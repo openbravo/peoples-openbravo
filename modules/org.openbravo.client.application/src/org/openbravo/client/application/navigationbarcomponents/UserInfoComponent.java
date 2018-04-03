@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,20 +21,16 @@ package org.openbravo.client.application.navigationbarcomponents;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.Query;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.KernelServlet;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -96,37 +92,14 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
       return userRoles;
     }
     userRoles = new ArrayList<>();
-    ActivationKey ak = ActivationKey.getInstance();
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     boolean correctSystemStatus = sysInfo.getSystemStatus() == null
         || KernelServlet.getGlobalParameters().getOBProperty("safe.mode", "false")
             .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
-    if (!correctSystemStatus) {
-      userRoles.add(new RoleInfo(OBDal.getInstance().get(Role.class, "0")));
-      return userRoles;
-    }
 
-    if (getParameters().get(KernelConstants.HTTP_SESSION) != null) {
-      final HttpSession session = (HttpSession) getParameters().get(KernelConstants.HTTP_SESSION);
-      final String dbSessionId = (String) session.getAttribute("#AD_Session_ID".toUpperCase());
-      LicenseRestriction limitation = ak.checkOPSLimitations(dbSessionId);
-      if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
-          || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
-          || limitation == LicenseRestriction.MODULE_EXPIRED
-          || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
-          || limitation == LicenseRestriction.HB_NOT_ACTIVE
-          || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
-          || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED) {
-        userRoles.add(new RoleInfo(OBDal.getInstance().get(Role.class, "0")));
-        return userRoles;
-      }
-    }
-
-    final HttpServletRequest request = RequestContext.get().getRequest();
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
-    boolean onlySystemAdminAccess = "Y".equals(vars
-        .getSessionValue("onlySystemAdminRoleShouldBeAvailableInErp"));
-    if (onlySystemAdminAccess) {
+    if (!correctSystemStatus
+        || ActivationKey.getInstance().forceSysAdminLogin(
+            (HttpSession) getParameters().get(KernelConstants.HTTP_SESSION))) {
       userRoles.add(new RoleInfo(OBDal.getInstance().get(Role.class, "0")));
       return userRoles;
     }

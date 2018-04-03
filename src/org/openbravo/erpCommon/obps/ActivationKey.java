@@ -245,19 +245,16 @@ public class ActivationKey {
   /**
    * Session types that are not taken into account for counting concurrent users
    */
-  @SuppressWarnings("serial")
-  private static final List<String> NO_CU_SESSION_TYPES = new ArrayList<String>() {
-    {
-      add("WS"); // Web service
-      add("WSC"); // Connector
-      add("OBPOS_POS"); // WebPOS
-    }
-  };
-
-  private static final List<String> BACKOFFICE_SUCESS_SESSION_TYPES = Arrays.asList(//
-      "S", // Standard success session
-      "SUR", // Concurrent users soft limit reached
+  private static final List<String> NO_CU_SESSION_TYPES = Arrays.asList(//
+      "WS", // Web service
+      "WSC", // Connector
+      "OBPOS_POS", // WebPOS
       "CUR" // Concurrent users hard limit reached
+  );
+
+  private static final List<String> BACKOFFICE_SUCCESS_SESSION_TYPES = Arrays.asList(//
+      "S", // Standard success session
+      "SUR" // Concurrent users soft limit reached
   );
 
   public static final Long NO_LIMIT = -1L;
@@ -1116,7 +1113,7 @@ public class ActivationKey {
    * mobile apps) if activity from them has been recently detected.
    */
   private boolean shouldDeactivateSession(Session expiredSession, Date lastValidPingTime) {
-    if (BACKOFFICE_SUCESS_SESSION_TYPES.contains(expiredSession.getLoginStatus())) {
+    if (BACKOFFICE_SUCCESS_SESSION_TYPES.contains(expiredSession.getLoginStatus())) {
       // backoffice sessions use ping, they can be deactivated even if created in a different node
       return true;
     }
@@ -2028,6 +2025,29 @@ public class ActivationKey {
 
   public Long getPosTerminalsWarn() {
     return posTerminalsWarn;
+  }
+
+  /**
+   * Returns whether only System Admin should be allowed, because it is already set in session or
+   * there are license restrictions.
+   */
+  public boolean forceSysAdminLogin(HttpSession session) {
+    String dbSessionId = null;
+    if (session != null) {
+      if ("Y".equals(session.getAttribute("ONLYSYSTEMADMINROLESHOULDBEAVAILABLEINERP"))) {
+        return true;
+      }
+      dbSessionId = (String) session.getAttribute("#AD_SESSION_ID");
+    }
+
+    LicenseRestriction limitation = checkOPSLimitations(dbSessionId);
+    return limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
+        || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
+        || limitation == LicenseRestriction.MODULE_EXPIRED
+        || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
+        || limitation == LicenseRestriction.HB_NOT_ACTIVE
+        || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
+        || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED;
   }
 
   private List<ModuleLicenseRestrictions> getModuleLicenseRestrictions() {

@@ -53,7 +53,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRScrollableFieldProviderDataSource;
@@ -224,7 +223,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
       // if stateless then stop here, the remaining logic uses the httpsession
       if (AuthenticationManager.isStatelessRequest(request)) {
-        if (areThereLicenseRestrictions(null)) {
+        if (ActivationKey.getInstance().forceSysAdminLogin(null)) {
           throw new AuthenticationException("No valid license");
         }
         // make sure that there is an OBContext for the logged in user also in case of stateless
@@ -273,13 +272,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                   .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
 
           final VariablesSecureApp vars = new VariablesSecureApp(request, false);
-          boolean onlySystemAdminAvailable = "Y".equals(vars
-              .getSessionValue("onlySystemAdminRoleShouldBeAvailableInErp"));
-          // We check if there is a Openbravo Professional Subscription restriction in the license,
-          // or if the last rebuild didn't go well. If any of these are true, then the user is
-          // allowed to login only as system administrator
-          if (areThereLicenseRestrictions(variables.getDBSession()) || !correctSystemStatus
-              || onlySystemAdminAvailable) {
+          if (!correctSystemStatus
+              || ActivationKey.getInstance().forceSysAdminLogin(request.getSession(false))) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(cp, strUserAuth);
             if (strRole == null || strRole.equals("")) {
@@ -294,6 +288,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             strClient = "0";
             strOrg = "0";
             strWarehouse = "";
+            vars.setSessionValue("onlySystemAdminRoleShouldBeAvailableInErp", "Y");
           } else {
             RoleDefaults defaults = LoginUtils.getLoginDefaults(strUserAuth, variables.getRole(),
                 cp);
@@ -509,20 +504,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       else
         bdErrorGeneral(request, response, "Error", e.toString());
     }
-  }
-
-  // We check if there is a Openbravo Professional Subscription restriction in the license,
-  // or if the last rebuild didn't go well. If any of these are true, then the user is
-  // allowed to login only as system administrator
-  private boolean areThereLicenseRestrictions(String sessionId) {
-    LicenseRestriction limitation = ActivationKey.getInstance().checkOPSLimitations(sessionId);
-    return limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
-        || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
-        || limitation == LicenseRestriction.MODULE_EXPIRED
-        || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
-        || limitation == LicenseRestriction.HB_NOT_ACTIVE
-        || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
-        || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED;
   }
 
   /**

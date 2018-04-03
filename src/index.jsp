@@ -70,7 +70,7 @@ try {
     org.openbravo.model.ad.access.Session dbSession = OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class, sessionId);
     String currentSessionType = dbSession.getLoginStatus();
 
-    if (!ActivationKey.consumesConcurrentUser(currentSessionType)) {
+    if (!ActivationKey.consumesConcurrentUser(currentSessionType) && !"CUR".equals(currentSessionType)) {
       // session was created not counting concurrent users, now switching to backend so they
       // should be counted
       dbSession.setLoginStatus(LoginHandler.SUCCESS_SESSION_STANDARD);

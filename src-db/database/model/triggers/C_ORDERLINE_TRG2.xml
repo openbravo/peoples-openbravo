@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2017 Openbravo SLU
+    * All portions are Copyright (C) 2001-2018 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -197,7 +197,7 @@ IF (UPDATING) THEN
       END IF;
     END IF;
     IF (v_istaxincluded = 'Y') THEN
-      C_ORDERLINETAX_ROUNDING(:new.C_OrderLine_ID, :new.line_gross_amount, ROUND(v_newLineNetAmt, v_Prec));
+      C_ORDERLINETAX_ROUNDING(:new.C_OrderLine_ID, :new.line_gross_amount, ROUND(v_newLineNetAmt, v_Prec), v_Prec);
     END IF;
 
     -- Get Total Tax Base Amt and Tax Amt

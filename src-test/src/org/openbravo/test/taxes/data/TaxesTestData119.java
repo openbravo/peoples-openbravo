@@ -71,9 +71,9 @@ public class TaxesTestData119 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes2 = new HashMap<String, String[]>();
-    lineTaxes2.put(TaxDataConstants.TAX_SUPER_25, new String[] { "4.78", "1.19", "4.78", "1.19",
+    lineTaxes2.put(TaxDataConstants.TAX_SUPER_25, new String[] { "4.77", "1.20", "4.77", "1.20",
         "9.55", "2.39", "9.55", "2.39" });
-    lineTaxes2.put(TaxDataConstants.TAX_SUPER_50, new String[] { "3.18", "1.60", "3.18", "1.60",
+    lineTaxes2.put(TaxDataConstants.TAX_SUPER_50, new String[] { "3.18", "1.59", "3.18", "1.59",
         "6.37", "3.18", "6.37", "3.18" });
     line2.setLinetaxes(lineTaxes2);
 
@@ -100,9 +100,9 @@ public class TaxesTestData119 extends TaxesTestData {
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes3 = new HashMap<String, String[]>();
     lineTaxes3.put(TaxDataConstants.TAX_SUPER_25, new String[] { "7.15", "1.79", "7.15", "1.79",
-        "14.30", "3.58", "14.30", "3.58" });
+        "14.31", "3.57", "14.31", "3.57" });
     lineTaxes3.put(TaxDataConstants.TAX_SUPER_50, new String[] { "4.77", "2.38", "4.77", "2.38",
-        "9.54", "4.76", "9.54", "4.76" });
+        "9.54", "4.77", "9.54", "4.77" });
     line3.setLinetaxes(lineTaxes3);
 
     // Amounts for line level are provided
@@ -121,10 +121,10 @@ public class TaxesTestData119 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> taxes = new HashMap<String, String[]>();
-    taxes.put(TaxDataConstants.TAX_SUPER_25, new String[] { "51.93", "12.98", "51.93", "12.98",
-        "103.85", "25.97", "103.85", "25.97" });
-    taxes.put(TaxDataConstants.TAX_SUPER_50, new String[] { "34.62", "17.31", "34.62", "17.31",
-        "69.24", "34.61", "69.24", "34.61" });
+    taxes.put(TaxDataConstants.TAX_SUPER_25, new String[] { "51.92", "12.99", "51.92", "12.99",
+        "103.86", "25.96", "103.86", "25.96" });
+    taxes.put(TaxDataConstants.TAX_SUPER_50, new String[] { "34.62", "17.30", "34.62", "17.30",
+        "69.24", "34.62", "69.24", "34.62" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided

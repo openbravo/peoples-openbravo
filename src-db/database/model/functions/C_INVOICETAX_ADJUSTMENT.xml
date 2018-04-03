@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2017 Openbravo SLU
+* All portions are Copyright (C) 2017-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -89,7 +89,7 @@ BEGIN --BODY
       ORDER BY it.Line
     )
     LOOP
-      -- Adjust TaxAmt
+      -- Adjust the tax that stays closest to the original amount (the one with the lowest rounded tax amount - not rounded tax amount + adjustment amount)
       IF (CUR_Tax.TaxAdjustment <> 0) THEN
         FOR CUR_Line IN (
           SELECT it.C_InvoiceTax_ID, it.C_Tax_ID, t.Line
@@ -99,7 +99,7 @@ BEGIN --BODY
           WHERE it.C_Invoice_ID = p_invoice_id
           AND it.Recalculate = 'Y'
           AND c_tax_get_root(it.C_Tax_ID) = CUR_Tax.C_Tax_ID
-          ORDER BY ABS(it.TaxAmt) DESC, t.Line DESC
+          ORDER BY ABS(it.TaxAmt - (it.TaxBaseAmt * (t.Rate/100)) - CUR_Tax.TaxAdjustment) ASC, ABS(it.TaxAmt) DESC, t.Line DESC
         )
         LOOP
           UPDATE C_INVOICETAX
