@@ -59,8 +59,6 @@ enyo.kind({
     editCustomerHeader.$.assigncustomeraddrtoticketinv.setShowing(!invship && this.args.bPLocation.get('isBillTo'));
     editCustomerHeader.$.assigncustomeraddrtoticketship.setShowing(!invship && this.args.bPLocation.get('isShipTo'));
 
-    this.args.bPLocation.set("loaded", new Date().toISOString());
-
     return true;
   },
   executeOnHide: function () {
