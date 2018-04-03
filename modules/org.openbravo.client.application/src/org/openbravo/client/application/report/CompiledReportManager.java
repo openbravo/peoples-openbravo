@@ -26,21 +26,24 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.Query;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.service.db.DalConnectionProvider;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 
 /**
- * This class is used to keep in cache the reports generated through the {@link ReportingUtils}
- * class.
+ * This class is used to compile reports in different languages. It keeps the compilation results in
+ * cache, avoiding unnecessary compilations when the same report is generated multiple times.
  */
 class CompiledReportManager {
   private static CompiledReportManager instance = new CompiledReportManager();
 
-  private ConcurrentHashMap<String, CompiledJasperReport> jasperReports;
+  private ConcurrentHashMap<String, CompiledReport> compiledReports;
   private boolean isDisabled;
 
   private CompiledReportManager() {
-    jasperReports = new ConcurrentHashMap<>();
+    compiledReports = new ConcurrentHashMap<>();
     isDisabled = isInDevelopment();
   }
 
@@ -55,85 +58,83 @@ class CompiledReportManager {
     return instance;
   }
 
-  JasperReport getReport(String reportPath, String language) {
-    String key = reportPath + "-" + language;
-    CompiledJasperReport compiledReport = getCompiledReport(key);
-    if (compiledReport == null) {
-      return null;
-    }
-    return compiledReport.mainReport;
+  JasperReport compileReport(String reportPath, String language) throws JRException {
+    return compileReport(reportPath, language,
+        DalConnectionProvider.getReadOnlyConnectionProvider());
   }
 
-  JasperReport getReport(String reportPath) {
-    CompiledJasperReport compiledReport = getCompiledReport(reportPath);
-    if (compiledReport == null) {
-      return null;
+  JasperReport compileReport(String reportPath, String language,
+      ConnectionProvider connectionProvider) throws JRException {
+    CompiledReport compiledReport = getCompiledReport(reportPath, language);
+    if (compiledReport != null) {
+      return compiledReport.mainReport;
     }
-    return compiledReport.mainReport;
+    ReportCompiler reportCompiler = new ReportCompiler(reportPath, language, connectionProvider);
+    JasperReport jReport = reportCompiler.compileReport();
+    putCompiledReport(reportPath, language, new CompiledReport(jReport));
+    return jReport;
   }
 
-  Map<String, JasperReport> getSubReports(String reportPath, String language) {
-    String key = reportPath + "-" + language;
-    CompiledJasperReport compiledReport = getCompiledReport(key);
-    if (compiledReport == null) {
-      return null;
+  JasperReport compileReportWithSubreports(String reportPath, String language,
+      Map<String, Object> parameters, ConnectionProvider subRepConnProvider) throws JRException {
+    JasperReport jReport;
+    Map<String, JasperReport> subReports = null;
+    CompiledReport compiledReport = getCompiledReport(reportPath, language);
+    if (compiledReport != null) {
+      jReport = compiledReport.mainReport;
+      subReports = compiledReport.subReports;
+    } else {
+      ReportCompiler reportCompiler = new ReportCompiler(reportPath, language,
+          DalConnectionProvider.getReadOnlyConnectionProvider());
+      jReport = reportCompiler.compileReport();
+      subReports = reportCompiler.compileSubReports(subRepConnProvider);
+      putCompiledReport(reportPath, language, new CompiledReport(jReport, subReports));
     }
-    return compiledReport.subReports;
+    if (subReports != null) {
+      parameters.putAll(subReports);
+    }
+    return jReport;
+  }
+
+  private CompiledReport getCompiledReport(String reportPath, String language) {
+    return compiledReports.get(getKey(reportPath, language));
+  }
+
+  private void putCompiledReport(String reportPath, String language, CompiledReport compiledReport) {
+    if (isDisabled) {
+      return;
+    }
+    compiledReports.putIfAbsent(getKey(reportPath, language), compiledReport);
+  }
+
+  private String getKey(String reportPath, String language) {
+    if (language == null) {
+      return reportPath;
+    }
+    return reportPath + "-" + language;
   }
 
   Set<String> getCachedReports() {
     Set<String> cachedReports = new HashSet<>();
-    for (Entry<String, CompiledJasperReport> entry : jasperReports.entrySet()) {
+    for (Entry<String, CompiledReport> entry : compiledReports.entrySet()) {
       cachedReports.add(entry.getKey());
     }
     return cachedReports;
   }
 
-  void clear() {
-    jasperReports.clear();
+  void clearCache() {
+    compiledReports.clear();
   }
 
-  private CompiledJasperReport getCompiledReport(String key) {
-    return jasperReports.get(key);
-  }
-
-  void put(String reportPath, String language, JasperReport jasperReport) {
-    put(reportPath, language, jasperReport, null);
-  }
-
-  void put(String reportPath, String language, JasperReport jasperReport,
-      Map<String, JasperReport> subReports) {
-    String key = reportPath + "-" + language;
-    CompiledJasperReport compiledJasperReport;
-    if (subReports == null) {
-      compiledJasperReport = new CompiledJasperReport(jasperReport);
-    } else {
-      compiledJasperReport = new CompiledJasperReport(jasperReport, subReports);
-    }
-    put(key, compiledJasperReport);
-  }
-
-  void put(String reportPath, JasperReport jasperReport) {
-    CompiledJasperReport compiledJasperReport = new CompiledJasperReport(jasperReport);
-    put(reportPath, compiledJasperReport);
-  }
-
-  private void put(String key, CompiledJasperReport compiledReport) {
-    if (isDisabled) {
-      return;
-    }
-    jasperReports.putIfAbsent(key, compiledReport);
-  }
-
-  private static class CompiledJasperReport {
+  private static class CompiledReport {
     JasperReport mainReport;
     Map<String, JasperReport> subReports;
 
-    public CompiledJasperReport(JasperReport mainReport) {
+    public CompiledReport(JasperReport mainReport) {
       this.mainReport = mainReport;
     }
 
-    public CompiledJasperReport(JasperReport mainReport, Map<String, JasperReport> subReports) {
+    public CompiledReport(JasperReport mainReport, Map<String, JasperReport> subReports) {
       this.mainReport = mainReport;
       this.subReports = subReports;
     }

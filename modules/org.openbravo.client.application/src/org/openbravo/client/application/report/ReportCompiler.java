@@ -60,16 +60,12 @@ class ReportCompiler {
   // server base design folder
   private String baseDesignPath;
 
-  ReportCompiler(String templatePath) {
+  ReportCompiler(String templatePath, String language, ConnectionProvider connectionProvider) {
     this.templatePath = templatePath;
     this.templateLocation = new File(templatePath).getParent() + "/";
     this.baseDesignPath = getBaseDesignPath();
-  }
-
-  ReportCompiler(ConnectionProvider connectionProvider, String templatePath, String language) {
-    this(templatePath);
-    this.connectionProvider = connectionProvider;
     this.language = language;
+    this.connectionProvider = connectionProvider;
   }
 
   private String getBaseDesignPath() {

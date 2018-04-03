@@ -46,7 +46,6 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.ad.utility.FileType;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -962,24 +961,12 @@ public class ReportingUtils {
       }
 
       String language = OBContext.getOBContext().getLanguage().getLanguage();
-      JasperReport jReport = compiledReportManager.getReport(jasperFilePath, language);
-      Map<String, JasperReport> subReports = null;
-      if (jReport == null) {
-        ReportCompiler reportCompiler = new ReportCompiler(
-            DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language);
-        jReport = reportCompiler.compileReport();
-        if (compileSubreports && connectionProvider != null) {
-          subReports = reportCompiler.compileSubReports(connectionProvider);
-          compiledReportManager.put(jasperFilePath, language, jReport, subReports);
-        } else {
-          compiledReportManager.put(jasperFilePath, language, jReport);
-        }
+      JasperReport jReport;
+      if (compileSubreports && connectionProvider != null) {
+        jReport = compiledReportManager.compileReportWithSubreports(jasperFilePath, language,
+            parameters, connectionProvider);
       } else {
-        subReports = compiledReportManager.getSubReports(jasperFilePath, language);
-      }
-
-      if (subReports != null) {
-        parameters.putAll(subReports);
+        jReport = compiledReportManager.compileReport(jasperFilePath, language);
       }
 
       ReportFiller reportFiller = new ReportFiller(jReport, parameters);
@@ -1035,14 +1022,7 @@ public class ReportingUtils {
    */
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
       String language) throws JRException {
-    JasperReport jasperReport = compiledReportManager.getReport(reportName, language);
-    if (jasperReport != null) {
-      return jasperReport;
-    }
-    ReportCompiler reportCompiler = new ReportCompiler(conn, reportName, language);
-    jasperReport = reportCompiler.compileReport();
-    compiledReportManager.put(reportName, language, jasperReport);
-    return jasperReport;
+    return compiledReportManager.compileReport(reportName, language, conn);
   }
 
   /**
@@ -1056,14 +1036,7 @@ public class ReportingUtils {
    *           message.
    */
   public static JasperReport compileReport(String jasperFilePath) throws JRException {
-    JasperReport jasperReport = compiledReportManager.getReport(jasperFilePath);
-    if (jasperReport != null) {
-      return jasperReport;
-    }
-    ReportCompiler reportCompiler = new ReportCompiler(jasperFilePath);
-    jasperReport = reportCompiler.compileReport();
-    compiledReportManager.put(jasperFilePath, jasperReport);
-    return jasperReport;
+    return compiledReportManager.compileReport(jasperFilePath, null, null);
   }
 
   /**
