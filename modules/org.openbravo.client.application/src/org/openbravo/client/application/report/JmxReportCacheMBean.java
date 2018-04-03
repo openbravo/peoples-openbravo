@@ -28,7 +28,7 @@ public interface JmxReportCacheMBean {
   /**
    * @return the set of report names currently available in cache.
    */
-  public Set<String> getCachedJasperReports();
+  public Set<String> getCachedReports();
 
   /**
    * Clears the content of the compiled reports cache.

@@ -33,12 +33,12 @@ public class JmxReportCache implements JmxReportCacheMBean {
   private static CompiledReportManager compiledReportManager = CompiledReportManager.getInstance();
 
   @Override
-  public Set<String> getCachedJasperReports() {
+  public Set<String> getCachedReports() {
     return compiledReportManager.getCachedReports();
   }
 
   @Override
   public void clearCache() {
-    compiledReportManager.clear();
+    compiledReportManager.clearCache();
   }
 }
