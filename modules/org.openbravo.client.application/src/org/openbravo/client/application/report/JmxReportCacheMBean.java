@@ -22,7 +22,7 @@ import java.util.Set;
 
 /**
  * This interface allows to define the {@link JmxReportCache} class as an standard MBean that allows
- * to view and clear the cached contents of the {@code CompiledReportManager} through JMX.
+ * to view and clear the cached contents of the {@link CompiledReportManager} through JMX.
  */
 public interface JmxReportCacheMBean {
   /**

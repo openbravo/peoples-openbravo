@@ -24,7 +24,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 /**
  * An standard MBean that allows to view and clear the cached contents of the
- * {@code CompiledReportManager} through JMX.
+ * {@link CompiledReportManager} through JMX.
  */
 @ApplicationScoped
 public class JmxReportCache implements JmxReportCacheMBean {
