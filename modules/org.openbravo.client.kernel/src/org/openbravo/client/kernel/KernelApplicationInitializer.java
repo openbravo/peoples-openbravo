@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
-import org.openbravo.client.application.report.JmxJasperReportCache;
+import org.openbravo.client.application.report.JmxReportCache;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.jmx.MBeanRegistry;
@@ -52,7 +52,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   private StaticResourceProvider resourceProvider;
 
   @Inject
-  private JmxJasperReportCache jasperReportCache;
+  private JmxReportCache reportCache;
 
   public void initialize() {
     registerSQLFunctions();
@@ -108,6 +108,6 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
 
   private void registerMBeans() {
     MBeanRegistry.registerMBean(KernelConstants.RESOURCE_COMPONENT_ID, resourceProvider);
-    MBeanRegistry.registerMBean(JmxJasperReportCache.MBEAN_NAME, jasperReportCache);
+    MBeanRegistry.registerMBean(JmxReportCache.MBEAN_NAME, reportCache);
   }
 }

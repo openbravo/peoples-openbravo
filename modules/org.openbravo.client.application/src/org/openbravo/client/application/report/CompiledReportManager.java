@@ -33,13 +33,13 @@ import net.sf.jasperreports.engine.JasperReport;
  * This class is used to keep in cache the reports generated through the {@link ReportingUtils}
  * class.
  */
-class JasperReportCache {
-  private static JasperReportCache instance = new JasperReportCache();
+class CompiledReportManager {
+  private static CompiledReportManager instance = new CompiledReportManager();
 
   private ConcurrentHashMap<String, CompiledJasperReport> jasperReports;
   private boolean isDisabled;
 
-  private JasperReportCache() {
+  private CompiledReportManager() {
     jasperReports = new ConcurrentHashMap<>();
     isDisabled = isInDevelopment();
   }
@@ -51,7 +51,7 @@ class JasperReportCache {
     return !indevelMods.list().isEmpty();
   }
 
-  static JasperReportCache getInstance() {
+  static CompiledReportManager getInstance() {
     return instance;
   }
 

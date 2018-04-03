@@ -35,10 +35,10 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
 /**
- * This class is used to fill the data of the JasperReports.
+ * This class is used to fill the data of the reports.
  */
-class JasperReportFiller {
-  private static final Logger log = LoggerFactory.getLogger(JasperReportFiller.class);
+class ReportFiller {
+  private static final Logger log = LoggerFactory.getLogger(ReportFiller.class);
 
   // main report file path
   private String templatePath;
@@ -51,12 +51,12 @@ class JasperReportFiller {
   // an optional data source in case the report uses it
   private JRDataSource dataSource;
 
-  JasperReportFiller(JasperReport jasperReport, Map<String, Object> parameters) {
+  ReportFiller(JasperReport jasperReport, Map<String, Object> parameters) {
     this.jasperReport = jasperReport;
     this.parameters = parameters;
   }
 
-  JasperReportFiller(String templatePath, Map<String, Object> parameters) {
+  ReportFiller(String templatePath, Map<String, Object> parameters) {
     this.templatePath = templatePath;
     this.parameters = parameters;
   }

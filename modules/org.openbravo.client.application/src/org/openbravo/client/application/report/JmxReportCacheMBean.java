@@ -20,25 +20,18 @@ package org.openbravo.client.application.report;
 
 import java.util.Set;
 
-import javax.enterprise.context.ApplicationScoped;
-
 /**
- * An standard MBean that allows to view and clear the contents of the {@code JasperReportCache}
- * through JMX.
+ * This interface allows to define the {@link JmxReportCache} class as an standard MBean that allows
+ * to view and clear the cached contents of the {@code CompiledReportManager} through JMX.
  */
-@ApplicationScoped
-public class JmxJasperReportCache implements JmxJasperReportCacheMBean {
+public interface JmxReportCacheMBean {
+  /**
+   * @return the set of report names currently available in cache.
+   */
+  public Set<String> getCachedJasperReports();
 
-  public static final String MBEAN_NAME = "JasperReportCache";
-  private static JasperReportCache reportCache = JasperReportCache.getInstance();
-
-  @Override
-  public Set<String> getCachedJasperReports() {
-    return reportCache.getCachedReports();
-  }
-
-  @Override
-  public void clearCache() {
-    reportCache.clear();
-  }
+  /**
+   * Clears the content of the compiled reports cache.
+   */
+  public void clearCache();
 }

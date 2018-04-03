@@ -41,11 +41,11 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 /**
- * This class is used to compile JasperReports. It also provides the ability to compile the
- * sub-reports passed as parameters within the report design.
+ * This class is used to compile reports. It also provides the ability to compile the sub-reports
+ * passed as parameters within the report design.
  */
-class JasperReportCompiler {
-  private static final Logger log = LoggerFactory.getLogger(JasperReportCompiler.class);
+class ReportCompiler {
+  private static final Logger log = LoggerFactory.getLogger(ReportCompiler.class);
 
   // connection provider used to retrieve the translated texts
   private ConnectionProvider connectionProvider;
@@ -60,13 +60,13 @@ class JasperReportCompiler {
   // server base design folder
   private String baseDesignPath;
 
-  JasperReportCompiler(String templatePath) {
+  ReportCompiler(String templatePath) {
     this.templatePath = templatePath;
     this.templateLocation = new File(templatePath).getParent() + "/";
     this.baseDesignPath = getBaseDesignPath();
   }
 
-  JasperReportCompiler(ConnectionProvider connectionProvider, String templatePath, String language) {
+  ReportCompiler(ConnectionProvider connectionProvider, String templatePath, String language) {
     this(templatePath);
     this.connectionProvider = connectionProvider;
     this.language = language;

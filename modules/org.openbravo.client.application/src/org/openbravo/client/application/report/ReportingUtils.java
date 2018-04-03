@@ -104,7 +104,7 @@ public class ReportingUtils {
   private static final float TEXT_CHAR_HEIGHT = 10;
   private static final float TEXT_CHAR_WIDTH = 10;
   private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
-  private static JasperReportCache reportCache = JasperReportCache.getInstance();
+  private static CompiledReportManager compiledReportManager = CompiledReportManager.getInstance();
 
   /**
    * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
@@ -957,32 +957,32 @@ public class ReportingUtils {
       logJasperReportParameters(parameters);
 
       if (!jasperFilePath.endsWith("jrxml")) {
-        JasperReportFiller reportFiller = new JasperReportFiller(jasperFilePath, parameters);
+        ReportFiller reportFiller = new ReportFiller(jasperFilePath, parameters);
         return reportFiller.fillReport();
       }
 
       String language = OBContext.getOBContext().getLanguage().getLanguage();
-      JasperReport jReport = reportCache.getReport(jasperFilePath, language);
+      JasperReport jReport = compiledReportManager.getReport(jasperFilePath, language);
       Map<String, JasperReport> subReports = null;
       if (jReport == null) {
-        JasperReportCompiler reportCompiler = new JasperReportCompiler(
+        ReportCompiler reportCompiler = new ReportCompiler(
             DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language);
         jReport = reportCompiler.compileReport();
         if (compileSubreports && connectionProvider != null) {
           subReports = reportCompiler.compileSubReports(connectionProvider);
-          reportCache.put(jasperFilePath, language, jReport, subReports);
+          compiledReportManager.put(jasperFilePath, language, jReport, subReports);
         } else {
-          reportCache.put(jasperFilePath, language, jReport);
+          compiledReportManager.put(jasperFilePath, language, jReport);
         }
       } else {
-        subReports = reportCache.getSubReports(jasperFilePath, language);
+        subReports = compiledReportManager.getSubReports(jasperFilePath, language);
       }
 
       if (subReports != null) {
         parameters.putAll(subReports);
       }
 
-      JasperReportFiller reportFiller = new JasperReportFiller(jReport, parameters);
+      ReportFiller reportFiller = new ReportFiller(jReport, parameters);
       if (connectionProvider != null) {
         reportFiller.setConnectionProvider(connectionProvider);
       }
@@ -1035,13 +1035,13 @@ public class ReportingUtils {
    */
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
       String language) throws JRException {
-    JasperReport jasperReport = reportCache.getReport(reportName, language);
+    JasperReport jasperReport = compiledReportManager.getReport(reportName, language);
     if (jasperReport != null) {
       return jasperReport;
     }
-    JasperReportCompiler reportCompiler = new JasperReportCompiler(conn, reportName, language);
+    ReportCompiler reportCompiler = new ReportCompiler(conn, reportName, language);
     jasperReport = reportCompiler.compileReport();
-    reportCache.put(reportName, language, jasperReport);
+    compiledReportManager.put(reportName, language, jasperReport);
     return jasperReport;
   }
 
@@ -1056,13 +1056,13 @@ public class ReportingUtils {
    *           message.
    */
   public static JasperReport compileReport(String jasperFilePath) throws JRException {
-    JasperReport jasperReport = reportCache.getReport(jasperFilePath);
+    JasperReport jasperReport = compiledReportManager.getReport(jasperFilePath);
     if (jasperReport != null) {
       return jasperReport;
     }
-    JasperReportCompiler reportCompiler = new JasperReportCompiler(jasperFilePath);
+    ReportCompiler reportCompiler = new ReportCompiler(jasperFilePath);
     jasperReport = reportCompiler.compileReport();
-    reportCache.put(jasperFilePath, jasperReport);
+    compiledReportManager.put(jasperFilePath, jasperReport);
     return jasperReport;
   }
 
