@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2017 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -48,21 +48,25 @@ BEGIN
                       AND COALESCE(rs.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id
                       AND rs.m_locator_id = :NEW.m_locator_id);
       IF (v_count > 0) THEN
-        SELECT COALESCE(sum(rs.quantity - COALESCE(rs.releasedqty,0)), 0), sd.qtyonhand
-          INTO v_reserved, v_onhand
+        SELECT COALESCE(sum(rs.quantity - COALESCE(rs.releasedqty,0)), 0)
+          INTO v_reserved
         FROM m_reservation_stock rs
             JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
-            JOIN m_storage_detail sd ON r.m_product_id = sd.m_product_id
-                                        AND r.c_uom_id = sd.c_uom_id
-                                        AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(sd.m_attributesetinstance_id, '0')
-                                        AND rs.m_locator_id = sd.m_locator_id
-                                        AND sd.m_product_uom_id IS NULL
         WHERE r.res_status NOT IN ('CL', 'DR')
           AND r.m_product_id = :NEW.m_product_id
           AND r.c_uom_id = :NEW.c_uom_id
           AND COALESCE(rs.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id
-          AND rs.m_locator_id = :NEW.m_locator_id
-        GROUP BY sd.qtyonhand, sd.m_storage_detail_id;
+          AND rs.m_locator_id = :NEW.m_locator_id;
+
+        SELECT sd.qtyonhand
+          INTO v_onhand
+        FROM m_storage_detail sd
+        WHERE sd.m_product_id = :NEW.m_product_id
+          AND sd.c_uom_id = :NEW.c_uom_id
+          AND COALESCE(sd.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id
+          AND sd.m_locator_id = :NEW.m_locator_id
+          AND sd.m_product_uom_id IS NULL;
+
         IF (v_onhand - v_reserved < ABS(:NEW.movementqty) AND v_reserved > 0) THEN
 	  SELECT value
             INTO v_product_value
