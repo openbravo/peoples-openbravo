@@ -6816,6 +6816,7 @@
       this.get('payments').reset();
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
+      this.unset('paymentDone');
       OB.MobileApp.model.set('isMultiOrderState', false);
       OB.UTIL.localStorage.removeItem('multiOrdersPayment');
     },

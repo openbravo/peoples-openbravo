@@ -2188,6 +2188,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         .valueOf(jsonorder.getDouble("payment"));
     BigDecimal amountPaidWithCredit = BigDecimal.ZERO;
 
+    if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
+      if (invoice != null) {
+        invoice.setPaymentComplete(Boolean.TRUE);
+        OBDal.getInstance().save(invoice);
+      }
+
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      return jsonResponse;
+    }
+
     FIN_PaymentSchedule paymentSchedule;
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
@@ -2927,9 +2937,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         OBDal.getInstance().refresh(finPayment);
         final List<FIN_FinaccTransaction> transactions = finPayment.getFINFinaccTransactionList();
         final String cashupId = jsonorder.getString("obposAppCashup");
-        final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-        for (FIN_FinaccTransaction transaction : transactions) {
-          transaction.setObposAppCashup(cashup);
+        if (Utility.isUUIDString(cashupId)) {
+          final OBPOSAppCashup cashup = OBDal.getInstance()
+              .getProxy(OBPOSAppCashup.class, cashupId);
+          for (FIN_FinaccTransaction transaction : transactions) {
+            transaction.setObposAppCashup(cashup);
+          }
         }
       }
     } finally {
