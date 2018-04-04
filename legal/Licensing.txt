@@ -67,7 +67,13 @@ http://www.eclipse.org/legal/epl-v10.html) or in the file EPL-1.0.txt in this fo
 # Eclipse icons 
 # wsdl4j-1.5.1.jar
 Icons and files under the Eclipse Public License (license available at
-http://www.eclipse.org/legal/epl-v10.html
+http://www.eclipse.org/legal/epl-v10.html)
+
+# javax.persistence-api-2.2.jar
+Under the terms of the Eclipse Public License v 1.0 (license available at
+http://www.eclipse.org/legal/epl-v10.html) 
+and Eclipse Distribution License v 1.0 (license available at 
+http://www.eclipse.org/org/documents/edl-v10.php)
 
 # nekohtml.jar (CyberNeko HTML Parser)
 Under the CyberNeko Software License, Version 1.0 (license available at
@@ -165,7 +171,8 @@ All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licen
 # poi-3.10.1.jar
 Under the Apache 2.0 license (included as Apache_poi_license.txt in this folder)
 
-# hibernate3-patched.jar
+# hibernate-core-5.3.0.CR1.jar
+# hibernate-commons-annotations-5.0.2.Final.jar
 All files under the LGPL 2.1 (available at www.gnu.org/licenses/lgpl.html)
 
 # dom4j-1.6.1.jar
@@ -185,7 +192,7 @@ Under the BSD 3-Clause license (avaliable at http://opensource.org/licenses/BSD-
 Under MPL/GPL License (available at https://developer.mozilla.org/en/Rhino_License)
 ob-rhino-1.6R7.jar is the same code as js.jar repackaged to be available under org.openbravo
 
-# javassist-3.20.0-GA.jar
+# javassist-3.22.0-GA.jar
 Under MPL License (included as MPL-1.1.txt in this folder)
 
 # slf4j-api-1.6.1.jar
@@ -199,20 +206,11 @@ In addition, the distribution includes
 - ojdbc6.jar under the OTN Development and Distribution
   License Agreement (in /legal folder and available at
   http://www.oracle.com/technology/software/popup-license/distribution-license.html)
-- hibernate-jpa-2.0-api-1.0.0.Final.jar
-  License Agreement available at:
-  http://fisheye.jboss.org/browse/Hibernate/jpa-api/tags/hibernate-jpa-2.0-api-1.0.0.Final/license.txt?r=16109&r=16109
 
 # jaxrpc.jar 
 # mail-1.4.4.jar 
 All files under the corresponding Sun Binary Code License. This is not free
 software, but provided under license from Sun Microsystems.
-
-# jta.jar. This software is subject to the Sun License Agreement and terms
-  set out in /legal/jta/ directory and also available at
-  https://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_Developer-Site/en_US/-/USD/ViewLicense-Start?LicenseUUID=aanACUFBI3YAAAEY1Z45AXiO&ProductUUID=gp_ACUFBpawAAAEYhHY5AXub
-Note: the software marked Java, JAVAX or Sun may not be modified in any
-way.
 
 # ejb-api-3.0.jar
 # jboss-interceptor-api-3.1.0-CR3.jar
@@ -229,6 +227,7 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # javax.inject.jar
 # jboss-interceptor-core-2.0.0.CR1.jar
 # jboss-interceptor-spi-2.0.0.CR1.jar
+# jboss-logging-3.3.1.Final.jar
 # weld-api.jar
 # weld-core-1.1.24.Final.jar
 # weld-servlet-core-1.1.24.Final.jar
@@ -263,6 +262,8 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # guice-2.0.jar
 # tomcat-juli.jar
 # tomcat-jdbc.jar
+# classmate-1.3.0.jar
+# jandex-2.0.3.Final.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jslint4java-1.4.7.jar
@@ -270,6 +271,7 @@ Under the New BSD license (available at http://www.opensource.org/licenses/bsd-l
 
 # javax.annotation-api-1.2.jar
 # javax.xml.soap-api-1.3.7.jar
+# jboss-transaction-api_1.2_spec-1.0.1.Final.jar
 Under the CDDL license version 1.0 (license available at https://spdx.org/licenses/CDDL-1.0.html 
 or in the file CDDL-1.0.txt in this folder)
 
