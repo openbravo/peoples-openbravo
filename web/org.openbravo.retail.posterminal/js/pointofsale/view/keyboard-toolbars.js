@@ -135,11 +135,12 @@ enyo.kind({
     }
 
     if (OB.DEC.compare(changedAmount) > 0) {
-      // receiptToPay.getPaymentStatus().isNegative -> payment or refund
+      //  -> payment or refund
       this.doShowPopup({
         popup: 'modalprovidergroup',
         args: {
           'receipt': this.getReceiptToPay(),
+          'refund': this.getReceiptToPay().getPaymentStatus().isNegative,
           'amount': amount,
           'currency': firstpayment.isocode,
           'providerGroup': providerGroup,

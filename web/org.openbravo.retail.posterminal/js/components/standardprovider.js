@@ -63,7 +63,7 @@ enyo.kind({
     }
   },
   processPayment: function (data) {
-    var type = data.receipt.getPaymentStatus().isNegative ? OBPOS_StandardProvider.TYPE_REFUND : OBPOS_StandardProvider.TYPE_SALE;
+    var type = data.refund ? OBPOS_StandardProvider.TYPE_REFUND : OBPOS_StandardProvider.TYPE_SALE;
 
     var request = {
       'type': type,
@@ -74,7 +74,7 @@ enyo.kind({
       }
     };
 
-    request = (data.receipt.getPaymentStatus().isNegative) ? this.populateRefundRequest(request, data) : this.populatePaymentRequest(request, data);
+    request = (data.refund) ? this.populateRefundRequest(request, data) : this.populatePaymentRequest(request, data);
 
     return OBPOS_StandardProvider.remoteRequest(request);
   },

@@ -52,11 +52,10 @@ enyo.kind({
 
     var receipt = this.args.receipt;
     var amount = this.args.amount;
+    var refund = this.args.refund;
     var providerGroup = this.args.providerGroup;
 
-    var isPayment = !receipt.getPaymentStatus().isNegative;
-
-    this.$.header.setContent(isPayment ? OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(amount)]) : OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(amount)]));
+    this.$.header.setContent(refund ? OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(amount)]) : OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(amount)]));
     this.$.bodyContent.$.lblType.setContent(OB.I18N.getLabel('OBPOS_LblModalType'));
     this.$.bodyContent.$.paymenttype.setContent(providerGroup.provider._identifier);
     this.$.bodyContent.$.description.setContent(providerGroup.provider.description);
@@ -78,10 +77,11 @@ enyo.kind({
 
     var receipt = this.args.receipt;
     var amount = this.args.amount;
+    var refund = this.args.refund;
     var currency = this.args.currency;
     var providerGroup = this.args.providerGroup;
-    var isPayment = !receipt.getPaymentStatus().isNegative;
     var providerinstance = this.args.providerinstance;
+    var attributes = this.args.attributes;
     var i;
 
     this.$.bodyContent.$.providergroupcomponent.destroyComponents();
@@ -89,7 +89,7 @@ enyo.kind({
       this.$.bodyContent.$.providergroupcomponent.createComponent(providerinstance.providerComponent).render();
     }
 
-    if (providerinstance.checkOverpayment && isPayment) {
+    if (providerinstance.checkOverpayment && !refund) {
       // check over payments in all payments of the group
       for (i = 0; i < providerGroup._payments.length; i++) {
         var payment = providerGroup._payments[i];
@@ -110,14 +110,16 @@ enyo.kind({
       'receipt': receipt,
       'currency': currency,
       'amount': amount,
+      'refund': refund,
       'providerGroup': providerGroup
     }).then(function (response) {
       var cardlogo = response.properties.cardlogo;
+      var paymentline;
       for (i = 0; i < providerGroup._payments.length; i++) {
         var payment = providerGroup._payments[i];
         if (cardlogo === payment.paymentType.searchKey) {
           // We found the payment method that applies.
-          receipt.addPayment(new OB.Model.PaymentLine({
+          paymentline = {
             'kind': payment.payment.searchKey,
             'name': payment.payment._identifier,
             'amount': amount,
@@ -139,7 +141,8 @@ enyo.kind({
               'provider': providerGroup.provider,
               'voidConfirmation': false // Is the void provider in charge of defining confirmation.
             }
-          }));
+          };
+          receipt.addPayment(new OB.Model.PaymentLine(Object.assign(paymentline, attributes)));
           window.setTimeout(this.doHideThisPopup.bind(this), 0);
           return; // Success
         }

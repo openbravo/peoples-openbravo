@@ -4425,7 +4425,7 @@
     reversePayment: function (payment, sender, reverseCallback) {
       var payments = this.get('payments'),
           me = this,
-          provider, usedPayment, reversalPayment;
+          usedPayment, reversalPayment;
 
       function reversePaymentConfirmed() {
         OB.UTIL.HookManager.executeHooks('OBPOS_preReversePayment', {
@@ -4464,7 +4464,6 @@
           reversalPayment.set('obposAppCashup', payment.get('obposAppCashup') ? payment.get('obposAppCashup') : null);
           reversalPayment.set('oBPOSPOSTerminal', payment.get('oBPOSPOSTerminal') ? payment.get('oBPOSPOSTerminal') : null);
 
-          provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddReversalPayment', {
             paymentToReverse: payment,
             reversalPayment: reversalPayment,
@@ -4476,20 +4475,49 @@
               }
               return true;
             }
-            if (provider) {
-              // Remove properties from the payment that ar not needed for a payment provider
-              reversalPayment.unset('kind');
-              // Add new properties for the payment provider
-              reversalPayment.set('receipt', me);
-              reversalPayment.set('provider', provider);
-              reversalPayment.set('paymentMethod', OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod);
-
+            var provider;
+            var firstpayment = OB.MobileApp.model.paymentnames[payment.get('kind')];
+            if (firstpayment.providerGroup) {
+              // Create a provider group instance that allows to return only with the same payment method.
+              var providerGroup = {
+                'provider': firstpayment.providerGroup,
+                '_payments': [
+                firstpayment]
+              };
               OB.MobileApp.view.waterfall('onShowPopup', {
-                popup: 'modalpayment',
-                args: reversalPayment.attributes
+                popup: 'modalprovidergroup',
+                args: {
+                  'receipt': me,
+                  'refund': true,
+                  'amount': payment.get('amount'),
+                  'currency': firstpayment.isocode,
+                  'providerGroup': providerGroup,
+                  'providerinstance': enyo.createFromKind(providerGroup.provider.provider),
+                  'attributes': {
+                    'isReversePayment': true,
+                    'reversedPaymentId': payment.get('paymentId'),
+                    'reversedPayment': payment,
+                    'reverseCallback': reverseCallback
+                  }
+                }
               });
             } else {
-              me.addPayment(new OB.Model.PaymentLine(reversalPayment.attributes));
+              provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
+              if (provider) {
+                // Remove properties from the payment that ar not needed for a payment provider
+                reversalPayment.unset('kind');
+                // Add new properties for the payment provider
+                reversalPayment.set('receipt', me);
+                reversalPayment.set('provider', provider);
+                reversalPayment.set('paymentMethod', OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod);
+
+                OB.MobileApp.view.waterfall('onShowPopup', {
+                  popup: 'modalpayment',
+                  args: reversalPayment.attributes
+                });
+              } else {
+                me.addPayment(new OB.Model.PaymentLine(reversalPayment.attributes));
+              }
             }
           });
         });
