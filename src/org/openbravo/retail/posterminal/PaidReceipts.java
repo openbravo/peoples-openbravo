@@ -315,6 +315,17 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptsPaymentsQuery.setString(0, orderid);
         JSONArray listPaymentsIn = hqlPropertiesPayments.getJSONArray(paidReceiptsPaymentsQuery);
 
+        String accountIds = "";
+        for (int i = 0; i < listPaymentsIn.length(); i++) {
+          JSONObject json = (JSONObject) listPaymentsIn.get(i);
+          accountIds += ",'" + json.getString("account") + "'";
+        }
+        if (!accountIds.isEmpty()) {
+          accountIds = accountIds.substring(1);
+        } else {
+          accountIds = "''";
+        }
+
         JSONArray listpaidReceiptsPayments = new JSONArray();
         JSONArray listPaymentsType = new JSONArray();
 
@@ -324,14 +335,14 @@ public class PaidReceipts extends JSONProcessSimple {
             + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
             + "p.financialAccount.currency.iSOCode as isocode, "
             + "p.paymentMethod.openDrawer as openDrawer "
-            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?)"
+            + " from OBPOS_App_Payment as p where p.financialAccount.id in ("
+            + accountIds
+            + ")"
             + "group by  p.financialAccount.id, p.commercialName ,p.searchKey,"
             + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
             + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
             + "p.financialAccount.currency.iSOCode ,p.paymentMethod.openDrawer";
         Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
-        // paidReceiptsQuery.setString(0, id);
-        paymentsTypeQuery.setString(0, orderid);
         for (Object objPaymentType : paymentsTypeQuery.list()) {
           Object[] objPaymentsType = (Object[]) objPaymentType;
           JSONObject paymentsType = new JSONObject();
