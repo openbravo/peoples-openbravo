@@ -62,10 +62,6 @@
         <index-column name="PROVIDER"/>
         <index-column name="VALUE"/>
       </index>
-      <index name="OBPOS_PAYMENTMETHOD_TYPE_VAL" unique="false">
-        <index-column name="PROVIDER"/>
-        <index-column name="VALUE"/>
-      </index>
       <check name="OBPOS_PAYMENTMETHOD_TYPE_ACT"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
