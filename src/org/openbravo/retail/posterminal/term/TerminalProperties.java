@@ -65,6 +65,9 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.organization.obretcoDbpOrgid.id", "defaultbp_bporg"));
     list.add(new HQLProperty("pos.organization.obretcoShowtaxid", "bp_showtaxid"));
     list.add(new HQLProperty("pos.organization.obretcoShowbpcategory", "bp_showcategoryselector"));
+    list.add(new HQLProperty(
+        "(select max(taxID) from OrganizationInformation oi where oi.organization = pos.organization)",
+        "organizationTaxId"));
     list.add(new HQLProperty("pos.orderdocnoPrefix", "docNoPrefix"));
     list.add(new HQLProperty("coalesce(pos.quotationdocnoPrefix, concat(pos.searchKey, 'QT'))",
         "quotationDocNoPrefix"));
