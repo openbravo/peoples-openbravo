@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,7 @@ package org.openbravo.base.session;
 import java.io.Serializable;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.UUIDGenerator;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.BaseOBObjectDef;
@@ -42,7 +42,8 @@ import org.openbravo.base.model.BaseOBObjectDef;
 public class DalUUIDGenerator extends UUIDGenerator {
 
   @Override
-  public Serializable generate(SessionImplementor session, Object obj) throws HibernateException {
+  public Serializable generate(SharedSessionContractImplementor session, Object obj)
+      throws HibernateException {
     final BaseOBObjectDef bob = (BaseOBObjectDef) obj;
     if (bob.getId() != null) {
       return ((String) bob.getId()).toUpperCase();

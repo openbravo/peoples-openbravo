@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,9 +25,10 @@ import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.PropertyNotFoundException;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.property.PropertyAccessor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.property.access.spi.PropertyAccess;
+import org.hibernate.property.access.spi.PropertyAccessStrategy;
 import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.structure.BaseOBObject;
 
@@ -37,7 +38,7 @@ import org.openbravo.base.structure.BaseOBObject;
  * @author mtaal
  */
 @SuppressWarnings("rawtypes")
-public class OBDynamicPropertyHandler implements PropertyAccessor {
+public class OBDynamicPropertyHandler implements PropertyAccessStrategy {
   public Getter getGetter(Class theClass, String propertyName) throws PropertyNotFoundException {
     return new Getter(theClass, propertyName);
   }
@@ -46,7 +47,7 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
     return new Setter(theClass, propertyName);
   }
 
-  public static class Getter implements org.hibernate.property.Getter {
+  public static class Getter implements org.hibernate.property.access.spi.Getter {
     private static final long serialVersionUID = 1L;
     private static final String ID_GETTER = "getId";
 
@@ -69,7 +70,6 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
         } catch (SecurityException e) {
         }
       }
-
       return null;
     }
 
@@ -78,6 +78,7 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
     }
 
     public String getMethodName() {
+
       return null;
     }
 
@@ -85,7 +86,7 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
       return ((BaseOBObject) owner).getValue(propertyName);
     }
 
-    public Object getForInsert(Object owner, Map mergeMap, SessionImplementor session)
+    public Object getForInsert(Object owner, Map mergeMap, SharedSessionContractImplementor session)
         throws HibernateException {
       return get(owner);
     }
@@ -95,7 +96,7 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
     }
   }
 
-  public static class Setter implements org.hibernate.property.Setter {
+  public static class Setter implements org.hibernate.property.access.spi.Setter {
     private static final long serialVersionUID = 1L;
     private static final String ID_SETTER = "setId";
 
@@ -129,5 +130,26 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
       ((BaseOBObject) target).setValue(propertyName, value);
     }
 
+  }
+
+  @Override
+  public PropertyAccess buildPropertyAccess(final Class theClass, final String propertyName) {
+    final OBDynamicPropertyHandler me = this;
+    return new PropertyAccess() {
+      @Override
+      public Setter getSetter() {
+        return new Setter(theClass, propertyName);
+      }
+
+      @Override
+      public PropertyAccessStrategy getPropertyAccessStrategy() {
+        return me;
+      }
+
+      @Override
+      public Getter getGetter() {
+        return new Getter(theClass, propertyName);
+      }
+    };
   }
 }

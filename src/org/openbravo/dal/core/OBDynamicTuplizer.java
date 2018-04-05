@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,11 +23,11 @@ import org.apache.log4j.Logger;
 import org.hibernate.EntityMode;
 import org.hibernate.EntityNameResolver;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
-import org.hibernate.property.Getter;
-import org.hibernate.property.Setter;
+import org.hibernate.property.access.spi.Getter;
+import org.hibernate.property.access.spi.Setter;
 import org.hibernate.proxy.ProxyFactory;
 import org.hibernate.proxy.map.MapProxyFactory;
 import org.hibernate.tuple.Instantiator;
@@ -82,7 +82,8 @@ public class OBDynamicTuplizer extends AbstractEntityTuplizer {
   }
 
   @Override
-  protected Instantiator buildInstantiator(PersistentClass mappingInfo) {
+  protected Instantiator buildInstantiator(EntityMetamodel entityMetamodel,
+      PersistentClass mappingInfo) {
     return new OBInstantiator(mappingInfo);
   }
 
@@ -127,5 +128,4 @@ public class OBDynamicTuplizer extends AbstractEntityTuplizer {
   public boolean isInstrumented() {
     return false;
   }
-
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.QueryException;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.engine.EntityKey;
+import org.hibernate.engine.spi.EntityKey;
 import org.hibernate.stat.SessionStatistics;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
@@ -64,8 +64,7 @@ public class ComputedColumnsTest extends OBBaseTest {
     Order order = (Order) qOrder.uniqueResult();
 
     // check it is in memory but computed columns are not already loaded
-    assertTrue("DAL Order loaded",
-        dalObjectLoaded(Order.ENTITY_NAME, order.getId()));
+    assertTrue("DAL Order loaded", dalObjectLoaded(Order.ENTITY_NAME, order.getId()));
     assertFalse("DAL Order computed columns shouldn't be loaded",
         dalObjectLoaded(Order_ComputedColumns.ENTITY_NAME, order.getId()));
 

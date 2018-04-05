@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -100,7 +101,8 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
   public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
     String strChValueId = chvalueUpdated.get();
     chvalueUpdated.set(null);
-    if (StringUtils.isBlank(strChValueId) || event.getTransaction().wasRolledBack()) {
+    if (StringUtils.isBlank(strChValueId)
+        || event.getTransaction().getStatus() == TransactionStatus.ROLLED_BACK) {
       return;
     }
     try {

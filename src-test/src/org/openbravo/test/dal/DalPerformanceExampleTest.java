@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,7 @@ import java.util.UUID;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.collection.PersistentBag;
+import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.Assert;
 import org.junit.Test;

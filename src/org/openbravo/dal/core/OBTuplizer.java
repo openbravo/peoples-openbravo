@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,21 +22,21 @@ package org.openbravo.dal.core;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
+import org.hibernate.internal.util.ReflectHelper;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Subclass;
-import org.hibernate.property.Getter;
-import org.hibernate.property.Setter;
+import org.hibernate.property.access.spi.Getter;
+import org.hibernate.property.access.spi.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.ProxyFactory;
-import org.hibernate.tuple.Instantiator;
 import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.tuple.entity.PojoEntityTuplizer;
 import org.hibernate.type.CompositeType;
-import org.hibernate.util.ReflectHelper;
 import org.openbravo.base.util.Check;
 
 /**
@@ -70,14 +70,9 @@ public class OBTuplizer extends PojoEntityTuplizer {
   // }
 
   @Override
-  protected Instantiator buildInstantiator(PersistentClass mappingInfo) {
-    return new OBInstantiator(mappingInfo);
-  }
-
-  @Override
   protected ProxyFactory buildProxyFactory(PersistentClass thePersistentClass, Getter idGetter,
       Setter idSetter) {
-    final Class<?> mappedClass = thePersistentClass.getMappedClass();
+    final Class mappedClass = thePersistentClass.getMappedClass();
     Check.isNotNull(mappedClass, "Mapped class of entity " + thePersistentClass.getEntityName()
         + " is null");
 
@@ -85,7 +80,7 @@ public class OBTuplizer extends PojoEntityTuplizer {
     // (if
     // any)
     // determine all interfaces needed by the resulting proxy
-    final HashSet<Object> proxyInterfaces = new HashSet<Object>();
+    final Set<Class> proxyInterfaces = new HashSet<>();
     proxyInterfaces.add(HibernateProxy.class);
 
     final Class<?> proxyInterface = thePersistentClass.getProxyInterface();
@@ -126,8 +121,10 @@ public class OBTuplizer extends PojoEntityTuplizer {
 
     ProxyFactory pf = buildProxyFactoryInternal(thePersistentClass, idGetter, idSetter);
     try {
+
       pf.postInstantiate(getEntityName(), mappedClass, proxyInterfaces, proxyGetIdentifierMethod,
           proxySetIdentifierMethod,
+
           thePersistentClass.hasEmbeddedIdentifier() ? (CompositeType) thePersistentClass
               .getIdentifier().getType() : null);
     } catch (final HibernateException he) {

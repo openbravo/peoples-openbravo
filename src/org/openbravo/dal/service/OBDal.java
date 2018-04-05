@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.impl.SessionFactoryImpl;
-import org.hibernate.jdbc.BorrowedConnectionProxy;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.stat.SessionStatistics;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -185,17 +184,9 @@ public class OBDal implements OBNotSingleton {
       flush();
     }
 
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
-    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      final Connection connection = ((SessionImplementor) SessionHandler.getInstance().getSession(
-          poolName)).connection();
-      return connection;
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentLoader);
-    }
+    final Connection connection = ((SessionImplementor) SessionHandler.getInstance().getSession(
+        poolName)).connection();
+    return connection;
   }
 
   /**

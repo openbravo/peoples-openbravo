@@ -241,7 +241,7 @@ public class SessionHandler implements OBNotSingleton {
       // If the connection has been obtained using an external connection pool it is passed to
       // openSession, to prevent a new connection to be created using the Hibernate default
       // connection pool
-      return sf.openSession(connection);
+      return sf.withOptions().connection(connection).openSession();
     } else {
       return sf.openSession();
     }
@@ -292,7 +292,7 @@ public class SessionHandler implements OBNotSingleton {
    * @return a {@code Connection} from the specified pool
    */
   public Connection getNewConnection(String pool) throws SQLException {
-    Connection newConnection;
+    Connection newConnection = null;
     if (externalConnectionPool != null) {
       newConnection = externalConnectionPool.getConnection(pool);
       try {
@@ -306,7 +306,7 @@ public class SessionHandler implements OBNotSingleton {
       // getting connection from Hibernate pool
       DalSessionFactory sf = (DalSessionFactory) SessionFactoryController.getInstance()
           .getSessionFactory();
-      newConnection = sf.getConnectionProvider().getConnection();
+      newConnection = sf.getJdbcConnectionAccess().obtainConnection();
       sf.initConnection(newConnection);
     }
     return newConnection;
