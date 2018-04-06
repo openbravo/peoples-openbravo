@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -134,14 +134,14 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
 
           productionPlan.setRunTime(0L);
           productionPlan.setClosephase(false);
-          BigDecimal requiredQty = wrOp.getQuantity().subtract(wrOp.getCompletedQuantity());
+          BigDecimal requeriedQty = wrOp.getQuantity().subtract(wrOp.getCompletedQuantity());
 
           if (wrOp.isCreateStandards()) {
-            productionPlan.setProductionQuantity(requiredQty);
+            productionPlan.setProductionQuantity(requeriedQty);
             BigDecimal estimatedTime = BigDecimal.ZERO;
             if (wrOp.getEstimatedTime() != null && wrOp.getQuantity() != null
                 && wrOp.getQuantity().compareTo(BigDecimal.ZERO) != 0) {
-              estimatedTime = wrOp.getEstimatedTime().multiply(requiredQty)
+              estimatedTime = wrOp.getEstimatedTime().multiply(requeriedQty)
                   .divide(wrOp.getQuantity(), RoundingMode.HALF_UP);
             }
             productionPlan.setEstimatedTime(new BigDecimal(estimatedTime.longValue()));
@@ -156,7 +156,7 @@ public class CreateWorkEffort implements org.openbravo.scheduling.Process {
           productionPlan.setStartingTime(starttime);
           productionPlan.setEndingTime(endtime);
 
-          productionPlan.setRequiredQuantity(requiredQty);
+          productionPlan.setRequiredQuantity(requeriedQty.longValue());
           productionPlan.setProcessUnit(wrOp.getWorkRequirement().getProcessUnit());
           if (wrOp.getWorkRequirement().getConversionRate() != null
               && wrOp.getWorkRequirement().getConversionRate().compareTo(BigDecimal.ZERO) != 0) {
