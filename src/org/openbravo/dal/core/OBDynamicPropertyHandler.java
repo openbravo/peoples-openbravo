@@ -29,7 +29,9 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.property.access.spi.PropertyAccess;
 import org.hibernate.property.access.spi.PropertyAccessStrategy;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.NamingUtil;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 
 /**
@@ -49,7 +51,6 @@ public class OBDynamicPropertyHandler implements PropertyAccessStrategy {
 
   public static class Getter implements org.hibernate.property.access.spi.Getter {
     private static final long serialVersionUID = 1L;
-    private static final String ID_GETTER = "getId";
 
     private String propertyName;
     private Class theClass;
@@ -61,25 +62,24 @@ public class OBDynamicPropertyHandler implements PropertyAccessStrategy {
 
     @SuppressWarnings("unchecked")
     public Method getMethod() {
-      // special case for IDs, so when executing getId() in a proxy, it is not necessary to load the
-      // whole object from DB
-      if (BaseOBObject.ID.equals(propertyName)) {
-        try {
-          return theClass.getDeclaredMethod(ID_GETTER);
-        } catch (NoSuchMethodException e) {
-        } catch (SecurityException e) {
-        }
+      Property property = ModelProvider.getInstance().getEntity(theClass).getProperty(propertyName);
+      String methodName = property.getGetterSetterName();
+      methodName = (property.isBoolean() ? "is" : "get") + methodName.substring(0, 1).toUpperCase()
+          + methodName.substring(1);
+      try {
+        return theClass.getDeclaredMethod(methodName);
+      } catch (NoSuchMethodException | SecurityException e) {
+        // TODO HB53 ignore
       }
       return null;
     }
 
     public Member getMember() {
-      return null;
+      return getMethod();
     }
 
     public String getMethodName() {
-
-      return null;
+      return getMethod().getName();
     }
 
     public Object get(Object owner) throws HibernateException {

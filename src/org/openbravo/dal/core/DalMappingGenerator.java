@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -111,7 +111,7 @@ public class DalMappingGenerator implements OBSingleton {
     final StringBuilder sb = new StringBuilder();
     for (final Entity e : mp.getModel()) {
       // Do not map datasource based tables
-      if (!e.isDataSourceBased() && !e.isVirtualEntity()) {
+      if (!e.isDataSourceBased() && !e.isVirtualEntity() && e.getMappingClass() != null) {
         final String entityMapping = generateMapping(e);
         sb.append(entityMapping);
       }
@@ -159,8 +159,9 @@ public class DalMappingGenerator implements OBSingleton {
       content.append("<tuplizer entity-mode=\"dynamic-map\" "
           + "class=\"org.openbravo.dal.core.OBDynamicTuplizer\"/>\n\n");
     } else {
-      content.append("<tuplizer entity-mode=\"pojo\" "
-          + "class=\"org.openbravo.dal.core.OBTuplizer\"/>\n\n");
+      // TODO HB53
+      // content.append("<tuplizer entity-mode=\"pojo\" "
+      // + "class=\"org.openbravo.dal.core.OBTuplizer\"/>\n\n");
     }
 
     if (entity.hasCompositeId()) {
@@ -221,8 +222,9 @@ public class DalMappingGenerator implements OBSingleton {
     hbm = hbm.replaceAll("ismutable", "false");
 
     final StringBuilder content = new StringBuilder();
-    content.append(TAB2
-        + "<tuplizer entity-mode=\"pojo\" class=\"org.openbravo.dal.core.OBTuplizer\"/>" + NL + NL);
+    // TODO HB53
+    // content.append(TAB2
+    // + "<tuplizer entity-mode=\"pojo\" class=\"org.openbravo.dal.core.OBTuplizer\"/>" + NL + NL);
     content.append(generateStandardID(entity) + NL);
 
     if (entity.isClientEnabled()) {
