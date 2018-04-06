@@ -175,7 +175,8 @@ BEGIN
     WHERE C_TAXPAYMENT_ID = p_record_id;
     -- Updating SO_CREDITUSED when PAYMENT OCCUR
     UPDATE C_BPARTNER
-    SET SO_CREDITUSED = SO_CREDITUSED - COALESCE(p_amount, 0)
+    SET SO_CREDITUSED = SO_CREDITUSED - COALESCE(p_amount, 0),
+    UPDATED = now()
     WHERE C_BPARTNER_ID = v_BPartner_ID; 
 
     -- Automatic creation of financial transaction

@@ -42,7 +42,8 @@ BEGIN
       FROM C_DEBT_PAYMENT_V
       WHERE C_BPartner_ID=p_BPartner_ID
         AND C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, Cancel_Processed, Generate_Processed, IsPaid, IsValid, C_CashLine_ID, C_BankStatementLine_ID)='P'
-      )
+      ),
+      UPDATED = now()
     WHERE C_BPartner_ID=p_BPartner_ID;
   END IF;
 END C_BP_SOCREDITUSED_REFRESH
