@@ -502,30 +502,36 @@ enyo.kind({
     this.owner.owner.addCommand('cashexact', {
       action: function (keyboard, txt) {
         var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status;
-        if (status && providerGroups[status]) {
-          me.bubble('onClearPaymentSelect');
-          // It is a provider group
-          me.payAmountWithProviderGroup(me.model.getPending(), providerGroups[status]);
-        } else if (status && allpayments[status]) {
-          me.bubble('onClearPaymentSelect');
-          // It is a payment...
-          var exactpayment = allpayments[status] || exactdefault,
-              amount = me.model.getPending(),
-              altexactamount = me.receipt.get('exactpayment'); // NOT FOUND
-          // check if alternate exact amount must be applied based on the payment method selected.
-          if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
-            amount = altexactamount[exactpayment.payment.searchKey];
-          }
-          if (exactpayment.rate && exactpayment.rate !== '1') {
-            amount = OB.DEC.div(amount, exactpayment.rate);
-          }
-
-          if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
-            me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
-          }
-        } else {
+        if (status && !allpayments[status] && !providerGroups[status]) {
           // Is not a payment, so continue with the default path...
           keyboard.execCommand(status, null);
+        } else {
+          me.bubble('onClearPaymentSelect');
+          var amount = me.model.getPending();
+          if (providerGroups[status]) {
+            // It is selected  a provider group
+            me.payAmountWithProviderGroup(amount, providerGroups[status]);
+          } else {
+            var exactpayment = allpayments[status] || exactdefault;
+            if (exactpayment.providerGroup) {
+              // The exact payment belongs to a provider group so call the provider group payment
+              me.payAmountWithProviderGroup(amount, providerGroups[exactpayment.providerGroup.id]);
+            } else {
+              // It is a regular payment
+              var altexactamount = me.receipt.get('exactpayment'); // NOT FOUND
+              // check if alternate exact amount must be applied based on the payment method selected.
+              if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
+                amount = altexactamount[exactpayment.payment.searchKey];
+              }
+              if (exactpayment.rate && exactpayment.rate !== '1') {
+                amount = OB.DEC.div(amount, exactpayment.rate);
+              }
+
+              if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
+                me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
+              }
+            }
+          }
         }
       }
     });
