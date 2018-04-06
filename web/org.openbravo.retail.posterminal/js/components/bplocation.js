@@ -712,7 +712,11 @@ enyo.kind({
         filter = inEvent.locName;
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      if (OB.MobileApp.model.get('permissions') && OB.MobileApp.model.get('permissions')["OBPOS_remote.customer"] && !OB.MobileApp.model.get("connectedToERP")) {
+        OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable'));
+      } else {
+        OB.UTIL.showError("OBDAL error: " + error);
+      }
     }
 
     function successCallbackBPsLoc(dataBps) {
@@ -910,7 +914,11 @@ enyo.kind({
     }
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      if (OB.MobileApp.model.get('permissions') && OB.MobileApp.model.get('permissions')["OBPOS_remote.customer"] && !OB.MobileApp.model.get("connectedToERP")) {
+        OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable'));
+      } else {
+        OB.UTIL.showError("OBDAL error: " + error);
+      }
     }
 
     if (bp.get('locations') && bp.get('locations').length > 0 && bp.get('locations')[0].attributes) {
