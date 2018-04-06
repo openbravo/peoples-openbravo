@@ -11,13 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.dal.core;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.log4j.Logger;
 import org.hibernate.cfg.Configuration;
@@ -41,7 +45,21 @@ public class DalSessionFactoryController extends SessionFactoryController {
     final String mapping = DalMappingGenerator.getInstance().generateMapping();
     log.debug("Generated mapping: ");
     log.debug(mapping);
-    configuration.addXML(mapping);
+    Path tmpFile = null;
+    try {
+      tmpFile = Files.createTempFile("", ".hbm");
+      Files.write(tmpFile, mapping.getBytes());
+      configuration.addFile(tmpFile.toString());
+    } catch (IOException e) {
+      log.error("Error writing temporary .hbm file for configuration", e);
+    } finally {
+      try {
+        if (tmpFile != null) {
+          Files.delete(tmpFile);
+        }
+      } catch (IOException ignore) {
+      }
+    }
   }
 
   @Override
