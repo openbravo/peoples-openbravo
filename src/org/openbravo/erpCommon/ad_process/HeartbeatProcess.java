@@ -289,7 +289,6 @@ public class HeartbeatProcess implements Process {
         hbLog.setAntVersion(systemInfo.getProperty("antVersion"));
         hbLog.setOpenbravoVersion(systemInfo.getProperty("obVersion"));
         hbLog.setOpenbravoInstallMode(systemInfo.getProperty("obInstallMode"));
-        hbLog.setCodeRevision(systemInfo.getProperty("codeRevision"));
         hbLog.setWebServer(systemInfo.getProperty("webserver"));
         hbLog.setWebServerVersion(systemInfo.getProperty("webserverVersion"));
         hbLog.setOperatingSystem(systemInfo.getProperty("os"));
