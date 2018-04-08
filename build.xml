@@ -96,8 +96,6 @@ export.database: exports database structure and data to xml files.
   <property name="buildValidation" value="true"/>
   <property name="modules" value=""/> 
  
-  <available file=".hg" property="is.hg" />
-
   <condition property="xdoclint.missing" value="" else="-Xdoclint:-missing">
     <equals arg1="${ant.java.version}" arg2="1.7"/>
   </condition>
@@ -347,7 +345,7 @@ export.database: exports database structure and data to xml files.
   
   <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
   
-  <target name="init" depends="code.rev">
+  <target name="init">
     <fail if="root.user" message="Don't run ant tasks with the root user" />
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
     <fail message="Unsupported Java version ${ant.java.version}. Minimum required is 7 (1.7).">
@@ -355,19 +353,6 @@ export.database: exports database structure and data to xml files.
         <equals arg1="${ant.java.version}" arg2="1.6"/>
       </condition>
     </fail>
-  </target>
-
-  <target name="code.rev" depends="set.code.rev">
-    <condition property="code.revision" value="${hg.id}" else="0">
-      <isset property="hg.id" />
-    </condition>
-  </target>
-
-  <target name="set.code.rev" if="is.hg">
-    <exec executable="hg" outputproperty="hg.id" failifexecutionfails="false">
-      <arg value="id"/>
-      <arg value="-i"/>
-    </exec>
   </target>
 
   <target name="compile.complete" depends="init, core.lib, wad.lib, trl.lib">
@@ -955,8 +940,6 @@ export.database: exports database structure and data to xml files.
                    replace="\1${core.rev}\3"
                    byline="true"/>
     
-    <echo message="${hg.id}" file="${tmpdir}/config/instance.revision"/>
-	
     <delete includeEmptyDirs="true">
       <fileset dir="${tmpdir}/modules" includes="**/*" defaultexcludes="no"/>
     </delete>
