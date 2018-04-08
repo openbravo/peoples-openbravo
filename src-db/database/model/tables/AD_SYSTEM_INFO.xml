@@ -73,10 +73,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CODE_REVISION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="SERVLET_CONTAINER" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
         <default/>
         <onCreateDefault/>
