@@ -54,7 +54,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
@@ -779,7 +778,7 @@ public class HeartbeatProcess implements Process {
    */
   public static boolean isShowHeartbeatRequired(String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
-    final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
+    final SystemInfoData[] hbData = SystemInfoData.selectSystemProperties(connectionProvider);
     if (hbData.length > 0) {
       final String isheartbeatactive = hbData[0].isheartbeatactive;
       final String postponeDate = hbData[0].postponeDate;
