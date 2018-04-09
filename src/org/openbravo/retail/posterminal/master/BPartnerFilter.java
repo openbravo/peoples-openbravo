@@ -71,19 +71,27 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     if (location) {
       hql = hql
           + "FROM BusinessPartnerLocation bpl left outer join bpl.businessPartner AS bp join bp.aDUserList AS ulist "
-          + "WHERE $filtersCriteria AND bp.customer = true AND "
-          + "bp.priceList IS NOT NULL AND bpl.$readableSimpleClientCriteria AND "
-          + "bpl.$naturalOrgCriteria AND bp.active = true AND bpl.active = true ";
+          + getWhereClause(location, jsonsent);
     } else {
       hql = hql + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist "
-          + "WHERE $filtersCriteria AND bp.customer = true AND "
-          + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
-          + "bp.$naturalOrgCriteria AND bp.active = true ";
+          + getWhereClause(location, jsonsent);
     }
     hql = hql + "$orderByCriteria";
 
     hqlQueries.add(hql);
     return hqlQueries;
+  }
+
+  protected String getWhereClause(boolean isLocation, JSONObject jsonsent) {
+    if (isLocation) {
+      return "WHERE $filtersCriteria AND bp.customer = true AND "
+          + "bp.priceList IS NOT NULL AND bpl.$readableSimpleClientCriteria AND "
+          + "bpl.$naturalOrgCriteria AND bp.active = true AND bpl.active = true ";
+    } else {
+      return "WHERE $filtersCriteria AND bp.customer = true AND "
+          + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
+          + "bp.$naturalOrgCriteria AND bp.active = true ";
+    }
   }
 
   public static Map<String, Object> getParams(JSONObject jsonsent) {
