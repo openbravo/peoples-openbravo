@@ -27,6 +27,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalSessionFactory;
@@ -176,21 +178,19 @@ public abstract class SessionFactoryController {
       SessionFactory delegateSessionFactory = configuration.buildSessionFactory();
       dalSessionFactory.setDelegateSessionFactory(delegateSessionFactory);
 
-      // when session factory is created, a basic Hibernate pool is also created, let's reset it to
-      // prevent leaked connections
-      // TODO HB53
-      // if (delegateSessionFactory instanceof SessionFactoryImpl) {
-      // ConnectionProvider hibernatePool = ((SessionFactoryImpl) delegateSessionFactory)
-      // .getSettings().getConnectionProvider();
-      // if (hibernatePool instanceof DriverManagerConnectionProvider) {
-      // hibernatePool.close();
-      // }
-      // }
       sessionFactory = dalSessionFactory;
 
       log.debug("Session Factory initialized");
     } catch (final Throwable t) {
       throw new OBException(t);
+    }
+  }
+
+  public void closeHibernatePool() {
+    ConnectionProvider hibernatePool = sessionFactory.getSessionFactoryOptions()
+        .getServiceRegistry().getService(ConnectionProvider.class);
+    if (hibernatePool != null && hibernatePool instanceof DriverManagerConnectionProviderImpl) {
+      ((DriverManagerConnectionProviderImpl) hibernatePool).stop();
     }
   }
 

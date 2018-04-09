@@ -25,6 +25,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 
 /**
@@ -77,6 +78,10 @@ public class DalLayerInitializer implements OBSingleton {
         DalSessionFactoryController.class));
     SessionFactoryController.getInstance().initialize();
 
+    if (isUsingExternalConnectionPool()) {
+      SessionFactoryController.getInstance().closeHibernatePool();
+    }
+
     // reset the session
     SessionHandler.deleteSessionHandler();
 
@@ -87,6 +92,12 @@ public class DalLayerInitializer implements OBSingleton {
 
     log.info("Dal layer initialized");
     initialized = true;
+  }
+
+  private boolean isUsingExternalConnectionPool() {
+    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("db.externalPoolClassName");
+    return poolClassName != null && !"".equals(poolClassName);
   }
 
   public boolean isInitialized() {
