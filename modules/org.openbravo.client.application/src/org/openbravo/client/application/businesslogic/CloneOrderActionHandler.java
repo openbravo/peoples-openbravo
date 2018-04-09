@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Mallikarjun M
  ************************************************************************
@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ import org.openbravo.erpCommon.businessUtility.CloneOrderHookCaller;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.json.DataResolvingMode;
@@ -98,6 +100,9 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
 
+     
+      Map<String, OrderLine> clonedOrderLines = new HashMap<>();
+      List<OrderlineServiceRelation> orderLinesServiceRelation = new ArrayList<>();
       // get the lines associated with the order and clone them to the new
       // order line.
       for (OrderLine ordLine : objOrder.getOrderLineList()) {
@@ -120,9 +125,26 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         objCloneOrder.getOrderLineList().add(objCloneOrdLine);
         objCloneOrdLine.setSalesOrder(objCloneOrder);
         objCloneOrdLine.setReservationStatus(null);
-      }
 
-      OBDal.getInstance().save(objCloneOrder);
+        clonedOrderLines.put(ordLine.getId(), objCloneOrdLine);
+        List<OrderlineServiceRelation> lineServiceRelation = cloneProductServiceRelation(ordLine, objCloneOrdLine);
+        orderLinesServiceRelation.addAll(lineServiceRelation);
+      }
+      
+      if(!orderLinesServiceRelation.isEmpty()){
+        OBDal.getInstance().save(objCloneOrder);
+        OBDal.getInstance().flush();
+      }
+      
+      for (OrderlineServiceRelation lineServiceRelation : orderLinesServiceRelation) {
+        OrderLine clonedOrderLine = clonedOrderLines.get(lineServiceRelation.getOrderlineRelated().getId());
+        OBDal.getInstance().refresh(clonedOrderLine);
+        lineServiceRelation.setOrderlineRelated(clonedOrderLine);   
+        OBDal.getInstance().save(lineServiceRelation);
+      }
+      
+      clonedOrderLines.clear();
+      orderLinesServiceRelation.clear();
 
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(objCloneOrder);
@@ -132,6 +154,21 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  private List<OrderlineServiceRelation> cloneProductServiceRelation(OrderLine ordLine, OrderLine objCloneOrdLine) {
+
+    List<OrderlineServiceRelation> cloneServiceRelation = new ArrayList<>(
+        ordLine.getOrderlineServiceRelationList().size());
+    for (OrderlineServiceRelation orderLineServiceRelation : ordLine.getOrderlineServiceRelationList()) {
+      OrderlineServiceRelation lineServiceRelation = (OrderlineServiceRelation) DalUtil.copy(orderLineServiceRelation,
+          false);
+      lineServiceRelation.setOrderlineRelated(orderLineServiceRelation.getOrderlineRelated()); 
+      lineServiceRelation.setSalesOrderLine(objCloneOrdLine);
+      cloneServiceRelation.add(lineServiceRelation);
+    }
+    objCloneOrdLine.setOrderlineServiceRelationList(cloneServiceRelation);
+    return cloneServiceRelation;
   }
 
   private String getPriceListVersion(String priceList, String clientId) {
