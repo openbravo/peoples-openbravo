@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -79,6 +79,8 @@ public class DalLayerInitializer implements OBSingleton {
     SessionFactoryController.getInstance().initialize();
 
     if (isUsingExternalConnectionPool()) {
+      // when the session factory is created by the SessionFactoryController, a basic Hibernate pool
+      // is also created, let's close it to prevent leaked connections
       SessionFactoryController.getInstance().closeHibernatePool();
     }
 
