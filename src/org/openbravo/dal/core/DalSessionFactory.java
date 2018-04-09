@@ -48,6 +48,7 @@ import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
 import org.hibernate.engine.spi.FilterDefinition;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
@@ -69,6 +70,7 @@ public class DalSessionFactory implements SessionFactory {
   private static final long serialVersionUID = 1L;
 
   private SessionFactory delegateSessionFactory;
+  private JdbcConnectionAccess jdbcConnectionAccess;
 
   /**
    * NOTE: Openbravo requires normal application code to use the DalSessionFactory and not the real
@@ -193,7 +195,11 @@ public class DalSessionFactory implements SessionFactory {
   }
 
   JdbcConnectionAccess getJdbcConnectionAccess() {
-    return ((SessionImplementor) delegateSessionFactory).getJdbcConnectionAccess();
+    if (jdbcConnectionAccess == null) {
+      jdbcConnectionAccess = ((SessionFactoryImpl) delegateSessionFactory).getJdbcServices()
+          .getBootstrapJdbcConnectionAccess();
+    }
+    return jdbcConnectionAccess;
   }
 
   @Override
