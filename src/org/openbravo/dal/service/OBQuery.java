@@ -183,16 +183,13 @@ public class OBQuery<E extends BaseOBObject> {
         "select " + usedAlias + "id " + FROM_SPACED + qryStr);
     setParameters(qry);
 
-    final ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY);
-    try {
+    try (ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY)) {
       while (results.next()) {
         final String id = results.getString(0);
         if (id.equals(targetId)) {
           return results.getRowNumber();
         }
       }
-    } finally {
-      results.close();
     }
     return -1;
   }
