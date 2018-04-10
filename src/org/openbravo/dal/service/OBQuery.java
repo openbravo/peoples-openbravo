@@ -19,8 +19,8 @@
 
 package org.openbravo.dal.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,7 +66,6 @@ public class OBQuery<E extends BaseOBObject> {
   private String usedAlias = "";
   private String whereAndOrderBy;
   private Entity entity;
-  private List<Object> parameters;
   private Map<String, Object> namedParameters;
   private boolean filterOnReadableOrganizations = true;
   private boolean filterOnReadableClients = true;
@@ -540,7 +539,7 @@ public class OBQuery<E extends BaseOBObject> {
    * @return the parameters used in the query, this is the list of non-named parameters in the query
    */
   public List<Object> getParameters() {
-    return parameters;
+    return Collections.emptyList();
   }
 
   /**
@@ -554,16 +553,11 @@ public class OBQuery<E extends BaseOBObject> {
    *          the parameters which are set in the query without a name (e.g. as :?)
    */
   public void setParameters(List<Object> parameters) {
-    if (parameters == null) {
-      this.parameters = new ArrayList<>();
-    } else {
-      this.parameters = parameters;
-    }
-    converToNamedParameterQuery();
+    converToNamedParameterQuery(parameters);
   }
 
-  private void converToNamedParameterQuery() {
-    if (parameters.isEmpty()) {
+  private void converToNamedParameterQuery(List<Object> parameters) {
+    if (parameters == null || parameters.isEmpty()) {
       return;
     }
     Pattern pattern = Pattern.compile("\\?");
