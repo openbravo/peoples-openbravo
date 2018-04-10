@@ -37,7 +37,6 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -54,7 +53,7 @@ import org.openbravo.service.db.QueryTimeOutUtil;
  * @author mtaal
  */
 
-public class OBQuery<E extends BaseOBObject> {
+public class OBQuery<E extends Object> {
   private static final Logger log = Logger.getLogger(OBQuery.class);
 
   private static final String FROM_SPACED = " from ";
