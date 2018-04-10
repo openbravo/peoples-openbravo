@@ -1595,17 +1595,18 @@
       if (this.get('lines').get(line).get('obposIsDeleted')) {
         this._deleteLines(lines, idx + 1, length, callback);
       } else {
-        this._deleteLine(line, function () {
+        this._deleteLine(line, lines, function () {
           me._deleteLines(lines, idx + 1, length, callback);
         });
       }
     },
 
-    _deleteLine: function (line, callback) {
+    _deleteLine: function (line, selectedLines, callback) {
       var me = this,
+          isSelectedLine = selectedLines.includes(line),
           pack = line.isAffectedByPack(),
           productId = line.get('product').id,
-          deletedQty;
+          deletedQty, deleteLineOnceChecked;
 
       //Defensive code: Do not remove non existing line
       if (!this.get('lines').get(line)) {
@@ -1630,7 +1631,7 @@
         return;
       }
 
-      if (me.get('replacedorder') && line.get('deliveredQuantity')) {
+      if (!isSelectedLine && me.get('replacedorder') && line.get('deliveredQuantity')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
         if (callback) {
           callback();
@@ -1653,86 +1654,106 @@
         }, this);
       }
 
-      // trigger
-      line.trigger('removed', line);
+      deleteLineOnceChecked = function () {
+        // trigger
+        line.trigger('removed', line);
 
-      if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
-        OB.UTIL.RfidController.removeEpcLine(line);
-      }
-
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        if (!line.get('hasTaxError')) {
-          line.set('obposQtyDeleted', line.get('qty'));
-          line.set('qty', 0, {
-            silent: true
-          });
-        } else {
-          // The line must be removed here because when the preference OBPOS_remove_ticket is enabled, the
-          // calculateReceipt process is executed before removing the lines, causing a js error during the
-          // tax calculation (due to the tax error)
-          this.get('lines').remove(line);
+        if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+          OB.UTIL.RfidController.removeEpcLine(line);
         }
-      }
 
-      line.set('obposIsDeleted', true);
-
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
-        deletedQty = line.get('obposQtyDeleted');
-      } else {
-        deletedQty = line.get('qty');
-      }
-
-      if (!this.get('undo').lines.length) {
-        this.get('undo').text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
-        this.get('undo').lines.push(line);
-      } else {
-        var linesToDelete = this.get('undo').lines,
-            text = this.get('undo').text;
-        if (!linesToDelete) {
-          linesToDelete = [];
-        }
-        linesToDelete.push(line);
-        if (text) {
-          text += ', ' + deletedQty + ' x ' + line.get('product').get('_identifier');
-        } else {
-          text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
-        }
-        this.get('undo').text = text;
-        this.get('undo').lines = linesToDelete;
-      }
-
-      this.removeRelatedServices(line, function () {
-        // This hook is used for any external module that need also to remove any related line.
-        // The related line must be introduced in the 'linesToRemove' array and will also be removed.
-        OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteRelatedServices', {
-          receipt: me,
-          removedLine: line,
-          linesToRemove: []
-        }, function (args) {
-          if (args && args.cancellation) {
-            if (callback) {
-              callback();
-            }
-            return;
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          if (!line.get('hasTaxError')) {
+            line.set('obposQtyDeleted', line.get('qty'));
+            line.set('qty', 0, {
+              silent: true
+            });
+          } else {
+            // The line must be removed here because when the preference OBPOS_remove_ticket is enabled, the
+            // calculateReceipt process is executed before removing the lines, causing a js error during the
+            // tax calculation (due to the tax error)
+            me.get('lines').remove(line);
           }
-          var removeRelatedLine;
-          removeRelatedLine = function (idx) {
-            if (idx === args.linesToRemove.length) {
+        }
+
+        line.set('obposIsDeleted', true);
+
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
+          deletedQty = line.get('obposQtyDeleted');
+        } else {
+          deletedQty = line.get('qty');
+        }
+
+        if (!me.get('undo').lines.length) {
+          me.get('undo').text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+          me.get('undo').lines.push(line);
+        } else {
+          var linesToDelete = me.get('undo').lines,
+              text = me.get('undo').text;
+          if (!linesToDelete) {
+            linesToDelete = [];
+          }
+          linesToDelete.push(line);
+          if (text) {
+            text += ', ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+          } else {
+            text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + line.get('product').get('_identifier');
+          }
+          me.get('undo').text = text;
+          me.get('undo').lines = linesToDelete;
+        }
+
+        me.removeRelatedServices(line, selectedLines, function () {
+          // This hook is used for any external module that need also to remove any related line.
+          // The related line must be introduced in the 'linesToRemove' array and will also be removed.
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteRelatedServices', {
+            receipt: me,
+            removedLine: line,
+            linesToRemove: [],
+            selectedLines: selectedLines
+          }, function (args) {
+            if (args && args.cancellation) {
               if (callback) {
                 callback();
               }
-            } else {
-              me._deleteLine(args.linesToRemove[idx], function () {
-                removeRelatedLine(idx + 1);
-              });
+              return;
             }
-          };
-          removeRelatedLine(0);
+            var removeRelatedLine;
+            removeRelatedLine = function (idx) {
+              if (idx === args.linesToRemove.length) {
+                if (callback) {
+                  callback();
+                }
+              } else {
+                me._deleteLine(args.linesToRemove[idx], selectedLines, function () {
+                  removeRelatedLine(idx + 1);
+                });
+              }
+            };
+            removeRelatedLine(0);
+          });
         });
-      });
+      };
+
+      // Check the stock for each negative discontinued line that is related to a deleting line
+      if (!isSelectedLine && line.get('qty') < 0 && (line.get('product').get('isdiscontinued') || line.get('product').get('issalediscontinued'))) {
+        var qtyAdded = -line.get('qty'),
+            options = {
+            line: line
+            };
+        me.getStoreStock(line.get('product'), qtyAdded, options, null, function (hasStock) {
+          if (hasStock) {
+            deleteLineOnceChecked();
+          } else if (callback) {
+            callback();
+          }
+        });
+      } else {
+        deleteLineOnceChecked();
+      }
     },
 
-    removeRelatedServices: function (lineToDelete, callback) {
+    removeRelatedServices: function (lineToDelete, selectedLines, callback) {
       var me = this,
           removedId = lineToDelete.get('id'),
           serviceLinesToCheck = [],
@@ -1784,7 +1805,7 @@
               }
               removeNextRelatedService(idx + 1);
             } else {
-              me._deleteLine(lineToCheck, function () {
+              me._deleteLine(lineToCheck, selectedLines, function () {
                 removeNextRelatedService(idx + 1);
               });
             }
