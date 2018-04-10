@@ -124,12 +124,16 @@ public class DataEntityQueryService {
    * Build an OBQuery object using the generated where, order by and select clauses.
    */
   public OBQuery<BaseOBObject> buildOBQuery() {
+    return buildOBQuery(BaseOBObject.class);
+  }
+
+  <T extends Object> OBQuery<T> buildOBQuery(Class<T> clz) {
     final String whereOrderBy = getWhereClause()
         + (getSummarySettings() == null ? queryBuilder.getOrderByClause() : "");
 
     log.debug("Querying for " + entityName + " " + whereOrderBy);
 
-    final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
+    final OBQuery obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
     obq.setFilterOnReadableClients(isFilterOnReadableClients());
     obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
 

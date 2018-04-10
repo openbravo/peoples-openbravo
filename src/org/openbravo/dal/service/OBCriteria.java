@@ -184,14 +184,15 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
 
     if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
       add(Restrictions.in("id." + PROPERTY_ORGANIZATION + ".id",
-          obContext.getReadableOrganizations()));
+          (Object[]) obContext.getReadableOrganizations()));
 
     } else if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
-      add(Restrictions.in(PROPERTY_ORGANIZATION + ".id", obContext.getReadableOrganizations()));
+      add(Restrictions.in(PROPERTY_ORGANIZATION + ".id",
+          (Object[]) obContext.getReadableOrganizations()));
     }
 
     if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
-      add(Restrictions.in(PROPERTY_CLIENT + ".id", obContext.getReadableClients()));
+      add(Restrictions.in(PROPERTY_CLIENT + ".id", (Object[]) obContext.getReadableClients()));
     }
 
     if (isFilterOnActive() && e.isActiveEnabled()) {
