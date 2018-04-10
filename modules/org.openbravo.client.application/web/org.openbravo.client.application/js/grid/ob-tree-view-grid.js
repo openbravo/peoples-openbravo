@@ -91,6 +91,7 @@ isc.OBTreeViewGrid.addProperties({
       me.parentTabRecordId = me.getParentTabRecordId();
       dsRequest.params.parentRecordId = me.parentTabRecordId;
       dsRequest.params.tabId = me.view.tabId;
+      dsRequest.params._noActiveFilter = true;
       dsRequest.params._extraProperties = me.view.dataSource && me.view.dataSource.requestProperties.params._extraProperties;
       if (dsRequest.dropIndex || dsRequest.dropIndex === 0) {
         //Only send the index if the tree is ordered
