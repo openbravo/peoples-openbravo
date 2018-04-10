@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentMonitorProcess;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
@@ -116,6 +117,10 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
         OBDal.getInstance().rollbackAndClose();
         return addMessage(jsonRequest, "@APRM_AmountMismatch@", "error");
       }
+
+      WeldUtils.getInstanceFromStaticBeanManager(ModifyPaymentPlanHookCaller.class)
+          .validatePaymentSchedule(lToModify);
+
       // As a final step, Payment Monitor information for this invoice is updated.
       FIN_PaymentMonitorProcess.updateInvoice(invoice);
       return addMessage(jsonRequest, "@Success@", "success");
@@ -143,7 +148,7 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       OBDal.getInstance().rollbackAndClose();
       log4j.error("Exception! " + e);
       try {
-        return addMessage(jsonRequest, "@ProcessRunError@", "error");
+        return addMessage(jsonRequest, "@ProcessRunError@", e.getMessage(), "error");
       } catch (Exception ex) {
         log4j.error("Exception! " + ex);
         return jsonRequest;
@@ -634,9 +639,28 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    */
   private JSONObject addMessage(JSONObject content, String strMessage, String strSeverity)
       throws JSONException {
+    return addMessage(content, "", strMessage, strSeverity);
+  }
+
+  /**
+   * Given a JSONObject to be returned, it adds a message to it
+   * 
+   * @throws JSONException
+   */
+  private JSONObject addMessage(JSONObject content, String strTitle, String strMessage,
+      String strSeverity) throws JSONException {
     JSONObject outPut = content;
     JSONObject message = new JSONObject();
     message.put("severity", strSeverity);
+    if (!StringUtils.isEmpty(strTitle)) {
+      message.put(
+          "title",
+          Utility.parseTranslation(new DalConnectionProvider(), new VariablesSecureApp(OBContext
+              .getOBContext().getUser().getId(), OBContext.getOBContext().getCurrentClient()
+              .getId(), OBContext.getOBContext().getCurrentOrganization().getId(), OBContext
+              .getOBContext().getRole().getId()), OBContext.getOBContext().getLanguage()
+              .getLanguage(), strTitle));
+    }
     message.put("text", Utility.parseTranslation(new DalConnectionProvider(),
         new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext.getOBContext()
             .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
