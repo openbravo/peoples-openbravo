@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -35,6 +35,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Level;
@@ -677,5 +678,21 @@ public class DalTest extends OBBaseTest {
     } catch (Exception ignored) {
     }
     return isoCode;
+  }
+
+  /**
+   * Test to check that an OBQuery using legacy-style query parameters ('?') can be executed
+   * properly.
+   */
+  @Test
+  public void testOBQueryWithLegacyStyleParameters() {
+    setTestUserContext();
+    String hql = "as c where c.iSOCode = ? and c.symbol = ?";
+    OBQuery<Currency> query = OBDal.getInstance().createQuery(Currency.class, hql);
+    List<Object> parameters = new ArrayList<>(2);
+    parameters.add(EURO);
+    parameters.add("€");
+    query.setParameters(parameters);
+    assertNotNull(query.uniqueResult());
   }
 }

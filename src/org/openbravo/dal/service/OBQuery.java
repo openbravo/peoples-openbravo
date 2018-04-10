@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -451,14 +453,6 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   private void setParameters(Query qry) {
-    int pos = 0;
-    for (final Object param : getParameters()) {
-      if (param instanceof BaseOBObject) {
-        qry.setEntity(pos++, param);
-      } else {
-        qry.setParameter(pos++, param);
-      }
-    }
     final Map<String, Object> localNamedParameters = getNamedParameters();
     if (localNamedParameters != null) {
       for (final String name : localNamedParameters.keySet()) {
@@ -550,17 +544,42 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
-   * Set the parameters in this query. These are the non-named parameters.
+   * Set the non-named parameters ('?') in the query by converting them to named parameters. This
+   * conversion is done because legacy-style query parameters are no longer supported in Hibernate.
+   * 
+   * Note that this method also parses the where and order by clauses of the query to make use of
+   * the newly generated named parameters.
    * 
    * @param parameters
    *          the parameters which are set in the query without a name (e.g. as :?)
    */
   public void setParameters(List<Object> parameters) {
     if (parameters == null) {
-      this.parameters = new ArrayList<Object>();
+      this.parameters = new ArrayList<>();
     } else {
       this.parameters = parameters;
     }
+    converToNamedParameterQuery();
+  }
+
+  private void converToNamedParameterQuery() {
+    if (parameters.isEmpty()) {
+      return;
+    }
+    Pattern pattern = Pattern.compile("\\?");
+    Matcher matcher = pattern.matcher(whereAndOrderBy);
+    StringBuffer parsedHql = new StringBuffer();
+    int parameterCount = 0;
+    while (matcher.find()) {
+      String parameterName = "p" + parameterCount;
+      matcher.appendReplacement(parsedHql, ":" + parameterName + " ");
+      setNamedParameter(parameterName, parameters.get(parameterCount));
+      parameterCount++;
+    }
+    matcher.appendTail(parsedHql);
+    Check.isTrue(parameterCount == parameters.size(),
+        "Could not convert legacy-style query parameters in: " + whereAndOrderBy);
+    whereAndOrderBy = parsedHql.toString();
   }
 
   /**
@@ -615,7 +634,7 @@ public class OBQuery<E extends BaseOBObject> {
    */
   public void setNamedParameter(String paramName, Object value) {
     if (this.namedParameters == null) {
-      this.namedParameters = new HashMap<String, Object>();
+      this.namedParameters = new HashMap<>();
     }
     this.namedParameters.put(paramName, value);
   }
