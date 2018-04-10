@@ -537,7 +537,9 @@ public class OBQuery<E extends BaseOBObject> {
 
   /**
    * @return the parameters used in the query, this is the list of non-named parameters in the query
+   * @deprecated use {@link #getNamedParameters()}
    */
+  @Deprecated
   public List<Object> getParameters() {
     return Collections.emptyList();
   }
@@ -551,7 +553,9 @@ public class OBQuery<E extends BaseOBObject> {
    * 
    * @param parameters
    *          the parameters which are set in the query without a name (e.g. as :?)
+   * @deprecated use {@link #setNamedParameters(Map)}
    */
+  @Deprecated
   public void setParameters(List<Object> parameters) {
     converToNamedParameterQuery(parameters);
   }
