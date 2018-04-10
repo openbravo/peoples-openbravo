@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -457,8 +458,9 @@ public class OBQuery<E extends BaseOBObject> {
   private void setParameters(Query<?> qry) {
     final Map<String, Object> localNamedParameters = getNamedParameters();
     if (localNamedParameters != null) {
-      for (final String name : localNamedParameters.keySet()) {
-        final Object value = localNamedParameters.get(name);
+      for (Entry<String, Object> entry : localNamedParameters.entrySet()) {
+        final String name = entry.getKey();
+        final Object value = entry.getValue();
         if (value instanceof Collection<?>) {
           qry.setParameterList(name, (Collection<?>) value);
         } else {
