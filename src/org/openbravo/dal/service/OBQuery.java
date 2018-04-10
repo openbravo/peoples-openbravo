@@ -30,10 +30,10 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
@@ -92,7 +92,6 @@ public class OBQuery<E extends BaseOBObject> {
    *           if the query returns more than one result
    * @see OBQuery#uniqueResultObject() uniqueResultObject for a version returning an Object
    */
-  @SuppressWarnings("unchecked")
   public E uniqueResult() {
     return (E) createQuery().uniqueResult();
   }
@@ -116,7 +115,6 @@ public class OBQuery<E extends BaseOBObject> {
    * 
    * @return list of objects retrieved from the database
    */
-  @SuppressWarnings("unchecked")
   public List<E> list() {
     return createQuery().list();
   }
@@ -127,8 +125,9 @@ public class OBQuery<E extends BaseOBObject> {
    * data.
    * 
    * @return iterator which walks over the list of objects in the db
+   * @deprecated
    */
-  @SuppressWarnings("unchecked")
+  @Deprecated
   public Iterator<E> iterate() {
     return createQuery().iterate();
   }
@@ -157,9 +156,10 @@ public class OBQuery<E extends BaseOBObject> {
       final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    final Query qry = getSession().createQuery("select count(*) " + FROM_SPACED + qryStr);
+    @SuppressWarnings("unchecked")
+    final Query<Number> qry = getSession().createQuery("select count(*) " + FROM_SPACED + qryStr);
     setParameters(qry);
-    return ((Number) qry.uniqueResult()).intValue();
+    return qry.uniqueResult().intValue();
   }
 
   /**
@@ -177,8 +177,9 @@ public class OBQuery<E extends BaseOBObject> {
       final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    final Query qry = getSession()
-        .createQuery("select " + usedAlias + "id " + FROM_SPACED + qryStr);
+    @SuppressWarnings("unchecked")
+    final Query<String> qry = getSession().createQuery(
+        "select " + usedAlias + "id " + FROM_SPACED + qryStr);
     setParameters(qry);
 
     final ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY);
@@ -209,7 +210,7 @@ public class OBQuery<E extends BaseOBObject> {
    * 
    * @return a new Hibernate Query object
    */
-  public Query deleteQuery() {
+  public Query<E> deleteQuery() {
     final String qryStr = createQueryString();
     String whereClause;
     final int whereIndex = qryStr.toLowerCase().indexOf(WHERE);
@@ -221,7 +222,8 @@ public class OBQuery<E extends BaseOBObject> {
     }
 
     try {
-      final Query qry = getSession().createQuery(
+      @SuppressWarnings("unchecked")
+      final Query<E> qry = getSession().createQuery(
           "DELETE FROM " + getEntity().getName() + " " + whereClause);
       setParameters(qry);
       return qry;
@@ -237,10 +239,11 @@ public class OBQuery<E extends BaseOBObject> {
    * 
    * @return a new Hibernate Query object
    */
-  public Query createQuery() {
+  public Query<E> createQuery() {
     final String qryStr = createQueryString();
     try {
-      final Query qry = getSession().createQuery(qryStr);
+      @SuppressWarnings("unchecked")
+      final Query<E> qry = getSession().createQuery(qryStr);
       setParameters(qry);
       if (fetchSize > -1) {
         qry.setFetchSize(fetchSize);
@@ -451,14 +454,12 @@ public class OBQuery<E extends BaseOBObject> {
     this.entity = entity;
   }
 
-  private void setParameters(Query qry) {
+  private void setParameters(Query<?> qry) {
     final Map<String, Object> localNamedParameters = getNamedParameters();
     if (localNamedParameters != null) {
       for (final String name : localNamedParameters.keySet()) {
         final Object value = localNamedParameters.get(name);
-        if (value instanceof BaseOBObject) {
-          qry.setEntity(name, value);
-        } else if (value instanceof Collection<?>) {
+        if (value instanceof Collection<?>) {
           qry.setParameterList(name, (Collection<?>) value);
         } else {
           qry.setParameter(name, value);
