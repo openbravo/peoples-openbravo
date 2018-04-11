@@ -950,11 +950,11 @@ public class ReportingUtils {
   public static JasperPrint generateJasperPrint(String jasperFilePath,
       Map<String, Object> parameters, boolean compileSubreports,
       ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
+    long t1 = System.currentTimeMillis();
     try {
       setReportFormatFactory(parameters);
-      if (log.isDebugEnabled()) {
-        log.debug("Parameters for report {}: {}", jasperFilePath, parameters);
-      }
+
+      log.debug("Parameters for report {}: {}", jasperFilePath, parameters);
 
       if (!jasperFilePath.endsWith("jrxml")) {
         ReportFiller reportFiller = new ReportFiller(jasperFilePath, parameters);
@@ -981,6 +981,9 @@ public class ReportingUtils {
     } catch (JRException e) {
       log.error("Error generating Jasper Report {}", jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
+    } finally {
+      log.debug("JasperPrint for {} generated in {} ms", jasperFilePath,
+          (System.currentTimeMillis() - t1));
     }
   }
 
