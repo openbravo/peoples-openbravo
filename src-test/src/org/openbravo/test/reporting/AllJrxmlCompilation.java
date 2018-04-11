@@ -33,17 +33,18 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import org.hibernate.Query;
+import javax.inject.Inject;
+
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.test.ParameterCdiTest;
+import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.report.ReportingUtils;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
@@ -55,13 +56,16 @@ import net.sf.jasperreports.engine.JasperReport;
  * @author alostale
  *
  */
-@RunWith(Parameterized.class)
-public class AllJrxmlCompilation extends OBBaseTest {
+public class AllJrxmlCompilation extends WeldBaseTest {
 
-  @Parameter(0)
-  public Path report;
-  @Parameter(1)
-  public Path fileName;
+  private static final List<Path> REPORTS = parameters();
+
+  @Rule
+  public ParameterCdiTestRule<Path> reportRule = new ParameterCdiTestRule<Path>(REPORTS);
+  private @ParameterCdiTest Path report;
+
+  @Inject
+  ApplicationDictionaryCachedStructures adcs;
 
   @Override
   protected boolean shouldMockServletContext() {
@@ -73,29 +77,25 @@ public class AllJrxmlCompilation extends OBBaseTest {
     String reportPath = report.toString();
     // compile the report for the first time
     ReportingUtils.compileReport(reportPath);
-    assumeThat("Has modules in development", hasModulesInDevelopment(), not(true));
+    assumeThat("Has modules in development", adcs.isInDevelopment(), not(true));
     // launch the compilation again: result will be retrieved from cache
     JasperReport jasperReport = ReportingUtils.compileReport(reportPath);
     assertNotNull(jasperReport);
   }
 
-  private Boolean hasModulesInDevelopment() {
-    final Query indevelMods = OBDal.getInstance().getSession()
-        .createQuery("select 1 from ADModule m where m.inDevelopment=true");
-    indevelMods.setMaxResults(1);
-    return indevelMods.list().size() > 0;
-  }
+  private static List<Path> parameters() {
+    final List<Path> allJasperFiles = new ArrayList<>();
+    try {
+      allJasperFiles.addAll(getJrxmlTemplates("src"));
+      allJasperFiles.addAll(getJrxmlTemplates("modules"));
+    } catch (IOException ioex) {
 
-  @Parameters(name = "{1}")
-  public static Collection<Object[]> parameters() throws IOException {
-    final Collection<Object[]> allJasperFiles = new ArrayList<>();
-    allJasperFiles.addAll(getJrxmlTemplates("src"));
-    allJasperFiles.addAll(getJrxmlTemplates("modules"));
+    }
     return allJasperFiles;
   }
 
-  private static Collection<Object[]> getJrxmlTemplates(String dir) throws IOException {
-    final Collection<Object[]> allJasperFiles = new ArrayList<>();
+  private static Collection<Path> getJrxmlTemplates(String dir) throws IOException {
+    final Collection<Path> allJasperFiles = new ArrayList<>();
 
     final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:.*\\.jrxml");
     Path basePath = Paths.get(OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -104,7 +104,7 @@ public class AllJrxmlCompilation extends OBBaseTest {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (matcher.matches(file)) {
-          allJasperFiles.add(new Object[] { file, file.getFileName() });
+          allJasperFiles.add(file);
         }
         return FileVisitResult.CONTINUE;
       }
