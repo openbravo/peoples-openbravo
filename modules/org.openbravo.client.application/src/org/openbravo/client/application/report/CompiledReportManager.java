@@ -24,8 +24,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.hibernate.Query;
-import org.openbravo.dal.service.OBDal;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
@@ -47,15 +47,9 @@ class CompiledReportManager {
 
   private CompiledReportManager() {
     compiledReports = new ConcurrentHashMap<>();
-    isDisabled = isInDevelopment();
+    isDisabled = WeldUtils.getInstanceFromStaticBeanManager(
+        ApplicationDictionaryCachedStructures.class).isInDevelopment();
     log.info("CompiledReportManager initialized, use cache: {}", !isDisabled);
-  }
-
-  private boolean isInDevelopment() {
-    final String query = "select 1 from ADModule m where m.inDevelopment=true";
-    final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
-    indevelMods.setMaxResults(1);
-    return !indevelMods.list().isEmpty();
   }
 
   static CompiledReportManager getInstance() {
