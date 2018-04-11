@@ -494,7 +494,9 @@ isc.OBUserProfile.addProperties({
             length = data.fields.length;
             for (i = 0; i < length; i++) {
               var field = data.fields[i];
-              pwdForm.addFieldErrors(field.field, OB.I18N.getLabel(field.messageCode), true);
+              var errorMessage = OB.I18N.getLabel(field.messageCode);
+              pwdForm.addFieldErrors(field.field, errorMessage, true);
+              isc.warn(errorMessage);
             }
           }
         }
