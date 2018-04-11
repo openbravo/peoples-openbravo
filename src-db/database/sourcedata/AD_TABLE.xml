@@ -10694,7 +10694,7 @@ from MaterialMgmtShipmentInOut s
   join e.uOM uom
   join e.product p
   join e.shipmentReceipt sh
-  join e.uOM aum
+  left join e.operativeUOM aum
   left join e.procurementReceiptInvoiceMatchList mi
   left join e.salesOrderLine ol
   left join ol.salesOrder o
@@ -11205,18 +11205,19 @@ where
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <HQLQUERY><![CDATA[select 
   e.id,
-  e.orderedQuantity - e.invoicedQuantity as orderedQuantity,
-  e.uOM,
-  e.product,
+  e.orderedQuantity - e.invoicedQuantity,
+  uom,
+  p,
   e.lineNo,
-  e.salesOrder,
-  e.operativeQuantity - COALESCE(M_GET_CONVERTED_AUMQTY(e.product.id, e.invoicedQuantity, 
-  e.operativeUOM.id), 0) as operativeQuantity,
-  (select aum from UOM as aum where aum.id = (case when (e.operativeUOM.id is not null) then e.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id) end
-  )) as operativeUOM
+  o,
+  e.operativeQuantity - coalesce(m_get_converted_aumqty(p.id, e.invoicedQuantity, aum.id), 0),
+  aum
 from OrderLine as e
-  join e.salesOrder as o
-  join o.priceList as pl
+  join e.salesOrder o
+  join o.priceList pl
+  join e.uOM uom
+  join e.product p
+  left join e.operativeUOM aum
   left join o.businessPartner.invoiceSchedule si
 where
   @additional_filters@
