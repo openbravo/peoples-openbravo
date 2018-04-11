@@ -468,7 +468,7 @@ public class ApplicationDictionaryCachedStructures {
    * Checks whether a module is "in development" status.
    * 
    * @param moduleId
-   *          the Id of the AD_Module to be checked
+   *          the ID of the AD_Module to be checked if it is in "in development".
    * 
    * @return {@code true} if the module passed as parameter is in "in development" status.
    *         Otherwise, return {@code false}
