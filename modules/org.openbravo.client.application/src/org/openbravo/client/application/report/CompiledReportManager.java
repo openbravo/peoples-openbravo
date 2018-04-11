@@ -28,6 +28,8 @@ import org.hibernate.Query;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
@@ -37,6 +39,7 @@ import net.sf.jasperreports.engine.JasperReport;
  * cache, avoiding unnecessary compilations when the same report is generated multiple times.
  */
 class CompiledReportManager {
+  private static final Logger log = LoggerFactory.getLogger(CompiledReportManager.class);
   private static CompiledReportManager instance = new CompiledReportManager();
 
   private ConcurrentHashMap<String, CompiledReport> compiledReports;
@@ -45,6 +48,7 @@ class CompiledReportManager {
   private CompiledReportManager() {
     compiledReports = new ConcurrentHashMap<>();
     isDisabled = isInDevelopment();
+    log.info("CompiledReportManager initialized, use cache: {}", !isDisabled);
   }
 
   private boolean isInDevelopment() {
@@ -67,8 +71,10 @@ class CompiledReportManager {
       ConnectionProvider connectionProvider) throws JRException {
     CompiledReport compiledReport = getCompiledReport(reportPath, language);
     if (compiledReport != null) {
+      log.trace("Retrieving compiled report from cache: {}", reportPath);
       return compiledReport.mainReport;
     }
+    log.trace("Compiling report: {}", reportPath);
     ReportCompiler reportCompiler = new ReportCompiler(reportPath, language, connectionProvider);
     JasperReport jReport = reportCompiler.compileReport();
     putCompiledReport(reportPath, language, new CompiledReport(jReport));
@@ -81,9 +87,11 @@ class CompiledReportManager {
     Map<String, JasperReport> subReports = null;
     CompiledReport compiledReport = getCompiledReport(reportPath, language);
     if (compiledReport != null) {
+      log.trace("Retrieving compiled report with subreports from cache: {}", reportPath);
       jReport = compiledReport.mainReport;
       subReports = compiledReport.subReports;
     } else {
+      log.trace("Compiling report with subreports: {}", reportPath);
       ReportCompiler reportCompiler = new ReportCompiler(reportPath, language,
           DalConnectionProvider.getReadOnlyConnectionProvider());
       jReport = reportCompiler.compileReport();
@@ -124,6 +132,7 @@ class CompiledReportManager {
 
   void clearCache() {
     compiledReports.clear();
+    log.info("CompiledReportManager cache cleared");
   }
 
   private static class CompiledReport {
