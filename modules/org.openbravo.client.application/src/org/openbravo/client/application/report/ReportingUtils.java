@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -953,7 +952,9 @@ public class ReportingUtils {
       ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
     try {
       setReportFormatFactory(parameters);
-      logJasperReportParameters(parameters);
+      if (log.isDebugEnabled()) {
+        log.debug("Parameters for report {}: {}", jasperFilePath, parameters);
+      }
 
       if (!jasperFilePath.endsWith("jrxml")) {
         ReportFiller reportFiller = new ReportFiller(jasperFilePath, parameters);
@@ -980,20 +981,6 @@ public class ReportingUtils {
     } catch (JRException e) {
       log.error("Error generating Jasper Report {}", jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
-    }
-  }
-
-  private static void logJasperReportParameters(Map<String, Object> parameters) {
-    if (!log.isDebugEnabled()) {
-      return;
-    }
-    for (Iterator<String> keys = parameters.keySet().iterator(); keys.hasNext();) {
-      String key = keys.next();
-      String value = "null";
-      if (parameters.get(key) != null) {
-        value = parameters.get(key).toString();
-      }
-      log.debug("jasper report parameter name: {}, value: {}", key, value);
     }
   }
 
