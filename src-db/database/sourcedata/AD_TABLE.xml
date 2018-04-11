@@ -10681,16 +10681,26 @@ You can also select if transactions are allowed or not for this organization typ
 <!--631D227DC83A4898BBD041D46D829D27-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--631D227DC83A4898BBD041D46D829D27-->  <HQLQUERY><![CDATA[select 
   e.id,
-  e.movementQuantity,
-  e.uOM,
-  e.product,
+  @insertion_point_1@,
+  uom,
+  p,
   e.lineNo,
-  e.shipmentReceipt,
-  e.operativeQuantity,
-  (select aum from UOM as aum where aum.id = (case when (e.operativeUOM.id is not null) then e.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, s.documentType.id) end
-  )) as operativeUOM
+  sh,
+  @insertion_point_2@,
+  aum
 from MaterialMgmtShipmentInOut s
+  join s.documentType dt
   join s.materialMgmtShipmentInOutLineList e
+  join e.uOM uom
+  join e.product p
+  join e.shipmentReceipt sh
+  join e.uOM aum
+  left join e.procurementReceiptInvoiceMatchList mi
+  left join e.salesOrderLine ol
+  left join ol.salesOrder o
+  left join o.priceList pl
+  left join e.invoiceLineList il
+  left join il.invoice i
 where
   @additional_filters@
   @insertion_point_0@]]></HQLQUERY>
