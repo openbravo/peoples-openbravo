@@ -125,8 +125,25 @@ class CompiledReportManager {
   }
 
   void clearCache() {
+    if (isDisabled) {
+      log.warn("Clearing disabled CompiledReportManager cache");
+    }
     compiledReports.clear();
     log.info("CompiledReportManager cache cleared");
+  }
+
+  void enableCache() {
+    this.isDisabled = false;
+    log.info("CompiledReportManager cache is enabled");
+  }
+
+  void disableCache() {
+    this.isDisabled = true;
+    log.info("CompiledReportManager cache is disabled");
+  }
+
+  boolean isCacheEnabled() {
+    return !isDisabled;
   }
 
   private static class CompiledReport {

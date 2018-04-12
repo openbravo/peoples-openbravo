@@ -41,4 +41,19 @@ public class JmxReportCache implements JmxReportCacheMBean {
   public void clearCache() {
     compiledReportManager.clearCache();
   }
+
+  @Override
+  public boolean isEnabled() {
+    return compiledReportManager.isCacheEnabled();
+  }
+
+  @Override
+  public void setEnabled(boolean enabled) {
+    if (enabled) {
+      compiledReportManager.enableCache();
+    } else {
+      compiledReportManager.disableCache();
+    }
+  }
+
 }

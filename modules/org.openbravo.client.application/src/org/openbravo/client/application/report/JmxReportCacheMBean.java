@@ -34,4 +34,17 @@ public interface JmxReportCacheMBean {
    * Clears the content of the compiled reports cache.
    */
   public void clearCache();
+
+  /**
+   * @return {@code true} if the reports cache is enabled, {@code false} otherwise.
+   */
+  public boolean isEnabled();
+
+  /**
+   * Enables/Disables the reports cache.
+   * 
+   * @param enabled
+   *          {@code true} to enable the cache, {@code false} otherwise.
+   */
+  public void setEnabled(boolean enabled);
 }
