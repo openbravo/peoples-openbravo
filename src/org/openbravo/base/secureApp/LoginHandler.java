@@ -30,6 +30,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.ChangePasswordException;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.client.application.CachedPreference;
@@ -143,12 +144,9 @@ public class LoginHandler extends HttpBaseServlet {
           }
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
-        } catch (AuthenticationExpirationPasswordException aepe) {
-
+        } catch (AuthenticationExpirationPasswordException|ChangePasswordException exception) {
           vars.removeSessionValue("#LoginErrorMsg");
-          goToUpdatePassword(res, vars, aepe.getOBError().getMessage(), aepe.getOBError()
-              .getTitle(), "Error", "../security/Login_FS.html");
-
+          goToUpdatePassword(res, vars, exception, "../security/Login_FS.html");
         } catch (AuthenticationException e) {
 
           final OBError errorMsg = e.getOBError();
@@ -594,6 +592,37 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
+  private void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
+      AuthenticationException authenticationException, String action) throws IOException,
+      ServletException {
+    String title = authenticationException.getOBError().getTitle();
+    String message = authenticationException.getOBError().getMessage();
+
+    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
+        "CPEmptyUserPassword", vars.getLanguage());
+
+    try {
+      JSONObject jsonMsg = new JSONObject();
+      jsonMsg.put("showMessage", true);
+      jsonMsg.put("target", action);
+      jsonMsg.put("messageType", "Error");
+      jsonMsg.put("messageTitle", title);
+      jsonMsg.put("messageText", msg);
+      jsonMsg.put("resetPassword", true);
+      if (authenticationException instanceof ChangePasswordException) {
+        jsonMsg.put("attemptedChange", true);
+      }
+      jsonMsg.put("loggedUser", vars.getStringParameter("user"));
+      response.setContentType("application/json;charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.print(jsonMsg.toString());
+      out.close();
+    } catch (JSONException e) {
+      log4j.error("Error setting login msg", e);
+      throw new ServletException(e);
+    }
+  }
+
   @Override
   public String getServletInfo() {
     return "User-login control Servlet";
@@ -641,11 +670,11 @@ public class LoginHandler extends HttpBaseServlet {
   }
 
   private void throwChangePasswordException(String titleKey, String messageKey, String language)
-      throws AuthenticationExpirationPasswordException {
+      throws ChangePasswordException {
     OBError errorMsg = new OBError();
     errorMsg.setType("Error");
     errorMsg.setTitle(Utility.messageBD(myPool, titleKey, language));
     errorMsg.setMessage(Utility.messageBD(myPool, messageKey, language));
-    throw new AuthenticationExpirationPasswordException(errorMsg.getMessage(), errorMsg, false);
+    throw new ChangePasswordException(errorMsg.getMessage(), errorMsg);
   }
 }
