@@ -30,14 +30,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
-import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -54,7 +52,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.axis.AxisFault;
 import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.ddlutils.io.DataReader;
 import org.apache.ddlutils.io.DataToArraySink;
@@ -1268,21 +1265,6 @@ public class ImportModule {
   private void insertDynaModulesInDB(Vector<DynaBean> dModulesToInstall,
       Vector<DynaBean> dependencies1, Vector<DynaBean> dbPrefix, boolean newModule)
       throws Exception {
-    final Properties obProperties = new Properties();
-    obProperties.load(new FileInputStream(obDir + "/config/Openbravo.properties"));
-
-    final String url = obProperties.getProperty("bbdd.url")
-        + (obProperties.getProperty("bbdd.rdbms").equals("POSTGRE") ? "/"
-            + obProperties.getProperty("bbdd.sid") : "");
-
-    final BasicDataSource ds = new BasicDataSource();
-    ds.setDriverClassName(obProperties.getProperty("bbdd.driver"));
-    ds.setUrl(url);
-    ds.setUsername(obProperties.getProperty("bbdd.user"));
-    ds.setPassword(obProperties.getProperty("bbdd.password"));
-
-    final Connection conn = ds.getConnection();
-
     Integer seqNo = Integer.valueOf(ImportModuleData.selectSeqNo(pool));
 
     for (final DynaBean module : dModulesToInstall) {
@@ -1346,8 +1328,6 @@ public class ImportModule {
           (String) module.get("AD_MODULE_DBPREFIX_ID"), (String) module.get("AD_MODULE_ID"),
           (String) module.get("NAME"));
     }
-
-    conn.close();
   }
 
   /**
