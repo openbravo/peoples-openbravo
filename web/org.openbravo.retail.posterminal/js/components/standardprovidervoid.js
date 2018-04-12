@@ -45,5 +45,6 @@ enyo.kind({
     // ex.response
     // ex.message
     // return OB.I18N.getLabel(...
+    return ex.message;
   }
 });
