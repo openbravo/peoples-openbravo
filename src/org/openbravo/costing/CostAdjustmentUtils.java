@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -119,6 +119,14 @@ public class CostAdjustmentUtils {
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate) {
+    Long lineNo = getNewLineNo(costAdjustmentHeader);
+    return insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted, isSource,
+        accountingDate, lineNo);
+  }
+
+  public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
+      CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
+      Date accountingDate, Long lineNo) {
     Long stdPrecission = transaction.getCurrency().getStandardPrecision();
     CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
     costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
@@ -133,7 +141,7 @@ public class CostAdjustmentUtils {
     costAdjustmentLine.setInventoryTransaction(transaction);
     costAdjustmentLine.setSource(isSource);
     costAdjustmentLine.setAccountingDate(accountingDate);
-    costAdjustmentLine.setLineNo(getNewLineNo(costAdjustmentHeader));
+    costAdjustmentLine.setLineNo(lineNo);
 
     OBDal.getInstance().save(costAdjustmentLine);
 
@@ -265,11 +273,10 @@ public class CostAdjustmentUtils {
 
   private static Long getNewLineNo(CostAdjustment cadj) {
     StringBuffer where = new StringBuffer();
-    where.append(" select " + CostAdjustmentLine.PROPERTY_LINENO);
+    where.append(" select max(" + CostAdjustmentLine.PROPERTY_LINENO + ")");
     where.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
     where.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT
         + ".id = :costAdjustment");
-    where.append(" order by cal." + CostAdjustmentLine.PROPERTY_LINENO + " desc");
     Query calQry = OBDal.getInstance().getSession().createQuery(where.toString());
     calQry.setParameter("costAdjustment", cadj.getId());
     calQry.setMaxResults(1);

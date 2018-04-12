@@ -245,7 +245,6 @@ public class CostAdjustmentProcess {
       // Reload cost adjustment object in case the costing algorithm has cleared the session.
       line = OBDal.getInstance().get(CostAdjustmentLine.class, strCostAdjLineId);
       line.setRelatedTransactionAdjusted(true);
-      OBDal.getInstance().save(line);
       OBDal.getInstance().flush();
       generateTransactionCosts(line);
       OBDal.getInstance().flush();
@@ -308,14 +307,15 @@ public class CostAdjustmentProcess {
         }
         trxCost.setCost(convertedAmt);
         trxCost.setCurrency(trx.getCurrency());
+        OBDal.getInstance().getSession().evict(trx);
 
         OBDal.getInstance().save(trxCost);
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
       }
     } finally {
       lines.close();
     }
+    OBDal.getInstance().flush();
+    OBDal.getInstance().getSession().clear();
     log.debug("Transaction costs created. Time {}", System.currentTimeMillis() - t1);
   }
 
