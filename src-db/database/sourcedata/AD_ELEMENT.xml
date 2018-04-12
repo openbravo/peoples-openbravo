@@ -22171,8 +22171,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--25966CDFF1DA4F9491BF9F648B536F6E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--25966CDFF1DA4F9491BF9F648B536F6E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--25966CDFF1DA4F9491BF9F648B536F6E-->  <COLUMNNAME><![CDATA[Createfromorders]]></COLUMNNAME>
-<!--25966CDFF1DA4F9491BF9F648B536F6E-->  <NAME><![CDATA[Create From Order]]></NAME>
-<!--25966CDFF1DA4F9491BF9F648B536F6E-->  <PRINTNAME><![CDATA[Create from order]]></PRINTNAME>
+<!--25966CDFF1DA4F9491BF9F648B536F6E-->  <NAME><![CDATA[Create Lines From Order]]></NAME>
+<!--25966CDFF1DA4F9491BF9F648B536F6E-->  <PRINTNAME><![CDATA[Create lines from order]]></PRINTNAME>
 <!--25966CDFF1DA4F9491BF9F648B536F6E-->  <DESCRIPTION><![CDATA[An addition of statements from pre-existing orders]]></DESCRIPTION>
 <!--25966CDFF1DA4F9491BF9F648B536F6E-->  <HELP><![CDATA[A process that allows the user to copy lines (products) from an existing document different from the one being copied into. For example,the user can copy lines (products) from an existing Sales Order or Purchase Order.]]></HELP>
 <!--25966CDFF1DA4F9491BF9F648B536F6E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -22659,12 +22659,12 @@ When this flag is enabled, this default behavior can be overridden allowing to r
 <!--3520D35789644AC4AD3597FD205F2213-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3520D35789644AC4AD3597FD205F2213-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3520D35789644AC4AD3597FD205F2213-->  <COLUMNNAME><![CDATA[Createfrominouts]]></COLUMNNAME>
-<!--3520D35789644AC4AD3597FD205F2213-->  <NAME><![CDATA[Create From Shipment]]></NAME>
-<!--3520D35789644AC4AD3597FD205F2213-->  <PRINTNAME><![CDATA[Create From Shipment]]></PRINTNAME>
+<!--3520D35789644AC4AD3597FD205F2213-->  <NAME><![CDATA[Create Lines From Shipment]]></NAME>
+<!--3520D35789644AC4AD3597FD205F2213-->  <PRINTNAME><![CDATA[Create lines from shipment]]></PRINTNAME>
 <!--3520D35789644AC4AD3597FD205F2213-->  <DESCRIPTION><![CDATA[An addition of statements from pre-existing goods shipment.]]></DESCRIPTION>
 <!--3520D35789644AC4AD3597FD205F2213-->  <HELP><![CDATA[A process that allows the user to copy lines (products) from an existing document different from the one being copied into. For example,the user can copy lines (products) from an existing Goods Shipment/Receipt.]]></HELP>
-<!--3520D35789644AC4AD3597FD205F2213-->  <PO_NAME><![CDATA[Create From Receipt]]></PO_NAME>
-<!--3520D35789644AC4AD3597FD205F2213-->  <PO_PRINTNAME><![CDATA[Create From Receipt]]></PO_PRINTNAME>
+<!--3520D35789644AC4AD3597FD205F2213-->  <PO_NAME><![CDATA[Create Lines From Receipt]]></PO_NAME>
+<!--3520D35789644AC4AD3597FD205F2213-->  <PO_PRINTNAME><![CDATA[Create lines from receipt]]></PO_PRINTNAME>
 <!--3520D35789644AC4AD3597FD205F2213-->  <PO_DESCRIPTION><![CDATA[An addition of statements from pre-existing documents]]></PO_DESCRIPTION>
 <!--3520D35789644AC4AD3597FD205F2213-->  <PO_HELP><![CDATA[A process that allows the user to copy lines (products) from an existing document different from the one being copied into. For example,the user can copy lines (products) from an existing Goods Shipment/Receipt.]]></PO_HELP>
 <!--3520D35789644AC4AD3597FD205F2213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
