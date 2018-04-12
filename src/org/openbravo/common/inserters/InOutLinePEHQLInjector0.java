@@ -40,16 +40,16 @@ public class InOutLinePEHQLInjector0 extends HqlInserter {
     final String strCurrencyId = requestParameters.get("@Invoice.currency@");
 
     StringBuilder hql = new StringBuilder();
-    hql.append(" and s.salesTransaction = :issotrx");
-    hql.append(" and s.logistic <> 'Y'");
-    hql.append(" and s.documentStatus in ('CO', 'CL')");
-    hql.append(" and s.businessPartner.id = :bp");
+    hql.append(" and sh.salesTransaction = :issotrx");
+    hql.append(" and sh.logistic <> 'Y'");
+    hql.append(" and sh.documentStatus in ('CO', 'CL')");
+    hql.append(" and sh.businessPartner.id = :bp");
 
     hql.append(" and (pl.id is null or pl.priceIncludesTax = :plIncTax)");
     hql.append(" and (o.id is null or o.currency.id = :cur)");
 
     if (isSalesTransaction) {
-      hql.append("   and s.completelyInvoiced = 'N'");
+      hql.append("   and sh.completelyInvoiced = 'N'");
       hql.append("   and (o.id is null or not ((o.invoiceTerms = 'O' and o.delivered = 'N') or o.invoiceTerms = 'N'))");
       hql.append(" group by e.id, e.movementQuantity, uom.id, p.id, sh.id, dt.id, aum.id");
       hql.append(" having ((");

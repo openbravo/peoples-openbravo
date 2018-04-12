@@ -10687,13 +10687,13 @@ You can also select if transactions are allowed or not for this organization typ
   e.lineNo,
   sh,
   @insertion_point_2@,
-  aum
-from MaterialMgmtShipmentInOut s
-  join s.documentType dt
-  join s.materialMgmtShipmentInOutLineList e
+  (case when(aum.id is not null) then aum else M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id) end)
+from 
+  MaterialMgmtShipmentInOutLine e
+  join e.shipmentReceipt sh
+  join sh.documentType dt
   join e.uOM uom
   join e.product p
-  join e.shipmentReceipt sh
   left join e.operativeUOM aum
   left join e.procurementReceiptInvoiceMatchList mi
   left join e.salesOrderLine ol
@@ -11211,10 +11211,11 @@ where
   e.lineNo,
   o,
   @insertion_point_2@,
-  aum
+  (case when(aum.id is not null) then aum else M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id) end)
 from OrderLine as e
   join e.salesOrder o
   join o.priceList pl
+  join o.documentType dt
   join e.uOM uom
   join e.product p
   left join e.operativeUOM aum
