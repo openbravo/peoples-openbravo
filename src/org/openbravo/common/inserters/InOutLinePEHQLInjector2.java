@@ -36,9 +36,12 @@ public class InOutLinePEHQLInjector2 extends HqlInserter {
     StringBuilder hql = new StringBuilder();
 
     if (isSalesTransaction) {
-      hql.append("e.operativeQuantity - sum(coalesce(case when (i.documentStatus <> 'CO') then 0 ELSE M_GET_CONVERTED_AUMQTY(p.id, il.invoicedQuantity, aum.id) END, 0))");
+      hql.append("coalesce(e.operativeQuantity, M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity, aum_defaum.id)) ");
+      hql.append("- sum(coalesce(case when (i.documentStatus <> 'CO') then 0 ");
+      hql.append(" else M_GET_CONVERTED_AUMQTY(p.id, il.invoicedQuantity, aum_defaum.id) end, 0))");
     } else {
-      hql.append("e.operativeQuantity - M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(mi.quantity,0)), aum.id)");
+      hql.append("coalesce(e.operativeQuantity, M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity, aum_defaum.id)) ");
+      hql.append("- M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(mi.quantity,0)), aum_defaum.id)");
     }
 
     return hql.toString();

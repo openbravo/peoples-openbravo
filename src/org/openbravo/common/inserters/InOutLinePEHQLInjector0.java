@@ -51,7 +51,7 @@ public class InOutLinePEHQLInjector0 extends HqlInserter {
     if (isSalesTransaction) {
       hql.append("   and sh.completelyInvoiced = 'N'");
       hql.append("   and (o.id is null or not ((o.invoiceTerms = 'O' and o.delivered = 'N') or o.invoiceTerms = 'N'))");
-      hql.append(" group by e.id, e.movementQuantity, uom.id, p.id, sh.id, dt.id, aum.id");
+      hql.append(" group by e.id, e.movementQuantity, uom.id, p.id, sh.id, dt.id, aum.id, aum_defaum.id");
       hql.append(" having ((");
       hql.append("   (e.movementQuantity >=0 and e.movementQuantity > sum(coalesce");
       hql.append("   (case when (i.documentStatus = 'CO') then il.invoicedQuantity else 0 end,0)))");
@@ -59,9 +59,11 @@ public class InOutLinePEHQLInjector0 extends HqlInserter {
       hql.append("   (case when (i.documentStatus = 'CO') then il.invoicedQuantity else 0 end,0)))");
       hql.append(" )  or e.explode = 'Y')");
     } else {
-      hql.append(" group by e.id, e.movementQuantity, uom.id, p.id, sh.id, dt.id, aum.id");
+      hql.append(" group by e.id, e.movementQuantity, uom.id, p.id, sh.id, dt.id, aum.id, aum_defaum.id");
       hql.append(" having ((e.movementQuantity - sum(coalesce(mi.quantity,0)) <> 0) or e.explode = 'Y')"); // or
     }
+
+    hql.append(" and aum_defaum.id = coalesce(aum.id, M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))");
 
     queryNamedParameters.put("issotrx", isSalesTransaction);
     queryNamedParameters.put("bp", strBusinessPartnerId);

@@ -36,11 +36,12 @@ public class OrderLinePEHQLInjector2 extends HqlInserter {
     StringBuilder hql = new StringBuilder();
 
     if (isSalesTransaction) {
-      hql.append(" e.operativeQuantity - coalesce(m_get_converted_aumqty(p.id, e.invoicedQuantity, aum.id), 0)");
+      hql.append(" coalesce(e.operativeQuantity, M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, aum_defaum.id)) ");
+      hql.append(" - coalesce(m_get_converted_aumqty(p.id, e.invoicedQuantity, aum_defaum.id), 0)");
     } else {
-      hql.append(" e.operativeQuantity ");
-      hql.append(" - coalesce(M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(e.invoicedQuantity, 0)), aum.id),0)");
-      hql.append(" - coalesce(M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(m.quantity, 0)), aum.id),0)");
+      hql.append(" coalesce(e.operativeQuantity, M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, aum_defaum.id)) ");
+      hql.append(" - coalesce(M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(e.invoicedQuantity, 0)), aum_defaum.id),0)");
+      hql.append(" - coalesce(M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(m.quantity, 0)), aum_defaum.id),0)");
     }
 
     return hql.toString();
