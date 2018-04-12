@@ -1712,6 +1712,14 @@
             me.get('undo').lines = linesToDelete;
           }
 
+          // If all lines are selected to remove, it is not necessary to find the related lines
+          if (selectedLines.length === me.get('lines').length) {
+            if (callback) {
+              callback();
+            }
+            return;
+          }
+
           me.removeRelatedServices(line, selectedLines, function () {
             // This hook is used for any external module that need also to remove any related line.
             // The related line must be introduced in the 'linesToRemove' array and will also be removed.
