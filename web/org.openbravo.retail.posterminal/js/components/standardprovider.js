@@ -62,32 +62,32 @@ enyo.kind({
       });
     }
   },
-  processPayment: function (data) {
-    var type = data.refund ? OBPOS_StandardProvider.TYPE_REFUND : OBPOS_StandardProvider.TYPE_SALE;
+  processPayment: function (paymentinfo) {
+    var type = paymentinfo.refund ? OBPOS_StandardProvider.TYPE_REFUND : OBPOS_StandardProvider.TYPE_SALE;
 
     var request = {
       'type': type,
-      'currency': data.currency,
-      'amount': data.amount,
+      'currency': paymentinfo.currency,
+      'amount': paymentinfo.amount,
       'properties': {
-        'provider': data.providerGroup.provider.provider
+        'provider': paymentinfo.providerGroup.provider.provider
       }
     };
 
-    request = (data.refund) ? this.populateRefundRequest(request, data) : this.populatePaymentRequest(request, data);
+    request = (paymentinfo.refund) ? this.populateRefundRequest(request, paymentinfo) : this.populatePaymentRequest(request, paymentinfo);
 
     return OBPOS_StandardProvider.remoteRequest(request);
   },
-  populatePaymentRequest: function (request, data) {
+  populatePaymentRequest: function (request, exceptioninfo) {
     return request;
   },
-  populateRefundRequest: function (request, data) {
+  populateRefundRequest: function (request, exceptioninfo) {
     return request;
   },
-  getErrorMessage: function (ex) {
-    // ex.response
-    // ex.message
+  getErrorMessage: function (exceptioninfo) {
+    // exceptioninfo.response
+    // exceptioninfo.message
     // return OB.I18N.getLabel(...
-    return ex.message;
+    return exceptioninfo.message;
   }
 });

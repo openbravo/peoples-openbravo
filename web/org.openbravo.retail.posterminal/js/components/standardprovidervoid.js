@@ -24,27 +24,27 @@ enyo.kind({
   //     message: 'Error from somewhere'
   //   });
   // },
-  processVoid: function (data) {
+  processVoid: function (voidpaymentinfo) {
     // data.receipt
     // data.payment
     var request = {
       'type': OBPOS_StandardProvider.TYPE_VOID,
-      'currency': data.payment.get('isocode'),
-      'amount': data.payment.get('amount'),
-      'properties': data.payment.get('gatewayData').voidproperties
+      'currency': voidpaymentinfo.payment.get('isocode'),
+      'amount': voidpaymentinfo.payment.get('amount'),
+      'properties': voidpaymentinfo.payment.get('gatewayData').voidproperties
     };
 
-    request = this.populateVoidRequest(request, data);
+    request = this.populateVoidRequest(request, voidpaymentinfo);
 
     return OBPOS_StandardProvider.remoteRequest(request);
   },
-  populateVoidRequest: function (request, data) {
+  populateVoidRequest: function (request, voidpaymentinfo) {
     return request;
   },
-  getErrorMessage: function (ex) {
-    // ex.response
-    // ex.message
+  getErrorMessage: function (exceptioninfo) {
+    // exceptioninfo.response
+    // exceptioninfo.message
     // return OB.I18N.getLabel(...
-    return ex.message;
+    return exceptioninfo.message;
   }
 });
