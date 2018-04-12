@@ -235,8 +235,6 @@ public abstract class CostingAlgorithmAdjustmentImp {
     newCAL.setRelatedTransactionAdjusted(false);
     newCAL.setParentCostAdjustmentLine(parentLine);
 
-    OBDal.getInstance().save(newCAL);
-
     addCostDependingTrx(newCAL);
     return newCAL;
   }

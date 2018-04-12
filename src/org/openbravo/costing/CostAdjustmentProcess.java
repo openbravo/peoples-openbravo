@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -177,9 +177,8 @@ public class CostAdjustmentProcess {
         CostAdjustmentLine line = (CostAdjustmentLine) lines.get()[0];
         strLines += line.getLineNo() + ", ";
 
-        if (count % 10000 == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
+        if (count == 10) {
+          break;
         }
         count++;
       }
@@ -199,29 +198,19 @@ public class CostAdjustmentProcess {
 
   private void initializeLines(CostAdjustment costAdjustment) {
     // initialize is related transaction adjusted flag to false
-    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
-        CostAdjustmentLine.class);
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustment));
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED, true));
-    ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
-    long count = 1L;
-    try {
-      while (lines.next()) {
-        CostAdjustmentLine line = (CostAdjustmentLine) lines.get(0);
-        line.setRelatedTransactionAdjusted(false);
-        OBDal.getInstance().save(line);
-
-        if (count % 1000 == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
-        }
-        count++;
-      }
-      OBDal.getInstance().flush();
-      OBDal.getInstance().getSession().clear();
-    } finally {
-      lines.close();
-    }
+    StringBuilder updateQuery = new StringBuilder("update ");
+    updateQuery.append(CostAdjustmentLine.ENTITY_NAME);
+    updateQuery.append(" set ");
+    updateQuery.append(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED);
+    updateQuery.append(" = false where ");
+    updateQuery.append(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT);
+    updateQuery.append(".id = :adjustmentId and ");
+    updateQuery.append(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED);
+    updateQuery.append(" = true ");
+    Query adjustmentLineQuery = OBDal.getInstance().getSession()
+        .createQuery(updateQuery.toString());
+    adjustmentLineQuery.setString("adjustmentId", costAdjustment.getId());
+    adjustmentLineQuery.executeUpdate();
   }
 
   private void calculateAdjustmentAmount(String strCostAdjustmentId) {
@@ -245,7 +234,6 @@ public class CostAdjustmentProcess {
       // Reload cost adjustment object in case the costing algorithm has cleared the session.
       line = OBDal.getInstance().get(CostAdjustmentLine.class, strCostAdjLineId);
       line.setRelatedTransactionAdjusted(true);
-      OBDal.getInstance().flush();
       generateTransactionCosts(line);
       OBDal.getInstance().flush();
       OBDal.getInstance().getSession().clear();
