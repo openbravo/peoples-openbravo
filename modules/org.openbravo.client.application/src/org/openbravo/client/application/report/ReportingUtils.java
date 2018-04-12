@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,16 +19,10 @@
 package org.openbravo.client.application.report;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,23 +43,17 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.ad.utility.FileType;
-import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.uiTranslation.TranslationHandler;
-import org.openbravo.utils.Replace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JRDesignParameter;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
@@ -75,7 +63,6 @@ import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.export.SimpleCsvReportConfiguration;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
@@ -115,6 +102,7 @@ public class ReportingUtils {
   private static final float TEXT_CHAR_HEIGHT = 10;
   private static final float TEXT_CHAR_WIDTH = 10;
   private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
+  private static CompiledReportManager compiledReportManager = CompiledReportManager.getInstance();
 
   /**
    * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
@@ -209,7 +197,7 @@ public class ReportingUtils {
       Map<Object, Object> additionalExportParameters, boolean compileSubreports) throws OBException {
 
     JRSwapFileVirtualizer virtualizer = null;
-    Map<Object, Object> exportParameters = new HashMap<Object, Object>();
+    Map<Object, Object> exportParameters = new HashMap<>();
     parameters.putAll(expType.getExportParameters());
     if (additionalExportParameters != null && additionalExportParameters.size() > 0) {
       exportParameters.putAll(additionalExportParameters);
@@ -237,7 +225,7 @@ public class ReportingUtils {
     try {
       saveReport(jasperPrint, expType, exportParameters, target);
     } catch (JRException e) {
-      log.error("Error generating Jasper Report: " + jasperFilePath, e);
+      log.error("Error generating Jasper Report {}", jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
     } finally {
       // remove virtualizer tmp files if we created them
@@ -282,7 +270,7 @@ public class ReportingUtils {
       throws OBException {
 
     JRSwapFileVirtualizer virtualizer = null;
-    Map<Object, Object> exportParameters = new HashMap<Object, Object>();
+    Map<Object, Object> exportParameters = new HashMap<>();
     parameters.putAll(expType.getExportParameters());
     if (additionalExportParameters != null && additionalExportParameters.size() > 0) {
       exportParameters.putAll(additionalExportParameters);
@@ -876,7 +864,7 @@ public class ReportingUtils {
       } else if (parameter.equals("Ignore page margins")) {
         configuration.setIgnorePageMargins((Boolean) pair.getValue());
       } else {
-        log.warn("Unknown XLS export configuration parameter: " + parameter);
+        log.warn("Unknown XLS export configuration parameter {}", parameter);
       }
     }
     return configuration;
@@ -934,7 +922,7 @@ public class ReportingUtils {
       } else if (parameter.equals("Zoom Ratio")) {
         configuration.setZoomRatio((Float) pair.getValue());
       } else {
-        log.warn("Unknown HTML export configuration parameter: " + parameter);
+        log.warn("Unknown HTML export configuration parameter {}", parameter);
       }
     }
   }
@@ -962,148 +950,50 @@ public class ReportingUtils {
   public static JasperPrint generateJasperPrint(String jasperFilePath,
       Map<String, Object> parameters, boolean compileSubreports,
       ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
-
-    JasperPrint jasperPrint = null;
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
+    long t1 = System.currentTimeMillis();
     try {
       setReportFormatFactory(parameters);
-      if (log.isDebugEnabled()) {
-        log.debug("list of parameters available in the jasper report");
-        for (Iterator<String> keys = parameters.keySet().iterator(); keys.hasNext();) {
-          String key = keys.next();
-          String value = "null";
-          if (parameters.get(key) != null) {
-            value = parameters.get(key).toString();
-          }
-          log.debug("parameter name: " + key + " value: " + value);
-        }
+
+      log.debug("Parameters for report {}: {}", jasperFilePath, parameters);
+
+      if (!jasperFilePath.endsWith("jrxml")) {
+        ReportFiller reportFiller = new ReportFiller(jasperFilePath, parameters);
+        return reportFiller.fillReport();
       }
 
-      if (jasperFilePath.endsWith("jrxml")) {
-        String strBaseDesign = getBaseDesignPath();
-        JasperReport jReport = getTranslatedJasperReport(
-            DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language,
-            strBaseDesign);
-        if (connectionProvider != null) {
-          if (compileSubreports) {
-            processSubReports(jasperFilePath, parameters, strBaseDesign, connectionProvider,
-                language);
-          }
-          Connection con = null;
-          try {
-            con = connectionProvider.getTransactionConnection();
-            if (data != null) {
-              parameters.put("REPORT_CONNECTION", con);
-              jasperPrint = JasperFillManager.fillReport(jReport, parameters, data);
-            } else {
-              jasperPrint = JasperFillManager.fillReport(jReport, parameters, con);
-            }
-          } catch (final Exception e) {
-            Throwable t = (e.getCause() != null) ? e.getCause().getCause() : null;
-            if (t != null) {
-              throw new OBException((t instanceof SQLException && t.getMessage().contains(
-                  "@NoConversionRate@")) ? t.getMessage() : e.getMessage(), e);
-            } else {
-              throw new OBException(e.getCause() instanceof SQLException ? e.getCause()
-                  .getMessage() : e.getMessage(), e);
-            }
-          } finally {
-            try {
-              connectionProvider.releaseRollbackConnection(con);
-            } catch (SQLException e) {
-            }
-          }
-        } else {
-          jasperPrint = JasperFillManager.fillReport(jReport, parameters, OBDal
-              .getReadOnlyInstance().getConnection());
-        }
+      String language = OBContext.getOBContext().getLanguage().getLanguage();
+      JasperReport jReport;
+      if (compileSubreports && connectionProvider != null) {
+        jReport = compiledReportManager.compileReportWithSubreports(jasperFilePath, language,
+            parameters, connectionProvider);
       } else {
-        jasperPrint = JasperFillManager.fillReport(jasperFilePath, parameters);
+        jReport = compiledReportManager.compileReport(jasperFilePath, language);
       }
-      return jasperPrint;
+
+      ReportFiller reportFiller = new ReportFiller(jReport, parameters);
+      if (connectionProvider != null) {
+        reportFiller.setConnectionProvider(connectionProvider);
+      }
+      if (data != null) {
+        reportFiller.setJRDataSource(data);
+      }
+      return reportFiller.fillReport();
     } catch (JRException e) {
-      log.error("Error generating Jasper Report: " + jasperFilePath, e);
+      log.error("Error generating Jasper Report {}", jasperFilePath, e);
       throw new OBException(e.getMessage(), e);
+    } finally {
+      log.debug("JasperPrint for {} generated in {} ms", jasperFilePath,
+          (System.currentTimeMillis() - t1));
     }
   }
 
   /**
-   * Generates sub-reports and adds them into the parameter map.
-   * 
-   * @param templateFile
-   *          The path to the JR template of the report.
-   * @param parameters
-   *          The parameters to be sent to Jasper Report.
-   * @param baseDesignPath
-   *          Base design path.
-   * @param connectionProvider
-   *          A connection provider in case the report needs it.
-   * @param language
-   *          Language to be used when generating the sub-report.
-   * @throws OBException
-   *           In case there is any error generating the sub-reports an exception is thrown with the
-   *           error message.
+   * @deprecated Use {@link #getTranslatedJasperReport(ConnectionProvider, String, String)} instead.
    */
-  private static void processSubReports(String templateFile, Map<String, Object> parameters,
-      String baseDesignPath, ConnectionProvider connectionProvider, String language)
-      throws OBException {
-    try {
-      JasperDesign jasperDesign = JRXmlLoader.load(templateFile);
-
-      Object[] parameterList = jasperDesign.getParametersList().toArray();
-      String parameterName = "";
-      String subReportName = "";
-      Collection<String> subreportList = new ArrayList<String>();
-      File template = new File(templateFile);
-      String templateLocation = template.getParent() + "/";
-
-      /*
-       * TODO: At present this process assumes the subreport is a .jrxml file. Need to handle the
-       * possibility that this subreport file could be a .jasper file.
-       */
-      for (int i = 0; i < parameterList.length; i++) {
-        final JRDesignParameter parameter = (JRDesignParameter) parameterList[i];
-        if (parameter.getName().startsWith("SUBREP_")) {
-          parameterName = parameter.getName();
-          subreportList.add(parameterName);
-          subReportName = Replace.replace(parameterName, "SUBREP_", "") + ".jrxml";
-          JasperReport jasperReportLines = createSubReport(templateLocation, subReportName,
-              baseDesignPath, connectionProvider, language);
-          parameters.put(parameterName, jasperReportLines);
-        }
-      }
-
-    } catch (final JRException e) {
-      log.error("Error processing subreports for template: " + templateFile, e);
-      throw new OBException(e.getMessage(), e);
-    }
-  }
-
-  /**
-   * Create a translated and compiled sub-report into a JasperReport object.
-   * 
-   * @param templateLocation
-   *          The location of the JR template of the sub-report.
-   * @param subReportFileName
-   *          The name of the sub-report jrxml file.
-   * @param baseDesignPath
-   *          Base design path.
-   * @param connectionProvider
-   *          A connection provider in case the report needs it.
-   * @param language
-   *          Language to be used when generating the sub-report.
-   * @return A JasperReport object with the compiled and translated sub-report.
-   */
-  private static JasperReport createSubReport(String templateLocation, String subReportFileName,
-      String baseDesignPath, ConnectionProvider connectionProvider, String language) {
-    JasperReport jasperReportLines = null;
-    try {
-      jasperReportLines = getTranslatedJasperReport(connectionProvider, templateLocation
-          + subReportFileName, language, baseDesignPath);
-    } catch (final JRException e) {
-      log.error("Error generating subreport: " + subReportFileName, e);
-    }
-    return jasperReportLines;
+  @Deprecated
+  public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
+      String language, String baseDesignPath) throws JRException {
+    return getTranslatedJasperReport(conn, reportName, language);
   }
 
   /**
@@ -1115,38 +1005,14 @@ public class ReportingUtils {
    *          The path to the JR template of the report.
    * @param language
    *          Language to be used when generating the report.
-   * @param baseDesignPath
-   *          Base design path.
    * @return A JasperReport object with the compiled and translated report.
    * @throws JRException
    *           In case there is any error generating the translated report an exception is thrown
    *           with the error message.
    */
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
-      String language, String baseDesignPath) throws JRException {
-
-    log.debug("translate report: " + reportName + " for language: " + language);
-
-    File reportFile = new File(reportName);
-
-    InputStream reportInputStream = null;
-    if (reportFile.exists()) {
-      TranslationHandler handler = new TranslationHandler(conn);
-      handler.prepareFile(reportName, language, reportFile, baseDesignPath);
-      reportInputStream = handler.getInputStream();
-    }
-    JasperDesign jasperDesign;
-    if (reportInputStream != null) {
-      log.debug("Jasper report being created with inputStream.");
-      jasperDesign = JRXmlLoader.load(reportInputStream);
-    } else {
-      log.debug("Jasper report being created with strReportName.");
-      jasperDesign = JRXmlLoader.load(reportName);
-    }
-
-    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-
-    return jasperReport;
+      String language) throws JRException {
+    return compiledReportManager.compileReport(reportName, language, conn);
   }
 
   /**
@@ -1160,9 +1026,7 @@ public class ReportingUtils {
    *           message.
    */
   public static JasperReport compileReport(String jasperFilePath) throws JRException {
-    JasperDesign jasperDesign = JRXmlLoader.load(jasperFilePath);
-    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-    return jasperReport;
+    return compiledReportManager.compileReport(jasperFilePath, null, null);
   }
 
   /**
@@ -1260,46 +1124,31 @@ public class ReportingUtils {
     parameters.put(JASPER_PARAM_HBSESSION, OBDal.getReadOnlyInstance().getSession());
     parameters.put(JASPER_PARAM_OBCONTEXT, OBContext.getOBContext());
 
-    {
-      final FormatDefinition reportFormat = UIDefinitionController.getInstance()
-          .getFormatDefinition("amount", UIDefinitionController.NORMALFORMAT_QUALIFIER);
+    FormatDefinition amountFormat = UIDefinitionController.getInstance().getFormatDefinition(
+        "amount", UIDefinitionController.NORMALFORMAT_QUALIFIER);
+    addFormatParameter(parameters, amountFormat, "AMOUNTFORMAT");
 
-      final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(reportFormat.getDecimalSymbol().charAt(0));
-      dfs.setGroupingSeparator(reportFormat.getGroupingSymbol().charAt(0));
-
-      final DecimalFormat numberFormat = new DecimalFormat(correctMaskForGrouping(
-          reportFormat.getFormat(), reportFormat.getDecimalSymbol(),
-          reportFormat.getGroupingSymbol()), dfs);
-      parameters.put("AMOUNTFORMAT", numberFormat);
-    }
-
-    {
-      final FormatDefinition reportFormat = UIDefinitionController.getInstance()
-          .getFormatDefinition("generalQty", UIDefinitionController.SHORTFORMAT_QUALIFIER);
-
-      final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-      dfs.setDecimalSeparator(reportFormat.getDecimalSymbol().charAt(0));
-      dfs.setGroupingSeparator(reportFormat.getGroupingSymbol().charAt(0));
-
-      final DecimalFormat numberFormat = new DecimalFormat(correctMaskForGrouping(
-          reportFormat.getFormat(), reportFormat.getDecimalSymbol(),
-          reportFormat.getGroupingSymbol()), dfs);
-      parameters.put("QUANTITYFORMAT", numberFormat);
-    }
+    FormatDefinition generalQtyFormat = UIDefinitionController.getInstance().getFormatDefinition(
+        "generalQty", UIDefinitionController.SHORTFORMAT_QUALIFIER);
+    addFormatParameter(parameters, generalQtyFormat, "QUANTITYFORMAT");
 
     String strClientId = OBContext.getOBContext().getCurrentClient().getId();
     parameters.put("Current_Client_ID", strClientId);
-    String strOrgs = "";
-    boolean isNotFirst = false;
-    for (String strOrgId : OBContext.getOBContext().getReadableOrganizations()) {
-      if (isNotFirst) {
-        strOrgs += ",";
-      }
-      strOrgs += "'" + strOrgId + "'";
-      isNotFirst = true;
-    }
+    String strOrgs = StringCollectionUtils.commaSeparated(OBContext.getOBContext()
+        .getReadableOrganizations());
     parameters.put("Readable_Organizations", strOrgs);
+  }
+
+  private static void addFormatParameter(Map<String, Object> parameters,
+      FormatDefinition reportFormat, String parameterName) {
+    final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+    dfs.setDecimalSeparator(reportFormat.getDecimalSymbol().charAt(0));
+    dfs.setGroupingSeparator(reportFormat.getGroupingSymbol().charAt(0));
+
+    final DecimalFormat numberFormat = new DecimalFormat(
+        correctMaskForGrouping(reportFormat.getFormat(), reportFormat.getDecimalSymbol(),
+            reportFormat.getGroupingSymbol()), dfs);
+    parameters.put(parameterName, numberFormat);
   }
 
   /**
@@ -1486,7 +1335,7 @@ public class ReportingUtils {
       // An instance of the Map is done for making sure
       // that if this method is called, it is only accessing
       // to the parameters of the current Map instance.
-      return new HashMap<String, Object>(params);
+      return new HashMap<>(params);
     }
 
     /**
@@ -1534,7 +1383,7 @@ public class ReportingUtils {
       if (StringUtils.isEmpty(fileExtension)) {
         return false;
       }
-      return extension.equals(fileExtension.toLowerCase());
+      return extension.equalsIgnoreCase(fileExtension);
     }
 
     /**
@@ -1564,9 +1413,7 @@ public class ReportingUtils {
    * @return a String with the temporary directory location.
    */
   public static String getTempFolder() {
-    final String tmpFolder = System.getProperty("java.io.tmpdir");
-
-    return tmpFolder;
+    return System.getProperty("java.io.tmpdir");
   }
 
   /**
@@ -1586,10 +1433,5 @@ public class ReportingUtils {
       base = "/" + base;
     }
     return base + "/" + design;
-  }
-
-  private static String getBaseDesignPath() {
-    ServletContext servletContext = DalContextListener.getServletContext();
-    return servletContext.getRealPath(getBaseDesign());
   }
 }
