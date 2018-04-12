@@ -18,10 +18,6 @@
  */
 package org.openbravo.test.reporting;
 
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeThat;
-
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -35,8 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -44,10 +38,8 @@ import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.report.ReportingUtils;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
 
 /**
  * Compiles all jrxml templates present in the sources directory ensuring they can be compiled with
@@ -62,10 +54,8 @@ public class AllJrxmlCompilation extends WeldBaseTest {
 
   @Rule
   public ParameterCdiTestRule<Path> reportRule = new ParameterCdiTestRule<Path>(REPORTS);
-  private @ParameterCdiTest Path report;
 
-  @Inject
-  ApplicationDictionaryCachedStructures adcs;
+  private @ParameterCdiTest Path report;
 
   @Override
   protected boolean shouldMockServletContext() {
@@ -74,13 +64,7 @@ public class AllJrxmlCompilation extends WeldBaseTest {
 
   @Test
   public void jrxmlShouldCompile() throws JRException {
-    String reportPath = report.toString();
-    // compile the report for the first time
-    ReportingUtils.compileReport(reportPath);
-    assumeThat("Has modules in development", adcs.isInDevelopment(), not(true));
-    // launch the compilation again: result will be retrieved from cache
-    JasperReport jasperReport = ReportingUtils.compileReport(reportPath);
-    assertNotNull(jasperReport);
+    ReportingUtils.compileReport(report.toString());
   }
 
   private static List<Path> parameters() {
