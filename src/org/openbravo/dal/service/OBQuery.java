@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -118,6 +119,17 @@ public class OBQuery<E extends BaseOBObject> {
    */
   public List<E> list() {
     return createQuery().list();
+  }
+
+  /**
+   * Makes it possible to get a {@link Stream} over the underlying Query object. Note that the
+   * {@link java.util.stream.Stream#close()} method should be invoked after processing the stream so
+   * that the underlying resources are deallocated right away.
+   * 
+   * @return a {@link Stream} over the underlying Query object.
+   */
+  public Stream<E> stream() {
+    return createQuery().stream();
   }
 
   /**
