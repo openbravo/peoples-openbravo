@@ -492,11 +492,18 @@ isc.OBUserProfile.addProperties({
           }
           if (data.fields) {
             length = data.fields.length;
+            var dialogCallback = function () {
+                return true;
+                };
+
             for (i = 0; i < length; i++) {
               var field = data.fields[i];
               var errorMessage = OB.I18N.getLabel(field.messageCode);
               pwdForm.addFieldErrors(field.field, errorMessage, true);
-              isc.warn(errorMessage);
+              isc.warn(errorMessage, dialogCallback, {
+                icon: '[SKINIMG]Dialog/error.png',
+                title: OB.I18N.getLabel('OBUIAPP_Error')
+              });
             }
           }
         }
