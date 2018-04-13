@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -86,20 +86,20 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
         // select the alert rules
         final String hql = "select distinct(e.alertRule) from  "
             + AlertRecipient.ENTITY_NAME
-            + " e where e.alertRule.active = true and (e.userContact.id=? "
-            + " or (e.userContact.id = null and e.role.id = ?))"
+            + " e where e.alertRule.active = true and (e.userContact.id = :userId "
+            + " or (e.userContact.id = null and e.role.id = :roleId))"
 
             // select only those rules that are client/org visible from current role
             + " and e.alertRule.client.id " + OBDal.getInstance().getReadableClientsInClause()
             + " and e.alertRule.organization.id "
             + OBDal.getInstance().getReadableOrganizationsInClause();
 
-        final Query qry = OBDal.getInstance().getSession().createQuery(hql);
-        qry.setParameter(0, OBContext.getOBContext().getUser().getId());
-        qry.setParameter(1, OBContext.getOBContext().getRole().getId());
+        final Query<AlertRule> qry = OBDal.getInstance().getSession()
+            .createQuery(hql, AlertRule.class);
+        qry.setParameter("userId", OBContext.getOBContext().getUser().getId());
+        qry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
 
-        for (Object o : qry.list()) {
-          final AlertRule alertRule = (AlertRule) o;
+        for (AlertRule alertRule : qry.list()) {
           final String whereClause = new UsedByLink().getWhereClause(vars, "",
               alertRule.getFilterClause() == null ? "" : alertRule.getFilterClause());
           final String sql = "select count(*) from AD_ALERT where COALESCE(to_char(STATUS), 'NEW')='NEW'"
