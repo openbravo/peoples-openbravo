@@ -26,9 +26,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -110,7 +110,7 @@ public class DataEntityQueryService {
    * @return a result which can be scrolled forward only and the results are not cached
    */
   public ScrollableResults scroll() {
-    final Query qry = buildOBQuery().createQuery();
+    final Query<BaseOBObject> qry = buildOBQuery().createQuery();
     qry.setFetchSize(1000);
     qry.setCacheable(false);
     return qry.scroll(ScrollMode.FORWARD_ONLY);
@@ -124,16 +124,12 @@ public class DataEntityQueryService {
    * Build an OBQuery object using the generated where, order by and select clauses.
    */
   public OBQuery<BaseOBObject> buildOBQuery() {
-    return buildOBQuery(BaseOBObject.class);
-  }
-
-  <T extends Object> OBQuery<T> buildOBQuery(Class<T> clz) {
     final String whereOrderBy = getWhereClause()
         + (getSummarySettings() == null ? queryBuilder.getOrderByClause() : "");
 
     log.debug("Querying for " + entityName + " " + whereOrderBy);
 
-    final OBQuery obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
+    final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName, whereOrderBy);
     obq.setFilterOnReadableClients(isFilterOnReadableClients());
     obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
 

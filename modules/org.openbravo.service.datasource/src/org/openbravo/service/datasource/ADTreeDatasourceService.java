@@ -236,7 +236,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
     boolean fetchRoot = ROOT_NODE_CLIENT.equals(parentId);
     int cont = 0;
-    ScrollableResults scrollNodes = obq.createQuery().scroll(ScrollMode.FORWARD_ONLY);
+    ScrollableResults scrollNodes = obq.createQuery(Object[].class).scroll(ScrollMode.FORWARD_ONLY);
     try {
       while (scrollNodes.next()) {
         Object[] node = scrollNodes.get();

@@ -222,8 +222,7 @@ public class DefaultJsonDataService implements JsonDataService {
             singleResult.put(queryService.getSummaryFields().get(0), queryService.buildOBQuery()
                 .createQuery().uniqueResult());
           } else {
-            // TODO HB53: check this!!
-            final Object[] os = queryService.buildOBQuery(Object[].class).createQuery()
+            final Object[] os = queryService.buildOBQuery().createQuery(Object[].class)
                 .uniqueResult();
             int i = 0;
             if (os != null && os.length > 0) {

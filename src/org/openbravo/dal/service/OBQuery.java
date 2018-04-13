@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -53,7 +54,7 @@ import org.openbravo.service.db.QueryTimeOutUtil;
  * @author mtaal
  */
 
-public class OBQuery<E extends Object> {
+public class OBQuery<E extends BaseOBObject> {
   private static final Logger log = Logger.getLogger(OBQuery.class);
 
   private static final String FROM_SPACED = " from ";
@@ -156,8 +157,8 @@ public class OBQuery<E extends Object> {
       final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    @SuppressWarnings("unchecked")
-    final Query<Number> qry = getSession().createQuery("select count(*) " + FROM_SPACED + qryStr);
+    final Query<Number> qry = getSession().createQuery("select count(*) " + FROM_SPACED + qryStr,
+        Number.class);
     setParameters(qry);
     return qry.uniqueResult().intValue();
   }
@@ -177,9 +178,8 @@ public class OBQuery<E extends Object> {
       final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
       qryStr = qryStr.substring(index);
     }
-    @SuppressWarnings("unchecked")
     final Query<String> qry = getSession().createQuery(
-        "select " + usedAlias + "id " + FROM_SPACED + qryStr);
+        "select " + usedAlias + "id " + FROM_SPACED + qryStr, String.class);
     setParameters(qry);
 
     try (ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY)) {
@@ -236,11 +236,15 @@ public class OBQuery<E extends Object> {
    * 
    * @return a new Hibernate Query object
    */
+  @SuppressWarnings("unchecked")
   public Query<E> createQuery() {
+    return (Query<E>) createQuery(BaseOBObject.class);
+  }
+
+  public <T extends Object> Query<T> createQuery(Class<T> clz) {
     final String qryStr = createQueryString();
     try {
-      @SuppressWarnings("unchecked")
-      final Query<E> qry = getSession().createQuery(qryStr);
+      final Query<T> qry = getSession().createQuery(qryStr, clz);
       setParameters(qry);
       if (fetchSize > -1) {
         qry.setFetchSize(fetchSize);
