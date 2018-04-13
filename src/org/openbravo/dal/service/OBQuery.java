@@ -719,7 +719,9 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
-   * Defines a select clause for the underlying query.
+   * Defines a select clause for the underlying query. <b>Important Note</b>: this method can change
+   * the type of the object returned by the query, which is previously defined when instantiating
+   * the OBQuery object.
    * 
    * @param selectClause
    *          the select clause to be used by the underlying query.
