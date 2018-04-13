@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -240,7 +240,7 @@ public class DalQueryTest extends OBBaseTest {
       final OBQuery<MaterialTransaction> obq = OBDal.getInstance().createQuery(
           MaterialTransaction.class,
           " order by " + MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME);
-      final Query qry = obq.createQuery();
+      final Query<MaterialTransaction> qry = obq.createQuery();
       qry.setMaxResults(pageSize);
       qry.setFirstResult(i * pageSize);
 
