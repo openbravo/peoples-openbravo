@@ -97,7 +97,7 @@ enyo.kind({
       removeTransaction();
       window.setTimeout(this.doHideThisPopup.bind(this), 0);
     }.bind(this))['catch'](function (exception) {
-      this.showMessageAndClose(providerinstance.getErrorMessage(exception));
+      this.showMessageAndClose(providerinstance.getErrorMessage ? providerinstance.getErrorMessage(exception) : exception.message);
     }.bind(this));
   }
 });

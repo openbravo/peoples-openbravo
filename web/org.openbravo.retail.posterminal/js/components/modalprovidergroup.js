@@ -149,7 +149,7 @@ enyo.kind({
       }
       this.showMessageAndClose(OB.I18N.getLabel('OBPOS_CannotFindPaymentMethod'));
     }.bind(this))['catch'](function (exception) {
-      this.showMessageAndClose(providerinstance.getErrorMessage(exception));
+      this.showMessageAndClose(providerinstance.getErrorMessage ? providerinstance.getErrorMessage(exception) : exception.message);
     }.bind(this));
   }
 });
