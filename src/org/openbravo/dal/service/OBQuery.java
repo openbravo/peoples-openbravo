@@ -572,7 +572,7 @@ public class OBQuery<E extends BaseOBObject> {
     StringBuffer parsedHql = new StringBuffer();
     int parameterCount = 0;
     while (matcher.find()) {
-      String parameterName = "p" + parameterCount;
+      String parameterName = "__p" + parameterCount;
       matcher.appendReplacement(parsedHql, ":" + parameterName + " ");
       setNamedParameter(parameterName, parameters.get(parameterCount));
       parameterCount++;
