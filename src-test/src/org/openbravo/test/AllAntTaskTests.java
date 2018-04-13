@@ -86,6 +86,7 @@ import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
+import org.openbravo.test.reporting.CompiledReportsCacheTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
 import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
 import org.openbravo.test.scheduling.ProcessSchedulingTest;
@@ -269,7 +270,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // jasper
     JasperReportsCompilation.class, //
-    AllJrxmlCompilation.class,
+    AllJrxmlCompilation.class, //
+    CompiledReportsCacheTest.class,
 
     // Product Services
     ServicesTest.class, //

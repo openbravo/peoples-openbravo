@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,9 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
@@ -44,6 +41,9 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -176,17 +176,16 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     String strBaseDesign = getBaseDesignPath(strLanguage);
     try {
       jasperSale = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSale.jrxml", vars.getLanguage(),
-          strBaseDesign);
+          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSale.jrxml", vars.getLanguage());
       jasperSaleForeign = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSaleForeign.jrxml",
-          vars.getLanguage(), strBaseDesign);
+          vars.getLanguage());
       jasperPurchase = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchase.jrxml",
-          vars.getLanguage(), strBaseDesign);
+          vars.getLanguage());
       jasperPurchaseForeign = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchaseForeign.jrxml",
-          vars.getLanguage(), strBaseDesign);
+          vars.getLanguage());
 
     } catch (JRException e) {
       e.printStackTrace();

@@ -236,14 +236,21 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
           variantMap.put("id", existingProduct.getId());
         }
         if (StringUtils.isNotEmpty(selectedFilters.getSearchKey())) {
+          StringBuilder matchedRegex = new StringBuilder(".*");
+          matchedRegex.append(selectedFilters.getSearchKey().trim().toLowerCase()
+              .replace(" ", ".*"));
+          matchedRegex.append(".*");
           includeInResult = includeInResult
-              && StringUtils.containsIgnoreCase((String) variantMap.get("searchKey"),
-                  selectedFilters.getSearchKey());
+              && ((String) variantMap.get("searchKey")).trim().toLowerCase()
+                  .matches(matchedRegex.toString());
         }
         if (StringUtils.isNotEmpty(selectedFilters.getName())) {
+          StringBuilder matchedRegex = new StringBuilder(".*");
+          matchedRegex.append(selectedFilters.getName().trim().toLowerCase().replace(" ", ".*"));
+          matchedRegex.append(".*");
           includeInResult = includeInResult
-              && StringUtils.containsIgnoreCase((String) variantMap.get("name"),
-                  selectedFilters.getName());
+              && ((String) variantMap.get("name")).trim().toLowerCase()
+                  .matches(matchedRegex.toString());
         }
         if (selectedFilters.isVariantCreated() != null) {
           includeInResult = includeInResult

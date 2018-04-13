@@ -1669,13 +1669,13 @@ public class Utility {
 
   /**
    * @deprecated Use
-   *             {@link org.openbravo.client.application.report.ReportingUtils#getTranslatedJasperReport(ConnectionProvider, String, String, String)}
+   *             {@link org.openbravo.client.application.report.ReportingUtils#getTranslatedJasperReport(ConnectionProvider, String, String)}
    *             instead.
    */
   @Deprecated
   public static JasperReport getTranslatedJasperReport(ConnectionProvider conn, String reportName,
       String language, String baseDesignPath) throws JRException {
-    return ReportingUtils.getTranslatedJasperReport(conn, reportName, language, baseDesignPath);
+    return ReportingUtils.getTranslatedJasperReport(conn, reportName, language);
   }
 
   /**

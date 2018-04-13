@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,9 +24,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockServletContext;
 import org.junit.Test;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.Component;
@@ -48,6 +46,11 @@ public class GenerateComponentTest extends WeldBaseTest {
 
   private static final Logger log = LoggerFactory.getLogger(GenerateComponentTest.class);
 
+  @Override
+  protected boolean shouldMockServletContext() {
+    return true;
+  }
+
   @Inject
   @ComponentProvider.Qualifier(KernelComponentProvider.QUALIFIER)
   private ComponentProvider kernelComponentProvider;
@@ -60,14 +63,10 @@ public class GenerateComponentTest extends WeldBaseTest {
   @SuppressWarnings("serial")
   @Test
   public void testStaticResources() throws Exception {
-    final MockServletContext mockContext = new MockServletContext(OBPropertiesProvider
-        .getInstance().getOpenbravoProperties().getProperty("source.path")
-        + "/WebContent");
-    DalContextListener.setServletContext(mockContext);
     generateComponent(KernelConstants.RESOURCE_COMPONENT_ID, new HashMap<String, Object>() {
       {
         put(KernelConstants.APP_NAME_PARAMETER, ComponentResource.APP_OB3);
-        put(KernelConstants.SERVLET_CONTEXT, mockContext);
+        put(KernelConstants.SERVLET_CONTEXT, DalContextListener.getServletContext());
       }
     });
   }
