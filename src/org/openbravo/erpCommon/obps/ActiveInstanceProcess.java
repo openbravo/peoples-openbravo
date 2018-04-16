@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,14 +21,17 @@ package org.openbravo.erpCommon.obps;
 
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
@@ -50,6 +53,7 @@ public class ActiveInstanceProcess implements Process {
   private static final Logger log = Logger.getLogger(ActiveInstanceProcess.class);
   private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
   private static final String EVALUATION_PURPOSE = "E";
+  private static final String PRODUCTION_PURPOSE = "P";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -125,6 +129,10 @@ public class ActiveInstanceProcess implements Process {
             sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
           }
 
+          if (PRODUCTION_PURPOSE.equals(purpose)) {
+            unflagInDevelopmentModules();
+          }
+
           updateShowProductionFields("Y");
 
           if (ak.isTrial() && !EVALUATION_PURPOSE.equals(purpose)) {
@@ -169,6 +177,18 @@ public class ActiveInstanceProcess implements Process {
       pref.setProperty("showMRPandProductionFields");
       pref.setSearchKey(value);
       OBDal.getInstance().save(pref);
+    }
+  }
+
+  private void unflagInDevelopmentModules() {
+    OBCriteria<Module> criteria = OBDal.getInstance().createCriteria(Module.class);
+    criteria.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, true));
+    List<Module> developmentModules = criteria.list();
+
+    for (Module module : developmentModules) {
+      log.info("Removing development status for module " + module.getName());
+      module.setInDevelopment(false);
+      OBDal.getInstance().save(module);
     }
   }
 
