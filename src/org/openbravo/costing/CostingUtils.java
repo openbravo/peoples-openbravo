@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -432,7 +432,11 @@ public class CostingUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append(" and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
-    select.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    if (product.isProduction()) {
+      select.append(" and trx." + MaterialTransaction.PROPERTY_CLIENT + ".id = :client");
+    } else {
+      select.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    }
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("dateTo", dateTo);
@@ -451,7 +455,11 @@ public class CostingUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
-    trxQry.setParameterList("orgs", orgs);
+    if (product.isProduction()) {
+      trxQry.setParameter("client", product.getClient().getId());
+    } else {
+      trxQry.setParameterList("orgs", orgs);
+    }
     BigDecimal stock = (BigDecimal) trxQry.uniqueResult();
     if (stock == null) {
       stock = BigDecimal.ZERO;
@@ -555,7 +563,11 @@ public class CostingUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append(" and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
-    select.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    if (product.isProduction()) {
+      select.append(" and trx." + MaterialTransaction.PROPERTY_CLIENT + ".id = :client");
+    } else {
+      select.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    }
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
     select.append(" tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
@@ -577,7 +589,11 @@ public class CostingUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
-    trxQry.setParameterList("orgs", orgs);
+    if (product.isProduction()) {
+      trxQry.setParameter("client", product.getClient().getId());
+    } else {
+      trxQry.setParameterList("orgs", orgs);
+    }
 
     ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
     BigDecimal sum = BigDecimal.ZERO;
