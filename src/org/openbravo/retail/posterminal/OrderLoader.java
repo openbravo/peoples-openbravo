@@ -458,6 +458,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               && CancelAndReplaceUtils
                   .getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(canceledOrder);
           canceledOrder.setObposAppCashup(jsoncashup.getString("id"));
+          if (canceledOrder.isObposIslayaway()) {
+            canceledOrder.setObposIslayaway(false);
+          }
           OBDal.getInstance().save(canceledOrder);
         }
         if (createInvoice) {
