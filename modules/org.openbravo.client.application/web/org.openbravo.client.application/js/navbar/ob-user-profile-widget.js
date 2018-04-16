@@ -482,8 +482,7 @@ isc.OBUserProfile.addProperties({
 
       // the callback displays an info dialog and then hides the form
       doSaveCallback: function (rpcResponse, data, rpcRequest) {
-        var i, length;
-        var dialogCallback = function () {
+        var i, length, dialogCallback = function () {
             return true;
             };
 
