@@ -483,6 +483,10 @@ isc.OBUserProfile.addProperties({
       // the callback displays an info dialog and then hides the form
       doSaveCallback: function (rpcResponse, data, rpcRequest) {
         var i, length;
+        var dialogCallback = function () {
+            return true;
+            };
+
         if (data.result === OB.Constants.SUCCESS) {
           isc.OBQuickRun.hide();
           isc.say(OB.I18N.getLabel('UINAVBA_PasswordChanged'));
@@ -492,9 +496,6 @@ isc.OBUserProfile.addProperties({
           }
           if (data.fields) {
             length = data.fields.length;
-            var dialogCallback = function () {
-                return true;
-                };
 
             for (i = 0; i < length; i++) {
               var field = data.fields[i];
