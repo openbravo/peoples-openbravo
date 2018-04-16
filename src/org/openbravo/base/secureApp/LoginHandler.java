@@ -557,41 +557,6 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  @Deprecated
-  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
-      String message, String title, String msgType, String action, boolean doRedirect)
-      throws IOException, ServletException {
-    goToUpdatePassword(response, vars, message, title, msgType, action);
-  }
-
-  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
-      String message, String title, String msgType, String action) throws IOException,
-      ServletException {
-    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
-        "CPEmptyUserPassword", vars.getLanguage());
-
-    try {
-      JSONObject jsonMsg = new JSONObject();
-      jsonMsg.put("showMessage", true);
-      jsonMsg.put("target", action);
-      jsonMsg.put("messageType", msgType);
-      jsonMsg.put("messageTitle", title);
-      jsonMsg.put("messageText", msg);
-      jsonMsg.put("resetPassword", true);
-      jsonMsg.put("loggedUser", vars.getStringParameter("user"));
-      if ("Confirmation".equals(msgType)) {
-        jsonMsg.put("command", "FORCE_NAMED_USER");
-      }
-      response.setContentType("application/json;charset=UTF-8");
-      final PrintWriter out = response.getWriter();
-      out.print(jsonMsg.toString());
-      out.close();
-    } catch (JSONException e) {
-      log4j.error("Error setting login msg", e);
-      throw new ServletException(e);
-    }
-  }
-
   private void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
       AuthenticationException authenticationException, String action) throws IOException,
       ServletException {
