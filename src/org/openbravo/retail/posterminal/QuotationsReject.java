@@ -51,7 +51,7 @@ public class QuotationsReject extends POSDataSynchronizationProcess implements
 
   @Override
   protected String getProperty() {
-    return "OBPOS_receipt.rejectquotation";
+    return "OBPOS_quotation.rejections";
   }
 
 }
