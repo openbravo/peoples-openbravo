@@ -6254,7 +6254,14 @@
     checkForDuplicateReceipts: function (model, callback, errorCallback, fromSelector) {
 
       function openReceiptPermissionError(orderType) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        if (fromSelector) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        }
+        if (errorCallback) {
+          errorCallback();
+        }
       }
 
       //Check Permissions
