@@ -100,8 +100,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
 
-     
-      Map<String, OrderLine> clonedOrderLines = new HashMap<>();
+      Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine = new HashMap<>();
       List<OrderlineServiceRelation> orderLinesServiceRelation = new ArrayList<>();
       // get the lines associated with the order and clone them to the new
       // order line.
@@ -126,26 +125,23 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         objCloneOrdLine.setSalesOrder(objCloneOrder);
         objCloneOrdLine.setReservationStatus(null);
 
-        clonedOrderLines.put(ordLine.getId(), objCloneOrdLine);
-        List<OrderlineServiceRelation> lineServiceRelation = cloneProductServiceRelation(ordLine, objCloneOrdLine);
+        mapOriginalOrderLineWithCloneOrderLine.put(ordLine.getId(), objCloneOrdLine);
+        List<OrderlineServiceRelation> lineServiceRelation = cloneProductServiceRelation(ordLine,
+            objCloneOrdLine);
         orderLinesServiceRelation.addAll(lineServiceRelation);
       }
-      
-      if(!orderLinesServiceRelation.isEmpty()){
-        OBDal.getInstance().save(objCloneOrder);
-        OBDal.getInstance().flush();
-      }
-      
+
       for (OrderlineServiceRelation lineServiceRelation : orderLinesServiceRelation) {
-        OrderLine clonedOrderLine = clonedOrderLines.get(lineServiceRelation.getOrderlineRelated().getId());
-        OBDal.getInstance().refresh(clonedOrderLine);
-        lineServiceRelation.setOrderlineRelated(clonedOrderLine);   
+        OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(lineServiceRelation
+            .getOrderlineRelated().getId());
+        lineServiceRelation.setOrderlineRelated(clonedOrderLine);
         OBDal.getInstance().save(lineServiceRelation);
       }
-      
-      clonedOrderLines.clear();
+
+      mapOriginalOrderLineWithCloneOrderLine.clear();
       orderLinesServiceRelation.clear();
 
+      OBDal.getInstance().save(objCloneOrder);
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(objCloneOrder);
       json = jsonConverter.toJsonObject(objCloneOrder, DataResolvingMode.FULL);
@@ -156,18 +152,21 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     }
   }
 
-  private List<OrderlineServiceRelation> cloneProductServiceRelation(OrderLine ordLine, OrderLine objCloneOrdLine) {
+  private List<OrderlineServiceRelation> cloneProductServiceRelation(OrderLine ordLine,
+      OrderLine objCloneOrdLine) {
 
-    List<OrderlineServiceRelation> cloneServiceRelation = new ArrayList<>(
-        ordLine.getOrderlineServiceRelationList().size());
-    for (OrderlineServiceRelation orderLineServiceRelation : ordLine.getOrderlineServiceRelationList()) {
-      OrderlineServiceRelation lineServiceRelation = (OrderlineServiceRelation) DalUtil.copy(orderLineServiceRelation,
-          false);
-      lineServiceRelation.setOrderlineRelated(orderLineServiceRelation.getOrderlineRelated()); 
+    List<OrderlineServiceRelation> cloneServiceRelation = new ArrayList<>(ordLine
+        .getOrderlineServiceRelationList().size());
+    for (OrderlineServiceRelation orderLineServiceRelation : ordLine
+        .getOrderlineServiceRelationList()) {
+      OrderlineServiceRelation lineServiceRelation = (OrderlineServiceRelation) DalUtil.copy(
+          orderLineServiceRelation, false);
+      lineServiceRelation.setOrderlineRelated(orderLineServiceRelation.getOrderlineRelated());
       lineServiceRelation.setSalesOrderLine(objCloneOrdLine);
       cloneServiceRelation.add(lineServiceRelation);
     }
     objCloneOrdLine.setOrderlineServiceRelationList(cloneServiceRelation);
+
     return cloneServiceRelation;
   }
 
