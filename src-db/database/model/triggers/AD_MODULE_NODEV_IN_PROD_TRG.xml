@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER AD_MODULE_NODEV_IN_PROD_TRG">
+    <trigger name="AD_MODULE_NODEV_IN_PROD_TRG" table="AD_MODULE" fires="before" insert="true" update="true" delete="false" foreach="row">
+      <body><![CDATA[
+  DECLARE
+    v_InstancePurpose CHAR(1);
+
+  /*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2018 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  BEGIN
+
+    IF AD_isTriggerEnabled()='N' THEN IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
+    END IF;
+
+    SELECT instance_purpose INTO v_InstancePurpose FROM ad_system_info;
+
+    IF :new.isindevelopment = 'Y' AND v_InstancePurpose = 'P' THEN
+      RAISE_APPLICATION_ERROR(-20000, '@AD_MODULE_INDEV_IN_PROD@');
+    END IF;
+
+    IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
+
+  END AD_MODULE_NODEV_IN_PROD_TRG
+]]></body>
+    </trigger>
+  </database>
