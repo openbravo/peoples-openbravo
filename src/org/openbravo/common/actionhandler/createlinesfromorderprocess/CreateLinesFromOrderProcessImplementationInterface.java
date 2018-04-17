@@ -24,21 +24,21 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.OrderLine;
 
 /**
- * Interface to be implemented by the hooks to be executed on the Create Lines From
- * Order/Shipment/Receipt process.
+ * Interface to be implemented by the hooks to be executed on the Create Lines From Order process.
  * 
  * Example of a hook:
  * 
  * <pre>
  * import javax.enterprise.context.Dependent;
  * import org.openbravo.client.kernel.ComponentProvider.Qualifier;
- * import org.openbravo.common.actionhandler.copyfromorderprocess.CopyFromOrdersProcessImplementationInterface;
- * import org.openbravo.model.common.order.Order;
+ * import org.openbravo.common.actionhandler.createlinesfromorderprocess.CreateLinesFromOrderProcessImplementationInterface;
+ * import org.openbravo.model.common.invoice.Invoice;
+ * import org.openbravo.model.common.invoice.InvoiceLine;
  * import org.openbravo.model.common.order.OrderLine;
  * 
  * &#064;Dependent
- * &#064;Qualifier(CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
- * public class TestHook implements CreateLinesFromProcessImplementationInterface {
+ * &#064;Qualifier(CreateLinesFromOrderProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
+ * public class TestHook implements CreateLinesFromOrderProcessImplementationInterface {
  * 
  *   &#064;Override
  *   public int getOrder() {
