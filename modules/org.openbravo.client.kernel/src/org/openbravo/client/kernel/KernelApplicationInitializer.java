@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
+import org.openbravo.client.application.report.JmxReportCache;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.jmx.MBeanRegistry;
@@ -50,10 +51,13 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   @Inject
   private StaticResourceProvider resourceProvider;
 
+  @Inject
+  private JmxReportCache reportCache;
+
   public void initialize() {
     registerSQLFunctions();
     checkDatabaseAndTomcatDateTime();
-    registerStaticResourcesMBean();
+    registerMBeans();
   }
 
   private void registerSQLFunctions() {
@@ -102,7 +106,8 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
     return date;
   }
 
-  private void registerStaticResourcesMBean() {
+  private void registerMBeans() {
     MBeanRegistry.registerMBean(KernelConstants.RESOURCE_COMPONENT_ID, resourceProvider);
+    MBeanRegistry.registerMBean(JmxReportCache.MBEAN_NAME, reportCache);
   }
 }

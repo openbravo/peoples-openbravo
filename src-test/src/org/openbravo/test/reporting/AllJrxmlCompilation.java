@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,18 +29,17 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.test.ParameterCdiTest;
+import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.client.application.report.ReportingUtils;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 /**
  * Compiles all jrxml templates present in the sources directory ensuring they can be compiled with
@@ -49,40 +48,47 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
  * @author alostale
  *
  */
-@RunWith(Parameterized.class)
-public class AllJrxmlCompilation {
+public class AllJrxmlCompilation extends WeldBaseTest {
 
-  @Parameter(0)
-  public Path report;
-  @Parameter(1)
-  public Path fileName;
+  private static final List<Path> REPORTS = parameters();
+
+  @Rule
+  public ParameterCdiTestRule<Path> reportRule = new ParameterCdiTestRule<Path>(REPORTS);
+
+  private @ParameterCdiTest Path report;
+
+  @Override
+  protected boolean shouldMockServletContext() {
+    return true;
+  }
 
   @Test
   public void jrxmlShouldCompile() throws JRException {
-    JasperDesign jasperDesign = JRXmlLoader.load(report.toFile());
-    JasperCompileManager.compileReport(jasperDesign);
+    ReportingUtils.compileReport(report.toString());
   }
 
-  @Parameters(name = "{1}")
-  public static Collection<Object[]> parameters() throws IOException {
-    final Collection<Object[]> allJasperFiles = new ArrayList<>();
-    allJasperFiles.addAll(getJrxmlTemplates("src"));
-    allJasperFiles.addAll(getJrxmlTemplates("modules"));
+  private static List<Path> parameters() {
+    final List<Path> allJasperFiles = new ArrayList<>();
+    try {
+      allJasperFiles.addAll(getJrxmlTemplates("src"));
+      allJasperFiles.addAll(getJrxmlTemplates("modules"));
+    } catch (IOException ioex) {
+
+    }
     return allJasperFiles;
   }
 
-  private static Collection<Object[]> getJrxmlTemplates(String dir) throws IOException {
-    final Collection<Object[]> allJasperFiles = new ArrayList<>();
+  private static Collection<Path> getJrxmlTemplates(String dir) throws IOException {
+    final Collection<Path> allJasperFiles = new ArrayList<>();
 
     final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:.*\\.jrxml");
-    Path basePath = Paths.get(
-        OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("source.path"),
-        dir);
+    Path basePath = Paths.get(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("source.path"), dir);
     Files.walkFileTree(basePath, new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (matcher.matches(file)) {
-          allJasperFiles.add(new Object[] { file, file.getFileName() });
+          allJasperFiles.add(file);
         }
         return FileVisitResult.CONTINUE;
       }

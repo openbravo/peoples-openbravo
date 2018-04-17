@@ -86,6 +86,7 @@ import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
+import org.openbravo.test.reporting.CompiledReportsCacheTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
 import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
 import org.openbravo.test.scheduling.ProcessSchedulingTest;
@@ -96,6 +97,7 @@ import org.openbravo.test.security.CrossOrganizationUI;
 import org.openbravo.test.security.CrossOrganizationUICDI;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.OBContextCollectionsTest;
+import org.openbravo.test.security.PasswordStrengthCheckerTest;
 import org.openbravo.test.security.StandardCrossOrganizationReference;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.services.ServicesTest;
@@ -186,7 +188,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     BypassAccessLevelCheck.class, //
     CrossOrganizationUI.class, //
     CrossOrganizationUICDI.class, //
-    OBContextCollectionsTest.class,
+    OBContextCollectionsTest.class, //
+    PasswordStrengthCheckerTest.class,
 
     // system
     SystemServiceTest.class, //
@@ -269,7 +272,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // jasper
     JasperReportsCompilation.class, //
-    AllJrxmlCompilation.class,
+    AllJrxmlCompilation.class, //
+    CompiledReportsCacheTest.class,
 
     // Product Services
     ServicesTest.class, //

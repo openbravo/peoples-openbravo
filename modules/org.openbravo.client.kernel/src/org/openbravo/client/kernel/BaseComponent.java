@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,7 @@ import javax.inject.Inject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -65,13 +65,15 @@ public abstract class BaseComponent implements Component {
   private static String contextUrl = null;
 
   private static String moduleVersionHash = null;
-  private static Boolean hasModulesInDevelopment = null;
 
   private static final Logger log4j = Logger.getLogger(BaseComponent.class);
 
   @Inject
   @Any
   private Instance<Component> components;
+
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
 
   // TODO: add the concept of child components which are generated/rendered before the root
   // component.
@@ -182,27 +184,11 @@ public abstract class BaseComponent implements Component {
    * @see org.openbravo.client.kernel.Component#getETag()
    */
   public String getETag() {
-    if (hasModulesInDevelopment()) {
+    if (adcs.isInDevelopment()) {
       return OBContext.getOBContext().getLanguage().getId() + "_" + getLastModified().getTime();
     } else {
       return OBContext.getOBContext().getLanguage().getId() + "_" + getModuleVersionHash();
     }
-  }
-
-  synchronized private boolean hasModulesInDevelopment() {
-    if (hasModulesInDevelopment == null) {
-      OBContext.setAdminMode();
-      try {
-        OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
-        qMod.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, true));
-        hasModulesInDevelopment = qMod.count() > 0;
-        log4j.debug("Calculating whether there are modules in development: "
-            + hasModulesInDevelopment);
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-    }
-    return hasModulesInDevelopment;
   }
 
   synchronized private String getModuleVersionHash() {
@@ -231,7 +217,6 @@ public abstract class BaseComponent implements Component {
   }
 
   synchronized public static void nullifyModuleCache() {
-    hasModulesInDevelopment = null;
     moduleVersionHash = null;
     log4j.debug("Module cache for etag is now null");
   }
@@ -282,7 +267,7 @@ public abstract class BaseComponent implements Component {
   }
 
   public boolean isInDevelopment() {
-    return getModule().isInDevelopment();
+    return adcs.isInDevelopment(getModule().getId());
   }
 
   protected String getApplicationName() {
