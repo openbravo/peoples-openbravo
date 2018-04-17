@@ -68,7 +68,8 @@ public class CreateLinesFromOrderProcess {
    * <li>2. Copy product and attributes</li>
    * <li>3. Calculate amounts and UOM's</li>
    * <li>4. Calculate Prices based on price list</li>
-   * <li>5. Recalculate Taxes</li>
+   * <li>5. Calculate Acc and Def Plan from Product</li>
+   * <li>6. Recalculate Taxes</li>
    * </ul>
    * 
    * @param selectedOrderLines
