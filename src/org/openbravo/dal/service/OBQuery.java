@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,8 @@ public class OBQuery<E extends BaseOBObject> {
   private static final String AS = "as ";
   private static final String WHERE = "where";
   private static final String ORDERBY = "order by";
+  private static final String DAL_CLIENT_FILTER = "_dal_readableClients_dal_";
+  private static final String DAL_ORG_FILTER = "_dal_readableOrganizations_dal_";
 
   // computed in createQueryString
   private String usedAlias = "";
@@ -391,21 +393,24 @@ public class OBQuery<E extends BaseOBObject> {
     boolean addWhereClause = !whereClause.toLowerCase().contains(" where ");
     if (isFilterOnReadableOrganization() && entity.isOrganizationPartOfKey()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "id.organization.id " + createInClause(obContext.getReadableOrganizations());
+          + "id.organization.id in (:" + DAL_ORG_FILTER + ")";
+      setNamedParameter(DAL_ORG_FILTER, obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
     } else if (isFilterOnReadableOrganization() && entity.isOrganizationEnabled()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "organization.id " + createInClause(obContext.getReadableOrganizations());
+          + "organization.id in (:" + DAL_ORG_FILTER + ")";
+      setNamedParameter(DAL_ORG_FILTER, obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
     }
 
     if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
-      whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix + "client.id "
-          + createInClause(obContext.getReadableClients());
+      whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
+          + "client.id in (:" + DAL_CLIENT_FILTER + ")";
+      setNamedParameter(DAL_CLIENT_FILTER, obContext.getReadableClients());
       if (addWhereClause) {
         addWhereClause = false;
       }
@@ -423,20 +428,6 @@ public class OBQuery<E extends BaseOBObject> {
       return whereClause + " and ";
     }
     return whereClause;
-  }
-
-  private String createInClause(String[] values) {
-    if (values.length == 0) {
-      return " in ('') ";
-    }
-    final StringBuilder sb = new StringBuilder();
-    for (final String v : values) {
-      if (sb.length() > 0) {
-        sb.append(", ");
-      }
-      sb.append("'" + v + "'");
-    }
-    return " in (" + sb.toString() + ")";
   }
 
   /**
@@ -467,6 +458,8 @@ public class OBQuery<E extends BaseOBObject> {
           qry.setEntity(name, value);
         } else if (value instanceof Collection<?>) {
           qry.setParameterList(name, (Collection<?>) value);
+        } else if (value instanceof String[]) {
+          qry.setParameterList(name, (String[]) value);
         } else {
           qry.setParameter(name, value);
         }
