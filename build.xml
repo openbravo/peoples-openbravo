@@ -821,7 +821,6 @@ export.database: exports database structure and data to xml files.
       <jvmarg line="${env.CATALINA_OPTS}" />
       <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" />
       <jvmarg value="-Djava.util.logging.config.file=${env.CATALINA_BASE}/conf/logging.properties" />
-      <jvmarg value="-Djava.endorsed.dirs=${env.CATALINA_HOME}/endorsed" />
       <jvmarg value="-Dcatalina.base=${env.CATALINA_BASE}" />
       <jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
       <jvmarg value="-Djava.io.tmpdir=${env.CATALINA_BASE}/temp" />
@@ -1012,7 +1011,7 @@ export.database: exports database structure and data to xml files.
         <pathelement path="${base.lib}/runtime/log4j-1.2.16.jar" />
         <pathelement path="${base.lib}/runtime/commons-pool-1.5.6.jar" />
         <pathelement path="${base.lib}/runtime/commons-dbcp-1.4.jar" />
-        <pathelement path="${base.lib}/runtime/postgresql-9.4.1207.jre6.jar" />
+        <pathelement path="${base.lib}/runtime/postgresql-42.2.2.jre7.jar" />
         <pathelement path="${base.lib}/runtime/ojdbc6.jar" />
         <pathelement path="${base.lib}/runtime/commons-collectionsi-3.2.1.jar" />
         <pathelement path="${base.lib}/runtime/ant-1.9.2.jar" />

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -199,7 +199,9 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     String rbdms = getStringProperty(props, "bbdd.rdbms", poolName);
 
     if ("POSTGRE".equals(rbdms)) {
-      poolProperties.setUrl(obUrl + "/" + sid);
+      String connectionURL = obUrl + "/" + sid;
+      connectionURL += (connectionURL.contains("?") ? "&" : "?") + "ApplicationName=openbravo";
+      poolProperties.setUrl(connectionURL);
     } else {
       poolProperties.setUrl(obUrl);
     }

@@ -82,6 +82,7 @@ OB.APRM.AddPayment = {
         if (isSelected) {
           record.amount = Number(curAmount.toString());
           grid.selectedIds.push(record.id);
+          grid.pneSelectedRecords.push(record);
           grid.data.savedData.push(editedRecord);
         }
       }

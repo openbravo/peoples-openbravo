@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -257,7 +257,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
       return;
     }
     MaterialTransaction deptrx = invline.getMaterialMgmtMaterialTransactionList().get(0);
-    if (!deptrx.isCostCalculated()) {
+    if (!deptrx.isCostCalculated() || deptrx.isCostPermanent()) {
       return;
     }
     insertCostAdjustmentLine(deptrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
@@ -295,7 +295,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
         continue;
       }
       MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
-      if (!prodtrx.isCostCalculated()) {
+      if (!prodtrx.isCostCalculated() || prodtrx.isCostPermanent()) {
         continue;
       }
       CostAdjustmentLine newCAL = insertCostAdjustmentLine(prodtrx, adjAmt, _costAdjLine);
@@ -330,7 +330,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
         continue;
       }
       MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
-      if (!prodtrx.isCostCalculated()) {
+      if (!prodtrx.isCostCalculated() || prodtrx.isCostPermanent()) {
         continue;
       }
       insertCostAdjustmentLine(prodtrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
@@ -354,7 +354,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
     InternalConsumptionLine intCons = intConsVoidedList.get(0);
     MaterialTransaction voidedTrx = intCons.getMaterialMgmtMaterialTransactionList().get(0);
-    if (!voidedTrx.isCostCalculated()) {
+    if (!voidedTrx.isCostCalculated() || voidedTrx.isCostPermanent()) {
       return;
     }
     insertCostAdjustmentLine(voidedTrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
@@ -373,7 +373,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
       if (movementTransaction.getId().equals(transaction.getId())) {
         continue;
       }
-      if (!movementTransaction.isCostCalculated()) {
+      if (!movementTransaction.isCostCalculated() || movementTransaction.isCostPermanent()) {
         continue;
       }
       insertCostAdjustmentLine(movementTransaction, costAdjLine.getAdjustmentAmount(), _costAdjLine);
@@ -393,7 +393,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
       return;
     }
     for (MaterialTransaction trx : voidedinoutline.getMaterialMgmtMaterialTransactionList()) {
-      if (!trx.isCostCalculated()) {
+      if (!trx.isCostCalculated() || trx.isCostPermanent()) {
         continue;
       }
       insertCostAdjustmentLine(trx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
@@ -428,7 +428,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
         counter++;
 
         MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
-        if (trx.isCostCalculated()) {
+        if (trx.isCostCalculated() && !trx.isCostPermanent()) {
           BigDecimal adjAmt = costAdjAmt.multiply(trx.getMovementQuantity().abs()).divide(
               inoutline.getMovementQuantity().abs(), precission, RoundingMode.HALF_UP);
           insertCostAdjustmentLine(trx, adjAmt, _costAdjLine);

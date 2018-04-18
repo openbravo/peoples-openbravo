@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -28,9 +28,6 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.ProjectionList;
@@ -49,6 +46,9 @@ import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 public class ReportReconciliation extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -109,18 +109,20 @@ public class ReportReconciliation extends HttpSecureAppServlet {
     JasperReport subReportOutstandingDeposit;
     JasperReport subReportUnreconciledBankStatementLines;
     try {
-      subReportOutstandingPayment = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingPayment.jrxml",
-          vars.getLanguage(), strBaseDesign);
+      subReportOutstandingPayment = ReportingUtils
+          .getTranslatedJasperReport(this, strBaseDesign
+              + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingPayment.jrxml",
+              vars.getLanguage());
 
-      subReportOutstandingDeposit = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingDeposit.jrxml",
-          vars.getLanguage(), strBaseDesign);
+      subReportOutstandingDeposit = ReportingUtils
+          .getTranslatedJasperReport(this, strBaseDesign
+              + "/org/openbravo/advpaymentmngt/ad_reports/OutstandingDeposit.jrxml",
+              vars.getLanguage());
 
       subReportUnreconciledBankStatementLines = ReportingUtils.getTranslatedJasperReport(this,
           strBaseDesign
               + "/org/openbravo/advpaymentmngt/ad_reports/UnreconciledBankStatement.jrxml",
-          vars.getLanguage(), strBaseDesign);
+          vars.getLanguage());
 
     } catch (JRException e) {
       throw new ServletException(e.getMessage());

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,6 +74,7 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
       jsonRequest.put("message", msg);
       jsonRequest.put("retryExecution", true);
     } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
       log.error("Error Process Price Correction", e);
 
       try {

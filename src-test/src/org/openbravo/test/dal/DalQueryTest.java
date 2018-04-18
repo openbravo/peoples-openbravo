@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -26,8 +26,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -168,10 +169,10 @@ public class DalQueryTest extends OBBaseTest {
     assertEquals(obContext.getUser().getId(), bpg.getUpdatedBy().getId());
 
     // first delete the related accounts
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(bpgs.get(0));
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("category", bpgs.get(0));
     final OBQuery<CategoryAccounts> q2 = OBDal.getInstance().createQuery(CategoryAccounts.class,
-        " " + CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY + "=?", parameters);
+        " " + CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY + "=:category", parameters);
     final List<CategoryAccounts> bpgas = q2.list();
     for (final CategoryAccounts bga : bpgas) {
       OBDal.getInstance().refresh(bga);

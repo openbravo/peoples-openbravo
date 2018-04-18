@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,9 +21,10 @@ package org.openbravo.advpaymentmngt.dao;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -55,33 +56,33 @@ public class TransactionsDao {
 
   public static List<Tab> getWindowData(String className) {
 
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(1);
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as td");
     whereClause.append(" left outer join td.window as win");
     whereClause.append(" left outer join td.masterDetailForm as mdf");
-    whereClause.append(" where UPPER(mdf.javaClassName) = UPPER(?)");
-    parameters.add(className);
+    whereClause.append(" where UPPER(mdf.javaClassName) = UPPER(:className)");
+    parameters.put("className", className);
 
     final OBQuery<Tab> obQuery = OBDal.getInstance().createQuery(Tab.class, whereClause.toString());
-    obQuery.setParameters(parameters);
+    obQuery.setNamedParameters(parameters);
     return obQuery.list();
   }
 
   public static OBObjectFieldProvider[] getAccTrxData(String finFinancialAccountId) {
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(1);
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as ft");
     whereClause.append(" left outer join ft.account as acc");
     whereClause.append(" left outer join ft.reconciliation as rec");
     whereClause.append(" where acc.id = rec.account.id");
-    whereClause.append(" and acc.id = ?");
-    parameters.add(finFinancialAccountId);
+    whereClause.append(" and acc.id = :financialAccountId");
+    parameters.put("financialAccountId", finFinancialAccountId);
     OBContext.setAdminMode();
     try {
       final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance().createQuery(
           FIN_FinaccTransaction.class, whereClause.toString());
-      obQuery.setParameters(parameters);
+      obQuery.setNamedParameters(parameters);
       OBObjectFieldProvider[] objectFieldProvider = OBObjectFieldProvider
           .createOBObjectFieldProvider(obQuery.list());
       return objectFieldProvider;
@@ -263,17 +264,17 @@ public class TransactionsDao {
     OBContext.setAdminMode();
     try {
 
-      final List<Object> parameters = new ArrayList<Object>();
+      final Map<String, Object> parameters = new HashMap<>();
       final StringBuilder whereClause = new StringBuilder();
       whereClause.append(" as ft");
       whereClause.append(" left outer join ft.reconciliation as rec");
-      whereClause.append(" where ft.account.id = ?");
+      whereClause.append(" where ft.account.id = :accountId");
       whereClause.append(" and (rec is null or rec.processed = 'N')");
       whereClause.append(" and ft.processed = 'Y'");
-      parameters.add(account.getId());
+      parameters.put("accountId", account.getId());
       if (hideAfterDate) {
-        whereClause.append(" and ft.transactionDate < ?");
-        parameters.add(statementDate);
+        whereClause.append(" and ft.transactionDate < :statementDate");
+        parameters.put("statementDate", statementDate);
       }
       whereClause.append(" order by ft.transactionDate, ft.lineNo");
 
@@ -299,17 +300,17 @@ public class TransactionsDao {
     OBContext.setAdminMode();
     try {
 
-      final List<Object> parameters = new ArrayList<Object>();
+      final Map<String, Object> parameters = new HashMap<>();
       final StringBuilder whereClause = new StringBuilder();
       whereClause.append(" as ft");
       whereClause.append(" left outer join ft.reconciliation as rec");
-      whereClause.append(" where ft.account.id = ?");
+      whereClause.append(" where ft.account.id = :accountId");
       whereClause.append(" and (rec is null or rec.processed = 'N')");
       whereClause.append(" and ft.processed = 'Y'");
-      parameters.add(account.getId());
+      parameters.put("accountId", account.getId());
       if (hideAfterDate) {
-        whereClause.append(" and ft.transactionDate < ?");
-        parameters.add(statementDate);
+        whereClause.append(" and ft.transactionDate < :statementDate");
+        parameters.put("statementDate", statementDate);
       }
       whereClause.append(" order by ft.transactionDate, ft.lineNo");
 

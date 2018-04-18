@@ -19,8 +19,10 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
@@ -69,6 +71,7 @@ public class ApplicationDictionaryCachedStructures {
   private Map<String, ComboTableData> comboTableDataMap;
   private Map<String, List<Parameter>> attMethodMetadataMap;
   private List<String> initializedWindows;
+  private Set<String> inDevelopmentModules;
 
   private boolean useCache;
 
@@ -93,16 +96,21 @@ public class ApplicationDictionaryCachedStructures {
     auxInputMap = new ConcurrentHashMap<>();
     comboTableDataMap = new ConcurrentHashMap<>();
     attMethodMetadataMap = new ConcurrentHashMap<>();
-    initializedWindows = new ArrayList<String>();
+    initializedWindows = new ArrayList<>();
     tabLocks = new ConcurrentHashMap<>();
     windowLocks = new ConcurrentHashMap<>();
+    inDevelopmentModules = getModulesInDevelopment();
 
     // The cache will only be active when there are no modules in development in the system
-    final String query = "select 1 from ADModule m where m.inDevelopment=true";
-    final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
-    indevelMods.setMaxResults(1);
-    useCache = indevelMods.list().size() == 0;
+    useCache = inDevelopmentModules.isEmpty();
     log.info("ADCS initialized, use cache: {}", useCache);
+  }
+
+  @SuppressWarnings("unchecked")
+  private Set<String> getModulesInDevelopment() {
+    final String query = "select m.id from ADModule m where m.inDevelopment=true";
+    final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
+    return new HashSet<>(indevelMods.list());
   }
 
   /**
@@ -446,5 +454,26 @@ public class ApplicationDictionaryCachedStructures {
   /** Can cache be used, AD components are cacheable if there are no modules in development */
   public boolean useCache() {
     return useCache;
+  }
+
+  /**
+   * @return {@code true} if there are modules in "in development" status. Otherwise, return
+   *         {@code false}
+   */
+  public boolean isInDevelopment() {
+    return !this.inDevelopmentModules.isEmpty();
+  }
+
+  /**
+   * Checks whether a module is "in development" status.
+   * 
+   * @param moduleId
+   *          the ID of the AD_Module to be checked if it is in "in development".
+   * 
+   * @return {@code true} if the module passed as parameter is in "in development" status.
+   *         Otherwise, return {@code false}
+   */
+  public boolean isInDevelopment(String moduleId) {
+    return this.inDevelopmentModules.contains(moduleId);
   }
 }

@@ -22,7 +22,9 @@ package org.openbravo.dal.service;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
@@ -414,7 +416,7 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * Create a OBQuery object using a class and a specific where and order by clause.
+   * Creates an OBQuery object using a class and a specific where and order by clause.
    * 
    * @param fromClz
    *          the class to create the query for
@@ -423,11 +425,11 @@ public class OBDal implements OBNotSingleton {
    * @return the query object
    */
   public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz, String whereOrderByClause) {
-    return createQuery(fromClz, whereOrderByClause, new ArrayList<Object>());
+    return createQuery(fromClz, whereOrderByClause, new HashMap<String, Object>());
   }
 
   /**
-   * Create a OBQuery object using a class and a specific where and order by clause and a set of
+   * Creates an OBQuery object using a class and a specific where and order by clause and a set of
    * parameters which are used in the query.
    * 
    * @param fromClz
@@ -437,11 +439,14 @@ public class OBDal implements OBNotSingleton {
    * @param parameters
    *          the parameters to use in the query
    * @return the query object
+   * 
+   * @deprecated use {@link #createQuery(Class, String, Map)} instead.
    */
+  @Deprecated
   public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz,
       String whereOrderByClause, List<Object> parameters) {
     checkReadAccess(fromClz);
-    final OBQuery<T> obQuery = new OBQuery<T>();
+    final OBQuery<T> obQuery = new OBQuery<>();
     obQuery.setWhereAndOrderBy(whereOrderByClause);
     obQuery.setEntity(ModelProvider.getInstance().getEntity(fromClz));
     obQuery.setParameters(parameters);
@@ -450,7 +455,30 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * Create a OBQuery object using an entity name and a specific where and order by clause.
+   * Creates an OBQuery object using a class and a specific where and order by clause and a map of
+   * named parameters which are used in the query.
+   * 
+   * @param fromClz
+   *          the class to create the query for
+   * @param whereOrderByClause
+   *          the HQL where and orderby clause
+   * @param parameters
+   *          the named parameters to use in the query
+   * @return the query object
+   */
+  public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz,
+      String whereOrderByClause, Map<String, Object> parameters) {
+    checkReadAccess(fromClz);
+    final OBQuery<T> obQuery = new OBQuery<>();
+    obQuery.setWhereAndOrderBy(whereOrderByClause);
+    obQuery.setEntity(ModelProvider.getInstance().getEntity(fromClz));
+    obQuery.setNamedParameters(parameters);
+    obQuery.setPoolName(poolName);
+    return obQuery;
+  }
+
+  /**
+   * Creates an OBQuery object using an entity name and a specific where and order by clause.
    * 
    * @param entityName
    *          the type to create the query for
@@ -459,12 +487,12 @@ public class OBDal implements OBNotSingleton {
    * @return the new query object
    */
   public OBQuery<BaseOBObject> createQuery(String entityName, String whereOrderByClause) {
-    return createQuery(entityName, whereOrderByClause, new ArrayList<Object>());
+    return createQuery(entityName, whereOrderByClause, new HashMap<String, Object>());
   }
 
   /**
-   * Create a OBQuery object using an entity name and a specific where and order by clause and a set
-   * of parameters which are used in the query.
+   * Creates an OBQuery object using an entity name and a specific where and order by clause and a
+   * set of parameters which are used in the query.
    * 
    * @param entityName
    *          the type to create the query for
@@ -473,14 +501,40 @@ public class OBDal implements OBNotSingleton {
    * @param parameters
    *          the parameters to use in the query
    * @return a new instance of {@link OBQuery}.
+   * 
+   * @deprecated use {@link #createQuery(String, String, Map)} instead.
    */
+  @Deprecated
   public OBQuery<BaseOBObject> createQuery(String entityName, String whereOrderByClause,
       List<Object> parameters) {
     checkReadAccess(entityName);
-    final OBQuery<BaseOBObject> obQuery = new OBQuery<BaseOBObject>();
+    final OBQuery<BaseOBObject> obQuery = new OBQuery<>();
     obQuery.setWhereAndOrderBy(whereOrderByClause);
     obQuery.setEntity(ModelProvider.getInstance().getEntity(entityName));
     obQuery.setParameters(parameters);
+    obQuery.setPoolName(poolName);
+    return obQuery;
+  }
+
+  /**
+   * Creates an OBQuery object using an entity name and a specific where and order by clause and a
+   * map of named parameters which are used in the query.
+   * 
+   * @param entityName
+   *          the type to create the query for
+   * @param whereOrderByClause
+   *          the HQL where and orderby clause
+   * @param parameters
+   *          the named parameters to use in the query
+   * @return a new instance of {@link OBQuery}.
+   */
+  public OBQuery<BaseOBObject> createQuery(String entityName, String whereOrderByClause,
+      Map<String, Object> parameters) {
+    checkReadAccess(entityName);
+    final OBQuery<BaseOBObject> obQuery = new OBQuery<>();
+    obQuery.setWhereAndOrderBy(whereOrderByClause);
+    obQuery.setEntity(ModelProvider.getInstance().getEntity(entityName));
+    obQuery.setNamedParameters(parameters);
     obQuery.setPoolName(poolName);
     return obQuery;
   }

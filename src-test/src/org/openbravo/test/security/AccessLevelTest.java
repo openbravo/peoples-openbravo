@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,8 +23,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
@@ -131,7 +132,7 @@ public class AccessLevelTest extends OBBaseTest {
         continue;
       }
       final StringBuilder where = new StringBuilder();
-      final List<Object> params = new ArrayList<Object>();
+      final Map<String, Object> params = new HashMap<>();
       if (e.getAccessLevel() == AccessLevel.ALL) {
         // anything allowed continue
         continue;
@@ -142,24 +143,24 @@ public class AccessLevelTest extends OBBaseTest {
         if (!e.isClientEnabled()) {
           continue;
         }
-        where.append("where client = ?");
-        params.add(clientZero);
+        where.append("where client = :clientId");
+        params.put("clientId", clientZero);
       } else if (e.getAccessLevel() == AccessLevel.ORGANIZATION) {
         if (!e.isOrganizationEnabled() || !e.isClientEnabled()) {
           // ignore these
           continue;
         }
-        where.append("where client = ? or organization = ?");
-        params.add(clientZero);
-        params.add(orgZero);
+        where.append("where client = :clientId or organization = :orgId");
+        params.put("clientId", clientZero);
+        params.put("orgId", orgZero);
       } else if (e.getAccessLevel() == AccessLevel.SYSTEM) {
         if (!e.isOrganizationEnabled()) {
-          where.append("where client != ?");
-          params.add(clientZero);
+          where.append("where client != :clientId");
+          params.put("clientId", clientZero);
         } else {
-          where.append("where client != ? or organization != ?");
-          params.add(clientZero);
-          params.add(orgZero);
+          where.append("where client != :clientId or organization != :orgId");
+          params.put("clientId", clientZero);
+          params.put("orgId", orgZero);
         }
         if (!e.isClientEnabled()) {
           // special case happens for AD_SQL_SCRIPT
@@ -170,12 +171,12 @@ public class AccessLevelTest extends OBBaseTest {
           // ignore these
           continue;
         }
-        where.append("where organization != ?");
-        params.add(orgZero);
+        where.append("where organization != :orgId");
+        params.put("orgId", orgZero);
       }
       final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(e.getName(),
           where.toString());
-      obq.setParameters(params);
+      obq.setNamedParameters(params);
       for (BaseOBObject bob : obq.list()) {
         String clientId = null;
         if (bob instanceof ClientEnabled) {

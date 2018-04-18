@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -42,7 +42,8 @@ BEGIN
       FROM C_DEBT_PAYMENT_V
       WHERE C_BPartner_ID=p_BPartner_ID
         AND C_DEBT_PAYMENT_STATUS(C_SETTLEMENT_CANCEL_ID, Cancel_Processed, Generate_Processed, IsPaid, IsValid, C_CashLine_ID, C_BankStatementLine_ID)='P'
-      )
+      ),
+      UPDATED = now()
     WHERE C_BPartner_ID=p_BPartner_ID;
   END IF;
 END C_BP_SOCREDITUSED_REFRESH

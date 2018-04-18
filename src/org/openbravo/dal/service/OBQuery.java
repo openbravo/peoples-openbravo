@@ -20,7 +20,6 @@
 package org.openbravo.dal.service;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,6 +62,8 @@ public class OBQuery<E extends BaseOBObject> {
   private static final String AS = "as ";
   private static final String WHERE = "where";
   private static final String ORDERBY = "order by";
+  private static final String DAL_CLIENT_FILTER = "_dal_readableClients_dal_";
+  private static final String DAL_ORG_FILTER = "_dal_readableOrganizations_dal_";
 
   // computed in createQueryString
   private String usedAlias = "";
@@ -408,21 +409,24 @@ public class OBQuery<E extends BaseOBObject> {
     boolean addWhereClause = !whereClause.toLowerCase().contains(" where ");
     if (isFilterOnReadableOrganization() && entity.isOrganizationPartOfKey()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "id.organization.id " + createInClause(obContext.getReadableOrganizations());
+          + "id.organization.id in (:" + DAL_ORG_FILTER + ")";
+      setNamedParameter(DAL_ORG_FILTER, obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
     } else if (isFilterOnReadableOrganization() && entity.isOrganizationEnabled()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "organization.id " + createInClause(obContext.getReadableOrganizations());
+          + "organization.id in (:" + DAL_ORG_FILTER + ")";
+      setNamedParameter(DAL_ORG_FILTER, obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
     }
 
     if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
-      whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix + "client.id "
-          + createInClause(obContext.getReadableClients());
+      whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
+          + "client.id in (:" + DAL_CLIENT_FILTER + ")";
+      setNamedParameter(DAL_CLIENT_FILTER, obContext.getReadableClients());
       if (addWhereClause) {
         addWhereClause = false;
       }
@@ -442,20 +446,6 @@ public class OBQuery<E extends BaseOBObject> {
     return whereClause;
   }
 
-  private String createInClause(String[] values) {
-    if (values.length == 0) {
-      return " in ('') ";
-    }
-    final StringBuilder sb = new StringBuilder();
-    for (final String v : values) {
-      if (sb.length() > 0) {
-        sb.append(", ");
-      }
-      sb.append("'" + v + "'");
-    }
-    return " in (" + sb.toString() + ")";
-  }
-
   /**
    * @return the Entity queried by the Query object
    */
@@ -469,15 +459,16 @@ public class OBQuery<E extends BaseOBObject> {
 
   private void setParameters(Query<?> qry) {
     final Map<String, Object> localNamedParameters = getNamedParameters();
-    if (localNamedParameters != null) {
-      for (Entry<String, Object> entry : localNamedParameters.entrySet()) {
-        final String name = entry.getKey();
-        final Object value = entry.getValue();
-        if (value instanceof Collection<?>) {
-          qry.setParameterList(name, (Collection<?>) value);
-        } else {
-          qry.setParameter(name, value);
-        }
+    if (localNamedParameters == null) {
+      return;
+    }
+    for (Entry<String, Object> entry : localNamedParameters.entrySet()) {
+      final String name = entry.getKey();
+      final Object value = entry.getValue();
+      if (value instanceof Collection<?>) {
+        qry.setParameterList(name, (Collection<?>) value);
+      } else {
+        qry.setParameter(name, value);
       }
     }
   }
@@ -551,15 +542,6 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   /**
-   * @return the parameters used in the query, this is the list of non-named parameters in the query
-   * @deprecated use {@link #getNamedParameters()}
-   */
-  @Deprecated
-  public List<Object> getParameters() {
-    return Collections.emptyList();
-  }
-
-  /**
    * Set the non-named parameters ('?') in the query by converting them to named parameters. This
    * conversion is done because legacy-style query parameters are no longer supported in Hibernate.
    * 
@@ -568,7 +550,8 @@ public class OBQuery<E extends BaseOBObject> {
    * 
    * @param parameters
    *          the parameters which are set in the query without a name (e.g. as :?)
-   * @deprecated use {@link #setNamedParameters(Map)}
+   * 
+   * @deprecated use {@link #setNamedParameters(Map)} instead.
    */
   @Deprecated
   public void setParameters(List<Object> parameters) {
