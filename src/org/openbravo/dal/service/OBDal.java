@@ -134,7 +134,7 @@ public class OBDal implements OBNotSingleton {
         .getInstance().getSessionFactory();
 
     final Dialect dialect = ((SessionFactoryImpl) dalSessionFactory.getDelegateSessionFactory())
-        .getDialect();
+        .getJdbcServices().getDialect();
     dialect.getFunctions().put(name, function);
   }
 
