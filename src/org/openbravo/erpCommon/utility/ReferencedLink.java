@@ -20,8 +20,9 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -111,8 +112,10 @@ public class ReferencedLink extends HttpSecureAppServlet {
       // Special case, find the real recordId for the language case
       if (entity.getName().equals(Language.ENTITY_NAME)) {
         final OBQuery<Language> languages = OBDal.getInstance().createQuery(Language.class,
-            Language.PROPERTY_LANGUAGE + "=?");
-        languages.setParameters(Collections.singletonList((Object) recordId));
+            Language.PROPERTY_LANGUAGE + "=:recordId");
+        Map<String, Object> parameters = new HashMap<>(1);
+        parameters.put("recordId", recordId);
+        languages.setNamedParameters(parameters);
         json.put("recordId", languages.list().get(0).getId());
       } else {
         json.put("recordId", recordId);

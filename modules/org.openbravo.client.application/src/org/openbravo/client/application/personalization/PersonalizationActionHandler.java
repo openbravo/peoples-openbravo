@@ -11,14 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.personalization;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,17 +97,17 @@ public class PersonalizationActionHandler extends BaseActionHandler {
         }
 
         // Delete also all the preferences that has this uiPersonalization as the 'Default View'
-        List<Object> params = new ArrayList<Object>();
+        Map<String, Object> params = new HashMap<>(2);
         StringBuilder hql = new StringBuilder();
         hql.append(" as p where ");
-        hql.append(" p.searchKey = ? ");
-        params.add(uiPersonalization);
-        hql.append(" and p.property = ?");
-        params.add("OBUIAPP_DefaultSavedView");
+        hql.append(" p.searchKey = :uiPersonalization ");
+        params.put("uiPersonalization", uiPersonalization);
+        hql.append(" and p.property = :property");
+        params.put("property", "OBUIAPP_DefaultSavedView");
 
         OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class,
             hql.toString());
-        qPref.setParameters(params);
+        qPref.setNamedParameters(params);
         List<Preference> preferences = qPref.list();
 
         for (Preference preference : preferences) {

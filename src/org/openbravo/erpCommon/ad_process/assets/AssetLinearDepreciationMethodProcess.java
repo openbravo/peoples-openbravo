@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,10 +22,11 @@ package org.openbravo.erpCommon.ad_process.assets;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -563,24 +564,24 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
   private AmortizationLine getAmortizationLine(Asset asset, Date startDate, Date endDate)
       throws OBException {
     StringBuilder whereClause = new StringBuilder();
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>();
     whereClause.append(" as aml join aml.amortization as am ");
-    whereClause.append(" where aml.asset.id = ? ");
+    whereClause.append(" where aml.asset.id = :assetId ");
     if (startDate != null) {
-      whereClause.append("       and am.startingDate = ?");
+      whereClause.append("       and am.startingDate = :startDate");
     }
-    whereClause.append("       and am.endingDate = ?");
+    whereClause.append("       and am.endingDate = :endDate");
     final OBQuery<AmortizationLine> obq = OBDal.getInstance().createQuery(AmortizationLine.class,
         whereClause.toString());
     obq.setFilterOnReadableOrganization(false);
-    parameters.add(asset.getId());
+    parameters.put("assetId", asset.getId());
     if (startDate != null) {
-      parameters.add(startDate);
+      parameters.put("startDate", startDate);
     }
-    parameters.add(endDate);
-    obq.setParameters(parameters);
+    parameters.put("endDate", endDate);
+    obq.setNamedParameters(parameters);
     List<AmortizationLine> amortizationLineList = obq.list();
-    if (amortizationLineList.size() == 0) {
+    if (amortizationLineList.isEmpty()) {
       return null;
     } else if (amortizationLineList.size() > 1) {
       throw new OBException("More than one amortization line exist from " + startDate.toString()

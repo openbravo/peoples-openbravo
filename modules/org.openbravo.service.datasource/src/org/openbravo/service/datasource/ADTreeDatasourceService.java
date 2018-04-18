@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ package org.openbravo.service.datasource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -350,14 +349,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (hqlWhereClause != null) {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
-    joinClause.append(" and tn.reportSet = ? order by tn.sequenceNumber ");
+    joinClause.append(" and tn.reportSet = :nodeId order by tn.sequenceNumber ");
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setFilterOnActive(false);
     obq.setFilterOnReadableOrganization(entity.getMappingClass() != Organization.class);
-    final List<Object> parameters = new ArrayList<>();
-    parameters.add(nodeId);
-    obq.setParameters(parameters);
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("nodeId", nodeId);
+    obq.setNamedParameters(parameters);
     return obq.count() > 0;
   }
 
@@ -686,14 +685,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     if (hqlWhereClause != null) {
       joinClause.append(" and (" + hqlWhereClause + ")");
     }
-    joinClause.append(" and tn.node = ?");
+    joinClause.append(" and tn.node = :nodeId");
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setFilterOnActive(false);
 
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(nodeId);
-    obq.setParameters(parameters);
+    final Map<String, Object> parameters = new HashMap<>();
+    parameters.put("nodeId", nodeId);
+    obq.setNamedParameters(parameters);
 
     return obq.count() > 0;
   }

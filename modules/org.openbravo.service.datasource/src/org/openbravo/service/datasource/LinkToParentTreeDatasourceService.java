@@ -221,7 +221,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     boolean isMultiParentTree = tableTree.isHasMultiparentNodes();
 
     StringBuilder whereClause = new StringBuilder();
-    final List<Object> queryParameters = new ArrayList<Object>();
+    final Map<String, Object> queryParameters = new HashMap<>();
     whereClause.append(" as e where ");
     String actualParentId = new String(parentId);
     if (isMultiParentTree) {
@@ -250,8 +250,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         if (!linkToParentProperty.isPrimitive()) {
           whereClause.append(".id");
         }
-        whereClause.append(" = ? ");
-        queryParameters.add(actualParentId);
+        whereClause.append(" = :parentId ");
+        queryParameters.put("parentId", actualParentId);
       }
       if (tab != null && tab.getTabLevel() > 0) {
         // only try to add the parent tab criteria when the tab is not the header
@@ -262,7 +262,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         whereClause.toString());
 
     query.setFilterOnActive(false);
-    query.setParameters(queryParameters);
+    query.setNamedParameters(queryParameters);
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
@@ -346,7 +346,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    *          tab will be included
    */
   private void addParentTabCriteria(StringBuilder whereClause, Tab tab,
-      Map<String, String> parameters, List<Object> queryParameters) {
+      Map<String, String> parameters, Map<String, Object> queryParameters) {
     Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
     if (parentTab != null) {
       String parentPropertyName = ApplicationUtils.getParentProperty(tab, parentTab);
@@ -355,8 +355,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
           JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
           String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
           if (parentRecordId != null) {
-            whereClause.append(" and e." + parentPropertyName + ".id = ? ");
-            queryParameters.add(parentRecordId);
+            whereClause.append(" and e." + parentPropertyName + ".id = :parentRecordId ");
+            queryParameters.put("parentRecordId", parentRecordId);
           }
         } catch (JSONException e) {
           logger.error("Error while obtaining a property from a JSONObject", e);
@@ -423,7 +423,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     if (!linkToParentProperty.isPrimitive()) {
       whereClause.append(".id");
     }
-    whereClause.append(" = ? ");
+    whereClause.append(" = :nodeId ");
     if (hqlWhereClause != null) {
       whereClause.append(" and " + hqlWhereClause);
     }
@@ -431,9 +431,9 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         whereClause.toString());
     query.setFilterOnActive(false);
 
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add(nodeIdStr);
-    query.setParameters(parameters);
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("nodeId", nodeIdStr);
+    query.setNamedParameters(parameters);
 
     return query.count() > 0;
   }
@@ -515,13 +515,13 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     if (!nodeIdProperty.isPrimitive()) {
       whereClause.append(".id");
     }
-    whereClause.append(" = ? ");
+    whereClause.append(" = :nodeId ");
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
 
-    final List<Object> queryParameters = new ArrayList<Object>();
-    queryParameters.add(nodeId);
-    query.setParameters(queryParameters);
+    final Map<String, Object> queryParameters = new HashMap<>(1);
+    queryParameters.put("nodeId", nodeId);
+    query.setNamedParameters(queryParameters);
 
     if (query.count() != 1) {
       // If the node has several parents, it is not possible to know which node should be returned
@@ -556,14 +556,14 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     if (!nodeIdProperty.isPrimitive()) {
       whereClause.append(".id");
     }
-    whereClause.append(" = ? ");
+    whereClause.append(" = :nodeId ");
     whereClause.append(" and (" + hqlWhereClause + ")");
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
 
-    final List<Object> queryParameters = new ArrayList<Object>();
-    queryParameters.add(nodeId);
-    query.setParameters(queryParameters);
+    final Map<String, Object> queryParameters = new HashMap<>(1);
+    queryParameters.put("nodeId", nodeId);
+    query.setNamedParameters(queryParameters);
 
     return (query.count() == 1);
   }
@@ -819,14 +819,14 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     if (!nodeIdProperty.isPrimitive()) {
       whereClause.append(".id");
     }
-    whereClause.append(" = ? ");
+    whereClause.append(" = :parentId ");
 
     final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(entity.getName(),
         whereClause.toString());
 
-    final List<Object> queryParameters = new ArrayList<Object>();
-    queryParameters.add(parentId);
-    query.setParameters(queryParameters);
+    final Map<String, Object> queryParameters = new HashMap<>();
+    queryParameters.put("parentId", parentId);
+    query.setNamedParameters(queryParameters);
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
