@@ -22,14 +22,14 @@ package org.openbravo.erpCommon.obps;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import javax.inject.Inject;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.ModuleDevelopmentStatusHelper;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
@@ -52,10 +52,6 @@ public class ActiveInstanceProcess implements Process {
   private static final Logger log = Logger.getLogger(ActiveInstanceProcess.class);
   private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
   private static final String EVALUATION_PURPOSE = "E";
-  private static final String PRODUCTION_PURPOSE = "P";
-
-  @Inject
-  private ApplicationDictionaryCachedStructures cachedStructures;
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -131,10 +127,6 @@ public class ActiveInstanceProcess implements Process {
             sysInfo.setMaturityUpdate(Integer.toString(MaturityLevel.CS_MATURITY));
           }
 
-          if (PRODUCTION_PURPOSE.equals(purpose)) {
-            unflagInDevelopmentModules();
-          }
-
           updateShowProductionFields("Y");
 
           if (ak.isTrial() && !EVALUATION_PURPOSE.equals(purpose)) {
@@ -151,6 +143,9 @@ public class ActiveInstanceProcess implements Process {
           if (HeartbeatProcess.isClonedInstance()) {
             insertDummyHBLog();
           }
+
+          WeldUtils.getInstanceFromStaticBeanManager(ModuleDevelopmentStatusHelper.class)
+              .updateDevelopmentStatusInAllModules(purpose);
         } else {
           msg.setType("Error");
           msg.setMessage(ak.getErrorMessage());
@@ -179,17 +174,6 @@ public class ActiveInstanceProcess implements Process {
       pref.setProperty("showMRPandProductionFields");
       pref.setSearchKey(value);
       OBDal.getInstance().save(pref);
-    }
-  }
-
-  private void unflagInDevelopmentModules() {
-    if (cachedStructures.isInDevelopment()) {
-      OBDal
-          .getInstance()
-          .getSession()
-          .createQuery(
-              "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
-          .executeUpdate();
     }
   }
 

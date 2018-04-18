@@ -22,50 +22,20 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.ApplicationInitializer;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.system.SystemInformation;
 
 @ApplicationScoped
 public class ProductionModuleInitializer implements ApplicationInitializer {
 
-  private static final String PURPOSE_PRODUCTION = "P";
   private static Logger log = Logger.getLogger(ProductionModuleInitializer.class);
 
   @Inject
-  private ApplicationDictionaryCachedStructures cachedStructures;
+  private ModuleDevelopmentStatusHelper moduleDevelopmentStatusHelper;
 
   @Override
   public void initialize() {
     log.info("Checking instance purpose and In Development modules");
-
-    String purpose = getInstancePurpose();
-    if (isProductionInstance(purpose) && cachedStructures.isInDevelopment()) {
-      removeDevelopmentFlagToAllModules();
-    }
+    moduleDevelopmentStatusHelper.updateDevelopmentStatusInAllModules();
   }
 
-  private boolean isProductionInstance(String purpose) {
-    return purpose != null && purpose.equals(PURPOSE_PRODUCTION);
-  }
-
-  private String getInstancePurpose() {
-    return (String) OBDal
-        .getInstance()
-        .getSession()
-        .createQuery(
-            "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
-                + SystemInformation.ENTITY_NAME).uniqueResult();
-  }
-
-  private void removeDevelopmentFlagToAllModules() {
-    OBDal
-        .getInstance()
-        .getSession()
-        .createQuery(
-            "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
-        .executeUpdate();
-  }
 }

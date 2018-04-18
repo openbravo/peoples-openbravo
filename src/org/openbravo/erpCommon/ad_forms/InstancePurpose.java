@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,12 +33,15 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.ModuleDevelopmentStatusHelper;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.utils.Replace;
@@ -47,6 +51,9 @@ public class InstancePurpose extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final ValueListFilter availablePurposeFilter = new ValueListFilter("P", "D", "T",
       "E");
+
+  @Inject
+  private ModuleDevelopmentStatusHelper moduleDevelopmentStatusHelper;
 
   @Override
   public void init(ServletConfig config) {
@@ -160,6 +167,8 @@ public class InstancePurpose extends HttpSecureAppServlet {
     if (HeartbeatProcess.isClonedInstance()) {
       InstanceManagement.insertDummyHBLog();
     }
+
+    moduleDevelopmentStatusHelper.updateDevelopmentStatusInAllModules();
   }
 
   @Override
