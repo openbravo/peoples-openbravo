@@ -20,10 +20,14 @@ package org.openbravo.common.actionhandler;
 
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.common.actionhandler.createlinesfromprocess.CreateLinesFromProcess;
+import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,22 +37,35 @@ public class CreateLinesFromInOut extends BaseProcessActionHandler {
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
-    OBContext.setAdminMode(true);
     try {
+      // Request Parameters
       jsonRequest = new JSONObject(content);
-      log.debug("{}", jsonRequest);
+      final String requestedAction = CreateLinesFromUtil.getRequestedAction(jsonRequest);
+      JSONArray selectedLines = CreateLinesFromUtil.getSelectedLines(jsonRequest);
+      Invoice currentInvoice = CreateLinesFromUtil.getCurrentInvoice(jsonRequest);
 
-      JSONObject errorMessage = new JSONObject();
-      errorMessage.put("severity", "success");
-      errorMessage.put("text", OBMessageUtils.messageBD("success"));
-      jsonRequest.put("message", errorMessage);
-
+      if (CreateLinesFromUtil.requestedActionIsDoneAndThereAreSelectedOrderLines(requestedAction,
+          selectedLines)) {
+        // CreateLinesFromProcess is instantiated using Weld so it can use Dependency Injection
+        CreateLinesFromProcess CreateLinesFromProcess = WeldUtils
+            .getInstanceFromStaticBeanManager(CreateLinesFromProcess.class);
+        int createdInvoiceLinesCount = CreateLinesFromProcess.createInvoiceLinesFromDocumentLines(
+            selectedLines, currentInvoice, ShipmentInOutLine.class);
+        jsonRequest.put(CreateLinesFromUtil.MESSAGE,
+            CreateLinesFromUtil.getSuccessMessage(createdInvoiceLinesCount));
+      }
     } catch (Exception e) {
-      log.error("Error in ManagePrereservation Action Handler", e);
+      log.error("Error in CreateLinesFromInOut Action Handler", e);
 
-    } finally {
-      OBContext.restorePreviousMode();
+      try {
+        if (jsonRequest != null) {
+          jsonRequest.put(CreateLinesFromUtil.MESSAGE, CreateLinesFromUtil.getErrorMessage(e));
+        }
+      } catch (Exception e2) {
+        log.error(e.getMessage(), e2);
+      }
     }
+
     return jsonRequest;
   }
 }

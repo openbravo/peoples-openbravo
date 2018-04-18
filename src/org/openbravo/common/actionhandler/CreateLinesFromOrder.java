@@ -20,18 +20,14 @@ package org.openbravo.common.actionhandler;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.common.actionhandler.createlinesfromorderprocess.CreateLinesFromOrderProcess;
-import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromMessageUtil;
-import org.openbravo.dal.service.OBDal;
+import org.openbravo.common.actionhandler.createlinesfromprocess.CreateLinesFromProcess;
+import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.OrderLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,26 +41,26 @@ public class CreateLinesFromOrder extends BaseProcessActionHandler {
     try {
       // Request Parameters
       jsonRequest = new JSONObject(content);
-      final String requestedAction = getRequestedAction(jsonRequest);
-      JSONArray selectedOrders = getSelectedOrderLines(jsonRequest);
-      Invoice currentInvoice = getCurrentInvoice(jsonRequest);
+      final String requestedAction = CreateLinesFromUtil.getRequestedAction(jsonRequest);
+      JSONArray selectedLines = CreateLinesFromUtil.getSelectedLines(jsonRequest);
+      Invoice currentInvoice = CreateLinesFromUtil.getCurrentInvoice(jsonRequest);
 
-      if (requestedActionIsDoneAndThereAreSelectedOrderLines(requestedAction, selectedOrders)) {
-        // CreateLinesFromOrderProcess is instantiated using Weld so it can use Dependency Injection
-        CreateLinesFromOrderProcess createLinesFromOrderProcess = WeldUtils
-            .getInstanceFromStaticBeanManager(CreateLinesFromOrderProcess.class);
-        int createdOrderLinesCount = createLinesFromOrderProcess.createOrderLines(selectedOrders,
-            currentInvoice);
-        jsonRequest.put(CreateLinesFromMessageUtil.MESSAGE,
-            CreateLinesFromMessageUtil.getSuccessMessage(createdOrderLinesCount));
+      if (CreateLinesFromUtil.requestedActionIsDoneAndThereAreSelectedOrderLines(requestedAction,
+          selectedLines)) {
+        // CreateLinesFromProcess is instantiated using Weld so it can use Dependency Injection
+        CreateLinesFromProcess CreateLinesFromProcess = WeldUtils
+            .getInstanceFromStaticBeanManager(CreateLinesFromProcess.class);
+        int createdInvoiceLinesCount = CreateLinesFromProcess.createInvoiceLinesFromDocumentLines(
+            selectedLines, currentInvoice, OrderLine.class);
+        jsonRequest.put(CreateLinesFromUtil.MESSAGE,
+            CreateLinesFromUtil.getSuccessMessage(createdInvoiceLinesCount));
       }
     } catch (Exception e) {
       log.error("Error in CreateLinesFromOrder Action Handler", e);
 
       try {
         if (jsonRequest != null) {
-          jsonRequest.put(CreateLinesFromMessageUtil.MESSAGE,
-              CreateLinesFromMessageUtil.getErrorMessage(e));
+          jsonRequest.put(CreateLinesFromUtil.MESSAGE, CreateLinesFromUtil.getErrorMessage(e));
         }
       } catch (Exception e2) {
         log.error(e.getMessage(), e2);
@@ -72,30 +68,6 @@ public class CreateLinesFromOrder extends BaseProcessActionHandler {
     }
 
     return jsonRequest;
-  }
-
-  private Invoice getCurrentInvoice(JSONObject jsonRequest) {
-    String invoiceId;
-    try {
-      invoiceId = jsonRequest.getString("inpcInvoiceId");
-    } catch (JSONException e) {
-      log.error("Error getting the current invoice id.", e.getMessage());
-      throw new OBException(e);
-    }
-    return OBDal.getInstance().get(Invoice.class, invoiceId);
-  }
-
-  private String getRequestedAction(final JSONObject jsonRequest) throws JSONException {
-    return jsonRequest.getString(ApplicationConstants.BUTTON_VALUE);
-  }
-
-  private JSONArray getSelectedOrderLines(final JSONObject jsonRequest) throws JSONException {
-    return jsonRequest.getJSONObject("_params").getJSONObject("window").getJSONArray("_selection");
-  }
-
-  private boolean requestedActionIsDoneAndThereAreSelectedOrderLines(final String requestedAction,
-      final JSONArray selectedOrderLines) {
-    return StringUtils.equals(requestedAction, "DONE") && selectedOrderLines.length() > 0;
   }
 
 }

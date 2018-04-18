@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.common.actionhandler.createlinesfromorderprocess;
+package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -46,23 +47,26 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateLinesFromOrderProcess {
+public class CreateLinesFromProcess {
   @Inject
   @Any
-  private Instance<CreateLinesFromOrderProcessImplementationInterface> createLinesFromOrderProcessHooks;
+  private Instance<CreateLinesFromProcessImplementationInterface> CreateLinesFromProcessHooks;
 
-  private static final Logger log = LoggerFactory.getLogger(CreateLinesFromOrderProcess.class);
+  private static final Logger log = LoggerFactory.getLogger(CreateLinesFromProcess.class);
 
+  // The class of the objects from the invoice lines will be created
+  private Class<? extends BaseOBObject> linesClz;
   private Invoice processingInvoice;
   // Last Line number of the Processing Line
   private Long lastLineNo = 0L;
 
   /**
-   * This process copies the Order Lines selected into the Invoice that is being processed by this
-   * same Process
+   * This process copies the selected Lines into the Invoice that is being processed by this same
+   * Process
    * <ul>
    * <li>1. Update Invoice and Invoice Line related information</li>
    * <li>2. Copy product and attributes</li>
@@ -72,43 +76,49 @@ public class CreateLinesFromOrderProcess {
    * <li>6. Recalculate Taxes</li>
    * </ul>
    * 
-   * @param selectedOrderLines
-   *          Order Lines from which the lines are going to be copied
+   * @param selectedLines
+   *          Order/Shipment/Receipt Lines from which the lines are going to be copied
+   * @param selectedLinesClz
+   *          The class of the lines being copied (Order/Shipment/Receipt)
    * @param currentInvoice
-   * @return The number of order lines properly copied
+   * @return The number of the lines properly copied
    */
-  public int createOrderLines(final JSONArray selectedOrderLines, Invoice currentInvoice) {
+  public int createInvoiceLinesFromDocumentLines(final JSONArray selectedLines,
+      Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesClz) {
+    // Validate the object class is supported in the process.
+    this.linesClz = selectedLinesClz;
+    validateLinesClz();
+
     OBContext.setAdminMode(true);
     try {
       long startTime = System.currentTimeMillis();
       processingInvoice = currentInvoice;
-      // Copy all the selected order lines
-      int createdInvoiceLinesCount = createLinesFromOrderLines(selectedOrderLines);
+      // Copy all the selected lines
+      int createdInvoiceLinesCount = createLinesFromSelectedLines(selectedLines);
 
       // Update invoice prepayment from order lines
       updateInvoicePrepayment();
 
       long endTime = System.currentTimeMillis();
-      log.debug(String.format(
-          "CreateLinesFromOrderProcess: Time taken to complete the process: %d ms",
+      log.debug(String.format("CreateLinesFromProcess: Time taken to complete the process: %d ms",
           (endTime - startTime)));
       return createdInvoiceLinesCount;
     } catch (Exception e) {
-      log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
-          "Error in CreateLinesFromOrderProcess: ", e);
+      log.error(OBMessageUtils.messageBD("CreateLinesFromError"),
+          "Error in CreateLinesFromProcess: ", e);
       throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  private int createLinesFromOrderLines(final JSONArray selectedOrderLines) {
-    // Initialize the line number with the last one in the processing Order.
+  private int createLinesFromSelectedLines(final JSONArray selectedLines) {
+    // Initialize the line number with the last one in the processing invoice.
     lastLineNo = getLastLineNoOfCurrentInvoice();
     int createdInvoiceLinesCount = 0;
-    for (int index = 0; index < selectedOrderLines.length(); index++) {
-      OrderLine orderLine = getSelectedOrderLineInPosition(selectedOrderLines, index);
-      InvoiceLine newInvoiceLine = createLineFromSelectedOrderLineAndRunHooks(orderLine);
+    for (int index = 0; index < selectedLines.length(); index++) {
+      BaseOBObject selectedLine = getLineInPosition(selectedLines, index);
+      InvoiceLine newInvoiceLine = createLineFromSelectedOrderLineAndRunHooks(selectedLine);
       processingInvoice.getInvoiceLineList().add(newInvoiceLine);
       OBDal.getInstance().save(newInvoiceLine);
       OBDal.getInstance().save(processingInvoice);
@@ -118,26 +128,42 @@ public class CreateLinesFromOrderProcess {
     return createdInvoiceLinesCount;
   }
 
-  private OrderLine getSelectedOrderLineInPosition(final JSONArray selectedOrderLines,
-      final int index) {
+  /**
+   * Return an object instance for the line in an specified index of the selection
+   * 
+   * @param selectedLines
+   * @param index
+   * @return The object representing the line
+   */
+  private BaseOBObject getLineInPosition(final JSONArray selectedLines, final int index) {
     try {
-      String selectedOrderLineId = selectedOrderLines.getJSONObject(index).getString("id");
-      return OBDal.getInstance().get(OrderLine.class, selectedOrderLineId);
+      String selectedLineId = selectedLines.getJSONObject(index).getString("id");
+      return OBDal.getInstance().get(linesClz, selectedLineId);
     } catch (JSONException e) {
       log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
-          "Error in CreateLinesFromOrderProcess when reading a JSONObject", e);
+          "Error in CreateLinesFromProcess when reading a JSONObject", e);
       throw new OBException(e);
     }
   }
 
   /**
-   * Creates a new invoice line from an existing order line
+   * Validate that the line class is supported by the process. If not then an exception is thrown
+   */
+  private void validateLinesClz() {
+    if (!linesClz.getName().equals(OrderLine.class.getName())
+        && !linesClz.getName().equals(ShipmentInOutLine.class.getName())) {
+      throw new OBException("CreateLinesFromProccessInvalidDocumentType");
+    }
+  }
+
+  /**
+   * Creates a new invoice line from an existing line
    * 
-   * @param orderLine
-   *          The order line to be copied
+   * @param copiedLine
+   *          The order/shipment/receipt line to be copied
    * @return The created invoice line
    */
-  private InvoiceLine createLineFromSelectedOrderLineAndRunHooks(final OrderLine orderLine) {
+  private InvoiceLine createLineFromSelectedOrderLineAndRunHooks(final BaseOBObject copiedLine) {
     long startTime = System.currentTimeMillis();
 
     InvoiceLine newInvoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
@@ -146,13 +172,12 @@ public class CreateLinesFromOrderProcess {
     newInvoiceLine.setLineNo(nextLineNo());
 
     // Execute Hooks to perform operations
-    executeHooks(orderLine, newInvoiceLine);
+    executeHooks(copiedLine, newInvoiceLine);
 
     long endTime = System.currentTimeMillis();
-    log.debug(String
-        .format(
-            "CreateLinesFromOrderProcess: Time taken to copy a line from the previous order line: %d ms",
-            (endTime - startTime)));
+    log.debug(String.format(
+        "CreateLinesFromProcess: Time taken to copy a line from the previous one: %d ms",
+        (endTime - startTime)));
 
     return newInvoiceLine;
   }
@@ -162,33 +187,34 @@ public class CreateLinesFromOrderProcess {
     return lastLineNo;
   }
 
-  private void executeHooks(final OrderLine orderLine, InvoiceLine newInvoiceLine) {
+  private void executeHooks(final BaseOBObject line, InvoiceLine newInvoiceLine) {
     try {
-      if (createLinesFromOrderProcessHooks != null) {
-        final List<CreateLinesFromOrderProcessImplementationInterface> hooks = new ArrayList<>();
-        for (CreateLinesFromOrderProcessImplementationInterface hook : createLinesFromOrderProcessHooks
+      if (CreateLinesFromProcessHooks != null) {
+        final List<CreateLinesFromProcessImplementationInterface> hooks = new ArrayList<>();
+        for (CreateLinesFromProcessImplementationInterface hook : CreateLinesFromProcessHooks
             .select(new ComponentProvider.Selector(
-                CreateLinesFromOrderProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER))) {
+                CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER))) {
           if (hook != null) {
             hooks.add(hook);
           }
         }
 
         Collections.sort(hooks, new CreateLinesFromHookComparator());
-        for (CreateLinesFromOrderProcessImplementationInterface hook : hooks) {
-          hook.exec(processingInvoice, orderLine, newInvoiceLine);
+        for (CreateLinesFromProcessImplementationInterface hook : hooks) {
+          hook.exec(processingInvoice, line, newInvoiceLine);
         }
       }
     } catch (Exception e) {
-
+      log.error("Error in CreateLinesFromProcess executing hooks.", e);
+      throw new OBException(e);
     }
   }
 
   private class CreateLinesFromHookComparator implements
-      Comparator<CreateLinesFromOrderProcessImplementationInterface> {
+      Comparator<CreateLinesFromProcessImplementationInterface> {
     @Override
-    public int compare(CreateLinesFromOrderProcessImplementationInterface a,
-        CreateLinesFromOrderProcessImplementationInterface b) {
+    public int compare(CreateLinesFromProcessImplementationInterface a,
+        CreateLinesFromProcessImplementationInterface b) {
       return a.getOrder() < b.getOrder() ? -1 : a.getOrder() == b.getOrder() ? 0 : 1;
     }
   }
@@ -213,18 +239,15 @@ public class CreateLinesFromOrderProcess {
   }
 
   /**
-   * Update the invoice prepayment with the sum of all the orders prepayment amounts
+   * Update the invoice prepayment with the sum of all the prepayment order amounts
    */
   private void updateInvoicePrepayment() {
-    BigDecimal invoicePrepaymentAmt = processingInvoice.getPrepaymentamt();
-    BigDecimal ordersPrepaymentAmt = getOrdersPrepaymentAmt();
-    BigDecimal totalprepayment = invoicePrepaymentAmt.add(ordersPrepaymentAmt);
-    processingInvoice.setPrepaymentamt(totalprepayment);
+    processingInvoice.setPrepaymentamt(getOrdersPrepaymentAmt());
     OBDal.getInstance().save(processingInvoice);
   }
 
   /**
-   * Get all the sum of the orders prepayment amount of all the orders related with the invoice
+   * Get the sum of the orders prepayment amount of all the orders related with the invoice
    * 
    * @return The sum of the prepayment amount of related orders
    */
@@ -233,6 +256,9 @@ public class CreateLinesFromOrderProcess {
         FIN_PaymentSchedule.class);
 
     List<Order> relatedOrdersToInvoiceLines = getRelatedOrdersToInvoiceLines();
+    if (relatedOrdersToInvoiceLines.isEmpty()) {
+      return BigDecimal.ZERO;
+    }
     obc.add(Restrictions.in(FIN_PaymentSchedule.PROPERTY_ORDER, relatedOrdersToInvoiceLines));
     obc.setProjection(Projections.sum(FIN_PaymentSchedule.PROPERTY_PAIDAMOUNT));
     obc.setMaxResults(1);
@@ -252,5 +278,4 @@ public class CreateLinesFromOrderProcess {
     qryOrder.setNamedParameter("invoiceId", processingInvoice.getId());
     return qryOrder.list();
   }
-
 }

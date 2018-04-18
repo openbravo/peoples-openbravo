@@ -19,12 +19,21 @@
 
 package org.openbravo.common.actionhandler.createlinesfromprocess.util;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.ApplicationConstants;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DbUtility;
 
-public class CreateLinesFromMessageUtil {
+public class CreateLinesFromUtil {
 
   public static final String MESSAGE = "message";
   private static final String MESSAGE_SEVERITY = "severity";
@@ -49,4 +58,36 @@ public class CreateLinesFromMessageUtil {
     errorMessage.put(MESSAGE_TEXT, message);
     return errorMessage;
   }
+
+  public static boolean isOrderLine(BaseOBObject line) {
+    return line.getClass().getName().equals(OrderLine.class.getName());
+  }
+
+  public static boolean isShipmentReceiptLine(BaseOBObject line) {
+    return line.getClass().getName().equals(ShipmentInOutLine.class.getName());
+  }
+
+  public static Invoice getCurrentInvoice(JSONObject jsonRequest) {
+    String invoiceId;
+    try {
+      invoiceId = jsonRequest.getString("inpcInvoiceId");
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+    return OBDal.getInstance().get(Invoice.class, invoiceId);
+  }
+
+  public static String getRequestedAction(final JSONObject jsonRequest) throws JSONException {
+    return jsonRequest.getString(ApplicationConstants.BUTTON_VALUE);
+  }
+
+  public static JSONArray getSelectedLines(final JSONObject jsonRequest) throws JSONException {
+    return jsonRequest.getJSONObject("_params").getJSONObject("window").getJSONArray("_selection");
+  }
+
+  public static boolean requestedActionIsDoneAndThereAreSelectedOrderLines(
+      final String requestedAction, final JSONArray selectedOrderLines) {
+    return StringUtils.equals(requestedAction, "DONE") && selectedOrderLines.length() > 0;
+  }
+
 }
