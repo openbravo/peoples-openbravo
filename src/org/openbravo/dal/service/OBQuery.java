@@ -467,6 +467,8 @@ public class OBQuery<E extends BaseOBObject> {
       final Object value = entry.getValue();
       if (value instanceof Collection<?>) {
         qry.setParameterList(name, (Collection<?>) value);
+      } else if (value instanceof String[]) {
+        qry.setParameterList(name, (String[]) value);
       } else {
         qry.setParameter(name, value);
       }
