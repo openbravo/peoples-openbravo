@@ -513,6 +513,7 @@ public class OBDal implements OBNotSingleton {
    * 
    * @deprecated use {@link #createQuery(String, String, Map)} instead.
    */
+  @Deprecated
   public OBQuery<BaseOBObject> createQuery(String entityName, String whereOrderByClause,
       List<Object> parameters) {
     checkReadAccess(entityName);
