@@ -21,17 +21,16 @@ package org.openbravo.erpCommon.obps;
 
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
@@ -54,6 +53,9 @@ public class ActiveInstanceProcess implements Process {
   private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
   private static final String EVALUATION_PURPOSE = "E";
   private static final String PRODUCTION_PURPOSE = "P";
+
+  @Inject
+  private ApplicationDictionaryCachedStructures cachedStructures;
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -181,14 +183,13 @@ public class ActiveInstanceProcess implements Process {
   }
 
   private void unflagInDevelopmentModules() {
-    OBCriteria<Module> criteria = OBDal.getInstance().createCriteria(Module.class);
-    criteria.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, true));
-    List<Module> developmentModules = criteria.list();
-
-    for (Module module : developmentModules) {
-      log.info("Removing development status for module " + module.getName());
-      module.setInDevelopment(false);
-      OBDal.getInstance().save(module);
+    if (cachedStructures.isInDevelopment()) {
+      OBDal
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
+          .executeUpdate();
     }
   }
 
