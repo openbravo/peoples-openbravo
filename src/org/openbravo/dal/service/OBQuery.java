@@ -442,29 +442,43 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   private void setParameters(Query qry) {
+    setPositionalParameters(qry);
+    setNamedParameters(qry);
+  }
+
+  private void setPositionalParameters(Query qry) {
+    final List<Object> localParameters = getParameters();
+    if (localParameters == null) {
+      return;
+    }
     int pos = 0;
-    for (final Object param : getParameters()) {
+    for (final Object param : localParameters) {
       if (param instanceof BaseOBObject) {
         qry.setEntity(pos++, param);
       } else {
         qry.setParameter(pos++, param);
       }
     }
+  }
+
+  private void setNamedParameters(Query qry) {
     final Map<String, Object> localNamedParameters = getNamedParameters();
-    if (localNamedParameters != null) {
-      for (final String name : localNamedParameters.keySet()) {
-        final Object value = localNamedParameters.get(name);
-        if (value instanceof BaseOBObject) {
-          qry.setEntity(name, value);
-        } else if (value instanceof Collection<?>) {
-          qry.setParameterList(name, (Collection<?>) value);
-        } else if (value instanceof String[]) {
-          qry.setParameterList(name, (String[]) value);
-        } else {
-          qry.setParameter(name, value);
-        }
+    if (localNamedParameters == null) {
+      return;
+    }
+    for (final String name : localNamedParameters.keySet()) {
+      final Object value = localNamedParameters.get(name);
+      if (value instanceof BaseOBObject) {
+        qry.setEntity(name, value);
+      } else if (value instanceof Collection<?>) {
+        qry.setParameterList(name, (Collection<?>) value);
+      } else if (value instanceof String[]) {
+        qry.setParameterList(name, (String[]) value);
+      } else {
+        qry.setParameter(name, value);
       }
     }
+
   }
 
   /**
@@ -538,19 +552,22 @@ public class OBQuery<E extends BaseOBObject> {
   /**
    * @return the parameters used in the query, this is the list of non-named parameters in the query
    */
-  public List<Object> getParameters() {
+  private List<Object> getParameters() {
     return parameters;
   }
 
   /**
-   * Set the parameters in this query. These are the non-named parameters.
+   * Set the parameters in this query. These are the non-named parameters ('?').
    * 
    * @param parameters
    *          the parameters which are set in the query without a name (e.g. as :?)
+   * 
+   * @deprecated use {@link #setNamedParameters(Map)} instead.
    */
+  @Deprecated
   public void setParameters(List<Object> parameters) {
     if (parameters == null) {
-      this.parameters = new ArrayList<Object>();
+      this.parameters = new ArrayList<>();
     } else {
       this.parameters = parameters;
     }
@@ -608,7 +625,7 @@ public class OBQuery<E extends BaseOBObject> {
    */
   public void setNamedParameter(String paramName, Object value) {
     if (this.namedParameters == null) {
-      this.namedParameters = new HashMap<String, Object>();
+      this.namedParameters = new HashMap<>();
     }
     this.namedParameters.put(paramName, value);
   }
