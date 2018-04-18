@@ -23,10 +23,13 @@ import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -74,6 +77,8 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
     // Dimension and User2 Dimension
     udpateInformationFromOrderLine();
 
+    // Update the BOM Parent of the invoice line
+    updateBOMParent();
   }
 
   /**
@@ -83,7 +88,6 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
     if (isOrderLine) {
       invoiceLine.setSalesOrderLine((OrderLine) copiedLine);
     } else if (CreateLinesFromUtil.isShipmentReceiptLine(copiedLine)) {
-      invoiceLine.setSalesOrderLine(((ShipmentInOutLine) copiedLine).getSalesOrderLine());
       invoiceLine.setGoodsShipmentLine((ShipmentInOutLine) copiedLine);
     }
   }
@@ -131,4 +135,27 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
     }
     return organizationForNewLine;
   }
+
+  private void updateBOMParent() {
+    invoiceLine.setBOMParent(getInvoiceLineBOMParent());
+  }
+
+  private InvoiceLine getInvoiceLineBOMParent() {
+    if (!isOrderLine && ((ShipmentInOutLine) copiedLine).getBOMParent() == null) {
+      return null;
+    }
+
+    OBCriteria<InvoiceLine> obc = OBDal.getInstance().createCriteria(InvoiceLine.class);
+    obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, invoiceLine.getInvoice()));
+    if (isOrderLine) {
+      obc.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE,
+          ((OrderLine) copiedLine).getBOMParent()));
+    } else {
+      obc.add(Restrictions.eq(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE,
+          ((ShipmentInOutLine) copiedLine).getBOMParent()));
+    }
+    obc.setMaxResults(1);
+    return (InvoiceLine) obc.uniqueResult();
+  }
+
 }
