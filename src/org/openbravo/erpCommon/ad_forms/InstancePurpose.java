@@ -168,7 +168,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
       InstanceManagement.insertDummyHBLog();
     }
 
-    moduleDevelopmentStatusHelper.updateDevelopmentStatusInAllModules();
+    moduleDevelopmentStatusHelper.updateDevelopmentStatusInAllModules(strPurpose);
   }
 
   @Override
