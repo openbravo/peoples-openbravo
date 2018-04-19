@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -33,10 +33,10 @@ import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -1481,7 +1481,6 @@ public class FIN_AddPayment {
    * @param paymentProposal
    * @return List of payment identifiers
    */
-  @SuppressWarnings("unchecked")
   public static List<String> getPaymentFromPaymentProposal(FIN_PaymentProposal paymentProposal) {
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done
@@ -1496,9 +1495,9 @@ public class FIN_AddPayment {
       hql.append("inner join psd." + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " as pd ");
       hql.append("inner join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + " as p ");
       hql.append("WHERE ppd." + FIN_PaymentPropDetail.PROPERTY_FINPAYMENTPROPOSAL + "."
-          + FIN_PaymentProposal.PROPERTY_ID + "= ?");
-      final Query obqPay = session.createQuery(hql.toString());
-      obqPay.setParameter(0, paymentProposal.getId());
+          + FIN_PaymentProposal.PROPERTY_ID + "= :paymentProposalId");
+      final Query<String> obqPay = session.createQuery(hql.toString(), String.class);
+      obqPay.setParameter("paymentProposalId", paymentProposal.getId());
 
       return obqPay.list();
 
