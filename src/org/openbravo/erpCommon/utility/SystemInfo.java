@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -444,6 +444,7 @@ public class SystemInfo {
       databaseVersion = getVersion(SystemInfoData.selectOracleVersion(conn));
     } else {
       databaseVersion = SystemInfoData.selectPostregresVersion(conn);
+      databaseVersion = databaseVersion.split(" ")[0];
     }
     return databaseVersion;
   }
