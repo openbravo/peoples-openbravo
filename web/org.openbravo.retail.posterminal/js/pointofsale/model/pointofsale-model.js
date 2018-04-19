@@ -815,31 +815,39 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                 function cancelAndNew() {
                   if (OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew', true)) {
-                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
-                      label: OB.I18N.getLabel('OBPOS_LblOk'),
-                      action: function () {
-                        orderList.addNewOrder();
-                        var length = cloneOrderForNew.get('lines').length,
-                            linesMap = {},
-                            order = orderList.modelorder,
-                            addRelatedLines, addLineToTickect;
+                    // Check if the not delivered lines are enough to create a ticket
+                    // A ticket cannot be created only with a service that is related to a product and not deferred
+                    var linesForNewTicket = !cloneOrderForNew.get('hasServices') || (_.find(cloneOrderForNew.get('lines').models, function (line) {
+                      return line.get('deliveredQuantity') < line.get('qty') && (!line.get('relatedLines') || _.find(line.get('relatedLines'), function (relatedLine) {
+                        return relatedLine.deferred;
+                      }) || _.find(cloneOrderForNew.get('lines').models, function (relatedLine) {
+                        return relatedLine.get('deliveredQuantity') < relatedLine.get('qty');
+                      }));
+                    }));
+                    if (linesForNewTicket) {
+                      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
+                        label: OB.I18N.getLabel('OBPOS_LblOk'),
+                        action: function () {
+                          orderList.addNewOrder();
+                          var linesMap = {},
+                              order = orderList.modelorder,
+                              addRelatedLines, addLineToTickect;
 
-                        addRelatedLines = function (index) {
-                          var line = cloneOrderForNew.get('lines').at(index),
-                              nextLine = function () {
-                              if (index + 1 < length) {
-                                addRelatedLines(index + 1);
-                              } else {
-                                order.unset('preventServicesUpdate');
-                              }
+                          var finalCallback = function () {
+                              order.unset('preventServicesUpdate');
+                              order.get('lines').trigger('updateRelations');
                               };
-                          if (line.get('remainingQuantity') < line.get('qty')) {
-                            var newLine = _.find(order.get('lines').models, function (orderline) {
-                              return orderline.id === linesMap[line.id];
-                            });
-                            if (line.get('relatedLines')) {
-                              newLine.set('relatedLines', []);
-                              _.each(line.get('relatedLines'), function (relatedLine) {
+
+                          addRelatedLines = function (index) {
+                            if (index === order.get('lines').length) {
+                              finalCallback();
+                              return;
+                            }
+                            var line = order.get('lines').at(index),
+                                oldLine = linesMap[line.id];
+                            if (oldLine.get('relatedLines')) {
+                              line.set('relatedLines', []);
+                              _.each(oldLine.get('relatedLines'), function (relatedLine) {
                                 var newRelatedLine = _.clone(relatedLine);
                                 // If the service is not a deferred service, the related line, documentNo
                                 // and orderId must be updated. If it is, is must be marked as deferred
@@ -850,57 +858,52 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                 } else {
                                   newRelatedLine.deferred = true;
                                 }
-                                newLine.get('relatedLines').push(newRelatedLine);
+                                line.get('relatedLines').push(newRelatedLine);
                               });
                             }
+                            // Hook to allow any needed relation from an external module
                             OB.UTIL.HookManager.executeHooks('OBPOS_CancelAndNewAddLineRelation', {
                               order: order,
                               cloneOrderForNew: cloneOrderForNew,
                               line: line,
-                              newLine: newLine,
+                              oldLine: oldLine,
                               linesMap: linesMap
                             }, function (args) {
-                              nextLine();
+                              addRelatedLines(index + 1);
                             });
-                          } else {
-                            nextLine();
-                          }
-                        };
+                          };
 
-                        addLineToTickect = function (idx) {
-                          if (idx === cloneOrderForNew.get('lines').length) {
-                            if (length > 0) {
+                          addLineToTickect = function (idx) {
+                            if (idx === cloneOrderForNew.get('lines').length) {
                               addRelatedLines(0);
                             } else {
-                              order.unset('preventServicesUpdate');
-                            }
-                          } else {
-                            var line = cloneOrderForNew.get('lines').at(idx);
-                            if (line.get('remainingQuantity') < line.get('qty')) {
-                              order.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('remainingQuantity')), undefined, undefined, function (success, orderline) {
-                                if (success) {
-                                  linesMap[line.id] = order.get('lines').at(order.get('lines').length - 1).id;
-                                }
+                              var line = cloneOrderForNew.get('lines').at(idx);
+                              if (line.get('deliveredQuantity') < line.get('qty')) {
+                                order.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('deliveredQuantity')), undefined, undefined, function (success, orderline) {
+                                  if (success) {
+                                    linesMap[order.get('lines').at(order.get('lines').length - 1).id] = line;
+                                  }
+                                  addLineToTickect(idx + 1);
+                                });
+                              } else {
                                 addLineToTickect(idx + 1);
-                              });
-                            } else {
-                              addLineToTickect(idx + 1);
+                              }
                             }
-                          }
-                        };
+                          };
 
-                        if (cloneOrderForNew.get('isLayaway')) {
-                          OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
-                            permission: null,
-                            orderType: 2
-                          });
+                          if (cloneOrderForNew.get('isLayaway')) {
+                            OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
+                              permission: null,
+                              orderType: 2
+                            });
+                          }
+                          order.set('bp', cloneOrderForNew.get('bp'));
+                          addLineToTickect(0);
                         }
-                        order.set('bp', cloneOrderForNew.get('bp'));
-                        addLineToTickect(0);
-                      }
-                    }, {
-                      label: OB.I18N.getLabel('OBPOS_Cancel')
-                    }]);
+                      }, {
+                        label: OB.I18N.getLabel('OBPOS_Cancel')
+                      }]);
+                    }
                   }
                 }
 
