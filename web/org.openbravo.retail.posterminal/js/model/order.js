@@ -5513,7 +5513,7 @@
     getScannableDocumentNo: function () {
       return this.get('documentNo').replace(/-/g, '\\-').replace(/\+/g, '\\+');
     },
-    turnEditable: function () {
+    turnEditable: function (callback) {
       if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
         return;
       }
@@ -5525,6 +5525,7 @@
         this.set('orderType', 2);
       }
       this.unset('skipApplyPromotions');
+      this.save(callback);
     }
   });
 
