@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.client.application.ModuleDevelopmentStatusHelper;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
@@ -144,7 +144,7 @@ public class ActiveInstanceProcess implements Process {
             insertDummyHBLog();
           }
 
-          WeldUtils.getInstanceFromStaticBeanManager(ModuleDevelopmentStatusHelper.class)
+          WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
               .updateDevelopmentStatusInAllModules(purpose);
         } else {
           msg.setType("Error");

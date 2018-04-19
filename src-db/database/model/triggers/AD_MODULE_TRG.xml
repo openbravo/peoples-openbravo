@@ -14,63 +14,70 @@
   * under the License.
   * The Original Code is Openbravo ERP.
   * The Initial Developer of the Original Code is Openbravo SLU
-  * All portions are Copyright (C) 2008-2012 Openbravo SLU
+  * All portions are Copyright (C) 2008-2018 Openbravo SLU
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
+  DECLARE
+  v_InstancePurpose CHAR(1);
 BEGIN
-    
-    IF AD_isTriggerEnabled()='N' THEN RETURN;
-    END IF;
 
-   IF :new.ENABLED = 'N' AND :new.AD_Module_ID = '0' THEN
-     RAISE_APPLICATION_ERROR(-20000, '@CannotDisableCore@');
-   END IF;
+  IF AD_isTriggerEnabled()='N' THEN IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
+  END IF;
 
-   --Tranlsation management
-   IF INSERTING THEN
+  IF :new.ENABLED = 'N' AND :new.AD_Module_ID = '0' THEN
+    RAISE_APPLICATION_ERROR(-20000, '@CannotDisableCore@');
+  END IF;
+
+  --Prevents development modules in Production instances
+  SELECT instance_purpose INTO v_InstancePurpose FROM ad_system_info;
+  IF :new.isindevelopment = 'Y' AND v_InstancePurpose = 'P' THEN
+    RAISE_APPLICATION_ERROR(-20000, '@AD_MODULE_INDEV_IN_PROD@');
+  END IF;
+
+  --Tranlsation management
+  IF INSERTING THEN
     --  Create Translation Row
-      INSERT INTO AD_Module_Trl
-        (
-          AD_Module_Trl_ID, AD_Module_ID, AD_Language, AD_Client_ID,
-          AD_Org_ID, IsActive, Created,
-          CreatedBy, Updated, UpdatedBy,
-          Description, Help, License,
-          IsTranslated
-        )
-      SELECT get_uuid(), :new.AD_Module_ID, AD_Language, :new.AD_Client_ID, 
-        :new.AD_Org_ID, :new.IsActive, :new.Created, 
-        :new.CreatedBy, :new.Updated, :new.UpdatedBy, 
+    INSERT INTO AD_Module_Trl
+    (
+      AD_Module_Trl_ID, AD_Module_ID, AD_Language, AD_Client_ID,
+      AD_Org_ID, IsActive, Created,
+      CreatedBy, Updated, UpdatedBy,
+      Description, Help, License,
+      IsTranslated
+    )
+      SELECT get_uuid(), :new.AD_Module_ID, AD_Language, :new.AD_Client_ID,
+        :new.AD_Org_ID, :new.IsActive, :new.Created,
+        :new.CreatedBy, :new.Updated, :new.UpdatedBy,
         :new.Description, :new.Help, :new.License,
         'N'
       FROM AD_Language
       WHERE IsActive='Y'
-        AND IsSystemLanguage='Y'
-        and (AD_Language.AD_Language != :new.ad_language or :new.ad_language is null);
-   END IF;
- 
-   IF UPDATING THEN
-    IF :new.IsRegistered ='Y' 
-      AND (COALESCE(:NEW.NAME, '.') <> COALESCE(:NEW.NAME, '.')
-        OR COALESCE(:NEW.TYPE, '.') <> COALESCE(:NEW.TYPE, '.')
-        OR COALESCE(:NEW.JAVAPACKAGE, '.') <> COALESCE(:NEW.JAVAPACKAGE, '.')) THEN
+            AND IsSystemLanguage='Y'
+            and (AD_Language.AD_Language != :new.ad_language or :new.ad_language is null);
+  END IF;
+
+  IF UPDATING THEN
+    IF :new.IsRegistered ='Y'
+       AND (COALESCE(:NEW.NAME, '.') <> COALESCE(:NEW.NAME, '.')
+            OR COALESCE(:NEW.TYPE, '.') <> COALESCE(:NEW.TYPE, '.')
+            OR COALESCE(:NEW.JAVAPACKAGE, '.') <> COALESCE(:NEW.JAVAPACKAGE, '.')) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20534@');
     END IF;
-    
-    
+
+
     IF(COALESCE(:old.License, '.') <> COALESCE(:NEW.License, '.')
-    OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
-    OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.'))
+       OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
+       OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.'))
     THEN
       UPDATE AD_Module_Trl
-        SET IsTranslated='N',
+      SET IsTranslated='N',
         Updated=now()
       WHERE AD_Module_ID=:new.AD_Module_ID;
     END IF;
-   END IF;
-   
+  END IF;
 
-END AD_MODULE_TRG
+  END AD_MODULE_TRG
 ]]></body>
     </trigger>
   </database>

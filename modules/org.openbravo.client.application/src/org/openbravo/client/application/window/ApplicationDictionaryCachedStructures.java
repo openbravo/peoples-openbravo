@@ -42,6 +42,8 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.domain.ReferencedTreeField;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -61,6 +63,7 @@ import org.slf4j.LoggerFactory;
 public class ApplicationDictionaryCachedStructures {
   private static final Logger log = LoggerFactory
       .getLogger(ApplicationDictionaryCachedStructures.class);
+  private static final String PURPOSE_PRODUCTION = "P";
 
   private Map<String, Window> windowMap;
   private Map<String, Tab> tabMap;
@@ -475,5 +478,51 @@ public class ApplicationDictionaryCachedStructures {
    */
   public boolean isInDevelopment(String moduleId) {
     return this.inDevelopmentModules.contains(moduleId);
+  }
+
+  /**
+   * Checks the current system instance purpose. If it is set as Production, all available modules
+   * are set as not in development
+   */
+  public void updateDevelopmentStatusInAllModules() {
+    String purpose = getInstancePurpose();
+    updateDevelopmentStatusInAllModules(purpose);
+  }
+
+  /**
+   * Sets all modules to not in development if the given purpose is "P" (Production) and there are
+   * modules in development mode
+   *
+   * @param purpose
+   *          The instance purpose value
+   */
+  public void updateDevelopmentStatusInAllModules(String purpose) {
+    if (PURPOSE_PRODUCTION.equals(purpose) && isInDevelopment()) {
+      removeDevelopmentFlagToAllModules();
+    }
+    updateCacheStatus();
+  }
+
+  private void updateCacheStatus() {
+    inDevelopmentModules = getModulesInDevelopment();
+    useCache = inDevelopmentModules.isEmpty();
+  }
+
+  private String getInstancePurpose() {
+    return (String) OBDal
+        .getInstance()
+        .getSession()
+        .createQuery(
+            "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
+                + SystemInformation.ENTITY_NAME).uniqueResult();
+  }
+
+  private void removeDevelopmentFlagToAllModules() {
+    OBDal
+        .getInstance()
+        .getSession()
+        .createQuery(
+            "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
+        .executeUpdate();
   }
 }

@@ -33,7 +33,6 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.application.ModuleDevelopmentStatusHelper;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -41,7 +40,6 @@ import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.utils.Replace;
@@ -53,7 +51,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
       "E");
 
   @Inject
-  private ModuleDevelopmentStatusHelper moduleDevelopmentStatusHelper;
+  private ApplicationDictionaryCachedStructures adCachedStructures;
 
   @Override
   public void init(ServletConfig config) {
@@ -168,7 +166,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
       InstanceManagement.insertDummyHBLog();
     }
 
-    moduleDevelopmentStatusHelper.updateDevelopmentStatusInAllModules(strPurpose);
+    adCachedStructures.updateDevelopmentStatusInAllModules(strPurpose);
   }
 
   @Override

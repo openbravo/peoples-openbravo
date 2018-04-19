@@ -22,6 +22,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.ApplicationInitializer;
 
 @ApplicationScoped
@@ -30,12 +31,12 @@ public class ProductionModuleInitializer implements ApplicationInitializer {
   private static Logger log = Logger.getLogger(ProductionModuleInitializer.class);
 
   @Inject
-  private ModuleDevelopmentStatusHelper moduleDevelopmentStatusHelper;
+  private ApplicationDictionaryCachedStructures adCachedStructures;
 
   @Override
   public void initialize() {
     log.info("Checking instance purpose and In Development modules");
-    moduleDevelopmentStatusHelper.updateDevelopmentStatusInAllModules();
+    adCachedStructures.updateDevelopmentStatusInAllModules();
   }
 
 }
