@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -145,16 +145,16 @@ public class TransactionsDao {
   }
 
   public static Long getTransactionMaxLineNo(FIN_FinancialAccount financialAccount) {
-    Query query = OBDal
+    Query<Long> query = OBDal
         .getInstance()
         .getSession()
         .createQuery(
-            "select max(f.lineNo) as maxLineno from FIN_Finacc_Transaction as f where account.id=?");
-    query.setString(0, financialAccount.getId());
-    for (Object obj : query.list()) {
-      if (obj != null) {
-        return (Long) obj;
-      }
+            "select max(f.lineNo) as maxLineno from FIN_Finacc_Transaction as f where account.id=:accountId",
+            Long.class);
+    query.setParameter("accountId", financialAccount.getId());
+    Long maxLineNo = query.uniqueResult();
+    if (maxLineNo != null) {
+      return maxLineNo;
     }
     return 0l;
   }
@@ -386,14 +386,11 @@ public class TransactionsDao {
     hqlString.append(" and ft.processed = 'Y'");
 
     final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(hqlString.toString());
-
-    for (Object resultObject : query.list()) {
-      if (resultObject != null && resultObject.getClass().isInstance(BigDecimal.ONE)) {
-        return (BigDecimal) resultObject;
-      }
+    final Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
+    BigDecimal resultObject = query.uniqueResult();
+    if (resultObject != null) {
+      return resultObject;
     }
-
     return BigDecimal.ZERO;
   }
 }

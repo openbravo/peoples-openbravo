@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -730,13 +730,12 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
   private Long getMaxSeqNoAsset(Asset asset) {
     StringBuilder hql = new StringBuilder();
     hql.append(" select coalesce(max(al.sEQNoAsset), 0) as maxSeqNoAsset ");
-    hql.append(" from FinancialMgmtAmortizationLine as al where al.asset.id = ? ");
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString(0, asset.getId());
-    for (Object obj : query.list()) {
-      if (obj != null) {
-        return (Long) obj;
-      }
+    hql.append(" from FinancialMgmtAmortizationLine as al where al.asset.id = :assetId");
+    Query<Long> query = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
+    query.setParameter("assetId", asset.getId());
+    Long maxSeqNoAsset = query.uniqueResult();
+    if (maxSeqNoAsset != null) {
+      return maxSeqNoAsset;
     }
     return 0l;
   }
@@ -752,13 +751,12 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
   private Long getMaxLineNo(Amortization amortization) {
     StringBuilder hql = new StringBuilder();
     hql.append(" select coalesce(max(al.lineNo), 0) as maxSeqNoAsset ");
-    hql.append(" from FinancialMgmtAmortizationLine as al where al.amortization.id = ? ");
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString(0, amortization.getId());
-    for (Object obj : query.list()) {
-      if (obj != null) {
-        return (Long) obj;
-      }
+    hql.append(" from FinancialMgmtAmortizationLine as al where al.amortization.id = :amortizationId");
+    Query<Long> query = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
+    query.setParameter("amortizationId", amortization.getId());
+    Long maxSeqNoAsset = query.uniqueResult();
+    if (maxSeqNoAsset != null) {
+      return maxSeqNoAsset;
     }
     return 0l;
   }

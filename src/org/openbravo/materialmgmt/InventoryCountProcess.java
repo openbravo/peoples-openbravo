@@ -32,7 +32,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
@@ -41,6 +40,7 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.exception.GenericJDBCException;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.internal.SessionImpl;
+import org.hibernate.query.Query;
 import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -176,7 +176,7 @@ public class InventoryCountProcess implements Process {
 
     // In case get_uuid is not already registered, it's registered now.
     final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
-        .getSessionFactory()).getDialect();
+        .getSessionFactory()).getJdbcServices().getDialect();
     Map<String, SQLFunction> function = dialect.getFunctions();
     if (!function.containsKey("get_uuid")) {
       dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
@@ -271,11 +271,12 @@ public class InventoryCountProcess implements Process {
     insert.append(" and e." + InventoryCountLine.PROPERTY_PRODUCT + ".id = p.id and p."
         + Product.PROPERTY_STOCKED + " = 'Y' and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
 
+    @SuppressWarnings("rawtypes")
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
-    queryInsert.setString("inv", inventory.getId());
-    queryInsert.setString("user", OBContext.getOBContext().getUser().getId());
+    queryInsert.setParameter("inv", inventory.getId());
+    queryInsert.setParameter("user", OBContext.getOBContext().getUser().getId());
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-    queryInsert.setString("currentDate", dateFormatter.format(new Date()));
+    queryInsert.setParameter("currentDate", dateFormatter.format(new Date()));
     // queryInsert.setBoolean("checkReservation", checkReservationQty);
     queryInsert.executeUpdate();
 
@@ -420,7 +421,7 @@ public class InventoryCountProcess implements Process {
     hqlString.append(" , MaterialMgmtStorageDetail as sd");
     hqlString.append(" , Locator as l");
     hqlString.append(" , MaterialMgmtInventoryStatus as invs");
-    hqlString.append(" where icl.physInventory.id = ?");
+    hqlString.append(" where icl.physInventory.id = :physInventoryId");
     hqlString.append("   and sd.product = icl.product");
     hqlString.append("   and (sd.quantityOnHand < 0");
     hqlString.append("     or sd.onHandOrderQuanity < 0");
@@ -433,8 +434,8 @@ public class InventoryCountProcess implements Process {
     hqlString.append(" order by icl.lineNo");
 
     final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(hqlString.toString());
-    query.setString(0, inventory.getId());
+    final Query<String> query = session.createQuery(hqlString.toString(), String.class);
+    query.setParameter("physInventoryId", inventory.getId());
     query.setMaxResults(1);
 
     if (!query.list().isEmpty()) {
