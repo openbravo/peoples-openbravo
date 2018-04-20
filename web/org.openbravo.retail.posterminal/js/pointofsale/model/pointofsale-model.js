@@ -852,11 +852,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                 // If the service is not a deferred service, the related line, documentNo
                                 // and orderId must be updated. If it is, is must be marked as deferred
                                 if (!newRelatedLine.otherTicket) {
+                                  var i, keys = _.keys(linesMap);
                                   newRelatedLine.orderDocumentNo = order.get('documentNo');
                                   newRelatedLine.orderId = order.id;
-                                  newRelatedLine.orderlineId = linesMap[newRelatedLine.orderlineId];
-                                } else {
-                                  newRelatedLine.deferred = true;
+                                  for (i = 0; i < keys.length; i++) {
+                                    var key = keys[i];
+                                    if (newRelatedLine.orderlineId === linesMap[key].id) {
+                                      newRelatedLine.orderlineId = key;
+                                      break;
+                                    }
+                                  }
                                 }
                                 line.get('relatedLines').push(newRelatedLine);
                               });
@@ -879,7 +884,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                             } else {
                               var line = cloneOrderForNew.get('lines').at(idx);
                               if (line.get('deliveredQuantity') < line.get('qty')) {
-                                order.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('deliveredQuantity')), undefined, undefined, function (success, orderline) {
+                                order.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('deliveredQuantity')), {
+                                  isSilentAddProduct: true
+                                }, undefined, function (success, orderline) {
                                   if (success) {
                                     linesMap[order.get('lines').at(order.get('lines').length - 1).id] = line;
                                   }
