@@ -38,15 +38,15 @@ public class CreateLinesFromUtil {
   public static final String MESSAGE = "message";
   private static final String MESSAGE_SEVERITY = "severity";
   private static final String MESSAGE_TEXT = "text";
-  private static final String MESSAGE_RECORDS_COPIED = "RecordsCopied";
+  private static final String MESSAGE_TITLE = "title";
   private static final String MESSAGE_SUCCESS = "success";
   private static final String MESSAGE_ERROR = "error";
 
   public static JSONObject getSuccessMessage(final int recordsCopiedCount) throws JSONException {
     JSONObject errorMessage = new JSONObject();
     errorMessage.put(MESSAGE_SEVERITY, MESSAGE_SUCCESS);
-    errorMessage.put(MESSAGE_TEXT, OBMessageUtils.messageBD(MESSAGE_SUCCESS) + "<br/>"
-        + OBMessageUtils.messageBD(MESSAGE_RECORDS_COPIED) + recordsCopiedCount);
+    errorMessage.put(MESSAGE_TITLE, "Success");
+    errorMessage.put(MESSAGE_TEXT, OBMessageUtils.messageBD(MESSAGE_SUCCESS));
     return errorMessage;
   }
 
@@ -55,6 +55,7 @@ public class CreateLinesFromUtil {
     String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
     JSONObject errorMessage = new JSONObject();
     errorMessage.put(MESSAGE_SEVERITY, MESSAGE_ERROR);
+    errorMessage.put(MESSAGE_TITLE, "Error");
     errorMessage.put(MESSAGE_TEXT, message);
     return errorMessage;
   }
