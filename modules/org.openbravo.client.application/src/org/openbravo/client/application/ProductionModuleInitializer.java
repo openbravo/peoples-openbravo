@@ -24,11 +24,14 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.ApplicationInitializer;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.SystemInformation;
 
 @ApplicationScoped
 public class ProductionModuleInitializer implements ApplicationInitializer {
 
   private static Logger log = Logger.getLogger(ProductionModuleInitializer.class);
+  private static String PRODUCTION_INSTANCE = "P";
 
   @Inject
   private ApplicationDictionaryCachedStructures adCachedStructures;
@@ -36,7 +39,18 @@ public class ProductionModuleInitializer implements ApplicationInitializer {
   @Override
   public void initialize() {
     log.info("Checking instance purpose and In Development modules");
-    adCachedStructures.updateDevelopmentStatusInAllModules();
+    if (PRODUCTION_INSTANCE.equals(getInstancePurpose())) {
+      adCachedStructures.setAllModulesAsNotInDevelopment();
+    }
+  }
+
+  private String getInstancePurpose() {
+    return (String) OBDal
+        .getInstance()
+        .getSession()
+        .createQuery(
+            "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
+                + SystemInformation.ENTITY_NAME).uniqueResult();
   }
 
 }

@@ -481,40 +481,13 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   /**
-   * Checks the current system instance purpose. If it is set as Production, all available modules
-   * are set as not in development
+   * Mark all modules as not in development and updates the cache status
    */
-  public void updateDevelopmentStatusInAllModules() {
-    String purpose = getInstancePurpose();
-    updateDevelopmentStatusInAllModules(purpose);
-  }
-
-  /**
-   * Sets all modules to not in development if the given purpose is "P" (Production) and there are
-   * modules in development mode
-   *
-   * @param purpose
-   *          The instance purpose value
-   */
-  public void updateDevelopmentStatusInAllModules(String purpose) {
-    if (PURPOSE_PRODUCTION.equals(purpose) && isInDevelopment()) {
-      removeDevelopmentFlagToAllModules();
-    }
-    updateCacheStatus();
-  }
-
-  private void updateCacheStatus() {
-    inDevelopmentModules = getModulesInDevelopment();
-    useCache = inDevelopmentModules.isEmpty();
-  }
-
-  private String getInstancePurpose() {
-    return (String) OBDal
-        .getInstance()
-        .getSession()
-        .createQuery(
-            "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
-                + SystemInformation.ENTITY_NAME).uniqueResult();
+  public void setAllModulesAsNotInDevelopment() {
+    removeDevelopmentFlagToAllModules();
+    inDevelopmentModules.clear();
+    useCache = true;
+    log.info("Setting all modules as not In Development");
   }
 
   private void removeDevelopmentFlagToAllModules() {

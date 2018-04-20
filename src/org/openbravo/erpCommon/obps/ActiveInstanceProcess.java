@@ -52,6 +52,7 @@ public class ActiveInstanceProcess implements Process {
   private static final Logger log = Logger.getLogger(ActiveInstanceProcess.class);
   private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
   private static final String EVALUATION_PURPOSE = "E";
+  private static final String PRODUCTION_PURPOSE = "P";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -144,8 +145,10 @@ public class ActiveInstanceProcess implements Process {
             insertDummyHBLog();
           }
 
-          WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
-              .updateDevelopmentStatusInAllModules(purpose);
+          if (PRODUCTION_PURPOSE.equals(purpose)) {
+            WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
+              .setAllModulesAsNotInDevelopment();
+          }
         } else {
           msg.setType("Error");
           msg.setMessage(ak.getErrorMessage());

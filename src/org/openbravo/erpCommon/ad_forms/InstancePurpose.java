@@ -49,6 +49,7 @@ public class InstancePurpose extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final ValueListFilter availablePurposeFilter = new ValueListFilter("P", "D", "T",
       "E");
+  private static final String PURPOSE_PRODUCTION = "P";
 
   @Inject
   private ApplicationDictionaryCachedStructures adCachedStructures;
@@ -166,7 +167,9 @@ public class InstancePurpose extends HttpSecureAppServlet {
       InstanceManagement.insertDummyHBLog();
     }
 
-    adCachedStructures.updateDevelopmentStatusInAllModules(strPurpose);
+    if (PURPOSE_PRODUCTION.equals(strPurpose)) {
+      adCachedStructures.setAllModulesAsNotInDevelopment();
+    }
   }
 
   @Override
