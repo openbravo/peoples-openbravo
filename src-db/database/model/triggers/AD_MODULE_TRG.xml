@@ -18,11 +18,10 @@
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
-  DECLARE
   v_InstancePurpose CHAR(1);
 BEGIN
 
-  IF AD_isTriggerEnabled()='N' THEN IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
+  IF AD_isTriggerEnabled()='N' THEN RETURN;
   END IF;
 
   IF :new.ENABLED = 'N' AND :new.AD_Module_ID = '0' THEN
