@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,8 @@ public class OBQuery<E extends BaseOBObject> {
   private static final String AS = "as ";
   private static final String WHERE = "where";
   private static final String ORDERBY = "order by";
+  private static final String DAL_CLIENT_FILTER = "_dal_readableClients_dal_";
+  private static final String DAL_ORG_FILTER = "_dal_readableOrganizations_dal_";
 
   // computed in createQueryString
   private String usedAlias = "";
@@ -391,21 +393,24 @@ public class OBQuery<E extends BaseOBObject> {
     boolean addWhereClause = !whereClause.toLowerCase().contains(" where ");
     if (isFilterOnReadableOrganization() && entity.isOrganizationPartOfKey()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "id.organization.id " + createInClause(obContext.getReadableOrganizations());
+          + "id.organization.id in (:" + DAL_ORG_FILTER + ")";
+      setNamedParameter(DAL_ORG_FILTER, obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
     } else if (isFilterOnReadableOrganization() && entity.isOrganizationEnabled()) {
       whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
-          + "organization.id " + createInClause(obContext.getReadableOrganizations());
+          + "organization.id in (:" + DAL_ORG_FILTER + ")";
+      setNamedParameter(DAL_ORG_FILTER, obContext.getReadableOrganizations());
       if (addWhereClause) {
         addWhereClause = false;
       }
     }
 
     if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
-      whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix + "client.id "
-          + createInClause(obContext.getReadableClients());
+      whereClause = (addWhereClause ? " where " : "") + addAnd(whereClause) + prefix
+          + "client.id in (:" + DAL_CLIENT_FILTER + ")";
+      setNamedParameter(DAL_CLIENT_FILTER, obContext.getReadableClients());
       if (addWhereClause) {
         addWhereClause = false;
       }
@@ -425,20 +430,6 @@ public class OBQuery<E extends BaseOBObject> {
     return whereClause;
   }
 
-  private String createInClause(String[] values) {
-    if (values.length == 0) {
-      return " in ('') ";
-    }
-    final StringBuilder sb = new StringBuilder();
-    for (final String v : values) {
-      if (sb.length() > 0) {
-        sb.append(", ");
-      }
-      sb.append("'" + v + "'");
-    }
-    return " in (" + sb.toString() + ")";
-  }
-
   /**
    * @return the Entity queried by the Query object
    */
@@ -451,27 +442,43 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   private void setParameters(Query qry) {
+    setPositionalParameters(qry);
+    setNamedParameters(qry);
+  }
+
+  private void setPositionalParameters(Query qry) {
+    final List<Object> localParameters = getParameters();
+    if (localParameters == null) {
+      return;
+    }
     int pos = 0;
-    for (final Object param : getParameters()) {
+    for (final Object param : localParameters) {
       if (param instanceof BaseOBObject) {
         qry.setEntity(pos++, param);
       } else {
         qry.setParameter(pos++, param);
       }
     }
+  }
+
+  private void setNamedParameters(Query qry) {
     final Map<String, Object> localNamedParameters = getNamedParameters();
-    if (localNamedParameters != null) {
-      for (final String name : localNamedParameters.keySet()) {
-        final Object value = localNamedParameters.get(name);
-        if (value instanceof BaseOBObject) {
-          qry.setEntity(name, value);
-        } else if (value instanceof Collection<?>) {
-          qry.setParameterList(name, (Collection<?>) value);
-        } else {
-          qry.setParameter(name, value);
-        }
+    if (localNamedParameters == null) {
+      return;
+    }
+    for (final String name : localNamedParameters.keySet()) {
+      final Object value = localNamedParameters.get(name);
+      if (value instanceof BaseOBObject) {
+        qry.setEntity(name, value);
+      } else if (value instanceof Collection<?>) {
+        qry.setParameterList(name, (Collection<?>) value);
+      } else if (value instanceof String[]) {
+        qry.setParameterList(name, (String[]) value);
+      } else {
+        qry.setParameter(name, value);
       }
     }
+
   }
 
   /**
@@ -545,19 +552,22 @@ public class OBQuery<E extends BaseOBObject> {
   /**
    * @return the parameters used in the query, this is the list of non-named parameters in the query
    */
-  public List<Object> getParameters() {
+  private List<Object> getParameters() {
     return parameters;
   }
 
   /**
-   * Set the parameters in this query. These are the non-named parameters.
+   * Set the parameters in this query. These are the non-named parameters ('?').
    * 
    * @param parameters
    *          the parameters which are set in the query without a name (e.g. as :?)
+   * 
+   * @deprecated use {@link #setNamedParameters(Map)} instead.
    */
+  @Deprecated
   public void setParameters(List<Object> parameters) {
     if (parameters == null) {
-      this.parameters = new ArrayList<Object>();
+      this.parameters = new ArrayList<>();
     } else {
       this.parameters = parameters;
     }
@@ -615,7 +625,7 @@ public class OBQuery<E extends BaseOBObject> {
    */
   public void setNamedParameter(String paramName, Object value) {
     if (this.namedParameters == null) {
-      this.namedParameters = new HashMap<String, Object>();
+      this.namedParameters = new HashMap<>();
     }
     this.namedParameters.put(paramName, value);
   }

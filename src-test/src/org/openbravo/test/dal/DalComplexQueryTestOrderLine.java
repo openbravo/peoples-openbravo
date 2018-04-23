@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,8 @@
 package org.openbravo.test.dal;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -98,7 +98,7 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
     // AND C_BPARTNER.C_BPARTNER_ID = ?
     // note the value of the parameter is set below
-    whereClause.append(" and ol.salesOrder.businessPartner.id=? ");
+    whereClause.append(" and ol.salesOrder.businessPartner.id=:bpId ");
 
     // AND C_ORDER.DOCSTATUS = 'CO'
     whereClause.append(" and ol.salesOrder.documentStatus='CO' ");
@@ -112,9 +112,9 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
         whereClause.toString());
 
     // set the business partner parameter
-    final List<Object> parameters = new ArrayList<Object>();
-    parameters.add("1000017");
-    qry.setParameters(parameters);
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("bpId", "1000017");
+    qry.setNamedParameters(parameters);
 
     for (OrderLine ol : qry.list()) {
 

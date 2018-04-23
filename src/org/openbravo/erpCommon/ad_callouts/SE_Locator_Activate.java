@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,8 @@
 
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -36,8 +36,8 @@ import org.openbravo.model.materialmgmt.onhandquantity.StoragePending;
 
 public class SE_Locator_Activate extends SimpleCallout {
 
-  private final String STORAGEBIN_TAB = "178";
-  private final String WAREHOUSE_TAB = "177";
+  private static final String STORAGEBIN_TAB = "178";
+  private static final String WAREHOUSE_TAB = "177";
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
@@ -85,11 +85,12 @@ public class SE_Locator_Activate extends SimpleCallout {
    */
   private boolean storageIsNotEmpty(String strLocator) {
     final StringBuilder hsqlScript = new StringBuilder();
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(1);
 
     hsqlScript.append(" as sd ");
-    hsqlScript.append(" where sd." + StorageDetail.PROPERTY_STORAGEBIN + ".id = ? and ");
-    parameters.add(strLocator);
+    hsqlScript
+        .append(" where sd." + StorageDetail.PROPERTY_STORAGEBIN + ".id = :storageBinId and ");
+    parameters.put("storageBinId", strLocator);
     hsqlScript.append(" (coalesce (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + ",0) <> 0)");
     hsqlScript.append(" or coalesce (sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + ",0) <> 0");
     hsqlScript.append(" or coalesce (sd." + StorageDetail.PROPERTY_QUANTITYINDRAFTTRANSACTIONS
@@ -99,7 +100,7 @@ public class SE_Locator_Activate extends SimpleCallout {
 
     final OBQuery<StorageDetail> query = OBDal.getInstance().createQuery(StorageDetail.class,
         hsqlScript.toString());
-    query.setParameters(parameters);
+    query.setNamedParameters(parameters);
     query.setMaxResult(1);
     return query.uniqueResult() != null;
   }
@@ -109,12 +110,12 @@ public class SE_Locator_Activate extends SimpleCallout {
    */
   private Boolean warehouseWithPendingReceipts(String warehouse) {
     final StringBuilder hsqlScript = new StringBuilder();
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(1);
 
     hsqlScript.append(" as sp");
     hsqlScript.append(" left join sp.warehouse as w");
-    hsqlScript.append(" where w.id = ? and");
-    parameters.add(warehouse);
+    hsqlScript.append(" where w.id = :warehouseId and");
+    parameters.put("warehouseId", warehouse);
     hsqlScript.append(" (coalesce (sp." + StoragePending.PROPERTY_ORDEREDQUANTITY + ",0) <> 0");
     hsqlScript.append(" or coalesce (sp." + StoragePending.PROPERTY_ORDEREDQUANTITYORDER
         + ",0) <> 0");
@@ -124,7 +125,7 @@ public class SE_Locator_Activate extends SimpleCallout {
 
     final OBQuery<StoragePending> query = OBDal.getInstance().createQuery(StoragePending.class,
         hsqlScript.toString());
-    query.setParameters(parameters);
+    query.setNamedParameters(parameters);
     query.setMaxResult(1);
     return query.uniqueResult() != null;
   }
