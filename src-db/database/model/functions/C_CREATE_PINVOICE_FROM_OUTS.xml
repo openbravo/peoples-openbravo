@@ -74,7 +74,8 @@
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
-  BEGIN --BODY    
+  BEGIN --BODY
+    -- Get Parameters
     FOR Cur_Parameter IN
       (SELECT i.Record_ID,
         p.ParameterName,

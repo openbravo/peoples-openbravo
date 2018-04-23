@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2017 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -98,6 +98,7 @@ BEGIN
   ) LOOP
     v_qty := LEAST(cur_stock.quantity, v_pendingqty);
     M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', cur_stock.m_storage_detail_id, v_qty, p_user_id, cur_stock.isallocated, v_dummy);
+    DBMS_OUTPUT.PUT_LINE('M_Rerserve_Stock_Manual: ' || v_dummy);
     v_pendingqty := v_pendingqty - v_qty;
     IF (v_pendingqty <= 0) THEN
       p_reservedqty := v_reserveqty;

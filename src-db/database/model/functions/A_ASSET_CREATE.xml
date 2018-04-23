@@ -35,12 +35,13 @@
   * - Reversal or Negative Delivery
   * - Guarantee Extension
   ************************************************************************/
-  -- Logistice
-  v_ResultStr VARCHAR2(2000):='';
-  v_Message VARCHAR2(2000):='';
-  v_Result NUMBER:=1; -- 0=failure
-  TYPE RECORD IS REF CURSOR;
+    -- Logistice
+    v_ResultStr VARCHAR2(2000):='';
+    v_Message VARCHAR2(2000):='';
+    v_Result NUMBER:=1; -- 0=failure
+    -- Parameter Variables
     -- Create from ShipmentLine
+    TYPE RECORD IS REF CURSOR;
     Cur_ShipLine RECORD;
     --
     v_A_Asset_ID VARCHAR2(32) ;
@@ -50,6 +51,13 @@
     v_count NUMBER:=0;
     v_Asset_Value VARCHAR2(200) ;
   BEGIN
+    --  Update AD_PInstance
+    IF(p_PInstance_ID IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('A_Asset_Create - Processing ' || p_PInstance_ID) ;
+      v_ResultStr:='PInstanceNotFound';
+      AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'Y', NULL, NULL) ;
+    END IF;
+  BEGIN --BODY
     -- Create From Shipment Line
     IF(p_InOutLine_ID IS NOT NULL) THEN
       FOR Cur_ShipLine IN
@@ -105,6 +113,7 @@
       AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', v_Result, v_Message) ;
     END IF;
     RETURN;
+  END; --BODY
 EXCEPTION
 WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;

@@ -190,7 +190,8 @@ BEGIN
         WHERE property = 'FinancialManagement'
 	  AND ad_module_id <> '0';
         IF (v_count > 0) THEN
-	  v_dummy := AD_GET_PREFERENCE_VALUE('FinancialManagement', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+          v_dummy := AD_GET_PREFERENCE_VALUE('FinancialManagement', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+          DBMS_OUTPUT.PUT_LINE('FinancialManagement preference value: ' || v_dummy);
         ELSIF (v_count = 0) THEN
 	  C_SETTLEMENT_POST(null, v_settlementid);
 	  update c_taxpayment set c_settlement_id=null where c_taxpayment.C_TAXPAYMENT_ID = v_record_id;
@@ -366,6 +367,7 @@ BEGIN
 		AND ad_module_id <> '0';
 	IF (v_count > 0) THEN
 		v_dummy := AD_GET_PREFERENCE_VALUE('FinancialManagement', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+		DBMS_OUTPUT.PUT_LINE('FinancialManagement preference value: ' || v_dummy);
 	ELSIF (v_count = 0) THEN
 		v_ResultStr:='Generating C_Debt_Payment';
 

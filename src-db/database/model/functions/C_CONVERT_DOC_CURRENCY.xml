@@ -49,7 +49,7 @@ BEGIN
 
   IF(p_Amount=0 OR p_CurFrom_ID=p_CurTo_ID) THEN
     RETURN p_Amount;
-  END IF;  
+  END IF;
 
   if (p_fin_finacc_transaction_id is not null) then
     select foreign_convert_rate into v_rate from fin_finacc_transaction fat where fin_finacc_transaction_id=p_fin_finacc_transaction_id;
@@ -69,6 +69,7 @@ EXCEPTION
 WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(SQLERRM);
   RAISE;
+  RETURN NULL;
 END C_CONVERT_DOC_CURRENCY
 ]]></body>
     </function>

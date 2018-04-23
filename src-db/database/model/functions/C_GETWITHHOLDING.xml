@@ -122,7 +122,6 @@ else
 end if;
 -- 3) base imponibile
 base_amount:=TotCompensi*baseamountpercent/100 ;
---TaxAmount := TaxInps*base_amount/100;
 base_amount := base_amount + TaxAmount ;
 -- 4) Calcolo finale
 Withholding:=(withpercent*base_amount)/100;
