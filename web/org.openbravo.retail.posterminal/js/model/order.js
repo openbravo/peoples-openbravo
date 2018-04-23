@@ -2104,7 +2104,27 @@
       if (qty > 0) {
         OB.UTIL.StockUtils.getReceiptLineStock(p.get('id'), undefined, function (data) {
           if (data && data.exception) {
-            OB.UTIL.showConfirmation.display('', data.exception.message);
+            if (data.exception.message === 'Application server is not available.') {
+              OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [p.get('_identifier')]), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                action: function () {
+                  callback(true);
+                }
+              }, {
+                label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                action: function () {
+                  callback(false);
+                }
+              }], {
+                onHideFunction: function () {
+                  callback(false);
+                }
+              });
+            } else {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message);
+              callback(false);
+            }
           } else {
             warehouse = _.find(data.warehouses, function (warehouse) {
               return warehouse.warehouseid === warehouseId;
