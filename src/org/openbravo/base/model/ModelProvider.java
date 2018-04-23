@@ -30,13 +30,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.BaseDomainType;
@@ -459,12 +461,17 @@ public class ModelProvider implements OBSingleton {
   }
 
   private <T extends ModelObject> T queryLastUpdateObject(Session session, Class<T> clazz) {
-    final Criteria c = session.createCriteria(clazz);
-    c.addOrder(Order.desc("updated"));
-    c.setMaxResults(1);
-    @SuppressWarnings("unchecked")
-    final List<T> list = c.list();
-    if (list.size() == 0) {
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaQuery<T> criteria = builder.createQuery(clazz);
+    Root<T> root = criteria.from(clazz);
+    criteria.select(root);
+    criteria.orderBy(builder.desc(root.get("updated")));
+
+    Query<T> query = session.createQuery(criteria);
+    query.setMaxResults(1);
+
+    final List<T> list = query.list();
+    if (list.isEmpty()) {
       throw new OBException("No instances of " + clazz.getName()
           + " in the database, has the database been created and filled with data?");
     }
@@ -477,12 +484,15 @@ public class ModelProvider implements OBSingleton {
     tables = null;
   }
 
-  @SuppressWarnings("unchecked")
   private List<Column> readColumns(Session session) {
-    final Criteria c = session.createCriteria(Column.class);
-    c.addOrder(Order.asc("position"));
-    c.addOrder(Order.asc("name"));
-    return c.list();
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaQuery<Column> criteria = builder.createQuery(Column.class);
+    Root<Column> root = criteria.from(Column.class);
+    criteria.select(root);
+    criteria.orderBy(builder.asc(root.get("position")), builder.asc(root.get("name")));
+
+    Query<Column> query = session.createQuery(criteria);
+    return query.list();
   }
 
   private void assignColumnsToTable(List<Column> cols) {
@@ -620,14 +630,15 @@ public class ModelProvider implements OBSingleton {
       SessionFactoryController sfController) {
     final String columnQry = sfController.getColumnMetadataQuery();
 
-    final Map<String, Boolean> result = new HashMap<String, Boolean>();
-    final SQLQuery sqlQuery = session.createSQLQuery(columnQry);
+    final Map<String, Boolean> result = new HashMap<>();
+    @SuppressWarnings("rawtypes")
+    final NativeQuery sqlQuery = session.createNativeQuery(columnQry);
     for (final Object row : sqlQuery.list()) {
       final Object[] vals = (Object[]) row;
       final String key = createColumnMandatoryKey(vals[0], vals[1]);
       if (vals[2] instanceof String) {
         // note the string contains Y or N
-        result.put(key, ((String) vals[2]).toUpperCase().equals("N"));
+        result.put(key, ((String) vals[2]).equalsIgnoreCase("N"));
       } else {
         result.put(key, (Boolean) vals[2]);
       }
@@ -688,8 +699,9 @@ public class ModelProvider implements OBSingleton {
   // uniqueconstraints from the database
   private List<UniqueConstraintColumn> getUniqueConstraintColumns(Session session,
       SessionFactoryController sessionFactoryController) {
-    final List<UniqueConstraintColumn> result = new ArrayList<UniqueConstraintColumn>();
-    final SQLQuery sqlQuery = session.createSQLQuery(sessionFactoryController
+    final List<UniqueConstraintColumn> result = new ArrayList<>();
+    @SuppressWarnings("rawtypes")
+    final NativeQuery sqlQuery = session.createNativeQuery(sessionFactoryController
         .getUniqueConstraintQuery());
     for (final Object row : sqlQuery.list()) {
       // cast to an array of strings!
@@ -862,22 +874,30 @@ public class ModelProvider implements OBSingleton {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public <T extends Object> List<T> list(Session s, Class<T> clazz) {
-    final Criteria c = s.createCriteria(clazz);
-    return c.list();
+    CriteriaBuilder builder = s.getCriteriaBuilder();
+    CriteriaQuery<T> criteria = builder.createQuery(clazz);
+    Root<T> root = criteria.from(clazz);
+    criteria.select(root);
+
+    Query<T> query = s.createQuery(criteria);
+    return query.list();
   }
 
   public List<Module> getModules() {
     return modules;
   }
 
-  @SuppressWarnings("unchecked")
   private List<Module> retrieveModules(Session s) {
-    final Criteria c = s.createCriteria(Module.class);
-    c.addOrder(Order.asc("seqno"));
-    c.add(Restrictions.eq("active", true));
-    return c.list();
+    CriteriaBuilder builder = s.getCriteriaBuilder();
+    CriteriaQuery<Module> criteria = builder.createQuery(Module.class);
+    Root<Module> root = criteria.from(Module.class);
+    criteria.select(root);
+    criteria.where(builder.equal(root.get("active"), true));
+    criteria.orderBy(builder.asc(root.get("seqno")));
+
+    Query<Module> query = s.createQuery(criteria);
+    return query.list();
   }
 
   /**
