@@ -14,6 +14,7 @@ import java.util.List;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.model.common.enterprise.Organization;
@@ -65,9 +66,6 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.organization.obretcoDbpOrgid.id", "defaultbp_bporg"));
     list.add(new HQLProperty("pos.organization.obretcoShowtaxid", "bp_showtaxid"));
     list.add(new HQLProperty("pos.organization.obretcoShowbpcategory", "bp_showcategoryselector"));
-    list.add(new HQLProperty(
-        "(select max(taxID) from OrganizationInformation oi where oi.organization = pos.organization)",
-        "organizationTaxId"));
     list.add(new HQLProperty("pos.orderdocnoPrefix", "docNoPrefix"));
     list.add(new HQLProperty("coalesce(pos.quotationdocnoPrefix, concat(pos.searchKey, 'QT'))",
         "quotationDocNoPrefix"));
@@ -99,6 +97,22 @@ public class TerminalProperties extends ModelExtension {
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCRPTTEMPLATE, "printCanceledReceiptTemplate",
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSWELCOMETEMPLATE, "printWelcomeTemplate", list);
+
+    // Legal Organization Tax ID
+    Organization org = OBDal.getInstance().get(Organization.class,
+        OBContext.getOBContext().getCurrentOrganization().getId());
+    while (org != null) {
+      if (org.getId().equals("0")) {
+        break;
+      }
+      if (org.getOrganizationType().isLegalEntity()) {
+        list.add(new HQLProperty(
+            "(select max(taxID) from OrganizationInformation oi where oi.organization.id = '"
+                + org.getId() + "')", "organizationTaxId"));
+        break;
+      }
+      org = OBContext.getOBContext().getOrganizationStructureProvider().getParentOrg(org);
+    }
 
     return list;
   }
