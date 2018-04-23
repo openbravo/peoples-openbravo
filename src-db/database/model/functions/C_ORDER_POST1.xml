@@ -360,17 +360,17 @@
     IF (v_IsSOTrx = 'Y' AND v_DocAction='CO') THEN
         FOR Cur_line IN
             (SELECT SUM(ol.qtyordered) AS qtyordered, ol.ad_org_id, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, COALESCE(ol.m_product_uom_id, '0') AS m_product_uom_id, p.islocked, p.issalediscontinued, p.name, p.isstocked, p.producttype
-                 FROM c_orderline ol JOIN m_product p ON ol.m_product_id = p.m_product_id
-	         WHERE ol.c_order_id = v_Record_ID
-	         AND p.isstocked = 'Y'
-	         AND p.producttype = 'I'
-	         AND (p.islocked = 'Y' OR p.issalediscontinued = 'Y')
-	         GROUP BY ol.ad_org_id, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), COALESCE(ol.m_product_uom_id, '0'), p.islocked, p.issalediscontinued, p.name, p.isstocked, p.producttype)
-	    LOOP
+             FROM c_orderline ol JOIN m_product p ON ol.m_product_id = p.m_product_id
+             WHERE ol.c_order_id = v_Record_ID
+             AND p.isstocked = 'Y'
+             AND p.producttype = 'I'
+             AND (p.islocked = 'Y' OR p.issalediscontinued = 'Y')
+             GROUP BY ol.ad_org_id, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), COALESCE(ol.m_product_uom_id, '0'), p.islocked, p.issalediscontinued, p.name, p.isstocked, p.producttype)
+            LOOP
                 IF (Cur_line.islocked = 'Y') THEN
                     RAISE_APPLICATION_ERROR(-20000, '@CannotUseLockedProduct@ ' || Cur_line.name);
                 ELSIF (Cur_line.issalediscontinued = 'Y') THEN
-                    SELECT (CASE WHEN (sd.m_product_uom_id IS NOT NULL) THEN COALESCE(SUM(sd.preqtyorderonhand - sd.reservedqty), 0)
+                    SELECT (CASE WHEN MAX(sd.m_product_uom_id) IS NOT NULL THEN COALESCE(SUM(sd.preqtyorderonhand - sd.reservedqty), 0)
                             ELSE COALESCE(SUM(sd.preqtyonhand - sd.reservedqty), 0) END) INTO v_stockqty
                     FROM m_storage_detail sd
                     JOIN m_locator loc on loc.m_locator_id = sd.m_locator_id
