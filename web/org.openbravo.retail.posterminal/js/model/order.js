@@ -2130,18 +2130,25 @@
               return warehouse.warehouseid === warehouseId;
             });
             if (warehouse && warehouse.warehouseqty < qty) {
-              OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, warehouse.warehouseqty, warehouse.warehousename]), [{
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                action: function () {
+              var navigateToStockScreen = function () {
                   if (p.get('showstock') && OB.MobileApp.model.get('connectedToERP')) {
                     params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
                     params.product = p;
                     params.warehouse = warehouse;
                     OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
                   }
+                  };
+              OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, warehouse.warehouseqty, warehouse.warehousename]), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                action: function () {
+                  navigateToStockScreen();
                 }
-              }]);
+              }], {
+                onHideFunction: function () {
+                  navigateToStockScreen();
+                }
+              });
               callback(false);
             } else {
               callback(true);
@@ -2439,14 +2446,50 @@
           addProductToOrder();
         }
       }
-      if ((p.get('isdiscontinued') || p.get('issalediscontinued')) && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
-        me.getStoreStock(p, qty, options, attrs, function (hasStock) {
-          if (hasStock) {
+      if ((p.get('isdiscontinued') || p.get('issalediscontinued')) && OB.DEC.compare(qty) === 1 && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+        if (p.get('showstock') && attrs && attrs.warehouse && !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)) {
+          var qtyToStock = qty;
+          _.forEach(this.get('lines').models, function (l) {
+            if (l.get('product').get('id') === p.get('id') && l.get('warehouse').id === attrs.warehouse.id) {
+              qtyToStock += l.get('qty');
+            }
+          });
+          if (qtyToStock > attrs.warehouse.warehouseqty) {
+            var navigateToStockScreen = function () {
+                if (OB.MobileApp.model.get('connectedToERP')) {
+                  var params = {};
+                  params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+                  params.product = p;
+                  params.warehouse = attrs.warehouse;
+                  OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
+                }
+                };
+            OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                navigateToStockScreen();
+              }
+            }], {
+              onHideFunction: function () {
+                navigateToStockScreen();
+              }
+            });
+            if (callback) {
+              callback(false, null);
+            }
+          } else {
             returnApproval();
-          } else if (callback) {
-            callback(false, null);
           }
-        });
+        } else {
+          me.getStoreStock(p, qty, options, attrs, function (hasStock) {
+            if (hasStock) {
+              returnApproval();
+            } else if (callback) {
+              callback(false, null);
+            }
+          });
+        }
       } else {
         returnApproval();
       }

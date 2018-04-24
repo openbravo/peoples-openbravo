@@ -325,11 +325,14 @@ enyo.kind({
           data.product = me.product;
           me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
           if (me.localStockModel.get('warehouses').at(0)) {
+            var currentWarehouse;
             if (me.warehouse.warehouseid) {
-              me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(me.warehouse.warehouseid));
+              currentWarehouse = me.localStockModel.getWarehouseById(me.warehouse.warehouseid);
             } else {
-              me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(me.warehouse.id));
+              currentWarehouse = me.localStockModel.getWarehouseById(me.warehouse.id);
             }
+            me.loadDefaultWarehouseData(currentWarehouse);
+            me.warehouse.warehouseqty = currentWarehouse.get('warehouseqty');
           }
           me.bodyComponent.$.stockHere.removeClass('error');
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
