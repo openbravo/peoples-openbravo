@@ -144,7 +144,7 @@ public class LoginHandler extends HttpBaseServlet {
           }
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
-        } catch (AuthenticationExpirationPasswordException|ChangePasswordException exception) {
+        } catch (AuthenticationExpirationPasswordException | ChangePasswordException exception) {
           vars.removeSessionValue("#LoginErrorMsg");
           goToUpdatePassword(res, vars, exception, "../security/Login_FS.html");
         } catch (AuthenticationException e) {
@@ -316,12 +316,6 @@ public class LoginHandler extends HttpBaseServlet {
           // System is being rebuild: allowing extra System Admin sessions
           break;
         }
-      case ON_DEMAND_OFF_PLATFORM:
-        msg = Utility.messageBD(cp, "ON_DEMAND_OFF_PLATFORM", vars.getLanguage());
-        title = Utility.messageBD(cp, "ON_DEMAND_OFF_PLATFORM_TITLE", vars.getLanguage());
-        log4j.warn("On demand off platform");
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
       case POS_TERMINALS_EXCEEDED:
         msg = Utility.messageBD(cp, "OPS_POS_TERMINALS_EXCEEDED", vars.getLanguage());
         title = Utility.messageBD(cp, "OPS_POS_TERMINALS_EXCEEDED_TITLE", vars.getLanguage());

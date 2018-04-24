@@ -19,17 +19,13 @@
 
 package org.openbravo.erpCommon.obps;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -48,7 +44,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -99,7 +94,6 @@ import org.openbravo.xmlEngine.XmlEngine;
 
 public class ActivationKey {
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
-  private final static String ON_DEMAND_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCfHx5q0Bs45Eg2x1V6ASx86ZWNh8jniPprH5xonuJ5ATVSDQ/UGsz1d0v/3WkWXaj98OwUPJt5/iSe7l5DAZ7I2C22y3CQx8pNiBfi4FK+HtRM4pOhK5YQXV2vNV5hTPgsjrOrjdPXZ+SQbDqUIGSNhwBVmrczNO9THDN+eQCSQIDAQAB";;
 
   private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
 
@@ -127,7 +121,6 @@ public class ActivationKey {
   private Date endDate;
   private boolean limitedWsAccess = true;
   private boolean limitNamedUsers = false;
-  private boolean outOfPlatform = false;
   private Long maxUsers;
   private Long posTerminals;
   private Long posTerminalsWarn;
@@ -157,7 +150,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, ON_DEMAND_OFF_PLATFORM, POS_TERMINALS_EXCEEDED
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, POS_TERMINALS_EXCEEDED
   }
 
   public enum CommercialModuleStatus {
@@ -199,7 +192,7 @@ public class ActivationKey {
   }
 
   public enum LicenseType {
-    CONCURRENT_USERS("USR"), ON_DEMAND("DMD");
+    CONCURRENT_USERS("USR");
     private String code;
 
     private LicenseType(String code) {
@@ -212,7 +205,8 @@ public class ActivationKey {
   }
 
   public enum SubscriptionStatus {
-    COMMUNITY("COM"), ACTIVE("ACT"), CANCEL("CAN"), EXPIRED("EXP"), NO_ACTIVE_YET("NAY");
+    COMMUNITY("COM"), ACTIVE("ACT"), CANCEL("CAN"), EXPIRED("EXP"), NO_ACTIVE_YET("NAY"), INVALID(
+        "INV");
     private String code;
 
     private SubscriptionStatus(String code) {
@@ -238,8 +232,6 @@ public class ActivationKey {
   private final static long WS_DAYS_EXCEEDING_ALLOWED_PERIOD = 30L;
   private final static long WS_MS_EXCEEDING_ALLOWED_PERIOD = MILLSECS_PER_DAY
       * WS_DAYS_EXCEEDING_ALLOWED_PERIOD;
-  private static final Long OUT_OF_PLATFORM_DEMAND_MAX_USERS = 2L;
-  private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:20290/checkOnDemand?qry=";
 
   /**
    * Session types that are not taken into account for counting concurrent users
@@ -399,6 +391,19 @@ public class ActivationKey {
       return;
     }
 
+    String pLicenseType = getProperty("lincensetype");
+    if ("USR".equals(pLicenseType)) {
+      licenseType = LicenseType.CONCURRENT_USERS;
+    } else if ("DMD".equals(pLicenseType)) {
+      isActive = false;
+      hasActivationKey = false;
+      errorMessage = "@OPS_INVALID_ON_DEMAND_LICENSE@";
+      return;
+    } else {
+      log4j.warn("Unknown license type:" + pLicenseType + ". Using Concurrent Users!.");
+      licenseType = LicenseType.CONCURRENT_USERS;
+    }
+
     // Get license class, old Activation Keys do not have this info, so treat them as Standard
     // Edition instances
     String pLicenseClass = getProperty("licenseedition");
@@ -409,30 +414,6 @@ public class ActivationKey {
     } else {
       log4j.warn("Unknown license class:" + pLicenseClass + ". Using Basic!.");
       licenseClass = LicenseClass.BASIC;
-    }
-
-    String pLicenseType = getProperty("lincensetype");
-    if ("DMD".equals(pLicenseType)) {
-      licenseType = LicenseType.ON_DEMAND;
-    } else if ("USR".equals(pLicenseType)) {
-      licenseType = LicenseType.CONCURRENT_USERS;
-    } else {
-      log4j.warn("Unknown license type:" + pLicenseType + ". Using Concurrent Users!.");
-      licenseType = LicenseType.CONCURRENT_USERS;
-    }
-
-    if (licenseType == LicenseType.ON_DEMAND) {
-      if (!checkInOnDemandPlatform()) {
-        outOfPlatform = true;
-        String limitusers = getProperty("limitusers");
-        maxUsers = StringUtils.isEmpty(limitusers) ? 0L : Long.valueOf(limitusers);
-        if (maxUsers == 0L) {
-          maxUsers = OUT_OF_PLATFORM_DEMAND_MAX_USERS;
-        }
-        log.warn("On Demand license ouf of platform limiting to " + maxUsers + " concurrent users");
-      } else {
-        maxUsers = 0L;
-      }
     }
 
     if (licenseType == LicenseType.CONCURRENT_USERS) {
@@ -548,48 +529,7 @@ public class ActivationKey {
     pendingTime = null;
     limitedWsAccess = false;
     limitNamedUsers = false;
-    outOfPlatform = false;
     maxUsers = null;
-  }
-
-  private boolean checkInOnDemandPlatform() {
-    InputStream is = null;
-    BufferedReader in = null;
-    try {
-      String qry = UUID.randomUUID().toString();
-      URL url = new URL(ON_DEMAND_PLATFORM_CHECK_URL + qry);
-      URLConnection conn = url.openConnection();
-      is = conn.getInputStream();
-      in = new BufferedReader(new InputStreamReader(is));
-      String l = in.readLine();
-      PublicKey pk = getPublicKey(ON_DEMAND_PUBLIC_KEY);
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      decrypt(l.getBytes(), pk, bos, ON_DEMAND_PUBLIC_KEY);
-      String s = new String(bos.toByteArray());
-      if (qry.equals(s)) {
-        return true;
-      }
-
-      return false;
-    } catch (Exception e) {
-      log.error("Error verifying on On Demand platform.", e);
-      return false;
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (IOException e) {
-          log.error("Error verifying on On Demand platform.", e);
-        }
-      }
-      if (in != null) {
-        try {
-          in.close();
-        } catch (IOException e) {
-          log.error("Error verifying on On Demand platform.", e);
-        }
-      }
-    }
   }
 
   private void checkDates() {
@@ -675,7 +615,7 @@ public class ActivationKey {
     tier2Artifacts = new ArrayList<String>();
     goldenExcludedArtifacts = new ArrayList<String>();
 
-    if (isActive() && licenseType == LicenseType.ON_DEMAND) {
+    if (isActive()) {
       limitNamedUsers = true;
     } else {
       limitNamedUsers = OBPropertiesProvider.getInstance().getBooleanProperty(
@@ -928,11 +868,6 @@ public class ActivationKey {
 
     if (getExpiredInstalledModules().size() > 0) {
       result = LicenseRestriction.MODULE_EXPIRED;
-    }
-
-    if (licenseType == LicenseType.ON_DEMAND && outOfPlatform
-        && !"true".equals(getProperty("limited.on.demand"))) {
-      result = LicenseRestriction.ON_DEMAND_OFF_PLATFORM;
     }
 
     if (result == LicenseRestriction.NO_RESTRICTION) {
@@ -1194,23 +1129,21 @@ public class ActivationKey {
                     : outputFormat.format(endDate))).append("</td></tr>");
       }
 
-      if (licenseType != LicenseType.ON_DEMAND || outOfPlatform) {
-        sb.append("<tr><td>")
-            .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
-            .append("</td><td>")
-            .append(
-                (maxUsers == null || maxUsers == 0L) ? Utility.messageBD(conn, "OPSUnlimitedUsers",
-                    lang) : maxUsers).append("</td></tr>");
-        if (getProperty("limituserswarn") != null) {
-          sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
-              .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
-        }
-
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
-            .append("</td><td>");
-        sb.append(getActiveSessions(null));
-        sb.append("</td></tr>");
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
+          .append("</td><td>")
+          .append(
+              (maxUsers == null || maxUsers == 0L) ? Utility.messageBD(conn, "OPSUnlimitedUsers",
+                  lang) : maxUsers).append("</td></tr>");
+      if (getProperty("limituserswarn") != null) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
+            .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
       }
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
+          .append("</td><td>");
+      sb.append(getActiveSessions(null));
+      sb.append("</td></tr>");
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
           .append("</td><td>").append(getProperty("instanceno")).append("\n");
@@ -1495,16 +1428,6 @@ public class ActivationKey {
     if (hasActivationKey && !subscriptionConvertedProperty && !trial && isTimeToRefresh(ONE_DAY)) {
       refreshLicense(ONE_DAY);
     } else {
-      if (licenseType == LicenseType.ON_DEMAND && outOfPlatform) {
-        outOfPlatform = !checkInOnDemandPlatform();
-        if (outOfPlatform) {
-          log.warn("Still working out of On Demand platform");
-        } else {
-          log.info("Now working on On Demand platform");
-          maxUsers = 0L;
-        }
-      }
-
       // Reload from DB if it was modified from outside, this can happen if:
       // * License was refreshed in a different node in a cluster
       // * Instance was activated through CLI: ant activate.instance
@@ -1723,6 +1646,8 @@ public class ActivationKey {
       return SubscriptionStatus.EXPIRED;
     } else if (isNotActiveYet()) {
       return SubscriptionStatus.NO_ACTIVE_YET;
+    } else if (!hasActivationKey) {
+      return SubscriptionStatus.INVALID;
     } else {
       return SubscriptionStatus.ACTIVE;
     }
@@ -1743,11 +1668,13 @@ public class ActivationKey {
    */
   public JSONObject getExpirationMessage(String lang) {
     JSONObject result = new JSONObject();
+
     try {
-      if (outOfPlatform) {
+      if (StringUtils.isNotBlank(errorMessage)) {
         result.put("type", "Error");
-        result.put("text", Utility.messageBD(new DalConnectionProvider(false),
-            "OBPS_ON_DEMAND_OFF_PLATFORM_LOGIN", lang, false));
+        result.put("text",
+            Utility.parseTranslation(new DalConnectionProvider(false), null, lang, errorMessage));
+
         return result;
       }
 
@@ -1765,7 +1692,6 @@ public class ActivationKey {
         }
         return result;
       }
-
       if (!hasExpired) {
         String msg;
         Long daysToExpireMsg = getProperty("daysWarn") == null ? null : Long
@@ -2006,10 +1932,6 @@ public class ActivationKey {
     return (int) (pendingMs / MILLSECS_PER_DAY);
   }
 
-  public boolean isOffPlatform() {
-    return outOfPlatform;
-  }
-
   public Long getAllowedPosTerminals() {
     // posTerminals not set if community: do not apply restriction
     return posTerminals == null ? NO_LIMIT : posTerminals;
@@ -2038,7 +1960,6 @@ public class ActivationKey {
         || limitation == LicenseRestriction.MODULE_EXPIRED
         || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
         || limitation == LicenseRestriction.HB_NOT_ACTIVE
-        || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
         || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED;
   }
 

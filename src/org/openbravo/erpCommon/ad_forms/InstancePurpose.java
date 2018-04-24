@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -132,10 +132,8 @@ public class InstancePurpose extends HttpSecureAppServlet {
         vars.getStringParameter("inpcRecordId", IsIDFilter.instance));
 
     try {
-      String validation = ActivationKey.getInstance().isOffPlatform() ? "50AFB21662F74D7DAEA5EA721AA7F2BA"
-          : "";
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose",
-          validation, Utility.getContext(this, vars, "#AccessibleOrgTree", "InstancePurpose"),
+      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstancePurpose"),
           Utility.getContext(this, vars, "#User_Client", "InstancePurpose"), 0);
       xmlDocument.setData("reportPurpose", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
