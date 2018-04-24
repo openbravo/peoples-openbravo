@@ -38,13 +38,10 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActiveInstanceProcess;
 import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.LeftTabsBar;
-import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -304,55 +301,37 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
 
     ConnectionProvider cp = new DalConnectionProvider(false);
 
-    // Interface parameters
     ToolBar toolbar = new ToolBar(cp, vars.getLanguage(), "InstanceManagement", false, "", "", "",
         false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-    try {
-      final WindowTabs tabs = new WindowTabs(cp, vars,
-          "org.openbravo.erpCommon.ad_forms.InstanceManagement");
-      xmlDocument.setParameter("theme", vars.getTheme());
-      final NavigationBar nav = new NavigationBar(cp, vars.getLanguage(),
-          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      final LeftTabsBar lBar = new LeftTabsBar(cp, vars.getLanguage(), "InstanceManagement.html",
-          strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (final Exception ex) {
-      throw new ServletException(ex);
+    OBError myMessage = null;
+    ActivationMsg msg = activationKey.getActivationMessage();
+    if (msg == null) {
+      myMessage = vars.getMessage("InstanceManagement");
+    } else {
+      myMessage = new OBError();
+      myMessage.setType(activationKey.getMessageType());
+      String msgTxt = Utility.parseTranslation(cp, vars, vars.getLanguage(), msg.getMsgText());
+
+      OBError originalMessage = vars.getMessage("InstanceManagement");
+      if (originalMessage != null) {
+        msgTxt = originalMessage.getMessage() + "<br/>" + msgTxt;
+      }
+      myMessage.setMessage(msgTxt);
+      myMessage.setType(msg.getSeverity().toString());
     }
 
-    // Message
-    {
-      OBError myMessage = null;
-      ActivationMsg msg = activationKey.getActivationMessage();
-      if (msg == null) {
-        myMessage = vars.getMessage("InstanceManagement");
-      } else {
-        myMessage = new OBError();
-        myMessage.setType(activationKey.getMessageType());
-        String msgTxt = Utility.parseTranslation(cp, vars, vars.getLanguage(), msg.getMsgText());
-
-        OBError originalMessage = vars.getMessage("InstanceManagement");
-        if (originalMessage != null) {
-          msgTxt = originalMessage.getMessage() + "<br/>" + msgTxt;
-        }
-        myMessage.setMessage(msgTxt);
-        myMessage.setType(msg.getSeverity().toString());
-      }
-
-      vars.removeMessage("InstanceManagement");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+    vars.removeMessage("InstanceManagement");
+    if (myMessage != null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
 
     if (!activationKey.isOPSInstance())
@@ -417,39 +396,16 @@ public class InstanceManagement extends HttpSecureAppServlet {
         .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", vars.getTheme());
 
     ConnectionProvider cp = new DalConnectionProvider(false);
 
-    // Interface parameters
-    final ToolBar toolbar = new ToolBar(cp, vars.getLanguage(), "InstanceManagement", false, "",
-        "", "", false, "ad_forms", strReplaceWith, false, true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-
-    try {
-      final WindowTabs tabs = new WindowTabs(cp, vars,
-          "org.openbravo.erpCommon.ad_forms.InstanceManagement");
-      xmlDocument.setParameter("theme", vars.getTheme());
-      final NavigationBar nav = new NavigationBar(cp, vars.getLanguage(),
-          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      final LeftTabsBar lBar = new LeftTabsBar(cp, vars.getLanguage(), "InstanceManagement.html",
-          strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (final Exception ex) {
-      throw new ServletException(ex);
-    }
-
-    // Message
-    {
-      final OBError myMessage = vars.getMessage("InstanceManagement");
-      vars.removeMessage("InstanceManagement");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+    final OBError myMessage = vars.getMessage("InstanceManagement");
+    vars.removeMessage("InstanceManagement");
+    if (myMessage != null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
 
     final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
