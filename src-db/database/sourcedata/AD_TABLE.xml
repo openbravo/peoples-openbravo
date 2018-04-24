@@ -11220,7 +11220,7 @@ from OrderLine as e
   join e.uOM uom
   join e.product p
   left join o.businessPartner.invoiceSchedule si
-  left join e.procurementPOInvoiceMatchList m
+  left outer join e.procurementPOInvoiceMatchList m  with (m.id is null or (m.invoiceLine.id is not null))
   left join e.operativeUOM aum
   ,UOM aum_defaum
 where
