@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2018 Openbravo SLU
+* All portions are Copyright (C) 2001-2017 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -362,23 +362,24 @@
             (SELECT SUM(ol.qtyordered) AS qtyordered, ol.ad_org_id, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, COALESCE(ol.m_product_uom_id, '0') AS m_product_uom_id, p.islocked, p.issalediscontinued, p.name, p.isstocked, p.producttype
              FROM c_orderline ol JOIN m_product p ON ol.m_product_id = p.m_product_id
              WHERE ol.c_order_id = v_Record_ID
-             AND p.isstocked = 'Y'
-             AND p.producttype = 'I'
              AND (p.islocked = 'Y' OR p.issalediscontinued = 'Y')
-             GROUP BY ol.ad_org_id, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), COALESCE(ol.m_product_uom_id, '0'), p.islocked, p.issalediscontinued, p.name, p.isstocked, p.producttype)
+             GROUP BY ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), COALESCE(ol.m_product_uom_id, '0'), p.islocked, p.issalediscontinued, p.name)
             LOOP
                 IF (Cur_line.islocked = 'Y') THEN
                     RAISE_APPLICATION_ERROR(-20000, '@CannotUseLockedProduct@ ' || Cur_line.name);
                 ELSIF (Cur_line.issalediscontinued = 'Y') THEN
-                    SELECT (CASE WHEN MAX(sd.m_product_uom_id) IS NOT NULL THEN COALESCE(SUM(sd.preqtyorderonhand - sd.reservedqty), 0)
-                            ELSE COALESCE(SUM(sd.preqtyonhand - sd.reservedqty), 0) END) INTO v_stockqty
+                    SELECT (CASE WHEN MAX(sd.m_product_uom_id) IS NOT NULL THEN COALESCE(SUM(sd.qtyorderonhand - sd.reservedqty), 0)
+                            ELSE COALESCE(SUM(sd.qtyonhand - sd.reservedqty), 0) END) INTO v_stockqty
                     FROM m_storage_detail sd
                     JOIN m_locator loc on loc.m_locator_id = sd.m_locator_id
                     WHERE sd.m_product_id = Cur_line.m_product_id
                     AND sd.c_uom_id = Cur_line.c_uom_id
                     AND COALESCE(sd.m_attributesetinstance_id, '0') = Cur_line.m_attributesetinstance_id
                     AND COALESCE(sd.m_product_uom_id, '0') = Cur_line.m_product_uom_id
-                    AND loc.m_warehouse_id IN (SELECT m_warehouse_id FROM AD_Org_Warehouse WHERE ad_org_id = v_Org_ID);
+                    AND EXISTS (SELECT 1
+                                FROM AD_Org_Warehouse w
+                                WHERE w.ad_org_id = v_Org_ID
+                                AND w.m_warehouse_id = loc.m_warehouse_id);
 
                     IF (Cur_line.qtyordered > v_stockqty) THEN
                         RAISE_APPLICATION_ERROR(-20000, '@CannotUseDiscontinuedProduct@ ' || Cur_line.name || '. @ProductDiscontinuedNoStock@' || '(' || v_stockqty || ').');
