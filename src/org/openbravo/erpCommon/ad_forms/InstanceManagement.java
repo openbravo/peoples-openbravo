@@ -22,6 +22,8 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -33,6 +35,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -40,6 +43,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActiveInstanceProcess;
+import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions;
 import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
@@ -338,7 +342,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("instanceInfo",
           Utility.messageBD(cp, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n"));
     else
-      xmlDocument.setParameter("instanceInfo", activationKey.toString(cp, vars.getLanguage()));
+      xmlDocument.setParameter("instanceInfo",
+          getLicenseDescription(activationKey, vars.getLanguage()));
 
     if (activationKey.hasExpirationDate()) {
       if (activationKey.getPendingDays() != null)
@@ -360,6 +365,101 @@ public class InstanceManagement extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
 
+  }
+
+  private String getLicenseDescription(ActivationKey ak, String lang) {
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
+
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    StringBuilder sb = new StringBuilder();
+    if (ak.getInstanceProperties() != null) {
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
+          .append("</td><td>").append(ak.getProperty("customer")).append("</td></tr>");
+
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSLicenseEdition", lang))
+          .append("</td><td>")
+          .append(
+              Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(), lang))
+          .append("</td></tr>");
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang))
+          .append("</td><td>")
+          .append(Utility.getListValueName("OPSLicenseType", ak.getProperty("lincensetype"), lang));
+      if (ak.isTrial()) {
+        sb.append(" (" + Utility.messageBD(conn, "OPSTrialLicense", lang) + ")");
+      }
+      sb.append("</td></tr>");
+      Date startDate = ak.getStartDate();
+      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
+      if (startDate != null) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
+            .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
+      }
+
+      Date endDate = ak.getEndDate();
+      if (endDate != null) {
+        sb.append("<tr><td>")
+            .append(Utility.messageBD(conn, "OPSEndDate", lang))
+            .append("</td><td>")
+            .append(
+                (ak.getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
+                    : outputFormat.format(endDate))).append("</td></tr>");
+      }
+
+      Long maxUsers = ak.getMaxUsers();
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
+          .append("</td><td>")
+          .append(
+              (maxUsers == null || maxUsers == 0L) ? Utility.messageBD(conn, "OPSUnlimitedUsers",
+                  lang) : maxUsers).append("</td></tr>");
+      if (ak.getProperty("limituserswarn") != null) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
+            .append("</td><td>").append(ak.getProperty("limituserswarn")).append("</td></tr>");
+      }
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
+          .append("</td><td>");
+      sb.append(ak.getActiveSessions(null));
+      sb.append("</td></tr>");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
+          .append("</td><td>").append(ak.getProperty("instanceno")).append("\n");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstancePurpose", lang))
+          .append("</td><td>")
+          .append(Utility.getListValueName("InstancePurpose", ak.getProperty("purpose"), lang))
+          .append("</td></tr>");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSLimitation", lang))
+          .append("</td><td>");
+      sb.append(ak.getWSExplanation(conn, lang));
+      sb.append("</td></tr>");
+
+      if (!ak.hasUnlimitedWsAccess()) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
+            .append("</td><td>");
+        sb.append(ak.getNumberWSDayCounter());
+        sb.append("</td></tr>");
+      }
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
+          .append("</td><td>");
+      sb.append(ak.getPOSTerminalsExplanation());
+      sb.append("</td></tr>");
+
+      for (ModuleLicenseRestrictions.AdditionalInfo addInfo : ak.getAdditionalMessageInfo()) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, addInfo.getKey(), lang))
+            .append("</td><td>");
+        sb.append(addInfo.getValue());
+        sb.append("</td></tr>");
+      }
+
+    } else {
+      sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
+    }
+    return sb.toString();
   }
 
   private void printPageNotActive(HttpServletResponse response, VariablesSecureApp vars)

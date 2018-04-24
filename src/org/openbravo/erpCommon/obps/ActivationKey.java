@@ -1094,95 +1094,6 @@ public class ActivationKey {
     }
   }
 
-  public String toString(ConnectionProvider conn, String lang) {
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("dateFormat.java");
-    SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-
-    StringBuilder sb = new StringBuilder();
-    if (instanceProperties != null) {
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
-          .append("</td><td>").append(getProperty("customer")).append("</td></tr>");
-
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseEdition", lang))
-          .append("</td><td>")
-          .append(Utility.getListValueName("OBPSLicenseEdition", licenseClass.getCode(), lang))
-          .append("</td></tr>");
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang))
-          .append("</td><td>")
-          .append(Utility.getListValueName("OPSLicenseType", getProperty("lincensetype"), lang));
-      if (trial) {
-        sb.append(" (" + Utility.messageBD(conn, "OPSTrialLicense", lang) + ")");
-      }
-      sb.append("</td></tr>");
-      if (startDate != null) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
-            .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
-      }
-
-      if (endDate != null) {
-        sb.append("<tr><td>")
-            .append(Utility.messageBD(conn, "OPSEndDate", lang))
-            .append("</td><td>")
-            .append(
-                (getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
-                    : outputFormat.format(endDate))).append("</td></tr>");
-      }
-
-      sb.append("<tr><td>")
-          .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
-          .append("</td><td>")
-          .append(
-              (maxUsers == null || maxUsers == 0L) ? Utility.messageBD(conn, "OPSUnlimitedUsers",
-                  lang) : maxUsers).append("</td></tr>");
-      if (getProperty("limituserswarn") != null) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
-            .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
-      }
-
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
-          .append("</td><td>");
-      sb.append(getActiveSessions(null));
-      sb.append("</td></tr>");
-
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
-          .append("</td><td>").append(getProperty("instanceno")).append("\n");
-
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstancePurpose", lang))
-          .append("</td><td>")
-          .append(Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang))
-          .append("</td></tr>");
-
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSLimitation", lang))
-          .append("</td><td>");
-      sb.append(getWSExplanation(conn, lang));
-      sb.append("</td></tr>");
-
-      if (!hasUnlimitedWsAccess()) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
-            .append("</td><td>");
-        sb.append(getNumberWSDayCounter());
-        sb.append("</td></tr>");
-      }
-
-      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
-          .append("</td><td>");
-      sb.append(getPOSTerminalsExplanation());
-      sb.append("</td></tr>");
-
-      for (ModuleLicenseRestrictions.AdditionalInfo addInfo : getAdditionalMessageInfo()) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, addInfo.getKey(), lang))
-            .append("</td><td>");
-        sb.append(addInfo.getValue());
-        sb.append("</td></tr>");
-      }
-
-    } else {
-      sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
-    }
-    return sb.toString();
-  }
-
   public String getPurpose(String lang) {
     return Utility.getListValueName("InstancePurpose", getProperty("purpose"), lang);
   }
@@ -1287,7 +1198,7 @@ public class ActivationKey {
   /**
    * get all additional messages to be printed in Instance Activation window.
    */
-  private List<ModuleLicenseRestrictions.AdditionalInfo> getAdditionalMessageInfo() {
+  public List<ModuleLicenseRestrictions.AdditionalInfo> getAdditionalMessageInfo() {
     List<ModuleLicenseRestrictions.AdditionalInfo> additionalInfo = new ArrayList<ModuleLicenseRestrictions.AdditionalInfo>();
     for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
       additionalInfo.addAll(moduleRestriction.getAdditionalMessage());
@@ -1298,7 +1209,7 @@ public class ActivationKey {
   /**
    * Returns the number of current active sessions
    */
-  private int getActiveSessions(String currentSession) {
+  public int getActiveSessions(String currentSession) {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
     obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
@@ -1857,7 +1768,7 @@ public class ActivationKey {
     }
   }
 
-  private int getNumberWSDayCounter() {
+  public int getNumberWSDayCounter() {
     Date date = getDayAt0(new Date());
     OBCriteria<Session> qLogins = OBDal.getInstance().createCriteria(Session.class);
     qLogins.add(Restrictions.eq(Session.PROPERTY_LOGINSTATUS, "WS"));
@@ -1971,5 +1882,25 @@ public class ActivationKey {
           ModuleLicenseRestrictions.class, bm.createCreationalContext(restrictionBean)));
     }
     return result;
+  }
+
+  /** @return all license's properties */
+  public Properties getInstanceProperties() {
+    return instanceProperties;
+  }
+
+  /** @return starting valid date for license */
+  public Date getStartDate() {
+    return startDate;
+  }
+
+  /** @return license's expiration date */
+  public Date getEndDate() {
+    return endDate;
+  }
+
+  /** @return maximum allowed concurrent users */
+  public Long getMaxUsers() {
+    return maxUsers;
   }
 }
