@@ -36,6 +36,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -51,6 +52,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InstanceManagement extends HttpSecureAppServlet {
@@ -115,6 +117,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       throws IOException, ServletException {
     OBError msg = new OBError();
     OBContext.setAdminMode();
+    ConnectionProvider cp = new DalConnectionProvider(false);
     try {
       // Check for commercial modules installed in the instance
       OBCriteria<Module> qMods = OBDal.getInstance().createCriteria(Module.class);
@@ -130,9 +133,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
         deactivable = false;
         commercialModules += "<br/>" + mod.getName();
       }
+
       if (!deactivable) {
         msg.setType("Error");
-        msg.setMessage(Utility.messageBD(this, "CannotDeactivateWithCommercialModules",
+        msg.setMessage(Utility.messageBD(cp, "CannotDeactivateWithCommercialModules",
             vars.getLanguage())
             + commercialModules);
       } else {
@@ -142,7 +146,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
         sys.setInstanceKey(null);
         ActivationKey.reload();
         msg.setType("Success");
-        msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+        msg.setMessage(Utility.messageBD(cp, "Success", vars.getLanguage()));
 
         ActiveInstanceProcess.updateShowProductionFields("N");
 
@@ -155,7 +159,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     } catch (Exception e) {
       log4j.error("Error deactivating instance", e);
       msg.setType("Error");
-      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+      msg.setMessage(Utility.parseTranslation(cp, vars, vars.getLanguage(), e.getMessage()));
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -192,7 +196,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
     } catch (Exception e) {
       log4j.error(e);
       msg.setType("Error");
-      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+      msg.setMessage(Utility.parseTranslation(new DalConnectionProvider(false), vars,
+          vars.getLanguage(), e.getMessage()));
     }
     vars.setMessage("InstanceManagement", msg);
     printPageClosePopUp(response, vars, "");
@@ -299,21 +304,24 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+
+    ConnectionProvider cp = new DalConnectionProvider(false);
+
     // Interface parameters
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InstanceManagement", false, "", "",
-        "", false, "ad_forms", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(cp, vars.getLanguage(), "InstanceManagement", false, "", "", "",
+        false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      final WindowTabs tabs = new WindowTabs(this, vars,
+      final WindowTabs tabs = new WindowTabs(cp, vars,
           "org.openbravo.erpCommon.ad_forms.InstanceManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
-      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      final NavigationBar nav = new NavigationBar(cp, vars.getLanguage(),
           "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
+      final LeftTabsBar lBar = new LeftTabsBar(cp, vars.getLanguage(), "InstanceManagement.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (final Exception ex) {
@@ -329,7 +337,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       } else {
         myMessage = new OBError();
         myMessage.setType(activationKey.getMessageType());
-        String msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMsgText());
+        String msgTxt = Utility.parseTranslation(cp, vars, vars.getLanguage(), msg.getMsgText());
 
         OBError originalMessage = vars.getMessage("InstanceManagement");
         if (originalMessage != null) {
@@ -349,22 +357,22 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     if (!activationKey.isOPSInstance())
       xmlDocument.setParameter("instanceInfo",
-          Utility.messageBD(this, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n"));
+          Utility.messageBD(cp, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n"));
     else
-      xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
+      xmlDocument.setParameter("instanceInfo", activationKey.toString(cp, vars.getLanguage()));
 
     if (activationKey.hasExpirationDate()) {
       if (activationKey.getPendingDays() != null)
         xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
       else
         xmlDocument.setParameter("OPSdaysLeft",
-            Utility.messageBD(this, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n"));
+            Utility.messageBD(cp, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n"));
     }
 
     xmlDocument.setParameter("moduleActions",
         activationKey.getInstanceActivationExtraActionsHtml(xmlEngine));
 
-    String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
+    String cacheMsg = Utility.messageBD(cp, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
         "\\n", "\n");
     cacheMsg = "var cacheMsg = \"" + cacheMsg + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsg);
@@ -409,21 +417,24 @@ public class InstanceManagement extends HttpSecureAppServlet {
         .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+
+    ConnectionProvider cp = new DalConnectionProvider(false);
+
     // Interface parameters
-    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InstanceManagement", false, "",
+    final ToolBar toolbar = new ToolBar(cp, vars.getLanguage(), "InstanceManagement", false, "",
         "", "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
-      final WindowTabs tabs = new WindowTabs(this, vars,
+      final WindowTabs tabs = new WindowTabs(cp, vars,
           "org.openbravo.erpCommon.ad_forms.InstanceManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
-      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+      final NavigationBar nav = new NavigationBar(cp, vars.getLanguage(),
           "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith,
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
+      final LeftTabsBar lBar = new LeftTabsBar(cp, vars.getLanguage(), "InstanceManagement.html",
           strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (final Exception ex) {
@@ -444,10 +455,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
     final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     // Purpose combo
     try {
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"),
-          Utility.getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement",
+      ComboTableData comboTableData = new ComboTableData(cp, "LIST", "", "InstancePurpose", "",
+          Utility.getContext(cp, vars, "#AccessibleOrgTree", "InstanceManagement"),
+          Utility.getContext(cp, vars, "#User_Client", "InstanceManagement"), 0);
+      Utility.fillSQLParameters(cp, vars, null, comboTableData, "InstanceManagement",
           sysInfo.getInstancePurpose());
       if (sysInfo.getInstancePurpose() != null) {
         xmlDocument.setParameter("paramSelPurpose", sysInfo.getInstancePurpose());
@@ -502,6 +513,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     pb.setParams(params);
 
     OBError msg = new OBError();
+    ConnectionProvider cp = new DalConnectionProvider(false);
     try {
       new ActiveInstanceProcess().execute(pb);
       msg = (OBError) pb.getResult();
@@ -510,17 +522,17 @@ public class InstanceManagement extends HttpSecureAppServlet {
       ActivationKey ak = ActivationKey.getInstance();
       if (result && ak.isActive() && ak.isTrial() && !ak.isHeartbeatActive()) {
         msg.setType("Warning");
-        msg.setTitle(Utility.messageBD(this, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage()));
-        msg.setMessage(Utility.messageBD(this, "OPS_NOT_HB_ACTIVE", vars.getLanguage()));
+        msg.setTitle(Utility.messageBD(cp, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage()));
+        msg.setMessage(Utility.messageBD(cp, "OPS_NOT_HB_ACTIVE", vars.getLanguage()));
       }
     } catch (Exception e) {
       log4j.error("Error Activating instance", e);
       msg.setType("Error");
-      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+      msg.setMessage(Utility.parseTranslation(cp, vars, vars.getLanguage(), e.getMessage()));
       result = false;
     }
 
-    msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMessage()));
+    msg.setMessage(Utility.parseTranslation(cp, vars, vars.getLanguage(), msg.getMessage()));
     vars.setMessage("InstanceManagement", msg);
     return result;
   }
