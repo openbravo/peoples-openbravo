@@ -615,12 +615,8 @@ public class ActivationKey {
     tier2Artifacts = new ArrayList<String>();
     goldenExcludedArtifacts = new ArrayList<String>();
 
-    if (isActive()) {
-      limitNamedUsers = true;
-    } else {
-      limitNamedUsers = OBPropertiesProvider.getInstance().getBooleanProperty(
-          "login.limit.user.session");
-    }
+    limitNamedUsers = OBPropertiesProvider.getInstance().getBooleanProperty(
+        "login.limit.user.session");
 
     if (isActive() && licenseClass == LicenseClass.STD && !golden) {
       // Don't read restrictions for Standard instances
