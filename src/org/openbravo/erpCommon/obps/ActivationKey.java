@@ -99,7 +99,6 @@ import org.openbravo.xmlEngine.XmlEngine;
 
 public class ActivationKey {
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
-  private final static String OB_PUBLIC_KEY2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCeivfuzeE+hdv7mXEyOWTpGglsT1J+UHcp9RrHydgLgccPdQ5EjqtKVSc/jzzJV5g+9XaSxz9pK5TuzzdN4fJHPCnuO0EiwWI2dxS/t1Boo+gGageGZyFRMhMsULU4902gzmw1qugEskUSKONJcR65H06HYRn2fTgVbGvEhFMASwIDAQAB";
   private final static String ON_DEMAND_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCfHx5q0Bs45Eg2x1V6ASx86ZWNh8jniPprH5xonuJ5ATVSDQ/UGsz1d0v/3WkWXaj98OwUPJt5/iSe7l5DAZ7I2C22y3CQx8pNiBfi4FK+HtRM4pOhK5YQXV2vNV5hTPgsjrOrjdPXZ+SQbDqUIGSNhwBVmrczNO9THDN+eQCSQIDAQAB";;
 
   private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
@@ -365,13 +364,6 @@ public class ActivationKey {
     try {
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       boolean signed = decrypt(activationKey.getBytes(), pk, bos, OB_PUBLIC_KEY);
-
-      if (!signed) {
-        // Basic license is only supported from 2.50mp21, they are signed with second key. So in
-        // case first key does not work, try to use the second one.
-        bos = new ByteArrayOutputStream();
-        signed = decrypt(activationKey.getBytes(), pk, bos, OB_PUBLIC_KEY2);
-      }
 
       if (signed) {
         byte[] props = bos.toByteArray();
