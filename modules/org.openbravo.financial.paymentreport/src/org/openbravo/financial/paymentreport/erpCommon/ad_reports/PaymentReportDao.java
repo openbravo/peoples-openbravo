@@ -390,12 +390,12 @@ public class PaymentReportDao {
       if (StringUtils.isNotEmpty(strPaymentDateFrom)) {
         hsqlScript.append(" and ((pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(" >= :paymetDateFrom)  or (pay.");
+        hsqlScript.append(" >= :paymentDateFrom)  or (pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
         hsqlScript.append(" is null and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(" >= :paymetDateFrom))");
-        parameters.put("paymetDateFrom", FIN_Utility.getDate(strPaymentDateFrom));
+        hsqlScript.append(" >= :paymentDateFrom))");
+        parameters.put("paymentDateFrom", FIN_Utility.getDate(strPaymentDateFrom));
       }
       if (StringUtils.isNotEmpty(strPaymentDateTo)) {
         hsqlScript.append(" and coalesce(pay.");
