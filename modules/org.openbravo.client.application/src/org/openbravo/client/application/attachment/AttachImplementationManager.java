@@ -353,7 +353,7 @@ public class AttachImplementationManager {
         in.close();
         boolean isTempFile = handler.isTempFile();
         if (isTempFile) {
-          file.delete();
+          deleteTempFile(file);
         }
       }
       dest.close();
