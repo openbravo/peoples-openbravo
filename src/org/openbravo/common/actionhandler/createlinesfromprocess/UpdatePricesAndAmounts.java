@@ -53,9 +53,11 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
   }
 
   /**
-   * Updates prices and amounts. If the product has a product price in the invoice price list then
-   * all prices and amounts will be recalculated using currency precisions and taking into account
-   * if the price list includes taxes or not.
+   * Updates prices and amounts. If the copied line is related with an order line then copy exactly
+   * the same prices from the original line. If the copied line is unrelated with an order line then
+   * if the product has a product price in the invoice price list then all prices and amounts will
+   * be recalculated using currency precisions and taking into account if the price list includes
+   * taxes or not.
    * 
    */
   @Override
@@ -66,14 +68,65 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
     this.processingInvoice = currentInvoice;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
 
-    ProductPrice productPrice = getProductPriceInPriceList(
-        (Product) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_PRODUCT
-            : ShipmentInOutLine.PROPERTY_PRODUCT), processingInvoice.getPriceList());
-    if (productPrice != null) {
-      setPricesBasedOnPriceList(productPrice);
+    if (isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
+      setPricesBasedOnOrderLineValues(isOrderLine ? (OrderLine) copiedLine
+          : ((ShipmentInOutLine) copiedLine).getSalesOrderLine());
     } else {
-      setPricesToZero();
+      ProductPrice productPrice = getProductPriceInPriceList(
+          (Product) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_PRODUCT
+              : ShipmentInOutLine.PROPERTY_PRODUCT), processingInvoice.getPriceList());
+      if (productPrice != null) {
+        setPricesBasedOnPriceList(productPrice);
+      } else {
+        setPricesToZero();
+      }
     }
+  }
+
+  private void setPricesBasedOnOrderLineValues(OrderLine orderLine) {
+    PriceInformation priceInformation = new PriceInformation();
+    BigDecimal qtyOrdered = orderLine.getOrderedQuantity();
+
+    // Standard and Price precision
+    Currency invoiceCurrency = processingInvoice.getCurrency();
+    int stdPrecision = invoiceCurrency.getStandardPrecision().intValue();
+
+    // Price List, Price Standard and discount
+    BigDecimal priceActual = orderLine.getStandardPrice();
+    BigDecimal priceList = orderLine.getListPrice();
+    BigDecimal priceLimit = orderLine.getPriceLimit();
+    BigDecimal discount = orderLine.getDiscount();
+
+    BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual).setScale(stdPrecision,
+        RoundingMode.HALF_UP);
+
+    // Processing for Prices Including Taxes
+    if (processingInvoice.getPriceList().isPriceIncludesTax()) {
+      BigDecimal grossUnitPrice = priceActual;
+      BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
+          RoundingMode.HALF_UP);
+
+      // Set gross price information
+      priceInformation.setGrossUnitPrice(grossUnitPrice);
+      priceInformation.setGrossBaseUnitPrice(grossUnitPrice);
+      priceInformation.setGrossListPrice(priceList);
+      priceInformation.setLineGrossAmount(grossAmount);
+
+      // Update Net Prices to 0
+      priceActual = BigDecimal.ZERO;
+      priceList = BigDecimal.ZERO;
+      priceLimit = BigDecimal.ZERO;
+    }
+
+    priceInformation.setUnitPrice(priceActual);
+    priceInformation.setStandardPrice(priceActual);
+    priceInformation.setListPrice(priceList);
+    priceInformation.setLineNetAmount(lineNetAmount);
+    priceInformation.setDiscount(discount);
+    priceInformation.setPriceLimit(priceLimit);
+
+    setPrices(priceInformation);
+
   }
 
   private void setPricesBasedOnPriceList(final ProductPrice productPrice) {
