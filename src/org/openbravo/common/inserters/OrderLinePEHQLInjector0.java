@@ -70,9 +70,7 @@ public class OrderLinePEHQLInjector0 extends HqlInserter {
       hql.append(" and o.documentStatus in ('CO', 'CL')");
       hql.append(" and o.invoiceTerms <> 'N'");
       hql.append(" group by e.id, e.orderedQuantity, o.id, uom.id, p.id, aum.id, dt.id, aum_defaum.id");
-      hql.append(" having (((e.explode = 'Y') or (e.orderedQuantity - sum(coalesce(m.quantity,0)) <> 0))");
-      hql.append("   and not(sum(coalesce(e.invoicedQuantity, 0)) - coalesce(e.orderedQuantity, 0) ");
-      hql.append("   - sum(coalesce(e.invoicedQuantity, 0)) >= 0))");
+      hql.append(" having (((e.explode = 'Y') or (sum(e.orderedQuantity) - sum(coalesce(m.quantity,0)) <> 0)))");
     }
 
     hql.append(" and aum_defaum.id = coalesce(aum.id, M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))");
