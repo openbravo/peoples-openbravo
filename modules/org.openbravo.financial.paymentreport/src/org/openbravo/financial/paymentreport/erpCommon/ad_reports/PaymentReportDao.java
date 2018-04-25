@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
@@ -250,7 +252,7 @@ public class PaymentReportDao {
       throws OBException {
 
     StringBuilder hsqlScript = new StringBuilder();
-    final java.util.List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>();
 
     String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateFormat.java");
@@ -342,28 +344,28 @@ public class PaymentReportDao {
       if (StringUtils.isNotEmpty(strDueDateFrom)) {
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        hsqlScript.append(" >= ?");
-        parameters.add(FIN_Utility.getDate(strDueDateFrom));
+        hsqlScript.append(" >= :dueDateFrom");
+        parameters.put("dueDateFrom", FIN_Utility.getDate(strDueDateFrom));
       }
       if (StringUtils.isNotEmpty(strDueDateTo)) {
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        hsqlScript.append(" <= ?");
-        parameters.add(FIN_Utility.getDate(strDueDateTo));
+        hsqlScript.append(" <= :dueDateTo");
+        parameters.put("dueDateTo", FIN_Utility.getDate(strDueDateTo));
       }
 
       // expected date from - expected date to
       if (StringUtils.isNotEmpty(strExpectedDateFrom)) {
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(" >= ?");
-        parameters.add(FIN_Utility.getDate(strExpectedDateFrom));
+        hsqlScript.append(" >= :expectedDateFrom");
+        parameters.put("expectedDateFrom", FIN_Utility.getDate(strExpectedDateFrom));
       }
       if (StringUtils.isNotEmpty(strExpectedDateTo)) {
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(" <= ?");
-        parameters.add(FIN_Utility.getDate(strExpectedDateTo));
+        hsqlScript.append(" <= :expectedDateTo");
+        parameters.put("expectedDateTo", FIN_Utility.getDate(strExpectedDateTo));
       }
 
       // document date from - document date to
@@ -372,37 +374,36 @@ public class PaymentReportDao {
         hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
         hsqlScript.append(", pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(") >= ?");
-        parameters.add(FIN_Utility.getDate(strDocumentDateFrom));
+        hsqlScript.append(") >= :documentDateFrom");
+        parameters.put("documentDateFrom", FIN_Utility.getDate(strDocumentDateFrom));
       }
       if (StringUtils.isNotEmpty(strDocumentDateTo)) {
         hsqlScript.append(" and coalesce(inv.");
         hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
         hsqlScript.append(", pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(") <= ?");
-        parameters.add(FIN_Utility.getDate(strDocumentDateTo));
+        hsqlScript.append(") <= :documentDateTo");
+        parameters.put("documentDateTo", FIN_Utility.getDate(strDocumentDateTo));
       }
 
       // payment date from - payment date to
       if (StringUtils.isNotEmpty(strPaymentDateFrom)) {
         hsqlScript.append(" and ((pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(" >= ?)  or (pay.");
+        hsqlScript.append(" >= :paymetDateFrom)  or (pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
         hsqlScript.append(" is null and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(" >= ?))");
-        parameters.add(FIN_Utility.getDate(strPaymentDateFrom));
-        parameters.add(FIN_Utility.getDate(strPaymentDateFrom));
+        hsqlScript.append(" >= :paymetDateFrom))");
+        parameters.put("paymetDateFrom", FIN_Utility.getDate(strPaymentDateFrom));
       }
       if (StringUtils.isNotEmpty(strPaymentDateTo)) {
         hsqlScript.append(" and coalesce(pay.");
         hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
         hsqlScript.append(", invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(") <= ?");
-        parameters.add(FIN_Utility.getDate(strPaymentDateTo));
+        hsqlScript.append(") <= :paymentDateTo");
+        parameters.put("paymentDateTo", FIN_Utility.getDate(strPaymentDateTo));
       }
 
       // Empty Business Partner included
@@ -577,8 +578,8 @@ public class PaymentReportDao {
         hsqlScript.append(" != '0'");
         hsqlScript.append(" and invps.");
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        hsqlScript.append(" <  ?");
-        parameters.add(DateUtils.truncate(new Date(), Calendar.DATE));
+        hsqlScript.append(" <  :dueDate");
+        parameters.put("dueDate", DateUtils.truncate(new Date(), Calendar.DATE));
       }
 
       if (!StringUtils.equals(strBAZero, "Y")) {
@@ -592,12 +593,13 @@ public class PaymentReportDao {
         final Session sessionCount = OBDal.getReadOnlyInstance().getSession();
         final Query queryCount = sessionCount
             .createQuery("select count(*)" + hsqlScript.toString());
-        int px = 0;
-        for (final Object param : parameters) {
+        for (Entry<String, Object> entry : parameters.entrySet()) {
+          String paramName = entry.getKey();
+          Object param = entry.getValue();
           if (param instanceof BaseOBObject) {
-            queryCount.setEntity(px++, param);
+            queryCount.setEntity(paramName, param);
           } else {
-            queryCount.setParameter(px++, param);
+            queryCount.setParameter(paramName, param);
           }
         }
         final Long hqlRecordsCount = (Long) queryCount.list().get(0);
@@ -710,12 +712,13 @@ public class PaymentReportDao {
       final Session session = OBDal.getReadOnlyInstance().getSession();
       final Query query = session.createQuery(hsqlScript.toString());
 
-      int pos = 0;
-      for (final Object param : parameters) {
+      for (Entry<String, Object> entry : parameters.entrySet()) {
+        String paramName = entry.getKey();
+        Object param = entry.getValue();
         if (param instanceof BaseOBObject) {
-          query.setEntity(pos++, param);
+          query.setEntity(paramName, param);
         } else {
-          query.setParameter(pos++, param);
+          query.setParameter(paramName, param);
         }
       }
 
