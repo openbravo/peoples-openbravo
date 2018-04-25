@@ -209,9 +209,9 @@ public class CloneOrderActionHandler extends BaseActionHandler {
   public static BigDecimal getLineNetAmt(String strOrderId) {
 
     BigDecimal bdLineNetAmt = new BigDecimal("0");
-    final String readLineNetAmtHql = " select (coalesce(ol.lineNetAmount,0) + coalesce(ol.freightAmount,0) + coalesce(ol.chargeAmount,0)) as LineNetAmt from OrderLine ol where ol.salesOrder.id=?";
+    final String readLineNetAmtHql = " select (coalesce(ol.lineNetAmount,0) + coalesce(ol.freightAmount,0) + coalesce(ol.chargeAmount,0)) as LineNetAmt from OrderLine ol where ol.salesOrder.id=:orderId";
     final Query readLineNetAmtQry = OBDal.getInstance().getSession().createQuery(readLineNetAmtHql);
-    readLineNetAmtQry.setString(0, strOrderId);
+    readLineNetAmtQry.setParameter("orderId", strOrderId);
 
     for (int i = 0; i < readLineNetAmtQry.list().size(); i++) {
       bdLineNetAmt = bdLineNetAmt.add(((BigDecimal) readLineNetAmtQry.list().get(i)));

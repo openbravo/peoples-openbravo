@@ -730,9 +730,9 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
   private Long getMaxSeqNoAsset(Asset asset) {
     StringBuilder hql = new StringBuilder();
     hql.append(" select coalesce(max(al.sEQNoAsset), 0) as maxSeqNoAsset ");
-    hql.append(" from FinancialMgmtAmortizationLine as al where al.asset.id = ? ");
+    hql.append(" from FinancialMgmtAmortizationLine as al where al.asset.id = :assetId ");
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString(0, asset.getId());
+    query.setParameter("assetId", asset.getId());
     for (Object obj : query.list()) {
       if (obj != null) {
         return (Long) obj;
@@ -752,9 +752,9 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
   private Long getMaxLineNo(Amortization amortization) {
     StringBuilder hql = new StringBuilder();
     hql.append(" select coalesce(max(al.lineNo), 0) as maxSeqNoAsset ");
-    hql.append(" from FinancialMgmtAmortizationLine as al where al.amortization.id = ? ");
+    hql.append(" from FinancialMgmtAmortizationLine as al where al.amortization.id = :amortizationId ");
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString(0, amortization.getId());
+    query.setParameter("amortizationId", amortization.getId());
     for (Object obj : query.list()) {
       if (obj != null) {
         return (Long) obj;

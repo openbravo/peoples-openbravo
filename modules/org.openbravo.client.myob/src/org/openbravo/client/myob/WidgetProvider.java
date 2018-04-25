@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -416,9 +416,9 @@ public abstract class WidgetProvider {
       translatedValues.put(allowedValue, allowedValue);
     }
 
-    final String readReferenceHql = "select searchKey, name from ADList where reference.id=?";
+    final String readReferenceHql = "select searchKey, name from ADList where reference.id=:referenceId";
     final Query readReferenceQry = OBDal.getInstance().getSession().createQuery(readReferenceHql);
-    readReferenceQry.setString(0, referenceId);
+    readReferenceQry.setParameter("referenceId", referenceId);
     for (Object o : readReferenceQry.list()) {
       final Object[] row = (Object[]) o;
       final String value = (String) row[0];
@@ -430,11 +430,11 @@ public abstract class WidgetProvider {
 
     // set the default if no translation found
     final String hql = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
-        + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
+        + " al.reference.id=:referenceId and trl.listReference=al and trl.language.id=:languageId"
         + " and al.active=true and trl.active=true";
     final Query qry = OBDal.getInstance().getSession().createQuery(hql);
-    qry.setString(0, referenceId);
-    qry.setString(1, userLanguageId);
+    qry.setParameter("referenceId", referenceId);
+    qry.setParameter("languageId", userLanguageId);
     for (Object o : qry.list()) {
       final Object[] row = (Object[]) o;
       translatedValues.put((String) row[0], (String) row[1]);
