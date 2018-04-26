@@ -37,6 +37,7 @@ public class CostAdjustmentAssert {
   final private boolean unit;
   final private String status;
   final private boolean isNeedPosting;
+  final private boolean checkPartenCostAdjustmentLine;
 
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
       BigDecimal amount, int day, boolean source) {
@@ -61,12 +62,13 @@ public class CostAdjustmentAssert {
 
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,
       String type, BigDecimal amount, int day, boolean source, boolean unit) {
-    this(materialTransaction, currencyId, type, amount, day, source, unit, "CO", false);
+    this(materialTransaction, currencyId, type, amount, day, source, unit, "CO", false, true);
   }
 
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,
       String type, BigDecimal amount, int day, boolean source, boolean unit, boolean isNeedPosting) {
-    this(materialTransaction, currencyId, type, amount, day, source, unit, "CO", isNeedPosting);
+    this(materialTransaction, currencyId, type, amount, day, source, unit, "CO", isNeedPosting,
+        true);
   }
 
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
@@ -77,12 +79,12 @@ public class CostAdjustmentAssert {
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
       BigDecimal amount, int day, boolean source, boolean unit, String status) {
     this(materialTransaction, TestCostingConstants.EURO_ID, type, amount, day, source, unit,
-        status, false);
+        status, false, true);
   }
 
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,
       String type, BigDecimal amount, int day, boolean source, boolean unit, String status,
-      boolean isNeedPosting) {
+      boolean isNeedPosting, boolean checkParentCostAdjustmentLine) {
     this.materialTransaction = materialTransaction;
     this.currency = OBDal.getInstance().get(Currency.class, currencyId);
     this.type = type;
@@ -92,6 +94,7 @@ public class CostAdjustmentAssert {
     this.unit = unit;
     this.status = status;
     this.isNeedPosting = isNeedPosting;
+    this.checkPartenCostAdjustmentLine = checkParentCostAdjustmentLine;
   }
 
   public MaterialTransaction getMaterialTransaction() {
@@ -128,6 +131,10 @@ public class CostAdjustmentAssert {
 
   public boolean isNeedPosting() {
     return isNeedPosting;
+  }
+
+  public boolean isCheckParentCostAdjustmentLine() {
+    return checkPartenCostAdjustmentLine;
   }
 
 }

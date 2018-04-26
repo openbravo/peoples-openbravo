@@ -40,6 +40,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -128,20 +129,44 @@ public class CostAdjustmentUtils {
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate, Long lineNo) {
     Long stdPrecission = transaction.getCurrency().getStandardPrecision();
-    CostAdjustmentLine costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
-    costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
-    costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
+
+    StringBuilder hql = new StringBuilder("");
+    hql.append(" costAdjustment.id = :costAdjustmentId ");
+    hql.append(" and inventoryTransaction.id = :transactionId ");
+    hql.append(" and isRelatedTransactionAdjusted = false ");
+    hql.append(" and currency.id = :currencyId ");
+    hql.append(" and isSource = :isSource ");
+    hql.append(" and accountingDate = :accountingDate");
+
+    OBQuery<CostAdjustmentLine> obc = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
+        hql.toString());
+    obc.setNamedParameter("costAdjustmentId", costAdjustmentHeader.getId());
+    obc.setNamedParameter("transactionId", transaction.getId());
+    obc.setNamedParameter("currencyId", transaction.getCurrency().getId());
+    obc.setNamedParameter("isSource", isSource);
+    obc.setNamedParameter("accountingDate", accountingDate);
+
+    obc.setMaxResult(1);
+
+    CostAdjustmentLine costAdjustmentLine = (CostAdjustmentLine) obc.uniqueResult();
+    if (costAdjustmentLine == null) {
+      costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
+      costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
+      costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
+      costAdjustmentLine.setCurrency(transaction.getCurrency());
+      costAdjustmentLine.setInventoryTransaction(transaction);
+      costAdjustmentLine.setSource(isSource);
+      costAdjustmentLine.setAccountingDate(accountingDate);
+      costAdjustmentLine.setLineNo(lineNo);
+    }
     if (costAdjusted == null) {
       costAdjustmentLine.setAdjustmentAmount(null);
     } else {
-      costAdjustmentLine.setAdjustmentAmount(costAdjusted.setScale(stdPrecission.intValue(),
-          RoundingMode.HALF_UP));
+      BigDecimal previouslyAdjustedAmount = costAdjustmentLine.getAdjustmentAmount() == null ? BigDecimal.ZERO
+          : costAdjustmentLine.getAdjustmentAmount();
+      costAdjustmentLine.setAdjustmentAmount(costAdjusted.add(previouslyAdjustedAmount).setScale(
+          stdPrecission.intValue(), RoundingMode.HALF_UP));
     }
-    costAdjustmentLine.setCurrency(transaction.getCurrency());
-    costAdjustmentLine.setInventoryTransaction(transaction);
-    costAdjustmentLine.setSource(isSource);
-    costAdjustmentLine.setAccountingDate(accountingDate);
-    costAdjustmentLine.setLineNo(lineNo);
 
     OBDal.getInstance().save(costAdjustmentLine);
 

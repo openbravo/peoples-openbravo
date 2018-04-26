@@ -233,7 +233,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
         (CostAdjustment) OBDal.getInstance().getProxy(CostAdjustment.ENTITY_NAME, strCostAdjId),
         adjustmentamt, false, dateAcct, getNextLineNo());
     newCAL.setRelatedTransactionAdjusted(false);
-    newCAL.setParentCostAdjustmentLine(parentLine);
+    if (!newCAL.getId().equals(parentLine.getId())) {
+      newCAL.setParentCostAdjustmentLine(parentLine);
+    }
 
     addCostDependingTrx(newCAL);
     return newCAL;
