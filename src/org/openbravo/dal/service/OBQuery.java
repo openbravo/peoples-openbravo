@@ -257,7 +257,7 @@ public class OBQuery<E extends BaseOBObject> {
   /**
    * Creates a Hibernate Query object using the whereclause and extra filters (for readable
    * organizations etc.). The Query will return objects with the type specified as parameter (unless
-   * a specific select clause is provided using the {@link OBQuery#setSelectClause(String)} method).
+   * a specific select clause is provided using the {@link #setSelectClause(String)} method).
    *
    * @param clz
    *          the class of the query's resulting objects
