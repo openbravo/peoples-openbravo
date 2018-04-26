@@ -254,6 +254,16 @@ public class OBQuery<E extends BaseOBObject> {
     return (Query<E>) createQuery(BaseOBObject.class);
   }
 
+  /**
+   * Creates a Hibernate Query object using the whereclause and extra filters (for readable
+   * organizations etc.). The Query will return objects with the type specified as parameter (unless
+   * a specific select clause is provided using the {@link OBQuery#setSelectClause(String)} method).
+   *
+   * @param clz
+   *          the class of the query's resulting objects
+   * 
+   * @return a new Hibernate Query object
+   */
   public <T extends Object> Query<T> createQuery(Class<T> clz) {
     final String qryStr = createQueryString();
     try {
