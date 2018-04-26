@@ -14020,7 +14020,7 @@ And Release features, bla, bla, bla]]></MSGTEXT>
 <!--1005800002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005800002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1005800002-->  <VALUE><![CDATA[HB_WELCOME]]></VALUE>
-<!--1005800002-->  <MSGTEXT><![CDATA[To help us improve the software quality and understand its worldwide usage, we invite you to enable the Heartbeat. This tool periodically sends to Openbravo anonymous updates regarding your technical system specifications (e.g. operating system, database, Openbravo version, etc.). Enabling the Heartbeat is required to access additional services provided by Openbravo, such as the ability to download and install extension modules. For a full description of the information transmitted to Openbravo, see the <a href='http://wiki.openbravo.com/wiki/ERP/2.50/User_Manual/HeartBeat' target='_blank' class='LabelLink'>Heartbeat Configuration</a> chapter of the User Manual.
+<!--1005800002-->  <MSGTEXT><![CDATA[To help us improve the software quality and understand its worldwide usage, we invite you to enable the Heartbeat. This tool periodically sends to Openbravo anonymous updates regarding your technical system specifications (e.g. operating system, database, Openbravo version, etc.). Enabling the Heartbeat is required to access additional services provided by Openbravo, such as the ability to download and install extension modules. For a full description of the information transmitted to Openbravo, see the <a href='http://wiki.openbravo.com/wiki/HeartBeat' target='_blank' class='LabelLink'>Heartbeat Configuration</a> chapter of the User Manual.
 
 
 
