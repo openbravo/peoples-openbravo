@@ -68,6 +68,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
             "attributeValue"));
         add(new HQLProperty("ordLine.salesOrder.id", "orderId"));
         add(new HQLProperty("ordLine.tax.taxCategory.id", "taxCategory"));
+        add(new HQLProperty("ordLine.tax.taxExempt", "taxExempt"));
       }
     };
 
