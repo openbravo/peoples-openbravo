@@ -29,8 +29,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -1532,46 +1530,43 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       } else {
         BigDecimal remainingAmount = amount;
-        final StringBuffer remainingPSDIdHQl = new StringBuffer();
-        remainingPSDIdHQl.append("SELECT psd.id ");
-        remainingPSDIdHQl.append("FROM FIN_Payment_ScheduleDetail psd ");
-        remainingPSDIdHQl.append("JOIN psd.orderPaymentSchedule ps ");
-        remainingPSDIdHQl.append("JOIN ps.order o ");
-        remainingPSDIdHQl.append("WHERE o.id = :orderId ");
-        remainingPSDIdHQl.append("AND psd.paymentDetails IS NULL ");
-        remainingPSDIdHQl.append("ORDER BY psd.invoicePaymentSchedule");
-        final Query<String> remainingPSDIdQuery = OBDal.getInstance().getSession()
-            .createQuery(remainingPSDIdHQl.toString(), String.class);
-        remainingPSDIdQuery.setParameter("orderId", order.getId());
-        final ScrollableResults paymentScheduleDetailIdQueryScrollable = remainingPSDIdQuery
-            .scroll(ScrollMode.FORWARD_ONLY);
-        while (paymentScheduleDetailIdQueryScrollable.next()
-            && remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
-          final FIN_PaymentScheduleDetail currentDetail = OBDal.getInstance().get(
-              FIN_PaymentScheduleDetail.class, paymentScheduleDetailIdQueryScrollable.get(0));
-          if (remainingAmount.compareTo(currentDetail.getAmount()) >= 0) {
-            remainingAmount = remainingAmount.subtract(currentDetail.getAmount());
-          } else {
-            // Create a new paymentScheduleDetail for pending amount to be paid and add it to the
-            // paymentScheduleDetailList and to the paymentAmountList
-            final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
-            newPSD.setNewOBObject(true);
-            newPSD.setOrderPaymentSchedule(paymentSchedule);
-            newPSD.setInvoicePaymentSchedule(currentDetail.getInvoicePaymentSchedule());
-            newPSD.setAmount(currentDetail.getAmount().subtract(remainingAmount));
-            newPSD.setBusinessPartner(order.getBusinessPartner());
-            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-            OBDal.getInstance().save(newPSD);
-
-            // Modify the existing paymentScheduleDetail to match the remaining to pay
-            currentDetail.setAmount(remainingAmount);
-            OBDal.getInstance().save(currentDetail);
-
-            remainingAmount = BigDecimal.ZERO;
+        // Get the remaining PSD and sort it by the ones that are related to an invoice
+        final List<FIN_PaymentScheduleDetail> remainingPSDList = new ArrayList<>();
+        for (final FIN_PaymentScheduleDetail currentDetail : paymentSchedule
+            .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
+          if (currentDetail.getPaymentDetails() == null) {
+            remainingPSDList.add(currentDetail);
           }
-          paymentScheduleDetailList.add(currentDetail);
-          paymentAmountMap.put(currentDetail.getId(), currentDetail.getAmount());
+        }
+        sortPSDByInvoice(remainingPSDList);
+        for (final FIN_PaymentScheduleDetail currentDetail : remainingPSDList) {
+          if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
+            if (remainingAmount.compareTo(currentDetail.getAmount()) >= 0) {
+              remainingAmount = remainingAmount.subtract(currentDetail.getAmount());
+            } else {
+              // Create a new paymentScheduleDetail for pending amount to be paid and add it to the
+              // paymentScheduleDetailList and to the paymentAmountList
+              final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
+                  FIN_PaymentScheduleDetail.class);
+              newPSD.setNewOBObject(true);
+              newPSD.setOrderPaymentSchedule(paymentSchedule);
+              newPSD.setInvoicePaymentSchedule(currentDetail.getInvoicePaymentSchedule());
+              newPSD.setAmount(currentDetail.getAmount().subtract(remainingAmount));
+              newPSD.setBusinessPartner(order.getBusinessPartner());
+              paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
+              OBDal.getInstance().save(newPSD);
+
+              // Modify the existing paymentScheduleDetail to match the remaining to pay
+              currentDetail.setAmount(remainingAmount);
+              OBDal.getInstance().save(currentDetail);
+
+              remainingAmount = BigDecimal.ZERO;
+            }
+            paymentScheduleDetailList.add(currentDetail);
+            paymentAmountMap.put(currentDetail.getId(), currentDetail.getAmount());
+          } else {
+            break;
+          }
         }
       }
 
@@ -1685,6 +1680,23 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  private void sortPSDByInvoice(List<FIN_PaymentScheduleDetail> psdList) {
+    Collections.sort(psdList, new Comparator<FIN_PaymentScheduleDetail>() {
+      @Override
+      public int compare(FIN_PaymentScheduleDetail psd1, FIN_PaymentScheduleDetail psd2) {
+        boolean isNullPSD1 = psd1.getInvoicePaymentSchedule() == null;
+        boolean isNullPSD2 = psd2.getInvoicePaymentSchedule() == null;
+        if (isNullPSD1 == isNullPSD2) {
+          return 0;
+        } else if (isNullPSD1) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+    });
   }
 
   private int countPayments(Order order) {
