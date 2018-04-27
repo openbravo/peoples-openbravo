@@ -31,7 +31,13 @@
     <Sql><![CDATA[
         SELECT AD_Org_ID
         FROM AD_Org
-        WHERE isready = 'Y'
+        WHERE IsReady = 'Y'
+        AND AD_Org_ID <> '0'
+        AND AD_PeriodControlAllowed_Org_ID IS NULL
+        AND AD_CalendarOwner_Org_ID IS NULL 
+        AND AD_InheritedCalendar_ID IS NULL 
+        AND AD_LegalEntity_Org_ID IS NULL
+        AND AD_BusinessUnit_Org_ID IS NULL
     ]]></Sql>
     <Field name="dummy" value="void"/>
   </SqlMethod>

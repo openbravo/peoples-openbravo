@@ -23,28 +23,26 @@ import org.openbravo.database.ConnectionProvider;
 
 public class UpdatePersistOrgInfo extends ModuleScript {
 
-  private static final Logger log4j = Logger.getLogger(UpdatePersistOrgInfo.class);
-
   @Override
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
       boolean isPersistOrgInfoUpdated = UpdatePersistOrgInfoData.isPersistOrgInfoUpdated(cp);
       if (!isPersistOrgInfoUpdated) {
-    	long init = System.currentTimeMillis();
-    	int orgUpdated = 0;
-    	UpdatePersistOrgInfoData[] organizations = UpdatePersistOrgInfoData.selectOrgs(cp);
-    	for (UpdatePersistOrgInfoData org: organizations) {
-          String periodControlAllowedOrg = UpdatePersistOrgInfoData.getPeriodControlAllowedOrg(cp, org.adOrgId);
+        UpdatePersistOrgInfoData[] organizations = UpdatePersistOrgInfoData.selectOrgs(cp);
+        for (UpdatePersistOrgInfoData org : organizations) {
+          String periodControlAllowedOrg = UpdatePersistOrgInfoData.getPeriodControlAllowedOrg(cp,
+              org.adOrgId);
           String calendarOwnerOrg = UpdatePersistOrgInfoData.getCalendarOwnerOrg(cp, org.adOrgId);
           String calendar = UpdatePersistOrgInfoData.getCalendar(cp, calendarOwnerOrg);
-          String legalEntity = UpdatePersistOrgInfoData.getLegalEntityBusinessUnitOrg(cp, org.adOrgId, "LE");
-          String businessUnit = UpdatePersistOrgInfoData.getLegalEntityBusinessUnitOrg(cp, org.adOrgId, "BU");
-          UpdatePersistOrgInfoData.updatePersistOrgInfo(cp, periodControlAllowedOrg, calendarOwnerOrg, calendar, legalEntity, businessUnit, org.adOrgId);
-          orgUpdated ++;
-    	}
-        log4j.info(orgUpdated + " organization/s updated with Persist Info in "+(System.currentTimeMillis() - init)+" ms.");
-    	UpdatePersistOrgInfoData.createPreferencePersistOrgInfoUpdated(cp);
+          String legalEntity = UpdatePersistOrgInfoData.getLegalEntityBusinessUnitOrg(cp,
+              org.adOrgId, "LE");
+          String businessUnit = UpdatePersistOrgInfoData.getLegalEntityBusinessUnitOrg(cp,
+              org.adOrgId, "BU");
+          UpdatePersistOrgInfoData.updatePersistOrgInfo(cp, periodControlAllowedOrg,
+              calendarOwnerOrg, calendar, legalEntity, businessUnit, org.adOrgId);
+        }
+        UpdatePersistOrgInfoData.createPreferencePersistOrgInfoUpdated(cp);
       }
     } catch (Exception e) {
       handleError(e);
@@ -58,6 +56,6 @@ public class UpdatePersistOrgInfo extends ModuleScript {
 
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 33862));
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 33888));
   }
 }
