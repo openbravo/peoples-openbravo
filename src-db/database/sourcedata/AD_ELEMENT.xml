@@ -25600,8 +25600,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--58955DB3E07A38CEE040007F01015E15-->  <COLUMNNAME><![CDATA[Hourly_Repetitions]]></COLUMNNAME>
 <!--58955DB3E07A38CEE040007F01015E15-->  <NAME><![CDATA[Number of Repetitions]]></NAME>
 <!--58955DB3E07A38CEE040007F01015E15-->  <PRINTNAME><![CDATA[Repetitions]]></PRINTNAME>
-<!--58955DB3E07A38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times this element will repeat after its first execution.]]></DESCRIPTION>
-<!--58955DB3E07A38CEE040007F01015E15-->  <HELP><![CDATA[The number of times this element will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
+<!--58955DB3E07A38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times a process request will repeat after its first execution.]]></DESCRIPTION>
+<!--58955DB3E07A38CEE040007F01015E15-->  <HELP><![CDATA[The number of times a process request will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
 <!--58955DB3E07A38CEE040007F01015E15-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--58955DB3E07A38CEE040007F01015E15-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--58955DB3E07A38CEE040007F01015E15--></AD_ELEMENT>
@@ -25614,8 +25614,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--58955DB3E07B38CEE040007F01015E15-->  <COLUMNNAME><![CDATA[Minutely_Repetitions]]></COLUMNNAME>
 <!--58955DB3E07B38CEE040007F01015E15-->  <NAME><![CDATA[Num Repetitions]]></NAME>
 <!--58955DB3E07B38CEE040007F01015E15-->  <PRINTNAME><![CDATA[Repetitions]]></PRINTNAME>
-<!--58955DB3E07B38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times this element will repeat after its first execution.]]></DESCRIPTION>
-<!--58955DB3E07B38CEE040007F01015E15-->  <HELP><![CDATA[The number of times this element will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
+<!--58955DB3E07B38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times a process request will repeat after its first execution.]]></DESCRIPTION>
+<!--58955DB3E07B38CEE040007F01015E15-->  <HELP><![CDATA[The number of times a process request will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
 <!--58955DB3E07B38CEE040007F01015E15-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--58955DB3E07B38CEE040007F01015E15-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--58955DB3E07B38CEE040007F01015E15--></AD_ELEMENT>
@@ -25628,8 +25628,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--58955DB3E07C38CEE040007F01015E15-->  <COLUMNNAME><![CDATA[Secondly_Repetitions]]></COLUMNNAME>
 <!--58955DB3E07C38CEE040007F01015E15-->  <NAME><![CDATA[Repetitions]]></NAME>
 <!--58955DB3E07C38CEE040007F01015E15-->  <PRINTNAME><![CDATA[Repetitions]]></PRINTNAME>
-<!--58955DB3E07C38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times this element will repeat after its first execution.]]></DESCRIPTION>
-<!--58955DB3E07C38CEE040007F01015E15-->  <HELP><![CDATA[The number of times this element will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
+<!--58955DB3E07C38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times a process request will repeat after its first execution.]]></DESCRIPTION>
+<!--58955DB3E07C38CEE040007F01015E15-->  <HELP><![CDATA[The number of times a process request will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
 <!--58955DB3E07C38CEE040007F01015E15-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--58955DB3E07C38CEE040007F01015E15-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--58955DB3E07C38CEE040007F01015E15--></AD_ELEMENT>
