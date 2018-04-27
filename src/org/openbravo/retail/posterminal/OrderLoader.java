@@ -1573,32 +1573,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleDetailList.add(currentDetail);
           paymentAmountMap.put(currentDetail.getId(), currentDetail.getAmount());
         }
-        // The first time
-        if (paymentScheduleDetailList.size() == 0) {
-          final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
-              FIN_PaymentScheduleDetail.class);
-          newPSD.setNewOBObject(true);
-          newPSD.setOrderPaymentSchedule(paymentSchedule);
-          newPSD.setAmount(remainingAmount);
-          newPSD.setBusinessPartner(order.getBusinessPartner());
-          paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-          OBDal.getInstance().save(newPSD);
-          paymentScheduleDetailList.add(newPSD);
-          paymentAmountMap.put(newPSD.getId(), newPSD.getAmount());
-          OBDal.getInstance().save(newPSD);
-          // Add a paymentScheduleDetail with the remaining amount
-          if (remainingAmount.compareTo(order.getGrandTotalAmount()) == -1) {
-            final FIN_PaymentScheduleDetail newRemainingPSD = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
-            newRemainingPSD.setNewOBObject(true);
-            newRemainingPSD.setOrderPaymentSchedule(paymentSchedule);
-            newRemainingPSD.setAmount(order.getGrandTotalAmount().subtract(remainingAmount));
-            newRemainingPSD.setBusinessPartner(order.getBusinessPartner());
-            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
-                newRemainingPSD);
-            OBDal.getInstance().save(newRemainingPSD);
-          }
-        }
       }
 
       DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
