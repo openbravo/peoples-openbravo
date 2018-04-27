@@ -1320,6 +1320,22 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
 
     BigDecimal writeoffAmt = paymentAmt.subtract(gross.abs());
+
+    // When a replaced ticket or a new one is synchronized without any payment, a new payment
+    // schedule detail must be created with the remaining amount
+    if ((!jsonorder.optBoolean("isLayaway", false) && !jsonorder.optBoolean("isPaid", false))
+        || doCancelAndReplace) {
+      final FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
+          FIN_PaymentScheduleDetail.class);
+      paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
+      paymentScheduleDetail.setAmount(gross);
+      paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
+      paymentScheduleDetail.setNewOBObject(true);
+      OBDal.getInstance().save(paymentScheduleDetail);
+      paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
+          paymentScheduleDetail);
+    }
+
     for (int i = 0; i < payments.length(); i++) {
       JSONObject payment = payments.getJSONObject(i);
       OBPOSAppPayment paymentType = null;
@@ -1381,20 +1397,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             account);
         writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
       }
-    }
-
-    // When a new ticket is synchronized without any payment, a new payment schedule detail must be
-    // created with the remaining amount
-    if (payments.length() == 0 && paymentAmt.compareTo(BigDecimal.ZERO) == 0
-        && !jsonorder.optBoolean("isLayaway", false) && !jsonorder.optBoolean("isPaid", false)) {
-      FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
-          FIN_PaymentScheduleDetail.class);
-      paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-      paymentScheduleDetail.setAmount(gross);
-      paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
-
-      paymentScheduleDetail.setNewOBObject(true);
-      OBDal.getInstance().save(paymentScheduleDetail);
     }
 
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
