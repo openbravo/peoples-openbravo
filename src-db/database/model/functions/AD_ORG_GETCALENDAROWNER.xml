@@ -24,6 +24,12 @@
 /*
 * It returns the calendar owner organization of the p_organization Organization.
 * If calendar owner organization is not set, it returns NULL.
+*
+* This function works only for organizations set as ready. For the flows where 
+* the organization is not set as ready yet, please use AD_ORG_GETCALENDAROWNERTN instead.
+*
+* Only when working with ready organizations, and in processes where performance is important, 
+* it is highly recommended to directly query AD_Org.AD_CALENDAROWNER_ORG_ID column. 
 */
 
   v_CalendarOwner_Org_ID AD_Org.AD_CalendarOwner_Org_ID%TYPE;

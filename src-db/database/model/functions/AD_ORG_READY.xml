@@ -190,7 +190,7 @@ BEGIN
           v_BusinessUnit_Org_ID := NULL;
         END;
 
-        -- Set Persist Org Information
+        -- Set Persist Org Information. Variables usage avoids mutating table in Oracle
         UPDATE AD_ORG
         SET AD_PeriodControlAllowed_Org_ID = v_PeriodControlAllowed_Org_ID,
             AD_CalendarOwner_Org_ID = v_CalendarOwner_Org_ID,
@@ -251,7 +251,7 @@ BEGIN
         v_BusinessUnit_Org_ID := NULL;
       END;
 
-      -- Set Persist Org Information
+      -- Set Persist Org Information. Variables usage avoids mutating table in Oracle
       UPDATE AD_ORG
       SET AD_PeriodControlAllowed_Org_ID = v_PeriodControlAllowed_Org_ID,
           AD_CalendarOwner_Org_ID = v_CalendarOwner_Org_ID,

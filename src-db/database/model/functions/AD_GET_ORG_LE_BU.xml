@@ -23,6 +23,21 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+
+/*
+* if p_type = 'LE', returns the Legal Entity
+*    p_type = 'BU', returns the Business Unit
+*    p_type = NULL, returns either the Business Unit or Legal Entity found.
+*
+* This function works only for organizations set as ready. For the flows where 
+* the organization is not set as ready yet, please use AD_GET_ORG_LE_BU_TREENODE instead.
+*
+* Only when working with ready organizations, and in processes where performance is important, 
+* it is highly recommended to directly query AD_Org.AD_LEGALENTITY_ORG_ID or 
+* AD_Org.AD_BUSINESSUNIT_ORG_ID columns. 
+*/
+
+
   v_org_header_id ad_org.ad_org_id%TYPE;
 
 BEGIN

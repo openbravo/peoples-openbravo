@@ -24,6 +24,12 @@
 /*
 * It returns the period allowed organization of the p_organization Organization.
 * If period allowed organization is not set, it returns NULL.
+*
+* This function works only for organizations set as ready. For the flows where 
+* the organization is not set as ready yet, please use AD_ORG_GETPERIODCONTROLALLOWTN instead.
+*
+* Only when working with ready organizations, and in processes where performance is important, 
+* it is highly recommended to directly query AD_Org.AD_PERIODCONTROLALLOWED_ORG_ID column. 
 */
 
   v_periodcontrolallowed_org_id AD_Org.AD_periodcontrolallowed_org_id%TYPE;
