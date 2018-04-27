@@ -23,7 +23,6 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ ADOrgPersistInfoSetReadyTest.class,
-    ADOrgPersistOrgInfoComplexOrgTreeTest.class, ADOrgPersistInfoCornerCaseOrg.class })
-
-public class ADOrgPersistInfoTest {
+    ADOrgPersistOrgInfoComplexOrgTreeTest.class, ADOrgPersistInfoCornerCaseOrgTest.class })
+public class ADOrgPersistInfoTestSuite {
 }

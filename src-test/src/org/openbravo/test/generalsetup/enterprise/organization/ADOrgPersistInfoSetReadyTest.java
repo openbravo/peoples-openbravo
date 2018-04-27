@@ -20,29 +20,16 @@ package org.openbravo.test.generalsetup.enterprise.organization;
 
 import org.junit.Test;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ADOrgPersistInfoSetReadyTest extends OBBaseTest {
-
-  private static final Logger log = LoggerFactory.getLogger(ADOrgPersistInfoSetReadyTest.class);
 
   /**
    * Create a new Organization of type Generic under F&B España, S.A Organization and test persist
    * organization info after the organization is set as ready with Cascade No.
    */
   @Test
-  public void testSetReadyOneGenericOrganization() {
-    try {
-      ADOrgPersistInfoUtility.setTestContextFB();
-      String orgId = ADOrgPersistInfoUtility.createOrganization(
-          ADOrgPersistInfoConstants.ORGTYPE_GENERIC, ADOrgPersistInfoConstants.ORG_FB_SPAIN, true,
-          ADOrgPersistInfoConstants.CUR_EURO);
-      ADOrgPersistInfoUtility.setAsReady(orgId, "N");
-      ADOrgPersistInfoUtility.assertPersistOrgInfo(orgId);
-    } catch (Exception e) {
-      log.error("Error in testSetReadyOrganization", e);
-    }
+  public void testSetReadyOneGenericOrganizationNoCascade() {
+    testSetReadyOneOrganization(false, ADOrgPersistInfoConstants.ORGTYPE_GENERIC);
   }
 
   /**
@@ -51,16 +38,33 @@ public class ADOrgPersistInfoSetReadyTest extends OBBaseTest {
    */
   @Test
   public void testSetReadyOneGenericOrganizationCascade() {
-    try {
-      ADOrgPersistInfoUtility.setTestContextFB();
-      String orgId = ADOrgPersistInfoUtility.createOrganization(
-          ADOrgPersistInfoConstants.ORGTYPE_GENERIC, ADOrgPersistInfoConstants.ORG_FB_SPAIN, true,
-          ADOrgPersistInfoConstants.CUR_EURO);
-      ADOrgPersistInfoUtility.setAsReady(orgId, "Y");
-      ADOrgPersistInfoUtility.assertPersistOrgInfo(orgId);
-    } catch (Exception e) {
-      log.error("Error in testSetReadyOrganization", e);
-    }
+    testSetReadyOneOrganization(true, ADOrgPersistInfoConstants.ORGTYPE_GENERIC);
+  }
+
+  /**
+   * Create a new Organization of type Organization under * Organization and test persist
+   * organization information after the organization is set as ready cascade as No.
+   */
+  @Test
+  public void testSetReadyOrganizationTypeNoCascade() {
+    testSetReadyOneOrganization(false, ADOrgPersistInfoConstants.ORGTYPE_ORGANIZATION);
+  }
+
+  /**
+   * Create a new Organization of type Organization under * Organization and test persist
+   * organization information after the organization is set as ready with cascade as Yes.
+   */
+  @Test
+  public void testSetReadyOrganizationCascade() {
+    testSetReadyOneOrganization(true, ADOrgPersistInfoConstants.ORGTYPE_ORGANIZATION);
+  }
+
+  private void testSetReadyOneOrganization(boolean isCascade, final String orgType) {
+    ADOrgPersistInfoUtility.setTestContextFB();
+    String orgId = ADOrgPersistInfoUtility.createOrganization(orgType,
+        ADOrgPersistInfoConstants.ORG_FB_SPAIN, true, ADOrgPersistInfoConstants.CUR_EURO);
+    ADOrgPersistInfoUtility.setAsReady(orgId, isCascade ? "Y" : "N");
+    ADOrgPersistInfoUtility.assertPersistOrgInfo(orgId);
   }
 
   /**
@@ -69,23 +73,18 @@ public class ADOrgPersistInfoSetReadyTest extends OBBaseTest {
    * No.
    */
   @Test
-  public void testSetReadyTwoGenericOrganization() {
-    try {
-      ADOrgPersistInfoUtility.setTestContextFB();
-      String firstOrgId = ADOrgPersistInfoUtility.createOrganization(
-          ADOrgPersistInfoConstants.ORGTYPE_GENERIC, ADOrgPersistInfoConstants.ORG_FB_SPAIN, true,
-          ADOrgPersistInfoConstants.CUR_EURO);
-      String secondOrgId = ADOrgPersistInfoUtility.createOrganization(
-          ADOrgPersistInfoConstants.ORGTYPE_GENERIC, firstOrgId, false,
-          ADOrgPersistInfoConstants.CUR_EURO);
-      ADOrgPersistInfoUtility.setAsReady(firstOrgId, "N");
-      ADOrgPersistInfoUtility.setAsReady(secondOrgId, "N");
-      ADOrgPersistInfoUtility.assertPersistOrgInfo(firstOrgId);
-      ADOrgPersistInfoUtility.assertPersistOrgInfo(secondOrgId);
-
-    } catch (Exception e) {
-      log.error("Error in testSetReadyTwoGenericOrganization", e);
-    }
+  public void testSetReadyTwoGenericOrganizationNoCascade() {
+    ADOrgPersistInfoUtility.setTestContextFB();
+    String firstOrgId = ADOrgPersistInfoUtility.createOrganization(
+        ADOrgPersistInfoConstants.ORGTYPE_GENERIC, ADOrgPersistInfoConstants.ORG_FB_SPAIN, true,
+        ADOrgPersistInfoConstants.CUR_EURO);
+    String secondOrgId = ADOrgPersistInfoUtility.createOrganization(
+        ADOrgPersistInfoConstants.ORGTYPE_GENERIC, firstOrgId, false,
+        ADOrgPersistInfoConstants.CUR_EURO);
+    ADOrgPersistInfoUtility.setAsReady(firstOrgId, "N");
+    ADOrgPersistInfoUtility.setAsReady(secondOrgId, "N");
+    ADOrgPersistInfoUtility.assertPersistOrgInfo(firstOrgId);
+    ADOrgPersistInfoUtility.assertPersistOrgInfo(secondOrgId);
   }
 
   /**
@@ -95,56 +94,16 @@ public class ADOrgPersistInfoSetReadyTest extends OBBaseTest {
    */
   @Test
   public void testSetReadyTwoGenericOrganizationCascade() {
-    try {
-      ADOrgPersistInfoUtility.setTestContextFB();
-      String firstOrgId = ADOrgPersistInfoUtility.createOrganization(
-          ADOrgPersistInfoConstants.ORGTYPE_GENERIC, ADOrgPersistInfoConstants.ORG_FB_SPAIN, true,
-          ADOrgPersistInfoConstants.CUR_EURO);
-      String secondOrgId = ADOrgPersistInfoUtility.createOrganization(
-          ADOrgPersistInfoConstants.ORGTYPE_GENERIC, firstOrgId, false,
-          ADOrgPersistInfoConstants.CUR_EURO);
-      ADOrgPersistInfoUtility.setAsReady(firstOrgId, "Y");
-      ADOrgPersistInfoUtility.assertPersistOrgInfo(firstOrgId);
-      ADOrgPersistInfoUtility.assertPersistOrgInfo(secondOrgId);
-
-    } catch (Exception e) {
-      log.error("Error in testSetReadyTwoGenericOrganization", e);
-    }
+    ADOrgPersistInfoUtility.setTestContextFB();
+    String firstOrgId = ADOrgPersistInfoUtility.createOrganization(
+        ADOrgPersistInfoConstants.ORGTYPE_GENERIC, ADOrgPersistInfoConstants.ORG_FB_SPAIN, true,
+        ADOrgPersistInfoConstants.CUR_EURO);
+    String secondOrgId = ADOrgPersistInfoUtility.createOrganization(
+        ADOrgPersistInfoConstants.ORGTYPE_GENERIC, firstOrgId, false,
+        ADOrgPersistInfoConstants.CUR_EURO);
+    ADOrgPersistInfoUtility.setAsReady(firstOrgId, "Y");
+    ADOrgPersistInfoUtility.assertPersistOrgInfo(firstOrgId);
+    ADOrgPersistInfoUtility.assertPersistOrgInfo(secondOrgId);
   }
 
-  /**
-   * Create a new Organization of type Organization under * Organization and test persist
-   * organization information after the organization is set as ready cascade as No.
-   */
-  @Test
-  public void testSetReadyOrganization() {
-    try {
-      ADOrgPersistInfoUtility.setTestContextFB();
-      String orgId = ADOrgPersistInfoUtility.createOrganization(
-          ADOrgPersistInfoConstants.ORGTYPE_ORGANIZATION, ADOrgPersistInfoConstants.ORG_FB_SPAIN,
-          true, ADOrgPersistInfoConstants.CUR_EURO);
-      ADOrgPersistInfoUtility.setAsReady(orgId, "N");
-      ADOrgPersistInfoUtility.assertPersistOrgInfo(orgId);
-    } catch (Exception e) {
-      log.error("Error in testSetReadyOrganization", e);
-    }
-  }
-
-  /**
-   * Create a new Organization of type Organization under * Organization and test persist
-   * organization information after the organization is set as ready with cascade as Yes.
-   */
-  @Test
-  public void testSetReadyOrganizationCascade() {
-    try {
-      ADOrgPersistInfoUtility.setTestContextFB();
-      String orgId = ADOrgPersistInfoUtility.createOrganization(
-          ADOrgPersistInfoConstants.ORGTYPE_ORGANIZATION, ADOrgPersistInfoConstants.ORG_FB_SPAIN,
-          true, ADOrgPersistInfoConstants.CUR_EURO);
-      ADOrgPersistInfoUtility.setAsReady(orgId, "Y");
-      ADOrgPersistInfoUtility.assertPersistOrgInfo(orgId);
-    } catch (Exception e) {
-      log.error("Error in testSetReadyOrganization", e);
-    }
-  }
 }
