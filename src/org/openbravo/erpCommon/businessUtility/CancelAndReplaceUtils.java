@@ -1435,33 +1435,13 @@ public class CancelAndReplaceUtils {
       OBDal.getInstance().save(paymentSchedule);
     }
 
-    // Get the payment schedule detail of the order
-    OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal.getInstance()
-        .createCriteria(FIN_PaymentScheduleDetail.class);
-    paymentScheduleDetailCriteria.add(Restrictions.eq(
-        FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-    // There should be only one with null paymentDetails
-    paymentScheduleDetailCriteria.add(Restrictions
-        .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-    List<FIN_PaymentScheduleDetail> pendingPaymentScheduleDetailList = paymentScheduleDetailCriteria
-        .list();
-
-    List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = new ArrayList<FIN_PaymentScheduleDetail>();
-    HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
-    FIN_PaymentScheduleDetail paymentScheduleDetail = null;
-    if (pendingPaymentScheduleDetailList.size() != 0
-        && pendingPaymentScheduleDetailList.get(0).getAmount().compareTo(amount) == 0) {
-      paymentScheduleDetailList.addAll(pendingPaymentScheduleDetailList);
-      paymentScheduleDetail = paymentScheduleDetailList.get(0);
-      paymentScheduleDetailAmount.put(paymentScheduleDetail.getId(), amount);
-    } else {
-      // Two possibilities
-      // 1.- All the payments have been created
-      // 2.- The payment was created trough Web POS and therefore a payment schedule detail with
-      // null payment detail is missing
-      // Lets assume that in this point the payment was created trough Web POS
-      // Create missing payment schedule detail
-      paymentScheduleDetail = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
+    if (_nettingPayment == null) {
+      // This is the first call to modify the netting payment. It is called to create the inverse
+      // order detail.
+      final List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = new ArrayList<FIN_PaymentScheduleDetail>();
+      final HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
+      final FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
+          FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrganization(order.getOrganization());
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
       paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
@@ -1471,19 +1451,50 @@ public class CancelAndReplaceUtils {
 
       String paymentScheduleDetailId = paymentScheduleDetail.getId();
       paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
-    }
-    if (_nettingPayment == null) {
+
       // Call to savePayment in order to create a new payment in
       _nettingPayment = FIN_AddPayment.savePayment(_nettingPayment, true, paymentDocumentType,
           paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
           amount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
           paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
           order.getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO);
-    }
-    // Create a new line
-    else {
-      FIN_AddPayment.updatePaymentDetail(paymentScheduleDetailList.get(0), _nettingPayment, amount,
-          false);
+    } else {
+      // The netting payment detail is being created for the original or the inverse order. It is
+      // necessary to search for the existing outstanding PSD and set them to the payment.
+      final OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal
+          .getInstance().createCriteria(FIN_PaymentScheduleDetail.class);
+      paymentScheduleDetailCriteria.add(Restrictions.eq(
+          FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+      // There should be only one with null paymentDetails
+      paymentScheduleDetailCriteria.add(Restrictions
+          .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+      final List<FIN_PaymentScheduleDetail> pendingPaymentScheduleDetailList = paymentScheduleDetailCriteria
+          .list();
+      BigDecimal remainingAmount = new BigDecimal(amount.toString());
+      for (final FIN_PaymentScheduleDetail remainingPSD : pendingPaymentScheduleDetailList) {
+        if (remainingAmount.compareTo(BigDecimal.ZERO) == 1) {
+          final BigDecimal auxAmount = new BigDecimal(remainingPSD.getAmount().toString());
+          if (remainingPSD.getAmount().compareTo(remainingAmount) == 1) {
+            // The PSD with the remaining amount is bigger to the amount to create, so it must be
+            // separated in two different details
+            final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
+                FIN_PaymentScheduleDetail.class);
+            newPSD.setNewOBObject(true);
+            newPSD.setOrderPaymentSchedule(paymentSchedule);
+            newPSD.setInvoicePaymentSchedule(remainingPSD.getInvoicePaymentSchedule());
+            newPSD.setAmount(remainingPSD.getAmount().subtract(remainingAmount));
+            newPSD.setBusinessPartner(order.getBusinessPartner());
+            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
+            OBDal.getInstance().save(newPSD);
+            remainingPSD.setAmount(remainingAmount);
+          }
+          remainingAmount = remainingAmount.subtract(auxAmount);
+          FIN_AddPayment.updatePaymentDetail(remainingPSD, _nettingPayment,
+              remainingPSD.getAmount(), false);
+        } else {
+          break;
+        }
+      }
     }
     return _nettingPayment;
   }
