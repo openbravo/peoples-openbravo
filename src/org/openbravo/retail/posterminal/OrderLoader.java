@@ -1530,6 +1530,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       } else {
         BigDecimal remainingAmount = amount;
+        boolean isNegativeOrder = amount.compareTo(BigDecimal.ZERO) == -1 ? true : false;
         // Get the remaining PSD and sort it by the ones that are related to an invoice
         final List<FIN_PaymentScheduleDetail> remainingPSDList = new ArrayList<>();
         for (final FIN_PaymentScheduleDetail currentDetail : paymentSchedule
@@ -1540,7 +1541,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         sortPSDByInvoice(remainingPSDList);
         for (final FIN_PaymentScheduleDetail currentDetail : remainingPSDList) {
-          if (remainingAmount.compareTo(BigDecimal.ZERO) > 0) {
+          if ((!isNegativeOrder && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
+              || (isNegativeOrder && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
             if (remainingAmount.compareTo(currentDetail.getAmount()) >= 0) {
               remainingAmount = remainingAmount.subtract(currentDetail.getAmount());
             } else {
