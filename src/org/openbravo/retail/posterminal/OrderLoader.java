@@ -1529,8 +1529,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         }
       } else {
-        BigDecimal remainingAmount = amount;
-        boolean isNegativeOrder = amount.compareTo(BigDecimal.ZERO) == -1 ? true : false;
+        BigDecimal remainingAmount = new BigDecimal(amount.toString());
+        boolean isNegativePayment = amount.compareTo(BigDecimal.ZERO) == -1 ? true : false;
         // Get the remaining PSD and sort it by the ones that are related to an invoice
         final List<FIN_PaymentScheduleDetail> remainingPSDList = new ArrayList<>();
         for (final FIN_PaymentScheduleDetail currentDetail : paymentSchedule
@@ -1541,8 +1541,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         sortPSDByInvoice(remainingPSDList);
         for (final FIN_PaymentScheduleDetail currentDetail : remainingPSDList) {
-          if ((!isNegativeOrder && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
-              || (isNegativeOrder && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
+          if ((!isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
+              || (isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
             if (remainingAmount.compareTo(currentDetail.getAmount()) >= 0) {
               remainingAmount = remainingAmount.subtract(currentDetail.getAmount());
             } else {
@@ -1569,6 +1569,44 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           } else {
             break;
           }
+        }
+        if ((!isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
+            || (isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
+          // There can be the possibility that the user is paying more than the remaining amount. In
+          // this case, a new PSD must be created for the over payment, and a remaining PSD must be
+          // created. This occurs only in a special case, that is when paying more than the
+          // remaining to pay using a cash payment method and there's no enough change to return in
+          // that payment method. That payment is not set as over payment, even when the amount is
+          // higher than the expected amount. After this payment, another one will come but in
+          // negative to set the paid and outstanding amounts to 0.
+          FIN_PaymentSchedule newPSInvoice = null;
+          if (paymentScheduleDetailList.size() != 0) {
+            // If a newly introduced psd has an invoice, the new ones to create must also have it
+            if (paymentScheduleDetailList.get(0).getOrderPaymentSchedule() != null) {
+              newPSInvoice = paymentScheduleDetailList.get(0).getInvoicePaymentSchedule();
+            }
+          }
+          final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
+              FIN_PaymentScheduleDetail.class);
+          newPSD.setNewOBObject(true);
+          newPSD.setOrderPaymentSchedule(paymentSchedule);
+          newPSD.setInvoicePaymentSchedule(newPSInvoice);
+          newPSD.setAmount(remainingAmount);
+          newPSD.setBusinessPartner(order.getBusinessPartner());
+          paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
+          OBDal.getInstance().save(newPSD);
+          final FIN_PaymentScheduleDetail newRemainingPSD = OBProvider.getInstance().get(
+              FIN_PaymentScheduleDetail.class);
+          newRemainingPSD.setNewOBObject(true);
+          newRemainingPSD.setOrderPaymentSchedule(paymentSchedule);
+          newRemainingPSD.setInvoicePaymentSchedule(newPSInvoice);
+          newRemainingPSD.setAmount(remainingAmount.negate());
+          newRemainingPSD.setBusinessPartner(order.getBusinessPartner());
+          paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
+              .add(newRemainingPSD);
+          OBDal.getInstance().save(newRemainingPSD);
+          paymentScheduleDetailList.add(newPSD);
+          paymentAmountMap.put(newPSD.getId(), newPSD.getAmount());
         }
       }
 
