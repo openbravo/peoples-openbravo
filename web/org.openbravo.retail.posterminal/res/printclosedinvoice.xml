@@ -44,7 +44,10 @@
       <text>, </text>
       <text><%= OB.UTIL.encodeXMLComponent(order.get('posTerminal'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
     </line>
-    
+    <line>
+      <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTaxId')) %></text>
+      <text><%= OB.MobileApp.model.get('terminal').organizationTaxId %></text>
+    </line>
     <line></line>
     <line size="1">
       <text align ="center" length="42"><%= OB.I18N.getLabel('OBPOS_ClosedInvoice') %></text>
@@ -122,7 +125,7 @@
          }else {
      %>
         <line>
-          <text align="left" length="10"><%= paymentName %></text>
+          <text align="left" length="20"><%= paymentName %></text>
           <text align="right" length="20"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
         </line>
       <%
@@ -158,14 +161,20 @@
       <%
           }
         }
-      %>   
+      %>
+    <line>
+      <% if(order.get('paidOnCredit')){ %>
+        <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Credit')) %></text>
+        <text align="right" length="20"><%= OB.I18N.formatCurrency(order.get('creditAmount'))%></text>
+      <% } %>
+    </line>
     <line>
       <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
       <text align="right" length="20"><%= OB.I18N.formatCurrency(order.get('change'))%></text>
-    </line>
+    </line>    
     <line></line>
     <line size="1">
-      <% if (order.get('hasbeenpaid') === 'Y') { %>
+      <% if (order.get('hasbeenpaid') === 'Y' || order.get('isPaid') == true) { %>
         <% if (order.get('paidOnCredit')){ %>
           <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
         <% } else { %>

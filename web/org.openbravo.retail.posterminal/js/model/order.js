@@ -5541,7 +5541,7 @@
     getScannableDocumentNo: function () {
       return this.get('documentNo').replace(/-/g, '\\-').replace(/\+/g, '\\+');
     },
-    turnEditable: function () {
+    turnEditable: function (callback) {
       if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
         return;
       }
@@ -5553,6 +5553,7 @@
         this.set('orderType', 2);
       }
       this.unset('skipApplyPromotions');
+      this.save(callback);
     }
   });
 
@@ -6282,7 +6283,14 @@
     checkForDuplicateReceipts: function (model, callback, errorCallback, fromSelector) {
 
       function openReceiptPermissionError(orderType) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        if (fromSelector) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        }
+        if (errorCallback) {
+          errorCallback();
+        }
       }
 
       //Check Permissions

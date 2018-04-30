@@ -68,11 +68,13 @@ enyo.kind({
         components: [{
           name: 'coin',
           kind: 'OB.UI.MediumButton',
+          avoidDoubleClick: false,
           classes: 'btnlink-gray btnlink-cashup-edit',
           ontap: 'addUnit'
         }, {
           name: 'qtyminus',
           kind: 'OB.UI.SmallButton',
+          avoidDoubleClick: false,
           style: 'width: 8%;',
           classes: 'btnlink-gray btnlink-cashup-edit',
           content: '-',
@@ -86,6 +88,7 @@ enyo.kind({
         }, {
           name: 'qtyplus',
           kind: 'OB.UI.SmallButton',
+          avoidDoubleClick: false,
           style: 'width: 8%',
           classes: 'btnlink-gray btnlink-cashup-edit',
           content: '+',

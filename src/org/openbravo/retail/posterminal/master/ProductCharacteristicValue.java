@@ -81,21 +81,31 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
 
     List<String> hqlQueries = new ArrayList<String>();
 
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+
     HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries.add("select " + regularProductsCharacteristicHQLProperties.getHqlSelect()
-        + "from ProductCharacteristicValue pcv "
-        + "inner join pcv.product.oBRETCOProlProductList opp "
-        + "inner join pcv.product.pricingProductPriceList ppp "
-        + "where opp.obretcoProductlist.id= :productListId "
-        + "and ppp.priceListVersion.id= :priceListVersionId "
-        + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
-        + "and pcv.$filtersCriteria AND pcv.$hqlCriteria "
-        + "and pcv.$naturalOrgCriteria and pcv.$readableSimpleClientCriteria "
-        + "and (opp.$incrementalUpdateCriteria OR ppp.$incrementalUpdateCriteria OR "
-        + "pcv.$incrementalUpdateCriteria OR pcv.characteristic.$incrementalUpdateCriteria OR "
-        + "pcv.characteristicValue.$incrementalUpdateCriteria) " + "order by pcv.id");
+    hqlQueries
+        .add("select "
+            + regularProductsCharacteristicHQLProperties.getHqlSelect()
+            + "from ProductCharacteristicValue pcv "
+            + "inner join pcv.product.oBRETCOProlProductList opp "
+            + "inner join pcv.product.pricingProductPriceList ppp "
+            + "where opp.obretcoProductlist.id= :productListId "
+            + "and ppp.priceListVersion.id= :priceListVersionId "
+            + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
+            + "and pcv.$filtersCriteria AND pcv.$hqlCriteria "
+            + "and pcv.$naturalOrgCriteria and pcv.$readableSimpleClientCriteria "
+            + ((lastUpdated != null) ? "and (opp.$incrementalUpdateCriteria OR ppp.$incrementalUpdateCriteria OR "
+                + "pcv.$incrementalUpdateCriteria OR pcv.characteristic.$incrementalUpdateCriteria OR "
+                + "pcv.characteristicValue.$incrementalUpdateCriteria) "
+                : "and (opp.$incrementalUpdateCriteria AND ppp.$incrementalUpdateCriteria AND "
+                    + "pcv.$incrementalUpdateCriteria AND pcv.characteristic.$incrementalUpdateCriteria AND "
+                    + "pcv.characteristicValue.$incrementalUpdateCriteria) ")
+            + "and pcv.characteristic.active = 'Y' " + "order by pcv.id");
     return hqlQueries;
   }
 }

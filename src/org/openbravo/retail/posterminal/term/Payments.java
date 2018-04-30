@@ -39,7 +39,8 @@ public class Payments extends JSONTerminalProperty {
       JSONArray respArray = new JSONArray();
       String posId = jsonsent.getString("pos");
       String hqlPayments = "select p as payment, pm as paymentMethod, "
-          + "c_currency_rate(coalesce(c, pmc), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, coalesce(c, pmc), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+          + "obpos_currency_rate(coalesce(c, pmc), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
+          + "obpos_currency_rate(p.obposApplications.organization.currency, coalesce(c, pmc), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
           + "coalesce(c.iSOCode, pmc.iSOCode) as isocode, "
           + "coalesce(c.symbol, pmc.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
           + "coalesce(f.currentBalance, 0) as currentBalance, "

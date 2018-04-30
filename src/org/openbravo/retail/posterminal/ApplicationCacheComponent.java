@@ -18,14 +18,21 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 
+import org.apache.commons.io.FileUtils;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
+import org.openbravo.model.ad.module.ModuleDependency;
 
 /**
  * 
@@ -34,6 +41,8 @@ import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
 
 @RequestScoped
 public class ApplicationCacheComponent extends MobileCoreApplicationCacheComponent {
+
+  private static final String PATH_PREFIX = "web" + File.separatorChar;
 
   @Override
   public List<String> getAppList() {
@@ -101,6 +110,49 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
         .add("../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
 
     return resources;
+  }
+
+  @Override
+  public List<String> getImageFileList() {
+    final String[] extensions = { "png", "gif", "svg" };
+    return getFileList(extensions);
+  }
+
+  private List<String> getFileList(String[] extensions) {
+    List<String> fileList = new ArrayList<String>();
+    String filePath, relativePath = PATH_PREFIX + getModulePackageName();
+    int pos = 0;
+    File directory = new File(RequestContext.getServletContext().getRealPath("/" + relativePath));
+    Iterator<File> it = FileUtils.iterateFiles(directory, extensions, true);
+    while (it.hasNext()) {
+      final File f = (File) it.next();
+      filePath = f.getPath();
+      pos = filePath.indexOf(relativePath);
+      fileList.add("../../" + filePath.substring(pos));
+    }
+
+    try {
+      OBContext.setAdminMode();
+      OBCriteria<ModuleDependency> mdCriteria = OBDal.getInstance().createCriteria(
+          ModuleDependency.class);
+      mdCriteria.add(Restrictions.eq(ModuleDependency.PROPERTY_DEPENDENTMODULE, getModule()));
+      for (ModuleDependency dependency : mdCriteria.list()) {
+        relativePath = PATH_PREFIX + dependency.getModule().getJavaPackage();
+        directory = new File(RequestContext.getServletContext().getRealPath("/" + relativePath));
+        if (directory.isDirectory()) {
+          it = FileUtils.iterateFiles(directory, extensions, true);
+          while (it.hasNext()) {
+            final File f = (File) it.next();
+            filePath = f.getPath();
+            pos = filePath.indexOf(relativePath);
+            fileList.add("../../" + filePath.substring(pos));
+          }
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return fileList;
   }
 
   @Override
