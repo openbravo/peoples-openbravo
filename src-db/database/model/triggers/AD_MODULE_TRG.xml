@@ -19,6 +19,7 @@
   * Contributor(s):  ______________________________________.
   ************************************************************************/
   v_InstancePurpose CHAR(1);
+
 BEGIN
 
   IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -28,7 +29,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20000, '@CannotDisableCore@');
   END IF;
 
-  --Prevents development modules in Production instances
+  --Prevents modules in "In Development" status in Production instances
   SELECT instance_purpose INTO v_InstancePurpose FROM ad_system_info;
   IF :new.isindevelopment = 'Y' AND v_InstancePurpose = 'P' THEN
     RAISE_APPLICATION_ERROR(-20000, '@AD_MODULE_INDEV_IN_PROD@');

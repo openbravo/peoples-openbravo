@@ -28,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
@@ -146,8 +147,7 @@ public class ActiveInstanceProcess implements Process {
           }
 
           if (PRODUCTION_PURPOSE.equals(purpose)) {
-            WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
-              .setNotInDevelopment();
+            setModulesAsNotInDevelopment();
           }
         } else {
           msg.setType("Error");
@@ -167,6 +167,20 @@ public class ActiveInstanceProcess implements Process {
 
   }
 
+  private void setModulesAsNotInDevelopment() {
+    if (SessionFactoryController.isRunningInWebContainer()) {
+      WeldUtils
+        .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class).setNotInDevelopment();
+    } else {
+      OBDal
+        .getInstance()
+        .getSession()
+        .createQuery(
+          "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
+        .executeUpdate();
+    }
+  }
+
   public static void updateShowProductionFields(String value) {
     String hql = "update ADPreference set searchKey = :value where property = 'showMRPandProductionFields' and module.id is null";
     Query q = OBDal.getInstance().getSession().createQuery(hql);
@@ -182,7 +196,7 @@ public class ActiveInstanceProcess implements Process {
 
   /**
    * Sends the request for the activation key.
-   * 
+   *
    * @param publickey
    *          Instance's public key
    * @param purpose

@@ -479,7 +479,7 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   /**
-   * Mark all modules as not in development and updates the cache status
+   * Marks all modules as not in development and updates the cache status
    */
   public void setNotInDevelopment() {
     setAllModulesAsNotInDevelopment();
