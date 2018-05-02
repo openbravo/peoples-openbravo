@@ -2963,7 +2963,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             || payment.optBoolean("isReversePayment", false) == true) {
           continue;
         }
-        amount = amount.add(new BigDecimal(payment.optDouble("origAmount")));
+        amount = amount.add(new BigDecimal(payment.optString("origAmount")));
       }
     } catch (JSONException e) {
       log.error("Exceptin in getCashPaymentAmount ", e);
