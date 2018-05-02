@@ -60,7 +60,7 @@ public class InOutLinePEHQLInjector0 extends HqlInserter {
       hql.append(" )  or e.explode = 'Y')");
     } else {
       hql.append(" group by e.id, e.movementQuantity, uom.id, p.id, sh.id, dt.id, aum.id, aum_defaum.id");
-      hql.append(" having ((e.movementQuantity - sum(coalesce(mi.quantity,0)) <> 0) or e.explode = 'Y')"); // or
+      hql.append(" having ((e.movementQuantity - sum(coalesce(mi.quantity,0)) <> 0) or e.explode = 'Y')");
     }
 
     hql.append(" and aum_defaum.id = coalesce(aum.id, M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))");

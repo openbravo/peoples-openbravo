@@ -34,15 +34,11 @@ public class OrderLinePEHQLInjector2 extends HqlInserter {
         requestParameters.get("@Invoice.salesTransaction@"), "true");
 
     StringBuilder hql = new StringBuilder();
-
-    if (isSalesTransaction) {
-      hql.append(" coalesce(e.operativeQuantity, M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, aum_defaum.id)) ");
-      hql.append(" - coalesce(m_get_converted_aumqty(p.id, e.invoicedQuantity, aum_defaum.id), 0)");
-    } else {
-      hql.append(" coalesce(e.operativeQuantity, M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, aum_defaum.id)) ");
-      hql.append(" - coalesce(M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(e.invoicedQuantity, 0)), aum_defaum.id),0)");
-      hql.append(" - coalesce(M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(m.quantity, 0)), aum_defaum.id),0)");
+    hql.append(" coalesce(e.operativeQuantity, TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity - e.invoicedQuantity ");
+    if (!isSalesTransaction) {
+      hql.append(" - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m),");
     }
+    hql.append(" coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))))");
 
     return hql.toString();
   }

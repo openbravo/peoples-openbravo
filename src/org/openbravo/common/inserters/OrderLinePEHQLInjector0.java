@@ -41,14 +41,14 @@ public class OrderLinePEHQLInjector0 extends HqlInserter {
 
     StringBuilder hql = new StringBuilder();
     hql.append(" and o.salesTransaction = :issotrx");
-    hql.append(" and o.businessPartner.id = :bp");
+    hql.append(" and bp.id = :bp");
     hql.append(" and pl.priceIncludesTax = :plIncTax");
     hql.append(" and o.currency.id = :cur");
 
     if (isSalesTransaction) {
       hql.append(" and o.documentStatus in ('CO', 'CL', 'IP')");
-      hql.append(" and o.documentType.documentCategory = 'SOO'");
-      hql.append(" and o.documentType.sOSubType not in ('ON','OB', 'WR')");
+      hql.append(" and dt.documentCategory = 'SOO'");
+      hql.append(" and dt.sOSubType not in ('ON','OB', 'WR')");
       hql.append(" and (");
       hql.append("   o.invoiceTerms in ('I', 'O', 'D', 'S') ");
       hql.append("   and si.invoiceFrequency is null or si.invoiceFrequency in ('D', 'W', 'T')");
@@ -69,11 +69,8 @@ public class OrderLinePEHQLInjector0 extends HqlInserter {
     } else {
       hql.append(" and o.documentStatus in ('CO', 'CL')");
       hql.append(" and o.invoiceTerms <> 'N'");
-      hql.append(" group by e.id, e.orderedQuantity, o.id, uom.id, p.id, aum.id, dt.id, aum_defaum.id");
-      hql.append(" having (((e.explode = 'Y') or (sum(e.orderedQuantity) - sum(coalesce(m.quantity,0)) <> 0)))");
+      hql.append(" and ((e.explode = 'Y') or ((e.orderedQuantity - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m)) <> 0)) ");
     }
-
-    hql.append(" and aum_defaum.id = coalesce(aum.id, M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))");
 
     queryNamedParameters.put("issotrx", isSalesTransaction);
     queryNamedParameters.put("bp", strBusinessPartnerId);

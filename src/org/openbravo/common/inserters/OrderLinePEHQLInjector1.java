@@ -38,7 +38,7 @@ public class OrderLinePEHQLInjector1 extends HqlInserter {
     if (isSalesTransaction) {
       hql.append(" e.orderedQuantity - e.invoicedQuantity");
     } else {
-      hql.append(" e.orderedQuantity - sum(coalesce(e.invoicedQuantity, 0)) - sum(coalesce(e.invoicedQuantity, 0))");
+      hql.append(" e.orderedQuantity - e.invoicedQuantity - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m)");
     }
 
     return hql.toString();

@@ -11204,25 +11204,24 @@ where
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1FA4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--7EB9FFD7BD4E4113A13A096EB879D358-->  <HQLQUERY><![CDATA[select 
+<!--7EB9FFD7BD4E4113A13A096EB879D358-->  <HQLQUERY><![CDATA[select    
   e.id,
   @insertion_point_1@,
   uom,
   p,
-  e.lineNo,
-  o,
+  e.lineNo,   
+  o,  
   @insertion_point_2@,
-  aum_defaum
-from OrderLine as e
-  join e.salesOrder o
-  join o.priceList pl
-  join o.documentType dt
-  join e.uOM uom
-  join e.product p
-  left join o.businessPartner.invoiceSchedule si
-  left outer join e.procurementPOInvoiceMatchList m  with (m.id is null or (m.invoiceLine.id is not null))
+(select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))
+from OrderLine as e   
+  join e.salesOrder o   
+  join o.priceList pl   
+  join o.documentType dt   
+  join e.uOM uom   
+  join e.product p 
+  join o.businessPartner bp 
+  left join bp.invoiceSchedule si
   left join e.operativeUOM aum
-  ,UOM aum_defaum
 where
   @additional_filters@
   @insertion_point_0@]]></HQLQUERY>
