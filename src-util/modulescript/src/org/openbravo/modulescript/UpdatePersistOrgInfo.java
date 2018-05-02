@@ -56,6 +56,6 @@ public class UpdatePersistOrgInfo extends ModuleScript {
 
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 33888));
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 33898));
   }
 }
