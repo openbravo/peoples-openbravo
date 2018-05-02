@@ -43,7 +43,6 @@ import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -63,7 +62,6 @@ import org.slf4j.LoggerFactory;
 public class ApplicationDictionaryCachedStructures {
   private static final Logger log = LoggerFactory
       .getLogger(ApplicationDictionaryCachedStructures.class);
-  private static final String PURPOSE_PRODUCTION = "P";
 
   private Map<String, Window> windowMap;
   private Map<String, Tab> tabMap;
@@ -483,14 +481,14 @@ public class ApplicationDictionaryCachedStructures {
   /**
    * Mark all modules as not in development and updates the cache status
    */
-  public void setAllModulesAsNotInDevelopment() {
-    removeDevelopmentFlagToAllModules();
+  public void setNotInDevelopment() {
+    setAllModulesAsNotInDevelopment();
     inDevelopmentModules.clear();
     useCache = true;
     log.info("Setting all modules as not In Development");
   }
 
-  private void removeDevelopmentFlagToAllModules() {
+  private void setAllModulesAsNotInDevelopment() {
     OBDal
         .getInstance()
         .getSession()

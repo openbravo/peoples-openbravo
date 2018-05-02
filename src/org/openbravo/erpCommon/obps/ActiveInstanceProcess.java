@@ -147,7 +147,7 @@ public class ActiveInstanceProcess implements Process {
 
           if (PRODUCTION_PURPOSE.equals(purpose)) {
             WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
-              .setAllModulesAsNotInDevelopment();
+              .setNotInDevelopment();
           }
         } else {
           msg.setType("Error");
