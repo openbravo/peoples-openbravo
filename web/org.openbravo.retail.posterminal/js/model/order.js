@@ -6166,6 +6166,9 @@
         }
         me.current = me.at(0);
         me.loadCurrent(createNew);
+
+        // Refresh Master Data
+        OB.UTIL.checkRefreshMasterData();
       }
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
