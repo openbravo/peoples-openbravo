@@ -20346,20 +20346,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400042-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1005400042--></AD_ELEMENT>
 
-<!--1005400043--><AD_ELEMENT>
-<!--1005400043-->  <AD_ELEMENT_ID><![CDATA[1005400043]]></AD_ELEMENT_ID>
-<!--1005400043-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400043-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400043-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400043-->  <COLUMNNAME><![CDATA[Code_Revision]]></COLUMNNAME>
-<!--1005400043-->  <NAME><![CDATA[Code Revision]]></NAME>
-<!--1005400043-->  <PRINTNAME><![CDATA[Code Revision]]></PRINTNAME>
-<!--1005400043-->  <DESCRIPTION><![CDATA[The code revision of the installed system]]></DESCRIPTION>
-<!--1005400043-->  <HELP><![CDATA[The code revision of the installed system]]></HELP>
-<!--1005400043-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005400043-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1005400043--></AD_ELEMENT>
-
 <!--1005500000--><AD_ELEMENT>
 <!--1005500000-->  <AD_ELEMENT_ID><![CDATA[1005500000]]></AD_ELEMENT_ID>
 <!--1005500000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -25614,8 +25600,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--58955DB3E07A38CEE040007F01015E15-->  <COLUMNNAME><![CDATA[Hourly_Repetitions]]></COLUMNNAME>
 <!--58955DB3E07A38CEE040007F01015E15-->  <NAME><![CDATA[Number of Repetitions]]></NAME>
 <!--58955DB3E07A38CEE040007F01015E15-->  <PRINTNAME><![CDATA[Repetitions]]></PRINTNAME>
-<!--58955DB3E07A38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times this element will repeat.]]></DESCRIPTION>
-<!--58955DB3E07A38CEE040007F01015E15-->  <HELP><![CDATA[The number of times this element will repeat.]]></HELP>
+<!--58955DB3E07A38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times a process request will repeat after its first execution.]]></DESCRIPTION>
+<!--58955DB3E07A38CEE040007F01015E15-->  <HELP><![CDATA[The number of times a process request will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
 <!--58955DB3E07A38CEE040007F01015E15-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--58955DB3E07A38CEE040007F01015E15-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--58955DB3E07A38CEE040007F01015E15--></AD_ELEMENT>
@@ -25628,8 +25614,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--58955DB3E07B38CEE040007F01015E15-->  <COLUMNNAME><![CDATA[Minutely_Repetitions]]></COLUMNNAME>
 <!--58955DB3E07B38CEE040007F01015E15-->  <NAME><![CDATA[Num Repetitions]]></NAME>
 <!--58955DB3E07B38CEE040007F01015E15-->  <PRINTNAME><![CDATA[Repetitions]]></PRINTNAME>
-<!--58955DB3E07B38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times this element will repeat.]]></DESCRIPTION>
-<!--58955DB3E07B38CEE040007F01015E15-->  <HELP><![CDATA[The number of times this element will repeat.]]></HELP>
+<!--58955DB3E07B38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times a process request will repeat after its first execution.]]></DESCRIPTION>
+<!--58955DB3E07B38CEE040007F01015E15-->  <HELP><![CDATA[The number of times a process request will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
 <!--58955DB3E07B38CEE040007F01015E15-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--58955DB3E07B38CEE040007F01015E15-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--58955DB3E07B38CEE040007F01015E15--></AD_ELEMENT>
@@ -25642,8 +25628,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--58955DB3E07C38CEE040007F01015E15-->  <COLUMNNAME><![CDATA[Secondly_Repetitions]]></COLUMNNAME>
 <!--58955DB3E07C38CEE040007F01015E15-->  <NAME><![CDATA[Repetitions]]></NAME>
 <!--58955DB3E07C38CEE040007F01015E15-->  <PRINTNAME><![CDATA[Repetitions]]></PRINTNAME>
-<!--58955DB3E07C38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times this element will repeat.]]></DESCRIPTION>
-<!--58955DB3E07C38CEE040007F01015E15-->  <HELP><![CDATA[The number of times this element will repeat.]]></HELP>
+<!--58955DB3E07C38CEE040007F01015E15-->  <DESCRIPTION><![CDATA[The number of times a process request will repeat after its first execution.]]></DESCRIPTION>
+<!--58955DB3E07C38CEE040007F01015E15-->  <HELP><![CDATA[The number of times a process request will repeat after its first execution. Note that 10 repeats will give a total of 11 process executions.]]></HELP>
 <!--58955DB3E07C38CEE040007F01015E15-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--58955DB3E07C38CEE040007F01015E15-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--58955DB3E07C38CEE040007F01015E15--></AD_ELEMENT>
@@ -26963,20 +26949,6 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--6DC905999D47BFC7E040007F01012E68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6DC905999D47BFC7E040007F01012E68-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--6DC905999D47BFC7E040007F01012E68--></AD_ELEMENT>
-
-<!--6DC905999D48BFC7E040007F01012E68--><AD_ELEMENT>
-<!--6DC905999D48BFC7E040007F01012E68-->  <AD_ELEMENT_ID><![CDATA[6DC905999D48BFC7E040007F01012E68]]></AD_ELEMENT_ID>
-<!--6DC905999D48BFC7E040007F01012E68-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--6DC905999D48BFC7E040007F01012E68-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--6DC905999D48BFC7E040007F01012E68-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--6DC905999D48BFC7E040007F01012E68-->  <COLUMNNAME><![CDATA[Version_ID]]></COLUMNNAME>
-<!--6DC905999D48BFC7E040007F01012E68-->  <NAME><![CDATA[Version ID]]></NAME>
-<!--6DC905999D48BFC7E040007F01012E68-->  <PRINTNAME><![CDATA[Version ID]]></PRINTNAME>
-<!--6DC905999D48BFC7E040007F01012E68-->  <DESCRIPTION><![CDATA[Version identifier]]></DESCRIPTION>
-<!--6DC905999D48BFC7E040007F01012E68-->  <HELP><![CDATA[It is an identifier for the version. In core module this is automatically calculated when it is build in a mercurial working copy, being in this case the last changeset in the working copy.]]></HELP>
-<!--6DC905999D48BFC7E040007F01012E68-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--6DC905999D48BFC7E040007F01012E68-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--6DC905999D48BFC7E040007F01012E68--></AD_ELEMENT>
 
 <!--6E9217CF7BC5485D8C445417E11F49A9--><AD_ELEMENT>
 <!--6E9217CF7BC5485D8C445417E11F49A9-->  <AD_ELEMENT_ID><![CDATA[6E9217CF7BC5485D8C445417E11F49A9]]></AD_ELEMENT_ID>

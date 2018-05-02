@@ -31,14 +31,7 @@ public class BuildValidationHandler {
   private static final Logger log4j = Logger.getLogger(BuildValidationHandler.class);
 
   /** Prerequisite validations are ensured to be executed before the rest of other ones */
-  @SuppressWarnings("serial")
-  private static final List<String> prerequisiteValidations = new ArrayList<String>() {
-    {
-      // guarantee current JVM version before executing other validations that can be compiled with
-      // a higher version
-      add("org.openbravo.buildvalidation.JdkVersionCheck");
-    }
-  };
+  private static final List<String> prerequisiteValidations = Collections.emptyList();
 
   private static File basedir;
   private static String module;

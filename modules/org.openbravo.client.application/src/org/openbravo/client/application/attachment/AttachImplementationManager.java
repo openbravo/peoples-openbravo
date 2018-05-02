@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -81,6 +83,7 @@ import org.slf4j.LoggerFactory;
 public class AttachImplementationManager {
 
   private static final Logger log = LoggerFactory.getLogger(AttachImplementationManager.class);
+  private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
   public static final String REFERENCE_LIST = "17";
   public static final String REFERENCE_SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
@@ -262,13 +265,28 @@ public class AttachImplementationManager {
 
       boolean isTempFile = handler.isTempFile();
       if (isTempFile) {
-        file.delete();
+        deleteTempFile(file);
       }
 
     } catch (IOException e) {
       throw new OBException(OBMessageUtils.messageBD("Error downloading file"), e);
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private void deleteTempFile(File file) {
+    Path parent = file.toPath().getParent();
+    Path tmpDir = Paths.get(TEMP_DIR);
+    file.delete();
+    if (parent.equals(tmpDir)) {
+      return;
+    }
+    try {
+      // Delete also temporary file's parent directory if it is empty
+      Files.delete(parent);
+    } catch (IOException ioex) {
+      log.error("Could not delete directory {}", parent, ioex);
     }
   }
 
@@ -335,7 +353,7 @@ public class AttachImplementationManager {
         in.close();
         boolean isTempFile = handler.isTempFile();
         if (isTempFile) {
-          file.delete();
+          deleteTempFile(file);
         }
       }
       dest.close();

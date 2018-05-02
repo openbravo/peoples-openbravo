@@ -20,7 +20,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 1999-2016 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 1999-2018 Openbravo, S.L.U.
   *************************************************************************
   * $Id: C_Cash_Post.sql,v 1.10 2003/03/17 20:32:25 jjanke Exp $
   ***
@@ -32,7 +32,6 @@
   ************************************************************************/
   --  Logistice
   v_ResultStr VARCHAR2(2000):='';
-  v_Result NUMBER;
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32) ;
   v_User VARCHAR2(32);
@@ -73,7 +72,6 @@
     v_CB_Date DATE;
     v_AD_Org_ID VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
-    v_C_CashBook_ID VARCHAR2(32) ;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -104,27 +102,14 @@
       POSTED,
       AD_Org_ID,
       AD_Client_ID,
-      C_CASHBOOK_ID, DateAcct
+      DateAcct
     INTO v_Processed,
       v_Posted,
       v_AD_Org_ID,
       v_AD_Client_ID,
-      v_C_CashBook_ID, v_dateCash
+      v_dateCash
     FROM C_CASH
     WHERE C_Cash_ID=v_Record_ID;
-    /* Not needed: payments are updated to pending status
-    SELECT COUNT(*) INTO v_Count
-    FROM C_CASHLINE
-    WHERE C_CASH_ID = v_Record_ID
-    AND C_ORDER_ID IS NOT NULL
-    AND C_DEBT_PAYMENT_ID IS NOT NULL;
-    DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID);
-    IF (v_Processed = 'Y' AND v_Count>0) THEN
-    v_Message := '@AlreadyPosted@';
-    v_Result := 0;
-    FINISH_PROCESS := true;
-    END IF;
-    */
     IF(NOT FINISH_PROCESS) THEN
       IF(v_Posted='Y') THEN
         RAISE_APPLICATION_ERROR(-20000, '@CashDocumentPosted@') ;
@@ -342,7 +327,6 @@
         ;
       IF v_count>0 THEN
         v_Message:='@CashOrderInvoiced@. Line:'||v_line;
-        v_Result:=0;
         FINISH_PROCESS:=true;
       END IF;
     END IF;--FINISH_PROCESS
@@ -476,45 +460,6 @@
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
       /**
-      *  Generate C_debt_payment for cashline with order type
-      */
-      /* Now this goes to c_order_post ALO
-      DECLARE
-      v_debtPaymentID varchar2(32);
-      CurCashLinesOrder RECORD;
-      BEGIN
-      FOR CurCashLinesOrder IN (SELECT o.AD_CLIENT_ID, o.AD_ORG_ID, o.ISSOTRX, o.DOCUMENTNO, bp.NAME, o.POREFERENCE, o.C_ORDER_ID, o.C_BPARTNER_ID,
-      o.C_CURRENCY_ID, cl.C_CASHLINE_ID, o.PAYMENTRULE, C_Currency_Convert((cl.Amount + cl.WriteOffAmt),
-      cl.C_Currency_ID, o.C_Currency_ID, c.DateAcct, NULL, c.AD_Client_ID, c.AD_Org_ID) AMT,
-      c.STATEMENTDATE, o.C_PROJECT_ID
-      FROM C_CASHLINE cl, C_ORDER o, C_BPARTNER bp, C_CASH c
-      WHERE cl.C_ORDER_ID = o.C_ORDER_ID
-      AND cl.C_CASH_ID = v_Record_ID
-      AND bp.C_BPARTNER_ID = o.C_BPARTNER_ID
-      AND C.C_CASH_ID = cl.C_CASH_id) LOOP
-      Ad_Sequence_Next('C_Debt_Payment', v_Record_ID, v_debtPaymentID);
-      INSERT INTO C_DEBT_PAYMENT(C_DEBT_PAYMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-      ISRECEIPT, C_SETTLEMENT_CANCEL_ID, C_SETTLEMENT_GENERATE_ID, DESCRIPTION,
-      C_ORDER_ID, C_BPARTNER_ID,
-      C_CURRENCY_ID, C_CASHLINE_ID, C_BANKACCOUNT_ID, C_CASHBOOK_ID, PAYMENTRULE,
-      ISPAID, AMOUNT, WRITEOFFAMT, DATEPLANNED, ISMANUAL, ISVALID,
-      C_BANKSTATEMENTLINE_ID, CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, c_project_id)
-      VALUES
-      (v_debtPaymentID, CurCashLinesOrder.AD_CLIENT_ID, CurCashLinesOrder.AD_ORG_ID, 'Y', now(), v_User, now(), v_User,
-      CurCashLinesOrder.IsSOTrx, NULL, NULL, 'Order No: ' || CurCashLinesOrder.DOCUMENTNO || ' (' || CurCashLinesOrder.Name || (CASE WHEN CurCashLinesOrder.POREFERENCE IS NULL THEN '' ELSE ' .Ref:'||TO_CHAR(CurCashLinesOrder.POREFERENCE) END) || ')',
-      CurCashLinesOrder.C_ORDER_ID, CurCashLinesOrder.C_BPartner_ID,
-      CurCashLinesOrder.C_CURRENCY_ID, NULL,NULL,v_C_CashBook_ID, CurCashLinesOrder.PAYMENTRULE,
-      'N',(CASE CurCashLinesOrder.IsSOTrx WHEN 'Y' THEN CurCashLinesOrder.AMT ELSE (-1)*CurCashLinesOrder.AMT END),0,CurCashLinesOrder.STATEMENTDATE,'N','Y',
-      NULL,'N','N','N',CurCashLinesOrder.C_PROJECT_ID);
-      UPDATE C_CASHLINE
-      SET C_DEBT_PAYMENT_ID = v_debtPaymentID,
-              Updated=now(),
-              UpdatedBy=v_User
-      WHERE C_CASHLINE_ID = CurCashLinesOrder.C_CASHLINE_ID;
-      END LOOP;
-      END;
-      */
-      /**
       *  Generate C_Settlement
       */
       SELECT COUNT(*)
@@ -577,7 +522,6 @@
       */
       DECLARE
         v_Total NUMBER:=0;
-        v_Currency_ID VARCHAR2(32):=NULL;
         -- Lines
         Cur_Lines RECORD;
       BEGIN
@@ -593,23 +537,7 @@
               Updated=now(),
               UpdatedBy=v_User
             WHERE C_Debt_Payment_ID=Cur_Lines.C_Debt_Payment_ID;
-            SELECT C_Currency_ID
-            INTO v_Currency_ID
-            FROM C_DEBT_PAYMENT
-            WHERE C_Debt_Payment_ID=Cur_Lines.C_Debt_Payment_ID;
           END IF;
-          -- Assume CashBook Currency for Charge
-          /* Lines are in cashbook currency
-     IF(v_Currency_ID IS NULL) THEN
-            v_Currency_ID:=v_CB_Currency_ID;
-          END IF;
-          v_ResultStr:='CalculatingSum';
-          IF(v_Currency_ID<>v_CB_Currency_ID) THEN
-            v_Total:=v_Total + C_Currency_Convert(Cur_Lines.Amount, v_Currency_ID, v_CB_Currency_ID, v_CB_Date, NULL, Cur_Lines.AD_Client_ID, Cur_Lines.AD_Org_ID) ;
-          ELSE
-            v_Total:=v_Total + Cur_Lines.Amount;
-          END IF;
-     */
      v_Total:=v_Total + Cur_Lines.Amount;
         END LOOP;
         --

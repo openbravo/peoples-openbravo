@@ -260,54 +260,7 @@ build.war: build a war file in the lib directory.
     <javac srcdir="${build.AD}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
       <classpath refid="project.class.path" />
     </javac>
-  	<antcall target="calculate.version"/>
   </target>
-
-	<target name="calculate.version" depends="init">
-	  <condition property="revision.from.file">
-		<and>
-		  <not>
-		 	<isset property="hg.id"/>
-		  </not>
-		  <available file="${basedir}/config/instance.revision"/>
-	    </and>
-	  </condition>
-	  <condition property="revision.not.found">
-		<and>
-		  <not>
-		 	<isset property="hg.id"/>
-		  </not>
-		  <not>
-		  	<available file="${basedir}/config/instance.revision"/>
-		  </not>
-	    </and>
-	  </condition>
-	  <antcall inheritall="true" target="calculate.instance.version"/>
-	</target>
-	<target name="calculate.instance.version" depends="calculate.version.from.hg, calculate.version.from.file, cannot.find.version">
-	    <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" delimiter="/">
-	      <classpath>
-	        <fileset dir="${base.lib}">
-	          <include name="**/*.jar">
-	          </include>
-	        </fileset>
-	      </classpath>
-	      <transaction>
-		        UPDATE AD_MODULE 
-	      	       SET VERSION_ID='${instance.version}'
-                 WHERE AD_MODULE_ID='0'
-		      </transaction>
-	    </sql>
-	</target>
-	<target name="calculate.version.from.hg" if="is.hg">
-	  <property name="instance.version" value="${hg.id}"/>
-	</target>
-	<target name="calculate.version.from.file" if="revision.from.file">
-	  <loadfile property="instance.version" srcfile="${basedir}/config/instance.revision"/>
-	</target>
-	<target name="cannot.find.version" if="revision.not.found">
-	  <property name="instance.version" value=" - "/>
-	</target>
 
   <target name="compile.src.gen" depends="init">
     <javac srcdir="${basedir}" includes="org/openbravo/base/exception/**,org/openbravo/base/gen/**,org/openbravo/base/expression/**,org/openbravo/base/provider/**,org/openbravo/base/model/**,org/openbravo/base/session/**,org/openbravo/base/validation/**,org/openbravo/base/util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
