@@ -45,7 +45,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 @ApplicationScoped
 public class KernelApplicationInitializer implements ApplicationInitializer {
-  private static Logger log4j = Logger.getLogger(KernelApplicationInitializer.class);
+  private static final Logger log4j = Logger.getLogger(KernelApplicationInitializer.class);
   private static final String sqlDateTimeFormat = "DD-MM-YYYY HH24:MI:SS";
   private static final String javaDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
   private static final long THRESHOLD = 5000; // 5 seconds

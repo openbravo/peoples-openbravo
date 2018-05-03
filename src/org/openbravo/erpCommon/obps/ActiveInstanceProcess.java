@@ -172,6 +172,7 @@ public class ActiveInstanceProcess implements Process {
       WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
           .setNotInDevelopment();
     } else {
+      // executing from ant activate.instance task
       OBDal
           .getInstance()
           .getSession()
