@@ -169,15 +169,15 @@ public class ActiveInstanceProcess implements Process {
 
   private void setModulesAsNotInDevelopment() {
     if (SessionFactoryController.isRunningInWebContainer()) {
-      WeldUtils
-        .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class).setNotInDevelopment();
+      WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
+          .setNotInDevelopment();
     } else {
       OBDal
-        .getInstance()
-        .getSession()
-        .createQuery(
-          "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
-        .executeUpdate();
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
+          .executeUpdate();
     }
   }
 

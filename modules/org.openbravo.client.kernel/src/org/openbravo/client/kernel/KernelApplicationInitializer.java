@@ -127,10 +127,10 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
 
   private String getInstancePurpose() {
     return (String) OBDal
-      .getInstance()
-      .getSession()
-      .createQuery(
-        "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
-          + SystemInformation.ENTITY_NAME).uniqueResult();
+        .getInstance()
+        .getSession()
+        .createQuery(
+            "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
+                + SystemInformation.ENTITY_NAME).uniqueResult();
   }
 }
