@@ -47,7 +47,10 @@
       <text>, </text>
       <text><%= OB.UTIL.encodeXMLComponent(order.get('posTerminal'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
     </line>
-    
+    <line>
+      <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTaxId')) %></text>
+      <text><%= OB.MobileApp.model.get('terminal').organizationTaxId %></text>
+    </line>
     <line></line>
     <line size="1">
       <text align ="center" length="42"><%= OB.I18N.getLabel('OBPOS_ToReturn') %></text>

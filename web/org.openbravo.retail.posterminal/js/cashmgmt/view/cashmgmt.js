@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -71,6 +71,8 @@ enyo.kind({
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSCashMgmt.Model.CashManagement,
   tag: 'section',
+  allowedIncrementalRefresh: false,
+  incrementalRefreshOnNavigate: false,
   events: {
     onShowPopup: ''
   },
@@ -231,9 +233,27 @@ OB.POS.registerWindow({
       });
       return;
     }
-    successCallback(args.route);
+    if (_.filter(OB.MobileApp.model.paymentnames, function (payment) {
+      return payment.paymentMethod.iscash === true;
+    }).length > 0) {
+      successCallback(args.route);
+    } else {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashMgmtError'), OB.I18N.getLabel('OBPOS_NoCashPaymentMethod'), [{
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          errorCallback();
+        }
+      }], {
+        onHideFunction: function () {
+          errorCallback();
+        }
+      });
+      return;
+    }
   },
   menuItemDisplayLogic: function () {
-    return OB.MobileApp.model.get('hasPaymentsForCashup');
+    return OB.MobileApp.model.get('hasPaymentsForCashup') && _.filter(OB.MobileApp.model.paymentnames, function (payment) {
+      return payment.paymentMethod.iscash === true;
+    }).length > 0;
   }
 });

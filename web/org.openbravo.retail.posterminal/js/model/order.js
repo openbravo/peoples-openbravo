@@ -5513,7 +5513,7 @@
     getScannableDocumentNo: function () {
       return this.get('documentNo').replace(/-/g, '\\-').replace(/\+/g, '\\+');
     },
-    turnEditable: function () {
+    turnEditable: function (callback) {
       if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
         return;
       }
@@ -5525,6 +5525,7 @@
         this.set('orderType', 2);
       }
       this.unset('skipApplyPromotions');
+      this.save(callback);
     }
   });
 
@@ -6165,6 +6166,9 @@
         }
         me.current = me.at(0);
         me.loadCurrent(createNew);
+
+        // Refresh Master Data
+        OB.UTIL.checkRefreshMasterData();
       }
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
@@ -6254,7 +6258,14 @@
     checkForDuplicateReceipts: function (model, callback, errorCallback, fromSelector) {
 
       function openReceiptPermissionError(orderType) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        if (fromSelector) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
+        }
+        if (errorCallback) {
+          errorCallback();
+        }
       }
 
       //Check Permissions
