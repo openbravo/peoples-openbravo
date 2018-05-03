@@ -36,12 +36,13 @@ public class InOutLinePEHQLInjector2 extends HqlInserter {
     StringBuilder hql = new StringBuilder();
 
     if (isSalesTransaction) {
-      hql.append("coalesce(e.operativeQuantity, M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity, aum_defaum.id)) ");
-      hql.append("- sum(coalesce(case when (i.documentStatus <> 'CO') then 0 ");
-      hql.append(" else M_GET_CONVERTED_AUMQTY(p.id, il.invoicedQuantity, aum_defaum.id) end, 0))");
+      hql.append("coalesce(TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity ");
+      hql.append("- (select coalesce(sum(il.invoicedQuantity),0) from e.invoiceLineList il where il.invoice.documentStatus = 'CO')");
+      hql.append(", coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))), 0)");
     } else {
-      hql.append("coalesce(e.operativeQuantity, M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity, aum_defaum.id)) ");
-      hql.append("- M_GET_CONVERTED_AUMQTY(p.id, sum(coalesce(mi.quantity,0)), aum_defaum.id)");
+      hql.append("coalesce(TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity ");
+      hql.append("- (select coalesce(sum(mi.quantity),0) from e.procurementReceiptInvoiceMatchList mi)");
+      hql.append(", coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))), 0)");
     }
 
     return hql.toString();

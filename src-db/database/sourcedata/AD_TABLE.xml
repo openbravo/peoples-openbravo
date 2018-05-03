@@ -10686,7 +10686,7 @@ You can also select if transactions are allowed or not for this organization typ
   p,
   e.lineNo,
   sh,
-  aum_defaum,
+  (select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))),
   @insertion_point_2@  
 from 
   MaterialMgmtShipmentInOutLine e
@@ -10694,14 +10694,10 @@ from
   join sh.documentType dt
   join e.uOM uom
   join e.product p
-  left join e.procurementReceiptInvoiceMatchList mi
   left join e.salesOrderLine ol
   left join ol.salesOrder o
   left join o.priceList pl
-  left join e.invoiceLineList il
-  left join il.invoice i
   left join e.operativeUOM aum
-  ,UOM aum_defaum
 where
   @additional_filters@
   @insertion_point_0@]]></HQLQUERY>

@@ -42,28 +42,24 @@ public class InOutLinePEHQLInjector0 extends HqlInserter {
     StringBuilder hql = new StringBuilder();
     hql.append(" and sh.salesTransaction = :issotrx");
     hql.append(" and sh.logistic <> 'Y'");
+    hql.append(" and sh.processed = 'Y'");
     hql.append(" and sh.documentStatus in ('CO', 'CL')");
     hql.append(" and sh.businessPartner.id = :bp");
-
     hql.append(" and (pl.id is null or pl.priceIncludesTax = :plIncTax)");
     hql.append(" and (o.id is null or o.currency.id = :cur)");
 
     if (isSalesTransaction) {
-      hql.append("   and sh.completelyInvoiced = 'N'");
-      hql.append("   and (o.id is null or not ((o.invoiceTerms = 'O' and o.delivered = 'N') or o.invoiceTerms = 'N'))");
-      hql.append(" group by e.id, e.movementQuantity, uom.id, p.id, sh.id, dt.id, aum.id, aum_defaum.id");
-      hql.append(" having ((");
-      hql.append("   (e.movementQuantity >=0 and e.movementQuantity > sum(coalesce");
-      hql.append("   (case when (i.documentStatus = 'CO') then il.invoicedQuantity else 0 end,0)))");
-      hql.append("   or (e.movementQuantity <0 and e.movementQuantity < sum(coalesce");
-      hql.append("   (case when (i.documentStatus = 'CO') then il.invoicedQuantity else 0 end,0)))");
-      hql.append(" )  or e.explode = 'Y')");
+      hql.append(" and sh.completelyInvoiced = 'N'");
+      hql.append(" and (o.id is null or not ((o.invoiceTerms = 'O' and o.delivered = 'N') or o.invoiceTerms = 'N'))");
+      hql.append(" and (");
+      hql.append("   (e.movementQuantity >= 0 and e.movementQuantity > ");
+      hql.append("    (select coalesce(sum(il.invoicedQuantity),0) from e.invoiceLineList il where il.invoice.documentStatus = 'CO')");
+      hql.append("   ) or (e.movementQuantity < 0 and e.movementQuantity < ");
+      hql.append("    (select coalesce(sum(il.invoicedQuantity),0) from e.invoiceLineList il where il.invoice.documentStatus = 'CO')");
+      hql.append("   ) or e.explode = 'Y')");
     } else {
-      hql.append(" group by e.id, e.movementQuantity, uom.id, p.id, sh.id, dt.id, aum.id, aum_defaum.id");
-      hql.append(" having ((e.movementQuantity - sum(coalesce(mi.quantity,0)) <> 0) or e.explode = 'Y')");
+      hql.append(" and ((e.movementQuantity - (select coalesce(sum(mi.quantity),0) from e.procurementReceiptInvoiceMatchList mi) <> 0) or e.explode = 'Y')");
     }
-
-    hql.append(" and aum_defaum.id = coalesce(aum.id, M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))");
 
     queryNamedParameters.put("issotrx", isSalesTransaction);
     queryNamedParameters.put("bp", strBusinessPartnerId);
