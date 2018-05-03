@@ -471,3 +471,118 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
 OB.UTIL.setScanningFocus = function (focus) {
   OB.MobileApp.view.scanningFocus(focus);
 };
+
+OB.UTIL.clearFlagAndTimersRefreshMasterData = function () {
+  OB.MobileApp.model.set('refreshMasterdataShowPopup', true);
+  OB.MobileApp.model.set('refreshMasterdata', false);
+};
+
+OB.UTIL.checkRefreshMasterData = function () {
+  if (OB.MobileApp.model.get('refreshMasterdata') === true && OB.UTIL.refreshMasterDataGetProperty('allowedIncrementalRefresh')) {
+    OB.UTIL.clearFlagAndTimersRefreshMasterData();
+    OB.UTIL.refreshMasterData();
+  }
+};
+
+OB.UTIL.checkRefreshMasterDataOnNavigate = function () {
+  if (OB.MobileApp.model.get('refreshMasterdata') === true && OB.UTIL.refreshMasterDataGetProperty('incrementalRefreshOnNavigate')) {
+    OB.UTIL.checkRefreshMasterData();
+  }
+};
+
+OB.UTIL.refreshMasterData = function () {
+  OB.MobileApp.model.set('secondsToRefreshMasterdata', 3);
+  var counterIntervalId = null;
+  counterIntervalId = setInterval(function () {
+    OB.MobileApp.model.set('secondsToRefreshMasterdata', OB.MobileApp.model.get('secondsToRefreshMasterdata') - 1);
+    if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
+      OB.MobileApp.model.set('refreshMasterdataShowPopup', false);
+      clearInterval(counterIntervalId);
+      if (OB.UTIL.RfidController.isRfidConfigured()) {
+        OB.UTIL.RfidController.disconnectRFIDDevice();
+      }
+      OB.UTIL.startLoadingSteps();
+      OB.MobileApp.model.set('isLoggingIn', true);
+      OB.UTIL.showLoading(true);
+      OB.MobileApp.model.on('incrementalModelsLoaded', function () {
+        OB.MobileApp.model.off('incrementalModelsLoaded');
+        OB.UTIL.showLoading(false);
+        if (OB.UTIL.RfidController.isRfidConfigured()) {
+          OB.UTIL.RfidController.connectRFIDDevice();
+        }
+        OB.MobileApp.model.set('isLoggingIn', false);
+      });
+
+      OB.MobileApp.model.loadModels(null, true);
+    }
+  }, 1000);
+
+  OB.MobileApp.view.$.dialogsContainer.createComponent({
+    kind: 'OB.UI.ModalAction',
+    header: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'),
+    bodyContent: {
+      content: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')])
+    },
+    bodyButtons: {
+      kind: 'OB.UI.ModalDialogButton',
+      content: OB.I18N.getLabel('OBMOBC_LblCancel'),
+      tap: function () {
+        OB.MobileApp.model.set('refreshMasterdataShowPopup', false);
+        OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+        clearInterval(counterIntervalId);
+        this.doHideThisPopup();
+      }
+    },
+    autoDismiss: false,
+    hideCloseButton: true,
+    executeOnShow: function () {
+      var reloadPopup = this;
+      OB.MobileApp.model.on('change:secondsToRefreshMasterdata', function () {
+        reloadPopup.$.bodyContent.$.control.setContent(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]));
+        if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
+          reloadPopup.hide();
+          OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+        }
+      });
+    }
+  }).show();
+
+  OB.info(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'));
+  clearInterval(OB.MobileApp.model.get('refreshMasterdataIntervalHandler'));
+  OB.MobileApp.model.set('refreshMasterdataIntervalHandler', setInterval(OB.UTIL.loadModelsIncFunc, OB.MobileApp.model.get('refreshMasterdataInterval')));
+};
+
+OB.UTIL.refreshMasterDataGetProperty = function (prop) {
+  var currentWindow = _.find(OB.MobileApp.model.windows.models, function (win) {
+    return win.get('route') === OB.MobileApp.view.currentWindow;
+  });
+  if (currentWindow) {
+    var windowClass = currentWindow.get('windowClass');
+    if (windowClass && typeof windowClass === 'function') {
+      return windowClass.prototype[prop];
+    }
+  }
+  return false;
+};
+
+OB.UTIL.loadModelsIncFunc = function () {
+  var msg = OB.I18N.getLabel(OB.MobileApp.view.currentWindow === 'retail.pointofsale' ? 'OBPOS_MasterdataWillHappenOnCloseTicket' : 'OBPOS_MasterdataWillHappenOnReturnToWebPOS'),
+      minutesToShowRefreshDataInc = OB.MobileApp.model.get('terminal').terminalType.minutesToShowRefreshDataInc,
+      minShowIncRefresh = OB.UTIL.isNullOrUndefined(minutesToShowRefreshDataInc) ? undefined : minutesToShowRefreshDataInc * 60 * 1000;
+  if (OB.UTIL.isNullOrUndefined(minShowIncRefresh) || minShowIncRefresh > 0) {
+    OB.info(msg);
+    OB.UTIL.showWarning(msg);
+  }
+  OB.MobileApp.model.set('refreshMasterdata', true);
+  if (!OB.UTIL.isNullOrUndefined(minShowIncRefresh) && minShowIncRefresh >= 0) {
+    var noActivityTimeout = OB.MobileApp.model.get('refreshMasterdataNoActivityTimeout');
+    if (OB.UTIL.isNullOrUndefined(noActivityTimeout)) {
+      OB.MobileApp.model.set('refreshMasterdataNoActivityTimeout', true);
+      setTimeout(function () {
+        // Refresh Master Data
+        OB.MobileApp.model.unset('refreshMasterdataNoActivityTimeout');
+        OB.UTIL.checkRefreshMasterData();
+      }, minShowIncRefresh);
+    }
+  }
+};

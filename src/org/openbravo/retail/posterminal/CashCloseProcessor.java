@@ -379,7 +379,7 @@ public class CashCloseProcessor {
       parameters.add(terminal.getClient().getId());
       parameters.add(terminal.getOrganization().getId());
 
-      String procedureName = "C_CURRENCY_RATE";
+      String procedureName = "obpos_currency_rate";
       conversionRate = (BigDecimal) CallStoredProcedure.getInstance().call(procedureName,
           parameters, null);
     }

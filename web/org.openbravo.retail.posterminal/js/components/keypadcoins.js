@@ -181,6 +181,7 @@ enyo.kind({
     name: 'btn'
   }],
   background: '#6cb33f',
+  avoidDoubleClick: false,
   initComponents: function () {
     var btn;
     this.inherited(arguments);

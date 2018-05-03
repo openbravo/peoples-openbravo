@@ -472,6 +472,12 @@ enyo.kind({
 
     function beforeCustomerSave(customer, isNew) {
       customer.adjustNames();
+      if (customer.get('locationModel')) {
+        customer.set('countryId', customer.get('locationModel').get('countryId'));
+        customer.set('shipCountryId', customer.get('locationModel').get('shipCountryId'));
+        customer.set('countryName', customer.get('locationModel').get('countryName'));
+        customer.set('shipCountryName', customer.get('locationModel').get('shipCountryName'));
+      }
       OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
         customer: customer,
         isNew: isNew,

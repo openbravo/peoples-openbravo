@@ -260,17 +260,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         return successMessage(jsonorder);
       }
 
-      if (isModified) {
-        order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+      order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
-        if (order != null) {
-          final Date loaded = POSUtils.dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
-              .convertToUTC(order.getUpdated());
-          if (loaded.compareTo(updated) != 0) {
-            throw new OutDatedDataChangeException(Utility.messageBD(
-                new DalConnectionProvider(false), "OBPOS_outdatedLayaway", OBContext.getOBContext()
-                    .getLanguage().getLanguage()));
-          }
+      if (order != null) {
+        final Date loaded = POSUtils.dateFormatUTC.parse(jsonorder.getString("loaded")), updated = OBMOBCUtils
+            .convertToUTC(order.getUpdated());
+        if (loaded.compareTo(updated) != 0) {
+          throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
+              "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
         }
       }
 
@@ -458,6 +455,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               && CancelAndReplaceUtils
                   .getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(canceledOrder);
           canceledOrder.setObposAppCashup(jsoncashup.getString("id"));
+          if (canceledOrder.isObposIslayaway()) {
+            canceledOrder.setObposIslayaway(false);
+          }
           OBDal.getInstance().save(canceledOrder);
         }
         if (createInvoice) {
@@ -2963,7 +2963,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             || payment.optBoolean("isReversePayment", false) == true) {
           continue;
         }
-        amount = amount.add(new BigDecimal(payment.optDouble("origAmount")));
+        amount = amount.add(new BigDecimal(payment.optString("origAmount")));
       }
     } catch (JSONException e) {
       log.error("Exceptin in getCashPaymentAmount ", e);

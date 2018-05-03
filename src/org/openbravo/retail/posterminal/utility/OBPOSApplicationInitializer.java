@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,6 +32,8 @@ public class OBPOSApplicationInitializer implements ApplicationInitializer {
   public void initialize() {
     OBDal.getInstance().registerSQLFunction("c_currency_rate",
         new StandardSQLFunction("c_currency_rate", StandardBasicTypes.STRING));
+    OBDal.getInstance().registerSQLFunction("obpos_currency_rate",
+        new StandardSQLFunction("obpos_currency_rate", StandardBasicTypes.STRING));
     OBDal.getInstance().registerSQLFunction("get_pricelist_version",
         new SQLFunctionTemplate(StandardBasicTypes.STRING, getPriceFunction()));
   }

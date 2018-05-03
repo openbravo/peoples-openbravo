@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION OBPOS_CURRENCY_RATE">
+    <function name="OBPOS_CURRENCY_RATE" type="NUMERIC">
+      <parameter name="p_curfrom_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_curto_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_convdate" type="TIMESTAMP" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_ratetype" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_client_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_org_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[/*************************************************************************
+* The contents of this file are subject to the Compiere Public
+* License 1.1 ("License"); You may not use this file except in
+* compliance with the License. You may obtain a copy of the License in
+* the legal folder of your Openbravo installation.
+* Software distributed under the License is distributed on an
+* "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+* implied. See the License for the specific language governing rights
+* and limitations under the License.
+* The Original Code is  Compiere  ERP &  Business Solution
+* The Initial Developer of the Original Code is Jorg Janke and ComPiere, Inc.
+* Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke,
+* parts created by ComPiere are Copyright (C) ComPiere, Inc.;
+* All Rights Reserved.
+* Contributor(s): Openbravo SLU
+* Contributions are Copyright (C) 2018 Openbravo, S.L.U.
+*
+************************************************************************/
+
+  -- Triangle
+  v_CurrencyFrom VARCHAR(32);
+  v_CurrencyTo   VARCHAR(32);
+  --
+  v_ConvDate DATE := now();
+  v_RateType VARCHAR(60) := 'S';
+  v_Rate     NUMBER;
+BEGIN
+  -- No Conversion
+  IF(p_CurFrom_ID = p_CurTo_ID) THEN
+    RETURN 1;
+  END IF;
+  -- Default Parameter
+  IF(p_ConvDate IS NOT NULL) THEN
+    v_ConvDate := p_ConvDate;
+  END IF;
+  IF(p_RateType IS NOT NULL) THEN
+    v_RateType := p_RateType;
+  END IF;
+  -- Flexible Rates
+  v_CurrencyFrom := p_CurFrom_ID;
+  v_CurrencyTo := p_CurTo_ID;
+  -- Get Rate
+  DECLARE
+  TYPE RECORD IS REF CURSOR;
+    CUR_Rate RECORD;
+  BEGIN
+    FOR CUR_Rate IN
+      (SELECT MultiplyRate
+      FROM OBPOS_Conversion_Rate
+      WHERE C_Currency_ID = v_CurrencyFrom
+        AND C_Currency_ID_To = v_CurrencyTo
+        AND ConversionRateType = v_RateType
+        AND TRUNC(v_ConvDate) BETWEEN ValidFrom AND ValidTo
+        AND AD_Client_ID IN ('0', p_Client_ID)
+        AND AD_Org_ID IN ('0', p_Org_ID)
+        AND IsActive = 'Y'
+      ORDER BY AD_Client_ID DESC,
+        AD_Org_ID DESC,
+        ValidFrom DESC
+      )
+    LOOP
+      v_Rate := CUR_Rate.MultiplyRate;
+      EXIT; -- only first
+    END LOOP;
+  END;
+  -- Not found
+  IF(v_Rate IS NULL) THEN
+     v_rate := c_currency_rate(p_curfrom_id, p_curto_id, p_convdate, p_ratetype, p_client_id, p_org_id); 
+  END IF;
+  -- Currency From was EMU
+  RETURN v_Rate;
+EXCEPTION
+WHEN OTHERS THEN
+  DBMS_OUTPUT.PUT_LINE(SQLERRM) ;
+  RAISE;
+  RETURN NULL;
+END OBPOS_CURRENCY_RATE
+]]></body>
+    </function>
+  </database>
