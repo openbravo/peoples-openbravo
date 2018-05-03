@@ -220,7 +220,7 @@ public class DefaultJsonDataService implements JsonDataService {
           final JSONObject singleResult = new JSONObject();
           if (queryService.getSummaryFields().size() == 1) {
             singleResult.put(queryService.getSummaryFields().get(0), queryService.buildOBQuery()
-                .createQuery().uniqueResult());
+                .createQuery(Object.class).uniqueResult());
           } else {
             final Object[] os = queryService.buildOBQuery().createQuery(Object[].class)
                 .uniqueResult();
