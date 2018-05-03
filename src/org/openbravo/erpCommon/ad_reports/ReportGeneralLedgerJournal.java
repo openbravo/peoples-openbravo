@@ -22,9 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -392,8 +390,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             && StringUtils.isEmpty(strShowReg) && StringUtils.isEmpty(strShowOpening)
             && StringUtils.isEmpty(strRecord)) {
 
-          int currentHistoryIndex = Integer
-              .parseInt(new VariablesHistory(request).getCurrentHistoryIndex());
+          int currentHistoryIndex = Integer.parseInt(new VariablesHistory(request)
+              .getCurrentHistoryIndex());
           String currentCommand = vars.getSessionValue("reqHistory.command" + currentHistoryIndex);
           if (StringUtils.equals(currentCommand, "DIRECT2")) {
             strFactAcctGroupId = vars.getGlobalVariable("inpFactAcctGroupId",
@@ -1086,7 +1084,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
   public static Set<String> getDocuments(String org, String accSchema) {
 
     final StringBuilder whereClause = new StringBuilder();
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(1);
     OBContext.setAdminMode();
     try {
       Set<String> orgStrct = OBContext.getOBContext().getOrganizationStructureProvider()
@@ -1100,8 +1098,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       whereClause.append(AcctSchemaTable.PROPERTY_TABLE + ".id");
       whereClause.append(" and ca.");
       whereClause.append(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA + ".id");
-      whereClause.append(" = ? ");
-      parameters.add(accSchema);
+      whereClause.append(" = :accSchemaId ");
+      parameters.put("accSchemaId", accSchema);
       whereClause.append("and ca.");
       whereClause.append(AcctSchemaTable.PROPERTY_ACTIVE + "='Y'");
       whereClause.append(" and cd.");
@@ -1112,7 +1110,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       whereClause.append(" order by cd." + DocumentType.PROPERTY_DOCUMENTCATEGORY);
       final OBQuery<DocumentType> obqDt = OBDal.getReadOnlyInstance().createQuery(
           DocumentType.class, whereClause.toString());
-      obqDt.setParameters(parameters);
+      obqDt.setNamedParameters(parameters);
       obqDt.setFilterOnReadableOrganization(false);
       TreeSet<String> docBaseTypes = new TreeSet<String>();
       for (DocumentType doc : obqDt.list()) {

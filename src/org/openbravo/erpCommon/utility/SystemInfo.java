@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -173,9 +173,6 @@ public class SystemInfo {
         break;
       case OB_INSTALL_MODE:
         systemInfo.put(i, SystemInfoData.selectObInstallMode(conn));
-        break;
-      case CODE_REVISION:
-        systemInfo.put(i, SystemInfoData.selectCodeRevision(conn));
         break;
       case NUM_REGISTERED_USERS:
         systemInfo.put(i, SystemInfoData.selectNumRegisteredUsers(conn));
@@ -444,6 +441,7 @@ public class SystemInfo {
       databaseVersion = getVersion(SystemInfoData.selectOracleVersion(conn));
     } else {
       databaseVersion = SystemInfoData.selectPostregresVersion(conn);
+      databaseVersion = databaseVersion.split(" ")[0];
     }
     return databaseVersion;
   }
@@ -841,7 +839,7 @@ public class SystemInfo {
         false), WEBSERVER_VERSION("webserverVersion", false), SERVLET_CONTAINER("servletContainer",
         false), SERVLET_CONTAINER_VERSION("servletContainerVersion", false), ANT_VERSION(
         "antVersion", false), OB_VERSION("obVersion", false), OB_INSTALL_MODE("obInstallMode",
-        false), CODE_REVISION("codeRevision", false), NUM_REGISTERED_USERS("numRegisteredUsers",
+        false), NUM_REGISTERED_USERS("numRegisteredUsers",
         false), ISHEARTBEATACTIVE("isheartbeatactive", true), ISPROXYREQUIRED("isproxyrequired",
         false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), JAVA_VERSION(
         "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRST_LOGIN(

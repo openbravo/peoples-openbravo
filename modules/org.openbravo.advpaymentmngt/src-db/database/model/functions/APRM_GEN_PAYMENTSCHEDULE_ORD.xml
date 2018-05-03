@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013-2015 Openbravo SLU
+* All portions are Copyright (C) 2013-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -97,7 +97,6 @@ BEGIN
 
     DECLARE
       v_payment_schedule_order VARCHAR2(32);
-      v_count NUMBER;
       v_pendingamount NUMBER;
       cur_invoicepayments RECORD;
     BEGIN

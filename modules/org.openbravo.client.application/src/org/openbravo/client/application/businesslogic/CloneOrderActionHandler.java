@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Mallikarjun M
  ************************************************************************
@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ import org.openbravo.erpCommon.businessUtility.CloneOrderHookCaller;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.json.DataResolvingMode;
@@ -98,6 +100,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
 
+      Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine = new HashMap<>();
+      List<OrderlineServiceRelation> orderLinesServiceRelation = new ArrayList<>();
       // get the lines associated with the order and clone them to the new
       // order line.
       for (OrderLine ordLine : objOrder.getOrderLineList()) {
@@ -120,10 +124,24 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         objCloneOrder.getOrderLineList().add(objCloneOrdLine);
         objCloneOrdLine.setSalesOrder(objCloneOrder);
         objCloneOrdLine.setReservationStatus(null);
+
+        mapOriginalOrderLineWithCloneOrderLine.put(ordLine.getId(), objCloneOrdLine);
+        List<OrderlineServiceRelation> lineServiceRelation = cloneProductServiceRelation(ordLine,
+            objCloneOrdLine);
+        orderLinesServiceRelation.addAll(lineServiceRelation);
       }
 
-      OBDal.getInstance().save(objCloneOrder);
+      for (OrderlineServiceRelation lineServiceRelation : orderLinesServiceRelation) {
+        OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(lineServiceRelation
+            .getOrderlineRelated().getId());
+        lineServiceRelation.setOrderlineRelated(clonedOrderLine);
+        OBDal.getInstance().save(lineServiceRelation);
+      }
 
+      mapOriginalOrderLineWithCloneOrderLine.clear();
+      orderLinesServiceRelation.clear();
+
+      OBDal.getInstance().save(objCloneOrder);
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(objCloneOrder);
       json = jsonConverter.toJsonObject(objCloneOrder, DataResolvingMode.FULL);
@@ -132,6 +150,24 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  private List<OrderlineServiceRelation> cloneProductServiceRelation(OrderLine ordLine,
+      OrderLine objCloneOrdLine) {
+
+    List<OrderlineServiceRelation> cloneServiceRelation = new ArrayList<>(ordLine
+        .getOrderlineServiceRelationList().size());
+    for (OrderlineServiceRelation orderLineServiceRelation : ordLine
+        .getOrderlineServiceRelationList()) {
+      OrderlineServiceRelation lineServiceRelation = (OrderlineServiceRelation) DalUtil.copy(
+          orderLineServiceRelation, false);
+      lineServiceRelation.setOrderlineRelated(orderLineServiceRelation.getOrderlineRelated());
+      lineServiceRelation.setSalesOrderLine(objCloneOrdLine);
+      cloneServiceRelation.add(lineServiceRelation);
+    }
+    objCloneOrdLine.setOrderlineServiceRelationList(cloneServiceRelation);
+
+    return cloneServiceRelation;
   }
 
   private String getPriceListVersion(String priceList, String clientId) {
@@ -173,9 +209,9 @@ public class CloneOrderActionHandler extends BaseActionHandler {
   public static BigDecimal getLineNetAmt(String strOrderId) {
 
     BigDecimal bdLineNetAmt = new BigDecimal("0");
-    final String readLineNetAmtHql = " select (coalesce(ol.lineNetAmount,0) + coalesce(ol.freightAmount,0) + coalesce(ol.chargeAmount,0)) as LineNetAmt from OrderLine ol where ol.salesOrder.id=?";
+    final String readLineNetAmtHql = " select (coalesce(ol.lineNetAmount,0) + coalesce(ol.freightAmount,0) + coalesce(ol.chargeAmount,0)) as LineNetAmt from OrderLine ol where ol.salesOrder.id=:orderId";
     final Query readLineNetAmtQry = OBDal.getInstance().getSession().createQuery(readLineNetAmtHql);
-    readLineNetAmtQry.setString(0, strOrderId);
+    readLineNetAmtQry.setParameter("orderId", strOrderId);
 
     for (int i = 0; i < readLineNetAmtQry.list().size(); i++) {
       bdLineNetAmt = bdLineNetAmt.add(((BigDecimal) readLineNetAmtQry.list().get(i)));

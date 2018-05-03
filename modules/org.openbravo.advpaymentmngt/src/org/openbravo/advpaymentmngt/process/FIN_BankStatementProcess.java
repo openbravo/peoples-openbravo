@@ -1,8 +1,28 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ *************************************************************************
+ */
+
 package org.openbravo.advpaymentmngt.process;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -145,14 +165,15 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
   private Date getMaxBSLDate(FIN_BankStatement bankstatement) {
     // Get last transaction date from previous bank statements
     final StringBuilder whereClause = new StringBuilder();
-    List<Object> parameters = new ArrayList<Object>();
+    Map<String, Object> parameters = new HashMap<>(2);
     whereClause.append(" as bsl ");
     whereClause.append(" where bsl.");
     whereClause.append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
-    whereClause.append("." + FIN_BankStatement.PROPERTY_ACCOUNT + " = ?");
-    parameters.add(bankstatement.getAccount());
-    whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + " <> ?");
-    parameters.add(bankstatement);
+    whereClause.append("." + FIN_BankStatement.PROPERTY_ACCOUNT + " = :account");
+    parameters.put("account", bankstatement.getAccount());
+    whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT
+        + " <> :bankStatement");
+    parameters.put("bankStatement", bankstatement);
     whereClause.append(" and bsl.bankStatement.processed = 'Y'");
     whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
     whereClause.append(" desc");

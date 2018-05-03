@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,10 @@
 
 <SqlClass name="HeartbeatData" package="org.openbravo.erpCommon.ad_forms">
 
-   <SqlMethod name="dummy" type="preparedStatement" return="String">
-      <Sql>select 1 as dummy from dual</Sql>
+   <SqlMethod name="selectServletcontainer" type="preparedStatement" return="multiple">
+      <Sql><![CDATA[
+        SELECT Servlet_Container, Servlet_Container_Version FROM AD_System_Info
+    ]]></Sql>
    </SqlMethod>
 
    <SqlMethod name="updateServletContainer" type="preparedStatement" return="rowCount">

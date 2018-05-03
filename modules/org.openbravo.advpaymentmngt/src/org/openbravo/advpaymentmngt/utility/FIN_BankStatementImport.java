@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.commons.fileupload.FileItem;
@@ -303,20 +304,20 @@ public abstract class FIN_BankStatementImport {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
-    List<Object> parameters = new ArrayList<Object>();
+    Map<String, Object> parameters = new HashMap<>(2);
     OBContext.setAdminMode();
     try {
       whereClause.append(" as bsl ");
       whereClause
           .append(" where translate(replace(bsl."
               + FIN_BankStatementLine.PROPERTY_BPARTNERNAME
-              + ",' ', ''),'0123456789', '          ') = translate( replace(?,' ',''),'0123456789', '          ')");
-      parameters.add(partnername.replaceAll("\\r\\n|\\r|\\n", " "));
+              + ",' ', ''),'0123456789', '          ') = translate( replace(:bpName,' ',''),'0123456789', '          ')");
+      parameters.put("bpName", partnername.replaceAll("\\r\\n|\\r|\\n", " "));
       whereClause.append(" and (bsl." + FIN_BankStatementLine.PROPERTY_BUSINESSPARTNER
           + " is not null or bsl." + FIN_BankStatementLine.PROPERTY_GLITEM + " is not null)");
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + ".");
-      whereClause.append(FIN_BankStatement.PROPERTY_ACCOUNT + ".id = ?");
-      parameters.add(account.getId());
+      whereClause.append(FIN_BankStatement.PROPERTY_ACCOUNT + ".id = :account");
+      parameters.put("account", account.getId());
       whereClause.append(" and bsl." + FIN_BankStatementLine.PROPERTY_ORGANIZATION + ".id in (");
       whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
           .getNaturalTree(organization.getId())) + ") ");
@@ -349,13 +350,13 @@ public abstract class FIN_BankStatementImport {
       return null;
     }
     final StringBuilder whereClause = new StringBuilder();
-    List<Object> parameters = new ArrayList<Object>();
+    Map<String, Object> parameters = new HashMap<>(1);
 
     OBContext.setAdminMode();
     try {
       whereClause.append(" as bp ");
-      whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = ?");
-      parameters.add(partnername);
+      whereClause.append(" where bp." + BusinessPartner.PROPERTY_NAME + " = :bpName");
+      parameters.put("bpName", partnername);
       whereClause.append(" and bp." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
       whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
           .getNaturalTree(organization.getId())) + ") ");
@@ -364,7 +365,7 @@ public abstract class FIN_BankStatementImport {
       bp.setFilterOnReadableOrganization(false);
       bp.setMaxResult(1);
       List<BusinessPartner> matchedBP = bp.list();
-      if (matchedBP.size() == 0)
+      if (matchedBP.isEmpty())
         return null;
       else
         return matchedBP.get(0);

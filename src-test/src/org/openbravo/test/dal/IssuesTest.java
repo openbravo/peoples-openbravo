@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -701,11 +701,11 @@ public class IssuesTest extends OBBaseTest {
     SQLQuery query = session
         .createSQLQuery("SELECT AD_REF_LIST.VALUE AS VALUE, AD_REF_LIST.NAME AS LISTNAME, TRL.NAME AS TRLNAME "
             + "FROM AD_REF_LIST LEFT OUTER JOIN "
-            + "(SELECT AD_REF_LIST_ID, NAME FROM AD_REF_LIST_TRL WHERE AD_REF_LIST_TRL.AD_LANGUAGE = ?) TRL "
+            + "(SELECT AD_REF_LIST_ID, NAME FROM AD_REF_LIST_TRL WHERE AD_REF_LIST_TRL.AD_LANGUAGE = :language) TRL "
             + "ON AD_REF_LIST.AD_REF_LIST_ID = TRL.AD_REF_LIST_ID "
-            + "WHERE AD_REF_LIST.AD_REFERENCE_ID = ?");
-    query.setString(0, "en_US");
-    query.setString(1, "800025");
+            + "WHERE AD_REF_LIST.AD_REFERENCE_ID = :referenceId");
+    query.setParameter("language", "en_US");
+    query.setParameter("referenceId", "800025");
     query.list();
   }
 

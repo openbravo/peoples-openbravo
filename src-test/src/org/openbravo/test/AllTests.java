@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,7 @@ import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.OBContextCollectionsTest;
+import org.openbravo.test.security.PasswordStrengthCheckerTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.xml.DefaultsDataset;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
@@ -67,7 +68,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     AccessLevelTest.class, //
     AllowedOrganizationsTest.class, //
     WritableReadableOrganizationClientTest.class, //
-    OBContextCollectionsTest.class,
+    OBContextCollectionsTest.class, //
+    PasswordStrengthCheckerTest.class,
 
     // dal
     HiddenUpdateTest.class, //
