@@ -87,30 +87,6 @@ enyo.kind({
     var product = this.leftSubWindow.product,
         me = this;
 
-    function addLine(line, product, attrs, args) {
-      if (line) {
-        if (attrs.warehouse.id !== line.get('warehouse').id) {
-          me.doSetLineProperty({
-            line: line,
-            property: 'warehouse',
-            value: attrs.warehouse
-          });
-        }
-        me.doCloseLeftSubWindow();
-      } else {
-        me.doAddProduct({
-          attrs: attrs,
-          options: {
-            line: line,
-            blockAddProduct: true
-          },
-          product: product,
-          qty: args.qty ? args.qty : OB.DEC.One,
-          ignoreStockTab: true
-        });
-      }
-    }
-
     if (product) {
       var line = null,
           lines = OB.MobileApp.model.receipt.get('lines'),
@@ -132,32 +108,27 @@ enyo.kind({
         if (args && args.cancelOperation && args.cancelOperation === true) {
           return;
         }
-        _.forEach(lines.models, function (li) {
-          if ((li.get('product').get('id') === product.get('id') && li.get('warehouse').id === attrs.warehouse.id) || (line && li.get('id') === line.get('id'))) {
-            allLinesQty += li.get('qty');
+        if (line) {
+          if (attrs.warehouse.id !== line.get('warehouse').id) {
+            me.doSetLineProperty({
+              line: line,
+              property: 'warehouse',
+              value: attrs.warehouse
+            });
           }
-        });
-        if (!line) {
-          allLinesQty += args.qty ? args.qty : OB.DEC.One;
+          me.doCloseLeftSubWindow();
         } else {
-          allLinesQty += args.qty ? args.qty : OB.DEC.Zero;
-        }
-        if ((product.get('isdiscontinued') || product.get('issalediscontinued'))) {
-          if (OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
-            if (allLinesQty > attrs.warehouse.warehouseqty) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
-            } else {
-              addLine(line, product, attrs, args);
-            }
-          } else {
-            if (line && allLinesQty > attrs.warehouse.warehouseqty) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
-            } else {
-              addLine(line, product, attrs, args);
-            }
-          }
-        } else {
-          addLine(line, product, attrs, args);
+          me.doAddProduct({
+            attrs: attrs,
+            options: {
+              line: line,
+              blockAddProduct: true,
+              stockScreen: true
+            },
+            product: product,
+            qty: args.qty ? args.qty : OB.DEC.One,
+            ignoreStockTab: true
+          });
         }
       });
     }

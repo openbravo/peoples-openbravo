@@ -2071,7 +2071,75 @@
       var me = this,
           lines = this.get('lines'),
           line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
-          warehouseId, warehouse, params = {};
+          stockScreen = options && options.stockScreen,
+          allLinesQty = qty,
+          warehouseId, warehouse;
+
+      function navigateToStockScreen(warehouse) {
+        if (stockScreen && OB.MobileApp.model.get('connectedToERP')) {
+          var params = {};
+          params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+          params.product = p;
+          params.warehouse = warehouse;
+          OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
+        }
+      }
+
+      function showDiscontinuedErrorPopup(warehouse) {
+        OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            navigateToStockScreen(warehouse);
+          }
+        }], {
+          onHideFunction: function () {
+            navigateToStockScreen(warehouse);
+          }
+        });
+        if (callback) {
+          callback(false);
+        }
+      }
+
+      function addProductWithoutStockPopup(warehouse) {
+        OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_NotEnoughStock'), OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), warehouse.warehouseqty, qty, warehouse.warehousename]), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            if (callback) {
+              callback(true);
+            }
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function () {
+            navigateToStockScreen(warehouse);
+            if (callback) {
+              callback(false);
+            }
+          }
+        }], {
+          onHideFunction: function () {
+            navigateToStockScreen(warehouse);
+            if (callback) {
+              callback(false);
+            }
+          }
+        });
+      }
+
+      function addDiscontinuedLine(warehouse, allLinesQty) {
+        if (allLinesQty > warehouse.warehouseqty) {
+          if (me.get('doNotAddWithoutStock')) {
+            showDiscontinuedErrorPopup(warehouse);
+          } else {
+            addProductWithoutStockPopup(warehouse);
+          }
+        } else if (callback) {
+          callback(true);
+        }
+      }
 
       if (!line && p.get('groupProduct')) {
         var affectedByPack;
@@ -2097,65 +2165,58 @@
 
       _.forEach(lines.models, function (l) {
         if ((l.get('product').get('id') === p.get('id') && l.get('warehouse').id === warehouseId) || (line && l.get('id') === line.get('id'))) {
-          qty += l.get('qty');
+          allLinesQty += l.get('qty');
         }
       });
 
-      if (qty > 0) {
-        OB.UTIL.StockUtils.getReceiptLineStock(p.get('id'), undefined, function (data) {
-          if (data && data.exception) {
-            if (data.exception.message === 'Application server is not available.') {
-              OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [p.get('_identifier')]), [{
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                action: function () {
-                  callback(true);
-                }
-              }, {
-                label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                action: function () {
-                  callback(false);
-                }
-              }], {
-                onHideFunction: function () {
-                  callback(false);
-                }
-              });
-            } else {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message);
-              callback(false);
-            }
-          } else {
-            warehouse = _.find(data.warehouses, function (warehouse) {
-              return warehouse.warehouseid === warehouseId;
-            });
-            if (warehouse && warehouse.warehouseqty < qty) {
-              var navigateToStockScreen = function () {
-                  if (p.get('showstock') && OB.MobileApp.model.get('connectedToERP')) {
-                    params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
-                    params.product = p;
-                    params.warehouse = warehouse;
-                    OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
+      if (allLinesQty > 0) {
+        if (p.get('showstock') && stockScreen && attrs && attrs.warehouse && !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)) {
+          addDiscontinuedLine(attrs.warehouse, allLinesQty);
+        } else {
+          OB.UTIL.StockUtils.getReceiptLineStock(p.get('id'), line, function (data) {
+            if (data && data.exception) {
+              if (data.exception.message === 'Application server is not available.') {
+                OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [p.get('_identifier')]), [{
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  action: function () {
+                    if (callback) {
+                      callback(true);
+                    }
                   }
-                  };
-              OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, warehouse.warehouseqty, warehouse.warehousename]), [{
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                action: function () {
-                  navigateToStockScreen();
+                }, {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                  action: function () {
+                    if (callback) {
+                      callback(false);
+                    }
+                  }
+                }], {
+                  onHideFunction: function () {
+                    if (callback) {
+                      callback(false);
+                    }
+                  }
+                });
+              } else {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message);
+                if (callback) {
+                  callback(false);
                 }
-              }], {
-                onHideFunction: function () {
-                  navigateToStockScreen();
-                }
-              });
-              callback(false);
+              }
             } else {
-              callback(true);
+              warehouse = _.find(data.warehouses, function (warehouse) {
+                return warehouse.warehouseid === warehouseId;
+              });
+              if (warehouse) {
+                addDiscontinuedLine(warehouse, allLinesQty);
+              } else if (callback) {
+                callback(false);
+              }
             }
-          }
-        });
-      } else {
+          });
+        }
+      } else if (callback) {
         callback(true);
       }
     },
@@ -2447,49 +2508,13 @@
         }
       }
       if ((p.get('isdiscontinued') || p.get('issalediscontinued')) && OB.DEC.compare(qty) === 1 && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
-        if (p.get('showstock') && attrs && attrs.warehouse && !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)) {
-          var qtyToStock = qty;
-          _.forEach(this.get('lines').models, function (l) {
-            if (l.get('product').get('id') === p.get('id') && l.get('warehouse').id === attrs.warehouse.id) {
-              qtyToStock += l.get('qty');
-            }
-          });
-          if (qtyToStock > attrs.warehouse.warehouseqty) {
-            var navigateToStockScreen = function () {
-                if (OB.MobileApp.model.get('connectedToERP')) {
-                  var params = {};
-                  params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
-                  params.product = p;
-                  params.warehouse = attrs.warehouse;
-                  OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
-                }
-                };
-            OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              action: function () {
-                navigateToStockScreen();
-              }
-            }], {
-              onHideFunction: function () {
-                navigateToStockScreen();
-              }
-            });
-            if (callback) {
-              callback(false, null);
-            }
-          } else {
+        me.getStoreStock(p, qty, options, attrs, function (hasStock) {
+          if (hasStock) {
             returnApproval();
+          } else if (callback) {
+            callback(false, null);
           }
-        } else {
-          me.getStoreStock(p, qty, options, attrs, function (hasStock) {
-            if (hasStock) {
-              returnApproval();
-            } else if (callback) {
-              callback(false, null);
-            }
-          });
-        }
+        });
       } else {
         returnApproval();
       }
