@@ -142,7 +142,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     cost.setQuantity(transaction.getMovementQuantity());
     cost.setTotalMovementQuantity(currentStock.add(transaction.getMovementQuantity()));
-    cost.setTotalStockValuation(currentValuedStock.add(trxCost));
+    cost.setTotalStockValuation(currentValuedStock.add(trxCost.setScale(costCurrency
+        .getCostingPrecision().intValue(), RoundingMode.HALF_UP)));
     if (transaction.getMovementQuantity().signum() == 0) {
       cost.setPrice(newCost);
     } else {
