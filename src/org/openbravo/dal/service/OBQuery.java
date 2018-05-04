@@ -109,7 +109,7 @@ public class OBQuery<E extends BaseOBObject> {
    * @see OBQuery#uniqueResult() uniqueResult for a type-safe version
    */
   public Object uniqueResultObject() {
-    return createQuery().uniqueResult();
+    return createQuery(Object.class).uniqueResult();
   }
 
   /**
