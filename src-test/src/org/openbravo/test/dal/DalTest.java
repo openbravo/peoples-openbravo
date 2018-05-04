@@ -40,6 +40,7 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
@@ -685,6 +686,7 @@ public class DalTest extends OBBaseTest {
    * properly.
    */
   @Test
+  @SuppressWarnings("deprecation")
   public void testOBQueryWithLegacyStyleParameters() {
     setTestUserContext();
     String hql = "as c where c.iSOCode = ? and c.symbol = ?";
@@ -694,5 +696,37 @@ public class DalTest extends OBBaseTest {
     parameters.add("€");
     query.setParameters(parameters);
     assertNotNull(query.uniqueResult());
+  }
+
+  /**
+   * Test to check that proxies are not initialized when retrieving their identifier
+   */
+  @Test
+  public void proxyShouldNotBeInitialized() {
+    Currency euro = OBDal.getInstance().getProxy(Currency.class, EURO_ID);
+    euro.getId();
+    assertThat("Proxy is not initialized", Hibernate.isInitialized(euro), equalTo(false));
+  }
+
+  /**
+   * Test to check that proxies are initialized when retrieving a property different from the
+   * identifier
+   */
+  @Test
+  public void proxyShouldBeInitialized() {
+    Currency euro = OBDal.getInstance().getProxy(Currency.class, EURO_ID);
+    euro.getISOCode();
+    assertThat("Proxy is not initialized", Hibernate.isInitialized(euro), equalTo(true));
+  }
+
+  /**
+   * Test to check that it is possible to retrieve the identifier of a proxy that references a
+   * non-existent record
+   */
+  @Test
+  public void canRetrieveIdOfNonExistentProxy() {
+    final String nonExistingId = "_0";
+    Currency unknown = OBDal.getInstance().getProxy(Currency.class, nonExistingId);
+    assertThat("Can retrieve ID of non-existent Proxy", unknown.getId(), equalTo(nonExistingId));
   }
 }
