@@ -382,6 +382,9 @@
         this.set('lines', new OrderLineList().reset(attributes.lines));
         this.set('orderManualPromotions', new Backbone.Collection().reset(attributes.orderManualPromotions));
         this.set('payments', new PaymentLineList().reset(attributes.payments));
+        if (attributes.canceledorder) {
+          this.set('canceledorder', new OB.Model.Order(attributes.canceledorder));
+        }
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
         this.set('qty', attributes.qty);
@@ -1078,6 +1081,10 @@
 
       if (_order.get('replacedorder')) {
         this.set('replacedorder', _order.get('replacedorder'));
+      }
+
+      if (_order.get('canceledorder')) {
+        this.set('canceledorder', _order.get('canceledorder'));
       }
 
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
