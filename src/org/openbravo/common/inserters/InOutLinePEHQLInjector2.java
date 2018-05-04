@@ -35,15 +35,13 @@ public class InOutLinePEHQLInjector2 extends HqlInserter {
 
     StringBuilder hql = new StringBuilder();
 
+    hql.append("coalesce(TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity ");
     if (isSalesTransaction) {
-      hql.append("coalesce(TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity ");
       hql.append("- (select coalesce(sum(il.invoicedQuantity),0) from e.invoiceLineList il where il.invoice.documentStatus = 'CO')");
-      hql.append(", coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))), 0)");
     } else {
-      hql.append("coalesce(TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity ");
       hql.append("- (select coalesce(sum(mi.quantity),0) from e.procurementReceiptInvoiceMatchList mi)");
-      hql.append(", coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))), 0)");
     }
+    hql.append(", coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))), 0)");
 
     return hql.toString();
   }

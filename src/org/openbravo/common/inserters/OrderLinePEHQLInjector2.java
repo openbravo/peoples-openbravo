@@ -36,7 +36,7 @@ public class OrderLinePEHQLInjector2 extends HqlInserter {
     StringBuilder hql = new StringBuilder();
     hql.append(" TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity - e.invoicedQuantity ");
     if (!isSalesTransaction) {
-      hql.append(" - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m) ");
+      hql.append(" - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m where m.invoiceLine.id is not null) ");
     }
     hql.append(" , coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))))");
 

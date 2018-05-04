@@ -69,7 +69,7 @@ public class OrderLinePEHQLInjector0 extends HqlInserter {
     } else {
       hql.append(" and o.documentStatus in ('CO', 'CL')");
       hql.append(" and o.invoiceTerms <> 'N'");
-      hql.append(" and ((e.explode = 'Y') or ((e.orderedQuantity - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m)) <> 0)) ");
+      hql.append(" and ((e.explode = 'Y') or ((e.orderedQuantity - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m where m.invoiceLine.id is not null)) <> 0)) ");
     }
 
     queryNamedParameters.put("issotrx", isSalesTransaction);
