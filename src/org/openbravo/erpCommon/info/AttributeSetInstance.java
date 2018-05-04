@@ -149,10 +149,12 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       AttributeSetInstanceValue attSetValue = new AttributeSetInstanceValue(lotNo, serialNo,
           expiryDate, vars.getStringParameter("inpislocked", "N"),
           vars.getStringParameter("inplockDescription"));
-      AttributeSet attSet = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
       HashMap<String, String> attValues = new HashMap<String, String>();
+      OBError myMessage = null;
       try {
         OBContext.setAdminMode(true);
+        AttributeSet attSet = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
+
         for (AttributeUse attrUse : attSet.getAttributeUseList()) {
           final String elementName = attrUse.getAttribute().getName();
           if (attrUse.isActive() && attrUse.getAttribute().isActive()) {
@@ -165,27 +167,25 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
             }
           }
         }
+
+        if (StringUtils.isEmpty(lotNo) && StringUtils.isEmpty(serialNo)
+            && StringUtils.isEmpty(expiryDate) && attValues.isEmpty()) {
+          myMessage = new OBError();
+          myMessage.setTitle("");
+          myMessage.setType("Success");
+          myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+        } else {
+          myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet, strInstance,
+              strWindowId, strIsSOTrx, strProduct, attValues);
+
+          if (myMessage != null && StringUtils.equals("Error", myMessage.getType())) {
+            bdErrorGeneralPopUp(request, response, OBMessageUtils.messageBD("Error"),
+                myMessage.getMessage());
+          }
+        }
       } finally {
         OBContext.restorePreviousMode();
       }
-
-      OBError myMessage = null;
-      if (StringUtils.isEmpty(lotNo) && StringUtils.isEmpty(serialNo)
-          && StringUtils.isEmpty(expiryDate) && attValues.isEmpty()) {
-        myMessage = new OBError();
-        myMessage.setTitle("");
-        myMessage.setType("Success");
-        myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-      } else {
-        myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet, strInstance,
-            strWindowId, strIsSOTrx, strProduct, attValues);
-
-        if (myMessage != null && StringUtils.equals("Error", myMessage.getType())) {
-          bdErrorGeneralPopUp(request, response, OBMessageUtils.messageBD("Error"),
-              myMessage.getMessage());
-        }
-      }
-
       vars.setSessionValue("AttributeSetInstance.instance", attSetValue.getAttSetInstanceId());
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
       vars.setSessionValue("AttributeSetInstance.close", "Y");
