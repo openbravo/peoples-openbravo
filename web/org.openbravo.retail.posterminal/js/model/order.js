@@ -4195,7 +4195,7 @@
           //in the default currency is satisfied
           if (OB.DEC.compare(OB.DEC.sub(OB.DEC.abs(this.getDifferenceRemovingSpecificPayment(p)), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
-            if (p.get('origAmount') !== multiCurrencyDifference) {
+            if (OB.DEC.abs(p.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
               p.set('origAmount', multiCurrencyDifference);
             }
           }
@@ -4214,6 +4214,9 @@
         }
         if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
           sumCash();
+          if (p.get('isPrePayment') || p.get('isReversePayment')) {
+            processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, p.get('origAmount'));
+          }
         } else {
           if (!p.get('isPrePayment')) {
             sumCash();
@@ -4244,7 +4247,7 @@
           pcash.set('paid', OB.DEC.Zero);
           this.set('payment', OB.DEC.abs(nocash));
           this.set('change', OB.DEC.add(cash, origCash));
-        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, OB.DEC.sub(cash, processedPaymentsAmount)), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
           //The change value will be computed through a rounded total value, to ensure that the total plus change
