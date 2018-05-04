@@ -2085,56 +2085,48 @@
         }
       }
 
-      function showDiscontinuedErrorPopup(warehouse) {
-        OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          action: function () {
-            navigateToStockScreen(warehouse);
-          }
-        }], {
-          onHideFunction: function () {
-            navigateToStockScreen(warehouse);
-          }
-        });
-        if (callback) {
-          callback(false);
-        }
-      }
-
-      function addProductWithoutStockPopup(warehouse) {
-        OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_NotEnoughStock'), OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), warehouse.warehouseqty, qty, warehouse.warehousename]), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          action: function () {
-            if (callback) {
-              callback(true);
-            }
-          }
-        }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-          action: function () {
-            navigateToStockScreen(warehouse);
-            if (callback) {
-              callback(false);
-            }
-          }
-        }], {
-          onHideFunction: function () {
-            navigateToStockScreen(warehouse);
-            if (callback) {
-              callback(false);
-            }
-          }
-        });
-      }
-
       function addDiscontinuedLine(warehouse, allLinesQty) {
         if (allLinesQty > warehouse.warehouseqty) {
           if (me.get('doNotAddWithoutStock')) {
-            showDiscontinuedErrorPopup(warehouse);
+            OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                navigateToStockScreen(warehouse);
+              }
+            }], {
+              onHideFunction: function () {
+                navigateToStockScreen(warehouse);
+              }
+            });
+            if (callback) {
+              callback(false);
+            }
           } else {
-            addProductWithoutStockPopup(warehouse);
+            OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_NotEnoughStock'), OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), warehouse.warehouseqty, qty, warehouse.warehousename]), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                if (callback) {
+                  callback(true);
+                }
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+              action: function () {
+                navigateToStockScreen(warehouse);
+                if (callback) {
+                  callback(false);
+                }
+              }
+            }], {
+              onHideFunction: function () {
+                navigateToStockScreen(warehouse);
+                if (callback) {
+                  callback(false);
+                }
+              }
+            });
           }
         } else if (callback) {
           callback(true);
