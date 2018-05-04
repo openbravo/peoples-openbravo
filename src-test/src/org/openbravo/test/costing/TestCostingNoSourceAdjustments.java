@@ -1668,12 +1668,11 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
           quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
-      BigDecimal previousAdjustment = quantity3.multiply(price3).add(
+      BigDecimal previousAdjustmentAmount1 = quantity3.multiply(price3).add(
           quantity3.multiply(price1).negate());
-      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList3.get(0),
-          TestCostingConstants.EURO_ID, "PDC", quantity4.multiply(price4)
-              .add(quantity4.multiply(price2).negate()).add(previousAdjustment), day4, false, true,
-          "CO", false, false));
+      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate())
+              .add(previousAdjustmentAmount1), day4, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList11);
@@ -1690,14 +1689,11 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
           quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
-      // costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-      // quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
-      BigDecimal previousAdjustment2 = quantity3.multiply(price3).add(
+      BigDecimal previousAdjustmentAmount2 = quantity3.multiply(price3).add(
           quantity3.multiply(price1).negate());
-      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0),
-          TestCostingConstants.EURO_ID, "PDC", quantity4.multiply(price4)
-              .add(quantity4.multiply(price2).negate()).add(previousAdjustment2), day4, false,
-          true, "CO", false, false));
+      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate())
+              .add(previousAdjustmentAmount2), day4, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       // costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
@@ -1716,14 +1712,11 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
           quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
-      // costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-      // quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
-      BigDecimal previousAdjustment3 = quantity3.multiply(price3).add(
+      BigDecimal previousAdjustmentAmount3 = quantity3.multiply(price3).add(
           quantity3.multiply(price1).negate());
-      costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0),
-          TestCostingConstants.EURO_ID, "PDC", quantity4.multiply(price4)
-              .add(quantity4.multiply(price2).negate()).add(previousAdjustment3), day4, false,
-          true, "CO", false, false));
+      costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate())
+              .add(previousAdjustmentAmount3), day4, false));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       // costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",

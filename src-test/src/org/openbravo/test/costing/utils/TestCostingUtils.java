@@ -4624,15 +4624,15 @@ public class TestCostingUtils {
           if (costAdjustmentAssertLine.getAmount().setScale(2, RoundingMode.HALF_UP)
               .equals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP))
               || (costAdjustmentAssertLine.getType().equals("LC") && !costAdjustmentAssertLine
-                  .isNeedPosting()))
+                  .isNeedPosting())) {
             assertFalse(costAdjustmentLine.isNeedsPosting());
-          else
+          } else {
             assertTrue(costAdjustmentLine.isNeedsPosting());
-
-          if (costAdjustmentAssertLine.isCheckParentCostAdjustmentLine()) {
-            assertParentCostAdjustmentLine(costAdjustment, costAdjustmentAssertLineList, j,
-                costAdjustmentLine, costAdjustmentAssertLine);
           }
+
+          assertParentCostAdjustmentLine(costAdjustment, costAdjustmentAssertLineList, j,
+              costAdjustmentLine, costAdjustmentAssertLine);
+
           j++;
         }
         i++;
@@ -4688,9 +4688,9 @@ public class TestCostingUtils {
             .getProduct()
             .equals(
                 costAdjustment.getCostAdjustmentLineList().get(j - 1).getInventoryTransaction()
-                    .getProduct())))
+                    .getProduct()))) {
       assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), null);
-    else if (costAdjustmentLine
+    } else if (costAdjustmentLine
         .getInventoryTransaction()
         .getProduct()
         .equals(
@@ -4701,10 +4701,10 @@ public class TestCostingUtils {
             .getStorageBin()
             .equals(
                 costAdjustment.getCostAdjustmentLineList().get(0).getInventoryTransaction()
-                    .getStorageBin()) || costAdjustmentAssertLineList.size() == 2))
+                    .getStorageBin()) || costAdjustmentAssertLineList.size() == 2)) {
       assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
           .getCostAdjustmentLineList().get(0));
-    else if (costAdjustmentLine
+    } else if (costAdjustmentLine
         .getInventoryTransaction()
         .getProduct()
         .equals(
@@ -4715,10 +4715,10 @@ public class TestCostingUtils {
             .getStorageBin()
             .equals(
                 costAdjustment.getCostAdjustmentLineList().get(1).getInventoryTransaction()
-                    .getStorageBin()) || costAdjustmentAssertLineList.size() == 3))
+                    .getStorageBin()) || costAdjustmentAssertLineList.size() == 3)) {
       assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
           .getCostAdjustmentLineList().get(1));
-    else if ((costAdjustmentLine
+    } else if ((costAdjustmentLine
         .getInventoryTransaction()
         .getProduct()
         .equals(
@@ -4731,12 +4731,16 @@ public class TestCostingUtils {
                 .getStorageBin()) || costAdjustmentAssertLineList.size() == 4))
         || costAdjustmentLine.getInventoryTransaction().getProduct().isBillOfMaterials()
         && costAdjustmentLine.getAdjustmentAmount().equals(
-            costAdjustment.getCostAdjustmentLineList().get(2).getAdjustmentAmount()))
+            costAdjustment.getCostAdjustmentLineList().get(2).getAdjustmentAmount())) {
       assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
           .getCostAdjustmentLineList().get(2));
-    else
+    } else if (costAdjustmentLine.getInventoryTransaction().getProduct().isBillOfMaterials()) {
+      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
+          .getCostAdjustmentLineList().get(4));
+    } else {
       assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
           .getCostAdjustmentLineList().get(3));
+    }
   }
 
   // Assert amounts and dates of a posted document

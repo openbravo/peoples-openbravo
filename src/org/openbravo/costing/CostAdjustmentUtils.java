@@ -130,25 +130,8 @@ public class CostAdjustmentUtils {
       Date accountingDate, Long lineNo) {
     Long stdPrecission = transaction.getCurrency().getStandardPrecision();
 
-    StringBuilder hql = new StringBuilder("");
-    hql.append(" costAdjustment.id = :costAdjustmentId ");
-    hql.append(" and inventoryTransaction.id = :transactionId ");
-    hql.append(" and isRelatedTransactionAdjusted = false ");
-    hql.append(" and currency.id = :currencyId ");
-    hql.append(" and isSource = :isSource ");
-    hql.append(" and accountingDate = :accountingDate");
-
-    OBQuery<CostAdjustmentLine> obc = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
-        hql.toString());
-    obc.setNamedParameter("costAdjustmentId", costAdjustmentHeader.getId());
-    obc.setNamedParameter("transactionId", transaction.getId());
-    obc.setNamedParameter("currencyId", transaction.getCurrency().getId());
-    obc.setNamedParameter("isSource", isSource);
-    obc.setNamedParameter("accountingDate", accountingDate);
-
-    obc.setMaxResult(1);
-
-    CostAdjustmentLine costAdjustmentLine = (CostAdjustmentLine) obc.uniqueResult();
+    CostAdjustmentLine costAdjustmentLine = getExistingCostAdjustmentLine(transaction,
+        costAdjustmentHeader, isSource, accountingDate);
     if (costAdjustmentLine == null) {
       costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
       costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
@@ -170,6 +153,30 @@ public class CostAdjustmentUtils {
 
     OBDal.getInstance().save(costAdjustmentLine);
 
+    return costAdjustmentLine;
+  }
+
+  private static CostAdjustmentLine getExistingCostAdjustmentLine(MaterialTransaction transaction,
+      CostAdjustment costAdjustmentHeader, boolean isSource, Date accountingDate) {
+    StringBuilder hql = new StringBuilder("");
+    hql.append(" costAdjustment.id = :costAdjustmentId ");
+    hql.append(" and inventoryTransaction.id = :transactionId ");
+    hql.append(" and isRelatedTransactionAdjusted = false ");
+    hql.append(" and currency.id = :currencyId ");
+    hql.append(" and isSource = :isSource ");
+    hql.append(" and accountingDate = :accountingDate");
+
+    OBQuery<CostAdjustmentLine> obc = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
+        hql.toString());
+    obc.setNamedParameter("costAdjustmentId", costAdjustmentHeader.getId());
+    obc.setNamedParameter("transactionId", transaction.getId());
+    obc.setNamedParameter("currencyId", transaction.getCurrency().getId());
+    obc.setNamedParameter("isSource", isSource);
+    obc.setNamedParameter("accountingDate", accountingDate);
+
+    obc.setMaxResult(1);
+
+    CostAdjustmentLine costAdjustmentLine = (CostAdjustmentLine) obc.uniqueResult();
     return costAdjustmentLine;
   }
 
