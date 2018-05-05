@@ -405,12 +405,8 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISLOCKED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="ISSALEDISCONTINUED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+      <column name="M_PRODUCT_STATUS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
@@ -454,6 +450,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_CATEGORY" name="M_PRODUCT_M_PRODUCT_CATEGORY">
         <reference local="M_PRODUCT_CATEGORY_ID" foreign="M_PRODUCT_CATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="M_PRODUCT_STATUS" name="M_PRODUCT_M_PRODUCT_STATUS">
+        <reference local="M_PRODUCT_STATUS_ID" foreign="M_PRODUCT_STATUS_ID"/>
       </foreign-key>
       <foreign-key foreignTable="MRP_PLANNER" name="M_PRODUCT_MRP_PLANNER">
         <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
@@ -519,7 +518,6 @@
       <check name="M_PROD_LINKEDTOPRODUCT_CHECK"><![CDATA[ISLINKEDTOPRODUCT IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ATSETVALTYPE_CHK"><![CDATA[M_ATTRIBUTESETINSTANCE_ID IS NULL OR ATTRSETVALUETYPE IS NOT NULL]]></check>
       <check name="M_PRODUCT_DISCONTINUED_CHECK"><![CDATA[DISCONTINUED IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_DISCSTOCKED_CHK"><![CDATA[NOT (ISSALEDISCONTINUED = 'Y' AND (ISSTOCKED = 'N' OR PRODUCTTYPE <> 'I'))]]></check>
       <check name="M_PRODUCT_ENFORCE_ATTRIBUT_CHK"><![CDATA[ENFORCE_ATTRIBUTE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISBOM_CHECK"><![CDATA[ISBOM IN ('Y', 'N')]]></check>
@@ -527,17 +525,14 @@
       <check name="M_PRODUCT_ISEXPDEFERRED_CHK"><![CDATA[ISDEFERREDEXPENSE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISGENERIC"><![CDATA[ISGENERIC IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISINVOICEPRINTDE_CHK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ISLOCKED_CHK"><![CDATA[ISLOCKED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPICKLISTPRINTD_CHK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPURCHASED_CHECK"><![CDATA[ISPURCHASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISQTYVAR_CHECK"><![CDATA[ISQUANTITYVARIABLE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISREVDEFCOMPLETE_CHK"><![CDATA[ISDEFERREDREVENUE = 'N' OR ISDEFERREDREVENUE = 'Y' AND REVPLANTYPE IS NOT NULL AND DEFAULTPERIOD IS NOT NULL AND PERIODNUMBER IS NOT NULL]]></check>
       <check name="M_PRODUCT_ISREVDEFERRED_CHK"><![CDATA[ISDEFERREDREVENUE IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_ISSALESDISC_CHK"><![CDATA[ISSALEDISCONTINUED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISSOLD_CHECK"><![CDATA[ISSOLD IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISSTOCKED_CHECK"><![CDATA[ISSTOCKED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISVERIFIED_CHECK"><![CDATA[ISVERIFIED IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_LOCKEDPRODTYPE_CHK"><![CDATA[NOT (ISLOCKED = 'Y' AND PRODUCTTYPE <> 'I')]]></check>
       <check name="M_PRODUCT_PERIODNUMBER_CHK"><![CDATA[ISDEFERREDREVENUE = 'Y' AND PERIODNUMBER > 0 OR ISDEFERREDREVENUE = 'N']]></check>
       <check name="M_PRODUCT_PERIODNUMEXP_CHK"><![CDATA[ISDEFERREDEXPENSE = 'Y' AND PERIODNUMBER_EXP > 0 OR ISDEFERREDEXPENSE = 'N']]></check>
       <check name="M_PRODUCT_PRICERULEBASED_CHECK"><![CDATA[ISPRICERULEBASED IN ('Y', 'N')]]></check>
