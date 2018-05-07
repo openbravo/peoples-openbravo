@@ -831,7 +831,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                           orderList.addNewOrder();
                           var linesMap = {},
                               order = orderList.modelorder,
-                              addRelatedLines, addLineToTickect;
+                              addRelatedLines, addLineToTicket;
 
                           var finalCallback = function () {
                               order.unset('preventServicesUpdate');
@@ -878,7 +878,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                             });
                           };
 
-                          addLineToTickect = function (idx) {
+                          addLineToTicket = function (idx) {
                             if (idx === cloneOrderForNew.get('lines').length) {
                               addRelatedLines(0);
                             } else {
@@ -890,10 +890,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                   if (success) {
                                     linesMap[order.get('lines').at(order.get('lines').length - 1).id] = line;
                                   }
-                                  addLineToTickect(idx + 1);
+                                  addLineToTicket(idx + 1);
                                 });
                               } else {
-                                addLineToTickect(idx + 1);
+                                addLineToTicket(idx + 1);
                               }
                             }
                           };
@@ -905,7 +905,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                             });
                           }
                           order.set('bp', cloneOrderForNew.get('bp'));
-                          addLineToTickect(0);
+                          addLineToTicket(0);
                         }
                       }, {
                         label: OB.I18N.getLabel('OBPOS_Cancel')
