@@ -1,16 +1,37 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" manifest="../../org.openbravo.mobile.core/OBPOS_Main/AppCacheManifest?_appName=WebPOS">
+
+<%@ page import="org.openbravo.erpCommon.businessUtility.Preferences" %>
+<%
+
+/**
+catch OBPOS_UseServiceWorkersForOffline preferences value to know if we want to use SW or AppCache
+*/
+String toServiceWorker="";
+String toAppCache="";
+String useServiceWorkers = Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, "0",
+    "0", "0", "0", null);
+if(useServiceWorkers.equals("Y")){
+  toServiceWorker = "../org.openbravo.mobile.core/source/offline/ob-fetch-manifest.js";
+}else{
+  toAppCache = "../../org.openbravo.mobile.core/OBPOS_Main/AppCacheManifest?_appName=WebPOS";
+}
+%>
+<html xmlns="http://www.w3.org/1999/xhtml" manifest=<%=toAppCache%>>
+
 <head>
   <title>Openbravo POS</title>
   <meta charset="utf-8">
   <meta name="description" content="Openbravo Point of Sale window">
   <meta name="author" content="Openbravo, S.L.U.">
+  
 
+  
   <%@include file="../org.openbravo.mobile.core/assets/include/mobile.jsp" %>
 
   <link rel="shortcut icon" type="image/x-icon" href="../../web/images/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS"/>
 
+  
   <script>
     (function () {
       /**
@@ -72,5 +93,6 @@
       }
     }());
   </script>
+  <script src=<%=toServiceWorker%>></script>
 </body>
 </html>
