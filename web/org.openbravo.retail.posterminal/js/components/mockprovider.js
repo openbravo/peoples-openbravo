@@ -26,9 +26,9 @@ enyo.kind({
   processPayment: function (paymentinfo) {
     return new Promise(function (resolve, reject) {
       setTimeout(function () {
-        if (paymentinfo.amount === 150.50) {
+        if (paymentinfo.amount === 350.50) { // 1 x Expedition tent 4 season 2 person
           this.resolveTransactionVISA(resolve, reject);
-        } else if (paymentinfo.amount === 301.00) {
+        } else if (paymentinfo.amount === 701.00) {
           this.resolveTransactionMASTER(resolve, reject);
         } else {
           this.rejectTransaction(resolve, reject);
