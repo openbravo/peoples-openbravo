@@ -15,6 +15,8 @@ enyo.kind({
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
   tag: 'section',
+  allowedIncrementalRefresh: true,
+  incrementalRefreshOnNavigate: true,
   handlers: {
     onAddProduct: 'addProductToOrder',
     onViewProductDetails: 'viewProductDetails',

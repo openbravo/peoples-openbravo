@@ -11,6 +11,7 @@
 enyo.kind({
   name: 'OB.UI.RenderProduct',
   kind: 'OB.UI.listItemButton',
+  avoidDoubleClick: false,
   resizeHandler: function () {
     if (!this.model) {
       return true;

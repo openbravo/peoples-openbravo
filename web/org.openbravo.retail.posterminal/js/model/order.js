@@ -382,6 +382,9 @@
         this.set('lines', new OrderLineList().reset(attributes.lines));
         this.set('orderManualPromotions', new Backbone.Collection().reset(attributes.orderManualPromotions));
         this.set('payments', new PaymentLineList().reset(attributes.payments));
+        if (attributes.canceledorder) {
+          this.set('canceledorder', new OB.Model.Order(attributes.canceledorder));
+        }
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
         this.set('qty', attributes.qty);
@@ -1078,6 +1081,10 @@
 
       if (_order.get('replacedorder')) {
         this.set('replacedorder', _order.get('replacedorder'));
+      }
+
+      if (_order.get('canceledorder')) {
+        this.set('canceledorder', _order.get('canceledorder'));
       }
 
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
@@ -4188,7 +4195,7 @@
           //in the default currency is satisfied
           if (OB.DEC.compare(OB.DEC.sub(OB.DEC.abs(this.getDifferenceRemovingSpecificPayment(p)), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
-            if (p.get('origAmount') !== multiCurrencyDifference) {
+            if (OB.DEC.abs(p.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
               p.set('origAmount', multiCurrencyDifference);
             }
           }
@@ -4207,6 +4214,9 @@
         }
         if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
           sumCash();
+          if (p.get('isPrePayment') || p.get('isReversePayment')) {
+            processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, p.get('origAmount'));
+          }
         } else {
           if (!p.get('isPrePayment')) {
             sumCash();
@@ -4237,7 +4247,7 @@
           pcash.set('paid', OB.DEC.Zero);
           this.set('payment', OB.DEC.abs(nocash));
           this.set('change', OB.DEC.add(cash, origCash));
-        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, OB.DEC.sub(cash, processedPaymentsAmount)), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
           //The change value will be computed through a rounded total value, to ensure that the total plus change
@@ -5513,7 +5523,7 @@
     getScannableDocumentNo: function () {
       return this.get('documentNo').replace(/-/g, '\\-').replace(/\+/g, '\\+');
     },
-    turnEditable: function () {
+    turnEditable: function (callback) {
       if (this.get('payment') > 0 || this.get('isPartiallyDelivered') || this.get('isFullyDelivered')) {
         return;
       }
@@ -5525,6 +5535,7 @@
         this.set('orderType', 2);
       }
       this.unset('skipApplyPromotions');
+      this.save(callback);
     }
   });
 
@@ -6165,6 +6176,9 @@
         }
         me.current = me.at(0);
         me.loadCurrent(createNew);
+
+        // Refresh Master Data
+        OB.UTIL.checkRefreshMasterData();
       }
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
