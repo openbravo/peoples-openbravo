@@ -24,6 +24,7 @@ import java.util.HashMap;
 import javax.enterprise.context.Dependent;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
@@ -45,7 +46,8 @@ class UpdateAccAndDefPlanFromProduct implements CreateLinesFromProcessImplementa
    * Calculate Acc and Def Plan from Product
    */
   @Override
-  public void exec(Invoice currentInvoice, BaseOBObject copiedLine, InvoiceLine newInvoiceLine) {
+  public void exec(Invoice currentInvoice, final JSONObject pickExecuteLineValues,
+      BaseOBObject copiedLine, InvoiceLine newInvoiceLine) {
     boolean isDeferred = false;
     HashMap<String, String> accDefPlanData = AccDefUtility.getDeferredPlanForInvoiceProduct(
         currentInvoice.getId(), newInvoiceLine.getProduct().getId());

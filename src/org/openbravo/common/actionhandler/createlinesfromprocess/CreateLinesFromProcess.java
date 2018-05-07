@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -63,6 +64,7 @@ public class CreateLinesFromProcess {
   private Invoice processingInvoice;
   // Last Line number of the Processing Line
   private Long lastLineNo = 0L;
+  private JSONArray selectedLines;
 
   /**
    * This process copies the selected Lines into the Invoice that is being processed by this same
@@ -76,15 +78,17 @@ public class CreateLinesFromProcess {
    * <li>6. Recalculate Taxes</li>
    * </ul>
    * 
-   * @param selectedLines
+   * @param selectedLinesParam
    *          Order/Shipment/Receipt Lines from which the lines are going to be copied
    * @param selectedLinesClz
    *          The class of the lines being copied (Order/Shipment/Receipt)
    * @param currentInvoice
    * @return The number of the lines properly copied
    */
-  public int createInvoiceLinesFromDocumentLines(final JSONArray selectedLines,
+  public int createInvoiceLinesFromDocumentLines(final JSONArray selectedLinesParam,
       Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesClz) {
+
+    this.selectedLines = selectedLinesParam;
     // Validate the object class is supported in the process.
     this.linesClz = selectedLinesClz;
     validateLinesClz();
@@ -94,7 +98,7 @@ public class CreateLinesFromProcess {
       long startTime = System.currentTimeMillis();
       processingInvoice = currentInvoice;
       // Copy all the selected lines
-      int createdInvoiceLinesCount = createLinesFromSelectedLines(selectedLines);
+      int createdInvoiceLinesCount = createLinesFromSelectedLines();
 
       // Update invoice prepayment from order lines
       updateInvoicePrepayment();
@@ -112,13 +116,12 @@ public class CreateLinesFromProcess {
     }
   }
 
-  private int createLinesFromSelectedLines(final JSONArray selectedLines) {
+  private int createLinesFromSelectedLines() {
     // Initialize the line number with the last one in the processing invoice.
     lastLineNo = getLastLineNoOfCurrentInvoice();
     int createdInvoiceLinesCount = 0;
     for (int index = 0; index < selectedLines.length(); index++) {
-      BaseOBObject selectedLine = getLineInPosition(selectedLines, index);
-      InvoiceLine newInvoiceLine = createLineFromSelectedOrderLineAndRunHooks(selectedLine);
+      InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(index);
       processingInvoice.getInvoiceLineList().add(newInvoiceLine);
       OBDal.getInstance().save(newInvoiceLine);
       OBDal.getInstance().save(processingInvoice);
@@ -131,14 +134,24 @@ public class CreateLinesFromProcess {
   /**
    * Return an object instance for the line in an specified index of the selection
    * 
-   * @param selectedLines
    * @param index
+   *          The ID of the selected object in the PE
    * @return The object representing the line
    */
-  private BaseOBObject getLineInPosition(final JSONArray selectedLines, final int index) {
+  private BaseOBObject getSelectedLineInPosition(final int index) {
     try {
       String selectedLineId = selectedLines.getJSONObject(index).getString("id");
       return OBDal.getInstance().get(linesClz, selectedLineId);
+    } catch (JSONException e) {
+      log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
+          "Error in CreateLinesFromProcess when reading a JSONObject", e);
+      throw new OBException(e);
+    }
+  }
+
+  private JSONObject getPickEditLineValuesInPosition(final int index) {
+    try {
+      return selectedLines.getJSONObject(index);
     } catch (JSONException e) {
       log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
           "Error in CreateLinesFromProcess when reading a JSONObject", e);
@@ -159,12 +172,14 @@ public class CreateLinesFromProcess {
   /**
    * Creates a new invoice line from an existing line
    * 
-   * @param copiedLine
-   *          The order/shipment/receipt line to be copied
+   * @param index
+   *          The index of the order/shipment/receipt line to be copied in the selected lines
    * @return The created invoice line
    */
-  private InvoiceLine createLineFromSelectedOrderLineAndRunHooks(final BaseOBObject copiedLine) {
+  private InvoiceLine createLineFromSelectedLineAndRunHooks(final int index) {
     long startTime = System.currentTimeMillis();
+    BaseOBObject copiedLine = getSelectedLineInPosition(index);
+    JSONObject pickExecuteLineValues = getPickEditLineValuesInPosition(index);
 
     InvoiceLine newInvoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
 
@@ -172,7 +187,7 @@ public class CreateLinesFromProcess {
     newInvoiceLine.setLineNo(nextLineNo());
 
     // Execute Hooks to perform operations
-    executeHooks(copiedLine, newInvoiceLine);
+    executeHooks(pickExecuteLineValues, copiedLine, newInvoiceLine);
 
     long endTime = System.currentTimeMillis();
     log.debug(String.format(
@@ -187,7 +202,8 @@ public class CreateLinesFromProcess {
     return lastLineNo;
   }
 
-  private void executeHooks(final BaseOBObject line, InvoiceLine newInvoiceLine) {
+  private void executeHooks(JSONObject pickExecuteLineValues, final BaseOBObject line,
+      InvoiceLine newInvoiceLine) {
     try {
       if (CreateLinesFromProcessHooks != null) {
         final List<CreateLinesFromProcessImplementationInterface> hooks = new ArrayList<>();
@@ -201,7 +217,7 @@ public class CreateLinesFromProcess {
 
         Collections.sort(hooks, new CreateLinesFromHookComparator());
         for (CreateLinesFromProcessImplementationInterface hook : hooks) {
-          hook.exec(processingInvoice, line, newInvoiceLine);
+          hook.exec(processingInvoice, pickExecuteLineValues, line, newInvoiceLine);
         }
       }
     } catch (Exception e) {

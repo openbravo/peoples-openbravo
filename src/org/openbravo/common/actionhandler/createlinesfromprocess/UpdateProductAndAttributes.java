@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -53,8 +54,8 @@ class UpdateProductAndAttributes implements CreateLinesFromProcessImplementation
    * Update the product and attribute set to the new invoice line
    */
   @Override
-  public void exec(final Invoice currentInvoice, final BaseOBObject selectedLine,
-      InvoiceLine newInvoiceLine) {
+  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
+      final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
     this.copiedLine = selectedLine;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
 

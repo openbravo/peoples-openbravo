@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -60,8 +61,8 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    * copied order line.
    */
   @Override
-  public void exec(final Invoice currentInvoice, final BaseOBObject selectedLine,
-      InvoiceLine newInvoiceLine) {
+  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
+      final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
     this.processingInvoice = currentInvoice;
     this.copiedLine = selectedLine;
     this.invoiceLine = newInvoiceLine;
@@ -146,7 +147,7 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
     }
 
     OBCriteria<InvoiceLine> obc = OBDal.getInstance().createCriteria(InvoiceLine.class);
-    obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, invoiceLine.getInvoice()));
+    obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, processingInvoice));
     if (isOrderLine) {
       obc.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE,
           ((OrderLine) copiedLine).getBOMParent()));

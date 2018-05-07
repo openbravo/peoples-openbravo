@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.enterprise.context.Dependent;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
@@ -46,6 +47,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
   private BaseOBObject copiedLine;
   private InvoiceLine invoiceLine;
   private boolean isOrderLine;
+  private JSONObject pickExecLineValues;
 
   @Override
   public int getOrder() {
@@ -61,12 +63,13 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
    * 
    */
   @Override
-  public void exec(final Invoice currentInvoice, final BaseOBObject selectedLine,
-      InvoiceLine newInvoiceLine) {
+  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
+      final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
     this.invoiceLine = newInvoiceLine;
     this.copiedLine = selectedLine;
     this.processingInvoice = currentInvoice;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
+    this.pickExecLineValues = pickExecuteLineValues;
 
     if (isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
       setPricesBasedOnOrderLineValues(isOrderLine ? (OrderLine) copiedLine
@@ -85,7 +88,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
 
   private void setPricesBasedOnOrderLineValues(OrderLine orderLine) {
     PriceInformation priceInformation = new PriceInformation();
-    BigDecimal qtyOrdered = orderLine.getOrderedQuantity();
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantityInPickEdit(pickExecLineValues);
 
     // Standard and Price precision
     Currency invoiceCurrency = processingInvoice.getCurrency();
@@ -131,9 +134,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
 
   private void setPricesBasedOnPriceList(final ProductPrice productPrice) {
     PriceInformation priceInformation = new PriceInformation();
-    BigDecimal qtyOrdered = (BigDecimal) copiedLine
-        .get(isOrderLine ? OrderLine.PROPERTY_ORDEREDQUANTITY
-            : ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY);
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantityInPickEdit(pickExecLineValues);
 
     // Standard and Price precision
     Currency invoiceCurrency = processingInvoice.getCurrency();
@@ -201,7 +202,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
     invoiceLine.setGrossListPrice(priceInformation.getGrossListPrice());
     invoiceLine.setBaseGrossUnitPrice(priceInformation.getGrossBaseUnitPrice());
     invoiceLine.setGrossAmount(priceInformation.getLineGrossAmount());
-    // Price Limit
+    // Price Limit and Line Net Amount
     invoiceLine.setPriceLimit(priceInformation.getPriceLimit());
     invoiceLine.setLineNetAmount(priceInformation.getLineNetAmount());
   }

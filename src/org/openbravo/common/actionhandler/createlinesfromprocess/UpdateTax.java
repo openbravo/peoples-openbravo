@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -74,8 +75,8 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
    * found.
    */
   @Override
-  public void exec(final Invoice currentInvoice, final BaseOBObject selectedLine,
-      InvoiceLine newInvoiceLine) {
+  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
+      final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
     this.invoiceLine = newInvoiceLine;
     this.copiedLine = selectedLine;
     this.processingInvoice = currentInvoice;

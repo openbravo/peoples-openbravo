@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import javax.enterprise.context.Dependent;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
@@ -43,6 +44,7 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
   private Invoice processingInvoice;
   private BaseOBObject copiedLine;
   private boolean isOrderLine;
+  private JSONObject pickExecLineValues;
 
   @Override
   public int getOrder() {
@@ -53,21 +55,20 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
    * Calculation of quantities and UOM-AUM Support
    */
   @Override
-  public void exec(final Invoice currentInvoice, final BaseOBObject selectedLine,
-      InvoiceLine newInvoiceLine) {
+  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
+      final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
     this.copiedLine = selectedLine;
     this.processingInvoice = currentInvoice;
+    this.pickExecLineValues = pickExecuteLineValues;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
 
-    BigDecimal orderedQuantity = (BigDecimal) copiedLine
-        .get(isOrderLine ? OrderLine.PROPERTY_ORDEREDQUANTITY
-            : ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY);
+    BigDecimal orderedQuantity = CreateLinesFromUtil
+        .getOrderedQuantityInPickEdit(pickExecLineValues);
+    BigDecimal operativeQuantity = CreateLinesFromUtil
+        .getOperativeQuantityInPickEdit(pickExecLineValues);
     BigDecimal orderQuantity = (BigDecimal) copiedLine
         .get(isOrderLine ? OrderLine.PROPERTY_ORDERQUANTITY
             : ShipmentInOutLine.PROPERTY_ORDERQUANTITY);
-    BigDecimal operativeQuantity = (BigDecimal) copiedLine
-        .get(isOrderLine ? OrderLine.PROPERTY_OPERATIVEQUANTITY
-            : ShipmentInOutLine.PROPERTY_OPERATIVEQUANTITY);
     UOM operativeUOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_OPERATIVEUOM
         : ShipmentInOutLine.PROPERTY_OPERATIVEUOM);
     UOM uOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_UOM
@@ -99,9 +100,8 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
 
   private boolean uomManagementIsEnabledAndAUMAndOrderUOMAreEmpty() {
     boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
-    BigDecimal operativeQuantity = (BigDecimal) copiedLine
-        .get(isOrderLine ? OrderLine.PROPERTY_OPERATIVEQUANTITY
-            : ShipmentInOutLine.PROPERTY_OPERATIVEQUANTITY);
+    BigDecimal operativeQuantity = CreateLinesFromUtil
+        .getOperativeQuantityInPickEdit(pickExecLineValues);
     UOM operativeUOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_OPERATIVEUOM
         : ShipmentInOutLine.PROPERTY_OPERATIVEUOM);
     ProductUOM orderUOM = (ProductUOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_ORDERUOM

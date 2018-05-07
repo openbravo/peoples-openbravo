@@ -19,6 +19,7 @@
 
 package org.openbravo.common.actionhandler.createlinesfromprocess;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -46,8 +47,8 @@ import org.openbravo.model.common.invoice.InvoiceLine;
  *   }
  * 
  *   &#064;Override
- *   public void exec(final Invoice currentInvoice, final BaseOBObject copiedLine,
- *       InvoiceLine newInvoiceLine) {
+ *   public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
+ *       final BaseOBObject copiedLine, InvoiceLine newInvoiceLine) {
  *     newInvoiceLine.setDescription(&quot;Test&quot;);
  *   }
  * }
@@ -68,11 +69,16 @@ public interface CreateLinesFromProcessImplementationInterface {
    * 
    * @param currentInvoice
    *          the Invoice we are updating
+   * @param pickExecuteLineValues
+   *          The values selected/calculated in the line of the Pick and Execute. These values can
+   *          differ from the values of the original record been copied (copiedLine) if they are
+   *          recalculated in the query or changed in the Pick and Execute window (for a future
+   *          behavior)
    * @param copiedLine
    *          the order/shipment/receipt line from which we are creating the invoice line
    * @param newInvoiceLine
    *          the new invoice line created within the currentInvoice
    */
-  public void exec(final Invoice currentInvoice, final BaseOBObject copiedLine,
-      InvoiceLine newInvoiceLine);
+  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
+      final BaseOBObject copiedLine, InvoiceLine newInvoiceLine);
 }

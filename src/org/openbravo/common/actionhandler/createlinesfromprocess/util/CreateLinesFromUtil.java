@@ -19,6 +19,8 @@
 
 package org.openbravo.common.actionhandler.createlinesfromprocess.util;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -89,6 +91,24 @@ public class CreateLinesFromUtil {
   public static boolean requestedActionIsDoneAndThereAreSelectedOrderLines(
       final String requestedAction, final JSONArray selectedOrderLines) {
     return StringUtils.equals(requestedAction, "DONE") && selectedOrderLines.length() > 0;
+  }
+
+  public static BigDecimal getOrderedQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
+    try {
+      BigDecimal qty = new BigDecimal(selectedPEValuesInLine.getString(selectedPEValuesInLine
+          .has("orderedQuantity") ? "orderedQuantity" : "movementQuantity"));
+      return qty;
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+  }
+
+  public static BigDecimal getOperativeQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
+    try {
+      return new BigDecimal(selectedPEValuesInLine.getString("operativeQuantity"));
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
   }
 
 }
