@@ -157,7 +157,7 @@ public abstract class SessionFactoryController {
       configuration.getProperties().setProperty(Environment.DEFAULT_BATCH_FETCH_SIZE, "50");
       configuration.getProperties().setProperty(Environment.STATEMENT_BATCH_SIZE, "10");
       configuration.getProperties().setProperty(Environment.STATEMENT_FETCH_SIZE, "50");
-      configuration.getProperties().setProperty("javax.persistence.validation.mode", "NONE");
+      configuration.getProperties().setProperty(Environment.JPA_VALIDATION_MODE, "NONE");
       // TODO: consider setting isolation level explicitly
       // configuration.getProperties().setProperty(Environment.ISOLATION,
       // "" + Connection.TRANSACTION_READ_COMMITTED);
