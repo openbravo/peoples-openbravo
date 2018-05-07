@@ -130,16 +130,13 @@ enyo.kind({
             'isCash': payment.paymentMethod.iscash,
             'openDrawer': payment.paymentMethod.openDrawer,
             'printtwice': payment.paymentMethod.printtwice,
-            'gatewayData': {
-              'transaction': response.transaction,
-              'authorization': response.authorization,
-              'cardmasked': response.properties.cardmasked,
-              'cardlogo': response.properties.cardlogo,
-              'voidproperties': response.properties.voidproperties
-            },
             'paymentData': {
               'provider': providerGroup.provider,
-              'voidConfirmation': false // Is the void provider in charge of defining confirmation.
+              'voidConfirmation': false,
+              // Is the void provider in charge of defining confirmation.
+              'transaction': response.transaction,
+              'authorization': response.authorization,
+              'properties': response.properties
             }
           };
           receipt.addPayment(new OB.Model.PaymentLine(Object.assign(paymentline, attributes)));

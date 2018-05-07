@@ -31,7 +31,7 @@ enyo.kind({
       'type': OBPOS_StandardProvider.TYPE_VOID,
       'currency': voidpaymentinfo.payment.get('isocode'),
       'amount': voidpaymentinfo.payment.get('amount'),
-      'properties': voidpaymentinfo.payment.get('gatewayData').voidproperties
+      'properties': voidpaymentinfo.payment.get('paymentData').properties.voidproperties
     };
 
     request = this.populateVoidRequest(request, voidpaymentinfo);

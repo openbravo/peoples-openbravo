@@ -27,7 +27,7 @@ enyo.kind({
     // data.payment
     return new Promise(function (resolve, reject) {
       setTimeout(function () {
-        if (voidpaymentinfo.payment.get('gatewayData').voidproperties.info === 'VISA OK') {
+        if (voidpaymentinfo.payment.get('paymentData').properties.voidproperties.info === 'VISA OK') {
           this.resolveTransaction(resolve, reject);
         } else {
           this.rejectTransaction(resolve, reject);
