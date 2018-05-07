@@ -157,16 +157,6 @@ public abstract class SessionFactoryController {
       configuration.getProperties().setProperty(Environment.DEFAULT_BATCH_FETCH_SIZE, "50");
       configuration.getProperties().setProperty(Environment.STATEMENT_BATCH_SIZE, "10");
       configuration.getProperties().setProperty(Environment.STATEMENT_FETCH_SIZE, "50");
-      if (properties.containsKey(Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES)) {
-        configuration.getProperties().setProperty(
-            Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES,
-            properties.getProperty(Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES));
-      }
-      if (properties.containsKey(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES)) {
-        configuration.getProperties().setProperty(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES,
-            properties.getProperty(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES));
-      }
-
       configuration.getProperties().setProperty("javax.persistence.validation.mode", "NONE");
       // TODO: consider setting isolation level explicitly
       // configuration.getProperties().setProperty(Environment.ISOLATION,
