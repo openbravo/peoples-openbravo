@@ -69,6 +69,7 @@ import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
+import org.openbravo.test.generalsetup.enterprise.organization.ADOrgPersistInfoTestSuite;
 import org.openbravo.test.inventoryStatus.InventoryStatusTest;
 import org.openbravo.test.materialMgmt.iscompletelyinvoicedshipment.IsCompletelyInvoicedShipment;
 import org.openbravo.test.model.ClassLoaderTest;
@@ -135,7 +136,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// dal
+    // dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
@@ -294,7 +295,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     CopyLinesFromOrdersTest.class,
 
     // Referenced Inventory
-    ReferencedInventoryTestSuite.class
+    ReferencedInventoryTestSuite.class,
+
+    // AD_Org Persist Information
+    ADOrgPersistInfoTestSuite.class
 
 })
 public class AllAntTaskTests {

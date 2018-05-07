@@ -173,7 +173,6 @@
   v_prepaymentamt NUMBER;
   v_hasTaxes NUMBER;
   v_calendarId C_CALENDAR.C_CALENDAR_ID%TYPE;
-  v_calendar_owner_id AD_Org.AD_Org_ID%TYPE;
    
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -342,9 +341,8 @@ BEGIN --BODY
     /*
      * Avoids repeating the same documentno for the same organization tree within the same fiscal year
      */
-    SELECT AD_ORG_GETCALENDAROWNER(v_Org_ID) INTO v_calendar_owner_id FROM DUAL;
-    IF (v_calendar_owner_id IS NOT NULL) THEN
-      SELECT C_CALENDAR_ID INTO v_calendarId FROM AD_ORG WHERE AD_ORG_ID = v_calendar_owner_id;
+    SELECT ad_inheritedcalendar_id INTO v_calendarId FROM AD_ORG WHERE AD_ORG_ID = v_Org_ID;
+    IF (v_calendarId IS NOT NULL) THEN
       SELECT COUNT(*) INTO v_count
       FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
               MIN(P.STARTDATE) AS PERIODSTARTDATE, MAX(P.ENDDATE) AS PERIODENDDATE

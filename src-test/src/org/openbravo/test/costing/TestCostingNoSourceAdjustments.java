@@ -68,8 +68,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -86,8 +87,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       Thread.sleep(1000);
 
       // Create goods movement, run costing background, post it and assert it
-      InternalMovement goodsMovement = TestCostingUtils.createGoodsMovement(product, price1,
-          quantity2, TestCostingConstants.LOCATOR_L01_ID, TestCostingConstants.LOCATOR_M01_ID, day3);
+      InternalMovement goodsMovement = TestCostingUtils
+          .createGoodsMovement(product, price1, quantity2, TestCostingConstants.LOCATOR_L01_ID,
+              TestCostingConstants.LOCATOR_M01_ID, day3);
 
       // Update transaction total cost amount
       TestCostingUtils.manualCostAdjustment(TestCostingUtils
@@ -200,8 +202,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -218,8 +221,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       Thread.sleep(1000);
 
       // Create goods movement, run costing background, post it and assert it
-      InternalMovement goodsMovement = TestCostingUtils.createGoodsMovement(product, price1,
-          quantity2, TestCostingConstants.LOCATOR_L01_ID, TestCostingConstants.LOCATOR_M01_ID, day3);
+      InternalMovement goodsMovement = TestCostingUtils
+          .createGoodsMovement(product, price1, quantity2, TestCostingConstants.LOCATOR_L01_ID,
+              TestCostingConstants.LOCATOR_M01_ID, day3);
 
       // Update transaction total cost amount
       TestCostingUtils.manualCostAdjustment(TestCostingUtils
@@ -342,8 +346,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -360,8 +365,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       Thread.sleep(1000);
 
       // Create goods movement, run costing background, post it and assert it
-      InternalMovement goodsMovement = TestCostingUtils.createGoodsMovement(product, price1,
-          quantity2, TestCostingConstants.LOCATOR_L01_ID, TestCostingConstants.LOCATOR_M01_ID, day3);
+      InternalMovement goodsMovement = TestCostingUtils
+          .createGoodsMovement(product, price1, quantity2, TestCostingConstants.LOCATOR_L01_ID,
+              TestCostingConstants.LOCATOR_M01_ID, day3);
 
       // Update transaction total cost amount
       TestCostingUtils.manualCostAdjustment(TestCostingUtils
@@ -497,8 +503,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -565,8 +572,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       Thread.sleep(1000);
 
       // Create goods movement, run costing background, post it and assert it
-      InternalMovement goodsMovement = TestCostingUtils.createGoodsMovement(product, price3,
-          quantity5, TestCostingConstants.LOCATOR_M01_ID, TestCostingConstants.LOCATOR_L01_ID, day8);
+      InternalMovement goodsMovement = TestCostingUtils
+          .createGoodsMovement(product, price3, quantity5, TestCostingConstants.LOCATOR_M01_ID,
+              TestCostingConstants.LOCATOR_L01_ID, day8);
 
       // Update transaction total cost amount
       TestCostingUtils.manualCostAdjustment(TestCostingUtils
@@ -719,8 +727,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -915,8 +924,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1034,8 +1044,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1136,8 +1147,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1232,8 +1244,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1319,8 +1332,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1402,8 +1416,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1538,8 +1553,9 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
 
     try {
 
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
       // Create a new product for the test
@@ -1577,8 +1593,8 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       // Create bill of materials production, run costing background, post it and
       // assert it
       ProductionTransaction billOfMaterialsProduction = TestCostingUtils
-          .createBillOfMaterialsProduction(product3, quantity5, TestCostingConstants.LOCATOR_L01_ID,
-              day3);
+          .createBillOfMaterialsProduction(product3, quantity5,
+              TestCostingConstants.LOCATOR_L01_ID, day3);
 
       // Create purchase invoice, post it and assert it
       List<ShipmentInOut> goodsReceiptList = new ArrayList<ShipmentInOut>();
@@ -1652,11 +1668,12 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
           quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
+      BigDecimal previousAdjustmentAmount1 = quantity3.multiply(price3).add(
+          quantity3.multiply(price1).negate());
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate())
+              .add(previousAdjustmentAmount1), day4, false));
       costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
-      costAdjustmentAssertLineList11.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList1.add(costAdjustmentAssertLineList11);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList1, costAdjustmentAssertList1);
@@ -1672,12 +1689,15 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
           quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
+      BigDecimal previousAdjustmentAmount2 = quantity3.multiply(price3).add(
+          quantity3.multiply(price1).negate());
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate())
+              .add(previousAdjustmentAmount2), day4, false));
       costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
-      costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
+      // costAdjustmentAssertLineList21.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
+      // quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList2.add(costAdjustmentAssertLineList21);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList2, costAdjustmentAssertList2);
 
@@ -1692,12 +1712,15 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, true));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList1.get(1), "PDC",
           quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
+      BigDecimal previousAdjustmentAmount3 = quantity3.multiply(price3).add(
+          quantity3.multiply(price1).negate());
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity3.multiply(price3).add(quantity3.multiply(price1).negate()), day4, false));
+          quantity4.multiply(price4).add(quantity4.multiply(price2).negate())
+              .add(previousAdjustmentAmount3), day4, false));
       costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList2.get(1), "PDC",
           quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
-      costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
-          quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
+      // costAdjustmentAssertLineList31.add(new CostAdjustmentAssert(transactionList3.get(0), "PDC",
+      // quantity4.multiply(price4).add(quantity4.multiply(price2).negate()), day4, false));
       costAdjustmentAssertList3.add(costAdjustmentAssertLineList31);
       TestCostingUtils.assertCostAdjustment(costAdjustmentList3, costAdjustmentAssertList3);
 
@@ -1719,21 +1742,33 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       documentPostAssertList1.add(new DocumentPostAssert(product1.getId(), "35000",
           BigDecimal.ZERO, quantity3.multiply(price3).add(quantity3.multiply(price1).negate()),
           null));
+      // documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "61000",
+      // BigDecimal.ZERO, quantity3.multiply(price3).add(quantity3.multiply(price1).negate()),
+      // null));
+      // documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "35000", quantity3
+      // .multiply(price3).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
+      BigDecimal previouslyAdjustedAmountPost = quantity3.multiply(price3).add(
+          quantity3.multiply(price1).negate());
       documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "61000",
-          BigDecimal.ZERO, quantity3.multiply(price3).add(quantity3.multiply(price1).negate()),
-          null));
-      documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "35000", quantity3
-          .multiply(price3).add(quantity3.multiply(price1).negate()), BigDecimal.ZERO, null));
+          BigDecimal.ZERO, quantity4.multiply(price4).add(quantity4.multiply(price2).negate())
+              .add(previouslyAdjustedAmountPost), null));
+      documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "35000", quantity4
+          .multiply(price4).add(quantity4.multiply(price2).negate())
+          .add(previouslyAdjustedAmountPost), BigDecimal.ZERO, null));
       documentPostAssertList1.add(new DocumentPostAssert(product2.getId(), "61000", quantity4
           .multiply(price4).add(quantity4.multiply(price2).negate()), BigDecimal.ZERO, null));
       documentPostAssertList1.add(new DocumentPostAssert(product2.getId(), "35000",
           BigDecimal.ZERO, quantity4.multiply(price4).add(quantity4.multiply(price2).negate()),
           null));
-      documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "61000",
-          BigDecimal.ZERO, quantity4.multiply(price4).add(quantity4.multiply(price2).negate()),
-          null));
-      documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "35000", quantity4
-          .multiply(price4).add(quantity4.multiply(price2).negate()), BigDecimal.ZERO, null));
+      // BigDecimal previouslyAdjustedAmountPost = quantity4.multiply(price4).add(
+      // quantity4.multiply(price2).negate());
+      // documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "61000",
+      // BigDecimal.ZERO, quantity4.multiply(price4).add(
+      // quantity4.multiply(price2).negate().add(previouslyAdjustedAmountPost)), null));
+      // documentPostAssertList1.add(new DocumentPostAssert(product3.getId(), "35000", quantity4
+      // .multiply(price4).add(
+      // quantity4.multiply(price2).negate().add(previouslyAdjustedAmountPost)),
+      // BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance().get(CostAdjustment.class,
           costAdjustmentList1.get(0).getId());
       TestCostingUtils.assertDocumentPost(costAdjustment1, null, documentPostAssertList1);

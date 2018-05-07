@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -73,6 +74,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
   protected boolean isManufacturingProduct;
   protected boolean areBackdatedTrxFixed;
   protected boolean checkNegativeStockCorrection;
+  protected Long nextLineNo;
   protected HashMap<CostDimension, String> costDimensionIds = new HashMap<CostDimension, String>();
 
   /**
@@ -229,15 +231,31 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
     CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
         (CostAdjustment) OBDal.getInstance().getProxy(CostAdjustment.ENTITY_NAME, strCostAdjId),
-        adjustmentamt, false, dateAcct);
+        adjustmentamt, false, dateAcct, getNextLineNo());
     newCAL.setRelatedTransactionAdjusted(false);
-    newCAL.setParentCostAdjustmentLine(parentLine);
-
-    OBDal.getInstance().save(newCAL);
-    OBDal.getInstance().flush();
+    if (!newCAL.getId().equals(parentLine.getId())) {
+      newCAL.setParentCostAdjustmentLine(parentLine);
+    }
 
     addCostDependingTrx(newCAL);
     return newCAL;
+  }
+
+  private Long getNextLineNo() {
+    if (nextLineNo == null) {
+      StringBuffer where = new StringBuffer();
+      where.append(" select max(" + CostAdjustmentLine.PROPERTY_LINENO + ")");
+      where.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
+      where.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT
+          + ".id = :costAdjustment");
+      Query calQry = OBDal.getInstance().getSession().createQuery(where.toString());
+      calQry.setParameter("costAdjustment", strCostAdjId);
+      calQry.setMaxResults(1);
+
+      nextLineNo = (Long) calQry.uniqueResult();
+    }
+    nextLineNo += 10L;
+    return nextLineNo;
   }
 
   /**

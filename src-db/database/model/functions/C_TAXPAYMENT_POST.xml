@@ -145,9 +145,9 @@ BEGIN
         v_paymentrule := 'T';
         v_currencyratetype := 'S';
 
-      select c_calendar_id into v_calendar_ID
+      select ad_inheritedcalendar_id into v_calendar_ID
       from ad_org
-      where ad_org_id = ad_org_getcalendarowner(v_org_id);
+      where ad_org_id = v_org_id;
 
       select c_period_id into v_period_id
       from c_period

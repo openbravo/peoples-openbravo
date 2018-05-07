@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.inject.Inject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
@@ -47,6 +49,10 @@ public class InstancePurpose extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final ValueListFilter availablePurposeFilter = new ValueListFilter("P", "D", "T",
       "E");
+  private static final String PRODUCTION_INSTANCE = "P";
+
+  @Inject
+  private ApplicationDictionaryCachedStructures adCachedStructures;
 
   @Override
   public void init(ServletConfig config) {
@@ -159,6 +165,10 @@ public class InstancePurpose extends HttpSecureAppServlet {
     OBDal.getInstance().save(systemInfo);
     if (HeartbeatProcess.isClonedInstance()) {
       InstanceManagement.insertDummyHBLog();
+    }
+
+    if (PRODUCTION_INSTANCE.equals(strPurpose)) {
+      adCachedStructures.setNotInDevelopment();
     }
   }
 
