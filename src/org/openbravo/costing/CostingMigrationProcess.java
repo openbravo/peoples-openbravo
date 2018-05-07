@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,11 +32,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.base.exception.OBException;
@@ -234,8 +234,9 @@ public class CostingMigrationProcess implements Process {
 
     if (legacyCostAvailableAlert.isActive()) {
 
-      SQLQuery alertQry = OBDal.getInstance().getSession()
-          .createSQLQuery(legacyCostAvailableAlert.getSql());
+      @SuppressWarnings("rawtypes")
+      NativeQuery alertQry = OBDal.getInstance().getSession()
+          .createNativeQuery(legacyCostAvailableAlert.getSql());
       alertQry.addScalar("REFERENCEKEY_ID", StringType.INSTANCE);
       alertQry.addScalar("AD_ROLE_ID", StringType.INSTANCE);
       alertQry.addScalar("AD_USER_ID", StringType.INSTANCE);

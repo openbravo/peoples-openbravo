@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,9 +22,9 @@ package org.openbravo.advpaymentmngt.utility;
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.ServletException;
 
-import org.hibernate.SQLQuery;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.type.StandardBasicTypes;
 import org.openbravo.client.kernel.ApplicationInitializer;
 import org.openbravo.dal.service.OBDal;
@@ -61,7 +61,9 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
 
   private boolean existsStrAgg() {
     try {
-      SQLQuery qry = OBDal.getInstance().getSession().createSQLQuery("select stragg(1) from dual");
+      @SuppressWarnings("rawtypes")
+      NativeQuery qry = OBDal.getInstance().getSession()
+          .createNativeQuery("select stragg(1) from dual");
       qry.list();
     } catch (Exception e) {
       return false;

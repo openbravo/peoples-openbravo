@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,7 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -63,7 +63,8 @@ class SQLExecutor_Query implements FieldProvider {
     PreparedStatement st = null;
     Vector<SQLExecutor_Query> vector = new Vector<>(0);
     try {
-      SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(strSQL);
+      @SuppressWarnings("rawtypes")
+      NativeQuery sqlQuery = OBDal.getInstance().getSession().createNativeQuery(strSQL);
       sqlQuery.setFirstResult(firstRegister);
       sqlQuery.setMaxResults(numberRegisters);
 
