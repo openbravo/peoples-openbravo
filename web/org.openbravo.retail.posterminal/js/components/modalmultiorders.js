@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -375,10 +375,27 @@ enyo.kind({
         if (e.get('checked')) {
           return e;
         }
-      }));
+      })),
+        addOrdersToOrderList;
+
     if (checkedMultiOrders.length === 0) {
       return true;
     }
+
+    addOrdersToOrderList = _.after(checkedMultiOrders.length, function () {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
+        selectedMultiOrders: selectedMultiOrders
+      }, function (args) {
+        if (args && args.cancellation) {
+          return;
+        }
+        me.doSelectMultiOrders({
+          value: selectedMultiOrders
+        });
+        me.showPaymentView();
+      });
+    });
+
     OB.UTIL.showLoading(true);
     me.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, function (iter) {
@@ -386,6 +403,7 @@ enyo.kind({
         iter.set('checked', true);
         iter.save();
         selectedMultiOrders.push(iter);
+        addOrdersToOrderList();
       } else {
         process.exec({
           orderid: iter.id
@@ -398,13 +416,7 @@ enyo.kind({
               order.set('belongsToMultiOrder', true);
               order.calculateReceipt(function () {
                 selectedMultiOrders.push(order);
-                order.save();
-                if (selectedMultiOrders.length === checkedMultiOrders.length) {
-                  me.doSelectMultiOrders({
-                    value: selectedMultiOrders
-                  });
-                  me.showPaymentView();
-                }
+                addOrdersToOrderList();
               });
             });
           } else {
@@ -413,15 +425,8 @@ enyo.kind({
           }
         });
       }
-      if (selectedMultiOrders.length === checkedMultiOrders.length) {
-        me.doSelectMultiOrders({
-          value: selectedMultiOrders
-        });
-        me.showPaymentView();
-      }
     });
-
-    this.doHideThisPopup();
+    me.doHideThisPopup();
   },
   cancelAction: function () {
     this.doHideThisPopup();

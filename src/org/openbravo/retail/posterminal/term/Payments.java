@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal.term;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.servlet.ServletException;
 
@@ -38,7 +39,8 @@ public class Payments extends JSONTerminalProperty {
       JSONArray respArray = new JSONArray();
       String posId = jsonsent.getString("pos");
       String hqlPayments = "select p as payment, pm as paymentMethod, "
-          + "c_currency_rate(coalesce(c, pmc), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, coalesce(c, pmc), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+          + "obpos_currency_rate(coalesce(c, pmc), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
+          + "obpos_currency_rate(p.obposApplications.organization.currency, coalesce(c, pmc), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
           + "coalesce(c.iSOCode, pmc.iSOCode) as isocode, "
           + "coalesce(c.symbol, pmc.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
           + "coalesce(f.currentBalance, 0) as currentBalance, "
@@ -99,7 +101,7 @@ public class Payments extends JSONTerminalProperty {
           BigDecimal mulrate = BigDecimal.ZERO;
           BigDecimal rate = new BigDecimal((String) objPayment[2]);
           if (rate.compareTo(BigDecimal.ZERO) != 0) {
-            mulrate = BigDecimal.ONE.divide(rate, 12, 4);
+            mulrate = BigDecimal.ONE.divide(rate, 12, RoundingMode.HALF_UP);
           }
           payment.put("mulrate", mulrate.toPlainString());
 
@@ -134,6 +136,11 @@ public class Payments extends JSONTerminalProperty {
   @Override
   public String getProperty() {
     return "payments";
+  }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
   }
 
 }

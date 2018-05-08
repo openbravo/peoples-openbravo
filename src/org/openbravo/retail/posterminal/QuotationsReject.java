@@ -49,4 +49,9 @@ public class QuotationsReject extends POSDataSynchronizationProcess implements
     return "OBPOS_RejectQuotation";
   }
 
+  @Override
+  protected String getProperty() {
+    return "OBPOS_quotation.rejections";
+  }
+
 }

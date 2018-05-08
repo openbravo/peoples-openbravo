@@ -82,12 +82,16 @@ public class LoadedCustomer extends ProcessHQLQuery {
     customers.add(hql);
     hql = " select" + bpartnerLocHQLProperties.getHqlSelect()
         + " from BusinessPartnerLocation AS bploc join bploc.businessPartner AS bp "
-        + "Where bploc.id= :bplocId" + " ORDER BY bploc.locationAddress.addressLine1";
+        + " left join bploc.locationAddress AS bplocAddress "
+        + " left join bplocAddress.region AS bplocRegion " + "Where bploc.id= :bplocId"
+        + " ORDER BY bploc.locationAddress.addressLine1";
     customers.add(hql);
     if (jsonsent.getJSONObject("parameters").has("bpBillLocationId")) {
       hql = " select" + bpartnerLocHQLProperties.getHqlSelect()
           + " from BusinessPartnerLocation AS bploc join bploc.businessPartner AS bp "
-          + "Where bploc.id= :bpbilllocId" + " ORDER BY bploc.locationAddress.addressLine1";
+          + " left join bploc.locationAddress AS bplocAddress "
+          + " left join bplocAddress.region AS bplocRegion " + "Where bploc.id= :bpbilllocId"
+          + " ORDER BY bploc.locationAddress.addressLine1";
       customers.add(hql);
     }
     return customers;

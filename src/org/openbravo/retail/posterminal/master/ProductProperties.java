@@ -12,21 +12,13 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.impl.SessionFactoryImpl;
-import org.hibernate.impl.SessionImpl;
-import org.hibernate.type.StringType;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
@@ -185,28 +177,12 @@ public class ProductProperties extends ModelExtension {
       log.error("Error getting preference: " + e.getMessage(), e);
     }
 
-    // If preference for Product Tax Category exists we will use the pl function, otherwise we will
-    // just read the tax category from the product itself
+    // If preference for Product Tax Category exists, taxCategory will be fetched from
+    // ProductProperties extension, otherwise we will just read the tax category from the product
     try {
       Preferences.getPreferenceValue("GETPRODUCTTAXCATEGORY", true, OBContext.getOBContext()
           .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
           .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
-      // Build Product Tax Category select clause
-      final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
-          .getSessionFactory()).getDialect();
-      Map<String, SQLFunction> function = dialect.getFunctions();
-      if (!function.containsKey("c_get_product_taxcategory")) {
-        dialect.getFunctions().put("c_get_product_taxcategory",
-            new StandardSQLFunction("c_get_product_taxcategory", new StringType()));
-      }
-      StringBuffer taxCategoryQry = new StringBuffer();
-      taxCategoryQry.append("c_get_product_taxcategory(product.id, '");
-      taxCategoryQry.append(posDetail.getOrganization().getId());
-      // Date, shipfrom and shipto as null
-      taxCategoryQry.append("', null, null, null)");
-      final String strTaxCategoryQry = taxCategoryQry.toString();
-      list.add(new HQLProperty(strTaxCategoryQry, "taxCategory"));
-
     } catch (PropertyException e) {
       list.add(new HQLProperty("product.taxCategory.id", "taxCategory"));
     }

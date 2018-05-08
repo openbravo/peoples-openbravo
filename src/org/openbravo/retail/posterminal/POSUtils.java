@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -397,7 +397,7 @@ public class POSUtils {
           if (number.indexOf("-") > -1) {
             number = number.substring(0, number.indexOf("-"));
           }
-          int errorNumber = new Long(number).intValue();
+          int errorNumber = Integer.parseInt(number);
           if (errorNumber > maxDocNo) {
             maxDocNo = errorNumber;
           }
@@ -485,7 +485,7 @@ public class POSUtils {
           if (number.indexOf("-") > -1) {
             number = number.substring(0, number.indexOf("-"));
           }
-          int errorNumber = new Long(number).intValue();
+          int errorNumber = Integer.parseInt(number);
           if (errorNumber > maxDocNo) {
             maxDocNo = errorNumber;
           }
@@ -570,7 +570,7 @@ public class POSUtils {
           if (number.indexOf("-") > -1) {
             number = number.substring(0, number.indexOf("-"));
           }
-          int errorNumber = new Long(number).intValue();
+          int errorNumber = Integer.parseInt(number);
           if (errorNumber > maxDocNo) {
             maxDocNo = errorNumber;
           }
@@ -720,10 +720,10 @@ public class POSUtils {
           .getInstance()
           .getSession()
           .createQuery(
-              "select c_currency_rate(coalesce(c, p.paymentMethod.currency), "
+              "select obpos_currency_rate(coalesce(c, p.paymentMethod.currency), "
                   + "p.obposApplications.organization.currency,"
                   + " null, null, p.obposApplications.client.id, "
-                  + "p.obposApplications.organization.id) as rate, c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate"
+                  + "p.obposApplications.organization.id) as rate, obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate"
                   + " from OBPOS_App_Payment as p left join p.financialAccount as f "
                   + "left join f.currency as c where p.obposApplications.id ='" + posTerminalId
                   + "'");

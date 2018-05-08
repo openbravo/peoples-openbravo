@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017 Openbravo S.L.U.
+ * Copyright (C) 2017-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -40,6 +40,7 @@
                 }
               }, this);
               receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+              OB.UTIL.setScanningFocus(true);
               OB.Dal.save(receipt, function () {
                 OB.UTIL.Debug.execute(function () {
                   if (!args.frozenReceipt) {
@@ -77,7 +78,11 @@
                     OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
                   }
 
-                  orderList.deleteCurrent();
+                  if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
+                    orderList.deleteCurrent(true);
+                  } else {
+                    orderList.deleteCurrent();
+                  }
                   receipt.setIsCalculateReceiptLockState(false);
                   receipt.setIsCalculateGrossLockState(false);
 
@@ -130,7 +135,8 @@
             'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
             'isCash': payment.paymentMethod.iscash,
             'openDrawer': payment.paymentMethod.openDrawer,
-            'printtwice': payment.paymentMethod.printtwice
+            'printtwice': payment.paymentMethod.printtwice,
+            'isChange': true
           }), function (receipt) {
             receipt.set('change', oldChange);
             for (i = 0; i < receipt.get('payments').length; i++) {

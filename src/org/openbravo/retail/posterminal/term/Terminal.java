@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.term;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,6 +38,8 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.process.JSONRowConverter;
+import org.openbravo.mobile.core.process.RequestTimeoutException;
+import org.openbravo.mobile.core.process.RequestTimeoutWithMessageException;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.domain.ModelImplementationParameter;
@@ -213,9 +216,16 @@ public class Terminal extends JSONProcessSimple {
         terminalquery.setParameter("imageId", myOrgInfo.getYourCompanyDocumentImage().getId());
       }
       StringWriter w = new StringWriter();
-      JSONRowConverter.startResponse(w);
-      int totalRows = ProcessHQLQuery.StrategyQueryScroll.buildResponse(w, terminalquery, true);
-      JSONRowConverter.endResponse(w, totalRows);
+
+      try {
+        JSONRowConverter.startResponse(w);
+        int totalRows = ProcessHQLQuery.StrategyQueryScroll.buildResponse(w, terminalquery, true);
+        JSONRowConverter.endResponse(w, totalRows);
+      } catch (RequestTimeoutWithMessageException e) {
+        throw new RequestTimeoutException("Timeout reached. Process: " + this.getClass()
+            + ". Remote ip: " + this.ipFromRequest + ". Timeout: " + this.timeout
+            + ". Initial time: " + new Date(this.initialTime) + ". " + e.getMessage());
+      }
       JSONArray arrayresult = new JSONArray();
       JSONObject aux = new JSONObject();
       arrayresult.put(aux.put("terminal",

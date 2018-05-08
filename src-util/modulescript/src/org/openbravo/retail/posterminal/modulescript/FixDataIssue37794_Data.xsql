@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2018 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="FixDataIssue37794Data" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT '' AS counter
+      FROM DUAL
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="deleteDuplicatedOrganizationUserPosTerminal" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      DELETE FROM obpos_userterminal_access 
+      WHERE obpos_userterminal_access_id in 
+            (SELECT a.obpos_userterminal_access_id 
+             FROM obpos_userterminal_access a LEFT JOIN obpos_userterminal_access b 
+             ON a.ad_org_id = b.ad_org_id 
+             AND a.ad_user_id = b.ad_user_id 
+             AND a.obpos_applications_id = b.obpos_applications_id 
+             WHERE a.obpos_userterminal_access_id < b.obpos_userterminal_access_id)
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>

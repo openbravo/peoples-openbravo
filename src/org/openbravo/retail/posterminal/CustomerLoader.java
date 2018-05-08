@@ -9,13 +9,16 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Random;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -138,25 +141,29 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
     } else {
-      String possibleSK = jsonCustomer.getString("searchKey");
-      String finalSK = "";
+      String possibleSK = jsonCustomer.getString("searchKey").trim(), finalSK = null, searchKeyValue = StringUtils
+          .substring(possibleSK, 0, 35);
 
-      int bpsWithPossibleSK = 0;
-
-      final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance().createCriteria(
-          BusinessPartner.class);
-      bpCriteria.setFilterOnActive(false);
-      bpCriteria.setFilterOnReadableOrganization(false);
-      bpCriteria.add(Restrictions.eq("searchKey", possibleSK));
-      bpCriteria.setMaxResults(1);
-      bpsWithPossibleSK = bpCriteria.count();
-
-      if (bpsWithPossibleSK > 0) {
-        // SK exist -> make it unique
-        finalSK = possibleSK + "_" + jsonCustomer.getString("id").substring(0, 4);
-      } else {
-        // we can use this SK
-        finalSK = possibleSK;
+      for (int i = 0; i < 10000; i++) {
+        final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance().createCriteria(
+            BusinessPartner.class);
+        bpCriteria.setFilterOnActive(false);
+        bpCriteria.setFilterOnReadableOrganization(false);
+        bpCriteria.add(Restrictions.eq("searchKey", possibleSK));
+        bpCriteria.setMaxResults(1);
+        if (bpCriteria.count() > 0) {
+          // SK exist -> make it unique
+          possibleSK = searchKeyValue + "_" + String.format("%04d", new Random().nextInt(10000));
+        } else {
+          // we can use this SK
+          finalSK = possibleSK;
+          break;
+        }
+      }
+      if (finalSK == null) {
+        String errorMessage = "Business partner search key already exists in system";
+        log.error(errorMessage);
+        throw new OBException(errorMessage, null);
       }
       customer.setSearchKey(finalSK);
     }
@@ -190,6 +197,22 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     // security
     customer.setCreditLimit(previousCL);
 
+    // Fixed birth date issue(-1 day) when converted to UTC from client time zone
+    if (jsonCustomer.has("birthDay") && jsonCustomer.get("birthDay") != null
+        && !jsonCustomer.getString("birthDay").isEmpty()) {
+      final long timezoneOffset;
+      if (jsonCustomer.has("timezoneOffset")) {
+        timezoneOffset = (long) Double.parseDouble(jsonCustomer.getString("timezoneOffset"));
+      } else {
+        // Using the current timezoneOffset
+        timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar
+            .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
+      }
+
+      customer.setBirthDay(OBMOBCUtils.calculateServerDate((String) jsonCustomer.get("birthDay"),
+          timezoneOffset));
+    }
+
     OBDal.getInstance().save(customer);
     return customer;
   }
@@ -214,36 +237,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     } else {
       // Contact doesn't exists > create it - create user linked to BP
 
-      // First: Check if the proposed username exists
-      String name = jsonCustomer.getString("name");
-      String possibleUsername = name.trim();
-      String finalUsername = "";
-
-      int usersWithPossibleUsername = 0;
-
-      final OBCriteria<org.openbravo.model.ad.access.User> userCriteria = OBDal.getInstance()
-          .createCriteria(org.openbravo.model.ad.access.User.class);
-      userCriteria.add(Restrictions.eq("username", possibleUsername));
-      userCriteria.setFilterOnReadableClients(false);
-      userCriteria.setFilterOnReadableOrganization(false);
-      userCriteria.setFilterOnActive(false);
-      userCriteria.setMaxResults(1);
-      usersWithPossibleUsername = userCriteria.count();
-
-      if (usersWithPossibleUsername > 0) {
-        // username exist -> make it unique
-        finalUsername = (possibleUsername.length() > 55 ? possibleUsername.substring(0, 55)
-            : possibleUsername) + "_" + jsonCustomer.getString("contactId").substring(0, 4);
-      } else {
-        // we can use this username
-        finalUsername = possibleUsername;
-      }
-
       // create the user
-
       final org.openbravo.model.ad.access.User usr = OBProvider.getInstance().get(
           org.openbravo.model.ad.access.User.class);
-
       JSONPropertyToEntity.fillBobFromJSON(userEntity, usr, jsonCustomer);
 
       if (jsonCustomer.has("contactId")) {
@@ -254,16 +250,36 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
         throw new OBException(errorMessage, null);
       }
 
-      usr.setUsername(finalUsername);
-      if (name.length() > 60) {
-        name = name.substring(0, 60);
+      String name = StringUtils.substring(jsonCustomer.getString("name").trim(), 0, 60), possibleUsername = name, finalUsername = null, userName = StringUtils
+          .substring(name, 0, 55);
+
+      for (int i = 0; i < 10000; i++) {
+        final OBCriteria<org.openbravo.model.ad.access.User> userCriteria = OBDal.getInstance()
+            .createCriteria(org.openbravo.model.ad.access.User.class);
+        userCriteria.add(Restrictions.eq("username", possibleUsername));
+        userCriteria.setFilterOnReadableClients(false);
+        userCriteria.setFilterOnReadableOrganization(false);
+        userCriteria.setFilterOnActive(false);
+        userCriteria.setMaxResults(1);
+        if (userCriteria.count() > 0) {
+          // username exist -> make it unique
+          possibleUsername = userName + "_" + String.format("%04d", new Random().nextInt(10000));
+        } else {
+          // we can use this username
+          finalUsername = possibleUsername;
+          break;
+        }
       }
+      if (finalUsername == null) {
+        String errorMessage = "User username already exists in system";
+        log.error(errorMessage);
+        throw new OBException(errorMessage, null);
+      }
+
+      usr.setUsername(finalUsername);
       usr.setName(name);
-
       usr.setBusinessPartner(customer);
-
       usr.setNewOBObject(true);
-
       OBDal.getInstance().save(usr);
     }
   }

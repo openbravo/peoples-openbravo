@@ -65,6 +65,9 @@ enyo.kind({
           symbolAtRight: true
         });
       }
+      if (inEvent.value.status === '' && !inEvent.value.keyboard.hasActivePayment) {
+        this.$.exactbutton.hide();
+      }
       isMultiOrders = this.model.isValidMultiOrderState();
       change = this.model.getChange();
       pending = this.model.getPending();
@@ -272,12 +275,14 @@ enyo.kind({
       if (OB.MobileApp.view.openedPopup === null) {
         enyo.$.scrim.hide();
       }
+      this.receipt.unset('paymentDone');
       OB.UTIL.showLoading(false);
     }, this);
     this.model.get('multiOrders').on('paymentCancel', function () {
       if (OB.MobileApp.view.openedPopup === null) {
         enyo.$.scrim.hide();
       }
+      this.model.get('multiOrders').unset('paymentDone');
       OB.UTIL.showLoading(false);
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
@@ -596,7 +601,7 @@ enyo.kind({
   checkValidOverpayment: function (paymentstatus) {
     var requiredOverpayment = paymentstatus.overpayment,
         overPaymentUsed = _.last(paymentstatus.payments.models),
-        overPaymentMethod = overPaymentUsed ? OB.MobileApp.model.paymentnames[overPaymentUsed.get('kind')].paymentMethod : undefined;
+        overPaymentMethod = overPaymentUsed && OB.MobileApp.model.paymentnames[overPaymentUsed.get('kind')] ? OB.MobileApp.model.paymentnames[overPaymentUsed.get('kind')].paymentMethod : undefined;
 
     // Execute logic only if all the following requirements are met:
     //  * There is at least one payment added to the receipt
@@ -1172,6 +1177,7 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
+    enyo.$.scrim.show();
 
     if (isMultiOrder) {
       var receipts = this.owner.model.get('multiOrders').get('multiOrdersList').models;
@@ -1222,6 +1228,7 @@ enyo.kind({
         }
       });
       if (this.avoidCompleteReceipt) {
+        enyo.$.scrim.hide();
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel(errorMsgLbl));
         OB.UTIL.SynchronizationHelper.finished(synchId, "doneButton");
         return;
@@ -1244,8 +1251,8 @@ enyo.kind({
               this.owner.receipt.trigger('cancelLayaway');
             } else {
               this.setDisabled(true);
-              enyo.$.scrim.show();
               me.owner.model.get('order').trigger('paymentDone', false);
+              OB.UTIL.setScanningFocus(false);
             }
             this.drawerOpened = false;
             this.setDisabled(true);
@@ -1256,26 +1263,26 @@ enyo.kind({
             }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             this.drawerOpened = true;
             this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+            enyo.$.scrim.hide();
           }
         } else {
           if (this.owner.receipt.get('orderType') === 3 && !this.owner.receipt.get('cancelLayaway')) {
             //Void Layaway
-            enyo.$.scrim.show();
             this.owner.receipt.trigger('voidLayaway');
           } else if (this.owner.receipt.get('orderType') === 3) {
             //Cancel Layaway
             this.owner.receipt.trigger('cancelLayaway');
           } else {
             this.setDisabled(true);
-            enyo.$.scrim.show();
             me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
+            OB.UTIL.setScanningFocus(false);
           }
         }
       } else {
         if (this.drawerpreference && this.allowOpenDrawer) {
           if (this.drawerOpened) {
-            enyo.$.scrim.show();
             this.owner.model.get('multiOrders').trigger('paymentDone', false);
+            OB.UTIL.setScanningFocus(false);
             this.owner.model.get('multiOrders').set('openDrawer', false);
             this.drawerOpened = false;
             this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
@@ -1286,10 +1293,11 @@ enyo.kind({
             }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             this.drawerOpened = true;
             this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+            enyo.$.scrim.hide();
           }
         } else {
-          enyo.$.scrim.show();
           this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
+          OB.UTIL.setScanningFocus(false);
           this.owner.model.get('multiOrders').set('openDrawer', false);
         }
       }
@@ -1498,7 +1506,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.CreditButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  i18nLabel: 'OBPOS_LblCreditSales',
+  i18nLabel: 'OBPOS_LblSellOnCredit',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.creditsales',
   events: {

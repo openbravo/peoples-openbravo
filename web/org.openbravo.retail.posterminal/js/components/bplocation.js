@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -213,7 +213,7 @@ enyo.kind({
       return true;
     }
     this.doHideSelector({
-      selectorHide: false
+      selectorHide: true
     });
     var me = this;
 
@@ -224,7 +224,12 @@ enyo.kind({
 
     function successCallbackBPs(dataBps) {
       var modalDlg = me.owner.owner.owner.owner.owner.owner,
-          navigationPath = (modalDlg.args.navigationPath && modalDlg.args.navigationPath.length > 0) ? modalDlg.args.navigationPath : OB.UTIL.BusinessPartnerSelector.cloneAndPush(null, 'modalcustomeraddress');
+          navigationPath;
+      if (modalDlg.kind === 'OB.UI.ModalBPLocation') {
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomeraddress');
+      } else {
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomershipaddress');
+      }
       me.doShowPopup({
         popup: 'customerAddrCreateAndEdit',
         args: {
@@ -707,7 +712,11 @@ enyo.kind({
         filter = inEvent.locName;
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      if (OB.MobileApp.model.get('permissions') && OB.MobileApp.model.get('permissions')["OBPOS_remote.customer"] && !OB.MobileApp.model.get("connectedToERP")) {
+        OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable'));
+      } else {
+        OB.UTIL.showError("OBDAL error: " + error);
+      }
     }
 
     function successCallbackBPsLoc(dataBps) {
@@ -821,7 +830,7 @@ enyo.kind({
         } else {
           me.doChangeBusinessPartner({
             businessPartner: dataBps,
-            target: 'order'
+            target: me.owner.owner.args.target
           });
         }
       }
@@ -905,7 +914,11 @@ enyo.kind({
     }
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      if (OB.MobileApp.model.get('permissions') && OB.MobileApp.model.get('permissions')["OBPOS_remote.customer"] && !OB.MobileApp.model.get("connectedToERP")) {
+        OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable'));
+      } else {
+        OB.UTIL.showError("OBDAL error: " + error);
+      }
     }
 
     if (bp.get('locations') && bp.get('locations').length > 0 && bp.get('locations')[0].attributes) {

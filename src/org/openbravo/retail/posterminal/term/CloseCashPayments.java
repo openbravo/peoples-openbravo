@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -25,12 +25,12 @@ public class CloseCashPayments extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return Arrays
-        .asList(new String[] { "select p.id as id, p.searchKey as _id, p.commercialName as name, f.currentBalance as expected, p.paymentMethod as paymentMethod, c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p, FIN_Financial_Account as f "
+        .asList(new String[] { "select p.id as id, p.searchKey as _id, p.commercialName as name, f.currentBalance as expected, p.paymentMethod as paymentMethod, obpos_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, p.financialAccount.currency.iSOCode as isocode from OBPOS_App_Payment as p, FIN_Financial_Account as f "
             + "where p.financialAccount=f and p.obposApplications.id = :pos order by p.line, p.commercialName" });
   }
 
   @Override
-  protected boolean bypassPreferenceCheck() {
-    return true;
+  protected String getProperty() {
+    return "OBPOS_retail.cashup";
   }
 }

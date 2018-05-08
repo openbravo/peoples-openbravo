@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,6 +39,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.servercontroller.MobileServerController;
+import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
+import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
@@ -82,6 +85,15 @@ public class PaidReceipts extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+    if (MobileServerController.getInstance().getCentralServer() != null) {
+      final String ORIGIN_CENTRAL = MobileServerController.getInstance().getCentralServer()
+          .getName();
+      if (MobileServerController.getInstance().isThisAStoreServer()
+          && ORIGIN_CENTRAL.equals(jsonsent.optString("originServer"))) {
+        return MobileServerRequestExecutor.getInstance().executeCentralRequest(
+            MobileServerUtils.OBWSPATH + PaidReceipts.class.getName(), jsonsent);
+      }
+    }
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
     try {
@@ -287,13 +299,14 @@ public class PaidReceipts extends JSONProcessSimple {
 
         HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
             .getPropertyExtensions(extensionsPayments);
-        String hqlPaymentsIn = "select "
-            + hqlPropertiesPayments.getHqlSelect()
+        String hqlPaymentsIn = "select " + hqlPropertiesPayments.getHqlSelect()
             + "from FIN_Payment_ScheduleDetail as scheduleDetail "
             + "join scheduleDetail.paymentDetails as paymentDetail "
             + "join paymentDetail.finPayment as finPayment "
             + "join scheduleDetail.orderPaymentSchedule.order as order "
-            + "left join finPayment.reversedPayment as reversedPayment "//
+            + "left join finPayment.reversedPayment as reversedPayment "
+            + "left join finPayment.obposAppCashup as obposAppCashup "
+            + "left join finPayment.oBPOSPOSTerminal as oBPOSPOSTerminal "
             + "where order.id=? " //
             + "group by " + hqlPropertiesPayments.getHqlGroupBy()
             + " order by finPayment.documentNo";
@@ -302,23 +315,34 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceiptsPaymentsQuery.setString(0, orderid);
         JSONArray listPaymentsIn = hqlPropertiesPayments.getJSONArray(paidReceiptsPaymentsQuery);
 
+        String accountIds = "";
+        for (int i = 0; i < listPaymentsIn.length(); i++) {
+          JSONObject json = (JSONObject) listPaymentsIn.get(i);
+          accountIds += ",'" + json.getString("account") + "'";
+        }
+        if (!accountIds.isEmpty()) {
+          accountIds = accountIds.substring(1);
+        } else {
+          accountIds = "''";
+        }
+
         JSONArray listpaidReceiptsPayments = new JSONArray();
         JSONArray listPaymentsType = new JSONArray();
 
         // TODO: make this extensible
         String hqlPaymentsType = "select p.commercialName as name, p.financialAccount.id as account, p.searchKey as searchKey, "
-            + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
-            + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+            + "obpos_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
+            + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
             + "p.financialAccount.currency.iSOCode as isocode, "
             + "p.paymentMethod.openDrawer as openDrawer "
-            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?)"
+            + " from OBPOS_App_Payment as p where p.financialAccount.id in ("
+            + accountIds
+            + ")"
             + "group by  p.financialAccount.id, p.commercialName ,p.searchKey,"
-            + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
-            + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
+            + "obpos_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
+            + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
             + "p.financialAccount.currency.iSOCode ,p.paymentMethod.openDrawer";
         Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
-        // paidReceiptsQuery.setString(0, id);
-        paymentsTypeQuery.setString(0, orderid);
         for (Object objPaymentType : paymentsTypeQuery.list()) {
           Object[] objPaymentsType = (Object[]) objPaymentType;
           JSONObject paymentsType = new JSONObject();
@@ -372,12 +396,17 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
               paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
+
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("isReversed", true);
               }
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
+              paidReceiptPayment.put("obposAppCashup",
+                  objectIn.has("cashup") ? objectIn.get("cashup") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminal",
+                  objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
               // Call all payments in processes injected.
               executeHooks(paymentsInProcesses, paidReceiptPayment, null,
                   (String) objectIn.get("paymentId"));
@@ -389,8 +418,8 @@ public class PaidReceipts extends JSONProcessSimple {
             // The payment type of the current payment is not configured for the webpos
 
             String hqlPaymentType = "select p.paymentMethod.name as name, p.account.id as account, "
-                + "c_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
-                + "c_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
+                + "obpos_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
+                + "obpos_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
                 + "p.account.currency.iSOCode as isocode " //
                 + "from FIN_Payment as p where p.id=?)";
             Query paymentTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentType);
@@ -448,6 +477,10 @@ public class PaidReceipts extends JSONProcessSimple {
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
+              paidReceiptPayment.put("obposAppCashup",
+                  objectIn.has("cashup") ? objectIn.get("cashup") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminal",
+                  objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }

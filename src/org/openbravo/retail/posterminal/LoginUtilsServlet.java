@@ -34,10 +34,12 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Preferences.QueryFilter;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.MobileServerDefinition;
 import org.openbravo.mobile.core.MobileServerOrganization;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
@@ -45,7 +47,9 @@ import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   public static final Logger log = Logger.getLogger(LoginUtilsServlet.class);
@@ -136,28 +140,28 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           + "formAccess.specialForm.id = :webPOSFormId and "
           + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList)))";
 
+      Map<String, String> iterParameter = new HashMap<>();
       if (approvalType.length() != 0) {
         // checking supervisor users for sent approval type
         for (int i = 0; i < approvalType.length(); i++) {
-          String iter = approvalType.getString(i);
-          hqlUser += "and exists (from ADPreference as p where property = '" + iter
-              + "'   and active = true and to_char(searchKey) = 'Y'"
+          hqlUser += "and exists (from ADPreference as p where property =  :iter" + i
+              + " and active = true and to_char(searchKey) = 'Y'"
               + "   and (userContact = user or exists (from ADUserRoles r"
               + "                  where r.role = p.visibleAtRole"
               + "                    and r.userContact = user)) "
               + "   and (p.visibleAtOrganization = terminal.organization "
               + "   or p.visibleAtOrganization.id in (:orgList) "
               + "   or p.visibleAtOrganization is null)) ";
+          iterParameter.put("iter" + i, approvalType.getString(i));
         }
-
       }
 
       hqlUser += "order by user.name";
-
       Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
       qryUser.setParameter("theTerminalSearchKey", terminalName);
       qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
       qryUser.setParameterList("orgList", naturalTreeOrgList);
+      qryUser.setProperties(iterParameter);
 
       List<Object> queryUserList = qryUser.list();
       for (Object qryUserObject : queryUserList) {
@@ -250,6 +254,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         HttpServletResponse response = RequestContext.get().getResponse();
         userId = authManager.authenticate(request, response);
         terminal = OBDal.getInstance().get(OBPOSApplications.class, terminal.getId());
+      } catch (AuthenticationException ae) {
+        ConnectionProvider cp = new DalConnectionProvider(false);
+        Client systemClient = OBDal.getInstance().get(Client.class, "0");
+        throw new AuthenticationException(Utility.messageBD(cp, ae.getMessage(), systemClient
+            .getLanguage().getLanguage()));
       } catch (Exception e) {
         throw new AuthenticationException(e.getMessage());
       }

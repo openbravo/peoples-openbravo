@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -704,11 +704,14 @@ enyo.kind({
           onchange: 'changeReason'
         },
         changeReason: function (inSender, inEvent) {
-          if (this.children[this.getSelected()].getValue() === '') {
-            this.owner.line.unset('returnReason');
-          } else {
-            this.owner.line.set('returnReason', this.children[this.getSelected()].getValue());
-          }
+          var returnReason = this.children[this.getSelected()].getValue();
+          _.each(this.owner.selectedModels, function (line) {
+            if (returnReason === '') {
+              line.unset('returnReason');
+            } else {
+              line.set('returnReason', returnReason);
+            }
+          });
         },
         renderHeader: enyo.kind({
           kind: 'enyo.Option',

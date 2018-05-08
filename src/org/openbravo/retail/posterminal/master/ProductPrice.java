@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -99,20 +99,38 @@ public class ProductPrice extends ProcessHQLQuery {
 
     HQLPropertyList priceListHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
     if (multiPrices) {
-      hqlQueries
-          .add("select "
-              + priceListHQLProperties.getHqlSelect()
-              + "from OBRETCO_Prol_Product as pli, PricingProductPrice ppp  "
-              + " left join  ppp.priceListVersion as plv "
-              + " where pli.product.id = ppp.product.id and pli.obretcoProductlist.id = :productListId "
-              + " and plv.active = true "
-              + " and plv.validFromDate = ( select max(pplv.validFromDate) from PricingPriceListVersion as pplv "
-              + " where pplv.active=true and pplv.priceList.id = plv.priceList.id "
-              + " and pplv.validFromDate  <= :validFromDate ) and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-              + " and plv.priceList.id <> (:priceList))"
-              + " and $filtersCriteria AND $hqlCriteria "
-              + " and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria) "
-              + " order by ppp.id asc");
+      hqlQueries.add(" select " //
+          + priceListHQLProperties.getHqlSelect() //
+          + " from OBRETCO_Prol_Product as pli, " //
+          + " PricingProductPrice ppp " //
+          + " left join  ppp.priceListVersion as plv " //
+          + " where pli.product.id = ppp.product.id " //
+          + " and pli.obretcoProductlist.id = :productListId " //
+          + " and plv.active = true " //
+          + " and exists ("//
+          + "   select 1 " //
+          + "   from PricingPriceListVersion plv, BusinessPartner bp" //
+          + "   where plv.priceList.id = bp.priceList.id" //
+          + "   and plv.active = true" //
+          + "   and plv.validFromDate = (" //
+          + "     select max(plv2.validFromDate) " //
+          + "     from PricingPriceListVersion as plv2" //
+          + "     where plv.priceList.id = plv2.priceList.id" //
+          + "     and plv2.validFromDate <= :validFromDate" //
+          + "     group by plv2.priceList.id" //
+          + "   )" //
+          + "   and plv.priceList.id <> (:priceList)" //
+          + "   and plv.id = ppp.priceListVersion.id" //
+          + "   and bp.customer='Y'"//
+          + " )"//
+          + " and $filtersCriteria " //
+          + " and $hqlCriteria "//
+          + " and pli.$naturalOrgCriteria" //
+          + " and pli.$readableClientCriteria" //
+          + " and (ppp.$incrementalUpdateCriteria) " //
+          + " and ppp.$paginationByIdCriteria" //
+          + " order by ppp.id asc");
+
     }
 
     return hqlQueries;

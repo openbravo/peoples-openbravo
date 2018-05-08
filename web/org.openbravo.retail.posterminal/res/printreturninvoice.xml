@@ -44,7 +44,10 @@
       <text>, </text>
       <text><%= OB.UTIL.encodeXMLComponent(order.get('posTerminal'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
     </line>
-    
+    <line>
+      <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTaxId')) %></text>
+      <text><%= OB.MobileApp.model.get('terminal').organizationTaxId %></text>
+    </line>
     <line></line>
     <line size="1">
       <text align ="center" length="42"><%= OB.I18N.getLabel('OBPOS_ToReturn') %></text>
@@ -120,14 +123,14 @@
         <line>
           <text align="left" length="15"><%= paymentName %></text>
           <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('amount')))+' '+payments.at(i).get('isocode')+')' %></text>
-          <text align="right" length="13"><%= '-' + OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('origAmount'))) %></text>
+          <text align="right" length="13"><%= OB.I18N.formatCurrency(payments.at(i).get('origAmount')) %></text>
         </line>
      <%
          }else {
      %>
         <line>
-          <text align="left" length="15"><%= paymentName %></text>
-          <text align="right" length="20"><%= '-' + OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('amount'))) %></text>
+          <text align="left" length="20"><%= paymentName %></text>
+          <text align="right" length="20"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
         </line>
       <%
         }

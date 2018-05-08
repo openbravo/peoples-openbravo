@@ -423,7 +423,7 @@ enyo.kind({
         });
         return true;
       }
-      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder);
+      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
       return true;
     }, this);
   }

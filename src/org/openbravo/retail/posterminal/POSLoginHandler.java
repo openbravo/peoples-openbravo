@@ -126,9 +126,10 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     try {
       // Terminal access will be checked to ensure that the user has access to the terminal
       OBQuery<TerminalAccess> accessCrit = OBDal.getInstance().createQuery(TerminalAccess.class,
-          "where userContact.id='" + userId + "'");
+          "where userContact.id= :userId ");
       accessCrit.setFilterOnReadableClients(false);
       accessCrit.setFilterOnReadableOrganization(false);
+      accessCrit.setNamedParameter("userId", userId);
       List<TerminalAccess> accessList = accessCrit.list();
       boolean hasAccess = false;
       if (accessList.size() != 0) {
@@ -156,13 +157,14 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
       // organization tree of the Terminal
       OBQuery<OBPOSApplications> appQry = OBDal.getInstance().createQuery(
           OBPOSApplications.class,
-          "where searchKey = '" + terminalSearchKey + "'" + " and ((ad_isorgincluded("
-              + "(select organization from ADUser where id='" + userId + "')"
+          "where searchKey = :terminalSearchKey  and ((ad_isorgincluded("
+              + "(select organization from ADUser where id= :userId)"
               + ", organization, client.id) <> -1) or " + "(ad_isorgincluded(organization, "
-              + "(select organization from ADUser where id='" + userId + "')"
-              + ", client.id) <> -1)) ");
+              + "(select organization from ADUser where id= :userId)" + ", client.id) <> -1)) ");
       appQry.setFilterOnReadableClients(false);
       appQry.setFilterOnReadableOrganization(false);
+      appQry.setNamedParameter("terminalSearchKey", terminalSearchKey);
+      appQry.setNamedParameter("userId", userId);
       List<OBPOSApplications> appList = appQry.list();
       if (appList.isEmpty()) {
         try {
@@ -316,13 +318,6 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
 
   @Override
   protected boolean isLoginAccessRestrictedInStoreServer(VariablesSecureApp vars) {
-    // access to the POS login is granted, even if the ERP access is restricted in the store server
-    // even though access is granted to the POS Login, the onlySystemAdminRoleShouldBeAvailableInErp
-    // session flag is set to prevent opening the backend from the POS (this is controlled in the
-    // index.jsp file)
-    if (isErpAccessRestrictedInStoreServer()) {
-      vars.setSessionValue("onlySystemAdminRoleShouldBeAvailableInErp", "Y");
-    }
     return false;
   }
 }

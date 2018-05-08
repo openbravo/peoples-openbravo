@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -41,6 +41,11 @@
       }
     },
     finishPromotions: function (receipt, line) {
+      _.forEach(receipt.get('lines').models, function (l) {
+        l.set('orderManualPromotionsAlreadyApplied', false, {
+          silent: true
+        });
+      });
       receipt.set('isBeingDiscounted', false, {
         silent: true
       });
@@ -75,6 +80,7 @@
             auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
         OB.UTIL.clone(receipt, auxReceipt);
         auxReceipt.groupLinesByProduct();
+        auxReceipt.removeNoDiscountAllowLines();
         me.auxReceiptInExecution = auxReceipt;
         auxReceipt.on('discountsApplied', function () {
           // to avoid several calls to applyPromotions, only will be applied the changes to original receipt for the last call done to applyPromotion
@@ -161,7 +167,8 @@
                 definition: {
                   userAmt: promo.userAmt,
                   applyNext: promo.applyNext,
-                  lastApplied: promo.lastApplied
+                  lastApplied: promo.lastApplied,
+                  discountinstance: promo.discountinstance
                 },
                 alreadyCalculated: true // to prevent loops
               };
@@ -224,6 +231,10 @@
         return;
       }
 
+      if (promotion.rule.get('obdiscAllowmultipleinstan')) {
+        promotion.definition.discountinstance = OB.UTIL.get_UUID();
+      }
+
       lines.forEach(function (line) {
         if (line.get('promotions')) {
           line.get('promotions').forEach(function (promotion) {
@@ -245,7 +256,10 @@
         text: OB.I18N.getLabel('OBPOS_AddedDiscount', [promotion.rule.get('name')]),
         undo: function () {
           receipt.get('lines').forEach(function (line) {
-            receipt.removePromotion(line, promotion.rule);
+            receipt.removePromotion(line, {
+              id: promotion.rule.get('id'),
+              discountinstance: promotion.definition.discountinstance
+            });
           });
           receipt.calculateReceipt();
           receipt.set('undo', null);
@@ -463,7 +477,6 @@
           amt: discountAmt,
           chunks: chunks
         });
-        l.set('discountedLinePrice', discountedLinePrice);
       });
     }
   });

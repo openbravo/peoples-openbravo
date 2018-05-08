@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.retail.posterminal.ad_reports;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,6 +40,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -51,11 +53,8 @@ import org.openbravo.retail.posterminal.OBPOSPaymentcashupEvents;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 public class CashUpReport extends HttpSecureAppServlet {
   @Inject
@@ -170,25 +169,27 @@ public class CashUpReport extends HttpSecureAppServlet {
           /******************************* STARTING CASH ***************************************************************/
           final BigDecimal startingbalance = paymentMethodCashup.getStartingcash();
           expected = expected.add(startingbalance.multiply(conversionRate).setScale(2,
-              BigDecimal.ROUND_HALF_UP));
+              RoundingMode.HALF_UP));
 
-          psData = fillReportRow("STARTING", paymentMethodCashup.getPaymentType().getSearchKey(),
-              "OBPOS_LblStarting", label,
-              startingbalance.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
-                  .toString(), startingbalance.toString(), "OBPOS_LblTotalStarting",
-              conversionRate, isoCode);
+          psData = fillReportRow(
+              "STARTING",
+              paymentMethodCashup.getPaymentType().getSearchKey(),
+              "OBPOS_LblStarting",
+              label,
+              startingbalance.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP).toString(),
+              startingbalance.toString(), "OBPOS_LblTotalStarting", conversionRate, isoCode);
           hashMapStartingsList.add(psData);
 
           /******************************* DROPS DEPOSIT ***************************************************************/
           final BigDecimal drop = paymentMethodCashup.getTotalreturns().multiply(conversionRate)
-              .setScale(2, BigDecimal.ROUND_HALF_UP);
+              .setScale(2, RoundingMode.HALF_UP);
           final BigDecimal deposit = paymentMethodCashup.getTotalsales().multiply(conversionRate)
-              .setScale(2, BigDecimal.ROUND_HALF_UP);
+              .setScale(2, RoundingMode.HALF_UP);
 
           // Withdrawals
           expected = expected.subtract(drop);
           totalDrops = totalDrops.add(drop.multiply(conversionRate).setScale(2,
-              BigDecimal.ROUND_HALF_UP));
+              RoundingMode.HALF_UP));
           psData = fillReportRow("WITHDRAWAL", paymentMethodCashup.getPaymentType().getSearchKey(),
               null, label, drop.toString(), paymentMethodCashup.getTotalreturns().toString(),
               "OBPOS_LblTotalWithdrawals", conversionRate, isoCode);
@@ -206,7 +207,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               .getOBPOSPaymentcashupEventsList();
           for (OBPOSPaymentcashupEvents paymentcashupEvent : paymentcashupEventsList) {
             BigDecimal amount = paymentcashupEvent.getAmount()
-                .multiply(paymentcashupEvent.getRate()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                .multiply(paymentcashupEvent.getRate()).setScale(2, RoundingMode.HALF_UP);
             if (paymentcashupEvent.getType().equals("drop")) {
               expected = expected.subtract(amount);
               totalDrops = totalDrops.add(amount);
@@ -233,8 +234,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               "OBPOS_LblExpected",
               label,
               expected.toString(),
-              expected.divide(conversionRate, 5, BigDecimal.ROUND_HALF_UP)
-                  .setScale(2, BigDecimal.ROUND_HALF_UP).toString(), "OBPOS_LblTotalExpected",
+              expected.divide(conversionRate, 5, RoundingMode.HALF_UP)
+                  .setScale(2, RoundingMode.HALF_UP).toString(), "OBPOS_LblTotalExpected",
               conversionRate, isoCode);
           hashMapExpectedList.add(psData);
 
@@ -245,7 +246,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               "OBPOS_LblCounted",
               label,
               paymentMethodCashup.getTotalCounted().multiply(conversionRate)
-                  .setScale(2, BigDecimal.ROUND_HALF_UP).toString(), paymentMethodCashup
+                  .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
                   .getTotalCounted().toString(), "OBPOS_LblTotalCounted", conversionRate, isoCode);
           hashMapCountedList.add(psData);
 
@@ -256,10 +257,10 @@ public class CashUpReport extends HttpSecureAppServlet {
               "OBPOS_LblDifference",
               label,
               paymentMethodCashup.getTotalCounted().multiply(conversionRate)
-                  .setScale(2, BigDecimal.ROUND_HALF_UP).subtract(expected).toString(),
+                  .setScale(2, RoundingMode.HALF_UP).subtract(expected).toString(),
               paymentMethodCashup.getTotalCounted()
-                  .subtract(expected.divide(conversionRate, 5, BigDecimal.ROUND_HALF_UP))
-                  .toString(), "OBPOS_LblTotalDifference", conversionRate, isoCode);
+                  .subtract(expected.divide(conversionRate, 5, RoundingMode.HALF_UP)).toString(),
+              "OBPOS_LblTotalDifference", conversionRate, isoCode);
           hashMapDifferenceList.add(psData);
 
           /******************************* CASH TO KEEP,CASH TO DEPOSIT ***************************************************************/
@@ -267,8 +268,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           cashToDeposit = paymentMethodCashup.getTotalCounted().subtract(
               paymentMethodCashup.getAmountToKeep());
           psData = fillReportRow("TODEPOSIT", paymentMethodCashup.getPaymentType().getSearchKey(),
-              null, label,
-              cashToDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+              null, label, cashToDeposit.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
                   .toString(), cashToDeposit.toString(), "OBPOS_LblTotalQtyToDepo", conversionRate,
               isoCode);
           hashMapCashToDepositList.add(psData);
@@ -280,7 +280,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               null,
               label,
               paymentMethodCashup.getAmountToKeep().multiply(conversionRate)
-                  .setScale(2, BigDecimal.ROUND_HALF_UP).toString(), paymentMethodCashup
+                  .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
                   .getAmountToKeep().toString(), "OBPOS_LblTotalQtyToKeep", conversionRate, isoCode);
           hashMapCashToKeepList.add(psData);
 
@@ -321,12 +321,10 @@ public class CashUpReport extends HttpSecureAppServlet {
       /******************************* BUILD REPORT ***************************************************************/
 
       try {
-        JasperReport subReportSalesTaxes;
-        final String strLanguage = vars.getLanguage();
-        final String strBaseDesign = getBaseDesignPath(strLanguage);
-        final JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
-            + "/org/openbravo/retail/posterminal/ad_reports/CashUpSubreport.jrxml");
-        subReportSalesTaxes = JasperCompileManager.compileReport(jasperDesignLines);
+        final String strLanguage = vars.getLanguage(), strBaseDesign = getBaseDesignPath(strLanguage);
+        final JasperReport subReportSalesTaxes = ReportingUtils.getTranslatedJasperReport(this,
+            strBaseDesign + "/org/openbravo/retail/posterminal/ad_reports/CashUpSubreport.jrxml",
+            strLanguage);
         parameters.put("SUBREP_CASHUP", subReportSalesTaxes);
 
       } catch (final JRException e) {

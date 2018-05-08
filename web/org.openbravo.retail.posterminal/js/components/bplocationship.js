@@ -169,7 +169,6 @@ enyo.kind({
   executeOnShow: function () {
     if (!this.isInitialized()) {
       this.inherited(arguments);
-      this.args.navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(null, 'modalcustomershipaddress');
       if (_.isUndefined(this.args.visibilityButtons)) {
         this.args.visibilityButtons = true;
       }

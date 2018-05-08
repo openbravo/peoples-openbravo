@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -191,6 +191,13 @@ public class Product extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+
+    return prepareQuery(jsonsent);
+
+  }
+
+  protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
+
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
 
@@ -277,22 +284,9 @@ public class Product extends ProcessHQLQuery {
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
 
     // regular products
-    String hql = "select" + regularProductsHQLProperties.getHqlSelect()
-        + "FROM OBRETCO_Prol_Product as pli ";
-    if (!useGetForProductImages) {
-      hql += "left outer join pli.product.image img ";
-    }
-    hql += "inner join pli.product as product, PricingProductPrice ppp ";
-    if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
-      hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
-    } else {
-      hql += " WHERE 1=1";
-    }
+    String hql = "select" + regularProductsHQLProperties.getHqlSelect();
 
-    hql += " AND $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist.id = :productListId) "
-        + "AND (ppp.priceListVersion.id= :priceListVersionId ) "
-        + " AND ("
-        + "pli.product.id = ppp.product.id" + ") ";
+    hql += getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages);
 
     if (lastUpdated != null) {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria))";
@@ -367,6 +361,28 @@ public class Product extends ProcessHQLQuery {
       products.add(genericProductsHqlString);
     }
     return products;
+  }
+
+  protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
+      JSONObject jsonsent, boolean useGetForProductImages) {
+
+    String hql = "FROM OBRETCO_Prol_Product as pli ";
+    if (!useGetForProductImages) {
+      hql += "left outer join pli.product.image img ";
+    }
+    hql += "inner join pli.product as product, PricingProductPrice ppp ";
+    if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
+      hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
+    } else {
+      hql += " WHERE 1=1";
+    }
+
+    hql += " AND $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist.id = :productListId) "
+        + "AND (ppp.priceListVersion.id= :priceListVersionId ) "
+        + " AND ("
+        + "pli.product.id = ppp.product.id" + ") ";
+
+    return hql;
   }
 
   @Override

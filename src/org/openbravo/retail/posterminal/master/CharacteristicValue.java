@@ -63,6 +63,11 @@ public class CharacteristicValue extends ProcessHQLQuery {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     boolean isRemote = false;
+
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+
     try {
       OBContext.setAdminMode(false);
       isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
@@ -74,24 +79,29 @@ public class CharacteristicValue extends ProcessHQLQuery {
       OBContext.restorePreviousMode();
     }
     if (!isRemote) {
-      hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
-          + "from CharacteristicValue cv, ADTreeNode node "
-          + "where cv.characteristic.tree = node.tree and cv.id = node.node "
-          + "and cv.characteristic.obposUseonwebpos = true and "
-          + "((cv.summaryLevel = false and exists (select 1 from  ProductCharacteristicValue pcv, "
-          + "OBRETCO_Prol_Product assort where pcv.characteristicValue.id = cv.id "
-          + "and pcv.product.id= assort.product.id " + "and assort.obretcoProductlist.id = '"
-          + productList.getId() + "')) or cv.summaryLevel = true) "
-          + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
-          + "and cv.$readableSimpleClientCriteria "
-          + "and (cv.$incrementalUpdateCriteria or node.$incrementalUpdateCriteria) "
-          + "order by cv.name, cv.id");
+      hqlQueries
+          .add("select"
+              + regularProductsChValueHQLProperties.getHqlSelect()
+              + "from CharacteristicValue cv, ADTreeNode node "
+              + "where cv.characteristic.tree = node.tree and cv.id = node.node "
+              + "and cv.characteristic.obposUseonwebpos = true and "
+              + "((cv.summaryLevel = false and exists (select 1 from  ProductCharacteristicValue pcv, "
+              + "OBRETCO_Prol_Product assort where pcv.characteristicValue.id = cv.id "
+              + "and pcv.product.id= assort.product.id "
+              + "and assort.obretcoProductlist.id = '"
+              + productList.getId()
+              + "')) or cv.summaryLevel = true) "
+              + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
+              + "and cv.$readableSimpleClientCriteria "
+              + ((lastUpdated != null) ? "and (cv.$incrementalUpdateCriteria or node.$incrementalUpdateCriteria) "
+                  : "and (cv.$incrementalUpdateCriteria and node.$incrementalUpdateCriteria) ")
+              + "and cv.active = 'Y' " + "order by cv.name, cv.id");
     } else {
       hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
           + "from CharacteristicValue cv where cv.characteristic.obposUseonwebpos = true "
           + "and $filtersCriteria and $hqlCriteria and cv.$naturalOrgCriteria "
           + "and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
-          + "order by cv.name, cv.id");
+          + "and cv.active = 'Y' " + "order by cv.name, cv.id");
     }
 
     return hqlQueries;

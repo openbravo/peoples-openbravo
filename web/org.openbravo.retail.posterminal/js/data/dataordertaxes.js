@@ -444,7 +444,6 @@
           pricenet = roundedLinePriceNet; // 2 decimals properly rounded.
           discountedNet = OB.DEC.mul(pricenet, new BigDecimal(String(line.get('qty'))));
         }
-        var netCascade = discountedNet;
         line.set('discountedNet', OB.DEC.add(line.get('discountedNet'), discountedNet), {
           silent: true
         });
@@ -454,16 +453,15 @@
 
         // second calculate tax lines.  
         var taxesline = {};
+        var auxNet;
         var callbackTaxLinesCreate = function (taxRate, taxIndex, taxList) {
-            var auxNet = discountedNet;
+            auxNet = discountedNet;
             if (!taxRate.get('summaryLevel')) {
 
               var taxId = taxRate.get('id');
               var rate = new BigDecimal(String(taxRate.get('rate')));
               rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP);
-              if (taxRate.get('cascade')) {
-                auxNet = netCascade;
-              } else if (taxRate.get('taxBase')) {
+              if (!taxRate.get('cascade') && taxRate.get('taxBase')) {
 
                 var baseTax = taxesline[taxRate.get('taxBase')];
                 if (!_.isUndefined(baseTax)) { //if the baseTax of this tax have been processed, we skip this tax till baseTax is processed.
@@ -474,13 +472,14 @@
               }
 
               var amount = OB.DEC.mul(auxNet, rate);
-              netCascade = OB.DEC.mul(netCascade, rate.add(BigDecimal.prototype.ONE));
+              var exactAmount = new BigDecimal(String(auxNet)).multiply(rate);
 
               taxesline[taxId] = {};
               taxesline[taxId].name = taxRate.get('name');
               taxesline[taxId].rate = taxRate.get('rate');
               taxesline[taxId].net = auxNet;
               taxesline[taxId].amount = amount;
+              taxesline[taxId].exactAmount = exactAmount;
             }
             //Remove processed tax from the collection
             taxList.splice(taxList.indexOf(taxRate), 1);
@@ -492,17 +491,14 @@
 
         // We need to make a final adjustment: we will sum all the tax lines,
         // and if the net amount of the line plus this sum is not equal to the gross,
-        // we will adjust the tax line with the greatest amount
+        // we will adjust the tax line with the greatest variance taking into account
+        // if the adjustment is positive or negative
         var summedTaxAmt = 0;
         var expectedGross = (_.isNull(discountedGross) || _.isUndefined(discountedGross)) ? orggross : discountedGross;
-        var greaterTax = null;
         _.each(coll, function (taxRate) {
           if (!taxRate.get('summaryLevel')) {
             var taxId = taxRate.get('id');
             summedTaxAmt = OB.DEC.add(summedTaxAmt, taxesline[taxId].amount);
-            if ((greaterTax === null || Math.abs(taxesline[greaterTax].amount) < Math.abs(taxesline[taxId].amount))) {
-              greaterTax = taxId;
-            }
           }
         });
         var netandtax, adjustment;
@@ -514,8 +510,18 @@
         if (expectedGross !== netandtax) {
           //An adjustment is needed
           adjustment = OB.DEC.sub(expectedGross, netandtax);
-          taxesline[greaterTax].amount = OB.DEC.add(taxesline[greaterTax].amount, adjustment); // adjust the amout of taxline with greater amount
-          navigateTaxesTree(coll, greaterTax, function (tax) {
+          var selectedTax;
+          _.each(coll, function (taxRate) {
+            if (!taxRate.get('summaryLevel')) {
+              var taxId = taxRate.get('id');
+              //Choose ABS(taxAmt amount - (exactAmount + adjustment)) closest to 0
+              if (selectedTax === undefined || OB.DEC.abs(new BigDecimal(String(taxesline[taxId].amount)).subtract(taxesline[taxId].exactAmount.add(new BigDecimal(String(-adjustment)))), 20) < OB.DEC.abs(new BigDecimal(String(taxesline[selectedTax].amount)).subtract(taxesline[selectedTax].exactAmount.add(new BigDecimal(String(-adjustment)))), 20)) {
+                selectedTax = taxId;
+              }
+            }
+          });
+          taxesline[selectedTax].amount = OB.DEC.add(taxesline[selectedTax].amount, adjustment); // adjust the amout of taxline with greater amount
+          navigateTaxesTree(coll, selectedTax, function (tax) {
             taxesline[tax.get('id')].net = OB.DEC.add(taxesline[tax.get('id')].net, adjustment); // adjust the net of taxlines that are son of the taxline with greater amount
           });
         }
@@ -777,7 +783,6 @@
           var originalNet = OB.DEC.div(totalGross, linerate);
           var taxAmount;
           var auxNet;
-          var netCascade = originalNet;
           _.forEach(taxRates, function (taxRate) {
             auxNet = originalNet;
             if (!taxRate.get('summaryLevel')) {
@@ -785,9 +790,7 @@
               var taxId = taxRate.get('id');
               var rate = new BigDecimal(String(taxRate.get('rate')));
               rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP);
-              if (taxRate.get('cascade')) {
-                auxNet = netCascade;
-              } else if (taxRate.get('taxBase')) {
+              if (!taxRate.get('cascade') && taxRate.get('taxBase')) {
 
                 var baseTax = receipt.get('taxes')[taxRate.get('taxBase')];
                 if (!_.isUndefined(baseTax)) { //if the baseTax of this tax have been processed, we skip this tax till baseTax is processed.
@@ -798,7 +801,8 @@
               }
 
               var amount = OB.DEC.mul(auxNet, rate);
-              netCascade = OB.DEC.mul(netCascade, rate.add(BigDecimal.prototype.ONE));
+              var exactAmount = new BigDecimal(String(auxNet)).multiply(rate);
+
 
               if (!receipt.get('taxes')[taxId]) {
                 receipt.get('taxes')[taxId] = {};
@@ -807,6 +811,7 @@
               receipt.get('taxes')[taxId].rate = taxRate.get('rate');
               receipt.get('taxes')[taxId].net = auxNet;
               receipt.get('taxes')[taxId].amount = amount;
+              receipt.get('taxes')[taxId].exactAmount = exactAmount;
             }
           });
 
@@ -816,14 +821,10 @@
           // The highest tax will be adjusted so that everything matches
           var summedTaxAmt = 0;
           var expectedGross = totalGross;
-          var greaterTax = null;
           _.each(taxRates, function (taxRate) {
             if (!taxRate.get('summaryLevel')) {
               var taxId = taxRate.get('id');
               summedTaxAmt = OB.DEC.add(summedTaxAmt, receipt.get('taxes')[taxId].amount);
-              if ((greaterTax === null || Math.abs(receipt.get('taxes')[greaterTax].amount) < Math.abs(receipt.get('taxes')[taxId].amount))) {
-                greaterTax = taxId;
-              }
             }
           });
           var netandtax, adjustment;
@@ -831,8 +832,19 @@
           if (expectedGross !== netandtax) {
             //An adjustment is needed
             adjustment = OB.DEC.sub(expectedGross, netandtax);
-            receipt.get('taxes')[greaterTax].amount = OB.DEC.add(receipt.get('taxes')[greaterTax].amount, adjustment); // adjust the amout of taxline with greater amount
-            navigateTaxesTree(taxRates, greaterTax, function (tax) {
+
+            var selectedTax;
+            _.each(taxRates, function (taxRate) {
+              if (!taxRate.get('summaryLevel')) {
+                var taxId = taxRate.get('id');
+                //Choose ABS(taxAmt amount - (exactAmount + adjustment)) closest to 0
+                if (selectedTax === undefined || OB.DEC.abs(new BigDecimal(String(receipt.get('taxes')[taxId].amount)).subtract(receipt.get('taxes')[taxId].exactAmount.add(new BigDecimal(String(-adjustment)))), 20) < OB.DEC.abs(new BigDecimal(String(receipt.get('taxes')[selectedTax].amount)).subtract(receipt.get('taxes')[selectedTax].exactAmount.add(new BigDecimal(String(-adjustment)))), 20)) {
+                  selectedTax = taxId;
+                }
+              }
+            });
+            receipt.get('taxes')[selectedTax].amount = OB.DEC.add(receipt.get('taxes')[selectedTax].amount, adjustment); // adjust the amout of taxline with greater amount
+            navigateTaxesTree(taxRates, selectedTax, function (tax) {
               receipt.get('taxes')[tax.get('id')].net = OB.DEC.add(receipt.get('taxes')[tax.get('id')].net, adjustment); // adjust the net of taxlines that are son of the taxline with greater amount
             });
           }
