@@ -71,6 +71,8 @@ enyo.kind({
   kind: 'OB.UI.WindowView',
   windowmodel: OB.OBPOSCashMgmt.Model.CashManagement,
   tag: 'section',
+  allowedIncrementalRefresh: false,
+  incrementalRefreshOnNavigate: false,
   events: {
     onShowPopup: ''
   },
