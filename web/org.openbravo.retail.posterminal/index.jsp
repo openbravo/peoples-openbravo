@@ -10,7 +10,7 @@ String toServiceWorker="";
 String toAppCache="";
 String useServiceWorkers = Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, "0",
     "0", "0", "0", null);
-if(useServiceWorkers.equals("Y")){
+if("Y".equals(useServiceWorkers)){
   toServiceWorker = "../org.openbravo.mobile.core/source/offline/ob-fetch-manifest.js";
 }else{
   toAppCache = "../../org.openbravo.mobile.core/OBPOS_Main/AppCacheManifest?_appName=WebPOS";
