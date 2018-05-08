@@ -34,11 +34,14 @@ public class OrderLinePEHQLInjector2 extends HqlInserter {
         requestParameters.get("@Invoice.salesTransaction@"), "true");
 
     StringBuilder hql = new StringBuilder();
-    hql.append(" TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity - e.invoicedQuantity ");
-    if (!isSalesTransaction) {
-      hql.append(" - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m where m.invoiceLine.id is not null) ");
+    if (isSalesTransaction) {
+      hql.append(" TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, COALESCE((select sum(il.movementQuantity) from e.materialMgmtShipmentInOutLineList il join il.shipmentReceipt io where il.reinvoice = 'N' and io.processed = 'Y') ");
+      hql.append(" , (e.orderedQuantity - e.invoicedQuantity)), coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))))");
+    } else {
+      hql.append(" TO_NUMBER(M_GET_CONVERTED_AUMQTY(p.id, COALESCE((select il.movementQuantity - sum(mi.quantity) from e.materialMgmtShipmentInOutLineList il join il.shipmentReceipt io join il.procurementReceiptInvoiceMatchList mi where io.processed = 'Y' and io.documentStatus <> 'VO' group by il.movementQuantity)");
+      hql.append(" , (e.orderedQuantity - (select coalesce(sum(mp.quantity),0) from e.procurementPOInvoiceMatchList mp where mp.invoiceLine.id is not null) - (select coalesce(sum(ci.invoicedQuantity),0) from e.procurementPOInvoiceMatchList mp join mp.invoiceLine ci))");
+      hql.append(" ), coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))))");
     }
-    hql.append(" , coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))))");
 
     return hql.toString();
   }

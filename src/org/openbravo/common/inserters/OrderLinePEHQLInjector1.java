@@ -36,9 +36,12 @@ public class OrderLinePEHQLInjector1 extends HqlInserter {
     StringBuilder hql = new StringBuilder();
 
     if (isSalesTransaction) {
-      hql.append(" e.orderedQuantity - e.invoicedQuantity");
+      hql.append(" COALESCE((select sum(il.movementQuantity) from e.materialMgmtShipmentInOutLineList il join il.shipmentReceipt io where il.reinvoice = 'N' and io.processed = 'Y') ");
+      hql.append(" , (e.orderedQuantity - e.invoicedQuantity))");
     } else {
-      hql.append(" e.orderedQuantity - e.invoicedQuantity - (select coalesce(sum(m.quantity),0) from e.procurementPOInvoiceMatchList m where m.invoiceLine.id is not null)");
+      hql.append(" COALESCE((select il.movementQuantity - sum(mi.quantity) from e.materialMgmtShipmentInOutLineList il join il.shipmentReceipt io join il.procurementReceiptInvoiceMatchList mi where io.processed = 'Y' and io.documentStatus <> 'VO' group by il.movementQuantity) ");
+      hql.append(" , (e.orderedQuantity - (select coalesce(sum(mp.quantity),0) from e.procurementPOInvoiceMatchList mp where mp.invoiceLine.id is not null) - (select coalesce(sum(ci.invoicedQuantity),0) from e.procurementPOInvoiceMatchList mp join mp.invoiceLine ci)) ");
+      hql.append(" )");
     }
 
     return hql.toString();
