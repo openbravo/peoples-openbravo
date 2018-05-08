@@ -23,10 +23,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.log4j.Logger;
 import org.hibernate.cfg.Configuration;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Initializes and provides the session factory for the runtime dal layer. This
@@ -38,14 +39,13 @@ import org.openbravo.base.session.SessionFactoryController;
  */
 
 public class DalSessionFactoryController extends SessionFactoryController {
-  private static final Logger log = Logger.getLogger(DalSessionFactoryController.class);
+  private static final Logger log = LoggerFactory.getLogger(DalSessionFactoryController.class);
 
   @Override
   protected void mapModel(Configuration configuration) {
     DalMappingGenerator mappingGenerator = DalMappingGenerator.getInstance();
     final String mapping = mappingGenerator.generateMapping();
-    log.debug("Generated mapping: ");
-    log.debug(mapping);
+    log.debug("Generated mapping: \n{}", mapping);
 
     if (mappingGenerator.getHibernateFileLocation() != null) {
       configuration.addFile(mappingGenerator.getHibernateFileLocation());
