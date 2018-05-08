@@ -4245,8 +4245,8 @@
         }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
-          this.set('payment', OB.DEC.abs(nocash));
-          this.set('change', OB.DEC.add(cash, origCash));
+          this.set('payment', OB.DEC.add(OB.DEC.abs(nocash), processedPaymentsAmount));
+          this.set('change', OB.DEC.add(OB.DEC.sub(cash, processedPaymentsAmount), origCash));
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, OB.DEC.sub(cash, processedPaymentsAmount)), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
