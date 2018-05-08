@@ -64,6 +64,7 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
   private BaseOBObject copiedLine;
   private InvoiceLine invoiceLine;
   private boolean isOrderLine;
+  private JSONObject pickExecLineValues;
 
   @Override
   public int getOrder() {
@@ -81,6 +82,7 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
     this.copiedLine = selectedLine;
     this.processingInvoice = currentInvoice;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
+    this.pickExecLineValues = pickExecuteLineValues;
 
     TaxRate tax = updateTaxRate();
     updateTaxAmount(tax);
@@ -89,6 +91,23 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
 
   private void updateTaxableAmount() {
     BigDecimal taxBaseAmt = invoiceLine.getLineNetAmount();
+    if (isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
+      OrderLine originalOrderLine = (isOrderLine ? (OrderLine) copiedLine
+          : ((ShipmentInOutLine) copiedLine).getSalesOrderLine());
+      if (originalOrderLine.getTaxableAmount() != null) {
+        BigDecimal originalOrderedQuantity = originalOrderLine.getOrderedQuantity();
+        BigDecimal qtyOrdered = CreateLinesFromUtil
+            .getOrderedQuantityInPickEdit(pickExecLineValues);
+        taxBaseAmt = originalOrderLine.getTaxableAmount();
+        if (originalOrderedQuantity.compareTo(BigDecimal.ZERO) != 0) {
+          taxBaseAmt = taxBaseAmt
+              .multiply(qtyOrdered)
+              .divide(originalOrderedQuantity)
+              .setScale(processingInvoice.getCurrency().getStandardPrecision().intValue(),
+                  RoundingMode.HALF_UP);
+        }
+      }
+    }
     invoiceLine.setTaxableAmount(taxBaseAmt);
   }
 

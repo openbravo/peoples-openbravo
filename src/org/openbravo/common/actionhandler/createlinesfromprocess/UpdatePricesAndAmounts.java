@@ -241,13 +241,14 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
     BigDecimal unitPrice;
     BigDecimal standardPrice;
     BigDecimal listPrice;
-    private BigDecimal lineNetAmount;
     // Gross Prices
     BigDecimal grossUnitPrice;
     BigDecimal grossBaseUnitPrice;
     BigDecimal grossListPrice;
     BigDecimal lineGrossAmount;
     BigDecimal priceLimit;
+    // Amounts
+    BigDecimal lineNetAmount;
 
     private PriceInformation() {
       this.priceLimit = BigDecimal.ZERO;
