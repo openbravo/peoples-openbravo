@@ -111,4 +111,14 @@ public class CreateLinesFromUtil {
     }
   }
 
+  public static BigDecimal getOrderQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
+    try {
+      BigDecimal qty = StringUtils.isEmpty(selectedPEValuesInLine.getString("orderQuantity")) ? null
+          : new BigDecimal(selectedPEValuesInLine.getString("orderQuantity"));
+      return qty;
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+  }
+
 }

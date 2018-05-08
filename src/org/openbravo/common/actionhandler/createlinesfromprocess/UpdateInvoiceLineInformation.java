@@ -90,6 +90,7 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
       invoiceLine.setSalesOrderLine((OrderLine) copiedLine);
     } else if (CreateLinesFromUtil.isShipmentReceiptLine(copiedLine)) {
       invoiceLine.setGoodsShipmentLine((ShipmentInOutLine) copiedLine);
+      invoiceLine.setSalesOrderLine(((ShipmentInOutLine) copiedLine).getSalesOrderLine());
     }
   }
 
@@ -100,7 +101,6 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
     invoiceLine.setInvoice(processingInvoice);
     invoiceLine.setClient(processingInvoice.getClient());
     invoiceLine.setDescription(processingInvoice.getDescription());
-    invoiceLine.setBusinessPartner(processingInvoice.getBusinessPartner());
   }
 
   private void udpateInformationFromOrderLine() {

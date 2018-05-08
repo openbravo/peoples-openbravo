@@ -10681,13 +10681,14 @@ You can also select if transactions are allowed or not for this organization typ
 <!--631D227DC83A4898BBD041D46D829D27-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--631D227DC83A4898BBD041D46D829D27-->  <HQLQUERY><![CDATA[select 
   e.id,
-  @insertion_point_1@,
+  @insertion_point_1@ as movementQuantity,
   uom,
   p,
   e.lineNo,
   sh,
   (select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))),
-  @insertion_point_2@  
+  @insertion_point_2@ as operativeQuantity,
+  @insertion_point_3@ as orderQuantity
 from 
   MaterialMgmtShipmentInOutLine e
   join e.shipmentReceipt sh
@@ -11202,13 +11203,14 @@ where
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <HQLQUERY><![CDATA[select    
   e.id,
-  @insertion_point_1@,
+  @insertion_point_1@ as orderedQuantity,
   uom,
   p,
   e.lineNo,   
   o,  
-  @insertion_point_2@,
-(select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))
+  @insertion_point_2@ as operativeQuantity,
+(select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))),
+  @insertion_point_3@ as orderQuantity
 from OrderLine as e   
   join e.salesOrder o   
   join o.priceList pl   
