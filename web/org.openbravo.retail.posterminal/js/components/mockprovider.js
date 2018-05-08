@@ -27,18 +27,18 @@ enyo.kind({
     return new Promise(function (resolve, reject) {
       setTimeout(function () {
         if (paymentinfo.amount === 350.50) { // 1 x Expedition tent 4 season 2 person
-          this.resolveTransactionVISA(resolve, reject);
+          this.resolveTransactionVISA(paymentinfo, resolve, reject);
         } else if (paymentinfo.amount === 701.00) {
-          this.resolveTransactionMASTER(resolve, reject);
+          this.resolveTransactionMASTER(paymentinfo, resolve, reject);
         } else {
-          this.rejectTransaction(resolve, reject);
+          this.rejectTransaction(paymentinfo, resolve, reject);
         }
       }.bind(this), 2000);
     }.bind(this));
   },
-  resolveTransactionVISA: function (resolve, reject) {
+  resolveTransactionVISA: function (paymentinfo, resolve, reject) {
     resolve({
-      transaction: '0000001',
+      transaction: paymentinfo.refund ? '0000002' : '0000001',
       authorization: '001',
       properties: {
         cardlogo: '00',
@@ -49,12 +49,13 @@ enyo.kind({
       }
     });
   },
-  resolveTransactionMASTER: function (resolve, reject) {
+  resolveTransactionMASTER: function (paymentinfo, resolve, reject) {
     resolve({
-      transaction: '0000002',
+      transaction: paymentinfo.refund ? '0000012' : '0000011',
       authorization: '002',
       properties: {
         cardlogo: '01',
+        refund: paymentinfo.refund,
         // MASTER
         voidproperties: {
           info: 'MASTER OK'
@@ -62,7 +63,7 @@ enyo.kind({
       }
     });
   },
-  rejectTransaction: function (resolve, reject) {
+  rejectTransaction: function (paymentinfo, resolve, reject) {
     reject({
       message: 'Transaction has been rejected'
     });
