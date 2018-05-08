@@ -42,9 +42,16 @@ public class DalSessionFactoryController extends SessionFactoryController {
 
   @Override
   protected void mapModel(Configuration configuration) {
-    final String mapping = DalMappingGenerator.getInstance().generateMapping();
+    DalMappingGenerator mappingGenerator = DalMappingGenerator.getInstance();
+    final String mapping = mappingGenerator.generateMapping();
     log.debug("Generated mapping: ");
     log.debug(mapping);
+
+    if (mappingGenerator.getHibernateFileLocation() != null) {
+      configuration.addFile(mappingGenerator.getHibernateFileLocation());
+      return;
+    }
+
     Path tmpFile = null;
     try {
       tmpFile = Files.createTempFile("", ".hbm");

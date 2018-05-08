@@ -84,8 +84,7 @@ public class DalMappingGenerator implements OBSingleton {
    * @return the generated Hibernate mapping (corresponds to what is found in a hbm.xml file)
    */
   public String generateMapping() {
-    final String hibernateFileLocation = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties().getProperty(HIBERNATE_FILE_PROPERTY);
+    final String hibernateFileLocation = getHibernateFileLocation();
 
     // If readMappingFromFile is true and the mapping is already generated to a file, this file will
     // be read instead of generating a new one. Useful while developing changes in mapping to edit
@@ -139,6 +138,11 @@ public class DalMappingGenerator implements OBSingleton {
       }
     }
     return result;
+  }
+
+  String getHibernateFileLocation() {
+    return OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty(HIBERNATE_FILE_PROPERTY);
   }
 
   private String generateMapping(Entity entity) {
