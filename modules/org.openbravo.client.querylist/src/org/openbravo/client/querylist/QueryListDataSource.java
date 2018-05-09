@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,13 +34,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.ModelProvider;
@@ -187,9 +190,9 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         HQL = updateSortByFields(HQL, parameters.get(JsonConstants.SORTBY_PARAMETER));
       }
 
-      Query widgetQuery = null;
+      Query<Tuple> widgetQuery = null;
       try {
-        widgetQuery = OBDal.getInstance().getSession().createQuery(HQL);
+        widgetQuery = OBDal.getInstance().getSession().createQuery(HQL, Tuple.class);
       } catch (Exception e) {
         if (fetchingSummaryFields) {
           log.error("Exception while fetching the summary columns of the widget "
@@ -203,7 +206,6 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         return result;
       }
-      String[] queryAliases = widgetQuery.getReturnAliases();
 
       if (!isExport && "widget".equals(viewMode) && !showAll) {
         int rowsNumber = Integer.valueOf((parameters.get("rowsNumber") != null && !parameters.get(
@@ -218,12 +220,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         }
       }
 
-      String[] params = widgetQuery.getNamedParameters();
-      if (params.length > 0) {
+      Set<String> params = widgetQuery.getParameterMetadata().getNamedParameterNames();
+      if (!params.isEmpty()) {
         HashMap<String, Object> parameterValues = getParameterValues(parameters, widgetClass);
 
-        for (int i = 0; i < params.length; i++) {
-          String namedParam = params[i];
+        for (String namedParam : params) {
           boolean isParamSet = false;
           if (parameterValues.containsKey(namedParam)) {
             Object value = parameterValues.get(namedParam);
@@ -278,24 +279,17 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
 
       } else {
         // process the response for the grid
-        for (Object objResult : widgetQuery.list()) {
-          final Map<String, Object> data = new LinkedHashMap<String, Object>();
-          Object[] resultList = new Object[1];
-          if (objResult instanceof Object[]) {
-            resultList = (Object[]) objResult;
-          } else {
-            resultList[0] = objResult;
-          }
+        for (Tuple tuple : widgetQuery.list()) {
+          final Map<String, Object> data = new LinkedHashMap<>();
 
           for (OBCQL_QueryColumn column : columns) {
             UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
                 column.getReference());
             DomainType domainType = uiDefinition.getDomainType();
-            // TODO: throw an exception if the display expression doesn't match any returned alias.
-            for (int i = 0; i < queryAliases.length; i++) {
-              if (queryAliases[i].equals(column.getDisplayExpression())
-                  || (!isExport && queryAliases[i].equals(column.getLinkExpression()))) {
-                Object value = resultList[i];
+            for (TupleElement<?> tupleElement : tuple.getElements()) {
+              if (tupleElement.getAlias().equals(column.getDisplayExpression())
+                  || (!isExport && tupleElement.getAlias().equals(column.getLinkExpression()))) {
+                Object value = tuple.get(tupleElement.getAlias());
                 if ((domainType instanceof DateDomainType || domainType instanceof DateDomainType)
                     && value != null) {
                   value = xmlDateFormat.format(value);
@@ -311,7 +305,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
                 }
 
                 if (!isExport) {
-                  data.put(queryAliases[i], value);
+                  data.put(tupleElement.getAlias(), value);
                 } else {
                   data.put(QueryListUtils.getColumnLabel(column), value);
                 }
