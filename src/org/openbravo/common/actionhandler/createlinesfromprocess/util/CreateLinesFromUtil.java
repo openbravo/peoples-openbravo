@@ -32,6 +32,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DbUtility;
 
@@ -130,6 +131,17 @@ public class CreateLinesFromUtil {
       throw new OBException(e);
     }
     return inOutLine;
+  }
+
+  public static UOM getAUM(JSONObject selectedPEValuesInLine) {
+    UOM aum = null;
+    try {
+      String aumId = selectedPEValuesInLine.getString("operativeUOM");
+      aum = OBDal.getInstance().get(UOM.class, aumId);
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+    return aum;
   }
 
 }

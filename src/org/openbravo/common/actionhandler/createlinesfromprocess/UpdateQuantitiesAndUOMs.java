@@ -67,8 +67,7 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
     BigDecimal operativeQuantity = CreateLinesFromUtil
         .getOperativeQuantityInPickEdit(pickExecLineValues);
     BigDecimal orderQuantity = CreateLinesFromUtil.getOrderQuantityInPickEdit(pickExecLineValues);
-    UOM operativeUOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_OPERATIVEUOM
-        : ShipmentInOutLine.PROPERTY_OPERATIVEUOM);
+    UOM operativeUOM = CreateLinesFromUtil.getAUM(pickExecLineValues);
     UOM uOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_UOM
         : ShipmentInOutLine.PROPERTY_UOM);
     ProductUOM orderUOM = (ProductUOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_ORDERUOM
