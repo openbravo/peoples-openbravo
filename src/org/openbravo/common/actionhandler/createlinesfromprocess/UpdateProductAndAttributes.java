@@ -19,8 +19,6 @@
 
 package org.openbravo.common.actionhandler.createlinesfromprocess;
 
-import java.util.List;
-
 import javax.enterprise.context.Dependent;
 
 import org.codehaus.jettison.json.JSONObject;
@@ -33,9 +31,7 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeInstance;
-import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
-import org.openbravo.model.common.plm.AttributeUse;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
@@ -58,49 +54,21 @@ class UpdateProductAndAttributes implements CreateLinesFromProcessImplementation
       final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
     this.copiedLine = selectedLine;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
-
     // Update the product
     newInvoiceLine.setProduct((Product) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_PRODUCT
         : ShipmentInOutLine.PROPERTY_PRODUCT));
-
     // Update the attributes
     AttributeSetInstance attributeSetValue = (AttributeSetInstance) copiedLine
         .get(isOrderLine ? OrderLine.PROPERTY_ATTRIBUTESETVALUE
             : ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE);
-    if (isInstanceAttribute(attributeSetValue)) {
-      AttributeSetInstance newAttributeSetInstance = copyAttributeSetValue(attributeSetValue);
-      newInvoiceLine.setAttributeSetValue(newAttributeSetInstance);
+    if (attributeSetValue != null) {
+      newInvoiceLine.setAttributeSetValue(copyAttributeSetValue(attributeSetValue));
     }
-  }
-
-  /**
-   * Return if an attribute set is instance. It returns TRUE if the attribute set is Lot, Serial No.
-   * or Expiration Date or if any of it attributes is an instance attribute
-   * 
-   * @param attributeSetInstance
-   *          The attribute set instance to be validated
-   * @return True if it is instance or False if not
-   */
-  private boolean isInstanceAttribute(final AttributeSetInstance attributeSetInstance) {
-    if (attributeSetInstance == null) {
-      return Boolean.FALSE;
-    }
-    AttributeSet attributeSet = attributeSetInstance.getAttributeSet();
-    List<AttributeUse> attributeUses = attributeSet.getAttributeUseList();
-    boolean hasInstanceAttribute = false;
-    for (AttributeUse attributeUse : attributeUses) {
-      if (attributeUse.getAttribute().isInstanceAttribute()) {
-        hasInstanceAttribute = Boolean.TRUE;
-        break;
-      }
-    }
-    return (attributeSet.isLot() || attributeSet.isSerialNo() || attributeSet.isExpirationDate() || hasInstanceAttribute);
   }
 
   private AttributeSetInstance copyAttributeSetValue(final AttributeSetInstance attributeSetValue) {
     AttributeSetInstance newAttributeSetInstance = copyAttributeSetInstance(attributeSetValue);
     copyAttributes(attributeSetValue, newAttributeSetInstance);
-
     return newAttributeSetInstance;
   }
 
@@ -127,7 +95,6 @@ class UpdateProductAndAttributes implements CreateLinesFromProcessImplementation
       newAttributeInstance.setAttributeSetValue(attributeSetInstanceTo);
       newAttributeInstance.setAttribute(attrInstance.getAttribute());
       attrInstance.setAttributeValue(attrInstance.getAttributeValue());
-
       attributeSetInstanceTo.getAttributeInstanceList().add(newAttributeInstance);
       OBDal.getInstance().save(newAttributeInstance);
       OBDal.getInstance().save(attributeSetInstanceTo);
