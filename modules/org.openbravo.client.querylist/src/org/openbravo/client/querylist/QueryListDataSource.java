@@ -246,28 +246,20 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         }
       }
 
-      final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+      final List<Map<String, Object>> result = new ArrayList<>();
 
       if (fetchingSummaryFields) {
         // process the response for the summary row
-        Map<String, Object> summaryData = new LinkedHashMap<String, Object>();
+        Map<String, Object> summaryData = new LinkedHashMap<>();
         try {
           JSONObject summaryFieldsObject = new JSONObject(
               parameters.get(JsonConstants.SUMMARY_PARAMETER));
+          Tuple uniqueResult = widgetQuery.uniqueResult();
           Iterator<?> summaryFieldNameIterator = summaryFieldsObject.keys();
-          Object uniqueResult = widgetQuery.uniqueResult();
-          if (uniqueResult instanceof Object[]) {
-            // handles the case where the values of several summary fields are request
-            Object[] summaryValues = (Object[]) uniqueResult;
-            int i = 0;
-            while (summaryFieldNameIterator.hasNext()) {
-              String summaryFieldName = (String) summaryFieldNameIterator.next();
-              summaryData.put(summaryFieldName, summaryValues[i++]);
-            }
-          } else {
-            // handles the case where the value of just one summary field is request
-            String summaryFieldName = (String) summaryFieldsObject.names().get(0);
-            summaryData.put(summaryFieldName, uniqueResult);
+          int i = 0;
+          while (summaryFieldNameIterator.hasNext()) {
+            String summaryFieldName = (String) summaryFieldNameIterator.next();
+            summaryData.put(summaryFieldName, uniqueResult.get(i++));
           }
           summaryData.put("isGridSummary", true);
         } catch (Exception e) {
