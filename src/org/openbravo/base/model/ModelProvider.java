@@ -872,13 +872,22 @@ public class ModelProvider implements OBSingleton {
     }
   }
 
-  public <T extends Object> List<T> list(Session s, Class<T> clazz) {
-    CriteriaBuilder builder = s.getCriteriaBuilder();
+  /**
+   * Retrieves a list of model objects of the class passed as parameter.
+   * 
+   * @param session
+   *          the session used to query for the objects
+   * @param clazz
+   *          the class of the model objects to be retrieved
+   * @return a list of model objects
+   */
+  public <T extends Object> List<T> list(Session session, Class<T> clazz) {
+    CriteriaBuilder builder = session.getCriteriaBuilder();
     CriteriaQuery<T> criteria = builder.createQuery(clazz);
     Root<T> root = criteria.from(clazz);
     criteria.select(root);
 
-    Query<T> query = s.createQuery(criteria);
+    Query<T> query = session.createQuery(criteria);
     return query.list();
   }
 
@@ -886,15 +895,15 @@ public class ModelProvider implements OBSingleton {
     return modules;
   }
 
-  private List<Module> retrieveModules(Session s) {
-    CriteriaBuilder builder = s.getCriteriaBuilder();
+  private List<Module> retrieveModules(Session session) {
+    CriteriaBuilder builder = session.getCriteriaBuilder();
     CriteriaQuery<Module> criteria = builder.createQuery(Module.class);
     Root<Module> root = criteria.from(Module.class);
     criteria.select(root);
     criteria.where(builder.equal(root.get("active"), true));
     criteria.orderBy(builder.asc(root.get("seqno")));
 
-    Query<Module> query = s.createQuery(criteria);
+    Query<Module> query = session.createQuery(criteria);
     return query.list();
   }
 

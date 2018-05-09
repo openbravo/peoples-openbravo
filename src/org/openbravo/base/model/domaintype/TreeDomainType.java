@@ -42,7 +42,7 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
 
   @Override
   public List<Class<?>> getClasses() {
-    List<Class<?>> listOfClasses = new ArrayList<Class<?>>();
+    List<Class<?>> listOfClasses = new ArrayList<>();
     listOfClasses.add(RefTree.class);
     return listOfClasses;
   }

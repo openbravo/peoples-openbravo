@@ -43,7 +43,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
 
   @Override
   public List<Class<?>> getClasses() {
-    List<Class<?>> listOfClasses = new ArrayList<Class<?>>();
+    List<Class<?>> listOfClasses = new ArrayList<>();
     listOfClasses.add(SelectorDefinition.class);
     listOfClasses.add(DatasourceDefinition.class);
     return listOfClasses;
@@ -112,6 +112,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
    * org.openbravo.base.model.domaintype.BaseForeignKeyDomainType#getForeignKeyColumn(java.lang.
    * String)
    */
+  @Override
   public Column getForeignKeyColumn(String columnName) {
     while (!column.isKey() && column.getDomainType() instanceof ForeignKeyDomainType) {
       column = ((ForeignKeyDomainType) column.getDomainType()).getForeignKeyColumn(column
@@ -128,6 +129,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
    * org.openbravo.base.model.domaintype.BaseForeignKeyDomainType#getReferedTableName(java.lang.
    * String)
    */
+  @Override
   protected String getReferedTableName(String columnName) {
     return tableName;
   }
