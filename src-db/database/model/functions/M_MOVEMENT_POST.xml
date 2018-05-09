@@ -252,6 +252,7 @@
                 SET quantity = quantity - v_qtytorelease
               WHERE m_reservation_stock_id = cur_res_stock.m_reservation_stock_id;
               M_RESERVE_STOCK_MANUAL(cur_moveline.m_reservation_id, 'SD', v_storage_detail_id, v_qtytorelease, v_p_user, cur_res_stock.isallocated, v_res_stock_id);
+              DBMS_OUTPUT.PUT_LINE('M_Reserve_Stock_Manual: ' || v_res_stock_id);
 
               v_reservedqty := v_reservedqty - v_qtytorelease;
               IF (v_reservedqty <= 0) THEN

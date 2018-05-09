@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,9 @@
 
 package org.openbravo.test.dal;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
@@ -82,7 +82,7 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
     setTestAdminContext();
 
     // the query parameters are added to this list
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(6);
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as rl");
 
@@ -114,41 +114,40 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
 
     // AND (M_REQUISITIONLINE.LOCKEDBY IS NULL OR
     // COALESCE (M_REQUISITIONLINE.LOCKDATE, TO_DATE('01-01-1900', 'DD-MM-YYYY')) < (now()-3))
-    whereClause.append(" and (rl.lockedBy = null or rl.lockDate<? or rl.lockDate = null)");
+    whereClause.append(" and (rl.lockedBy = null or rl.lockDate<:lockDate or rl.lockDate = null)");
     final long threeDays = 1000 * 3600 * 24 * 3;
-    parameters.add(new Date(System.currentTimeMillis() - threeDays));
+    parameters.put("lockDate", new Date(System.currentTimeMillis() - threeDays));
 
     // AND M_REQUISITION.AD_CLIENT_ID IN ? <-- Done by the DAL
     // AND M_REQUISITIONLINE.AD_ORG_ID IN ? <-- Done by the DAL
 
     // AND M_REQUISITIONLINE.NEEDBYDATE >= ?
-    whereClause.append(" and rl.needByDate>=?");
+    whereClause.append(" and rl.needByDate>=:needByDateFrom");
     // needByDate from, set at 30 days back
     final long thirtyDays = threeDays * 10;
-    parameters.add(new Date(System.currentTimeMillis() - thirtyDays));
+    parameters.put("needByDateFrom", new Date(System.currentTimeMillis() - thirtyDays));
 
     // AND AND M_REQUISITIONLINE.NEEDBYDATE < ?
-    whereClause.append(" and rl.needByDate<?");
+    whereClause.append(" and rl.needByDate<:needByDateTo");
     // needByDate to, set at 30 days in the future
-    parameters.add(new Date(System.currentTimeMillis() + thirtyDays));
+    parameters.put("needByDateTo", new Date(System.currentTimeMillis() + thirtyDays));
 
     // AND M_REQUISITIONLINE.M_PRODUCT_ID = ?
-    whereClause.append(" and rl.product.id=?");
-    parameters.add("1000010");
+    whereClause.append(" and rl.product.id=:productId");
+    parameters.put("productId", "1000010");
 
     // AND M_REQUISITION.AD_USER_ID = TO_CHAR(?)
-    whereClause.append(" and rl.requisition.userContact.id=?");
-    parameters.add("100");
+    whereClause.append(" and rl.requisition.userContact.id=:userId");
+    parameters.put("userId", "100");
 
     // AND ((M_REQUISITIONLINE.C_BPARTNER_ID = ? OR M_REQUISITION.C_BPARTNER_ID = ?) OR
     // (M_REQUISITIONLINE.C_BPARTNER_ID IS NULL AND M_REQUISITION.C_BPARTNER_ID IS NULL))
     // ORDER BY M_REQUISITIONLINE.NEEDBYDATE, M_REQUISITIONLINE.M_PRODUCT_ID,
     // M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
     whereClause
-        .append(" and ((rl.businessPartner.id = ? or rl.requisition.businessPartner.id = ?) or "
+        .append(" and ((rl.businessPartner.id = :bpId or rl.requisition.businessPartner.id = :bpId) or "
             + "(rl.businessPartner = null and rl.requisition.businessPartner = null))");
-    parameters.add("1000011");
-    parameters.add("1000011");
+    parameters.put("bpId", "1000011");
 
     // ORDER BY M_REQUISITIONLINE.NEEDBYDATE, M_REQUISITIONLINE.M_PRODUCT_ID,
     // M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
@@ -157,7 +156,7 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
     final OBQuery<RequisitionLine> obQuery = OBDal.getInstance().createQuery(RequisitionLine.class,
         whereClause.toString());
 
-    obQuery.setParameters(parameters);
+    obQuery.setNamedParameters(parameters);
 
     // now print the select clause parts
     for (RequisitionLine requisitionLine : obQuery.list()) {
@@ -235,29 +234,30 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
 
     // AND (M_REQUISITIONLINE.LOCKEDBY IS NULL OR
     // COALESCE (M_REQUISITIONLINE.LOCKDATE, TO_DATE('01-01-1900', 'DD-MM-YYYY')) < (now()-3))
-    whereClause.append(" and (lockedBy = null or lockDate<? or lockDate = null)");
+    whereClause.append(" and (lockedBy = null or lockDate<:lockDate or lockDate = null)");
 
     // AND M_REQUISITION.AD_CLIENT_ID IN ? <-- Done by the DAL
     // AND M_REQUISITIONLINE.AD_ORG_ID IN ? <-- Done by the DAL
 
     // AND M_REQUISITIONLINE.NEEDBYDATE >= ?
-    whereClause.append(" and needByDate>=?");
+    whereClause.append(" and needByDate>=:needByDateFrom");
 
     // AND AND M_REQUISITIONLINE.NEEDBYDATE < ?
-    whereClause.append(" and needByDate<?");
+    whereClause.append(" and needByDate<:needByDateTo");
 
     // AND M_REQUISITIONLINE.M_PRODUCT_ID = ?
-    whereClause.append(" and product.id=?");
+    whereClause.append(" and product.id=:productId");
 
     // AND M_REQUISITION.AD_USER_ID = TO_CHAR(?)
-    whereClause.append(" and requisition.userContact.id=?");
+    whereClause.append(" and requisition.userContact.id=:userId");
 
     // AND ((M_REQUISITIONLINE.C_BPARTNER_ID = ? OR M_REQUISITION.C_BPARTNER_ID = ?) OR
     // (M_REQUISITIONLINE.C_BPARTNER_ID IS NULL AND M_REQUISITION.C_BPARTNER_ID IS NULL))
     // ORDER BY M_REQUISITIONLINE.NEEDBYDATE, M_REQUISITIONLINE.M_PRODUCT_ID,
     // M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
-    whereClause.append(" and ((businessPartner.id = ? or requisition.businessPartner.id = ?) or "
-        + "(businessPartner = null and requisition.businessPartner = null))");
+    whereClause
+        .append(" and ((businessPartner.id = :bpId or requisition.businessPartner.id = :bpId) or "
+            + "(businessPartner = null and requisition.businessPartner = null))");
 
     // ORDER BY M_REQUISITIONLINE.NEEDBYDATE, M_REQUISITIONLINE.M_PRODUCT_ID,
     // M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
@@ -267,30 +267,29 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
         whereClause.toString());
 
     // now set the parameters
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>(6);
 
     // lockDate
     final long threeDays = 1000 * 3600 * 24 * 3;
-    parameters.add(new Date(System.currentTimeMillis() - threeDays));
+    parameters.put("lockDate", new Date(System.currentTimeMillis() - threeDays));
 
     // needByDate from, set at 30 days back
     final long thirtyDays = threeDays * 10;
-    parameters.add(new Date(System.currentTimeMillis() - thirtyDays));
+    parameters.put("needByDateFrom", new Date(System.currentTimeMillis() - thirtyDays));
 
     // needByDate to, set at 30 days in the future
-    parameters.add(new Date(System.currentTimeMillis() + thirtyDays));
+    parameters.put("needByDateTo", new Date(System.currentTimeMillis() + thirtyDays));
 
     // product.id
-    parameters.add("1000010");
+    parameters.put("productId", "1000010");
 
     // userContact.id
-    parameters.add("100");
+    parameters.put("userId", "100");
 
     // businessPartner.id
-    parameters.add("1000011");
-    parameters.add("1000011");
+    parameters.put("bpId", "1000011");
 
-    obQuery.setParameters(parameters);
+    obQuery.setNamedParameters(parameters);
 
     // now print the select clause parts
     for (RequisitionLine requisitionLine : obQuery.list()) {

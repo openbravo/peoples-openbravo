@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,9 +28,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
+import org.openbravo.client.application.report.JmxReportCache;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.jmx.MBeanRegistry;
+import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -42,18 +45,26 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 @ApplicationScoped
 public class KernelApplicationInitializer implements ApplicationInitializer {
-  private static Logger log4j = Logger.getLogger(KernelApplicationInitializer.class);
+  private static final Logger log4j = Logger.getLogger(KernelApplicationInitializer.class);
   private static final String sqlDateTimeFormat = "DD-MM-YYYY HH24:MI:SS";
   private static final String javaDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
   private static final long THRESHOLD = 5000; // 5 seconds
+  private static final String PRODUCTION_INSTANCE = "P";
 
   @Inject
   private StaticResourceProvider resourceProvider;
 
+  @Inject
+  private JmxReportCache reportCache;
+
+  @Inject
+  private ApplicationDictionaryCachedStructures adCachedStructures;
+
   public void initialize() {
     registerSQLFunctions();
     checkDatabaseAndTomcatDateTime();
-    registerStaticResourcesMBean();
+    registerMBeans();
+    setModulesAsNotInDevelopment();
   }
 
   private void registerSQLFunctions() {
@@ -102,7 +113,24 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
     return date;
   }
 
-  private void registerStaticResourcesMBean() {
+  private void registerMBeans() {
     MBeanRegistry.registerMBean(KernelConstants.RESOURCE_COMPONENT_ID, resourceProvider);
+    MBeanRegistry.registerMBean(JmxReportCache.MBEAN_NAME, reportCache);
+  }
+
+  private void setModulesAsNotInDevelopment() {
+    log4j.debug("Checking instance purpose and In Development modules");
+    if (PRODUCTION_INSTANCE.equals(getInstancePurpose()) && adCachedStructures.isInDevelopment()) {
+      adCachedStructures.setNotInDevelopment();
+    }
+  }
+
+  private String getInstancePurpose() {
+    return (String) OBDal
+        .getInstance()
+        .getSession()
+        .createQuery(
+            "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
+                + SystemInformation.ENTITY_NAME).uniqueResult();
   }
 }

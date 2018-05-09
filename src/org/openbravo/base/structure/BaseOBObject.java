@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -129,9 +129,11 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
         OBContext.setAdminMode(true);
         try {
           @SuppressWarnings("unchecked")
-          List<BaseOBObject> trl = OBDal.getInstance().getSession()
-              .createFilter(this.get(p.getTrlOneToManyProperty().getName()), "where language = ?")
-              .setParameter(0, language).list();
+          List<BaseOBObject> trl = OBDal
+              .getInstance()
+              .getSession()
+              .createFilter(this.get(p.getTrlOneToManyProperty().getName()),
+                  "where language = :language").setParameter("language", language).list();
 
           if (!trl.isEmpty()) {
             dataTrl = trl.get(0);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,10 +20,10 @@ package org.openbravo.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -209,7 +209,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strOrg, String strProjectType, String strResponsible, Date dateFromContract,
       Date dateToContract, String strPartner, Date dateFromStarting, Date dateToStarting) {
     final StringBuilder hsqlScript = new StringBuilder();
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>();
 
     hsqlScript.append(" as unitofmeasure");
     hsqlScript.append(" where exists (");
@@ -222,47 +222,47 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     hsqlScript.append("         and tel.uOM.id <> '101' ");
     hsqlScript.append("         and es.processed = 'Y' ");
     if (StringUtils.isNotEmpty(strProject)) {
-      hsqlScript.append("    and p.id = ?");
-      parameters.add(strProject);
+      hsqlScript.append("    and p.id = :projectId");
+      parameters.put("projectId", strProject);
     }
     if (StringUtils.isNotEmpty(strOrg)) {
       hsqlScript.append("    and p." + Project.PROPERTY_ORGANIZATION + ".id in (" + strOrg + ")");
     }
     if (StringUtils.isNotEmpty(strProjectType)) {
-      hsqlScript.append("    and p." + Project.PROPERTY_PROJECTTYPE + ".id = ?");
-      parameters.add(strProjectType);
+      hsqlScript.append("    and p." + Project.PROPERTY_PROJECTTYPE + ".id = :projectTypeId");
+      parameters.put("projectTypeId", strProjectType);
     }
     if (StringUtils.isNotEmpty(strResponsible)) {
-      hsqlScript.append("    and p." + Project.PROPERTY_PERSONINCHARGE + ".id = ?");
-      parameters.add(strResponsible);
+      hsqlScript.append("    and p." + Project.PROPERTY_PERSONINCHARGE + ".id = :responsible");
+      parameters.put("responsible", strResponsible);
     }
     if (StringUtils.isNotEmpty(strPartner)) {
-      hsqlScript.append("    and p." + Project.PROPERTY_BUSINESSPARTNER + ".id = ?");
-      parameters.add(strPartner);
+      hsqlScript.append("    and p." + Project.PROPERTY_BUSINESSPARTNER + ".id = :bpId");
+      parameters.put("bpId", strPartner);
     }
     if (dateFrom != null) {
-      hsqlScript.append("    and es.reportDate >= ?");
-      parameters.add(dateFrom);
+      hsqlScript.append("    and es.reportDate >= :dateFrom");
+      parameters.put("dateFrom", dateFrom);
     }
     if (dateTo != null) {
-      hsqlScript.append("    and es.reportDate <= ?");
-      parameters.add(dateTo);
+      hsqlScript.append("    and es.reportDate <= :dateTo");
+      parameters.put("dateTo", dateTo);
     }
     if (dateFromStarting != null) {
-      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " >= ?");
-      parameters.add(dateFromStarting);
+      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " >= :dateFromStarting");
+      parameters.put("dateFromStarting", dateFromStarting);
     }
     if (dateToStarting != null) {
-      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " < ?");
-      parameters.add(dateToStarting);
+      hsqlScript.append("    and p." + Project.PROPERTY_STARTINGDATE + " < :dateToStarting");
+      parameters.put("dateToStarting", dateToStarting);
     }
     if (dateFromContract != null) {
-      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " >= ?");
-      parameters.add(dateFromContract);
+      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " >= :dateFromContract");
+      parameters.put("dateFromContract", dateFromContract);
     }
     if (dateToContract != null) {
-      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " < ?");
-      parameters.add(dateToContract);
+      hsqlScript.append("    and p." + Project.PROPERTY_CONTRACTDATE + " < :dateToContract");
+      parameters.put("dateToContract", dateToContract);
     }
     hsqlScript.append(" )");
     hsqlScript.append(" and not exists (");
@@ -274,7 +274,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
 
     final OBQuery<UOM> query = OBDal.getReadOnlyInstance().createQuery(UOM.class,
         hsqlScript.toString());
-    query.setParameters(parameters);
+    query.setNamedParameters(parameters);
     return query.list();
   }
 

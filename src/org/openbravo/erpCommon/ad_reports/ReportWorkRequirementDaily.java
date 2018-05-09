@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
@@ -40,6 +37,9 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -97,7 +97,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     try {
       jasperReportProducts = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily.jrxml",
-          vars.getLanguage(), strBaseDesign);
+          vars.getLanguage());
     } catch (JRException e) {
       log4j.error("Could not load/compile jrxml-file", e);
       throw new ServletException(e);
@@ -107,7 +107,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
     try {
       jasperReportProducts2 = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
           + "/org/openbravo/erpCommon/ad_reports/SubreportWorkRequirementDaily2.jrxml",
-          vars.getLanguage(), strBaseDesign);
+          vars.getLanguage());
     } catch (JRException e) {
       log4j.error("Could not load/compile jrxml-file", e);
       throw new ServletException(e);

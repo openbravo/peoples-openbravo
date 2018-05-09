@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -20,9 +20,9 @@ package org.openbravo.advpaymentmngt.ad_forms;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -586,25 +586,27 @@ public class Transactions extends HttpSecureAppServlet {
       return Utility.messageBD(myPool, "Y", vars.getLanguage());
     if ("N".equals(strPosted))
       return Utility.messageBD(myPool, "N", vars.getLanguage());
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>();
     final StringBuilder whereClause = new StringBuilder();
     whereClause.append(" as l");
     whereClause.append(" where l." + org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE
-        + ".id = ?");
-    whereClause.append(" and l." + org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY + " = ?");
+        + ".id = :referenceId");
+    whereClause.append(" and l." + org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY
+        + " = :searchKey");
     // Reference ID for Posted list is 234
-    parameters.add("234");
-    parameters.add(strPosted);
+    parameters.put("referenceId", "234");
+    parameters.put("searchKey", strPosted);
     OBContext.setAdminMode();
     try {
       final OBQuery<org.openbravo.model.ad.domain.List> obQuery = OBDal.getInstance().createQuery(
           org.openbravo.model.ad.domain.List.class, whereClause.toString());
-      obQuery.setParameters(parameters);
+      obQuery.setNamedParameters(parameters);
       List<org.openbravo.model.ad.domain.List> list = null;
-      if (obQuery != null && obQuery.list().size() > 0) {
+      if (!obQuery.list().isEmpty()) {
         list = obQuery.list();
-      } else
+      } else {
         return strPosted;
+      }
       return list.get(0).getName();
     } finally {
       OBContext.restorePreviousMode();

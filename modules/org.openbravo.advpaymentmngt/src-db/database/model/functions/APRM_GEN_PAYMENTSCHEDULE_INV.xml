@@ -657,7 +657,8 @@ BEGIN
         v_ConvertedAmount := COALESCE(V_OutstandingAmount, 0) * v_creditmultiplier;
       end if;
       UPDATE C_BPARTNER
-      SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) + v_ConvertedAmount
+      SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) + v_ConvertedAmount,
+      UPDATED = now()
       WHERE C_BPARTNER_ID = v_BPartner_ID;
 
       -- Automatic creation of payment and financial transaction
@@ -999,7 +1000,8 @@ BEGIN
                   v_ConvertedAmount := (COALESCE(cur_paymentschedule.OUTSTANDINGAMT, 0) * v_creditmultiplier);
                 end if;
                 UPDATE C_BPARTNER
-                SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - v_ConvertedAmount
+                SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - v_ConvertedAmount,
+                UPDATED = now()
                 WHERE C_BPARTNER_ID = v_BPartner_ID;
               END IF;
               -- Automatic creation of financial transaction
@@ -1070,8 +1072,6 @@ BEGIN
 
   ELSIF (p_docaction = 'RE') THEN
     DECLARE
-      v_count NUMBER;
-      v_documentno VARCHAR2(40);
       v_PaymentPlanExpectedTotal NUMBER:= 0;
     BEGIN
       SELECT count(*), max(p.documentno)
@@ -1148,7 +1148,8 @@ BEGIN
         v_ConvertedAmount := ((v_PaymentPlanExpectedTotal - v_PaidAmount) * v_creditmultiplier);
       END IF;
       UPDATE C_BPARTNER
-         SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - v_convertedAmount
+         SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - v_convertedAmount,
+         UPDATED = now()
       WHERE C_BPARTNER_ID = v_BPartner_ID;
 
       -- Delete C_InvoiceTax_CashVAT records for this invoice
@@ -1168,7 +1169,6 @@ BEGIN
 
   ELSIF (p_docaction = 'RC') THEN
     DECLARE
-      v_count NUMBER;
       v_prepaymentamt NUMBER;
     BEGIN
       v_delete_paymentplan := TRUE;

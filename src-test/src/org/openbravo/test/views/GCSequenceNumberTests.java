@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,13 @@
 
 package org.openbravo.test.views;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.GCTab;
@@ -32,7 +35,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test cases with different combinations of grid configurations at tab level with different
@@ -41,7 +43,7 @@ import org.openbravo.test.base.OBBaseTest;
  * @author NaroaIriarte
  *
  */
-public class GCSequenceNumberTests extends OBBaseTest {
+public class GCSequenceNumberTests extends GridConfigurationTest {
   private static final String CLIENT_FOR_GC_SYSTEM_FIELD_TAB = "0";
   private static final String ZERO_ORGANIZATION = "0";
   private static final String BUSINESS_PARTNER_TAB_ID = "220";
@@ -52,6 +54,15 @@ public class GCSequenceNumberTests extends OBBaseTest {
   private static final String NO = "N";
   private static final long LOW_SEQUENCE_NUMBER = 10;
   private static final long HIGH_SEQUENCE_NUMBER = 20;
+
+  /**
+   * Execute these test cases only if there is no custom grid config as it could make unstable
+   * results
+   */
+  @Before
+  public void shouldExecuteOnlyIfThereIsNoGridConfig() {
+    assumeThat("Number of custom grid configs", getNumberOfGridConfigurations(), is(0));
+  }
 
   /**
    * If different sequence number is set for the same tab, the expected behavior is that the

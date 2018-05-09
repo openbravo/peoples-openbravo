@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -482,7 +482,10 @@ isc.OBUserProfile.addProperties({
 
       // the callback displays an info dialog and then hides the form
       doSaveCallback: function (rpcResponse, data, rpcRequest) {
-        var i, length;
+        var i, length, dialogCallback = function () {
+            return true;
+            };
+
         if (data.result === OB.Constants.SUCCESS) {
           isc.OBQuickRun.hide();
           isc.say(OB.I18N.getLabel('UINAVBA_PasswordChanged'));
@@ -492,9 +495,15 @@ isc.OBUserProfile.addProperties({
           }
           if (data.fields) {
             length = data.fields.length;
+
             for (i = 0; i < length; i++) {
               var field = data.fields[i];
-              pwdForm.addFieldErrors(field.field, OB.I18N.getLabel(field.messageCode), true);
+              var errorMessage = OB.I18N.getLabel(field.messageCode);
+              pwdForm.addFieldErrors(field.field, errorMessage, true);
+              isc.warn(errorMessage, dialogCallback, {
+                icon: '[SKINIMG]Dialog/error.png',
+                title: OB.I18N.getLabel('OBUIAPP_Error')
+              });
             }
           }
         }
@@ -521,6 +530,18 @@ isc.OBUserProfile.addProperties({
         }
         pwdForm.focusInItem(item.name);
       },
+
+      itemHoverHTML: function (item) {
+        if (!item.isVisible()) {
+          return null;
+        }
+        var errs = item.getErrors();
+        if (!errs) {
+          return this.Super('itemHoverHTML', arguments);
+        }
+        return OB.Utilities.getPromptString(errs);
+      },
+
       fields: [currentPasswordField, newPasswordField, confirmPasswordField]
     });
 

@@ -121,7 +121,7 @@ export.database.structure: Exports the database structure in the xml's files.
       <taskdef name="exportdatabase" classname="org.openbravo.ddlutils.task.ExportDatabase">
         <classpath refid="runtime-classpath" />
       </taskdef>
-      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" codeRevision="${code.revision}" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" checkTranslationConsistency="${checkTranslationConsistency}" threads="${max.threads}"/>
+      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" checkTranslationConsistency="${checkTranslationConsistency}" threads="${max.threads}"/>
       <antcall target="update.dbupdate.timestamp" />
   </target>
 
@@ -150,7 +150,6 @@ export.database.structure: Exports the database structure in the xml's files.
         </fileset>
       </classpath>
       <transaction>
-          UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
           CALL AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL WHERE STATUS IS NULL OR STATUS='I';
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N' WHERE ISINDEVELOPMENT IS NULL;
@@ -168,7 +167,6 @@ export.database.structure: Exports the database structure in the xml's files.
         </fileset>
       </classpath>
       <transaction>
-          UPDATE AD_SYSTEM_INFO SET CODE_REVISION=SUBSTR('${code.revision}',1,60);
           SELECT AD_UPDATE_ACCESS();
           UPDATE AD_MODULE SET SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL WHERE STATUS IS NULL OR STATUS='I';
           UPDATE AD_MODULE SET ISINDEVELOPMENT='N' WHERE ISINDEVELOPMENT IS NULL;

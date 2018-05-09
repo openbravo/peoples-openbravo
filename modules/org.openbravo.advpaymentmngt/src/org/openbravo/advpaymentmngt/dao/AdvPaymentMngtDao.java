@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -231,7 +231,7 @@ public class AdvPaymentMngtDao {
       String strAmountFrom, String strAmountTo) {
 
     final StringBuilder whereClause = new StringBuilder();
-    final List<Object> parameters = new ArrayList<Object>();
+    final Map<String, Object> parameters = new HashMap<>();
 
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done
@@ -313,14 +313,14 @@ public class AdvPaymentMngtDao {
         if (transactionDateFrom != null) {
           whereClause.append(" and inv.");
           whereClause.append(Invoice.PROPERTY_INVOICEDATE);
-          whereClause.append(" >= ?");
-          parameters.add(transactionDateFrom);
+          whereClause.append(" >= :transactionDateFrom");
+          parameters.put("transactionDateFrom", transactionDateFrom);
         }
         if (transactionDateTo != null) {
           whereClause.append(" and inv.");
           whereClause.append(Invoice.PROPERTY_INVOICEDATE);
-          whereClause.append(" < ?");
-          parameters.add(transactionDateTo);
+          whereClause.append(" < :transactionDateTo");
+          parameters.put("transactionDateTo", transactionDateTo);
         }
         whereClause.append(" and inv.");
         whereClause.append(Invoice.PROPERTY_SALESTRANSACTION);
@@ -381,14 +381,14 @@ public class AdvPaymentMngtDao {
         if (transactionDateFrom != null) {
           whereClause.append(" and ord.");
           whereClause.append(Order.PROPERTY_ORDERDATE);
-          whereClause.append(" >= ?");
-          parameters.add(transactionDateFrom);
+          whereClause.append(" >= :transactionDateFrom");
+          parameters.put("transactionDateFrom", transactionDateFrom);
         }
         if (transactionDateTo != null) {
           whereClause.append(" and ord.");
           whereClause.append(Order.PROPERTY_ORDERDATE);
-          whereClause.append(" < ?");
-          parameters.add(transactionDateTo);
+          whereClause.append(" < :transactionDateTo");
+          parameters.put("transactionDateTo", transactionDateTo);
         }
         if (!StringUtils.isEmpty(strDocumentNo)) {
           whereClause.append(" and ord.");
@@ -414,8 +414,8 @@ public class AdvPaymentMngtDao {
         whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         whereClause.append(", ops.");
         whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        whereClause.append(") >= ?");
-        parameters.add(dueDateFrom);
+        whereClause.append(") >= :dueDateFrom");
+        parameters.put("dueDateFrom", dueDateFrom);
       }
       // dateTo
       if (dueDateTo != null) {
@@ -423,8 +423,8 @@ public class AdvPaymentMngtDao {
         whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         whereClause.append(", ops.");
         whereClause.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        whereClause.append(") < ?");
-        parameters.add(dueDateTo);
+        whereClause.append(") < :dueDateTo");
+        parameters.put("dueDateTo", dueDateTo);
       }
 
       // expecteddateFrom
@@ -433,8 +433,8 @@ public class AdvPaymentMngtDao {
         whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
         whereClause.append(", ops.");
         whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        whereClause.append(") >= ?");
-        parameters.add(expectedDateFrom);
+        whereClause.append(") >= :expectedDateFrom");
+        parameters.put("expectedDateFrom", expectedDateFrom);
       }
       // expecteddateTo
       if (expectedDateTo != null) {
@@ -442,8 +442,8 @@ public class AdvPaymentMngtDao {
         whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
         whereClause.append(", ops.");
         whereClause.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        whereClause.append(") < ?");
-        parameters.add(expectedDateTo);
+        whereClause.append(") < :expectedDateTo");
+        parameters.put("expectedDateTo", expectedDateTo);
       }
 
       // TODO: Add order to show first scheduled payments from invoices and later scheduled payments
@@ -470,7 +470,7 @@ public class AdvPaymentMngtDao {
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance().createQuery(
           FIN_PaymentScheduleDetail.class, whereClause.toString());
 
-      obqPSD.setParameters(parameters);
+      obqPSD.setNamedParameters(parameters);
       return obqPSD.list();
 
     } finally {
@@ -1208,7 +1208,7 @@ public class AdvPaymentMngtDao {
     OBContext.setAdminMode();
     try {
       final StringBuilder whereClause = new StringBuilder();
-      final List<Object> parameters = new ArrayList<Object>();
+      final Map<String, Object> parameters = new HashMap<>();
 
       whereClause.append(" as p ");
       whereClause.append(" where p.");
@@ -1224,18 +1224,17 @@ public class AdvPaymentMngtDao {
       whereClause.append(" as ft");
       whereClause.append(" where ft.");
       whereClause.append(FIN_FinaccTransaction.PROPERTY_ACCOUNT);
-      whereClause.append(".id = ? ");
+      whereClause.append(".id = :accountId ");
       whereClause.append(" and ft.");
       whereClause.append(FIN_FinaccTransaction.PROPERTY_PROCESSED);
       whereClause.append(" = true) ");
       whereClause.append(" and p.");
       whereClause.append(FIN_Payment.PROPERTY_ACCOUNT);
-      whereClause.append(".id = ? ");
+      whereClause.append(".id = :accountId ");
       whereClause.append(" and p.");
       whereClause.append(FIN_Payment.PROPERTY_STATUS);
       whereClause.append(" IN ('RPR', 'PPM')");
-      parameters.add(account.getId());
-      parameters.add(account.getId());
+      parameters.put("accountId", account.getId());
       // IsReceipt
       whereClause.append(" and p.");
       whereClause.append(FIN_Payment.PROPERTY_RECEIPT);
@@ -1251,15 +1250,15 @@ public class AdvPaymentMngtDao {
       if (fromDate != null) {
         whereClause.append(" and p.");
         whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        whereClause.append(" >= ? ");
-        parameters.add(fromDate);
+        whereClause.append(" >= :fromDate ");
+        parameters.put("fromDate", fromDate);
       }
       // To Date
       if (toDate != null) {
         whereClause.append(" AND p.");
         whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        whereClause.append(" < ?");
-        parameters.add(toDate);
+        whereClause.append(" < :toDate");
+        parameters.put("toDate", toDate);
       }
       // Order by date and payment no
       whereClause.append(" ORDER BY p.");
@@ -1338,7 +1337,7 @@ public class AdvPaymentMngtDao {
     OBContext.setAdminMode();
     try {
       final StringBuilder whereClause = new StringBuilder();
-      final List<Object> parameters = new ArrayList<Object>();
+      final Map<String, Object> parameters = new HashMap<>();
 
       whereClause.append(" as p ");
       whereClause.append(" where p.");
@@ -1353,7 +1352,7 @@ public class AdvPaymentMngtDao {
       whereClause.append(" as ft");
       whereClause.append(" where ft.");
       whereClause.append(FinAccPaymentMethod.PROPERTY_ACCOUNT);
-      whereClause.append(".id = ?) ");
+      whereClause.append(".id = :accountId) ");
       whereClause.append(" and p.");
       whereClause.append(FIN_Payment.PROPERTY_STATUS);
       whereClause.append(" IN ('RPR', 'PPM')");
@@ -1366,9 +1365,8 @@ public class AdvPaymentMngtDao {
       whereClause.append(".id");
       whereClause.append(" from ");
       whereClause.append(" FIN_Financial_Account as fa");
-      whereClause.append(" where fa.id = ? )");
-      parameters.add(account.getId());
-      parameters.add(account.getId());
+      whereClause.append(" where fa.id = :accountId )");
+      parameters.put("accountId", account.getId());
       // IsReceipt
       whereClause.append(" and p.");
       whereClause.append(FIN_Payment.PROPERTY_RECEIPT);
@@ -1384,15 +1382,15 @@ public class AdvPaymentMngtDao {
       if (fromDate != null) {
         whereClause.append(" and p.");
         whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        whereClause.append(" >= ? ");
-        parameters.add(fromDate);
+        whereClause.append(" >= :fromDate ");
+        parameters.put("fromDate", fromDate);
       }
       // To Date
       if (toDate != null) {
         whereClause.append(" AND p.");
         whereClause.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        whereClause.append(" < ?");
-        parameters.add(toDate);
+        whereClause.append(" < :toDate");
+        parameters.put("toDate", toDate);
       }
       // Order by date and payment no
       whereClause.append(" ORDER BY p.");

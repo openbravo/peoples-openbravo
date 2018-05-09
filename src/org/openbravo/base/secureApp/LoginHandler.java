@@ -30,6 +30,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.ChangePasswordException;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.client.application.CachedPreference;
@@ -54,6 +55,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.server.ServerControllerHandler;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.password.PasswordStrengthChecker;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -78,6 +80,9 @@ public class LoginHandler extends HttpBaseServlet {
 
   @Inject
   private CachedPreference cachedPreference;
+
+  @Inject
+  private PasswordStrengthChecker passwordStrengthChecker;
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException,
@@ -139,12 +144,9 @@ public class LoginHandler extends HttpBaseServlet {
           }
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
-        } catch (AuthenticationExpirationPasswordException aepe) {
-
+        } catch (AuthenticationExpirationPasswordException|ChangePasswordException exception) {
           vars.removeSessionValue("#LoginErrorMsg");
-          goToUpdatePassword(res, vars, aepe.getOBError().getMessage(), aepe.getOBError()
-              .getTitle(), "Error", "../security/Login_FS.html");
-
+          goToUpdatePassword(res, vars, exception, "../security/Login_FS.html");
         } catch (AuthenticationException e) {
 
           final OBError errorMsg = e.getOBError();
@@ -555,16 +557,12 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  @Deprecated
-  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
-      String message, String title, String msgType, String action, boolean doRedirect)
-      throws IOException, ServletException {
-    goToUpdatePassword(response, vars, message, title, msgType, action);
-  }
-
-  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
-      String message, String title, String msgType, String action) throws IOException,
+  private void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
+      AuthenticationException authenticationException, String action) throws IOException,
       ServletException {
+    String title = authenticationException.getOBError().getTitle();
+    String message = authenticationException.getOBError().getMessage();
+
     String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
         "CPEmptyUserPassword", vars.getLanguage());
 
@@ -572,14 +570,14 @@ public class LoginHandler extends HttpBaseServlet {
       JSONObject jsonMsg = new JSONObject();
       jsonMsg.put("showMessage", true);
       jsonMsg.put("target", action);
-      jsonMsg.put("messageType", msgType);
+      jsonMsg.put("messageType", "Error");
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);
       jsonMsg.put("resetPassword", true);
-      jsonMsg.put("loggedUser", vars.getStringParameter("user"));
-      if ("Confirmation".equals(msgType)) {
-        jsonMsg.put("command", "FORCE_NAMED_USER");
+      if (authenticationException instanceof ChangePasswordException) {
+        jsonMsg.put("attemptedChange", true);
       }
+      jsonMsg.put("loggedUser", vars.getStringParameter("user"));
       response.setContentType("application/json;charset=UTF-8");
       final PrintWriter out = response.getWriter();
       out.print(jsonMsg.toString());
@@ -597,9 +595,8 @@ public class LoginHandler extends HttpBaseServlet {
 
   /**
    * Update user password for userId with unHashedPassword provided, throws
-   * AuthenticationExpirationPasswordException in case the new password is the same that the old
-   * one.
-   * 
+   * AuthenticationExpirationPasswordException when the provided password is the same as the old one
+   * or when the password is not strong enough.
    * 
    * @param userId
    *          the userId
@@ -623,11 +620,9 @@ public class LoginHandler extends HttpBaseServlet {
       String oldPassword = userOB.getPassword();
       String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
       if (oldPassword.equals(newPassword)) {
-        OBError errorMsg = new OBError();
-        errorMsg.setType("Error");
-        errorMsg.setTitle(Utility.messageBD(myPool, "CPDifferentPassword", language));
-        errorMsg.setMessage(Utility.messageBD(myPool, "CPSamePasswordThanOld", language));
-        throw new AuthenticationExpirationPasswordException(errorMsg.getMessage(), errorMsg, false);
+        throwChangePasswordException("CPDifferentPassword", "CPSamePasswordThanOld", language);
+      } else if (!passwordStrengthChecker.isStrongPassword(unHashedPassword)) {
+        throwChangePasswordException("CPWeakPasswordTitle", "CPPasswordNotStrongEnough", language);
       } else {
         userOB.setPassword(newPassword);
         OBDal.getInstance().save(userOB);
@@ -637,5 +632,14 @@ public class LoginHandler extends HttpBaseServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void throwChangePasswordException(String titleKey, String messageKey, String language)
+      throws ChangePasswordException {
+    OBError errorMsg = new OBError();
+    errorMsg.setType("Error");
+    errorMsg.setTitle(Utility.messageBD(myPool, titleKey, language));
+    errorMsg.setMessage(Utility.messageBD(myPool, messageKey, language));
+    throw new ChangePasswordException(errorMsg.getMessage(), errorMsg);
   }
 }
