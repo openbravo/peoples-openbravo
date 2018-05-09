@@ -631,9 +631,7 @@ public class ModelProvider implements OBSingleton {
     final String columnQry = sfController.getColumnMetadataQuery();
 
     final Map<String, Boolean> result = new HashMap<>();
-    @SuppressWarnings("rawtypes")
-    final NativeQuery sqlQuery = session.createNativeQuery(columnQry);
-    for (final Object row : sqlQuery.list()) {
+    for (final Object row : session.createNativeQuery(columnQry).list()) {
       final Object[] vals = (Object[]) row;
       final String key = createColumnMandatoryKey(vals[0], vals[1]);
       if (vals[2] instanceof String) {

@@ -24,7 +24,6 @@ import javax.servlet.ServletException;
 
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.type.StandardBasicTypes;
 import org.openbravo.client.kernel.ApplicationInitializer;
 import org.openbravo.dal.service.OBDal;
@@ -61,10 +60,7 @@ public class APRMApplicationInitializer implements ApplicationInitializer {
 
   private boolean existsStrAgg() {
     try {
-      @SuppressWarnings("rawtypes")
-      NativeQuery qry = OBDal.getInstance().getSession()
-          .createNativeQuery("select stragg(1) from dual");
-      qry.list();
+      OBDal.getInstance().getSession().createNativeQuery("select stragg(1) from dual").list();
     } catch (Exception e) {
       return false;
     }
