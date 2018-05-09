@@ -50,6 +50,7 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
   private BaseOBObject copiedLine;
   private InvoiceLine invoiceLine;
   private boolean isOrderLine;
+  private JSONObject pickExecLineValues;
 
   @Override
   public int getOrder() {
@@ -67,6 +68,7 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
     this.copiedLine = selectedLine;
     this.invoiceLine = newInvoiceLine;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
+    this.pickExecLineValues = pickExecuteLineValues;
 
     // Create to the new invoice line the reference to the order line from it is created
     updateOrderLineReference();
@@ -88,6 +90,8 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
   private void updateOrderLineReference() {
     if (isOrderLine) {
       invoiceLine.setSalesOrderLine((OrderLine) copiedLine);
+      invoiceLine
+          .setGoodsShipmentLine(CreateLinesFromUtil.getShipmentInOutLine(pickExecLineValues));
     } else if (CreateLinesFromUtil.isShipmentReceiptLine(copiedLine)) {
       invoiceLine.setGoodsShipmentLine((ShipmentInOutLine) copiedLine);
       invoiceLine.setSalesOrderLine(((ShipmentInOutLine) copiedLine).getSalesOrderLine());

@@ -11210,7 +11210,8 @@ where
   o,  
   @insertion_point_2@ as operativeQuantity,
 (select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))),
-  @insertion_point_3@ as orderQuantity
+  @insertion_point_3@ as orderQuantity,
+  il
 from OrderLine as e   
   join e.salesOrder o   
   join o.priceList pl   
@@ -11220,6 +11221,7 @@ from OrderLine as e
   join o.businessPartner bp 
   left join bp.invoiceSchedule si
   left join e.operativeUOM aum
+  left join e.materialMgmtShipmentInOutLineList il
 where
   @additional_filters@
   @insertion_point_0@]]></HQLQUERY>

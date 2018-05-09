@@ -121,4 +121,15 @@ public class CreateLinesFromUtil {
     }
   }
 
+  public static ShipmentInOutLine getShipmentInOutLine(JSONObject selectedPEValuesInLine) {
+    ShipmentInOutLine inOutLine = null;
+    try {
+      String inOutLineId = selectedPEValuesInLine.getString("shipmentInOutLine");
+      inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class, inOutLineId);
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+    return inOutLine;
+  }
+
 }
