@@ -29,10 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
+import org.hibernate.query.Query;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.model.Column;
@@ -374,10 +373,11 @@ public class RuntimeModelTest extends OBBaseTest {
     try {
       final List<Table> tables = ModelProvider.getInstance().list(session, Table.class);
       // read the columns in one query and assign them to the table
-      final Criteria c = session.createCriteria(Column.class);
-      c.addOrder(Order.asc("position"));
-      @SuppressWarnings("unchecked")
-      final List<Column> cols = c.list();
+      StringBuilder hql = new StringBuilder();
+      hql.append("SELECT c FROM " + Column.class.getName() + " AS c");
+      hql.append(" ORDER BY c.position ASC");
+      Query<Column> query = session.createQuery(hql.toString(), Column.class);
+      final List<Column> cols = query.list();
       for (final Column column : cols) {
         final Table table = column.getTable();
         table.getColumns().add(column);

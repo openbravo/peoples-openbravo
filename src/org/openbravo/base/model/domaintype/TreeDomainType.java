@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,10 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.RefTree;
@@ -53,9 +51,12 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
 
     Session session = ModelProvider.getInstance().getSession();
 
-    final Criteria criteria = session.createCriteria(RefTree.class);
-    criteria.add(Restrictions.eq("referenceId", getReference().getId()));
-    final List<?> list = criteria.list();
+    StringBuilder hql = new StringBuilder();
+    hql.append("SELECT r FROM " + RefTree.class.getName());
+    hql.append(" AS r WHERE r.referenceId = :referenceId");
+    Query<RefTree> query = session.createQuery(hql.toString(), RefTree.class);
+    query.setParameter("referenceId", getReference().getId());
+    final List<RefTree> list = query.list();
     if (list.isEmpty()) {
       // a base reference
       if (getReference().getParentReference() == null) {
@@ -67,7 +68,7 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
       log.warn("Reference " + getReference()
           + " has more than one tree definition, only one is really used");
     }
-    final RefTree treeReference = (RefTree) list.get(0);
+    final RefTree treeReference = list.get(0);
     Table table = treeReference.getTable();
     if (table == null) {
       throw new IllegalStateException("The tree reference " + treeReference.getIdentifier()
@@ -84,18 +85,20 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private Column readKeyColumn(Session session, Table table) {
-    final Criteria c = session.createCriteria(Column.class);
-    c.add(Restrictions.eq("table", table));
-    c.add(Restrictions.eq("key", true));
-    c.addOrder(Order.asc("position"));
-    Column keyColumn = null;
-    List<Column> keyColumns = c.list();
-    if (!keyColumns.isEmpty()) {
-      keyColumn = keyColumns.get(0);
+    StringBuilder hql = new StringBuilder();
+    hql.append("SELECT c FROM " + Column.class.getName());
+    hql.append(" AS c WHERE c.table = :table ");
+    hql.append(" AND c.key = true ");
+    hql.append(" ORDER BY c.position ASC");
+    Query<Column> query = session.createQuery(hql.toString(), Column.class);
+    query.setParameter("table", table);
+
+    List<Column> keyColumns = query.list();
+    if (keyColumns.isEmpty()) {
+      return null;
     }
-    return keyColumn;
+    return keyColumns.get(0);
   }
 
   @Override
