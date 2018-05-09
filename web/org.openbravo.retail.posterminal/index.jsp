@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <%@ page import="org.openbravo.erpCommon.businessUtility.Preferences" %>
+<%@ page import="org.openbravo.erpCommon.utility.PropertyNotFoundException" %>
 <%
 
 /**
@@ -8,9 +9,16 @@ catch OBPOS_UseServiceWorkersForOffline preferences value to know if we want to 
 */
 String toServiceWorker="";
 String toAppCache="";
-String useServiceWorkers = Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, "0",
-    "0", "0", "0", null);
-if("Y".equals(useServiceWorkers)){
+boolean useServiceWorkers = false;
+try{
+useServiceWorkers=Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, "0",
+    "0", "0", "0", null).equals("Y");
+}catch(PropertyNotFoundException e) {
+  //If preference is not set, we will use AppCache
+  useServiceWorkers=false;
+}
+
+if(useServiceWorkers){
   toServiceWorker = "../org.openbravo.mobile.core/source/offline/ob-fetch-manifest.js";
 }else{
   toAppCache = "../../org.openbravo.mobile.core/OBPOS_Main/AppCacheManifest?_appName=WebPOS";
@@ -25,7 +33,6 @@ if("Y".equals(useServiceWorkers)){
   <meta name="author" content="Openbravo, S.L.U.">
   
 
-  
   <%@include file="../org.openbravo.mobile.core/assets/include/mobile.jsp" %>
 
   <link rel="shortcut icon" type="image/x-icon" href="../../web/images/favicon.ico" />
