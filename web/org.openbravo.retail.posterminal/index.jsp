@@ -2,6 +2,9 @@
 
 <%@ page import="org.openbravo.erpCommon.businessUtility.Preferences" %>
 <%@ page import="org.openbravo.erpCommon.utility.PropertyNotFoundException" %>
+<%@ page import="org.openbravo.erpCommon.businessUtility.Preferences.QueryFilter" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
 <%
 
 /**
@@ -9,18 +12,22 @@ catch OBPOS_UseServiceWorkersForOffline preferences value to know if we want to 
 */
 String toServiceWorker="";
 String toAppCache="";
-boolean useServiceWorkers = false;
+boolean useServiceWorkers = false; 
 try{
-useServiceWorkers=Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, "0",
-    "0", "0", "0", null).equals("Y");
+  Map<QueryFilter, Boolean> queryFilters = new HashMap<QueryFilter, Boolean>();
+  queryFilters.put(QueryFilter.ACTIVE, true);
+  queryFilters.put(QueryFilter.CLIENT, false);
+  queryFilters.put(QueryFilter.ORGANIZATION, false);
+  useServiceWorkers=Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, null, null,
+    null, null, (String) null, queryFilters).equals("Y");
 }catch(PropertyNotFoundException e) {
   //If preference is not set, we will use AppCache
   useServiceWorkers=false;
 }
 
-if(useServiceWorkers){
+if (useServiceWorkers) {
   toServiceWorker = "../org.openbravo.mobile.core/source/offline/ob-fetch-manifest.js";
-}else{
+} else {
   toAppCache = "../../org.openbravo.mobile.core/OBPOS_Main/AppCacheManifest?_appName=WebPOS";
 }
 %>
