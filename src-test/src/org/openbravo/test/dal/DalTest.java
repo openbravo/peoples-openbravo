@@ -729,4 +729,17 @@ public class DalTest extends OBBaseTest {
     Currency unknown = OBDal.getInstance().getProxy(Currency.class, nonExistingId);
     assertThat("Can retrieve ID of non-existent Proxy", unknown.getId(), equalTo(nonExistingId));
   }
+
+  /**
+   * Test to check that it is possible to use OBContext cached objects as OBQuery parameters even if
+   * they have not been previously loaded into the session
+   */
+  @Test
+  public void canUseOBContextParamNotPresentInSession() {
+    OBDal.getInstance().getSession().clear();
+    OBQuery<BusinessPartner> q = OBDal.getInstance().createQuery(BusinessPartner.class,
+        "as bp where bp.client = :client");
+    q.setNamedParameter("client", OBContext.getOBContext().getCurrentClient());
+    assertNotNull("OBQuery with an OBContext object parameter is executed properly", q.list());
+  }
 }
