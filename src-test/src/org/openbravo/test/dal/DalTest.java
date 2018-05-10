@@ -24,6 +24,7 @@ package org.openbravo.test.dal;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -731,8 +732,8 @@ public class DalTest extends OBBaseTest {
   }
 
   /**
-   * Test to check that it is possible to use OBContext cached objects as OBQuery parameters even if
-   * they have not been previously loaded into the session
+   * Test to check that it is possible to use OBContext cached objects as the value for OBQuery
+   * parameters even if they have not been previously loaded into the session
    */
   @Test
   public void canUseOBContextParamNotPresentInSession() {
@@ -740,6 +741,6 @@ public class DalTest extends OBBaseTest {
     OBQuery<BusinessPartner> q = OBDal.getInstance().createQuery(BusinessPartner.class,
         "as bp where bp.client = :client");
     q.setNamedParameter("client", OBContext.getOBContext().getCurrentClient());
-    assertNotNull("OBQuery with an OBContext object parameter is executed properly", q.list());
+    assertThat("Can use OBContext object as OBQuery parameter value", q.list(), notNullValue());
   }
 }
