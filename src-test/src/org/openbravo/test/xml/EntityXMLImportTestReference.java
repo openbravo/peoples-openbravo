@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,8 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,6 +36,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.model.common.enterprise.Organization;
@@ -137,8 +137,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     // deleted, force this by being admin
     OBContext.setAdminMode();
     try {
-      removeAll(Warehouse.class, numberOfWarehouses,
-          Restrictions.in(Warehouse.PROPERTY_NAME, warehouseNames));
+      removeAll(Warehouse.class, numberOfWarehouses, "e." + Warehouse.PROPERTY_NAME + " IN ("
+          + StringCollectionUtils.commaSeparated(warehouseNames) + ")");
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -189,28 +189,33 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     // deleted, force this by being admin
     OBContext.setAdminMode();
     try {
-      removeAll(Warehouse.class, numberOfWarehouses,
-          Restrictions.in(Warehouse.PROPERTY_NAME, warehouseNames));
-      removeAll(Location.class, numberOfLocations,
-          Restrictions.in(Location.PROPERTY_ADDRESSLINE1, locationAddresses));
+      removeAll(Warehouse.class, numberOfWarehouses, "e." + Warehouse.PROPERTY_NAME + " IN ("
+          + StringCollectionUtils.commaSeparated(warehouseNames) + ")");
+      removeAll(Location.class, numberOfLocations, "e." + Location.PROPERTY_ADDRESSLINE1 + " IN ("
+          + StringCollectionUtils.commaSeparated(locationAddresses) + ")");
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  private <T extends BaseOBObject> void removeAll(Class<T> clz, int expectCount, Criterion c) {
-    final Criteria criteria = SessionHandler.getInstance().getSession().createCriteria(clz);
-    if (c != null) {
-      criteria.add(c);
+  private <T extends BaseOBObject> void removeAll(Class<T> clz, int expectCount,
+      String additionalWhereClause) {
+    StringBuilder hql = new StringBuilder();
+    hql.append("SELECT e FROM " + clz.getName() + " AS e");
+    hql.append(" WHERE e.client.id = :clientId");
+    if (additionalWhereClause != null) {
+      hql.append(" AND " + additionalWhereClause);
     }
-    criteria.add(Restrictions.eq("client.id", QA_TEST_CLIENT_ID));
 
-    @SuppressWarnings("unchecked")
-    final List<T> list = criteria.list();
+    Query<BaseOBObject> query = SessionHandler.getInstance().getSession()
+        .createQuery(hql.toString(), BaseOBObject.class);
+    query.setParameter("clientId", QA_TEST_CLIENT_ID);
+
+    final List<BaseOBObject> list = query.list();
     if (expectCount != -1) {
       assertEquals(expectCount, list.size());
     }
-    for (final T t : list) {
+    for (final BaseOBObject t : list) {
       SessionHandler.getInstance().getSession().delete(t);
     }
   }
