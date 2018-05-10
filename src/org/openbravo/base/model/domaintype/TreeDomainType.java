@@ -88,8 +88,8 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
   private Column readKeyColumn(Session session, Table table) {
     StringBuilder hql = new StringBuilder();
     hql.append("SELECT c FROM " + Column.class.getName());
-    hql.append(" AS c WHERE c.table = :table ");
-    hql.append(" AND c.key = true ");
+    hql.append(" AS c WHERE c.table = :table");
+    hql.append(" AND c.key = true");
     hql.append(" ORDER BY c.position ASC");
     Query<Column> query = session.createQuery(hql.toString(), Column.class);
     query.setParameter("table", table);

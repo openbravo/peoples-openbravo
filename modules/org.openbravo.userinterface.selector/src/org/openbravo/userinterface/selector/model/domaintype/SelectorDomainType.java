@@ -56,8 +56,8 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
     Session session = ModelProvider.getInstance().getSession();
 
     StringBuilder hql = new StringBuilder();
-    hql.append("SELECT p FROM " + SelectorDefinition.class.getName());
-    hql.append(" AS p WHERE p.referenceId = :referenceId");
+    hql.append("SELECT s FROM " + SelectorDefinition.class.getName());
+    hql.append(" AS s WHERE s.referenceId = :referenceId");
     Query<SelectorDefinition> query = session.createQuery(hql.toString(), SelectorDefinition.class);
     query.setParameter("referenceId", getReference().getId());
     final List<SelectorDefinition> list = query.list();
@@ -98,7 +98,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
   private List<Column> readColumns(Session session, Table table) {
     StringBuilder hql = new StringBuilder();
     hql.append("SELECT c FROM " + Column.class.getName());
-    hql.append(" AS c WHERE c.table = :table ");
+    hql.append(" AS c WHERE c.table = :table");
     hql.append(" ORDER BY c.position ASC");
     Query<Column> query = session.createQuery(hql.toString(), Column.class);
     query.setParameter("table", table);
