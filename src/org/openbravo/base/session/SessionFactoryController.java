@@ -24,8 +24,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQL82Dialect;
 import org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
@@ -146,19 +146,19 @@ public abstract class SessionFactoryController {
       setInterceptor(configuration);
 
       final Properties properties = getOpenbravoProperties();
-      bbddUser = properties.getProperty(Environment.USER);
+      bbddUser = properties.getProperty(AvailableSettings.USER);
       configuration.addProperties(properties);
 
       // second-level caching is disabled for now because not all data
       // access and updates go through hibernate.
       // TODO: move to configuration file
-      configuration.getProperties().setProperty(Environment.USE_SECOND_LEVEL_CACHE, "false");
-      configuration.getProperties().setProperty(Environment.USE_QUERY_CACHE, "false");
-      configuration.getProperties().setProperty(Environment.BATCH_FETCH_STYLE, "DYNAMIC");
-      configuration.getProperties().setProperty(Environment.DEFAULT_BATCH_FETCH_SIZE, "50");
-      configuration.getProperties().setProperty(Environment.STATEMENT_BATCH_SIZE, "10");
-      configuration.getProperties().setProperty(Environment.STATEMENT_FETCH_SIZE, "50");
-      configuration.getProperties().setProperty(Environment.JPA_VALIDATION_MODE, "NONE");
+      configuration.getProperties().setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "false");
+      configuration.getProperties().setProperty(AvailableSettings.USE_QUERY_CACHE, "false");
+      configuration.getProperties().setProperty(AvailableSettings.BATCH_FETCH_STYLE, "DYNAMIC");
+      configuration.getProperties().setProperty(AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, "50");
+      configuration.getProperties().setProperty(AvailableSettings.STATEMENT_BATCH_SIZE, "10");
+      configuration.getProperties().setProperty(AvailableSettings.STATEMENT_FETCH_SIZE, "50");
+      configuration.getProperties().setProperty(AvailableSettings.JPA_VALIDATION_MODE, "NONE");
       // TODO: consider setting isolation level explicitly
       // configuration.getProperties().setProperty(Environment.ISOLATION,
       // "" + Connection.TRANSACTION_READ_COMMITTED);
@@ -222,16 +222,16 @@ public abstract class SessionFactoryController {
   private Properties getPostgresHbProps(Properties obProps) {
     isPostgresDatabase = true;
     final Properties props = new Properties();
-    props.setProperty(Environment.DIALECT, PostgreSQL82Dialect.class.getName());
+    props.setProperty(AvailableSettings.DIALECT, PostgreSQL82Dialect.class.getName());
     if (isJNDIModeOn(obProps)) {
       setJNDI(obProps, props);
     } else {
-      props.setProperty(Environment.DRIVER, "org.postgresql.Driver");
-      props.setProperty(Environment.URL,
+      props.setProperty(AvailableSettings.DRIVER, "org.postgresql.Driver");
+      props.setProperty(AvailableSettings.URL,
           obProps.getProperty("bbdd.url") + "/" + obProps.getProperty("bbdd.sid"));
 
-      props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
-      props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
+      props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
+      props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
     }
     return props;
   }
@@ -239,14 +239,14 @@ public abstract class SessionFactoryController {
   private Properties getOracleHbProps(Properties obProps) {
     isPostgresDatabase = false;
     final Properties props = new Properties();
-    props.setProperty(Environment.DIALECT, OBOracle10gDialect.class.getName());
+    props.setProperty(AvailableSettings.DIALECT, OBOracle10gDialect.class.getName());
     if (isJNDIModeOn(obProps)) {
       setJNDI(obProps, props);
     } else {
-      props.setProperty(Environment.DRIVER, "oracle.jdbc.driver.OracleDriver");
-      props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
-      props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
-      props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
+      props.setProperty(AvailableSettings.DRIVER, "oracle.jdbc.driver.OracleDriver");
+      props.setProperty(AvailableSettings.URL, obProps.getProperty("bbdd.url"));
+      props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
+      props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
     }
     return props;
   }
@@ -254,21 +254,21 @@ public abstract class SessionFactoryController {
   private Properties getDB2HbProps(Properties obProps) {
     isPostgresDatabase = false;
     final Properties props = new Properties();
-    props.setProperty(Environment.DIALECT, OBDB2v97Dialect.class.getName());
+    props.setProperty(AvailableSettings.DIALECT, OBDB2v97Dialect.class.getName());
     if (isJNDIModeOn(obProps)) {
       setJNDI(obProps, props);
     } else {
-      props.setProperty(Environment.DRIVER, "com.ibm.db2.jcc.DB2Driver");
-      props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
-      props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
-      props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
+      props.setProperty(AvailableSettings.DRIVER, "com.ibm.db2.jcc.DB2Driver");
+      props.setProperty(AvailableSettings.URL, obProps.getProperty("bbdd.url"));
+      props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
+      props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
     }
     return props;
   }
 
   private void setJNDI(Properties obProps, Properties hbProps) {
     log.info("Using JNDI with resource name-> " + obProps.getProperty("JNDI.resourceName"));
-    hbProps.setProperty(Environment.DATASOURCE,
+    hbProps.setProperty(AvailableSettings.DATASOURCE,
         "java:/comp/env/" + obProps.getProperty("JNDI.resourceName"));
   }
 
