@@ -54,6 +54,8 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -78,6 +80,8 @@ public class OBDal implements OBNotSingleton {
   private static ConcurrentHashMap<String, OBDal> otherPoolInstances = new ConcurrentHashMap<>();
   private String poolName;
 
+  private static final String DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE = "DefaultDBPoolForReports";
+
   /**
    * @return the singleton instance of the OBDal service
    */
@@ -90,7 +94,12 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * @return the singleton instance of the OBDal read-only service
+   * Attempts to return an instance of OBDal using the read-only pool.
+   * This requires that the read-only pool is enabled and the Preference "DefaultDBPoolForReports"
+   * is set to "RO". In any other case, the DEFAULT pool will be returned.
+   *
+   * @return the singleton instance of the OBDal read-only service if possible. In any other case,
+   * the default instance will be returned.
    */
   public static OBDal getReadOnlyInstance() {
     return getInstance(ExternalConnectionPool.READONLY_POOL);
@@ -103,9 +112,37 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)) {
+    if (shouldUseDefaultPool(pool)) {
       return getInstance();
     }
+
+    return getOtherPoolInstance(pool);
+  }
+
+  private static boolean shouldUseDefaultPool(String pool) {
+    return ExternalConnectionPool.DEFAULT_POOL.equals(pool)
+        || ExternalConnectionPool.DEFAULT_POOL.equals(getDefaultDBPoolPreference());
+  }
+
+  // TODO: Try using CachedPreference to retrieve this value
+  private static String getDefaultDBPoolPreference() {
+    String defaultDbPool;
+    try {
+      OBContext.setAdminMode(false);
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+      Organization asterisk = OBDal.getInstance().get(Organization.class, "0");
+      defaultDbPool = Preferences.getPreferenceValue(DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE, true,
+          systemClient, asterisk, null, null, null);
+    } catch (PropertyException pe) {
+      defaultDbPool = ExternalConnectionPool.READONLY_POOL;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return defaultDbPool;
+  }
+
+  private static OBDal getOtherPoolInstance(String pool) {
     if (!otherPoolInstances.containsKey(pool)) {
       OBDal dal = OBProvider.getInstance().get(OBDal.class);
       dal.poolName = pool;
