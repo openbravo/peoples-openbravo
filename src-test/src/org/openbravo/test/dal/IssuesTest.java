@@ -379,7 +379,7 @@ public class IssuesTest extends OBBaseTest {
     formTrl.setDescription("description");
     formTrl.setName("name");
     formTrl.setSpecialForm(form);
-    formTrl.setLanguage(OBDal.getInstance().createCriteria(Language.class).list().get(0));
+    formTrl.setLanguage(getNonInstalledLanguage());
 
     form.getADFormTrlList().add(formTrl);
     OBDal.getInstance().save(form);
@@ -389,6 +389,11 @@ public class IssuesTest extends OBBaseTest {
 
     // don't save anything
     OBDal.getInstance().rollbackAndClose();
+  }
+
+  private Language getNonInstalledLanguage() {
+    return (Language) OBDal.getInstance().createCriteria(Language.class)
+      .add(Restrictions.eq(Language.PROPERTY_SYSTEMLANGUAGE, false)).list().get(0);
   }
 
   /**

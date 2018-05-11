@@ -353,6 +353,15 @@ export.database: exports database structure and data to xml files.
         <equals arg1="${ant.java.version}" arg2="1.6"/>
       </condition>
     </fail>
+    <antversion property="min.ant.version" atleast="1.9.2" />
+    <antversion property="actual.ant.version" />
+    <fail message="Unsupported ant version ${actual.ant.version}. Minimum required is 1.9.2.">
+      <condition>
+        <not>
+          <isset property="min.ant.version"/>
+        </not>
+      </condition>
+    </fail>
   </target>
 
   <target name="compile.complete" depends="init, core.lib, wad.lib, trl.lib">

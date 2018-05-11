@@ -442,7 +442,7 @@ public class CostingUtils {
     trxQry.setParameter("dateTo", dateTo);
     if (existsCumulatedStock) {
       if (costingRule.isBackdatedTransactionsFixed()) {
-        trxQry.setParameter("fixbdt", costingRule.getFixbackdatedfrom());
+        trxQry.setParameter("fixbdt", getCostingRuleFixBackdatedFrom(costingRule));
         trxQry.setParameter("mvtdate", costing.getInventoryTransaction().getMovementDate());
       }
       trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
@@ -576,7 +576,7 @@ public class CostingUtils {
     trxQry.setParameter("dateTo", dateTo);
     if (existsCumulatedValuation) {
       if (costingRule.isBackdatedTransactionsFixed()) {
-        trxQry.setParameter("fixbdt", costingRule.getFixbackdatedfrom());
+        trxQry.setParameter("fixbdt", getCostingRuleFixBackdatedFrom(costingRule));
         trxQry.setParameter("mvtdate", costing.getInventoryTransaction().getMovementDate());
       }
       trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);

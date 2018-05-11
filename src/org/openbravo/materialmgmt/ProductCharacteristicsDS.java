@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -203,14 +203,19 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     hqlBuilder.append(this.getClientOrgFilter());
 
     if (StringUtils.isNotBlank(gridWhereClause)) {
-      hqlBuilder.append("  and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
+      hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
           + gridWhereClause + "  and pcv.characteristicValue = v and pcv.product = " + productPath
           + ")");
 
     } else if (StringUtils.isNotBlank(customSelectorWhereClause)) {
-      hqlBuilder.append("  and exists (from ProductCharacteristicValue pcv, "
+      hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, "
           + customSelectorWhereClause + "  and pcv.characteristicValue = v and pcv.product = "
           + productPath + ")");
+    }
+    else if (parentGridEntity != null){
+      hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
+        + " as e where pcv.characteristicValue = v and pcv.product = "
+        + productPath + ")");
     }
 
     hqlBuilder.append(" order by c.name, ");
