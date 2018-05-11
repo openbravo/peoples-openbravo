@@ -19,7 +19,6 @@
 
 package org.openbravo.common.actionhandler.createlinesfromprocess;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,13 +40,10 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
-import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,9 +95,6 @@ public class CreateLinesFromProcess {
       processingInvoice = currentInvoice;
       // Copy all the selected lines
       int createdInvoiceLinesCount = createLinesFromSelectedLines();
-
-      // Update invoice prepayment from order lines
-      updateInvoicePrepayment();
 
       long endTime = System.currentTimeMillis();
       log.debug(String.format("CreateLinesFromProcess: Time taken to complete the process: %d ms",
@@ -254,44 +247,4 @@ public class CreateLinesFromProcess {
     return lineNumber;
   }
 
-  /**
-   * Update the invoice prepayment with the sum of all the prepayment order amounts
-   */
-  private void updateInvoicePrepayment() {
-    processingInvoice.setPrepaymentamt(getOrdersPrepaymentAmt());
-    OBDal.getInstance().save(processingInvoice);
-  }
-
-  /**
-   * Get the sum of the orders prepayment amount of all the orders related with the invoice
-   * 
-   * @return The sum of the prepayment amount of related orders
-   */
-  private BigDecimal getOrdersPrepaymentAmt() {
-    final OBCriteria<FIN_PaymentSchedule> obc = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedule.class);
-
-    List<Order> relatedOrdersToInvoiceLines = getRelatedOrdersToInvoiceLines();
-    if (relatedOrdersToInvoiceLines.isEmpty()) {
-      return BigDecimal.ZERO;
-    }
-    obc.add(Restrictions.in(FIN_PaymentSchedule.PROPERTY_ORDER, relatedOrdersToInvoiceLines));
-    obc.setProjection(Projections.sum(FIN_PaymentSchedule.PROPERTY_PAIDAMOUNT));
-    obc.setMaxResults(1);
-    BigDecimal paidAmt = (BigDecimal) obc.uniqueResult();
-    return paidAmt;
-  }
-
-  private List<Order> getRelatedOrdersToInvoiceLines() {
-    StringBuffer where = new StringBuffer();
-    where.append(" as o");
-    where.append(" where exists (");
-    where.append("   select 1 from " + InvoiceLine.ENTITY_NAME + " as il");
-    where.append("     join il." + InvoiceLine.PROPERTY_SALESORDERLINE + " as ol");
-    where.append("   where ol." + OrderLine.PROPERTY_SALESORDER + " = o");
-    where.append("     and il." + InvoiceLine.PROPERTY_INVOICE + ".id = :invoiceId)");
-    OBQuery<Order> qryOrder = OBDal.getInstance().createQuery(Order.class, where.toString());
-    qryOrder.setNamedParameter("invoiceId", processingInvoice.getId());
-    return qryOrder.list();
-  }
 }

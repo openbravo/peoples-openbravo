@@ -19,10 +19,12 @@
 
 package org.openbravo.common.actionhandler.createlinesfromprocess;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
@@ -34,11 +36,13 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.financialmgmt.accounting.Costcenter;
 import org.openbravo.model.financialmgmt.accounting.UserDimension1;
 import org.openbravo.model.financialmgmt.accounting.UserDimension2;
 import org.openbravo.model.financialmgmt.assetmgmt.Asset;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.project.Project;
 
@@ -82,6 +86,12 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
 
     // Update the BOM Parent of the invoice line
     updateBOMParent();
+
+    // Update Invoice prepayment amount
+    updateInvoicePrepaymentAmount();
+
+    // Update Invoice's order reference
+    updateOrderReference();
   }
 
   /**
@@ -163,4 +173,55 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
     return (InvoiceLine) obc.uniqueResult();
   }
 
+  /**
+   * Update the prepayment amount of the Invoice
+   */
+  private void updateInvoicePrepaymentAmount() {
+    if (isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
+      BigDecimal invoicePrepaymentAmt = processingInvoice.getPrepaymentamt();
+      BigDecimal orderPrepaymentAmt = getOrderPrepaymentAmt();
+      processingInvoice.setPrepaymentamt(invoicePrepaymentAmt.add(orderPrepaymentAmt));
+    }
+  }
+
+  /**
+   * Get the prepayment amount of the related order
+   * 
+   * @return The prepayment amount of related order
+   */
+  private BigDecimal getOrderPrepaymentAmt() {
+    final OBCriteria<FIN_PaymentSchedule> obc = OBDal.getInstance().createCriteria(
+        FIN_PaymentSchedule.class);
+    Order processingOrder = getRelatedOrder();
+    if (processingOrder == null) {
+      return BigDecimal.ZERO;
+    }
+    obc.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, processingOrder));
+    obc.setMaxResults(1);
+    BigDecimal paidAmt = ((FIN_PaymentSchedule) obc.uniqueResult()).getPaidAmount();
+    return paidAmt;
+  }
+
+  /**
+   * Update the Order reference to the invoice
+   */
+  private void updateOrderReference() {
+    Order processingOrder = getRelatedOrder();
+    if (processingInvoice.getSalesOrder() != null && processingOrder != null
+        && !StringUtils.equals(processingInvoice.getSalesOrder().getId(), processingOrder.getId())) {
+      processingInvoice.setSalesOrder(null);
+    } else if (processingOrder != null) {
+      processingInvoice.setSalesOrder(processingOrder);
+    }
+  }
+
+  private Order getRelatedOrder() {
+    Order processingOrder = null;
+    if (isOrderLine) {
+      processingOrder = ((OrderLine) copiedLine).getSalesOrder();
+    } else if (((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
+      processingOrder = ((ShipmentInOutLine) copiedLine).getSalesOrderLine().getSalesOrder();
+    }
+    return processingOrder;
+  }
 }
