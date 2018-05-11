@@ -61,6 +61,7 @@
 	<parameter name="LANGUAGE" class="java.lang.String">
 		<defaultValueExpression><![CDATA["en_US"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="SUBREP_RptM_Requisition_Lines" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT M_REQUISITION.M_REQUISITION_ID, M_REQUISITION.DOCUMENTNO,
        AD_COLUMN_IDENTIFIER(to_char('AD_User'), to_char(M_REQUISITION.AD_USER_ID), $P{LANGUAGE}) AS REQUESTER,
@@ -200,7 +201,7 @@
 					<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{SR_LINES}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREP_RptM_Requisition_Lines}]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,12 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.application.report.ReportingUtils;
 
 public class RptM_Requisition extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -49,8 +45,9 @@ public class RptM_Requisition extends HttpSecureAppServlet {
       String strmRequisitionId = vars.getSessionValue("RptM_Requisition.inpmRequisitionId_R");
       if (strmRequisitionId.equals(""))
         strmRequisitionId = vars.getSessionValue("RptM_Requisition.inpmRequisitionId");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("+***********************: " + strmRequisitionId);
+      }
       printPagePartePDF(response, vars, strmRequisitionId);
     } else
       pageError(response);
@@ -58,23 +55,17 @@ public class RptM_Requisition extends HttpSecureAppServlet {
 
   private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars,
       String strmRequisitionId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
-    String strBaseDesign = getBaseDesignPath(vars.getLanguage());
-
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    JasperReport jasperReportLines;
-    try {
-      jasperReportLines = ReportingUtils.compileReport(strBaseDesign
-          + "/org/openbravo/erpReports/RptM_Requisition_Lines.jrxml");
-    } catch (JRException e) {
-      e.printStackTrace();
-      throw new ServletException(e.getMessage());
     }
-
-    parameters.put("SR_LINES", jasperReportLines);
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REQUISITION_ID", strmRequisitionId);
     renderJR(vars, response, null, "pdf", parameters, null, null);
+  }
+
+  @Override
+  protected boolean renderJRShouldCompileSubreports() {
+    return true;
   }
 
   public String getServletInfo() {
