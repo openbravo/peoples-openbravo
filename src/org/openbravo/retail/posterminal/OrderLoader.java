@@ -1322,7 +1322,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     // When a replaced ticket or a new one is synchronized without any payment, a new payment
     // schedule detail must be created with the remaining amount
     if ((!jsonorder.optBoolean("isLayaway", false) && !jsonorder.optBoolean("isPaid", false))
-        || doCancelAndReplace) {
+        || doCancelAndReplace || doCancelLayaway) {
       final FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
           FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
@@ -1443,7 +1443,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       } else if (writeoffAmt.signum() == -1
           && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway
-              && !checkPaidOnCreditChecked && !hasPrepayment) || jsonorder
+              && !checkPaidOnCreditChecked && !hasPrepayment && !doCancelLayaway) || jsonorder
                 .has("paidInNegativeStatusAmt"))) {
         // If the overpayment is negative and the order is not a fully or not paid layaway, a
         // quotation nor an order paid on credit, or the overpayment is negative and having a
@@ -1543,7 +1543,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         for (final FIN_PaymentScheduleDetail currentDetail : remainingPSDList) {
           if ((!isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
               || (isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
-            if (remainingAmount.compareTo(currentDetail.getAmount()) >= 0) {
+            if ((!isNegativePayment && remainingAmount.compareTo(currentDetail.getAmount()) != -1)
+                || (isNegativePayment && remainingAmount.compareTo(currentDetail.getAmount()) != 1)) {
               remainingAmount = remainingAmount.subtract(currentDetail.getAmount());
             } else {
               // Create a new paymentScheduleDetail for pending amount to be paid and add it to the
@@ -1581,9 +1582,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           // negative to set the paid and outstanding amounts to 0.
           FIN_PaymentSchedule newPSInvoice = null;
           if (paymentScheduleDetailList.size() != 0) {
-            // If a newly introduced psd has an invoice, the new ones to create must also have it
-            if (paymentScheduleDetailList.get(0).getOrderPaymentSchedule() != null) {
-              newPSInvoice = paymentScheduleDetailList.get(0).getInvoicePaymentSchedule();
+            // If a newly introduced PSD has an invoice, the new ones to create must also have it
+            if (paymentScheduleDetailList.get(paymentScheduleDetailList.size() - 1)
+                .getInvoicePaymentSchedule() != null) {
+              newPSInvoice = paymentScheduleDetailList.get(paymentScheduleDetailList.size() - 1)
+                  .getInvoicePaymentSchedule();
             }
           }
           final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
