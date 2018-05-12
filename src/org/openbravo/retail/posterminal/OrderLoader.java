@@ -1533,83 +1533,121 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         boolean isNegativePayment = amount.compareTo(BigDecimal.ZERO) == -1 ? true : false;
         // Get the remaining PSD and sort it by the ones that are related to an invoice
         final List<FIN_PaymentScheduleDetail> remainingPSDList = new ArrayList<>();
+        BigDecimal paymentsRemainingAmt = BigDecimal.ZERO;
         for (final FIN_PaymentScheduleDetail currentDetail : paymentSchedule
             .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
           if (currentDetail.getPaymentDetails() == null) {
             remainingPSDList.add(currentDetail);
+            paymentsRemainingAmt = paymentsRemainingAmt.add(currentDetail.getAmount());
           }
         }
-        sortPSDByInvoice(remainingPSDList);
-        for (final FIN_PaymentScheduleDetail currentDetail : remainingPSDList) {
+        if (paymentsRemainingAmt.signum() == remainingAmount.signum()) {
+          sortPSDByInvoice(remainingPSDList);
+          for (final FIN_PaymentScheduleDetail currentDetail : remainingPSDList) {
+            if ((!isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
+                || (isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
+              if ((!isNegativePayment && remainingAmount.compareTo(currentDetail.getAmount()) != -1)
+                  || (isNegativePayment && remainingAmount.compareTo(currentDetail.getAmount()) != 1)) {
+                remainingAmount = remainingAmount.subtract(currentDetail.getAmount());
+              } else {
+                // Create a new paymentScheduleDetail for pending amount to be paid and add it to
+                // the paymentScheduleDetailList and to the paymentAmountList
+                final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
+                    FIN_PaymentScheduleDetail.class);
+                newPSD.setNewOBObject(true);
+                newPSD.setOrderPaymentSchedule(paymentSchedule);
+                newPSD.setInvoicePaymentSchedule(currentDetail.getInvoicePaymentSchedule());
+                newPSD.setAmount(currentDetail.getAmount().subtract(remainingAmount));
+                newPSD.setBusinessPartner(order.getBusinessPartner());
+                paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
+                OBDal.getInstance().save(newPSD);
+
+                // Modify the existing paymentScheduleDetail to match the remaining to pay
+                currentDetail.setAmount(remainingAmount);
+                OBDal.getInstance().save(currentDetail);
+
+                remainingAmount = BigDecimal.ZERO;
+              }
+              paymentScheduleDetailList.add(currentDetail);
+              paymentAmountMap.put(currentDetail.getId(), currentDetail.getAmount());
+            } else {
+              break;
+            }
+          }
           if ((!isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
               || (isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
-            if ((!isNegativePayment && remainingAmount.compareTo(currentDetail.getAmount()) != -1)
-                || (isNegativePayment && remainingAmount.compareTo(currentDetail.getAmount()) != 1)) {
-              remainingAmount = remainingAmount.subtract(currentDetail.getAmount());
-            } else {
-              // Create a new paymentScheduleDetail for pending amount to be paid and add it to the
-              // paymentScheduleDetailList and to the paymentAmountList
-              final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
-                  FIN_PaymentScheduleDetail.class);
-              newPSD.setNewOBObject(true);
-              newPSD.setOrderPaymentSchedule(paymentSchedule);
-              newPSD.setInvoicePaymentSchedule(currentDetail.getInvoicePaymentSchedule());
-              newPSD.setAmount(currentDetail.getAmount().subtract(remainingAmount));
-              newPSD.setBusinessPartner(order.getBusinessPartner());
-              paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-              OBDal.getInstance().save(newPSD);
-
-              // Modify the existing paymentScheduleDetail to match the remaining to pay
-              currentDetail.setAmount(remainingAmount);
-              OBDal.getInstance().save(currentDetail);
-
-              remainingAmount = BigDecimal.ZERO;
+            // There can be the possibility that the user is paying more than the remaining amount.
+            // In this case, a new PSD must be created for the over payment, and a remaining PSD
+            // must be created. This occurs only in a special case, that is when paying more than
+            // the remaining to pay using a cash payment method and there's no enough change to
+            // return in that payment method. That payment is not set as over payment, even when the
+            // amount is higher than the expected amount. After this payment, another one will come
+            // but in negative to set the paid and outstanding amounts to 0.
+            FIN_PaymentSchedule newPSInvoice = null;
+            if (paymentScheduleDetailList.size() != 0) {
+              // If a newly introduced PSD has an invoice, the new ones to create must also have it
+              if (paymentScheduleDetailList.get(paymentScheduleDetailList.size() - 1)
+                  .getInvoicePaymentSchedule() != null) {
+                newPSInvoice = paymentScheduleDetailList.get(paymentScheduleDetailList.size() - 1)
+                    .getInvoicePaymentSchedule();
+              }
             }
-            paymentScheduleDetailList.add(currentDetail);
-            paymentAmountMap.put(currentDetail.getId(), currentDetail.getAmount());
+            final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
+                FIN_PaymentScheduleDetail.class);
+            newPSD.setNewOBObject(true);
+            newPSD.setOrderPaymentSchedule(paymentSchedule);
+            newPSD.setInvoicePaymentSchedule(newPSInvoice);
+            newPSD.setAmount(remainingAmount);
+            newPSD.setBusinessPartner(order.getBusinessPartner());
+            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
+            OBDal.getInstance().save(newPSD);
+            final FIN_PaymentScheduleDetail newRemainingPSD = OBProvider.getInstance().get(
+                FIN_PaymentScheduleDetail.class);
+            newRemainingPSD.setNewOBObject(true);
+            newRemainingPSD.setOrderPaymentSchedule(paymentSchedule);
+            newRemainingPSD.setInvoicePaymentSchedule(newPSInvoice);
+            newRemainingPSD.setAmount(remainingAmount.negate());
+            newRemainingPSD.setBusinessPartner(order.getBusinessPartner());
+            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
+                newRemainingPSD);
+            OBDal.getInstance().save(newRemainingPSD);
+            paymentScheduleDetailList.add(newPSD);
+            paymentAmountMap.put(newPSD.getId(), newPSD.getAmount());
+          }
+        } else {
+          // The quantity that is being introduced has a different sign to the pending quantity.
+          // This means that a negative payment is being introduced in a positive ticket, or that a
+          // positive payment is being introduced in a negative ticket. Instead of consuming the
+          // remaining payment, it is increased.
+          // This only occurs in a C&R or a CL processes.
+          final FIN_PaymentScheduleDetail newPSD;
+          if (remainingPSDList.size() > 0) {
+            newPSD = remainingPSDList.get(remainingPSDList.size() - 1);
           } else {
-            break;
+            // Create a new PSD if there was not a remaining amount
+            newPSD = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
+            newPSD.setNewOBObject(true);
+            newPSD.setOrderPaymentSchedule(paymentSchedule);
+            newPSD.setBusinessPartner(order.getBusinessPartner());
+            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
           }
-        }
-        if ((!isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
-            || (isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
-          // There can be the possibility that the user is paying more than the remaining amount. In
-          // this case, a new PSD must be created for the over payment, and a remaining PSD must be
-          // created. This occurs only in a special case, that is when paying more than the
-          // remaining to pay using a cash payment method and there's no enough change to return in
-          // that payment method. That payment is not set as over payment, even when the amount is
-          // higher than the expected amount. After this payment, another one will come but in
-          // negative to set the paid and outstanding amounts to 0.
-          FIN_PaymentSchedule newPSInvoice = null;
-          if (paymentScheduleDetailList.size() != 0) {
-            // If a newly introduced PSD has an invoice, the new ones to create must also have it
-            if (paymentScheduleDetailList.get(paymentScheduleDetailList.size() - 1)
-                .getInvoicePaymentSchedule() != null) {
-              newPSInvoice = paymentScheduleDetailList.get(paymentScheduleDetailList.size() - 1)
-                  .getInvoicePaymentSchedule();
-            }
-          }
-          final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
-              FIN_PaymentScheduleDetail.class);
-          newPSD.setNewOBObject(true);
-          newPSD.setOrderPaymentSchedule(paymentSchedule);
-          newPSD.setInvoicePaymentSchedule(newPSInvoice);
-          newPSD.setAmount(remainingAmount);
-          newPSD.setBusinessPartner(order.getBusinessPartner());
-          paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-          OBDal.getInstance().save(newPSD);
+          // Create the new PSD for the remaining amount
           final FIN_PaymentScheduleDetail newRemainingPSD = OBProvider.getInstance().get(
               FIN_PaymentScheduleDetail.class);
           newRemainingPSD.setNewOBObject(true);
           newRemainingPSD.setOrderPaymentSchedule(paymentSchedule);
-          newRemainingPSD.setInvoicePaymentSchedule(newPSInvoice);
-          newRemainingPSD.setAmount(remainingAmount.negate());
+          newRemainingPSD.setInvoicePaymentSchedule(newPSD.getInvoicePaymentSchedule());
+          newRemainingPSD.setAmount(newPSD.getAmount().subtract(remainingAmount));
           newRemainingPSD.setBusinessPartner(order.getBusinessPartner());
           paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
               .add(newRemainingPSD);
           OBDal.getInstance().save(newRemainingPSD);
+          // Set the quantity to the payment that is being created
+          newPSD.setAmount(remainingAmount);
+          OBDal.getInstance().save(newPSD);
+
           paymentScheduleDetailList.add(newPSD);
-          paymentAmountMap.put(newPSD.getId(), newPSD.getAmount());
+          paymentAmountMap.put(newPSD.getId(), remainingAmount);
         }
       }
 

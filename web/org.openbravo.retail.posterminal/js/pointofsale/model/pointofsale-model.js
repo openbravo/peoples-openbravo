@@ -704,7 +704,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.UTIL.calculateCurrentCash(function () {
                 receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
                 receipt.set('timezoneOffset', new Date().getTimezoneOffset());
-                receipt.set('gross', OB.DEC.mul(receipt.get('gross'), -1));
+                receipt.set('gross', OB.DEC.Zero);
                 receipt.get('payments').forEach(function (payment) {
                   payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
                   payment.set('paid', OB.DEC.mul(payment.get('paid'), -1));
