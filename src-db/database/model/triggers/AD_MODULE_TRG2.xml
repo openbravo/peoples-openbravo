@@ -14,7 +14,7 @@
   * under the License.
   * The Original Code is Openbravo ERP.
   * The Initial Developer of the Original Code is Openbravo SLU
-  * All portions are Copyright (C) 2011 Openbravo SLU
+  * All portions are Copyright (C) 2011-2018 Openbravo SLU
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
@@ -53,7 +53,6 @@ BEGIN
       COALESCE(:OLD.VERSION_ID           ,'.') = COALESCE(:NEW.VERSION_ID           ,'.') AND
       COALESCE(:OLD.ISCOMMERCIAL         ,'.') = COALESCE(:NEW.ISCOMMERCIAL         ,'.') AND
       COALESCE(:OLD.MATURITY_UPDATE      ,'.') = COALESCE(:NEW.MATURITY_UPDATE      ,'.') AND
-      COALESCE(:OLD.COMMERCIAL_TIER      ,'.') = COALESCE(:NEW.COMMERCIAL_TIER      ,'.') AND
       COALESCE(:OLD.ENABLED              ,'.') = COALESCE(:NEW.ENABLED              ,'.') AND
                (:OLD.ISCONFIGSCRIPTAPPLIED  != :NEW.ISCONFIGSCRIPTAPPLIED OR
                COALESCE(:OLD.ISINDEVELOPMENT      ,'.') != COALESCE(:NEW.ISINDEVELOPMENT      ,'.')))  THEN
