@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,30 +19,37 @@
 
 package org.openbravo.advpaymentmngt.utility;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.ServletException;
 
 import org.hibernate.SQLQuery;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
-import org.openbravo.client.kernel.ApplicationInitializer;
+import org.openbravo.dal.core.SQLFunctionRegister;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.service.db.DalConnectionProvider;
 
+/**
+ * A class in charge of registering APRM SQL functions in Hibernate.
+ */
 @ApplicationScoped
-public class APRMApplicationInitializer implements ApplicationInitializer {
+public class APRMSQLFunctionRegister implements SQLFunctionRegister {
   final static String RDBMS = new DalConnectionProvider(false).getRDBMS();
 
   @Override
-  public void initialize() {
-    OBDal.getInstance().registerSQLFunction("ad_message_get2",
-        new StandardSQLFunction("ad_message_get2", StandardBasicTypes.STRING));
-    OBDal.getInstance().registerSQLFunction("hqlagg",
-        new SQLFunctionTemplate(StandardBasicTypes.STRING, getAggregationSQL()));
-    OBDal.getInstance().registerSQLFunction("get_uuid",
-        new StandardSQLFunction("get_uuid", StandardBasicTypes.STRING));
+  public Map<String, SQLFunction> getSQLFunctions() {
+    Map<String, SQLFunction> sqlFunctions = new HashMap<>();
+    sqlFunctions.put("ad_message_get2", new StandardSQLFunction("ad_message_get2",
+        StandardBasicTypes.STRING));
+    sqlFunctions.put("hqlagg", new SQLFunctionTemplate(StandardBasicTypes.STRING,
+        getAggregationSQL()));
+    return sqlFunctions;
   }
 
   private String getAggregationSQL() {
