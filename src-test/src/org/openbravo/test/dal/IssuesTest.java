@@ -47,8 +47,6 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -185,8 +183,6 @@ public class IssuesTest extends OBBaseTest {
   @Test
   public void test18688() {
     final Session session = OBDal.getInstance().getSession();
-    OBDal.getInstance().registerSQLFunction("ad_column_identifier_std",
-        new StandardSQLFunction("ad_column_identifier_std", StandardBasicTypes.STRING));
     final String qryStr = "select bc.id, ad_column_identifier_std('C_BP_Group', bc.id) from "
         + Category.ENTITY_NAME + " bc";
     final Query qry = session.createQuery(qryStr);
@@ -393,7 +389,7 @@ public class IssuesTest extends OBBaseTest {
 
   private Language getNonInstalledLanguage() {
     return (Language) OBDal.getInstance().createCriteria(Language.class)
-      .add(Restrictions.eq(Language.PROPERTY_SYSTEMLANGUAGE, false)).list().get(0);
+        .add(Restrictions.eq(Language.PROPERTY_SYSTEMLANGUAGE, false)).list().get(0);
   }
 
   /**

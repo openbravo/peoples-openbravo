@@ -49,6 +49,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalContextListener;
@@ -61,6 +62,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.test.dal.TestDalSessionFactoryController;
 
 /**
  * OBBaseTest class which can/should be extended by most other test classes which want to make use
@@ -383,8 +385,13 @@ public class OBBaseTest {
   }
 
   private static void staticInitializeDalLayer() throws Exception {
-    if (!DalLayerInitializer.getInstance().isInitialized()) {
-      DalLayerInitializer.getInstance().initialize(true);
+    DalLayerInitializer initializer = DalLayerInitializer.getInstance();
+    if (!initializer.isInitialized()) {
+      // use a custom DalSessionFactoryController instance to be able to register SQL functions to
+      // be used in HQL queries created for the tests
+      initializer.setDalSessionFactoryController(OBProvider.getInstance().get(
+          TestDalSessionFactoryController.class));
+      initializer.initialize(true);
     }
   }
 

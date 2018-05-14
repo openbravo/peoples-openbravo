@@ -29,7 +29,7 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.weld.WeldUtils;
 
 /**
- * This class is responsible for initializing the dal layer. It ensures that the model is read in
+ * This class is responsible for initializing the DAL layer. It ensures that the model is read in
  * memory and that the mapping is generated in a two stage process.
  * 
  * @author mtaal
@@ -48,6 +48,7 @@ public class DalLayerInitializer implements OBSingleton {
   }
 
   private boolean initialized = false;
+  private DalSessionFactoryController dalSessionFactoryController;
 
   /**
    * Initializes the in-memory model, registers the entity classes with the {@link OBProvider
@@ -90,6 +91,9 @@ public class DalLayerInitializer implements OBSingleton {
   }
 
   private DalSessionFactoryController getDalSessionFactoryController() {
+    if (dalSessionFactoryController != null) {
+      return dalSessionFactoryController;
+    }
     try {
       return WeldUtils.getInstanceFromStaticBeanManager(DalSessionFactoryController.class);
     } catch (Exception ex) {
@@ -98,13 +102,24 @@ public class DalLayerInitializer implements OBSingleton {
     return OBProvider.getInstance().get(DalSessionFactoryController.class);
   }
 
+  /**
+   * A method that can be used to provide a custom {@link DalSessionFactoryController} that will be
+   * used to initialize the DAL layer.
+   * 
+   * @param dalSessionFactoryController
+   *          a DalSessionFactoryController instance
+   */
+  public void setDalSessionFactoryController(DalSessionFactoryController dalSessionFactoryController) {
+    this.dalSessionFactoryController = dalSessionFactoryController;
+  }
+
   public boolean isInitialized() {
     return initialized;
   }
 
   /**
    * Can be used to set the internal initialized member to false and then call initialize again to
-   * re-initialize the Dal layer.
+   * re-initialize the DAL layer.
    * 
    * @param initialized
    *          the value of the initialized member
