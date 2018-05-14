@@ -30,10 +30,16 @@ import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.type.StringType;
 import org.openbravo.client.application.report.JmxReportCache;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.jmx.MBeanRegistry;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -50,6 +56,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   private static final String javaDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
   private static final long THRESHOLD = 5000; // 5 seconds
   private static final String PRODUCTION_INSTANCE = "P";
+  private static final String DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE = "DefaultDBPoolForReports";
 
   @Inject
   private StaticResourceProvider resourceProvider;
@@ -65,6 +72,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
     checkDatabaseAndTomcatDateTime();
     registerMBeans();
     setModulesAsNotInDevelopment();
+    setDefaultReadOnlyPoolPreference();
   }
 
   private void registerSQLFunctions() {
@@ -132,5 +140,26 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
         .createQuery(
             "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
                 + SystemInformation.ENTITY_NAME).uniqueResult();
+  }
+
+  // TODO: Try using CachedPreference to retrieve this value
+  private void setDefaultReadOnlyPoolPreference() {
+    String defaultDbPool;
+
+    try {
+      OBContext.setAdminMode(false);
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+      Organization asterisk = OBDal.getInstance().get(Organization.class, "0");
+
+      defaultDbPool = Preferences.getPreferenceValue(DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE, true,
+          systemClient, asterisk, null, null, null);
+
+    } catch (PropertyException pe) {
+      defaultDbPool = ExternalConnectionPool.READONLY_POOL;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    OBDal.setDefaultReadOnlyPool(defaultDbPool);
   }
 }
