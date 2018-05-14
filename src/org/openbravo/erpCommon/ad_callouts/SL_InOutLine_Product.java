@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -107,30 +107,30 @@ public class SL_InOutLine_Product extends SimpleCallout {
 
     BigDecimal qty = BigDecimal.ZERO;
     String fromOrder = SLInOutLineProductData.fromOrder(this, strmInoutlineId);
+    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     if (fromOrder.equals("0")) {
       BigDecimal qtyOrder = StringUtils.isNotEmpty(strQtyOrder) ? new BigDecimal(strQtyOrder)
           : null;
       qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
       info.addResult("inpquantityorder", qtyOrder);
       info.addResult("inpmovementqty", qty);
-    }
 
-    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
-    if (isUomManagementEnabled && productIsNotUsingSecondaryUom(strUOMProduct)) {
-      // Set AUM based on default
-      try {
-        OBContext.setAdminMode();
-        ShipmentInOut mInOut = OBDal.getInstance().get(ShipmentInOut.class,
-            info.vars.getStringParameter("inpmInoutId"));
-        String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, mInOut.getDocumentType()
-            .getId());
-        if (isValidUom(finalAUM)) {
-          info.addResult("inpcAum", finalAUM);
-          qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
-          info.addResult("inpaumqty", UOMUtil.getConvertedAumQty(strMProductID, qty, finalAUM));
+      if (isUomManagementEnabled && productIsNotUsingSecondaryUom(strUOMProduct)) {
+        // Set AUM based on default
+        try {
+          OBContext.setAdminMode();
+          ShipmentInOut mInOut = OBDal.getInstance().get(ShipmentInOut.class,
+              info.vars.getStringParameter("inpmInoutId"));
+          String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, mInOut
+              .getDocumentType().getId());
+          if (isValidUom(finalAUM)) {
+            info.addResult("inpcAum", finalAUM);
+            qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
+            info.addResult("inpaumqty", UOMUtil.getConvertedAumQty(strMProductID, qty, finalAUM));
+          }
+        } finally {
+          OBContext.restorePreviousMode();
         }
-      } finally {
-        OBContext.restorePreviousMode();
       }
     }
 
