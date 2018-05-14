@@ -105,13 +105,12 @@ public class SL_InOutLine_Product extends SimpleCallout {
     // However, if the delivery-note doesn't come from an order, it modifies
     // the quantity field with the quantity in the warehouse.
 
-    BigDecimal qty = BigDecimal.ZERO;
     String fromOrder = SLInOutLineProductData.fromOrder(this, strmInoutlineId);
     boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     if (fromOrder.equals("0")) {
       BigDecimal qtyOrder = StringUtils.isNotEmpty(strQtyOrder) ? new BigDecimal(strQtyOrder)
           : null;
-      qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
+      BigDecimal qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
       info.addResult("inpquantityorder", qtyOrder);
       info.addResult("inpmovementqty", qty);
 
@@ -125,7 +124,6 @@ public class SL_InOutLine_Product extends SimpleCallout {
               .getDocumentType().getId());
           if (isValidUom(finalAUM)) {
             info.addResult("inpcAum", finalAUM);
-            qty = StringUtils.isNotEmpty(strQty) ? new BigDecimal(strQty) : null;
             info.addResult("inpaumqty", UOMUtil.getConvertedAumQty(strMProductID, qty, finalAUM));
           }
         } finally {
