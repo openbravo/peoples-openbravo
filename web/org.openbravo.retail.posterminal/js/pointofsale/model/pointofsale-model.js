@@ -820,8 +820,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     var linesForNewTicket = !cloneOrderForNew.get('hasServices') || (_.find(cloneOrderForNew.get('lines').models, function (line) {
                       return line.get('deliveredQuantity') < line.get('qty') && (!line.get('relatedLines') || _.find(line.get('relatedLines'), function (relatedLine) {
                         return relatedLine.deferred;
-                      }) || _.find(line.get('relatedLines'), function (relatedLine) {
-                        return relatedLine.deferred;
                       }) || _.find(cloneOrderForNew.get('lines').models, function (relatedLine) {
                         return relatedLine.get('deliveredQuantity') < relatedLine.get('qty');
                       }));
