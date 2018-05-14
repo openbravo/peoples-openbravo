@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.base.weld.WeldUtils;
 
 /**
  * This class is responsible for initializing the dal layer. It ensures that the model is read in
@@ -73,8 +74,7 @@ public class DalLayerInitializer implements OBSingleton {
     }
 
     log.info("Model read in-memory, generating mapping...");
-    SessionFactoryController.setInstance(OBProvider.getInstance().get(
-        DalSessionFactoryController.class));
+    SessionFactoryController.setInstance(getDalSessionFactoryController());
     SessionFactoryController.getInstance().initialize();
 
     // reset the session
@@ -87,6 +87,15 @@ public class DalLayerInitializer implements OBSingleton {
 
     log.info("Dal layer initialized");
     initialized = true;
+  }
+
+  private DalSessionFactoryController getDalSessionFactoryController() {
+    try {
+      return WeldUtils.getInstanceFromStaticBeanManager(DalSessionFactoryController.class);
+    } catch (Exception ex) {
+      log.debug("Could not instantiate DalSessionFactoryController using weld", ex);
+    }
+    return OBProvider.getInstance().get(DalSessionFactoryController.class);
   }
 
   public boolean isInitialized() {
