@@ -4245,8 +4245,8 @@
         }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
-          this.set('payment', OB.DEC.abs(nocash));
-          this.set('change', OB.DEC.add(cash, origCash));
+          this.set('payment', OB.DEC.add(OB.DEC.abs(nocash), processedPaymentsAmount));
+          this.set('change', OB.DEC.add(OB.DEC.sub(cash, processedPaymentsAmount), origCash));
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, OB.DEC.sub(cash, processedPaymentsAmount)), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
@@ -5587,7 +5587,7 @@
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('newPaidReceipt');
       enyo.$.scrim.show();
       var order = new Order(),
-          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, bpBillLocId, numberOfLines = model.receiptLines.length,
+          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, bpBillLocId, bpBillLoc, numberOfLines = model.receiptLines.length,
           orderQty = 0,
           NoFoundProduct = true,
           NoFoundCustomer = true,
@@ -5960,35 +5960,38 @@
               });
             }
           } else {
-            var criteria = {};
-            if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-              var remoteCriteria = [{
-                columns: ['id'],
-                operator: 'equals',
-                value: [bpLocId, bpBillLocId]
-              }];
-              criteria.remoteFilters = remoteCriteria;
+            if (isLoadedPartiallyFromBackend && !OB.UTIL.isNullOrUndefined(bpLoc) && !OB.UTIL.isNullOrUndefined(bpBillLoc)) {
+              bp.set('locations', [bpBillLoc, bpLoc]);
+              locationForBpartner(bpLoc, bpBillLoc);
             } else {
-              criteria._whereClause = "where c_bpartner_location_id in (?, ?)";
-              criteria.params = [bpLocId, bpBillLocId];
-            }
-            OB.UTIL.bpLoc = bpLoc;
-            OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
-              var loc, billLoc;
-              _.each(locations.models, function (l) {
-                if (l.id === bpLocId) {
-                  loc = l;
-                } else if (l.id === bpBillLocId) {
-                  billLoc = l;
-                }
-              });
-              if (OB.UTIL.isNullOrUndefined(loc)) {
-                billLoc = loc = OB.UTIL.bpLoc;
+              var criteria = {};
+              if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+                var remoteCriteria = [{
+                  columns: ['id'],
+                  operator: 'equals',
+                  value: [bpLocId, bpBillLocId]
+                }];
+                criteria.remoteFilters = remoteCriteria;
+              } else {
+                criteria._whereClause = "where c_bpartner_location_id in (?, ?)";
+                criteria.params = [bpLocId, bpBillLocId];
               }
-              locationForBpartner(loc, billLoc);
-            }, function (tx, error) {
-              OB.UTIL.showError("OBDAL error: " + error);
-            });
+              OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
+                var loc, billLoc;
+                _.each(locations.models, function (l) {
+                  if (l.id === bpLocId) {
+                    loc = l;
+                  } else if (l.id === bpBillLocId) {
+                    billLoc = l;
+                  }
+                });
+                locationForBpartner(loc, billLoc);
+              }, function (tx, error) {
+                OB.UTIL.showError("OBDAL error: " + error);
+              }, bpLoc);
+
+            }
+
           }
 
           };
@@ -5996,12 +5999,19 @@
         bpartnerForProduct(bp);
       }, null, function () {
         //Empty
-        new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
+        var loadCustomerParameters = {
           bpartnerId: bpId,
           bpLocationId: bpLocId
-        }, function (data) {
+        };
+        if (bpLocId !== bpBillLocId) {
+          loadCustomerParameters.bpBillLocationId = bpBillLocId;
+        }
+        new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec(loadCustomerParameters, function (data) {
           isLoadedPartiallyFromBackend = true;
           bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
+          if (bpLocId !== bpBillLocId) {
+            bpBillLoc = OB.Dal.transform(OB.Model.BPLocation, data[2]);
+          }
           bpartnerForProduct(OB.Dal.transform(OB.Model.BusinessPartner, data[0]));
         }, function () {
           if (NoFoundCustomer) {
