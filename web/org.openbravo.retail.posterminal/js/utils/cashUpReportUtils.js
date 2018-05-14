@@ -178,7 +178,7 @@
             }
             if (payment.get('amount') < 0) {
               auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), payment.get('amount')));
-            } else if (orderType === 3) { // void layaway 
+            } else if (orderType === 3 && order.getPaymentStatus().isNegative) { // void layaway 
               auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), payment.get('amount')));
             } else {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
