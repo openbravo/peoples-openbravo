@@ -58,7 +58,7 @@ public class RptM_Requisition extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
     }
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    HashMap<String, Object> parameters = new HashMap<>();
     parameters.put("REQUISITION_ID", strmRequisitionId);
     renderJR(vars, response, null, "pdf", parameters, null, null);
   }
