@@ -383,7 +383,6 @@ enyo.kind({
         }
       }
       this.$.layawayaction.setLocalDisabled(disable);
-      this.$.layawayaction.show();
       if (receiptHasPrepaymentAmount && pendingPrepayment <= 0) {
         this.$.layawayaction.hide();
       } else {
