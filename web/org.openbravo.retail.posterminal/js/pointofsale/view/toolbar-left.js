@@ -531,7 +531,7 @@ enyo.kind({
         }
         var line = me.model.get('order').get('lines').at(idx),
             productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product'));
-        if (OB.DEC.compare(line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock) {
+        if (OB.DEC.compare(line.get('qty')) === 1 && productStatus && productStatus.restrictsaleoutofstock) {
           var options = {
             line: line
           };
