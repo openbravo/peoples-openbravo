@@ -2492,7 +2492,7 @@
                 line = args.line;
                 newLine = false;
               } else {
-                if (args.attrs && args.attrs.relatedLines && args.attrs.relatedLines[0].deferred && args.p.get('quantityRule') === 'PP') {
+                if (args.attrs && args.attrs.relatedLines && args.attrs.relatedLines[0].deferred && args.p.get('quantityRule') === 'PP' && args.qty > 0) {
                   line = args.receipt.createLine(args.p, args.attrs.relatedLines[0].qty, args.options, args.attrs);
                 } else {
                   line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
