@@ -165,6 +165,7 @@ build.war: build a war file in the lib directory.
       <src path="${base.src}"/>
       <src path="../build/javasqlc/src"/>
       <src path="../src-gen"/>
+      <src path="../modules/org.openbravo.base.weld/src/"/>
       <classpath refid="apply.module.compile.classpath" />
     </javac>
   </target>
