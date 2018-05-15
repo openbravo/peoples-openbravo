@@ -10699,6 +10699,8 @@ from
   left join ol.salesOrder o
   left join o.priceList pl
   left join e.operativeUOM aum
+  left join e.invoiceLineList il
+  left join il.invoice i
 where
   @additional_filters@
   @insertion_point_0@]]></HQLQUERY>

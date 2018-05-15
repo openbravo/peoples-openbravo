@@ -36,7 +36,7 @@ public class InOutLinePEHQLInjector1 extends HqlInserter {
     StringBuilder hql = new StringBuilder();
 
     if (isSalesTransaction) {
-      hql.append("e.movementQuantity - (select coalesce(sum(il.invoicedQuantity),0) from e.invoiceLineList il where il.invoice.documentStatus = 'CO')");
+      hql.append("e.movementQuantity - (select coalesce(sum(il.invoicedQuantity),0) FROM InvoiceLine il WHERE il.invoice.id = i.id and i.documentStatus = 'CO' and il.goodsShipmentLine.id = e.id)");
     } else {
       hql.append("e.movementQuantity - (select coalesce(sum(mi.quantity),0) from e.procurementReceiptInvoiceMatchList mi)");
     }
