@@ -368,7 +368,11 @@ enyo.kind({
   },
 
   updateLayawayAction: function (forceDisable) {
-    var disable = forceDisable || !(this.model.get('leftColumnViewManager').isMultiOrder() ? true : this.receipt.isReversedPaid());
+    var disable = forceDisable || !(this.model.get('leftColumnViewManager').isMultiOrder() ? true : this.receipt.isReversedPaid()),
+        paymentstatus = this.receipt.getPaymentStatus(),
+        prepaymentAmount = this.receipt.get('obposPrepaymentamt'),
+        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
+        pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentstatus.pendingAmt), paymentstatus.totalAmt);
     if ((this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) && !this.receipt.getPaymentStatus().done && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
       this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
       if (!disable && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
@@ -380,6 +384,11 @@ enyo.kind({
       }
       this.$.layawayaction.setLocalDisabled(disable);
       this.$.layawayaction.show();
+      if (receiptHasPrepaymentAmount && pendingPrepayment <= 0) {
+        this.$.layawayaction.hide();
+      } else {
+        this.$.layawayaction.show();
+      }
     } else if (this.receipt.get('orderType') === 3 && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
       this.$.layawayaction.setLocalDisabled(false);
       this.$.layawayaction.hide();
