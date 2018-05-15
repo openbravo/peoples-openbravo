@@ -47,6 +47,7 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.client.application.datapool.DataPoolChecker;
 import org.openbravo.dal.core.DalSessionFactory;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -78,8 +79,6 @@ public class OBDal implements OBNotSingleton {
   private static ConcurrentHashMap<String, OBDal> otherPoolInstances = new ConcurrentHashMap<>();
   private String poolName;
 
-  private static String defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
-
   /**
    * @return the singleton instance of the OBDal service
    */
@@ -110,7 +109,7 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (shouldUseDefaultPool(pool)) {
+    if (shouldUseDefaultPool(pool) && !DataPoolChecker.shouldUseReadOnlyPool()) {
       return getInstance();
     }
 
@@ -118,8 +117,7 @@ public class OBDal implements OBNotSingleton {
   }
 
   private static boolean shouldUseDefaultPool(String pool) {
-    return ExternalConnectionPool.DEFAULT_POOL.equals(pool)
-        || ExternalConnectionPool.DEFAULT_POOL.equals(defaultReadOnlyPool);
+    return ExternalConnectionPool.DEFAULT_POOL.equals(pool);
   }
 
   private static OBDal getOtherPoolInstance(String pool) {
@@ -130,16 +128,6 @@ public class OBDal implements OBNotSingleton {
     }
 
     return otherPoolInstances.get(pool);
-  }
-
-  /**
-   * Set the default pool retrieved when requesting the read-only pool
-   * 
-   * @param defaultPool
-   *          the identifier of the the default read-only pool
-   */
-  public static void setDefaultReadOnlyPool(String defaultPool) {
-    defaultReadOnlyPool = defaultPool;
   }
 
   /**
