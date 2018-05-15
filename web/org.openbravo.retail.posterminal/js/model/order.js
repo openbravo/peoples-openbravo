@@ -2075,6 +2075,7 @@
           line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
           stockScreen = options && options.stockScreen,
           allLinesQty = qty,
+          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(p),
           warehouseId, warehouse;
 
       function navigateToStockScreen(warehouse) {
@@ -2091,7 +2092,7 @@
         if (allLinesQty > warehouse.warehouseqty) {
           if (me.get('doNotAddWithoutStock')) {
             OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
+            OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CannotSellWithoutStock', [p.get('_identifier'), productStatus.name, allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
                 navigateToStockScreen(warehouse);
@@ -2106,7 +2107,7 @@
             }
           } else {
             OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBPOS_NotEnoughStock'), OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), warehouse.warehouseqty, allLinesQty, warehouse.warehousename]), [{
+            OB.I18N.getLabel('OBPOS_NotEnoughStock'), OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
                 if (callback) {
@@ -2171,7 +2172,7 @@
             if (data && data.exception) {
               if (data.exception.message === 'Application server is not available.') {
                 OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [p.get('_identifier')]), [{
+                OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [p.get('_identifier'), productStatus.name]), [{
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
                   action: function () {
                     if (callback) {
@@ -2277,7 +2278,7 @@
         return false;
       }
       if (productStatus && productStatus.restrictsalefrompos && OB.DEC.compare(qty) === 1) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductBlocked', [p.get('_identifier')]));
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductLocked', [p.get('_identifier'), productStatus.name]));
         if (callback) {
           callback(false, null);
         }
