@@ -73,11 +73,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_MODULE" name="M_PRODUCT_STATUS_AD_MODULE_FK">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_STATUS_AD_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="M_PRODUCT_STATUS_AD_MODULE_FK">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_STATUS_AD_ORG_FK">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>

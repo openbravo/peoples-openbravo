@@ -358,36 +358,36 @@
 
     /*Locked and Discontinued Products*/
     IF (v_IsSOTrx = 'Y' AND v_DocAction='CO') THEN
-        FOR Cur_line IN
-            (SELECT SUM(ol.qtyordered) AS qtyordered, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, COALESCE(ol.m_product_uom_id, '0') AS m_product_uom_id, p.name, ps.name
-             FROM c_orderline ol
-             JOIN m_product p ON ol.m_product_id = p.m_product_id
-             JOIN m_product_status ps ON p.m_product_status_id = ps.m_product_status_id
-             WHERE ol.c_order_id = v_Record_ID
-             AND (ps.restrictsalefrombackend = 'Y' OR ps.restrictsaleoutofstock = 'Y')
-             GROUP BY ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), COALESCE(ol.m_product_uom_id, '0'), p.name, ps.name)
-            LOOP
-                IF (Cur_line.islocked = 'Y') THEN
-                    RAISE_APPLICATION_ERROR(-20000, '@CannotUseLockedProduct@ ' || Cur_line.name);
-                ELSIF (Cur_line.issalediscontinued = 'Y') THEN
-                    SELECT (CASE WHEN MAX(sd.m_product_uom_id) IS NOT NULL THEN COALESCE(SUM(sd.qtyorderonhand - sd.reservedqty), 0)
-                            ELSE COALESCE(SUM(sd.qtyonhand - sd.reservedqty), 0) END) INTO v_stockqty
-                    FROM m_storage_detail sd
-                    JOIN m_locator loc on loc.m_locator_id = sd.m_locator_id
-                    WHERE sd.m_product_id = Cur_line.m_product_id
-                    AND sd.c_uom_id = Cur_line.c_uom_id
-                    AND COALESCE(sd.m_attributesetinstance_id, '0') = Cur_line.m_attributesetinstance_id
-                    AND COALESCE(sd.m_product_uom_id, '0') = Cur_line.m_product_uom_id
-                    AND EXISTS (SELECT 1
-                                FROM AD_Org_Warehouse w
-                                WHERE w.ad_org_id = v_Org_ID
-                                AND w.m_warehouse_id = loc.m_warehouse_id);
+      FOR Cur_line IN
+        (SELECT SUM(ol.qtyordered) AS qtyordered, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, COALESCE(ol.m_product_uom_id, '0') AS m_product_uom_id, p.name, ps.name, ps.restrictsalefrombackend, ps.restrictsaleoutofstock
+         FROM c_orderline ol
+         JOIN m_product p ON ol.m_product_id = p.m_product_id
+         JOIN m_product_status ps ON p.m_product_status_id = ps.m_product_status_id
+         WHERE ol.c_order_id = v_Record_ID
+         AND (ps.restrictsalefrombackend = 'Y' OR ps.restrictsaleoutofstock = 'Y')
+         GROUP BY ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), COALESCE(ol.m_product_uom_id, '0'), p.name, ps.name, ps.restrictsalefrombackend, ps.restrictsaleoutofstock)
+      LOOP
+        IF (Cur_line.restrictsalefrombackend = 'Y') THEN
+          RAISE_APPLICATION_ERROR(-20000, '@CannotUseLockedProduct@ ' || Cur_line.name || '. @VerifyPLMStatus@.');
+        ELSIF (Cur_line.restrictsaleoutofstock = 'Y') THEN
+          SELECT (CASE WHEN MAX(sd.m_product_uom_id) IS NOT NULL THEN COALESCE(SUM(sd.qtyorderonhand - sd.reservedqty), 0)
+                  ELSE COALESCE(SUM(sd.qtyonhand - sd.reservedqty), 0) END) INTO v_stockqty
+          FROM m_storage_detail sd
+          JOIN m_locator loc on loc.m_locator_id = sd.m_locator_id
+          WHERE sd.m_product_id = Cur_line.m_product_id
+          AND sd.c_uom_id = Cur_line.c_uom_id
+          AND COALESCE(sd.m_attributesetinstance_id, '0') = Cur_line.m_attributesetinstance_id
+          AND COALESCE(sd.m_product_uom_id, '0') = Cur_line.m_product_uom_id
+          AND EXISTS (SELECT 1
+                      FROM AD_Org_Warehouse w
+                      WHERE w.ad_org_id = v_Org_ID
+                      AND w.m_warehouse_id = loc.m_warehouse_id);
 
-                    IF (Cur_line.qtyordered > v_stockqty) THEN
-                        RAISE_APPLICATION_ERROR(-20000, '@CannotUseDiscontinuedProduct@ ' || Cur_line.name || '. @ProductDiscontinuedNoStock@' || '(' || v_stockqty || ').');
-                    END IF;
-                END IF;
-            END LOOP;
+          IF (Cur_line.qtyordered > v_stockqty) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@CannotUseDiscontinuedProduct@ ' || Cur_line.name || '. @ProductDiscontinuedNoStock@' || '(' || v_stockqty || '). @VerifyPLMStatus@.');
+          END IF;
+        END IF;
+      END LOOP;
     END IF;
 
     /** 
