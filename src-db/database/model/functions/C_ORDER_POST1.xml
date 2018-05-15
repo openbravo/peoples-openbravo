@@ -359,11 +359,13 @@
     /*Locked and Discontinued Products*/
     IF (v_IsSOTrx = 'Y' AND v_DocAction='CO') THEN
         FOR Cur_line IN
-            (SELECT SUM(ol.qtyordered) AS qtyordered, ol.ad_org_id, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, COALESCE(ol.m_product_uom_id, '0') AS m_product_uom_id, p.islocked, p.issalediscontinued, p.name, p.isstocked, p.producttype
-             FROM c_orderline ol JOIN m_product p ON ol.m_product_id = p.m_product_id
+            (SELECT SUM(ol.qtyordered) AS qtyordered, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, COALESCE(ol.m_product_uom_id, '0') AS m_product_uom_id, p.name, ps.name
+             FROM c_orderline ol
+             JOIN m_product p ON ol.m_product_id = p.m_product_id
+             JOIN m_product_status ps ON p.m_product_status_id = ps.m_product_status_id
              WHERE ol.c_order_id = v_Record_ID
-             AND (p.islocked = 'Y' OR p.issalediscontinued = 'Y')
-             GROUP BY ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), COALESCE(ol.m_product_uom_id, '0'), p.islocked, p.issalediscontinued, p.name)
+             AND (ps.restrictsalefrombackend = 'Y' OR ps.restrictsaleoutofstock = 'Y')
+             GROUP BY ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0'), COALESCE(ol.m_product_uom_id, '0'), p.name, ps.name)
             LOOP
                 IF (Cur_line.islocked = 'Y') THEN
                     RAISE_APPLICATION_ERROR(-20000, '@CannotUseLockedProduct@ ' || Cur_line.name);

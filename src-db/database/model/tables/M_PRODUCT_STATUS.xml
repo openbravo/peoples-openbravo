@@ -69,6 +69,13 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_MODULE" name="AD_PRODUCT_STATUS_AD_MODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_STATUS_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -82,5 +89,6 @@
       <check name="M_PROD_ST_RESSALEOUTSTOCK_CHK"><![CDATA[RESTRICTSALEOUTOFSTOCK IN ('Y', 'N')]]></check>
       <check name="M_PROD_ST_RESTRICTPURCHASE_CHK"><![CDATA[RESTRICTPURCHASE IN ('Y', 'N')]]></check>
       <check name="M_PROD_ST_RESTRICTSALEPOS_CHK"><![CDATA[RESTRICTSALEFROMPOS IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_STATUS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
