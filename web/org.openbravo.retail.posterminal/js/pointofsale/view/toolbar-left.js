@@ -529,8 +529,9 @@ enyo.kind({
           showMandatoryServices();
           return;
         }
-        var line = me.model.get('order').get('lines').at(idx);
-        if (line.get('qty') > 0 && (line.get('product').get('isdiscontinued') || line.get('product').get('issalediscontinued'))) {
+        var line = me.model.get('order').get('lines').at(idx),
+            productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product'));
+        if (OB.DEC.compare(line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock) {
           var options = {
             line: line
           };

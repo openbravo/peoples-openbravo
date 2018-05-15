@@ -214,17 +214,13 @@
     column: 'isSerialNo',
     type: 'BOOL'
   }, {
-    name: 'islocked',
-    column: 'islocked',
-    type: 'BOOL'
+    name: 'productStatus',
+    column: 'productStatus',
+    type: 'TEXT'
   }, {
-    name: 'isdiscontinued',
-    column: 'isdiscontinued',
-    type: 'BOOL'
-  }, {
-    name: 'issalediscontinued',
-    column: 'issalediscontinued',
-    type: 'BOOL'
+    name: 'producAssortmentStatus',
+    column: 'producAssortmentStatus',
+    type: 'TEXT'
   }]);
 
   Product.addIndex([{

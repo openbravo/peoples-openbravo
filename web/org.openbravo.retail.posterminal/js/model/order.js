@@ -1493,11 +1493,12 @@
       }
 
       function checkStock(idx) {
-        var line = selectedModels[idx];
         if (idx === selectedModels.length) {
           deleteApproval();
         } else {
-          if (line.get('qty') < 0 && (line.get('product').get('isdiscontinued') || line.get('product').get('issalediscontinued'))) {
+          var line = selectedModels[idx],
+              productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product'));
+          if (productStatus && productStatus.restrictsaleoutofstock && OB.DEC.compare(line.get('qty')) === -1) {
             var qtyAdded = -line.get('qty'),
                 options = {
                 line: line
@@ -1606,6 +1607,7 @@
           isSelectedLine = selectedLines.includes(line),
           pack = line.isAffectedByPack(),
           productId = line.get('product').id,
+          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product')),
           deletedQty, deleteLineOnceChecked;
 
       //Defensive code: Do not remove non existing line
@@ -1754,7 +1756,7 @@
       };
 
       // Check the stock for each negative discontinued line that is related to a deleting line
-      if (!isSelectedLine && line.get('qty') < 0 && (line.get('product').get('isdiscontinued') || line.get('product').get('issalediscontinued'))) {
+      if (!isSelectedLine && OB.DEC.compare(line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
         var qtyAdded = -line.get('qty'),
             options = {
             line: line
@@ -2089,7 +2091,7 @@
         if (allLinesQty > warehouse.warehouseqty) {
           if (me.get('doNotAddWithoutStock')) {
             OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
+            OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
                 navigateToStockScreen(warehouse);
@@ -2104,7 +2106,7 @@
             }
           } else {
             OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBPOS_NotEnoughStock'), OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), warehouse.warehouseqty, qty, warehouse.warehousename]), [{
+            OB.I18N.getLabel('OBPOS_NotEnoughStock'), OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), warehouse.warehouseqty, allLinesQty, warehouse.warehousename]), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               action: function () {
                 if (callback) {
@@ -2221,7 +2223,8 @@
           productHavingSameAttribute = false,
           productHasAttribute = p.get('hasAttributes'),
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true),
-          isQuotationAndAttributeAllowed = p.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
+          isQuotationAndAttributeAllowed = p.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true),
+          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(p);
       if (enyo.Panels.isScreenNarrow()) {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
@@ -2273,7 +2276,7 @@
         }
         return false;
       }
-      if (p.get('islocked') && qty > 0) {
+      if (productStatus && productStatus.restrictsalefrompos && OB.DEC.compare(qty) === 1) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductBlocked', [p.get('_identifier')]));
         if (callback) {
           callback(false, null);
@@ -2499,7 +2502,7 @@
           addProductToOrder();
         }
       }
-      if ((p.get('isdiscontinued') || p.get('issalediscontinued')) && OB.DEC.compare(qty) === 1 && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+      if (productStatus && productStatus.restrictsaleoutofstock && OB.DEC.compare(qty) === 1 && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
         me.getStoreStock(p, qty, options, attrs, function (hasStock) {
           if (hasStock) {
             returnApproval();

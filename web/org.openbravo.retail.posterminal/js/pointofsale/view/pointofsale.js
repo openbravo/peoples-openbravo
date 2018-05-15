@@ -971,7 +971,8 @@ enyo.kind({
     });
   },
   returnLine: function (inSender, inEvent) {
-    var me = this;
+    var me = this,
+        productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(inEvent.line.get('product'));
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
@@ -982,7 +983,7 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
       return;
     }
-    if (inEvent.line.get('qty') < 0 && (inEvent.line.get('product').get('isdiscontinued') || inEvent.line.get('product').get('issalediscontinued')) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+    if (OB.DEC.compare(inEvent.line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
       var qtyAdded = -inEvent.line.get('qty') - inEvent.line.get('qty');
       this.model.get('order').getStoreStock(inEvent.line.get('product'), qtyAdded, inEvent, null, function (hasStock) {
         if (hasStock) {
