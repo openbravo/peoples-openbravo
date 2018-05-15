@@ -26,6 +26,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
@@ -44,7 +45,8 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -60,9 +62,9 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
       }
     }
 
+    final Product product = (Product) event.getTargetInstance();
     if (newGeneric == true && oldGeneric == false) {
       // check that whether the there are characteristic already define
-      final Product product = (Product) event.getTargetInstance();
       if (!product.getProductCharacteristicList().isEmpty()) {
         for (ProductCharacteristic productCh : product.getProductCharacteristicList()) {
           if (productCh.getProductCharacteristicConfList().isEmpty()
@@ -85,6 +87,23 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
           // so Create configuration based on Characteristic Subset Values is skipped
         }
       }
+    }
+    checkStatusForNotStocked(product);
+  }
+
+  public void onSave(@Observes
+  EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    final Product product = (Product) event.getTargetInstance();
+    checkStatusForNotStocked(product);
+  }
+
+  private void checkStatusForNotStocked(Product product) {
+    if (product.getProductStatus() != null
+        && !(product.isStocked() && "I".equals(product.getProductType()))) {
+      throw new OBException(OBMessageUtils.messageBD("NotStockedWithStatus"));
     }
   }
 }
