@@ -73,13 +73,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_MODULE" name="AD_PRODUCT_STATUS_AD_MODULE">
+      <foreign-key foreignTable="AD_MODULE" name="M_PRODUCT_STATUS_AD_MODULE_FK">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_STATUS_AD_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_STATUS_AD_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_STATUS_AD_ORG">
+      <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_STATUS_AD_ORG_FK">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="M_PROD_ST_RESDISTRIBORDISS_CHK"><![CDATA[RESTRICTDISTRIBORDERISSUE IN ('Y', 'N')]]></check>
