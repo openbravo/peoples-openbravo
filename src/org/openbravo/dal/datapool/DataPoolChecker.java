@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.application.datapool;
+package org.openbravo.dal.datapool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +28,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Helper class used to determine if a request should use the read-only pool to retrieve data
@@ -39,7 +35,6 @@ import org.openbravo.model.common.enterprise.Organization;
 public class DataPoolChecker {
   private static List<String> readOnlyPoolProcesses = new ArrayList<>();
   private static String defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
-  private static final String DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE = "DefaultDBPoolForReports";
 
   /**
    * Reload from DB the processes that should use the Read-only pool
@@ -67,29 +62,6 @@ public class DataPoolChecker {
   }
 
   /**
-   * Refresh the default pool used when requesting a read-only instance of OBDal
-   */
-  public static void refreshDefaultPoolForReadOnly() {
-    String defaultDbPool;
-
-    try {
-      OBContext.setAdminMode(false);
-      Client systemClient = OBDal.getInstance().get(Client.class, "0");
-      Organization asterisk = OBDal.getInstance().get(Organization.class, "0");
-
-      defaultDbPool = Preferences.getPreferenceValue(DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE, true,
-          systemClient, asterisk, null, null, null);
-
-    } catch (PropertyException pe) {
-      defaultDbPool = ExternalConnectionPool.READONLY_POOL;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    defaultReadOnlyPool = defaultDbPool;
-  }
-
-  /**
    * Verifies whether the current process from SessionInfo.getProcessId() should use the read-only
    * pool
    *
@@ -103,5 +75,15 @@ public class DataPoolChecker {
     }
 
     return false;
+  }
+
+  /**
+   * Set the default pool used when requesting the read-only pool
+   * 
+   * @param defaultReadOnlyPool
+   *          the ID of the default pool returned when requesting read-only
+   */
+  public static void setDefaultReadOnlyPool(String defaultReadOnlyPool) {
+    DataPoolChecker.defaultReadOnlyPool = defaultReadOnlyPool;
   }
 }
