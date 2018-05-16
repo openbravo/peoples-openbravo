@@ -58,6 +58,7 @@ public class InOutLinePEHQLInjector0 extends HqlInserter {
       hql.append("    (select coalesce(sum(il.invoicedQuantity),0) FROM InvoiceLine il WHERE il.invoice.id = i.id and i.documentStatus = 'CO' and il.goodsShipmentLine.id = e.id)");
       hql.append("   ) or e.explode = 'Y')");
     } else {
+      hql.append(" and (o.id is null or o.invoiceTerms <> 'N')");
       hql.append(" and ((e.movementQuantity - (select coalesce(sum(mi.quantity),0) from e.procurementReceiptInvoiceMatchList mi) <> 0) or e.explode = 'Y')");
     }
 
