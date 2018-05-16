@@ -386,6 +386,7 @@ public class OBBaseTest {
   }
 
   private static void staticInitializeDalLayer() throws Exception {
+    // use default DalSessionFactoryController instance for the DAL layer initialization
     staticInitializeDalLayer(null);
   }
 
