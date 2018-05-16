@@ -61,11 +61,11 @@ public class BPLocation extends ProcessHQLQuery {
         + "left join bploc.locationAddress AS bplocAddress "
         + "left join bplocAddress.region AS bplocRegion " + "where $filtersCriteria AND "
         + "bp.customer = true AND " + "bp.priceList IS NOT NULL AND "
-        + "(bploc.$incrementalUpdateCriteria" + operator + "bp.$incrementalUpdateCriteria) ";
+        + "((bploc.$incrementalUpdateCriteria" + operator + "bp.$incrementalUpdateCriteria) ";
     if (lastUpdated != null) {
       hql += " OR (bplocAddress.$incrementalUpdateCriteria) ";
     }
-    hql += " and bploc.$readableSimpleClientCriteria AND " + "bploc.$naturalOrgCriteria "
+    hql += ") and bploc.$readableSimpleClientCriteria AND " + "bploc.$naturalOrgCriteria "
         + " and bploc.$paginationByIdCriteria " //
         + "ORDER BY bploc.id";
     hqlQueries.add(hql);

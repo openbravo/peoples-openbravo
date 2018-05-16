@@ -318,13 +318,6 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
 
   @Override
   protected boolean isLoginAccessRestrictedInStoreServer(VariablesSecureApp vars) {
-    // access to the POS login is granted, even if the ERP access is restricted in the store server
-    // even though access is granted to the POS Login, the onlySystemAdminRoleShouldBeAvailableInErp
-    // session flag is set to prevent opening the backend from the POS (this is controlled in the
-    // index.jsp file)
-    if (isErpAccessRestrictedInStoreServer()) {
-      vars.setSessionValue("onlySystemAdminRoleShouldBeAvailableInErp", "Y");
-    }
     return false;
   }
 }
