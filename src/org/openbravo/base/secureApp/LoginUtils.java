@@ -13,7 +13,6 @@ package org.openbravo.base.secureApp;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -625,15 +624,11 @@ public class LoginUtils {
 
         OrganizationStructureProvider osp = OBContext.getOBContext()
             .getOrganizationStructureProvider(strClient);
-        Set<String> allAccessibleOrgs = new HashSet<>();
 
-        for (OrgTreeData org : OrgTreeData.select(connectionProvider, strRole)) {
-          if (!allAccessibleOrgs.contains(org.adOrgId)) {
-            allAccessibleOrgs.addAll(osp.getNaturalTree(org.adOrgId));
-          }
-        }
+        Set<String> orgNaturalTree = osp.getNaturalTree(strOrg);
+
         strWarehouse = DefaultOptionsData.getDefaultWarehouse(connectionProvider, strClient,
-            StringCollectionUtils.commaSeparated(allAccessibleOrgs));
+            StringCollectionUtils.commaSeparated(orgNaturalTree));
       }
     } else {
       strWarehouse = "";
