@@ -28,7 +28,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
-import org.openbravo.database.SessionInfo;
 
 /**
  * Helper class used to determine if a request should use the read-only pool to retrieve data
@@ -40,24 +39,41 @@ public class DataPoolChecker {
   /**
    * Reload from DB the processes that should use the Read-only pool
    */
-  @SuppressWarnings("unchecked")
   public static void refreshDataPoolProcesses() {
+    List<DataPoolSelection> readOnlyDataPoolSelection = findActiveDataPoolSelection();
+    setDataPoolProcesses(convertToMap(readOnlyDataPoolSelection));
+  }
+
+  private static List<DataPoolSelection> findActiveDataPoolSelection() {
     OBContext.setAdminMode(false);
     OBCriteria<DataPoolSelection> criteria = OBDal.getInstance().createCriteria(
         DataPoolSelection.class);
     criteria.setFilterOnActive(true);
-    List<DataPoolSelection> readOnlyDataPoolSelection = criteria.list();
+    List<DataPoolSelection> selection = criteria.list();
+    OBContext.restorePreviousMode();
 
-    DataPoolChecker.dataPoolProcesses.clear();
-    for (DataPoolSelection selection : readOnlyDataPoolSelection) {
+    return selection;
+  }
+
+  /**
+   *
+   * @param selectionList
+   *          a list of DataPoolSelection objects
+   * @return A Map<String,String> with the Process ID (either for Process and ProcessDefinition) as
+   *         key, and their corresponding DataPool as the value
+   */
+  private static Map<String, String> convertToMap(List<DataPoolSelection> selectionList) {
+    Map<String, String> processes = new HashMap<>();
+
+    for (DataPoolSelection selection : selectionList) {
       if (selection.getProcessDefintion() != null) {
-        dataPoolProcesses.put(selection.getProcessDefintion().getId(), selection.getDataPool());
+        processes.put(selection.getProcessDefintion().getId(), selection.getDataPool());
       } else if (selection.getProcess() != null) {
-        dataPoolProcesses.put(selection.getProcess().getId(), selection.getDataPool());
+        processes.put(selection.getProcess().getId(), selection.getDataPool());
       }
     }
 
-    OBContext.restorePreviousMode();
+    return processes;
   }
 
   /**
@@ -66,18 +82,26 @@ public class DataPoolChecker {
    *
    * @return true if the current process should use the default pool
    */
-  public static boolean shouldUseDefaultPool() {
-    String processId = SessionInfo.getProcessId();
-    if (StringUtils.isNotBlank(processId)) {
+  public static boolean shouldUseDefaultPool(String processId) {
+    if (processIsNotAvailable(processId)) {
+      return preferenceIsSetToDefaultPool();
+    }
+    else {
       String poolForProcess = dataPoolProcesses.get(processId);
       if (poolForProcess != null) {
         return poolForProcess.equals(ExternalConnectionPool.DEFAULT_POOL);
-      } else {
-        return ExternalConnectionPool.DEFAULT_POOL.equals(defaultReadOnlyPool);
       }
-    }
 
+      return preferenceIsSetToDefaultPool();
+    }
+  }
+
+  private static boolean preferenceIsSetToDefaultPool() {
     return ExternalConnectionPool.DEFAULT_POOL.equals(defaultReadOnlyPool);
+  }
+
+  private static boolean processIsNotAvailable(String processId) {
+    return StringUtils.isBlank(processId);
   }
 
   /**
@@ -88,5 +112,15 @@ public class DataPoolChecker {
    */
   public static void setDefaultReadOnlyPool(String defaultReadOnlyPool) {
     DataPoolChecker.defaultReadOnlyPool = defaultReadOnlyPool;
+  }
+
+  /**
+   * Set the map of processes with their assigned data pool
+   * 
+   * @param dataPoolProcesses
+   *          a map with the ID of the process as key and the pool type (DEFAULT|RO) as the value
+   */
+  public static void setDataPoolProcesses(Map<String, String> dataPoolProcesses) {
+    DataPoolChecker.dataPoolProcesses = dataPoolProcesses;
   }
 }

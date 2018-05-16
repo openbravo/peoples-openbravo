@@ -47,11 +47,11 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
-import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.dal.core.DalSessionFactory;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
@@ -109,7 +109,8 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (shouldUseDefaultPool(pool) || DataPoolChecker.shouldUseDefaultPool()) {
+    if (shouldUseDefaultPool(pool)
+        || DataPoolChecker.shouldUseDefaultPool(SessionInfo.getProcessId())) {
       return getInstance();
     }
 
