@@ -28,6 +28,12 @@ import org.hibernate.dialect.function.SQLFunction;
  */
 public interface SQLFunctionRegister {
 
+  /**
+   * This method is executed by the {@link DalSessionFactoryController} to retrieve SQL functions
+   * that should be registered in Hibernate.
+   * 
+   * @return A Map with SQL functions to be registered in Hibernate.
+   */
   public Map<String, SQLFunction> getSQLFunctions();
 
 }
