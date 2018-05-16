@@ -25,9 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.type.DateType;
 import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.StringType;
 import org.openbravo.dal.core.SQLFunctionRegister;
 
 /**
@@ -40,15 +38,15 @@ public class KernelSQLFunctionRegister implements SQLFunctionRegister {
   public Map<String, SQLFunction> getSQLFunctions() {
     Map<String, SQLFunction> sqlFunctions = new HashMap<>();
     sqlFunctions.put("ad_org_getcalendarowner", new StandardSQLFunction("ad_org_getcalendarowner",
-        new StringType()));
+        StandardBasicTypes.STRING));
     sqlFunctions.put("ad_org_getperiodcontrolallow", new StandardSQLFunction(
-        "ad_org_getperiodcontrolallow", new StringType()));
-    sqlFunctions.put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
+        "ad_org_getperiodcontrolallow", StandardBasicTypes.STRING));
+    sqlFunctions.put("get_uuid", new StandardSQLFunction("get_uuid", StandardBasicTypes.STRING));
     sqlFunctions.put("m_isparent_ch_value", new StandardSQLFunction("m_isparent_ch_value",
-        new StringType()));
+        StandardBasicTypes.STRING));
     sqlFunctions.put("m_getjsondescription", new StandardSQLFunction("m_getjsondescription",
         StandardBasicTypes.STRING));
-    sqlFunctions.put("now", new StandardSQLFunction("now", new DateType()));
+    sqlFunctions.put("now", new StandardSQLFunction("now", StandardBasicTypes.DATE));
     return sqlFunctions;
   }
 }
