@@ -19,19 +19,21 @@
 
 package org.openbravo.advpaymentmngt.utility;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.servlet.ServletException;
 
-import org.hibernate.SQLQuery;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.SQLFunctionRegister;
-import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -68,19 +70,25 @@ public class APRMSQLFunctionRegister implements SQLFunctionRegister {
 
   private boolean existsStrAgg() {
     try {
-      SQLQuery qry = OBDal.getInstance().getSession().createSQLQuery("select stragg(1) from dual");
-      qry.list();
-    } catch (Exception e) {
-      return false;
+      ConnectionProviderImpl connectionProvider = new ConnectionProviderImpl(OBPropertiesProvider
+          .getInstance().getOpenbravoProperties());
+      String sql = "select stragg(1) from dual";
+      try (PreparedStatement st = connectionProvider.getPreparedStatement(sql);
+          Connection connection = st.getConnection();
+          ResultSet result = st.executeQuery()) {
+        return true;
+      }
+    } catch (Exception ignore) {
     }
-    return true;
+    return false;
   }
 
   private boolean is11R2orNewer() {
     String dbVersion = null;
     try {
-      dbVersion = SystemInfo.getDatabaseVersion(new DalConnectionProvider(false));
-    } catch (ServletException ignore) {
+      dbVersion = SystemInfo.getDatabaseVersion(new ConnectionProviderImpl(OBPropertiesProvider
+          .getInstance().getOpenbravoProperties()));
+    } catch (Exception ignore) {
     }
     if (dbVersion == null) {
       return false;
