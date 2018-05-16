@@ -65,6 +65,9 @@
       <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_STATUS_TRL_AD_ORG_FK">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="M_PROD_STATUS_TRL_PROD_STATUS" unique="false">
+        <index-column name="M_PRODUCT_STATUS_ID"/>
+      </index>
       <check name="M_PROD_STAT_TRANSLATED_TRL_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
       <check name="M_PROD_STATUS_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
