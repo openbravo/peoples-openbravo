@@ -1087,6 +1087,10 @@
         this.set('canceledorder', _order.get('canceledorder'));
       }
 
+      if (_order.get('doCancelAndReplace')) {
+        this.set('doCancelAndReplace', _order.get('doCancelAndReplace'));
+      }
+
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
       if (OB.UTIL.isNullOrUndefined(this.get('idExecution')) && OB.UTIL.isNullOrUndefined(_order.get('idExecution'))) {
         idExecution = new Date().getTime();
