@@ -49,11 +49,11 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.DalLayerInitializer;
+import org.openbravo.dal.core.DalSessionFactoryController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
@@ -62,7 +62,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.dal.TestDalSessionFactoryController;
 
 /**
  * OBBaseTest class which can/should be extended by most other test classes which want to make use
@@ -380,17 +379,22 @@ public class OBBaseTest {
    * 
    * @throws Exception
    */
-  protected void initializeDalLayer() throws Exception {
-    staticInitializeDalLayer();
+  protected void initializeDalLayer(DalSessionFactoryController sfc) throws Exception {
+    DalLayerInitializer.getInstance().setInitialized(false);
+    log.info("Creating custom DAL layer initialization...");
+    staticInitializeDalLayer(sfc);
   }
 
   private static void staticInitializeDalLayer() throws Exception {
+    staticInitializeDalLayer(null);
+  }
+
+  private static void staticInitializeDalLayer(DalSessionFactoryController sfc) throws Exception {
     DalLayerInitializer initializer = DalLayerInitializer.getInstance();
     if (!initializer.isInitialized()) {
-      // use a custom DalSessionFactoryController instance to be able to register SQL functions to
-      // be used in HQL queries created for the tests
-      initializer.setDalSessionFactoryController(OBProvider.getInstance().get(
-          TestDalSessionFactoryController.class));
+      if (sfc != null) {
+        initializer.setDalSessionFactoryController(sfc);
+      }
       initializer.initialize(true);
     }
   }

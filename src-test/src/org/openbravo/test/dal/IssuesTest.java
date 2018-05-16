@@ -47,6 +47,9 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.function.SQLFunction;
+import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -59,6 +62,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalSessionFactoryController;
 import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -179,9 +183,22 @@ public class IssuesTest extends OBBaseTest {
 
   /**
    * https://issues.openbravo.com/view.php?id=18688
+   * 
+   * @throws Exception
    */
   @Test
-  public void test18688() {
+  public void test18688() throws Exception {
+    // custom DAL layer initialization to register the SQL function
+    initializeDalLayer(new DalSessionFactoryController() {
+      @Override
+      protected Map<String, SQLFunction> getSQLFunctions() {
+        Map<String, SQLFunction> sqlFunctions = new HashMap<>();
+        sqlFunctions.put("ad_column_identifier_std", new StandardSQLFunction(
+            "ad_column_identifier_std", StandardBasicTypes.STRING));
+        return sqlFunctions;
+      }
+    });
+
     final Session session = OBDal.getInstance().getSession();
     final String qryStr = "select bc.id, ad_column_identifier_std('C_BP_Group', bc.id) from "
         + Category.ENTITY_NAME + " bc";
