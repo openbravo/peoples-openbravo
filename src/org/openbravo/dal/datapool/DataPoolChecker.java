@@ -18,13 +18,14 @@
  */
 package org.openbravo.dal.datapool;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.DataPoolSelection;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
@@ -33,28 +34,26 @@ import org.openbravo.database.SessionInfo;
  * Helper class used to determine if a request should use the read-only pool to retrieve data
  */
 public class DataPoolChecker {
-  private static List<String> readOnlyPoolProcesses = new ArrayList<>();
+  private static Map<String, String> dataPoolProcesses = new HashMap<>();
   private static String defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
 
   /**
    * Reload from DB the processes that should use the Read-only pool
    */
   @SuppressWarnings("unchecked")
-  public static void refreshReadOnlyProcesses() {
+  public static void refreshDataPoolProcesses() {
     OBContext.setAdminMode(false);
-    List<DataPoolSelection> readOnlyDataPoolSelection = (List<DataPoolSelection>) OBDal
-        .getInstance()
-        .createCriteria(DataPoolSelection.class)
-        .add(
-            Restrictions.eq(DataPoolSelection.PROPERTY_DATAPOOL,
-                ExternalConnectionPool.READONLY_POOL)).list();
+    OBCriteria<DataPoolSelection> criteria = OBDal.getInstance().createCriteria(
+        DataPoolSelection.class);
+    criteria.setFilterOnActive(true);
+    List<DataPoolSelection> readOnlyDataPoolSelection = criteria.list();
 
-    DataPoolChecker.readOnlyPoolProcesses.clear();
+    DataPoolChecker.dataPoolProcesses.clear();
     for (DataPoolSelection selection : readOnlyDataPoolSelection) {
       if (selection.getProcessDefintion() != null) {
-        readOnlyPoolProcesses.add(selection.getProcessDefintion().getId());
+        dataPoolProcesses.put(selection.getProcessDefintion().getId(), selection.getDataPool());
       } else if (selection.getProcess() != null) {
-        readOnlyPoolProcesses.add(selection.getProcess().getId());
+        dataPoolProcesses.put(selection.getProcess().getId(), selection.getDataPool());
       }
     }
 
@@ -62,19 +61,23 @@ public class DataPoolChecker {
   }
 
   /**
-   * Verifies whether the current process from SessionInfo.getProcessId() should use the read-only
+   * Verifies whether the current process from SessionInfo.getProcessId() should use the default
    * pool
    *
-   * @return true if the current process should use the RO pool
+   * @return true if the current process should use the default pool
    */
-  public static boolean shouldUseReadOnlyPool() {
+  public static boolean shouldUseDefaultPool() {
     String processId = SessionInfo.getProcessId();
     if (StringUtils.isNotBlank(processId)) {
-      return ExternalConnectionPool.DEFAULT_POOL.equals(defaultReadOnlyPool)
-          || readOnlyPoolProcesses.contains(SessionInfo.getProcessId());
+      String poolForProcess = dataPoolProcesses.get(processId);
+      if (poolForProcess != null) {
+        return poolForProcess.equals(ExternalConnectionPool.DEFAULT_POOL);
+      } else {
+        return ExternalConnectionPool.DEFAULT_POOL.equals(defaultReadOnlyPool);
+      }
     }
 
-    return false;
+    return ExternalConnectionPool.DEFAULT_POOL.equals(defaultReadOnlyPool);
   }
 
   /**

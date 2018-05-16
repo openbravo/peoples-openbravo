@@ -168,6 +168,6 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   }
 
   private void updateDataPoolSelectionCache() {
-    DataPoolChecker.refreshReadOnlyProcesses();
+    DataPoolChecker.refreshDataPoolProcesses();
   }
 }

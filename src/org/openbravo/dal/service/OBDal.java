@@ -109,7 +109,7 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (shouldUseDefaultPool(pool) && !DataPoolChecker.shouldUseReadOnlyPool()) {
+    if (shouldUseDefaultPool(pool) || DataPoolChecker.shouldUseDefaultPool()) {
       return getInstance();
     }
 
