@@ -9,9 +9,12 @@
 
 package org.openbravo.retail.posterminal.event;
 
+import java.util.List;
+
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -20,8 +23,11 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.TerminalTypePaymentMethod;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -45,6 +51,8 @@ public class PaymentMethodEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
+
+    validateActivePayment((OBPOSAppPayment) event.getTargetInstance());
 
     FIN_FinancialAccount financialAccount = (FIN_FinancialAccount) event.getTargetInstance().get(
         "financialAccount");
@@ -83,5 +91,20 @@ public class PaymentMethodEventHandler extends EntityPersistenceEventObserver {
           "OBPOS_FinAccLeaveCredit", OBContext.getOBContext().getLanguage().getLanguage()));
     }
 
+  }
+
+  private void validateActivePayment(OBPOSAppPayment paymentTerminal) {
+    if (!paymentTerminal.isActive()) {
+      OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance().createCriteria(
+          OBPOSAppCashup.class);
+      obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id", paymentTerminal
+          .getObposApplications().getId()));
+      obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ISPROCESSED, false));
+      List<OBPOSAppCashup> cashUp = obCriteria.list();
+      if (cashUp.size() > 0) {
+        throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+            "OBPOS_PaymentDeactive", OBContext.getOBContext().getLanguage().getLanguage()));
+      }
+    }
   }
 }
