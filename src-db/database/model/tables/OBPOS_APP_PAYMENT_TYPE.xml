@@ -177,16 +177,16 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="REFUNDABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <column name="ISREVERSABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="AVAILABLE_REVERSE_DELAY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="REFUNDABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="COUNTPAYMENTINCASHUP" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
@@ -198,6 +198,14 @@
         <onCreateDefault/>
       </column>
       <column name="OBPOS_PAYMENTMETHOD_TYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CHANGELESSTHAN" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CHANGE_PAYMENT_TYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -245,6 +253,9 @@
       </foreign-key>
       <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APPPAYTYPE_TERM">
         <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_PAYTYPE_CHANGEPAY_CHK" onDelete="cascade">
+        <reference local="CHANGE_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </foreign-key>
       <index name="OBPOS_APPPAYTYPE_CURR" unique="false">
         <index-column name="C_CURRENCY_ID"/>
