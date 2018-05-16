@@ -40,7 +40,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 @ApplicationScoped
 public class APRMSQLFunctionRegister implements SQLFunctionRegister {
-  final static String RDBMS = new DalConnectionProvider(false).getRDBMS();
+  private static final String RDBMS = new DalConnectionProvider(false).getRDBMS();
 
   @Override
   public Map<String, SQLFunction> getSQLFunctions() {
@@ -81,15 +81,11 @@ public class APRMSQLFunctionRegister implements SQLFunctionRegister {
     try {
       dbVersion = SystemInfo.getDatabaseVersion(new DalConnectionProvider(false));
     } catch (ServletException ignore) {
-
     }
     if (dbVersion == null) {
       return false;
     }
-    int version = Integer.valueOf(dbVersion.replaceAll("\\.", "").substring(0, 3));
-    if (version >= 112) {
-      return true;
-    }
-    return false;
+    int version = Integer.parseInt(dbVersion.replaceAll("\\.", "").substring(0, 3));
+    return version >= 112;
   }
 }
