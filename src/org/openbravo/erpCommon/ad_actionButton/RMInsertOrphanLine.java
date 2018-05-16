@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.ReturnReason;
@@ -96,6 +97,11 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
       newOrderLine.setAttributeSetValue(attrSetInstance);
       newOrderLine.setUOM(product.getUOM());
       newOrderLine.setOrderedQuantity(returnedQty.negate());
+
+      if (UOMUtil.isUomManagementEnabled()) {
+        newOrderLine.setOperativeQuantity(returnedQty.negate());
+        newOrderLine.setOperativeUOM(product.getUOM());
+      }
 
       if (strUnitPrice.isEmpty()) {
         ProductPrice productPrice = getProductPrice(product, order.getOrderDate(),
