@@ -209,6 +209,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_GLITEM_ROUND_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -254,8 +258,11 @@
       <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APPPAYTYPE_TERM">
         <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_PAYTYPE_CHANGEPAY_CHK" onDelete="cascade">
+      <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_PAYTYPE_CHANGEPAY" onDelete="cascade">
         <reference local="CHANGE_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="OBPOS_PAYTYPE_GLROUND" onDelete="cascade">
+        <reference local="C_GLITEM_ROUND_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
       <index name="OBPOS_APPPAYTYPE_CURR" unique="false">
         <index-column name="C_CURRENCY_ID"/>
