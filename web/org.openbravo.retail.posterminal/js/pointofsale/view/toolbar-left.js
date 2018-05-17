@@ -229,7 +229,7 @@ enyo.kind({
   tabPanel: 'payment',
   handlers: {
     onChangedTotal: 'renderTotal',
-    onRightToolbarDisabled: 'disabledButton',
+    onRightToolbarDisabled: 'disabledButton'
   },
   processesToListen: ['calculateReceipt'],
   isEnabled: true,
