@@ -17,9 +17,9 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
- * This validation is related to this issue 25464. A unique constraint has been added to
- * ad_module.javapackage column, this validation checks there are no multiple modules with the same
- * javapackage.
+ * This validation is related to this issue 38194. A unique constraint has been added to
+ * OBPOS_TERMINALTYPE table, this validation checks MINUTESTORESHOWFRESHDATAINC column is
+ * strictly less than MINUTESTOREFRESHDATAINC column.
  */
 public class I38194ValidateRefreshMasterData extends BuildValidation {
 
@@ -42,6 +42,11 @@ public class I38194ValidateRefreshMasterData extends BuildValidation {
     } catch (Exception e) {
       return handleError(e);
     }
+  }
+
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
   }
 
   @Override

@@ -135,8 +135,7 @@
             'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
             'isCash': payment.paymentMethod.iscash,
             'openDrawer': payment.paymentMethod.openDrawer,
-            'printtwice': payment.paymentMethod.printtwice,
-            'isChange': true
+            'printtwice': payment.paymentMethod.printtwice
           }), function (receipt) {
             receipt.set('change', oldChange);
             for (i = 0; i < receipt.get('payments').length; i++) {
