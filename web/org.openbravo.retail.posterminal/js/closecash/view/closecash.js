@@ -85,10 +85,9 @@ enyo.kind({
     isEnableNextButton: false,
     handlers: {
       onDisableNextButton: 'disableNextButton',
-      onEnableNextButton: 'enableNextButton',
-      synchronizing: 'disableButton',
-      synchronized: 'enableButton'
+      onEnableNextButton: 'enableNextButton'
     },
+    processesToListen: [],
     disableButton: function () {
       this.setDisabled(true);
     },

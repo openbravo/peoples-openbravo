@@ -1065,18 +1065,15 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  handlers: {
-    synchronizing: 'isSynchronizing',
-    synchronized: 'isSynchronized'
-  },
+  processesToListen: ['calculateReceipt'],
   drawerOpened: true,
   isLocked: true,
   lasDisabledPetition: true,
-  isSynchronizing: function () {
+  disableButton: function () {
     this.isLocked = true;
     this.setDisabledIfSynchronized();
   },
-  isSynchronized: function () {
+  enableButton: function () {
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },

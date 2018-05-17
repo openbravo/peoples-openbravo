@@ -754,7 +754,7 @@
       OB.MobileApp.view.waterfall('calculatingReceipt');
       this.trigger('calculatingReceipt');
       this.calculatingReceipt = true;
-
+      var execution = OB.UTIL.ProcessController.start('calculateReceipt');
       this.addToListOfCallbacks(callback);
       var executeCallback;
       executeCallback = function (listOfCallbacks, callback) {
@@ -773,6 +773,7 @@
         me.on('calculategross', function () {
           me.off('calculategross');
           if (me.pendingCalculateReceipt) {
+            OB.UTIL.ProcessController.finish('calculateReceipt', execution);
             OB.MobileApp.view.waterfall('calculatedReceipt');
             me.pendingCalculateReceipt = false;
             me.calculatingReceipt = false;
@@ -784,11 +785,13 @@
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
+                OB.UTIL.ProcessController.finish('calculateReceipt', execution);
               });
             } else {
               me.calculatingReceipt = false;
               OB.MobileApp.view.waterfall('calculatedReceipt');
               me.trigger('calculatedReceipt');
+              OB.UTIL.ProcessController.finish('calculateReceipt', execution);
             }
           }
         });

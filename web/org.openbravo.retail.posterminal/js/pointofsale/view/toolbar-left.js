@@ -52,11 +52,7 @@ enyo.kind({
   events: {
     onAddNewOrder: ''
   },
-  handlers: {
-    onLeftToolbarDisabled: 'disabledButton',
-    calculatingReceipt: 'disableButton',
-    calculatedReceipt: 'enableButton'
-  },
+  processesToListen: ['calculateReceipt'],
   disableButton: function () {
     if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
       this.isEnabled = false;
@@ -122,11 +118,7 @@ enyo.kind({
     onDeleteOrder: '',
     onRemoveMultiOrders: ''
   },
-  handlers: {
-    onLeftToolbarDisabled: 'disabledButton',
-    calculatingReceipt: 'disableButton',
-    calculatedReceipt: 'enableButton'
-  },
+  processesToListen: ['calculateReceipt'],
   disableButton: function () {
     this.isEnabled = false;
     this.setDisabled(true);
@@ -238,9 +230,8 @@ enyo.kind({
   handlers: {
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton',
-    synchronizing: 'disableButton',
-    synchronized: 'enableButton'
   },
+  processesToListen: ['calculateReceipt'],
   isEnabled: true,
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
@@ -260,12 +251,14 @@ enyo.kind({
     // the decision to enable the button is made based on several requirements that must be met
     var requirements, me = this,
         hasBeenPaid;
+    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !isDisabled) {
+      return true;
+    }
 
     function requirementsAreMet(model) {
       // This function is in charge of managing all the requirements of the pay button to be enabled and disabled
       // Any attribute or parameter used to change the state of the button MUST be managed here
       requirements = {
-        isSynchronized: undefined,
         isModel: undefined,
         isReceipt: undefined,
         receiptId: undefined,
@@ -290,10 +283,6 @@ enyo.kind({
       }
       requirements.isToolbarEnabled = me.isEnabled;
       if (!requirements.isToolbarEnabled) {
-        return false;
-      }
-      requirements.isSynchronized = OB.UTIL.SynchronizationHelper.isSynchronized();
-      if (!requirements.isSynchronized) {
         return false;
       }
       requirements.isModel = !OB.UTIL.isNullOrUndefined(model);
@@ -552,6 +541,9 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
+  },
+  destroyComponents: function () {
+    this.inherited(arguments);
   },
   renderTotal: function (inSender, inEvent) {
     this.$.totalPrinter.renderTotal(inEvent.newTotal);
