@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 @ComponentProvider.Qualifier("org.openbravo.costing.AverageAlgorithm")
 public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
   private static final String PRICE_DIFFERENCE_CORRECTION_SEARCHKEY = "PDC";
-  private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcess.class);
+  private static final Logger log = LoggerFactory.getLogger(AverageCostAdjustment.class);
   private String bdCostingId;
 
   @Override
@@ -87,35 +87,39 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     Date trxDate = basetrx.getTransactionProcessDate();
 
     BigDecimal adjustmentBalance = BigDecimal.ZERO;
-    BigDecimal unitCostAdjustmentBalance = BigDecimal.ZERO;
+    BigDecimal negativeStockAdjustmentBalance = BigDecimal.ZERO;
+
     // Initialize adjustment balance looping through all cost adjustment lines of current
     // transaction.
     log.debug("Initialize adjustment balance");
     CostAdjustmentLine baseCAL = getCostAdjLine();
     for (CostAdjustmentLine costAdjLine : getTrxAdjustmentLines(basetrx)) {
-      if (costAdjLine.isSource() && !costAdjLine.isRelatedTransactionAdjusted()
-          && !costAdjLine.getId().equals(strCostAdjLineId)) {
-        searchRelatedTransactionCosts(costAdjLine);
-      }
-
-      costAdjLine.setRelatedTransactionAdjusted(Boolean.TRUE);
-      if (!costAdjLine.getId().equals(strCostAdjLineId)) {
-        costAdjLine.setParentCostAdjustmentLine(baseCAL);
-      }
-      // If the cost adjustment line has Transaction Costs those adjustment amount are included
-      // in the Current Value Amount and not in the Adjustment Balance
-      if (!costAdjLine.getTransactionCostList().isEmpty()) {
-        continue;
-      }
       BigDecimal adjustmentAmt = costAdjLine.getAdjustmentAmount();
       if (!strCostCurrencyId.equals(costAdjLine.getCurrency().getId())) {
         adjustmentAmt = FinancialUtils.getConvertedAmount(adjustmentAmt, costAdjLine.getCurrency(),
             getCostCurrency(), costAdjLine.getAccountingDate(), getCostOrg(),
             FinancialUtils.PRECISION_STANDARD);
       }
-      adjustmentBalance = adjustmentBalance.add(adjustmentAmt.multiply(signMultiplier));
-      if (costAdjLine.isUnitCost()) {
-        unitCostAdjustmentBalance = unitCostAdjustmentBalance.add(adjustmentAmt);
+
+      if (isFromThisCostAdjustment(costAdjLine)) {
+        if (costAdjLine.isSource() && !costAdjLine.isRelatedTransactionAdjusted()
+            && !costAdjLine.getId().equals(strCostAdjLineId)) {
+          searchRelatedTransactionCosts(costAdjLine);
+        }
+
+        costAdjLine.setRelatedTransactionAdjusted(Boolean.TRUE);
+        if (!costAdjLine.getId().equals(strCostAdjLineId)) {
+          costAdjLine.setParentCostAdjustmentLine(baseCAL);
+        }
+        // If the cost adjustment line has Transaction Costs those adjustment amount are included
+        // in the Current Value Amount and not in the Adjustment Balance
+        if (!costAdjLine.getTransactionCostList().isEmpty()) {
+          continue;
+        }
+        adjustmentBalance = adjustmentBalance.add(adjustmentAmt.multiply(signMultiplier));
+      }
+      if (costAdjLine.isNegativeStockCorrection()) {
+        negativeStockAdjustmentBalance = negativeStockAdjustmentBalance.add(adjustmentAmt);
       }
     }
 
@@ -146,14 +150,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     log.debug("Starting average cost {}", cost == null ? "not cost" : cost.toPlainString());
     if (AverageAlgorithm.modifiesAverage(trxType) || !baseCAL.isBackdatedTrx()) {
-      BigDecimal trxUnitCost = CostAdjustmentUtils.getTrxCost(basetrx, true, getCostCurrency());
-      BigDecimal trxPrice = null;
-      if (basetrx.getMovementQuantity().signum() == 0) {
-        trxPrice = BigDecimal.ZERO;
-      } else {
-        trxPrice = trxUnitCost.add(unitCostAdjustmentBalance).divide(
-            basetrx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
-      }
+      BigDecimal trxCost = CostAdjustmentUtils.getTrxCost(basetrx, false, getCostCurrency());
+      BigDecimal trxPrice = getTransactionPrice(
+          trxCost.add(adjustmentBalance.multiply(signMultiplier)), negativeStockAdjustmentBalance,
+          basetrx.getMovementQuantity());
       if (cost == null) {
         cost = trxPrice;
       }
@@ -199,7 +199,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         newCosting.setQuantity(basetrx.getMovementQuantity());
         newCosting.setTotalMovementQuantity(null);
         newCosting.setTotalStockValuation(null);
-        newCosting.setPrice(cost);
+        newCosting.setPrice(trxPrice);
         newCosting.setCostType("AVA");
         newCosting.setManual(Boolean.FALSE);
         newCosting.setPermanent(Boolean.TRUE);
@@ -230,8 +230,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
         log.debug("Process related transaction {}", trx.getIdentifier());
         BigDecimal trxSignMultiplier = new BigDecimal(trx.getMovementQuantity().signum());
+        // trxAdjAmt: Sum of cost adjustment lines that still do not have transaction cost.
         BigDecimal trxAdjAmt = BigDecimal.ZERO;
         BigDecimal trxUnitCostAdjAmt = BigDecimal.ZERO;
+        BigDecimal trxNegativeStockAdjAmt = BigDecimal.ZERO;
         if (StringUtils.isNotEmpty(bdCostingId) && !isBackdatedTransaction(trx)) {
           // If there is a backdated source adjustment pending modify the dates of its m_costing.
           updateBDCostingTimeRange(trx);
@@ -255,29 +257,32 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
         List<CostAdjustmentLine> existingAdjLines = getTrxAdjustmentLines(trx);
         for (CostAdjustmentLine existingCAL : existingAdjLines) {
-          if (existingCAL.isSource() && !existingCAL.isRelatedTransactionAdjusted()) {
-            searchRelatedTransactionCosts(existingCAL);
+          BigDecimal adjustmentAmt = existingCAL.getAdjustmentAmount();
+          if (!strCurrentCurId.equals(existingCAL.getCurrency().getId())) {
+            Currency curCurrency = OBDal.getInstance().get(Currency.class, strCurrentCurId);
+            adjustmentAmt = FinancialUtils.getConvertedAmount(adjustmentAmt,
+                existingCAL.getCurrency(), curCurrency, existingCAL.getAccountingDate(),
+                getCostOrg(), FinancialUtils.PRECISION_STANDARD);
           }
-          if (existingCAL.getTransactionCostList().isEmpty()
-              && !existingCAL.isRelatedTransactionAdjusted()) {
-            BigDecimal adjustmentAmt = existingCAL.getAdjustmentAmount();
-            if (!strCurrentCurId.equals(existingCAL.getCurrency().getId())) {
-              Currency curCurrency = OBDal.getInstance().get(Currency.class, strCurrentCurId);
-              adjustmentAmt = FinancialUtils.getConvertedAmount(adjustmentAmt,
-                  existingCAL.getCurrency(), curCurrency, existingCAL.getAccountingDate(),
-                  getCostOrg(), FinancialUtils.PRECISION_STANDARD);
+          if (isFromThisCostAdjustment(existingCAL)) {
+            if (existingCAL.isSource() && !existingCAL.isRelatedTransactionAdjusted()) {
+              searchRelatedTransactionCosts(existingCAL);
             }
-            trxAdjAmt = trxAdjAmt.add(adjustmentAmt);
-            adjustmentBalance = adjustmentBalance.add(adjustmentAmt.multiply(trxSignMultiplier));
-            if (existingCAL.isUnitCost()) {
-              trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(adjustmentAmt);
+            if (existingCAL.getTransactionCostList().isEmpty()) {
+              trxAdjAmt = trxAdjAmt.add(adjustmentAmt);
+              if (existingCAL.isUnitCost()) {
+                trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(adjustmentAmt);
+              }
+              adjustmentBalance = adjustmentBalance.add(adjustmentAmt.multiply(trxSignMultiplier));
             }
+
+            existingCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
+            existingCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance()
+                .getProxy(CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
           }
-
-          existingCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
-          existingCAL.setParentCostAdjustmentLine((CostAdjustmentLine) OBDal.getInstance()
-              .getProxy(CostAdjustmentLine.ENTITY_NAME, strCostAdjLineId));
-
+          if (existingCAL.isNegativeStockCorrection()) {
+            trxNegativeStockAdjAmt = trxNegativeStockAdjAmt.add(adjustmentAmt);
+          }
         }
         log.debug("Current trx adj amount of existing CALs {}", trxAdjAmt.toPlainString());
 
@@ -309,8 +314,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                   expectedCost.toPlainString(), unitCost.toPlainString());
               BigDecimal unitCostDifference = expectedCost.subtract(unitCost);
               if (unitCostDifference.signum() != 0) {
-
-                trxAdjAmt = trxAdjAmt.add(unitCostDifference.multiply(trxSignMultiplier));
+                trxAdjAmt = trxAdjAmt.add(unitCostDifference);
                 trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(unitCostDifference);
                 adjustmentBalance = adjustmentBalance.add(unitCostDifference
                     .multiply(trxSignMultiplier));
@@ -332,13 +336,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           }
           log.debug("New average cost: {}", cost.toPlainString());
           Costing curCosting = trx.getMaterialMgmtCostingList().get(0);
-          BigDecimal trxPrice = null;
-          if (trx.getMovementQuantity().signum() == 0) {
-            trxPrice = BigDecimal.ZERO;
-          } else {
-            trxPrice = trxUnitCost.add(trxUnitCostAdjAmt).divide(trx.getMovementQuantity().abs(),
-                costCurPrecission, RoundingMode.HALF_UP);
-          }
+          BigDecimal trxPrice = getTransactionPrice(trxCost.add(trxAdjAmt), trxNegativeStockAdjAmt,
+              trx.getMovementQuantity());
 
           if (checkNegativeStockCorrection && currentStock.compareTo(trx.getMovementQuantity()) < 0
               && cost.compareTo(trxPrice) != 0) {
@@ -348,7 +347,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                 .setScale(stdCurPrecission, RoundingMode.HALF_UP).subtract(currentValueAmt)
                 .subtract(adjustmentBalance);
             adjustmentBalance = adjustmentBalance.add(negCorrAmt.multiply(trxSignMultiplier));
-            trxAdjAmt = trxAdjAmt.add(negCorrAmt.multiply(trxSignMultiplier));
             // If there is a difference insert a cost adjustment line.
             CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, negCorrAmt, null);
             newCAL.setNegativeStockCorrection(Boolean.TRUE);
@@ -368,7 +366,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                     .getAdjustmentAmount().negate());
               }
               adjustmentBalance = adjustmentBalance.add(revertedNegativeAdjustment);
-              trxAdjAmt = trxAdjAmt.add(revertedNegativeAdjustment);
               // If there is a difference insert a cost adjustment line.
               CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, revertedNegativeAdjustment,
                   null);
@@ -406,22 +403,19 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                 stdCurPrecission, RoundingMode.HALF_UP);
             BigDecimal unitCost = CostAdjustmentUtils.getTrxCost(trx, true, OBDal.getInstance()
                 .get(Currency.class, strCurrentCurId));
-            unitCost = unitCost.add(trxAdjAmt);
+            unitCost = unitCost.add(trxUnitCostAdjAmt);
             log.debug("Is adjustment needed? Expected {} vs Current {}",
                 expectedCost.toPlainString(), unitCost.toPlainString());
             if (expectedCost.compareTo(unitCost) != 0) {
-              trxAdjAmt = trxAdjAmt
-                  .add(expectedCost.subtract(unitCost).multiply(trxSignMultiplier));
-              trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(expectedCost.subtract(unitCost));
-              adjustmentBalance = adjustmentBalance.add(expectedCost.subtract(unitCost).multiply(
-                  trxSignMultiplier));
+              BigDecimal newAdjAmt = expectedCost.subtract(unitCost);
+              trxAdjAmt = trxAdjAmt.add(newAdjAmt);
+              trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(newAdjAmt);
+              adjustmentBalance = adjustmentBalance.add(newAdjAmt.multiply(trxSignMultiplier));
               // If there is a difference insert a cost adjustment line.
-              CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx,
-                  expectedCost.subtract(unitCost), null);
+              CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, newAdjAmt, null);
               newCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
               OBDal.getInstance().save(newCAL);
-              log.debug("Adjustment added. Amount {}.", expectedCost.subtract(unitCost)
-                  .toPlainString());
+              log.debug("Adjustment added. Amount {}.", newAdjAmt.toPlainString());
             }
           }
           if (!trx.getMaterialMgmtCostingList().isEmpty()) {
@@ -430,13 +424,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
                   RoundingMode.HALF_UP);
             }
-            BigDecimal trxPrice = null;
-            if (trx.getMovementQuantity().signum() == 0) {
-              trxPrice = BigDecimal.ZERO;
-            } else {
-              trxPrice = trxUnitCost.add(trxUnitCostAdjAmt).divide(trx.getMovementQuantity().abs(),
-                  costCurPrecission, RoundingMode.HALF_UP);
-            }
+            BigDecimal trxPrice = getTransactionPrice(trxCost.add(trxAdjAmt),
+                trxNegativeStockAdjAmt, trx.getMovementQuantity());
             if (curCosting.getCost().compareTo(cost) != 0
                 || (curCosting.getTotalMovementQuantity() != null && curCosting
                     .getTotalMovementQuantity().compareTo(currentStock) != 0)
@@ -478,6 +467,34 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         TriggerHandler.getInstance().enable();
       }
     }
+  }
+
+  /**
+   * Calculates the price per unit in the cost currency precision of the MaterialTransaction
+   * considering any adjustment made to it except the NegativeStock corrections.
+   * 
+   * @param trxCost
+   *          the total TransactionCost considering all adjustments.
+   * @param trxNegativeStockAdjAmt
+   *          the total NegativeStock adjustments.
+   * @param movementQuantity
+   *          the MovementQuantity of the transaction.
+   * @return The transaction price
+   */
+  private BigDecimal getTransactionPrice(BigDecimal trxCost, BigDecimal trxNegativeStockAdjAmt,
+      BigDecimal movementQuantity) {
+    BigDecimal trxPrice = null;
+    if (movementQuantity.signum() == 0) {
+      trxPrice = BigDecimal.ZERO;
+    } else {
+      trxPrice = trxCost.subtract(trxNegativeStockAdjAmt).divide(movementQuantity.abs(),
+          costCurPrecission, RoundingMode.HALF_UP);
+    }
+    return trxPrice;
+  }
+
+  private boolean isFromThisCostAdjustment(CostAdjustmentLine existingCAL) {
+    return existingCAL.getCostAdjustment().getId().equals(getCostAdj().getId());
   }
 
   private void updateCosting(Costing curCosting, BigDecimal cost, BigDecimal trxPrice) {
@@ -739,12 +756,18 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
+  /**
+   * Get all Cost Adjustment Lines related to the MaterialTransaction. Including those from other
+   * Cost Adjustments
+   */
   private List<CostAdjustmentLine> getTrxAdjustmentLines(MaterialTransaction trx) {
     OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
         CostAdjustmentLine.class);
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, getCostAdj()));
+    critLines.createAlias(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, "ca");
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, trx));
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED, false));
+    critLines.add(Restrictions.or(//
+        Restrictions.eq("ca.id", getCostAdj().getId()),//
+        Restrictions.eq("ca." + CostAdjustment.PROPERTY_DOCUMENTSTATUS, "CO")));
 
     return critLines.list();
   }

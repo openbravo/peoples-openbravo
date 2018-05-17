@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -202,7 +202,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     hqlBuilder.append(" and v.characteristic = c");
     hqlBuilder.append(this.getClientOrgFilter());
 
-    if (StringUtils.isNotBlank(gridWhereClause)) {
+    if (StringUtils.isNotBlank(gridWhereClause) && parentGridEntity != null) {
       hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
           + gridWhereClause + "  and pcv.characteristicValue = v and pcv.product = " + productPath
           + ")");
@@ -211,11 +211,10 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, "
           + customSelectorWhereClause + "  and pcv.characteristicValue = v and pcv.product = "
           + productPath + ")");
-    }
-    else if (parentGridEntity != null){
+
+    } else if (parentGridEntity != null) {
       hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
-        + " as e where pcv.characteristicValue = v and pcv.product = "
-        + productPath + ")");
+          + " as e where pcv.characteristicValue = v and pcv.product = " + productPath + ")");
     }
 
     hqlBuilder.append(" order by c.name, ");
