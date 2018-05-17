@@ -277,12 +277,12 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[0]]></onCreateDefault>
       </column>
-      <column name="CREATEFROMORDERS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default/>
+      <column name="CREATEFROMORDERS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CREATEFROMINOUTS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default/>
+      <column name="CREATEFROMINOUTS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
@@ -383,6 +383,8 @@
         <index-column name="UPDATED"/>
       </index>
       <check name="C_INVOICE_CREATEFROM_CHECK"><![CDATA[CREATEFROM IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_CREATEFROMIO_CHEK"><![CDATA[CREATEFROMINOUTS IN ('Y', 'N')]]></check>
+      <check name="C_INVOICE_CREATEFROMO_CHEK"><![CDATA[CREATEFROMORDERS IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_GENERATETO_CHECK"><![CDATA[GENERATETO IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_INVOICE_ISCASHVAT_CH"><![CDATA[ISCASHVAT IN ('Y', 'N')]]></check>

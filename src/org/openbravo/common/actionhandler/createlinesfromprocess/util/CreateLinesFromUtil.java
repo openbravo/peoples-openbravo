@@ -86,7 +86,7 @@ public class CreateLinesFromUtil {
   }
 
   public static JSONArray getSelectedLines(final JSONObject jsonRequest) throws JSONException {
-    return jsonRequest.getJSONObject("_params").getJSONObject("window").getJSONArray("_selection");
+    return jsonRequest.getJSONObject("_params").getJSONObject("grid").getJSONArray("_selection");
   }
 
   public static boolean requestedActionIsDoneAndThereAreSelectedOrderLines(
