@@ -84,7 +84,7 @@ public class DatasourceTestUtil {
     return request(openbravoURL, wsPart, method, content, cookie, expectedResponse, null);
   }
 
-  static String request(String openbravoURL, String wsPart, String method, String content,
+  public static String request(String openbravoURL, String wsPart, String method, String content,
       String cookie, int expectedResponse, String contentType) throws Exception {
     final HttpURLConnection hc = createConnection(openbravoURL, wsPart, method, cookie);
     if (contentType != null) {
