@@ -37,9 +37,11 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -114,11 +116,17 @@ public class CreateLinesFromProcess {
     lastLineNo = getLastLineNoOfCurrentInvoice();
     int createdInvoiceLinesCount = 0;
     for (int index = 0; index < selectedLines.length(); index++) {
-      InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(index);
-      processingInvoice.getInvoiceLineList().add(newInvoiceLine);
-      OBDal.getInstance().save(newInvoiceLine);
-      OBDal.getInstance().save(processingInvoice);
-      createdInvoiceLinesCount++;
+      BaseOBObject copiedLine = getSelectedLineInPosition(index);
+      if (CreateLinesFromUtil.isOrderLineShipmentReceiptRelated(copiedLine,
+          getPickEditLineValuesInPosition(index))) {
+        processCopiedLineShipmentInOut(copiedLine);
+      } else {
+        InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(copiedLine, index);
+        processingInvoice.getInvoiceLineList().add(newInvoiceLine);
+        OBDal.getInstance().save(newInvoiceLine);
+        OBDal.getInstance().save(processingInvoice);
+        createdInvoiceLinesCount++;
+      }
     }
     OBDal.getInstance().flush();
     return createdInvoiceLinesCount;
@@ -169,9 +177,8 @@ public class CreateLinesFromProcess {
    *          The index of the order/shipment/receipt line to be copied in the selected lines
    * @return The created invoice line
    */
-  private InvoiceLine createLineFromSelectedLineAndRunHooks(final int index) {
+  private InvoiceLine createLineFromSelectedLineAndRunHooks(BaseOBObject copiedLine, final int index) {
     long startTime = System.currentTimeMillis();
-    BaseOBObject copiedLine = getSelectedLineInPosition(index);
     JSONObject pickExecuteLineValues = getPickEditLineValuesInPosition(index);
 
     InvoiceLine newInvoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
@@ -247,4 +254,52 @@ public class CreateLinesFromProcess {
     return lineNumber;
   }
 
+  private void processCopiedLineShipmentInOut(BaseOBObject copiedLine) {
+
+    StringBuilder shipmentHQLQuery = new StringBuilder(" as il");
+    shipmentHQLQuery.append(" join il.shipmentReceipt sh");
+    shipmentHQLQuery.append(" where il.salesOrderLine.id = :orderLineId");
+    shipmentHQLQuery.append("  and sh.processed = :processed");
+    shipmentHQLQuery.append("  and sh.documentStatus in ('CO', 'CL')");
+    shipmentHQLQuery.append("  and sh.completelyInvoiced = 'N'");
+
+    OBQuery<ShipmentInOutLine> shipmentQuery = OBDal.getInstance().createQuery(
+        ShipmentInOutLine.class, shipmentHQLQuery.toString());
+
+    shipmentQuery.setNamedParameter("orderLineId", ((OrderLine) copiedLine).getId());
+    shipmentQuery.setNamedParameter("processed", true);
+
+    List<ShipmentInOutLine> shipmentInOutLines = shipmentQuery.list();
+
+    for (ShipmentInOutLine shipmentInOutLine : shipmentInOutLines) {
+      selectedLines.put(getShipmentInOutJson((OrderLine) copiedLine, shipmentInOutLine));
+    }
+  }
+
+  private JSONObject getShipmentInOutJson(OrderLine orderLine, ShipmentInOutLine shipmentInOut) {
+    JSONObject line = new JSONObject();
+
+    try {
+      line.put("uOM", orderLine.getUOM().getId());
+      line.put("uOM$_identifier", orderLine.getUOM().getIdentifier());
+      line.put("product", orderLine.getProduct().getId());
+      line.put("product$_identifier", orderLine.getProduct().getIdentifier());
+      line.put("lineNo", orderLine.getLineNo());
+      line.put("orderedQuantity", shipmentInOut.getMovementQuantity().toString());
+      line.put("operativeQuantity", shipmentInOut.getOperativeQuantity() == null ? shipmentInOut
+          .getMovementQuantity().toString() : shipmentInOut.getOperativeQuantity().toString());
+      line.put("id", orderLine.getId());
+      line.put("salesOrder", orderLine.getSalesOrder().getId());
+      line.put("operativeUOM", shipmentInOut.getOperativeUOM() == null ? shipmentInOut.getUOM()
+          .getId() : shipmentInOut.getOperativeUOM().getId());
+      line.put("operativeUOM$_identifier", shipmentInOut.getOperativeUOM() == null ? shipmentInOut
+          .getUOM().getIdentifier() : shipmentInOut.getOperativeUOM().getIdentifier());
+      line.put("orderQuantity", "");
+
+      line.put("shipmentInOutLine", shipmentInOut.getId());
+      return line;
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+  }
 }

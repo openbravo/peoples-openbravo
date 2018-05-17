@@ -144,4 +144,14 @@ public class CreateLinesFromUtil {
     return aum;
   }
 
+  public static boolean isOrderLineShipmentReceiptRelated(BaseOBObject line,
+      JSONObject selectedPEValuesInLine) {
+    try {
+      return isOrderLine(line)
+          && ((OrderLine) line).getMaterialMgmtShipmentInOutLineList().size() > 0
+          && StringUtils.isEmpty(selectedPEValuesInLine.getString("shipmentInOutLine"));
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
+  }
 }

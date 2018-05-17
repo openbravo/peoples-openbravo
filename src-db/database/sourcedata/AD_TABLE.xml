@@ -11223,7 +11223,7 @@ from OrderLine as e
   join o.businessPartner bp 
   left join bp.invoiceSchedule si
   left join e.operativeUOM aum
-  left join e.materialMgmtShipmentInOutLineList il
+  left join e.goodsShipmentLine il
 where
   @additional_filters@
   @insertion_point_0@]]></HQLQUERY>
