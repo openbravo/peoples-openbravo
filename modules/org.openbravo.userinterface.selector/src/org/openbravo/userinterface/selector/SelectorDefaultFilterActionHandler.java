@@ -19,6 +19,7 @@
 package org.openbravo.userinterface.selector;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
     JSONObject result = new JSONObject();
 
     Map<String, String> params = getParameterMap(parameters);
+    addParametersFromRequestContent(params, content);
 
     OBContext.setAdminMode();
 
@@ -161,6 +163,23 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
     }
 
     return result;
+  }
+
+  private void addParametersFromRequestContent(Map<String, String> params, String content) {
+    JSONObject jsonContent;
+    try {
+      jsonContent = new JSONObject(content);
+      @SuppressWarnings("unchecked")
+      Iterator<String> keys = jsonContent.keys();
+      while (keys.hasNext()) {
+        String key = keys.next();
+        String value = jsonContent.getString(key);
+        params.put(key, value);
+      }
+    } catch (JSONException e) {
+      log.error("Could not retrieve JSON from content: " + content);
+      return;
+    }
   }
 
   private JSONObject createJSONObjectFilter(String fieldName, String id, String identifier)
