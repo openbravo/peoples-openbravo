@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpSession;
@@ -90,7 +91,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       obc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
 
       List<SelectorField> selFields = obc.list();
-      if (selFields.size() == 0) {
+      if (selFields.isEmpty()) {
         return result;
       }
 
@@ -192,12 +193,13 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
   }
 
   private Map<String, String> getParameterMap(Map<String, Object> parameters) {
-    Map<String, String> params = new HashMap<String, String>();
-    for (String key : parameters.keySet()) {
+    Map<String, String> params = new HashMap<>();
+    for (Entry<String, Object> entry : parameters.entrySet()) {
+      String key = entry.getKey();
       if (key.equals(KernelConstants.HTTP_SESSION) || key.equals(KernelConstants.HTTP_REQUEST)) {
         continue;
       }
-      params.put(key, (String) parameters.get(key));
+      params.put(key, (String) entry.getValue());
     }
     return params;
   }
