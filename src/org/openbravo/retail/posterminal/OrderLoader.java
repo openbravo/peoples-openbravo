@@ -1131,9 +1131,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
           invoice.getDocumentType());
     }
-    final Date orderDate = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("orderDate"),
+    final Date orderDate = OBMOBCUtils.calculateServerDatetime(jsonorder.getString("orderDate"),
         Long.parseLong(jsonorder.getString("timezoneOffset")));
-    invoice.set("creationDate", orderDate);
+    Date now = new Date();
+    invoice.set("creationDate", orderDate.after(now) ? now : orderDate);
     final Date invoiceDate = OBMOBCUtils.stripTime(orderDate);
     invoice.setAccountingDate(invoiceDate);
     invoice.setInvoiceDate(invoiceDate);
