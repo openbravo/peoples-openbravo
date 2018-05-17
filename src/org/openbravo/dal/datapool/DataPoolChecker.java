@@ -85,8 +85,7 @@ public class DataPoolChecker {
   public static boolean shouldUseDefaultPool(String processId) {
     if (processIsNotAvailable(processId)) {
       return preferenceIsSetToDefaultPool();
-    }
-    else {
+    } else {
       String poolForProcess = dataPoolProcesses.get(processId);
       if (poolForProcess != null) {
         return poolForProcess.equals(ExternalConnectionPool.DEFAULT_POOL);
