@@ -48,6 +48,8 @@ public class DalSessionFactoryController extends SessionFactoryController {
   @Any
   private Instance<SQLFunctionRegister> sqlFunctionRegisters;
 
+  private Map<String, SQLFunction> sqlFunctions;
+
   @Override
   protected void mapModel(Configuration configuration) {
     final String mapping = DalMappingGenerator.getInstance().generateMapping();
@@ -63,7 +65,10 @@ public class DalSessionFactoryController extends SessionFactoryController {
 
   @Override
   protected Map<String, SQLFunction> getSQLFunctions() {
-    Map<String, SQLFunction> sqlFunctions = new HashMap<>();
+    if (sqlFunctions != null) {
+      return sqlFunctions;
+    }
+    sqlFunctions = new HashMap<>();
     if (sqlFunctionRegisters == null) {
       return sqlFunctions;
     }
@@ -75,5 +80,9 @@ public class DalSessionFactoryController extends SessionFactoryController {
       sqlFunctions.putAll(registeredSqlFunctions);
     }
     return sqlFunctions;
+  }
+
+  void setSQLFunctions(Map<String, SQLFunction> sqlFunctions) {
+    this.sqlFunctions = sqlFunctions;
   }
 }

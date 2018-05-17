@@ -19,7 +19,10 @@
 
 package org.openbravo.dal.core;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
+import org.hibernate.dialect.function.SQLFunction;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
@@ -40,6 +43,8 @@ public class DalLayerInitializer implements OBSingleton {
 
   private static DalLayerInitializer instance;
 
+  private Map<String, SQLFunction> sqlFunctions;
+
   public static DalLayerInitializer getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(DalLayerInitializer.class);
@@ -48,7 +53,6 @@ public class DalLayerInitializer implements OBSingleton {
   }
 
   private boolean initialized = false;
-  private DalSessionFactoryController dalSessionFactoryController;
 
   /**
    * Initializes the in-memory model, registers the entity classes with the {@link OBProvider
@@ -91,26 +95,28 @@ public class DalLayerInitializer implements OBSingleton {
   }
 
   private DalSessionFactoryController getDalSessionFactoryController() {
-    if (dalSessionFactoryController != null) {
-      return dalSessionFactoryController;
-    }
+    DalSessionFactoryController dsfc;
     try {
-      return WeldUtils.getInstanceFromStaticBeanManager(DalSessionFactoryController.class);
+      dsfc = WeldUtils.getInstanceFromStaticBeanManager(DalSessionFactoryController.class);
     } catch (Exception ex) {
       log.debug("Could not instantiate DalSessionFactoryController using weld", ex);
+      dsfc = OBProvider.getInstance().get(DalSessionFactoryController.class);
     }
-    return OBProvider.getInstance().get(DalSessionFactoryController.class);
+    if (sqlFunctions != null && !sqlFunctions.isEmpty()) {
+      dsfc.setSQLFunctions(sqlFunctions);
+    }
+    return dsfc;
   }
 
   /**
-   * A method that can be used to provide a custom {@link DalSessionFactoryController} that will be
-   * used to initialize the DAL layer.
+   * Can be used to manually provide to the {@link DalSessionFactoryController} the SQL functions to
+   * be registered in Hibernate.
    * 
-   * @param dalSessionFactoryController
-   *          a DalSessionFactoryController instance
+   * @param sqlFunctions
+   *          a Map with the SQL functions to be registered in Hibernate.
    */
-  public void setDalSessionFactoryController(DalSessionFactoryController dalSessionFactoryController) {
-    this.dalSessionFactoryController = dalSessionFactoryController;
+  public void setSQLFunctions(Map<String, SQLFunction> sqlFunctions) {
+    this.sqlFunctions = sqlFunctions;
   }
 
   public boolean isInitialized() {

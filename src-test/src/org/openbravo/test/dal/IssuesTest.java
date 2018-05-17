@@ -62,7 +62,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalSessionFactoryController;
 import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -188,16 +187,11 @@ public class IssuesTest extends OBBaseTest {
    */
   @Test
   public void test18688() throws Exception {
-    // custom DAL layer initialization to register the SQL function
-    initializeDalLayer(new DalSessionFactoryController() {
-      @Override
-      protected Map<String, SQLFunction> getSQLFunctions() {
-        Map<String, SQLFunction> sqlFunctions = new HashMap<>();
-        sqlFunctions.put("ad_column_identifier_std", new StandardSQLFunction(
-            "ad_column_identifier_std", StandardBasicTypes.STRING));
-        return sqlFunctions;
-      }
-    });
+    // define the map containing the SQL function to be registered in Hibernate
+    Map<String, SQLFunction> sqlFunctions = new HashMap<>();
+    sqlFunctions.put("ad_column_identifier_std", new StandardSQLFunction(
+        "ad_column_identifier_std", StandardBasicTypes.STRING));
+    initializeDalLayer(sqlFunctions);
 
     final Session session = OBDal.getInstance().getSession();
     final String qryStr = "select bc.id, ad_column_identifier_std('C_BP_Group', bc.id) from "
