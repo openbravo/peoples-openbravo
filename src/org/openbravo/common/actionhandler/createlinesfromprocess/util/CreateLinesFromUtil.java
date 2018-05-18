@@ -64,11 +64,11 @@ public class CreateLinesFromUtil {
   }
 
   public static boolean isOrderLine(BaseOBObject line) {
-    return line.getClass().getName().equals(OrderLine.class.getName());
+    return line instanceof OrderLine;
   }
 
   public static boolean isShipmentReceiptLine(BaseOBObject line) {
-    return line.getClass().getName().equals(ShipmentInOutLine.class.getName());
+    return line instanceof ShipmentInOutLine;
   }
 
   public static Invoice getCurrentInvoice(JSONObject jsonRequest) {
@@ -96,9 +96,8 @@ public class CreateLinesFromUtil {
 
   public static BigDecimal getOrderedQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
     try {
-      BigDecimal qty = new BigDecimal(selectedPEValuesInLine.getString(selectedPEValuesInLine
+      return new BigDecimal(selectedPEValuesInLine.getString(selectedPEValuesInLine
           .has("orderedQuantity") ? "orderedQuantity" : "movementQuantity"));
-      return qty;
     } catch (JSONException e) {
       throw new OBException(e);
     }
@@ -114,9 +113,8 @@ public class CreateLinesFromUtil {
 
   public static BigDecimal getOrderQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
     try {
-      BigDecimal qty = StringUtils.isEmpty(selectedPEValuesInLine.getString("orderQuantity")) ? null
+      return StringUtils.isEmpty(selectedPEValuesInLine.getString("orderQuantity")) ? null
           : new BigDecimal(selectedPEValuesInLine.getString("orderQuantity"));
-      return qty;
     } catch (JSONException e) {
       throw new OBException(e);
     }
@@ -148,7 +146,7 @@ public class CreateLinesFromUtil {
       JSONObject selectedPEValuesInLine) {
     try {
       return isOrderLine(line)
-          && ((OrderLine) line).getMaterialMgmtShipmentInOutLineList().size() > 0
+          && !((OrderLine) line).getMaterialMgmtShipmentInOutLineList().isEmpty()
           && StringUtils.isEmpty(selectedPEValuesInLine.getString("shipmentInOutLine"));
     } catch (JSONException e) {
       throw new OBException(e);
