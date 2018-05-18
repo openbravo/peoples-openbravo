@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,16 @@
 
 package org.openbravo.dal.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.dialect.function.SQLFunction;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
 
@@ -36,6 +44,12 @@ import org.openbravo.base.session.SessionFactoryController;
 public class DalSessionFactoryController extends SessionFactoryController {
   private static final Logger log = Logger.getLogger(DalSessionFactoryController.class);
 
+  @Inject
+  @Any
+  private Instance<SQLFunctionRegister> sqlFunctionRegisters;
+
+  private Map<String, SQLFunction> sqlFunctions;
+
   @Override
   protected void mapModel(Configuration configuration) {
     final String mapping = DalMappingGenerator.getInstance().generateMapping();
@@ -47,5 +61,28 @@ public class DalSessionFactoryController extends SessionFactoryController {
   @Override
   protected void setInterceptor(Configuration configuration) {
     configuration.setInterceptor(new OBInterceptor());
+  }
+
+  @Override
+  protected Map<String, SQLFunction> getSQLFunctions() {
+    if (sqlFunctions != null) {
+      return sqlFunctions;
+    }
+    sqlFunctions = new HashMap<>();
+    if (sqlFunctionRegisters == null) {
+      return sqlFunctions;
+    }
+    for (SQLFunctionRegister register : sqlFunctionRegisters) {
+      Map<String, SQLFunction> registeredSqlFunctions = register.getSQLFunctions();
+      if (registeredSqlFunctions == null) {
+        continue;
+      }
+      sqlFunctions.putAll(registeredSqlFunctions);
+    }
+    return sqlFunctions;
+  }
+
+  void setSQLFunctions(Map<String, SQLFunction> sqlFunctions) {
+    this.sqlFunctions = sqlFunctions;
   }
 }
