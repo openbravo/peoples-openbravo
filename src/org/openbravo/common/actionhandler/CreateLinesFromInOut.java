@@ -47,9 +47,9 @@ public class CreateLinesFromInOut extends BaseProcessActionHandler {
       if (CreateLinesFromUtil.requestedActionIsDoneAndThereAreSelectedOrderLines(requestedAction,
           selectedLines)) {
         // CreateLinesFromProcess is instantiated using Weld so it can use Dependency Injection
-        CreateLinesFromProcess CreateLinesFromProcess = WeldUtils
+        CreateLinesFromProcess createLinesFromProcess = WeldUtils
             .getInstanceFromStaticBeanManager(CreateLinesFromProcess.class);
-        int createdInvoiceLinesCount = CreateLinesFromProcess.createInvoiceLinesFromDocumentLines(
+        int createdInvoiceLinesCount = createLinesFromProcess.createInvoiceLinesFromDocumentLines(
             selectedLines, currentInvoice, ShipmentInOutLine.class);
         jsonRequest.put(CreateLinesFromUtil.MESSAGE,
             CreateLinesFromUtil.getSuccessMessage(createdInvoiceLinesCount));
