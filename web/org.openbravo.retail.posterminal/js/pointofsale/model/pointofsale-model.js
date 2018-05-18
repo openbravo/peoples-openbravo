@@ -757,7 +757,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('finishCancelLayaway');
 
           processCancelLayaway = function () {
-            receipt.set('gross', receipt.get('layawayGross'));
             receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
             receipt.set('timezoneOffset', new Date().getTimezoneOffset());
@@ -797,6 +796,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     if (cancelLayawayObj.deliveredQuantityAmount) {
                       cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
                     }
+                    receipt.set('gross', receipt.get('layawayGross'));
 
                     cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
                     var orderId = receipt.id;
