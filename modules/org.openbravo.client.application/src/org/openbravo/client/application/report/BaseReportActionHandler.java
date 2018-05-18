@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -574,14 +574,18 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   }
 
   /**
-   * Override this method to define if the sub-reports generated with the handler must be compiled.
-   * If true, it will compile all sub-report jrxml files placed in the same folder as the main
-   * report and whose related parameter name starts with SUBREP_
-   *
-   * @return true if the handler must compile the sub-reports. Otherwise, it returns false.
+   * This method has no effect. Classes extending {@code BaseReportActionHandler} will always try to
+   * compile the sub-reports (if any). Note that the sub-reports to be compiled will be the .jrxml
+   * files placed in the same folder as the main report and whose related parameter name starts with
+   * <b>SUBREP_</b>.
+   * 
+   * @return {@code true}
+   * 
+   * @deprecated This method has no effect
    */
+  @Deprecated
   protected boolean isCompilingSubreports() {
-    return false;
+    return true;
   }
 
   private void doJRExport(String jrTemplatePath, ExportType expType, String strFileName,
@@ -602,8 +606,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       }
       ReportingUtils.exportJR(jrTemplatePath, expType, jrParameters,
           new File(ReportingUtils.getTempFolder(), strFileName), true,
-          getReportConnectionProvider(), getReportData(parameters), localExportParameters,
-          isCompilingSubreports());
+          getReportConnectionProvider(), getReportData(parameters), localExportParameters);
     } finally {
       ReportSemaphoreHandling.getInstance().release();
     }
