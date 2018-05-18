@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class CreateLinesFromProcess {
   @Inject
   @Any
-  private Instance<CreateLinesFromProcessImplementationInterface> CreateLinesFromProcessHooks;
+  private Instance<CreateLinesFromProcessImplementationInterface> createLinesFromProcessHooks;
 
   private static final Logger log = LoggerFactory.getLogger(CreateLinesFromProcess.class);
 
@@ -183,7 +183,7 @@ public class CreateLinesFromProcess {
 
     InvoiceLine newInvoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
 
-    // Always increment the lineNo when adding a new order line
+    // Always increment the lineNo when adding a new invoice line
     newInvoiceLine.setLineNo(nextLineNo());
 
     // Execute Hooks to perform operations
@@ -205,9 +205,9 @@ public class CreateLinesFromProcess {
   private void executeHooks(JSONObject pickExecuteLineValues, final BaseOBObject line,
       InvoiceLine newInvoiceLine) {
     try {
-      if (CreateLinesFromProcessHooks != null) {
+      if (createLinesFromProcessHooks != null) {
         final List<CreateLinesFromProcessImplementationInterface> hooks = new ArrayList<>();
-        for (CreateLinesFromProcessImplementationInterface hook : CreateLinesFromProcessHooks
+        for (CreateLinesFromProcessImplementationInterface hook : createLinesFromProcessHooks
             .select(new ComponentProvider.Selector(
                 CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER))) {
           if (hook != null) {
@@ -244,7 +244,7 @@ public class CreateLinesFromProcess {
   private Long getLastLineNoOfCurrentInvoice() {
     OBCriteria<InvoiceLine> obc = OBDal.getInstance().createCriteria(InvoiceLine.class);
     obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, processingInvoice));
-    obc.setProjection(Projections.max(OrderLine.PROPERTY_LINENO));
+    obc.setProjection(Projections.max(InvoiceLine.PROPERTY_LINENO));
     Long lineNumber = 0L;
     obc.setMaxResults(1);
     Object o = obc.uniqueResult();
