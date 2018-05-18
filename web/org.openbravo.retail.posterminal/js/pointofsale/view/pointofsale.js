@@ -983,7 +983,7 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
       return;
     }
-    if (OB.DEC.compare(inEvent.line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+    if (OB.DEC.compare(inEvent.line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock && OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
       var qtyAdded = -inEvent.line.get('qty') - inEvent.line.get('qty');
       this.model.get('order').getStoreStock(inEvent.line.get('product'), qtyAdded, inEvent, null, function (hasStock) {
         if (hasStock) {

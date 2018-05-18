@@ -1586,7 +1586,7 @@
         }
       }
 
-      if (!OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
         // Check the stock for the discontinued negative lines
         checkStock(0);
       } else {
@@ -1767,7 +1767,7 @@
       };
 
       // Check the stock for each negative discontinued line that is related to a deleting line
-      if (!isSelectedLine && OB.DEC.compare(line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+      if (!isSelectedLine && OB.DEC.compare(line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock && OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
         var qtyAdded = -line.get('qty'),
             options = {
             line: line
@@ -2518,7 +2518,7 @@
           addProductToOrder();
         }
       }
-      if (productStatus && productStatus.restrictsaleoutofstock && OB.DEC.compare(qty) === 1 && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+      if (productStatus && productStatus.restrictsaleoutofstock && OB.DEC.compare(qty) === 1 && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
         me.getStoreStock(p, qty, options, attrs, function (hasStock) {
           if (hasStock) {
             returnApproval();
