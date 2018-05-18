@@ -89,7 +89,7 @@ class ReportCompiler {
    * possibility that this subreport file could be a .jasper file.
    * 
    * @param provider
-   *          A connection provider in case the report needs it.
+   *          A connection provider in case sub-reports need it.
    * @return a Map containing the compiled sub-reports. The keys of the map are the name of the
    *         parameter that references to each sub-report.
    * @throws OBException
