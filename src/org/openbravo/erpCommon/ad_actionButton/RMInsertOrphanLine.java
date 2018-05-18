@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.ReturnReason;
@@ -66,25 +67,26 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     final String strTaxId = (String) bundle.getParams().get("cTaxId");
     final String strReturnReason = (String) bundle.getParams().get("cReturnReasonId");
 
-    Order order = OBDal.getInstance().get(Order.class, strOrderId);
-    Product product = OBDal.getInstance().get(Product.class, strProductId);
-
-    if (!product.isReturnable()) {
-      throw new OBException("@Product@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
-    }
-    AttributeSetInstance attrSetInstance = null;
-    if (strAttributeSetInstanceId != null) {
-      attrSetInstance = OBDal.getInstance().get(AttributeSetInstance.class,
-          strAttributeSetInstanceId);
-    }
-    if (product.getAttributeSet() != null
-        && (strAttributeSetInstanceId == null || strAttributeSetInstanceId.equals(""))
-        && (product.getUseAttributeSetValueAs() == null || product.getUseAttributeSetValueAs() != "F")) {
-      throw new OBException("@productWithoutAttributeSet@");
-    }
-
     OBContext.setAdminMode(true);
     try {
+      Order order = OBDal.getInstance().get(Order.class, strOrderId);
+      Product product = OBDal.getInstance().get(Product.class, strProductId);
+
+      if (!product.isReturnable()) {
+        throw new OBException("@Product@ '" + product.getIdentifier()
+            + "' @ServiceIsNotReturnable@");
+      }
+      AttributeSetInstance attrSetInstance = null;
+      if (strAttributeSetInstanceId != null) {
+        attrSetInstance = OBDal.getInstance().get(AttributeSetInstance.class,
+            strAttributeSetInstanceId);
+      }
+      if (product.getAttributeSet() != null
+          && (strAttributeSetInstanceId == null || strAttributeSetInstanceId.equals(""))
+          && (product.getUseAttributeSetValueAs() == null || product.getUseAttributeSetValueAs() != "F")) {
+        throw new OBException("@productWithoutAttributeSet@");
+      }
+
       OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);
       newOrderLine.setSalesOrder(order);
       newOrderLine.setOrganization(order.getOrganization());
@@ -96,6 +98,11 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
       newOrderLine.setAttributeSetValue(attrSetInstance);
       newOrderLine.setUOM(product.getUOM());
       newOrderLine.setOrderedQuantity(returnedQty.negate());
+
+      if (UOMUtil.isUomManagementEnabled()) {
+        newOrderLine.setOperativeQuantity(returnedQty.negate());
+        newOrderLine.setOperativeUOM(product.getUOM());
+      }
 
       if (strUnitPrice.isEmpty()) {
         ProductPrice productPrice = getProductPrice(product, order.getOrderDate(),
