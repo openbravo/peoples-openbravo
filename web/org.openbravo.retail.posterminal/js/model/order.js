@@ -2214,11 +2214,15 @@
               warehouse = _.find(data.warehouses, function (warehouse) {
                 return warehouse.warehouseid === warehouseId;
               });
-              if (warehouse) {
-                addDiscontinuedLine(warehouse, allLinesQty);
-              } else if (callback) {
-                callback(false);
+              if (!warehouse) {
+                warehouse = {
+                  bins: [],
+                  warehouseid: OB.MobileApp.model.get('warehouses')[0].warehouseid,
+                  warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename,
+                  warehouseqty: OB.DEC.Zero
+                };
               }
+              addDiscontinuedLine(warehouse, allLinesQty);
             }
           });
         }
