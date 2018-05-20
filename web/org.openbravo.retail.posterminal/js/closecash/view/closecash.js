@@ -45,6 +45,9 @@ enyo.kind({
   tap: function () {
     OB.POS.hwserver.checkDrawer(function () {
       this.doCancelCashup();
+      if (!OB.MobileApp.view.$.containerWindow.showing) {
+        OB.MobileApp.model.trigger('allModelsLoaded');
+      }
     }, this);
   }
 });
