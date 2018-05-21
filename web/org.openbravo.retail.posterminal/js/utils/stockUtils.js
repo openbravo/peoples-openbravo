@@ -79,7 +79,7 @@
       }
       var order = orders[idxOrder];
       if (order.get('isEditable')) {
-        checkOrderLineStock(0, order, function (hasStock) {
+        checkOrderLineStock(0, order, function () {
           checkOrderStock(idxOrder + 1);
         });
       } else {
