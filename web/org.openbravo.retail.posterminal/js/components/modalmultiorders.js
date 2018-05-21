@@ -387,18 +387,20 @@ enyo.kind({
     }
 
     addOrdersToOrderList = _.after(checkedMultiOrders.length, function () {
-      OB.UTIL.StockUtils.checkOrderLinesStock(selectedMultiOrders, function () {
-        OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
-          selectedMultiOrders: selectedMultiOrders
-        }, function (args) {
-          if (args && args.cancellation) {
-            return;
-          }
-          me.doSelectMultiOrders({
-            value: selectedMultiOrders
+      OB.UTIL.StockUtils.checkOrderLinesStock(selectedMultiOrders, function (hasStock) {
+        if (hasStock) {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
+            selectedMultiOrders: selectedMultiOrders
+          }, function (args) {
+            if (args && args.cancellation) {
+              return;
+            }
+            me.doSelectMultiOrders({
+              value: selectedMultiOrders
+            });
+            me.showPaymentView();
           });
-          me.showPaymentView();
-        });
+        }
       });
     });
 
