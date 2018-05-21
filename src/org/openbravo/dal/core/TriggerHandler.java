@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.dal.core;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -59,23 +58,16 @@ public class TriggerHandler {
    */
   public void disable() {
     log.debug("Disabling triggers");
-    Check.isNull(sessionStatus.get(), "There is already a ADSessionStatus present in this thread, "
-        + "call enable before calling disable again");
+    Check.isNull(sessionStatus.get(),
+        "There is already a ADSessionStatus present in this thread, call enable before calling disable again");
     Connection con = OBDal.getInstance().getConnection();
-    PreparedStatement ps = null;
-    try {
-      ps = con
-          .prepareStatement("INSERT INTO AD_SESSION_STATUS (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)"
-              + " VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
+    try (PreparedStatement ps = con.prepareStatement(
+        "INSERT INTO AD_SESSION_STATUS (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)"
+            + " VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')")) {
       ps.executeUpdate();
       sessionStatus.set(Boolean.TRUE);
     } catch (Exception e) {
       throw new OBException("Couldn't disable triggers: ", e);
-    } finally {
-      try {
-        ps.close();
-      } catch (SQLException e) {
-      }
     }
   }
 
@@ -99,23 +91,18 @@ public class TriggerHandler {
    */
   public void enable() {
     log.debug("Enabling triggers");
-    Check.isNotNull(sessionStatus.get(), "SessionStatus not set, call disable "
-        + "before calling this method");
+    Check.isNotNull(sessionStatus.get(),
+        "SessionStatus not set, call disable before calling this method");
 
     Connection con = OBDal.getInstance().getConnection();
-    PreparedStatement ps = null;
-    try {
-      ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS WHERE isimporting = 'Y'");
+    try (PreparedStatement ps = con
+        .prepareStatement("DELETE FROM AD_SESSION_STATUS WHERE isimporting = 'Y'")) {
       ps.executeUpdate();
     } catch (Exception e) {
-      throw new OBException("Couldn't disable triggers: ", e);
+      throw new OBException("Couldn't enable triggers: ", e);
     } finally {
       // always clear the threadlocal
       clear();
-      try {
-        ps.close();
-      } catch (SQLException e) {
-      }
     }
   }
 }
