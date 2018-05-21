@@ -10679,31 +10679,23 @@ You can also select if transactions are allowed or not for this organization typ
 <!--631D227DC83A4898BBD041D46D829D27-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1F14B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--631D227DC83A4898BBD041D46D829D27-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--631D227DC83A4898BBD041D46D829D27-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--631D227DC83A4898BBD041D46D829D27-->  <HQLQUERY><![CDATA[select 
+<!--631D227DC83A4898BBD041D46D829D27-->  <HQLQUERY><![CDATA[SELECT
   e.id,
-  @insertion_point_1@ as movementQuantity,
+  @movementQuantity@ as movementQuantity,
   uom,
   p,
   e.lineNo,
   sh,
   (select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))),
-  @insertion_point_2@ as operativeQuantity,
-  @insertion_point_3@ as orderQuantity
-from 
-  MaterialMgmtShipmentInOutLine e
-  join e.shipmentReceipt sh
-  join sh.documentType dt
-  join e.uOM uom
-  join e.product p
-  left join e.salesOrderLine ol
-  left join ol.salesOrder o
-  left join o.priceList pl
-  left join e.operativeUOM aum
-  left join e.invoiceLineList il
-  left join il.invoice i
-where
+  @operativeQuantity@ as operativeQuantity,
+  @orderQuantity@ as orderQuantity
+FROM
+  @fromClause@
+WHERE
   @additional_filters@
-  @insertion_point_0@]]></HQLQUERY>
+  @whereClause@
+GROUP BY
+  @groupByClause@]]></HQLQUERY>
 <!--631D227DC83A4898BBD041D46D829D27-->  <ENTITY_ALIAS><![CDATA[e]]></ENTITY_ALIAS>
 <!--631D227DC83A4898BBD041D46D829D27--></AD_TABLE>
 
