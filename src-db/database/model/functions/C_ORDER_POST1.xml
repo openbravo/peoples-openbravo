@@ -356,8 +356,8 @@
       RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@ ' || v_productName);
     END IF;
 
-    /*Locked and Discontinued Products*/
-    IF (v_IsSOTrx = 'Y' AND v_DocAction='CO') THEN
+    /*PLM-Status*/
+    IF (v_IsSOTrx = 'Y' AND v_DocAction = 'CO') THEN
       FOR Cur_line IN
         (SELECT SUM(ol.qtyordered) AS qtyordered, ol.m_product_id, ol.c_uom_id, COALESCE(ol.m_attributesetinstance_id, '0') AS m_attributesetinstance_id, COALESCE(ol.m_product_uom_id, '0') AS m_product_uom_id, p.name, ps.name, ps.restrictsalefrombackend, ps.restrictsaleoutofstock
          FROM c_orderline ol
@@ -384,7 +384,7 @@
                       AND w.m_warehouse_id = loc.m_warehouse_id);
 
           IF (Cur_line.qtyordered > v_stockqty) THEN
-            RAISE_APPLICATION_ERROR(-20000, '@CannotUseDiscontinuedProduct@ ' || Cur_line.name || '. @ProductDiscontinuedNoStock@' || '(' || v_stockqty || '). @VerifyPLMStatus@.');
+            RAISE_APPLICATION_ERROR(-20000, '@CannotUseDiscontinuedProduct@ ' || Cur_line.name || '. @ProductDiscontinuedNoStock@ (' || v_stockqty || '). @VerifyPLMStatus@.');
           END IF;
         END IF;
       END LOOP;
