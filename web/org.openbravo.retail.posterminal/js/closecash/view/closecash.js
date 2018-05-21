@@ -87,7 +87,6 @@ enyo.kind({
       onDisableNextButton: 'disableNextButton',
       onEnableNextButton: 'enableNextButton'
     },
-    processesToListen: [],
     disableButton: function () {
       this.setDisabled(true);
     },
@@ -240,7 +239,6 @@ enyo.kind({
     OB.POS.navigate('retail.pointofsale');
   },
   init: function () {
-    this.synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("cashup");
     var me = this;
     this.inherited(arguments);
 
@@ -461,11 +459,6 @@ enyo.kind({
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }
   },
-
-  rendered: function () {
-    OB.UTIL.SynchronizationHelper.finished(this.synchId, 'cashup');
-  },
-
   refreshButtons: function () {
     // Disable/Enable buttons
     this.waterfall('onDisablePreviousButton', {

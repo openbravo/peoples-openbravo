@@ -374,7 +374,7 @@ enyo.kind({
     onShowPopup: ''
   },
   showPaymentTab: function () {
-    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('showPaymentTab');
+    var execution = OB.UTIL.ProcessController.start('showPaymentTab');
     var receipt = this.model.get('order'),
         me = this;
     if (receipt.get('isQuotation')) {
@@ -413,11 +413,11 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });
       }
-      OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
+      OB.UTIL.ProcessController.finish('showPaymentTab', execution);
       return;
     }
     if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid')) {
-      OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
+      OB.UTIL.ProcessController.finish('showPaymentTab', execution);
       return true;
     }
     receipt.trigger('updatePending');
@@ -447,8 +447,7 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }
-
-    OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
+    OB.UTIL.ProcessController.finish('showPaymentTab', execution);
   },
   tap: function () {
     var me = this,
@@ -470,7 +469,6 @@ enyo.kind({
         this.showPaymentTab();
         return;
       }
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
       this.model.on('showPaymentTab', function (event) {
         this.model.off('showPaymentTab');
         this.showPaymentTab();
@@ -504,11 +502,9 @@ enyo.kind({
           me.model.completePayment(me);
           me.doClearUserInput();
         }
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
       }, function (trx, error) {
         me.model.completePayment(me);
         me.doClearUserInput();
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
       });
     }
   },

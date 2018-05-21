@@ -2083,7 +2083,6 @@
               args.orderline.set('hasMandatoryServices', false);
             }
             if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
-              var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
               // Display related services after calculate gross, if it is new line
               // and if the line has not been deleted.
               // The line might has been deleted during calculate gross for
@@ -2112,7 +2111,6 @@
                 } else {
                   callbackAddProduct();
                 }
-                OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
               }, args.orderline);
             } else {
               callbackAddProduct();
@@ -5577,7 +5575,6 @@
     },
 
     newPaidReceipt: function (model, callback) {
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('newPaidReceipt');
       enyo.$.scrim.show();
       var order = new Order(),
           lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, bpBillLocId, numberOfLines = model.receiptLines.length,
@@ -5776,7 +5773,6 @@
                         if (OB.MobileApp.view.openedPopup === null) {
                           enyo.$.scrim.hide();
                         }
-                        OB.UTIL.SynchronizationHelper.finished(synchId, 'newPaidReceipt');
                       }
                     });
                     };
@@ -6060,17 +6056,14 @@
       this.loadCurrent(true);
 
       if (!model.get('isQuotation')) {
-        synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
         // OB.Dal.save is done here because we want to force to save with the original id, only this time.
         OB.Dal.save(model, function () {
           enyo.$.scrim.hide();
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
           if (callback instanceof Function) {
             callback(me.modelorder);
           }
         }, function () {
           enyo.$.scrim.hide();
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
           OB.error(arguments);
           if (callback instanceof Function) {
             callback(me.modelorder);

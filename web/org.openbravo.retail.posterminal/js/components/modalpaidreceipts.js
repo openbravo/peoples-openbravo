@@ -383,7 +383,6 @@ enyo.kind({
     this.$.prslistitemprinter.setCollection(this.prsList);
     this.prsList.on('click', function (model) {
       function loadOrder(model) {
-        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch');
         OB.UTIL.showLoading(true);
         process.exec({
           orderid: model.get('id')
@@ -405,12 +404,10 @@ enyo.kind({
                 params: me.parent.parent.params
               }, function (args) {
                 if (!args.cancelOperation) {
-                  var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
                   me.model.get('orderList').newPaidReceipt(data[0], function (order) {
                     me.doChangePaidReceipt({
                       newPaidReceipt: order
                     });
-                    OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearchNewReceipt');
 
                   });
                 }
@@ -419,7 +416,6 @@ enyo.kind({
           } else {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
           }
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
         });
         return true;
       }

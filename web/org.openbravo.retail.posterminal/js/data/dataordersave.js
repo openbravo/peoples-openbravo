@@ -371,7 +371,7 @@
         }, function () {
           OB.MobileApp.model.resetCheckpointData();
           restoreReceiptOnError(eventParams, model.get('order'));
-          OB.UTIL.SynchronizationHelper.finished(OB.MobileApp.model.synchProcessingTransaction, 'ProcessingTransaction');
+          OB.UTIL.ProcessController.finish('processingTransactionSyncMode', OB.MobileApp.model.execution);
         });
       } else {
         mainReceiptCloseFunction(eventParams, context);
@@ -423,7 +423,7 @@
         };
 
     var saveAndSyncMultiOrder = function (me, closedReceipts, syncCallback) {
-        var recursiveSaveFn, currentReceipt, synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrdersClosed");
+        var recursiveSaveFn, currentReceipt;
         recursiveSaveFn = function (receiptIndex) {
           if (receiptIndex < closedReceipts.length) {
             currentReceipt = closedReceipts[receiptIndex];
@@ -505,14 +505,12 @@
                 me.hasInvLayaways = false;
               }
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
               model.get('multiOrders').trigger('checkOpenDrawer');
             }, function () {
               if (syncCallback instanceof Function) {
                 syncCallback();
               }
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
             });
           }
         };

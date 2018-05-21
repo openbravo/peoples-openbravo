@@ -66,11 +66,9 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
-    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("modalDialogButtonTap");
 
     function error(tx) {
       OB.UTIL.showError("OBDAL error: " + tx);
-      OB.UTIL.SynchronizationHelper.finished(synchId, "modalDialogButtonTap");
     }
 
     this.owner.owner.actionCancel = false;
@@ -113,7 +111,6 @@ enyo.kind({
           me.model.get('leftColumnViewManager').setOrderMode();
         }
       }
-      OB.UTIL.SynchronizationHelper.finished(synchId, "modalDialogButtonTap");
     }, error);
   }
 });

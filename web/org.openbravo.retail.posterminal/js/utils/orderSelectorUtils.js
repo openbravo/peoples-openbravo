@@ -31,7 +31,7 @@
 
   OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context, originServer, fromSelector) {
     var me = this,
-        synchId, continueAfterPaidReceipt, checkListCallback, errorCallback, orderLoaded, loadOrder, loadOrders, loadOrdersProcess, recursiveCallback, recursiveIdx, currentModel, currentOrderList, currentContext, currentOriginServer, currentFromSelector;
+        continueAfterPaidReceipt, checkListCallback, errorCallback, orderLoaded, loadOrder, loadOrders, loadOrdersProcess, recursiveCallback, recursiveIdx, currentModel, currentOrderList, currentContext, currentOriginServer, currentFromSelector;
 
     checkListCallback = function () {
       if (me.listOfReceipts && me.listOfReceipts.length > 0) {
@@ -43,7 +43,6 @@
     };
 
     errorCallback = function (unsetLoading, msg, msgInPopup) {
-      OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
       if (unsetLoading) {
         OB.UTIL.showLoading(false);
       }
@@ -64,7 +63,6 @@
           if (recursiveCallback) {
             recursiveCallback(recursiveIdx + 1);
           } else {
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
             checkListCallback();
           }
           };
@@ -124,13 +122,11 @@
     };
 
     loadOrders = function (models) {
-      OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
       context.doShowPopup({
         popup: 'modalOpenRelatedReceipts',
         args: {
           models: models,
           callback: function (selectedModels) {
-            synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch');
             if (selectedModels.length === 1) {
               loadOrder(models[0]);
             } else {
@@ -148,7 +144,6 @@
                     if (idx === data.length) {
                       recursiveCallback = undefined;
                       recursiveIdx = undefined;
-                      OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
                       checkListCallback();
                     } else {
                       var order = data[idx];
@@ -176,7 +171,6 @@
       currentContext = context;
       currentOriginServer = originServer;
       currentFromSelector = fromSelector;
-      synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch');
       orderList.checkForDuplicateReceipts(model, function (order) {
         if (OB.MobileApp.model.get('terminal').terminalType.openrelatedreceipts && model.get('businessPartner') !== OB.MobileApp.model.get('terminal').businessPartner) {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.SearchRelatedReceipts');
@@ -223,7 +217,6 @@
           loadOrder(order);
         }
       }, function () {
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
         checkListCallback();
       }, fromSelector);
     };
