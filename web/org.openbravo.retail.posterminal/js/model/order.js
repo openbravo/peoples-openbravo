@@ -2181,34 +2181,9 @@
         } else {
           OB.UTIL.StockUtils.getReceiptLineStock(p.get('id'), line, function (data) {
             if (data && data.exception) {
-              if (data.exception.message === 'Application server is not available.') {
-                OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [p.get('_identifier'), productStatus.name]), [{
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  action: function () {
-                    if (callback) {
-                      callback(true);
-                    }
-                  }
-                }, {
-                  label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                  action: function () {
-                    if (callback) {
-                      callback(false);
-                    }
-                  }
-                }], {
-                  onHideFunction: function () {
-                    if (callback) {
-                      callback(false);
-                    }
-                  }
-                });
-              } else {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message);
-                if (callback) {
-                  callback(false);
-                }
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorServerGeneric') + data.exception.message);
+              if (callback) {
+                callback(false);
               }
             } else {
               warehouse = _.find(data.warehouses, function (warehouse) {
@@ -2224,6 +2199,29 @@
               }
               addDiscontinuedLine(warehouse, allLinesQty);
             }
+          }, function (data) {
+            OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_ConnectionFail'), OB.I18N.getLabel('OBPOS_CannotVerifyStock', [p.get('_identifier'), productStatus.name]), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              action: function () {
+                if (callback) {
+                  callback(true);
+                }
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+              action: function () {
+                if (callback) {
+                  callback(false);
+                }
+              }
+            }], {
+              onHideFunction: function () {
+                if (callback) {
+                  callback(false);
+                }
+              }
+            });
           });
         }
       } else if (callback) {

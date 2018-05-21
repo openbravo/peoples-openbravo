@@ -304,6 +304,8 @@ enyo.kind({
             }
             me.loadDefaultWarehouseData(currentWarehouse);
             me.warehouse.warehouseqty = currentWarehouse.get('warehouseqty');
+          } else {
+            me.warehouse.warehouseqty = OB.DEC.Zero;
           }
           me.bodyComponent.$.stockHere.removeClass('error');
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);

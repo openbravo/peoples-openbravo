@@ -13,7 +13,7 @@
   OB.UTIL.ProductStatusUtils = {};
 
   OB.UTIL.ProductStatusUtils.getProductStatus = function (product) {
-    var productLineStatus = product.get('producAssortmentStatus') ? product.get('producAssortmentStatus') : (product.get('productStatus') ? product.get('productStatus') : null);
+    var productLineStatus = product.get('productAssortmentStatus') ? product.get('productAssortmentStatus') : (product.get('productStatus') ? product.get('productStatus') : null);
     if (productLineStatus) {
       return _.find(OB.MobileApp.model.get('productStatusList'), function (productStatus) {
         return productLineStatus === productStatus.id;

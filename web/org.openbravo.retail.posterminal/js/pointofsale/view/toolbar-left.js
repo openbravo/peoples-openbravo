@@ -483,71 +483,51 @@ enyo.kind({
         return;
       }
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
-      showMandatoryServices = function () {
-        me.model.on('showPaymentTab', function (event) {
-          me.model.off('showPaymentTab');
-          me.showPaymentTab();
-        });
+      OB.UTIL.StockUtils.checkOrderLinesStock([me.model.get('order')], function (hasStock) {
+        if (hasStock) {
+          me.model.on('showPaymentTab', function (event) {
+            me.model.off('showPaymentTab');
+            me.showPaymentTab();
+          });
 
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          criteria.remoteFilters = [];
-          criteria.remoteFilters.push({
-            columns: [],
-            operator: OB.Dal.FILTER,
-            value: 'Final_Services',
-            params: []
-          });
-          criteria.remoteFilters.push({
-            columns: ['ispack'],
-            operator: 'equals',
-            value: false,
-            fieldType: 'forceString'
-          });
-        } else {
-          criteria.productType = 'S';
-          criteria.proposalType = 'FMA';
-        }
-        OB.Dal.find(OB.Model.Product, criteria, function (data) {
-          if (data && data.length > 0 && !me.model.get('order').get('isPaid') && !me.model.get('order').get('isLayaway')) {
-            me.model.get('order').trigger('showProductList', null, 'final', function () {
-              me.model.completePayment();
-              me.doClearUserInput();
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+            criteria.remoteFilters = [];
+            criteria.remoteFilters.push({
+              columns: [],
+              operator: OB.Dal.FILTER,
+              value: 'Final_Services',
+              params: []
+            });
+            criteria.remoteFilters.push({
+              columns: ['ispack'],
+              operator: 'equals',
+              value: false,
+              fieldType: 'forceString'
             });
           } else {
+            criteria.productType = 'S';
+            criteria.proposalType = 'FMA';
+          }
+          OB.Dal.find(OB.Model.Product, criteria, function (data) {
+            if (data && data.length > 0 && !me.model.get('order').get('isPaid') && !me.model.get('order').get('isLayaway')) {
+              me.model.get('order').trigger('showProductList', null, 'final', function () {
+                me.model.completePayment();
+                me.doClearUserInput();
+              });
+            } else {
+              me.model.completePayment(me);
+              me.doClearUserInput();
+            }
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
+          }, function (trx, error) {
             me.model.completePayment(me);
             me.doClearUserInput();
-          }
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
-        }, function (trx, error) {
-          me.model.completePayment(me);
-          me.doClearUserInput();
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
-        });
-      };
-      checkStock = function (idx) {
-        if (idx === me.model.get('order').get('lines').length) {
-          showMandatoryServices();
-          return;
-        }
-        var line = me.model.get('order').get('lines').at(idx),
-            productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(line.get('product'));
-        if (OB.DEC.compare(line.get('qty')) === 1 && productStatus && productStatus.restrictsaleoutofstock) {
-          var options = {
-            line: line
-          };
-          me.model.get('order').getStoreStock(line.get('product'), OB.DEC.Zero, options, null, function (hasStock) {
-            if (hasStock) {
-              checkStock(idx + 1);
-            } else {
-              OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
-            }
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
           });
         } else {
-          checkStock(idx + 1);
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
         }
-      };
-      // Check discontinuedLines
-      checkStock(0);
+      });
     }
   },
   attributes: {

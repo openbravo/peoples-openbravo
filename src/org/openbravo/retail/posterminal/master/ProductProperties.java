@@ -56,7 +56,7 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("img.id", "imgId"));
         }
         add(new HQLProperty("pli.bestseller", "bestseller"));
-        add(new HQLProperty("pli.productStatus.id", "producAssortmentStatus"));
+        add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
         add(new HQLProperty("'false'", "ispack"));
         add(new HQLProperty("ppp.listPrice", "listPrice"));
         add(new HQLProperty("ppp.standardPrice", "standardPrice"));
