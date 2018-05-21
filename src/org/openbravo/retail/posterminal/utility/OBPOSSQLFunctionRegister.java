@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,23 +19,34 @@
 
 package org.openbravo.retail.posterminal.utility;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.enterprise.context.ApplicationScoped;
+
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
-import org.openbravo.client.kernel.ApplicationInitializer;
-import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.core.SQLFunctionRegister;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class OBPOSApplicationInitializer implements ApplicationInitializer {
+/**
+ * A class in charge of registering the SQL functions required by the Web POS module.
+ */
+@ApplicationScoped
+public class OBPOSSQLFunctionRegister implements SQLFunctionRegister {
 
   @Override
-  public void initialize() {
-    OBDal.getInstance().registerSQLFunction("c_currency_rate",
-        new StandardSQLFunction("c_currency_rate", StandardBasicTypes.STRING));
-    OBDal.getInstance().registerSQLFunction("obpos_currency_rate",
-        new StandardSQLFunction("obpos_currency_rate", StandardBasicTypes.STRING));
-    OBDal.getInstance().registerSQLFunction("get_pricelist_version",
-        new SQLFunctionTemplate(StandardBasicTypes.STRING, getPriceFunction()));
+  public Map<String, SQLFunction> getSQLFunctions() {
+    Map<String, SQLFunction> sqlFunctions = new HashMap<>();
+    sqlFunctions.put("c_currency_rate", new StandardSQLFunction("c_currency_rate",
+        StandardBasicTypes.STRING));
+    sqlFunctions.put("obpos_currency_rate", new StandardSQLFunction("obpos_currency_rate",
+        StandardBasicTypes.STRING));
+    sqlFunctions.put("get_pricelist_version", new SQLFunctionTemplate(StandardBasicTypes.STRING,
+        getPriceFunction()));
+    return sqlFunctions;
   }
 
   private String getPriceFunction() {
@@ -56,4 +67,5 @@ public class OBPOSApplicationInitializer implements ApplicationInitializer {
     }
     return func;
   }
+
 }
