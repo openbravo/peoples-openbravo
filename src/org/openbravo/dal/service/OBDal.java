@@ -31,10 +31,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.stat.SessionStatistics;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -42,14 +39,11 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.UniqueConstraint;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
-import org.openbravo.dal.core.DalSessionFactory;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.SQLFunctionRegister;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.database.ExternalConnectionPool;
@@ -125,24 +119,6 @@ public class OBDal implements OBNotSingleton {
   public void enableActiveFilter() {
     SessionHandler.getInstance().getSession(poolName).enableFilter("activeFilter")
         .setParameter("activeParam", "Y");
-  }
-
-  /**
-   * Register a sql function in the session factory, after this call it can be used by queries.
-   * 
-   * @deprecated Use a {@link SQLFunctionRegister} instead. This method is slated for removal in the
-   *             upcoming releases.
-   */
-  @Deprecated
-  public void registerSQLFunction(String name, SQLFunction function) {
-    log.debug("Using deprecated way of registering SQL functions in Hibernate", new Exception(
-        "Current Stack Trace"));
-    final DalSessionFactory dalSessionFactory = (DalSessionFactory) SessionFactoryController
-        .getInstance().getSessionFactory();
-
-    final Dialect dialect = ((SessionFactoryImpl) dalSessionFactory.getDelegateSessionFactory())
-        .getJdbcServices().getDialect();
-    dialect.getFunctions().put(name, function);
   }
 
   /**
