@@ -382,6 +382,9 @@
         this.set('lines', new OrderLineList().reset(attributes.lines));
         this.set('orderManualPromotions', new Backbone.Collection().reset(attributes.orderManualPromotions));
         this.set('payments', new PaymentLineList().reset(attributes.payments));
+        if (attributes.canceledorder) {
+          this.set('canceledorder', new OB.Model.Order(attributes.canceledorder));
+        }
         this.set('payment', attributes.payment);
         this.set('change', attributes.change);
         this.set('qty', attributes.qty);
@@ -441,7 +444,7 @@
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
       }
-      if (!OB.MobileApp.model.get('preventOrderSave')) {
+      if (!OB.MobileApp.model.get('preventOrderSave') && !this.pendingCalculateReceipt) {
         OB.Dal.save(this, function () {
           if (callback) {
             callback();
@@ -1083,6 +1086,14 @@
         this.set('replacedorder', _order.get('replacedorder'));
       }
 
+      if (_order.get('canceledorder')) {
+        this.set('canceledorder', _order.get('canceledorder'));
+      }
+
+      if (_order.get('doCancelAndReplace')) {
+        this.set('doCancelAndReplace', _order.get('doCancelAndReplace'));
+      }
+
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
       if (OB.UTIL.isNullOrUndefined(this.get('idExecution')) && OB.UTIL.isNullOrUndefined(_order.get('idExecution'))) {
         idExecution = new Date().getTime();
@@ -1123,7 +1134,7 @@
       this.setUnit(line, OB.DEC.add(line.get('qty'), qty, OB.I18N.qtyScale()), OB.I18N.getLabel('OBPOS_AddUnits', [OB.DEC.toNumber(new BigDecimal((String)(qty.toString()))), line.get('product').get('_identifier')]));
     },
 
-    setUnit: function (line, qty, text, doNotSave) {
+    setUnit: function (line, qty, text) {
       var permission, me = this;
 
       if (OB.DEC.isNumber(qty) && qty !== 0) {
@@ -1150,8 +1161,11 @@
           this.addProduct(line.get('product'));
           return true;
         } else {
-          // sets the new quantity
-          line.set('qty', qty);
+          var setQuantity = function () {
+              // sets the new quantity
+              line.set('qty', qty);
+              me.adjustPayment();
+              };
           // sets the undo action
           if (this.get('multipleUndo')) {
             var undoText = '',
@@ -1179,7 +1193,7 @@
                 me.calculateReceipt();
                 me.set('undo', null);
               }
-            });
+            }, setQuantity);
           } else {
             this.setUndo('EditLine', {
               text: text || OB.I18N.getLabel('OBPOS_SetUnits', [line.get('qty'), line.get('product').get('_identifier')]),
@@ -1190,12 +1204,8 @@
                 me.calculateReceipt();
                 me.set('undo', null);
               }
-            });
+            }, setQuantity);
           }
-        }
-        this.adjustPayment();
-        if (!doNotSave) {
-          this.save();
         }
       } else {
         if (line.get('deleteApproved')) {
@@ -1329,11 +1339,15 @@
 
       function postDeleteLine() {
         var cleanReceipt, hasServices = me.get('hasServices'),
+            preventOrderSave = OB.MobileApp.model.get('preventOrderSave'),
             linesToDelete = _.filter(me.get('lines').models, function (line) {
             return line.get('obposIsDeleted');
           });
 
         cleanReceipt = function () {
+          if (!preventOrderSave) {
+            OB.MobileApp.model.unset('preventOrderSave');
+          }
           if (hasServices) {
             var services = _.find(me.get('lines').models, function (line) {
               return line.get('relatedLines');
@@ -1346,18 +1360,17 @@
           me.unset('preventServicesUpdate');
           me.unset('deleting');
           me.get('lines').trigger('updateRelations');
-          me.save(function () {
-            if (OB.MobileApp.view.openedPopup === null) {
-              enyo.$.scrim.hide();
+          me.save();
+          if (OB.MobileApp.view.openedPopup === null) {
+            enyo.$.scrim.hide();
+          }
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
+            order: me,
+            selectedLines: selectedModels
+          }, function (args) {
+            if (callback) {
+              callback();
             }
-            OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
-              order: me,
-              selectedLines: selectedModels
-            }, function (args) {
-              if (callback) {
-                callback();
-              }
-            });
           });
         };
 
@@ -1435,6 +1448,9 @@
 
         if (hasServices) {
           me.unset('hasServices');
+        }
+        if (!preventOrderSave) {
+          OB.MobileApp.model.set('preventOrderSave', true);
         }
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
           me.calculateReceipt(function () {
@@ -1646,7 +1662,9 @@
         }
       }
 
-      line.set('obposIsDeleted', true);
+      line.set('obposIsDeleted', true, {
+        silent: true
+      });
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted')) {
         deletedQty = line.get('obposQtyDeleted');
@@ -2595,7 +2613,7 @@
 
       qtyToMove = originalQty - qtyToKeep;
 
-      this.setUnit(line, qtyToKeep, null, true);
+      this.setUnit(line, qtyToKeep, null);
 
       p = line.get('product');
 
@@ -2610,10 +2628,10 @@
           addedBySplit: true
         });
         this.get('lines').add(newLine);
-        this.setUnit(newLine, qtyToMove, null, true);
+        this.setUnit(newLine, qtyToMove, null);
         return newLine;
       } else {
-        this.setUnit(newLine, newLine.get('qty') + qtyToMove, null, true);
+        this.setUnit(newLine, newLine.get('qty') + qtyToMove, null);
       }
     },
 
@@ -4128,7 +4146,7 @@
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       //Returns the difference (abs) between total to pay and payments.
       //if paymentToIignore parameter is provided the result will exclude that payment.
-      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore));
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
       //Returns the difference (abs) between total to pay and payments without take into account currentPayment
@@ -4187,9 +4205,9 @@
           //and finally we transform this difference to the foreign amount
           //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
           //in the default currency is satisfied
-          if (OB.DEC.compare(OB.DEC.sub(OB.DEC.abs(this.getDifferenceRemovingSpecificPayment(p)), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
-            if (p.get('origAmount') !== multiCurrencyDifference) {
+            if (OB.DEC.abs(p.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
               p.set('origAmount', multiCurrencyDifference);
             }
           }
@@ -4208,6 +4226,9 @@
         }
         if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
           sumCash();
+          if (p.get('isPrePayment') || p.get('isReversePayment')) {
+            processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, p.get('origAmount'));
+          }
         } else {
           if (!p.get('isPrePayment')) {
             sumCash();
@@ -4236,9 +4257,9 @@
         }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
-          this.set('payment', OB.DEC.abs(nocash));
-          this.set('change', OB.DEC.add(cash, origCash));
-        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
+          this.set('payment', OB.DEC.add(OB.DEC.abs(nocash), processedPaymentsAmount));
+          this.set('change', OB.DEC.add(OB.DEC.sub(cash, processedPaymentsAmount), origCash));
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, OB.DEC.sub(cash, processedPaymentsAmount)), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
           //The change value will be computed through a rounded total value, to ensure that the total plus change
@@ -5577,7 +5598,7 @@
     newPaidReceipt: function (model, callback) {
       enyo.$.scrim.show();
       var order = new Order(),
-          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, bpBillLocId, numberOfLines = model.receiptLines.length,
+          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, bpBillLocId, bpBillLoc, numberOfLines = model.receiptLines.length,
           orderQty = 0,
           NoFoundProduct = true,
           NoFoundCustomer = true,
@@ -5642,7 +5663,7 @@
         order.set('isPaid', true);
         var paidByPayments = 0;
         _.each(model.receiptPayments, function (receiptPayment) {
-          paidByPayments += receiptPayment.amount;
+          paidByPayments += OB.DEC.mul(receiptPayment.amount, receiptPayment.rate);
         });
 
         var creditAmount = OB.DEC.sub(model.totalamount, paidByPayments);
@@ -5949,35 +5970,38 @@
               });
             }
           } else {
-            var criteria = {};
-            if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-              var remoteCriteria = [{
-                columns: ['id'],
-                operator: 'equals',
-                value: [bpLocId, bpBillLocId]
-              }];
-              criteria.remoteFilters = remoteCriteria;
+            if (isLoadedPartiallyFromBackend && !OB.UTIL.isNullOrUndefined(bpLoc) && !OB.UTIL.isNullOrUndefined(bpBillLoc)) {
+              bp.set('locations', [bpBillLoc, bpLoc]);
+              locationForBpartner(bpLoc, bpBillLoc);
             } else {
-              criteria._whereClause = "where c_bpartner_location_id in (?, ?)";
-              criteria.params = [bpLocId, bpBillLocId];
-            }
-            OB.UTIL.bpLoc = bpLoc;
-            OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
-              var loc, billLoc;
-              _.each(locations.models, function (l) {
-                if (l.id === bpLocId) {
-                  loc = l;
-                } else if (l.id === bpBillLocId) {
-                  billLoc = l;
-                }
-              });
-              if (OB.UTIL.isNullOrUndefined(loc)) {
-                billLoc = loc = OB.UTIL.bpLoc;
+              var criteria = {};
+              if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+                var remoteCriteria = [{
+                  columns: ['id'],
+                  operator: 'equals',
+                  value: [bpLocId, bpBillLocId]
+                }];
+                criteria.remoteFilters = remoteCriteria;
+              } else {
+                criteria._whereClause = "where c_bpartner_location_id in (?, ?)";
+                criteria.params = [bpLocId, bpBillLocId];
               }
-              locationForBpartner(loc, billLoc);
-            }, function (tx, error) {
-              OB.UTIL.showError("OBDAL error: " + error);
-            });
+              OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
+                var loc, billLoc;
+                _.each(locations.models, function (l) {
+                  if (l.id === bpLocId) {
+                    loc = l;
+                  } else if (l.id === bpBillLocId) {
+                    billLoc = l;
+                  }
+                });
+                locationForBpartner(loc, billLoc);
+              }, function (tx, error) {
+                OB.UTIL.showError("OBDAL error: " + error);
+              }, bpLoc);
+
+            }
+
           }
 
           };
@@ -5985,12 +6009,19 @@
         bpartnerForProduct(bp);
       }, null, function () {
         //Empty
-        new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
+        var loadCustomerParameters = {
           bpartnerId: bpId,
           bpLocationId: bpLocId
-        }, function (data) {
+        };
+        if (bpLocId !== bpBillLocId) {
+          loadCustomerParameters.bpBillLocationId = bpBillLocId;
+        }
+        new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec(loadCustomerParameters, function (data) {
           isLoadedPartiallyFromBackend = true;
           bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
+          if (bpLocId !== bpBillLocId) {
+            bpBillLoc = OB.Dal.transform(OB.Model.BPLocation, data[2]);
+          }
           bpartnerForProduct(OB.Dal.transform(OB.Model.BusinessPartner, data[0]));
         }, function () {
           if (NoFoundCustomer) {
@@ -6535,7 +6566,7 @@
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       //Returns the difference (abs) between total to pay and payments.
       //if paymentToIignore parameter is provided the result will exclude that payment.
-      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore));
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
       //Returns the difference (abs) between total to pay and payments without take into account currentPayment
@@ -6576,7 +6607,7 @@
           //and finally we transform this difference to the foreign amount
           //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
           //in the default currency is satisfied
-          if (OB.DEC.compare(OB.DEC.sub(OB.DEC.abs(this.getDifferenceRemovingSpecificPayment(p)), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (p.get('origAmount') !== multiCurrencyDifference) {
               p.set('origAmount', multiCurrencyDifference);

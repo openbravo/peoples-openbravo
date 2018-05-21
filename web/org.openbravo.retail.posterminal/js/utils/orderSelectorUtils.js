@@ -72,7 +72,7 @@
           loadNextOrder();
         });
       } else {
-        order.calculateGrossAndSave(false, function () {
+        order.calculateGrossAndSave(true, function () {
           loadNextOrder();
         });
       }

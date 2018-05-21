@@ -126,7 +126,7 @@
         <onCreateDefault/>
       </column>
       <column name="MINUTESTORESHOWFRESHDATAINC" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
+        <default><![CDATA[5]]></default>
         <onCreateDefault><![CDATA[5]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">

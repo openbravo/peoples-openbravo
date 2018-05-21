@@ -91,7 +91,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
         .append(" and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
     hqlPaidReceipts
         .append(" and ord.documentStatus <> 'CA' and (ord.documentStatus <> 'CL' or ord.iscancelled = true)");
-    if (jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL) {
+    if ((jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL)
+        || (jsonsent.has("orderByProperties") && jsonsent.get("orderByProperties") != JSONObject.NULL)) {
       hqlPaidReceipts.append(" $orderByCriteria");
     }
 

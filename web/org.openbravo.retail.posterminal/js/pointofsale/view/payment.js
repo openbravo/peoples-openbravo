@@ -303,13 +303,7 @@ enyo.kind({
         return;
       }
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
-      if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done && _.isUndefined(model.get('paidInNegativeStatusAmt'))) {
-        this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-        this.$.layawayaction.setDisabled(false);
-        this.$.layawayaction.show();
-      } else {
-        this.$.layawayaction.hide();
-      }
+      this.updateLayawayAction();
       this.updateCreditSalesAction();
     }, this);
     this.updateExtraInfo('');
@@ -326,6 +320,29 @@ enyo.kind({
       this.$.extrainfo.hide();
     }
     this.alignErrorMessages();
+  },
+
+  updateLayawayAction: function (forceDisable) {
+    var disable = forceDisable || false;
+    if ((this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) && !this.receipt.getPaymentStatus().done && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
+      this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+      if (!disable && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
+        if (!_.find(this.receipt.get('payments').models, function (payment) {
+          return !payment.get('isPrePayment');
+        })) {
+          disable = true;
+        }
+      }
+      this.$.layawayaction.setLocalDisabled(disable);
+      this.$.layawayaction.show();
+    } else if (this.receipt.get('orderType') === 3 && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
+      this.$.layawayaction.setLocalDisabled(false);
+      this.$.layawayaction.hide();
+    } else if (!_.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
+      this.$.layawayaction.setLocalDisabled(false);
+      this.$.layawayaction.hide();
+      this.$.exactbutton.show();
+    }
   },
 
   updateCreditSalesAction: function () {
@@ -419,14 +436,7 @@ enyo.kind({
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.exactbutton.show();
       }
-      if ((this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
-        this.$.layawayaction.show();
-      } else if (this.receipt.get('orderType') === 3 && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
-        this.$.layawayaction.hide();
-      } else if (!_.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
-        this.$.layawayaction.hide();
-        this.$.exactbutton.show();
-      }
+      this.updateLayawayAction();
     }
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
       if (this.receipt.getGross() === 0) {
@@ -701,6 +711,22 @@ enyo.kind({
     return check;
   },
 
+  checkDrawerPreference: function () {
+    var hasCashPayment, paymentList = this.model.get('multiOrders').get('payments');
+    if (paymentList.length > 0) {
+      hasCashPayment = _.find(paymentList.models, function (item) {
+        if (item.get('isCash')) {
+          return item;
+        }
+      });
+    }
+    if (_.isUndefined(hasCashPayment) && this.model.get('multiOrders').selectedPayment !== 'OBPOS_payment.cash') {
+      this.$.donebutton.drawerpreference = false;
+      this.$.donebutton.drawerOpened = true;
+      this.$.donebutton.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+    }
+  },
+
   checkValidPayments: function (paymentstatus, selectedPayment) {
     var resultOK, me = this;
 
@@ -756,8 +782,8 @@ enyo.kind({
       } else if (!this.receipt.stopAddingPayments) {
         this.$.donebutton.setLocalDisabled(false);
         this.$.exactbutton.setLocalDisabled(false);
-        this.$.layawayaction.setLocalDisabled(false);
         this.$.creditsalesaction.setLocalDisabled(false);
+        this.updateLayawayAction();
       }
 
     } else {
@@ -913,11 +939,7 @@ enyo.kind({
         this.$.exactbutton.setLocalDisabled(true);
       }
     } else if (button === 'Layaway') {
-      if (resultOK) {
-        this.$.layawayaction.setLocalDisabled(false);
-      } else {
-        this.$.layawayaction.setLocalDisabled(true);
-      }
+      this.updateLayawayAction(resultOK ? false : true);
     } else if (button === 'Credit') {
       if (resultOK) {
         this.$.creditsalesaction.setLocalDisabled(false);
@@ -1310,6 +1332,7 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
+    this.owner.checkDrawerPreference();
     this.doExactPayment();
   }
 });
