@@ -115,12 +115,6 @@ public class CostingMigrationProcess implements Process {
         throw new OBException("@CostMigratedInstance@");
       }
 
-      // FIXME: Remove when HQL based inserts are removed.
-      OBDal.getInstance().registerSQLFunction("get_uuid",
-          new StandardSQLFunction("get_uuid", new StringType()));
-      OBDal.getInstance()
-          .registerSQLFunction("now", new StandardSQLFunction("now", new DateType()));
-
       if (!isMigrationFirstPhaseCompleted()) {
         long t1 = System.currentTimeMillis();
         log4j.debug("Starting CostingMigrationProcess first phase at: " + new Date());

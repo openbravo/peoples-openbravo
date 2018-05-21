@@ -19,7 +19,10 @@
 
 package org.openbravo.dal.core;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
+import org.hibernate.dialect.function.SQLFunction;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
@@ -27,9 +30,10 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.base.weld.WeldUtils;
 
 /**
- * This class is responsible for initializing the dal layer. It ensures that the model is read in
+ * This class is responsible for initializing the DAL layer. It ensures that the model is read in
  * memory and that the mapping is generated in a two stage process.
  * 
  * @author mtaal
@@ -39,6 +43,8 @@ public class DalLayerInitializer implements OBSingleton {
   private static final Logger log = Logger.getLogger(DalLayerInitializer.class);
 
   private static DalLayerInitializer instance;
+
+  private Map<String, SQLFunction> sqlFunctions;
 
   public static DalLayerInitializer getInstance() {
     if (instance == null) {
@@ -74,8 +80,7 @@ public class DalLayerInitializer implements OBSingleton {
     }
 
     log.info("Model read in-memory, generating mapping...");
-    SessionFactoryController.setInstance(OBProvider.getInstance().get(
-        DalSessionFactoryController.class));
+    SessionFactoryController.setInstance(getDalSessionFactoryController());
     SessionFactoryController.getInstance().initialize();
 
     if (isUsingExternalConnectionPool()) {
@@ -96,6 +101,33 @@ public class DalLayerInitializer implements OBSingleton {
     initialized = true;
   }
 
+  private DalSessionFactoryController getDalSessionFactoryController() {
+    DalSessionFactoryController dsfc;
+    try {
+      dsfc = WeldUtils.getInstanceFromStaticBeanManager(DalSessionFactoryController.class);
+    } catch (Throwable t) {
+      // retrieving the DalSessionFactoryController instance with weld can fail in some build tasks
+      // or when executing the tests
+      log.debug("Could not instantiate DalSessionFactoryController using weld", t);
+      dsfc = OBProvider.getInstance().get(DalSessionFactoryController.class);
+    }
+    if (sqlFunctions != null && !sqlFunctions.isEmpty()) {
+      dsfc.setSQLFunctions(sqlFunctions);
+    }
+    return dsfc;
+  }
+
+  /**
+   * Can be used to manually provide to the {@link DalSessionFactoryController} the SQL functions to
+   * be registered in Hibernate.
+   * 
+   * @param sqlFunctions
+   *          a Map with the SQL functions to be registered in Hibernate.
+   */
+  public void setSQLFunctions(Map<String, SQLFunction> sqlFunctions) {
+    this.sqlFunctions = sqlFunctions;
+  }
+
   private boolean isUsingExternalConnectionPool() {
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
@@ -108,7 +140,7 @@ public class DalLayerInitializer implements OBSingleton {
 
   /**
    * Can be used to set the internal initialized member to false and then call initialize again to
-   * re-initialize the Dal layer.
+   * re-initialize the DAL layer.
    * 
    * @param initialized
    *          the value of the initialized member

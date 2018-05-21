@@ -1247,13 +1247,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
             + "/servlets/image?image={0}");
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, os, false,
-            readOnlyCP, data, localExportParameters, renderJRShouldCompileSubreports());
+            readOnlyCP, data, localExportParameters);
       } else if (expType != ExportType.XML) {
         reportId = UUID.randomUUID();
         File outputFile = new File(globalParameters.strFTPDirectory + "/" + localStrFileName + "-"
             + (reportId) + "." + localStrOutputType);
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, outputFile,
-            false, readOnlyCP, data, localExportParameters, renderJRShouldCompileSubreports());
+            false, readOnlyCP, data, localExportParameters);
         response.setContentType("text/html;charset=UTF-8");
         response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "-"
             + (reportId) + ".html");
@@ -1294,19 +1294,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       return ReportingUtils.getExcelExportType().getExtension();
     }
     return outputType;
-  }
-
-  /**
-   * This method should be overridden by those classes which want to compile the sub-reports when
-   * invoking renderJR. Note that the sub-reports to be compiled will be the .jrxml files placed in
-   * the same folder as the main report and whose related parameter name starts with <b>SUBREP_</b>.
-   * By default, this method returns {@code false}.
-   * 
-   * @return {@code true} if renderJR should use the reporting engine to compile the sub-reports
-   *         automatically. Otherwise, this method should return {@code false}.
-   */
-  protected boolean renderJRShouldCompileSubreports() {
-    return false;
   }
 
   /**

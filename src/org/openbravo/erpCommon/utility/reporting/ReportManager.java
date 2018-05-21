@@ -110,7 +110,7 @@ public class ReportManager {
               + Utility.messageBD(_connectionProvider, "Invoice", language));
     }
     try {
-      jasperPrint = ReportingUtils.generateJasperPrint(templateFile, designParameters, true,
+      jasperPrint = ReportingUtils.generateJasperPrint(templateFile, designParameters,
           _connectionProvider, null);
     } catch (final Exception exception) {
       log4j.error(exception.getMessage());

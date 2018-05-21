@@ -131,7 +131,12 @@ public class SystemInfo {
   }
 
   private static void load(Item i, ConnectionProvider conn) throws ServletException {
-
+    if (i == Item.DATABASE) {
+      // The database information can be requested without having DAL initialized, so we directly
+      // retrieve it here, avoiding to initialize OBContext
+      systemInfo.put(i, conn.getRDBMS());
+      return;
+    }
     OBContext.setAdminMode();
     try {
 
@@ -147,7 +152,7 @@ public class SystemInfo {
         systemInfo.put(i, getDBIdentifier(conn));
         break;
       case DATABASE:
-        systemInfo.put(i, conn.getRDBMS());
+        // already handled
         break;
       case DATABASE_VERSION:
         systemInfo.put(i, getDatabaseVersion(conn));
@@ -839,11 +844,11 @@ public class SystemInfo {
         false), WEBSERVER_VERSION("webserverVersion", false), SERVLET_CONTAINER("servletContainer",
         false), SERVLET_CONTAINER_VERSION("servletContainerVersion", false), ANT_VERSION(
         "antVersion", false), OB_VERSION("obVersion", false), OB_INSTALL_MODE("obInstallMode",
-        false), NUM_REGISTERED_USERS("numRegisteredUsers",
-        false), ISHEARTBEATACTIVE("isheartbeatactive", true), ISPROXYREQUIRED("isproxyrequired",
-        false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), JAVA_VERSION(
-        "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRST_LOGIN(
-        "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
+        false), NUM_REGISTERED_USERS("numRegisteredUsers", false), ISHEARTBEATACTIVE(
+        "isheartbeatactive", true), ISPROXYREQUIRED("isproxyrequired", false), PROXY_SERVER(
+        "proxyServer", false), PROXY_PORT("proxyPort", false), JAVA_VERSION("javaVersion", false), MODULES(
+        "modules", false), OBPS_INSTANCE("obpsId", false), FIRST_LOGIN("firstLogin", false), LAST_LOGIN(
+        "lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
         "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
         "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
         false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false), INSTANCE_PURPOSE(
