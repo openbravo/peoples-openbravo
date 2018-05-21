@@ -255,7 +255,7 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0),
           TestCostingConstants.SPAIN_WAREHOUSE_ID, price3, price1, price3, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1),
-          TestCostingConstants.SPAIN_WAREHOUSE_ID, price3, price6, price5, quantity3));
+          TestCostingConstants.SPAIN_WAREHOUSE_ID, price4, price6, price5, quantity3));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(2),
           TestCostingConstants.SPAIN_EAST_WAREHOUSE_ID, price4, price1, price4, quantity2));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList);
@@ -618,7 +618,7 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1),
           TestCostingConstants.SPAIN_EAST_WAREHOUSE_ID, price3, price2, price3, quantity1));
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(5),
-          TestCostingConstants.SPAIN_EAST_WAREHOUSE_ID, price9, null, price9, quantity2));
+          TestCostingConstants.SPAIN_EAST_WAREHOUSE_ID, price5, null, price9, quantity2));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList);
 
       // Assert cost adjustment
@@ -818,7 +818,7 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       List<MaterialTransaction> transactionList2 = TestCostingUtils.getProductTransactions(product
           .getId());
       List<ProductCostingAssert> productCostingAssertList2 = new ArrayList<ProductCostingAssert>();
-      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price1,
+      productCostingAssertList2.add(new ProductCostingAssert(transactionList2.get(0), price4,
           price1, price4, quantity1));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList2);
 
@@ -1474,7 +1474,7 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       List<ProductCostingAssert> productCostingAssertList = new ArrayList<ProductCostingAssert>();
       productCostingAssertList.add(new ProductCostingAssert(transactionList.get(0), price2, price1,
           price2, quantity1));
-      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price2, price5,
+      productCostingAssertList.add(new ProductCostingAssert(transactionList.get(1), price3, price5,
           price4, quantity1.add(quantity2.negate())));
       TestCostingUtils.assertProductCosting(product.getId(), productCostingAssertList);
 

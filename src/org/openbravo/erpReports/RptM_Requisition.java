@@ -63,11 +63,6 @@ public class RptM_Requisition extends HttpSecureAppServlet {
     renderJR(vars, response, null, "pdf", parameters, null, null);
   }
 
-  @Override
-  protected boolean renderJRShouldCompileSubreports() {
-    return true;
-  }
-
   public String getServletInfo() {
     return "Servlet that presents the RptMRequisitions seeker";
   } // End of getServletInfo() method

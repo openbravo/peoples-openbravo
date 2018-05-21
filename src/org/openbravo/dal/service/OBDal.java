@@ -50,6 +50,7 @@ import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.dal.core.DalSessionFactory;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SQLFunctionRegister;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.database.ExternalConnectionPool;
@@ -129,8 +130,14 @@ public class OBDal implements OBNotSingleton {
 
   /**
    * Register a sql function in the session factory, after this call it can be used by queries.
+   * 
+   * @deprecated Use a {@link SQLFunctionRegister} instead. This method is slated for removal in the
+   *             upcoming releases.
    */
+  @Deprecated
   public void registerSQLFunction(String name, SQLFunction function) {
+    log.debug("Using deprecated way of registering SQL functions in Hibernate", new Exception(
+        "Current Stack Trace"));
     final DalSessionFactory dalSessionFactory = (DalSessionFactory) SessionFactoryController
         .getInstance().getSessionFactory();
 
