@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
@@ -36,6 +35,8 @@ import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Initializes and provides the session factory to the rest of the application. There are subclasses
@@ -45,7 +46,7 @@ import org.openbravo.dal.core.DalSessionFactory;
  */
 
 public abstract class SessionFactoryController {
-  private static final Logger log = Logger.getLogger(SessionFactoryController.class);
+  private static final Logger log = LoggerFactory.getLogger(SessionFactoryController.class);
 
   // note the order by is really important otherwise the build of
   // uniqueconstraints (ModelProvider) can fail with strange errors.
@@ -88,8 +89,7 @@ public abstract class SessionFactoryController {
 
   public static synchronized void setInstance(SessionFactoryController sfc) {
     if (sfc != null) {
-      log.debug("Setting instance of " + sfc.getClass().getName()
-          + " as session factory controller");
+      log.debug("Setting instance of {} as session factory controller", sfc.getClass().getName());
     } else {
       log.debug("Nullifying session factory controller");
     }
@@ -188,6 +188,7 @@ public abstract class SessionFactoryController {
       return;
     }
     for (Entry<String, SQLFunction> entry : sqlFunctions.entrySet()) {
+      log.debug("Registering SQL function: {}", entry.getKey());
       configuration.addSqlFunction(entry.getKey(), entry.getValue());
     }
   }
@@ -286,7 +287,7 @@ public abstract class SessionFactoryController {
   }
 
   private void setJNDI(Properties obProps, Properties hbProps) {
-    log.info("Using JNDI with resource name-> " + obProps.getProperty("JNDI.resourceName"));
+    log.info("Using JNDI with resource name-> {}", obProps.getProperty("JNDI.resourceName"));
     hbProps.setProperty(AvailableSettings.DATASOURCE,
         "java:/comp/env/" + obProps.getProperty("JNDI.resourceName"));
   }
