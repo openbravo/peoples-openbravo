@@ -102,7 +102,8 @@ enyo.kind({
       this.clearEditBox();
     }, this);
   },
-  validateQuantity: function (keyboard, value) {
+  validateQuantity: function (keyboard, value, callback) {
+    var me = this;
     if (!isFinite(value)) {
       return true;
     }
@@ -111,7 +112,36 @@ enyo.kind({
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_StdPrecisionLimitError', [keyboard.line.get('product').get('uOMstandardPrecision')]));
       return false;
     }
+    if (OB.MobileApp.model.hasPermission('OBPOS_maxQtyUsingKeyboard', true) && value >= OB.I18N.parseNumber(OB.MobileApp.model.hasPermission('OBPOS_maxQtyUsingKeyboard', true))) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardHeader'), OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardBody', [value]), [{
+        isConfirmButton: true,
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          callback(me, keyboard, value);
+        }
+      }, {
+        label: OB.I18N.getLabel('OBMOBC_LblCancel')
+      }]);
+      return false;
+    }
     return true;
+  },
+  validatePrice: function (keyboard, price, callback) {
+    var me = this;
+    if (OB.MobileApp.model.hasPermission('OBPOS_maxPriceUsingKeyboard', true) && price >= OB.I18N.parseNumber(OB.MobileApp.model.hasPermission('OBPOS_maxPriceUsingKeyboard', true))) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardHeader'), OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardBody', [price]), [{
+        isConfirmButton: true,
+        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+        action: function () {
+          callback(me, keyboard, price);
+        }
+      }, {
+        label: OB.I18N.getLabel('OBMOBC_LblCancel')
+      }]);
+      return false;
+    } else {
+      return true;
+    }
   },
   validateReceipt: function (keyboard, validateLine) {
     if (keyboard.receipt.get('isEditable') === false) {
@@ -228,47 +258,76 @@ enyo.kind({
 
         };
 
+    var changePrice = function (keyboardComponent, keyboard, price) {
+        var cancelChange = false;
+        if (keyboardComponent.selectedModels.length > 1) {
+          keyboard.receipt.set('undo', null);
+          keyboard.receipt.set('multipleUndo', true);
+          _.each(keyboardComponent.selectedModels, function (model) {
+            if (model.get('replacedorderline') && model.get('qty') < 0) {
+              cancelChange = true;
+            }
+          });
+          if (cancelChange) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
+            return;
+          }
+          _.each(keyboardComponent.selectedModels, function (model) {
+            keyboard.receipt.setPrice(model, price);
+          });
+          keyboard.receipt.set('multipleUndo', null);
+        } else {
+          keyboard.receipt.setPrice(keyboard.line, price);
+        }
+        keyboard.receipt.calculateReceipt();
+        keyboard.receipt.trigger('scan');
+        };
+
+    var changeQuantity = function (keyboardComponent, keyboard, value) {
+        keyboard.receipt.set('undo', null);
+        var selection = [];
+        var toadd;
+        if (keyboardComponent.selectedModels && keyboardComponent.selectedModels.length > 1) {
+          keyboard.receipt.set('multipleUndo', true);
+        }
+        _.each(keyboardComponent.selectedModels, function (model) {
+          selection.push(model);
+          keyboard.line = model;
+          if (keyboard.receipt.get('orderType') === 1) {
+            toadd = value - (-keyboard.line.get('qty'));
+          } else {
+            toadd = value - keyboard.line.get('qty');
+          }
+          if (toadd !== 0) {
+            if (value === 0) { // If final quantity will be 0 then request approval
+              keyboard.doDeleteLine({
+                selectedModels: keyboard.selectedModels
+              });
+            } else {
+              actionAddProduct(keyboard, toadd);
+            }
+          } else {
+            keyboard.clearInput();
+          }
+        });
+        keyboard.receipt.set('multipleUndo', null);
+        keyboardComponent.doSetMultiSelectionItems({
+          selection: selection
+        });
+        };
+
     this.addCommand('line:qty', {
       action: function (keyboard, txt) {
-        var value = OB.I18N.parseNumber(txt),
-            toadd;
+        var value = OB.I18N.parseNumber(txt);
 
         if (!keyboard.line) {
           return true;
         }
         if (value || value === 0) {
-          if (!me.validateQuantity(keyboard, value)) {
+          if (!me.validateQuantity(keyboard, value, changeQuantity)) {
             return true;
           }
-          keyboard.receipt.set('undo', null);
-          var selection = [];
-          if (me.selectedModels && me.selectedModels.length > 1) {
-            keyboard.receipt.set('multipleUndo', true);
-          }
-          _.each(me.selectedModels, function (model) {
-            selection.push(model);
-            keyboard.line = model;
-            if (keyboard.receipt.get('orderType') === 1) {
-              toadd = value - (-keyboard.line.get('qty'));
-            } else {
-              toadd = value - keyboard.line.get('qty');
-            }
-            if (toadd !== 0) {
-              if (value === 0) { // If final quantity will be 0 then request approval
-                keyboard.doDeleteLine({
-                  selectedModels: keyboard.selectedModels
-                });
-              } else {
-                actionAddProduct(keyboard, toadd);
-              }
-            } else {
-              keyboard.clearInput();
-            }
-          });
-          keyboard.receipt.set('multipleUndo', null);
-          me.doSetMultiSelectionItems({
-            selection: selection
-          });
+          changeQuantity(me, keyboard, value);
         }
       }
     });
@@ -276,10 +335,15 @@ enyo.kind({
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
       action: function (keyboard, txt) {
+        var price = OB.I18N.parseNumber(txt);
+
         if (!me.validateReceipt(keyboard, false)) {
           return true;
         }
         if (!keyboard.line) {
+          return true;
+        }
+        if (!me.validatePrice(keyboard, price, changePrice)) {
           return true;
         }
         if (keyboard.line.get('product').get('isEditablePrice') === false) {
@@ -292,32 +356,7 @@ enyo.kind({
           OB.UTIL.Approval.requestApproval(
           me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
             if (approved) {
-              var price = OB.I18N.parseNumber(txt),
-                  cancelChange = false;
-              if (me.selectedModels.length > 1) {
-                keyboard.receipt.set('undo', null);
-                keyboard.receipt.set('multipleUndo', true);
-
-                _.each(me.selectedModels, function (model) {
-                  if (model.get('replacedorderline') && model.get('qty') < 0) {
-                    cancelChange = true;
-                  }
-                });
-
-                if (cancelChange) {
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
-                  return;
-                }
-
-                _.each(me.selectedModels, function (model) {
-                  keyboard.receipt.setPrice(model, price);
-                });
-                keyboard.receipt.set('multipleUndo', null);
-              } else {
-                keyboard.receipt.setPrice(keyboard.line, price);
-              }
-              keyboard.receipt.calculateReceipt();
-              keyboard.receipt.trigger('scan');
+              changePrice(me, keyboard, price);
             }
           });
         }

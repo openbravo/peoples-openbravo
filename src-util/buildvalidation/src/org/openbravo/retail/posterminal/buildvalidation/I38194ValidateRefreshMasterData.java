@@ -34,8 +34,7 @@ public class I38194ValidateRefreshMasterData extends BuildValidation {
             + data[i].name
             + " - 'Time to Incrementally Refresh Masterdata' must be greater than 'Time to Show Incremental Refresh Popup'"
             + "\nCurrent values - Time to Incrementally Refresh Masterdata: "
-            + data[i].minutestorefreshdatainc + ", Time to Show Incremental Refresh Popup: "
-            + data[i].minutestoreshowfreshdatainc;
+            + data[i].minutestorefreshdatainc + ", Time to Show Incremental Refresh Popup: 5";
         errors.add(msg);
       }
       return errors;

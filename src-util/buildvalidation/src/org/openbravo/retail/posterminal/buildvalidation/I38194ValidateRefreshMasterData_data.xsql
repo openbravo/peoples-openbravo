@@ -11,8 +11,8 @@
 <SqlClass name="I38194ValidateRefreshMasterDataData" package="org.openbravo.retail.posterminal.buildvalidation">
   <SqlMethod name="validate" type="preparedStatement" return="multiple">
       <Sql><![CDATA[
-            select name, minutestorefreshdatainc, minutestoreshowfreshdatainc from obpos_terminaltype
-            where minutestorefreshdatainc < minutestoreshowfreshdatainc
+            select name, minutestorefreshdatainc from obpos_terminaltype
+            where minutestorefreshdatainc < 5
         ]]>
       </Sql>
   </SqlMethod>
