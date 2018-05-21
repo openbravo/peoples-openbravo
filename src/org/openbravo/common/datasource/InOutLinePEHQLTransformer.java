@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
-package org.openbravo.common.inserters;
+package org.openbravo.common.datasource;
 
 import java.util.Map;
 
