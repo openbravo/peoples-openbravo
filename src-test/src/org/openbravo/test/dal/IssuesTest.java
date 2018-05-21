@@ -68,6 +68,7 @@ import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -659,7 +660,9 @@ public class IssuesTest extends OBBaseTest {
 
       @Override
       protected void doAction() throws Exception {
-        OBDal.getInstance().getSession().beginTransaction();
+        if (!SessionHandler.getInstance().isCurrentTransactionActive()) {
+          OBDal.getInstance().getSession().beginTransaction();
+        }
         OBDal.getInstance().getSession().getTransaction().commit();
       }
     };
