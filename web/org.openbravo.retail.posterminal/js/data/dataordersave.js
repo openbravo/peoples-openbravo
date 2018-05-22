@@ -371,7 +371,6 @@
         }, function () {
           OB.MobileApp.model.resetCheckpointData();
           restoreReceiptOnError(eventParams, model.get('order'));
-          OB.UTIL.ProcessController.finish('processingTransactionSyncMode', OB.MobileApp.model.execution);
         });
       } else {
         mainReceiptCloseFunction(eventParams, context);

@@ -367,7 +367,9 @@ enyo.kind({
   },
 
   updatePending: function () {
+    var execution = OB.UTIL.ProcessController.start('updatePending');
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      OB.UTIL.ProcessController.finish('updatePending', execution);
       return true;
     }
     var paymentstatus = this.receipt.getPaymentStatus();
@@ -458,8 +460,10 @@ enyo.kind({
     }
 
     this.updateCreditSalesAction();
+    OB.UTIL.ProcessController.finish('updatePending', execution);
   },
   updatePendingMultiOrders: function () {
+    var execution = OB.UTIL.ProcessController.start('updatePendingMultiOrders');
     var paymentstatus = this.model.get('multiOrders');
     var symbol = '',
         symbolAtRight = true,
@@ -543,6 +547,7 @@ enyo.kind({
       this.$.exactlbl.hide();
       this.$.donezerolbl.hide();
     }
+    OB.UTIL.ProcessController.finish('updatePendingMultiOrders', execution);
   },
 
   checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, button, callback) {
@@ -1087,10 +1092,10 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  processesToListen: ['showPaymentTab'],
   drawerOpened: true,
   isLocked: true,
   lasDisabledPetition: true,
+  processesToListen: ['showPaymentTab', 'updatePending', 'updatePendingMultiOrders'],
   disableButton: function () {
     this.isLocked = true;
     this.setDisabledIfSynchronized();
@@ -1101,7 +1106,11 @@ enyo.kind({
   },
   setDisabled: function (value) {
     this.lasDisabledPetition = value;
-    this.setDisabledIfSynchronized();
+    if (value) {
+      this.disableButton();
+    } else {
+      this.enableButton();
+    }
   },
   setDisabledIfSynchronized: function () {
     var value = this.lasDisabledPetition;

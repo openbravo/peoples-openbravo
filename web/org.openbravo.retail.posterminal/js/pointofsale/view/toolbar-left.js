@@ -152,7 +152,6 @@ enyo.kind({
         hasPayments = false,
         isMultiOrders = this.model.isValidMultiOrderState();
 
-    this.disableButton();
     if (isMultiOrders) {
       this.doRemoveMultiOrders();
       return true;
@@ -374,7 +373,6 @@ enyo.kind({
     onShowPopup: ''
   },
   showPaymentTab: function () {
-    var execution = OB.UTIL.ProcessController.start('showPaymentTab');
     var receipt = this.model.get('order'),
         me = this;
     if (receipt.get('isQuotation')) {
@@ -413,11 +411,9 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });
       }
-      OB.UTIL.ProcessController.finish('showPaymentTab', execution);
       return;
     }
     if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid')) {
-      OB.UTIL.ProcessController.finish('showPaymentTab', execution);
       return true;
     }
     receipt.trigger('updatePending');
@@ -447,7 +443,6 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }
-    OB.UTIL.ProcessController.finish('showPaymentTab', execution);
   },
   tap: function () {
     var me = this,
