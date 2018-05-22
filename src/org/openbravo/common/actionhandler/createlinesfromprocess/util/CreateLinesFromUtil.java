@@ -35,8 +35,11 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DbUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateLinesFromUtil {
+  private static final Logger log = LoggerFactory.getLogger(CreateLinesFromUtil.class);
 
   public static final String MESSAGE = "message";
   private static final String MESSAGE_SEVERITY = "severity";
@@ -72,13 +75,15 @@ public class CreateLinesFromUtil {
   }
 
   public static Invoice getCurrentInvoice(JSONObject jsonRequest) {
-    String invoiceId;
+    Invoice invoice = null;
     try {
-      invoiceId = jsonRequest.getString("inpcInvoiceId");
+      String invoiceId = jsonRequest.getString("inpcInvoiceId");
+      invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
     } catch (JSONException e) {
+      log.error("Error getting the invoice.", e);
       throw new OBException(e);
     }
-    return OBDal.getInstance().get(Invoice.class, invoiceId);
+    return invoice;
   }
 
   public static String getRequestedAction(final JSONObject jsonRequest) throws JSONException {
@@ -94,20 +99,42 @@ public class CreateLinesFromUtil {
     return StringUtils.equals(requestedAction, "DONE") && selectedOrderLines.length() > 0;
   }
 
-  public static BigDecimal getOrderedQuantity(JSONObject selectedPEValuesInLine) {
+  public static BigDecimal getOrderedQuantity(BaseOBObject line, JSONObject selectedPEValuesInLine) {
+    BigDecimal orderedQuantity = null;
+    if (isOrderLine(line) && ((OrderLine) line).getGoodsShipmentLine() != null) {
+      orderedQuantity = ((OrderLine) line).getGoodsShipmentLine().getMovementQuantity();
+    } else {
+      orderedQuantity = getOrderedQuantity(selectedPEValuesInLine);
+    }
+    return orderedQuantity;
+  }
+
+  private static BigDecimal getOrderedQuantity(JSONObject selectedPEValuesInLine) {
     try {
       return new BigDecimal(selectedPEValuesInLine.getString(selectedPEValuesInLine
           .has("orderedQuantity") ? "orderedQuantity" : "movementQuantity"));
     } catch (JSONException e) {
+      log.error("Error getting the Ordered Quantity.", e);
       throw new OBException(e);
     }
   }
 
-  public static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
+  public static BigDecimal getOperativeQuantity(BaseOBObject line, JSONObject selectedPEValuesInLine) {
+    BigDecimal operativeQuantity = null;
+    if (isOrderLine(line) && ((OrderLine) line).getGoodsShipmentLine() != null) {
+      operativeQuantity = ((OrderLine) line).getGoodsShipmentLine().getOperativeQuantity();
+    } else {
+      operativeQuantity = getOperativeQuantity(selectedPEValuesInLine);
+    }
+    return operativeQuantity;
+  }
+
+  private static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
     try {
       return StringUtils.isEmpty(selectedPEValuesInLine.getString("operativeQuantity")) ? null
           : new BigDecimal(selectedPEValuesInLine.getString("operativeQuantity"));
     } catch (JSONException e) {
+      log.error("Error getting the Operative Quantity.", e);
       throw new OBException(e);
     }
   }
@@ -117,6 +144,7 @@ public class CreateLinesFromUtil {
       return StringUtils.isEmpty(selectedPEValuesInLine.getString("orderQuantity")) ? null
           : new BigDecimal(selectedPEValuesInLine.getString("orderQuantity"));
     } catch (JSONException e) {
+      log.error("Error getting the Order Quantity.", e);
       throw new OBException(e);
     }
   }
@@ -129,6 +157,7 @@ public class CreateLinesFromUtil {
         inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class, inOutLineId);
       }
     } catch (JSONException e) {
+      log.error("Error getting the Shipment/Receipt.", e);
       throw new OBException(e);
     }
     return inOutLine;
@@ -142,6 +171,7 @@ public class CreateLinesFromUtil {
         aum = OBDal.getInstance().get(UOM.class, aumId);
       }
     } catch (JSONException e) {
+      log.error("Error getting the AUM.", e);
       throw new OBException(e);
     }
     return aum;
@@ -154,6 +184,7 @@ public class CreateLinesFromUtil {
           && !((OrderLine) line).getMaterialMgmtShipmentInOutLineList().isEmpty()
           && StringUtils.isEmpty(selectedPEValuesInLine.getString("shipmentInOutLine"));
     } catch (JSONException e) {
+      log.error("Error getting is an order line and has related shipment/receipt.", e);
       throw new OBException(e);
     }
   }

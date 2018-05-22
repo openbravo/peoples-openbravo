@@ -62,10 +62,10 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
     this.pickExecLineValues = pickExecuteLineValues;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
 
-    BigDecimal orderedQuantity = CreateLinesFromUtil
-        .getOrderedQuantity(pickExecLineValues);
-    BigDecimal operativeQuantity = CreateLinesFromUtil
-        .getOperativeQuantity(pickExecLineValues);
+    BigDecimal orderedQuantity = CreateLinesFromUtil.getOrderedQuantity(copiedLine,
+        pickExecLineValues);
+    BigDecimal operativeQuantity = CreateLinesFromUtil.getOperativeQuantity(copiedLine,
+        pickExecLineValues);
     BigDecimal orderQuantity = CreateLinesFromUtil.getOrderQuantity(pickExecLineValues);
     UOM operativeUOM = CreateLinesFromUtil.getAUM(pickExecLineValues);
     UOM uOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_UOM
@@ -99,8 +99,8 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
 
   private boolean uomManagementIsEnabledAndAUMAndOrderUOMAreEmpty() {
     boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
-    BigDecimal operativeQuantity = CreateLinesFromUtil
-        .getOperativeQuantity(pickExecLineValues);
+    BigDecimal operativeQuantity = CreateLinesFromUtil.getOperativeQuantity(copiedLine,
+        pickExecLineValues);
     UOM operativeUOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_OPERATIVEUOM
         : ShipmentInOutLine.PROPERTY_OPERATIVEUOM);
     ProductUOM orderUOM = (ProductUOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_ORDERUOM

@@ -96,8 +96,8 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
           : ((ShipmentInOutLine) copiedLine).getSalesOrderLine());
       if (originalOrderLine.getTaxableAmount() != null) {
         BigDecimal originalOrderedQuantity = originalOrderLine.getOrderedQuantity();
-        BigDecimal qtyOrdered = CreateLinesFromUtil
-            .getOrderedQuantity(pickExecLineValues);
+        BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(copiedLine,
+            pickExecLineValues);
         taxBaseAmt = originalOrderLine.getTaxableAmount();
         if (originalOrderedQuantity.compareTo(BigDecimal.ZERO) != 0) {
           taxBaseAmt = taxBaseAmt

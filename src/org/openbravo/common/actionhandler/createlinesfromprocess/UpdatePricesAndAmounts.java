@@ -88,7 +88,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
 
   private void setPricesBasedOnOrderLineValues(OrderLine orderLine) {
     PriceInformation priceInformation = new PriceInformation();
-    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(pickExecLineValues);
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(copiedLine, pickExecLineValues);
 
     // Standard and Price precision
     Currency invoiceCurrency = processingInvoice.getCurrency();
@@ -134,7 +134,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
 
   private void setPricesBasedOnPriceList(final ProductPrice productPrice) {
     PriceInformation priceInformation = new PriceInformation();
-    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(pickExecLineValues);
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(copiedLine, pickExecLineValues);
 
     // Standard and Price precision
     Currency invoiceCurrency = processingInvoice.getCurrency();
