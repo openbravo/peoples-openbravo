@@ -16,23 +16,31 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.common.actionhandler;
+package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.common.actionhandler.createlinesfromprocess.CreateLinesFromProcess;
 import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateLinesFromInOut extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(CreateLinesFromInOut.class);
+/**
+ * Abstract class to be implemented by any process that creates lines from any Openbravo
+ * BaseOBObject
+ * 
+ * @param <T>
+ *          Invoice lines will be created from an object whose class extends from the BaseOBObject
+ */
+abstract class CreateInvoiceLinesFrom<T extends BaseOBObject> extends BaseProcessActionHandler {
+  private static final Logger log = LoggerFactory.getLogger(CreateInvoiceLinesFrom.class);
+
+  protected abstract Class<T> getFromClass();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -50,12 +58,12 @@ public class CreateLinesFromInOut extends BaseProcessActionHandler {
         CreateLinesFromProcess createLinesFromProcess = WeldUtils
             .getInstanceFromStaticBeanManager(CreateLinesFromProcess.class);
         int createdInvoiceLinesCount = createLinesFromProcess.createInvoiceLinesFromDocumentLines(
-            selectedLines, currentInvoice, ShipmentInOutLine.class);
+            selectedLines, currentInvoice, getFromClass());
         jsonRequest.put(CreateLinesFromUtil.MESSAGE,
             CreateLinesFromUtil.getSuccessMessage(createdInvoiceLinesCount));
       }
     } catch (Exception e) {
-      log.error("Error in CreateLinesFromInOut Action Handler", e);
+      log.error("Error in Invoice CreateLinesFrom Action Handler", e);
 
       try {
         if (jsonRequest != null) {
@@ -68,4 +76,5 @@ public class CreateLinesFromInOut extends BaseProcessActionHandler {
 
     return jsonRequest;
   }
+
 }
