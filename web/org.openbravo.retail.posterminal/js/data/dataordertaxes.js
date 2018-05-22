@@ -25,6 +25,9 @@
             // resolving the linked configuration tax category
             // this is the use case for the *Services can change product tax* functionality.
             params.taxCategory = linked.get('taxCategory');
+            if (!params.line.get('taxChangedPrice')) {
+              params.line.changePrice = true;
+            }
             resolve(params);
             return;
           }
@@ -32,12 +35,18 @@
         // Not found a linked configuration that matches productCategory of the product line
         // resolving product tax category
         params.taxCategory = params.line.get('product').get('taxCategory');
+        if (params.line.get('taxChangedPrice')) {
+          params.line.changeBackPrice = true;
+        }
         resolve(params);
       }
 
       if (params.line.get('originalTaxCategory')) {
         // The taxes calculation is locked so use the originalTaxCategory
         params.taxCategory = params.line.get('originalTaxCategory');
+        if (params.line.get('taxChangedPrice')) {
+          params.line.changeBackPrice = true;
+        }
         resolve(params);
         return;
       }
@@ -76,6 +85,9 @@
       // Not found a service linked with *modifyTax* flag activated.
       // resolving product tax Category
       params.taxCategory = params.line.get('product').get('taxCategory');
+      if (params.line.get('taxChangedPrice')) {
+        params.line.changeBackPrice = true;
+      }
       resolve(params);
     });
   }
@@ -606,6 +618,8 @@
   var calcLineTaxesIncPrice = function (receipt, line) {
 
       // Initialize line properties
+      delete line.changePrice;
+      delete line.changeBackPrice;
       line.set({
         'taxLines': {},
         'tax': null,
@@ -614,7 +628,8 @@
         'net': OB.DEC.Zero,
         'pricenet': OB.DEC.Zero,
         'discountedNet': OB.DEC.Zero,
-        'linerate': OB.DEC.One
+        'linerate': OB.DEC.One,
+        'lineratePrev': line.get('linerate')
       }, {
         silent: true
       });
@@ -1005,10 +1020,13 @@
 
   var calcLineTaxesExcPrice = function (receipt, line) {
 
+      delete line.changePrice;
+      delete line.changeBackPrice;
       line.set({
         'pricenet': line.get('price'),
         'net': OB.DEC.mul(line.get('price'), line.get('qty')),
         'linerate': OB.DEC.One,
+        'lineratePrev': line.get('linerate'),
         'tax': null,
         'taxUndo': line.get('tax') ? line.get('tax') : line.get('taxUndo'),
         'taxAmount': OB.DEC.Zero,
@@ -1198,7 +1216,35 @@
   // Just calc the right function depending on prices including or excluding taxes
   var calcTaxes = function (receipt) {
       if (receipt.get('priceIncludesTax')) {
-        return calcTaxesIncPrice(receipt);
+        return calcTaxesIncPrice(receipt).then(function () {
+
+          // Does any receipt line require a price change?
+          var recalculate = false;
+          receipt.get('lines').forEach(function (line) {
+            if (line.changePrice) {
+              line.set({
+                'price': OB.DEC.div(OB.DEC.mul(line.get('price'), line.get('linerate')), line.get('lineratePrev')),
+                'taxChangedPrice': line.get('price')
+              }, {
+                silent: true
+              });
+              recalculate = true;
+            } else if (line.changeBackPrice) {
+              line.set('price', line.get('taxChangedPrice'), {
+                silent: true
+              });
+              line.unset('taxChangedPrice', {
+                silent: true
+              });
+              recalculate = true;
+            }
+          });
+
+          // Recalculate taxes based on the new price...
+          if (recalculate) {
+            return calcTaxesIncPrice(receipt);
+          }
+        });
       } else {
         return calcTaxesExcPrice(receipt);
       }
