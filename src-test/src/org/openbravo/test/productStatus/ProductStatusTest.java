@@ -116,14 +116,13 @@ public class ProductStatusTest extends OBBaseTest {
   @Test
   public void testLocked() {
     boolean success = false;
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       final Order testOrder = createOrder(1);
       setProductStatus(COSTING_PRODUCT_1, OBSOLETE);
       completeOrder(testOrder);
     } catch (Exception e) {
       success = e.getMessage().contains(LOCKED_ERROR);
-      OBDal.getInstance().rollbackAndClose();
     } finally {
       assertThat("The product costing Product 1 cannot be sold (locked)", success, equalTo(true));
       OBContext.restorePreviousMode();
@@ -133,7 +132,7 @@ public class ProductStatusTest extends OBBaseTest {
   @Test
   public void testDiscontinuedWithoutStock() {
     boolean success = false;
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       final Order testOrder = createOrder(2);
       setProductStatus(COSTING_PRODUCT_1, RAMP_DOWN);
@@ -150,7 +149,6 @@ public class ProductStatusTest extends OBBaseTest {
       completeOrder(testOrder);
     } catch (Exception e) {
       success = e.getMessage().contains(DISCONTINUED_ERROR);
-      OBDal.getInstance().rollbackAndClose();
     } finally {
       assertThat("The product costing Product 1 cannot be sold (not stock)", success, equalTo(true));
       OBContext.restorePreviousMode();
@@ -160,7 +158,7 @@ public class ProductStatusTest extends OBBaseTest {
   @Test
   public void testDiscontinuedWithStock() {
     boolean success = true;
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       final Order testOrder = createOrder(3);
       setProductStatus(COSTING_PRODUCT_1, RAMP_DOWN);
@@ -181,7 +179,6 @@ public class ProductStatusTest extends OBBaseTest {
       setProductStatus(COSTING_PRODUCT_1, null);
     } catch (Exception e) {
       success = false;
-      OBDal.getInstance().rollbackAndClose();
     } finally {
       assertThat("The product costing Product 1 can be sold (with stock)", success, equalTo(true));
       OBContext.restorePreviousMode();
@@ -191,7 +188,7 @@ public class ProductStatusTest extends OBBaseTest {
   @Test
   public void testNotLockedNorDiscontinued() {
     boolean success = true;
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       final Order testOrder = createOrder(4);
       setProductStatus(COSTING_PRODUCT_1, MATURE);
@@ -199,7 +196,6 @@ public class ProductStatusTest extends OBBaseTest {
       setProductStatus(COSTING_PRODUCT_1, null);
     } catch (Exception e) {
       success = false;
-      OBDal.getInstance().rollbackAndClose();
     } finally {
       assertThat(
           "The product costing Product 1 can be sold without a locked or discontinued status",
@@ -211,14 +207,13 @@ public class ProductStatusTest extends OBBaseTest {
   @Test
   public void testWithoutProductStatus() {
     boolean success = true;
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       final Order testOrder = createOrder(5);
       setProductStatus(COSTING_PRODUCT_1, null);
       completeOrder(testOrder);
     } catch (Exception e) {
       success = false;
-      OBDal.getInstance().rollbackAndClose();
     } finally {
       assertThat("The product costing Product 1 can be sold without any status", success,
           equalTo(true));
