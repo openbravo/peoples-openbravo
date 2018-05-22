@@ -106,14 +106,14 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     whereClause.append(" and o.currency.id = :cur");
     if (isSalesTransaction) {
       whereClause.append(" and (");
-      whereClause.append("     ic.term in ('D', 'S') and ic.qtydelivered <> 0");
+      whereClause.append("     ic.term in ('D', 'S') and ic.deliveredQuantity <> 0");
       whereClause.append("  or (ic.term = 'I' AND EXISTS");
       whereClause.append("   (SELECT 1");
       whereClause.append("    FROM OrderLine ol2");
       whereClause.append("    WHERE ol2.salesOrder = o.id");
       whereClause.append("    GROUP BY ol2.id ");
       whereClause.append("    HAVING SUM(ol2.orderedQuantity) - SUM(ol2.invoicedQuantity) <> 0))");
-      whereClause.append("  or (ic.term = 'O' and ic.qtyordered = ic.qtydelivered)");
+      whereClause.append("  or (ic.term = 'O' and ic.orderedQuantity = ic.deliveredQuantity)");
       whereClause.append(" )");
     } else {
       whereClause.append(" and o.documentStatus in ('CO', 'CL')");
