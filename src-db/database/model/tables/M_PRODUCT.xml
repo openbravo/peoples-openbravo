@@ -538,7 +538,7 @@
       <check name="M_PRODUCT_PRICERULEBASED_CHECK"><![CDATA[ISPRICERULEBASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_PRINT_DESCRIP_CHECK"><![CDATA[PRINT_DESCRIPTION IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_RETURNABLE_CHECK"><![CDATA[RETURNABLE IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_STATUS_CHK"><![CDATA[M_PRODUCT_STATUS_ID IS NULL OR ISSTOCKED = 'Y' AND PRODUCTTYPE = 'I']]></check>
+      <check name="M_PRODUCT_STATUS_CHK"><![CDATA[M_PRODUCT_STATUS_ID IS NULL OR ISSTOCKED = 'Y']]></check>
       <check name="M_PRODUCT_UN_PERDOCUMENT_CHECK"><![CDATA[UNIQUE_PER_DOCUMENT IN ('Y', 'N')]]></check>
     </table>
   </database>

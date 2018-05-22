@@ -44,8 +44,7 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -61,9 +60,9 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
       }
     }
 
-    final Product product = (Product) event.getTargetInstance();
     if (newGeneric == true && oldGeneric == false) {
       // check that whether the there are characteristic already define
+      final Product product = (Product) event.getTargetInstance();
       if (!product.getProductCharacteristicList().isEmpty()) {
         for (ProductCharacteristic productCh : product.getProductCharacteristicList()) {
           if (productCh.getProductCharacteristicConfList().isEmpty()
