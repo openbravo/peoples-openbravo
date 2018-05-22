@@ -117,7 +117,7 @@ public class CreateLinesFromProcess {
     int createdInvoiceLinesCount = 0;
     for (int index = 0; index < selectedLines.length(); index++) {
       BaseOBObject copiedLine = getSelectedLineInPosition(index);
-      if (CreateLinesFromUtil.isOrderLineShipmentReceiptRelated(copiedLine,
+      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine,
           getPickEditLineValuesInPosition(index))) {
         processCopiedLineShipmentInOut(copiedLine);
       } else {

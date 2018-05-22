@@ -94,7 +94,7 @@ public class CreateLinesFromUtil {
     return StringUtils.equals(requestedAction, "DONE") && selectedOrderLines.length() > 0;
   }
 
-  public static BigDecimal getOrderedQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
+  public static BigDecimal getOrderedQuantity(JSONObject selectedPEValuesInLine) {
     try {
       return new BigDecimal(selectedPEValuesInLine.getString(selectedPEValuesInLine
           .has("orderedQuantity") ? "orderedQuantity" : "movementQuantity"));
@@ -103,7 +103,7 @@ public class CreateLinesFromUtil {
     }
   }
 
-  public static BigDecimal getOperativeQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
+  public static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
     try {
       return StringUtils.isEmpty(selectedPEValuesInLine.getString("operativeQuantity")) ? null
           : new BigDecimal(selectedPEValuesInLine.getString("operativeQuantity"));
@@ -112,7 +112,7 @@ public class CreateLinesFromUtil {
     }
   }
 
-  public static BigDecimal getOrderQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
+  public static BigDecimal getOrderQuantity(JSONObject selectedPEValuesInLine) {
     try {
       return StringUtils.isEmpty(selectedPEValuesInLine.getString("orderQuantity")) ? null
           : new BigDecimal(selectedPEValuesInLine.getString("orderQuantity"));
@@ -147,7 +147,7 @@ public class CreateLinesFromUtil {
     return aum;
   }
 
-  public static boolean isOrderLineShipmentReceiptRelated(BaseOBObject line,
+  public static boolean isOrderLineWithRelatedShipmentReceiptLines(BaseOBObject line,
       JSONObject selectedPEValuesInLine) {
     try {
       return isOrderLine(line)
