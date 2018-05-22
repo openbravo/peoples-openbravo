@@ -97,5 +97,8 @@
 
     <excludedFunction name="OBEQUALS"/>
     <excludedFunction name="UUID\_%"/> <!-- PostgreSQL uuid functions -->
+
     <excludedFunction name="AD_ISTRIGGERENABLED"/>
+    <excludedFunction name="AD_ENABLE_TRIGGERS"/>
+    <excludedFunction name="AD_DISABLE_TRIGGERS"/>
   </vector>
