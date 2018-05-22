@@ -19,6 +19,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -93,8 +94,19 @@ public class PaymentMethodEventHandler extends EntityPersistenceEventObserver {
 
   }
 
+  public void onDelete(@Observes EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    validateActiveOrRemovePayment((OBPOSAppPayment) event.getTargetInstance(), true);
+  }
+
   private void validateActivePayment(OBPOSAppPayment paymentTerminal) {
-    if (!paymentTerminal.isActive()) {
+    validateActiveOrRemovePayment(paymentTerminal, false);
+  }
+
+  private void validateActiveOrRemovePayment(OBPOSAppPayment paymentTerminal, boolean removePayment) {
+    if (!paymentTerminal.isActive() || removePayment) {
       OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance().createCriteria(
           OBPOSAppCashup.class);
       obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id", paymentTerminal
@@ -103,8 +115,10 @@ public class PaymentMethodEventHandler extends EntityPersistenceEventObserver {
       List<OBPOSAppCashup> cashUp = obCriteria.list();
       if (cashUp.size() > 0) {
         throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-            "OBPOS_PaymentDeactive", OBContext.getOBContext().getLanguage().getLanguage()));
+            (removePayment == true) ? "OBPOS_PaymentRemove" : "OBPOS_PaymentDeactive", OBContext
+                .getOBContext().getLanguage().getLanguage()));
       }
     }
   }
+
 }
