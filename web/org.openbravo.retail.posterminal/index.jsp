@@ -13,16 +13,21 @@ catch OBPOS_UseServiceWorkersForOffline preferences value to know if we want to 
 String toServiceWorker="";
 String toAppCache="";
 boolean useServiceWorkers = false; 
-try{
-  Map<QueryFilter, Boolean> queryFilters = new HashMap<QueryFilter, Boolean>();
-  queryFilters.put(QueryFilter.ACTIVE, true);
-  queryFilters.put(QueryFilter.CLIENT, false);
-  queryFilters.put(QueryFilter.ORGANIZATION, false);
-  useServiceWorkers=Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, null, null,
-    null, null, (String) null, queryFilters).equals("Y");
-}catch(PropertyNotFoundException e) {
-  //If preference is not set, we will use AppCache
+String browserType = request.getHeader("User-Agent");
+if(browserType.contains("Safari") && browserType.contains("Version")){
   useServiceWorkers=false;
+}else{
+  try{
+    Map<QueryFilter, Boolean> queryFilters = new HashMap<QueryFilter, Boolean>();
+    queryFilters.put(QueryFilter.ACTIVE, true);
+    queryFilters.put(QueryFilter.CLIENT, false);
+    queryFilters.put(QueryFilter.ORGANIZATION, false);
+    useServiceWorkers=Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, null, null,
+    null, null, (String) null, queryFilters).equals("Y");
+  }catch(PropertyNotFoundException e) {
+    //If preference is not set, we will use ServiceWorkers
+    useServiceWorkers=true;
+  }
 }
 
 if (useServiceWorkers) {
