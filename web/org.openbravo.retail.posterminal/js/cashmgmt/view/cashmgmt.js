@@ -32,6 +32,7 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblDone',
     stepCount: 0,
     span: 6,
+    processesToListen: ['showLoading'],
     disableButton: function () {
       this.setDisabled(true);
     },

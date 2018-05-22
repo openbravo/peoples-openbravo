@@ -87,6 +87,7 @@ enyo.kind({
       onDisableNextButton: 'disableNextButton',
       onEnableNextButton: 'enableNextButton'
     },
+    processesToListen: ['cashupWindow'],
     disableButton: function () {
       this.setDisabled(true);
     },
@@ -241,6 +242,7 @@ enyo.kind({
   init: function () {
     var me = this;
     this.inherited(arguments);
+    this.execution = OB.UTIL.ProcessController.start("cashupWindow");
 
     this.$.cashupMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.button.$.theButton.$.btnCashUp.setContent(OB.I18N.getLabel(this.titleLabel));
 
@@ -458,6 +460,9 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }
+  },
+  rendered: function () {
+    OB.UTIL.ProcessController.finish('cashupWindow', this.execution);
   },
   refreshButtons: function () {
     // Disable/Enable buttons
