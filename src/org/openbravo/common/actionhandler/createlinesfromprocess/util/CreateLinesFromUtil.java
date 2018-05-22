@@ -105,7 +105,8 @@ public class CreateLinesFromUtil {
 
   public static BigDecimal getOperativeQuantityInPickEdit(JSONObject selectedPEValuesInLine) {
     try {
-      return new BigDecimal(selectedPEValuesInLine.getString("operativeQuantity"));
+      return StringUtils.isEmpty(selectedPEValuesInLine.getString("operativeQuantity")) ? null
+          : new BigDecimal(selectedPEValuesInLine.getString("operativeQuantity"));
     } catch (JSONException e) {
       throw new OBException(e);
     }
@@ -124,7 +125,9 @@ public class CreateLinesFromUtil {
     ShipmentInOutLine inOutLine = null;
     try {
       String inOutLineId = selectedPEValuesInLine.getString("shipmentInOutLine");
-      inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class, inOutLineId);
+      if (StringUtils.isNotEmpty(inOutLineId)) {
+        inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class, inOutLineId);
+      }
     } catch (JSONException e) {
       throw new OBException(e);
     }
@@ -135,7 +138,9 @@ public class CreateLinesFromUtil {
     UOM aum = null;
     try {
       String aumId = selectedPEValuesInLine.getString("operativeUOM");
-      aum = OBDal.getInstance().get(UOM.class, aumId);
+      if (StringUtils.isNotEmpty(aumId)) {
+        aum = OBDal.getInstance().get(UOM.class, aumId);
+      }
     } catch (JSONException e) {
       throw new OBException(e);
     }
