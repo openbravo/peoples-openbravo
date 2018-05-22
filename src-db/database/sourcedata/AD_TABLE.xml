@@ -10689,7 +10689,7 @@ You can also select if transactions are allowed or not for this organization typ
   (select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))),
   @operativeQuantity@ as operativeQuantity,
   @orderQuantity@ as orderQuantity
-FROM
+MAINFROM
   @fromClause@
 WHERE
   @additional_filters@

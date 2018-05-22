@@ -39,15 +39,11 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     final PriceList priceList = OBDal.getInstance().get(PriceList.class, strInvoicePriceListId);
     final String strBusinessPartnerId = requestParameters.get("@Invoice.businessPartner@");
     final String strCurrencyId = requestParameters.get("@Invoice.currency@");
-    final String strInvoiceId = requestParameters.get("@Invoice.id@");
 
     queryNamedParameters.put("issotrx", isSalesTransaction);
     queryNamedParameters.put("bp", strBusinessPartnerId);
     queryNamedParameters.put("plIncTax", priceList.isPriceIncludesTax());
     queryNamedParameters.put("cur", strCurrencyId);
-    if (!isSalesTransaction) {
-      queryNamedParameters.put("invId", strInvoiceId);
-    }
 
     String transformedHql = _hqlQuery.replace("@fromClause@", getFromClauseHQL());
     transformedHql = transformedHql.replace("@whereClause@", getWhereClauseHQL());
@@ -60,36 +56,42 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
   private String getGroupByHQL() {
     StringBuilder groupByClause = new StringBuilder();
-
+    groupByClause.append("  sh.id,");
+    groupByClause.append("  sh.documentNo,");
+    groupByClause.append("  sh.movementDate,");
+    groupByClause.append("  e.movementQuantity,");
+    groupByClause.append("  uom.id,");
+    groupByClause.append("  uom.symbol,");
+    groupByClause.append("  p.id,");
+    groupByClause.append("  p.name,");
+    groupByClause.append("  e.id,");
+    groupByClause.append("  e.lineNo,");
+    groupByClause.append("  ol.id,");
+    groupByClause.append("  COALESCE(e.asset.id, sh.asset.id),");
+    groupByClause.append("  COALESCE(e.project.id, sh.project.id),");
+    groupByClause.append("  COALESCE(e.costcenter.id, sh.costcenter.id),");
+    groupByClause.append("  COALESCE(e.stDimension.id, sh.stDimension.id),");
+    groupByClause.append("  COALESCE(e.ndDimension.id, sh.ndDimension.id),");
+    groupByClause.append("  e.explode,");
+    groupByClause.append("  bomParent.id,");
+    groupByClause.append("  aum.id,");
+    groupByClause.append("  e.operativeQuantity,");
+    groupByClause.append("  dt.id,");
+    groupByClause.append("  ol.id,");
+    groupByClause.append("  o.id,");
+    groupByClause.append("  pl.id,");
+    groupByClause.append("  ma.id,");
+    groupByClause.append("  ma.serialNo,");
     if (isSalesTransaction) {
-
+      groupByClause.append("  il.id,");
+      groupByClause.append("  i.id");
+      groupByClause
+          .append(" HAVING (e.movementQuantity >= 0 AND e.movementQuantity > SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
+      groupByClause
+          .append("  OR (e.movementQuantity < 0 AND e.movementQuantity < SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
+      groupByClause.append("  OR (e.explode='Y')");
     } else {
-      groupByClause.append("  sh.id,");
-      groupByClause.append("  sh.documentNo,");
-      groupByClause.append("  sh.movementDate,");
-      groupByClause.append("  e.movementQuantity,");
-      groupByClause.append("  uom.id,");
-      groupByClause.append("  uom.symbol,");
-      groupByClause.append("  p.id,");
-      groupByClause.append("  p.name,");
-      groupByClause.append("  e.id,");
-      groupByClause.append("  e.lineNo,");
-      groupByClause.append("  ol.id,");
-      groupByClause.append("  COALESCE(e.asset.id, sh.asset.id),");
-      groupByClause.append("  COALESCE(e.project.id, sh.project.id),");
-      groupByClause.append("  COALESCE(e.costcenter.id, sh.costcenter.id),");
-      groupByClause.append("  COALESCE(e.stDimension.id, sh.stDimension.id),");
-      groupByClause.append("  COALESCE(e.ndDimension.id, sh.ndDimension.id),");
-      groupByClause.append("  e.explode,");
-      groupByClause.append("  bomParent.id,");
-      groupByClause.append("  aum.id,");
-      groupByClause.append("  e.operativeQuantity,");
-      groupByClause.append("  dt.id,");
-      groupByClause.append("  mi.id,");
-      groupByClause.append("  ol.id,");
-      groupByClause.append("  o.id,");
-      groupByClause.append("  pl.id,");
-      groupByClause.append("  ma.id");
+      groupByClause.append("  mi.id");
       groupByClause
           .append(" HAVING ((e.movementQuantity-SUM(COALESCE(mi.quantity,0))) <> 0 OR (e.explode='Y'))");
     }
@@ -98,37 +100,44 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
   private String getWhereClauseHQL() {
     StringBuilder whereClause = new StringBuilder();
+    whereClause.append(" and sh.salesTransaction = :issotrx");
+    whereClause.append(" and sh.documentStatus in ('CO', 'CL')");
+    whereClause.append(" and sh.processed = 'Y'");
+    whereClause.append(" and sh.logistic <> 'Y'");
+    whereClause.append(" and sh.businessPartner.id = :bp");
+    whereClause.append(" and (ol.id is null or pl.priceIncludesTax = :plIncTax)");
+    whereClause.append(" and (o.id is null or o.currency.id = :cur)");
     if (isSalesTransaction) {
-
+      whereClause.append(" and sh.completelyInvoiced = 'N'");
+      whereClause.append(" and NOT EXISTS");
+      whereClause.append(" (SELECT 1");
+      whereClause.append(" FROM Order o2");
+      whereClause.append(" WHERE o2.id = o.id");
+      whereClause
+          .append(" AND ((o2.invoiceTerms = 'O' and o2.delivered = 'N') or o2.invoiceTerms = 'N'))");
     } else {
-      whereClause.append(" and sh.salesTransaction = :issotrx");
-      whereClause.append(" and sh.documentStatus in ('CO', 'CL')");
-      whereClause.append(" and sh.processed = 'Y'");
-      whereClause.append(" and (pl.id is null or pl.priceIncludesTax = :plIncTax)");
-      whereClause.append(" and sh.logistic <> 'Y'");
-      whereClause.append(" and sh.businessPartner.id = :bp");
-      whereClause.append(" and (o.id is null or o.currency.id = :cur)");
     }
     return whereClause.toString();
   }
 
   private String getFromClauseHQL() {
     StringBuilder fromClause = new StringBuilder();
+    fromClause.append(" MaterialMgmtShipmentInOutLine e");
+    fromClause.append(" join e.shipmentReceipt sh");
+    fromClause.append(" join sh.documentType dt");
+    fromClause.append(" join e.uOM uom");
+    fromClause.append(" join e.product p");
+    fromClause.append(" left join e.attributeSetValue ma");
+    fromClause.append(" left join e.salesOrderLine ol");
+    fromClause.append(" left join ol.salesOrder o");
+    fromClause.append(" left join o.priceList pl");
+    fromClause.append(" left join e.operativeUOM aum");
+    fromClause.append(" left join e.bOMParent bomParent");
     if (isSalesTransaction) {
-
+      fromClause.append(" left join e.invoiceLineList il");
+      fromClause.append(" left join il.invoice i");
     } else {
-      fromClause.append(" MaterialMgmtShipmentInOutLine e");
-      fromClause.append(" join e.shipmentReceipt sh");
-      fromClause.append(" join sh.documentType dt");
-      fromClause.append(" join e.uOM uom");
-      fromClause.append(" join e.product p");
-      fromClause.append(" left join e.attributeSetValue ma");
       fromClause.append(" left join e.procurementReceiptInvoiceMatchList mi");
-      fromClause.append(" left join e.salesOrderLine ol");
-      fromClause.append(" left join ol.salesOrder o");
-      fromClause.append(" left join o.priceList pl");
-      fromClause.append(" left join e.operativeUOM aum");
-      fromClause.append(" left join e.bOMParent bomParent");
     }
 
     return fromClause.toString();
@@ -137,6 +146,9 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
   private String getOrderQuantityHQL() {
     StringBuilder orderQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
+      orderQuantityHql
+          .append(" e.orderQuantity - coalesce((case when i.documentStatus = 'CO' then il.orderQuantity else 0 end),0)");
+
     } else {
       orderQuantityHql
           .append(" e.orderQuantity * TO_NUMBER(C_DIVIDE((e.movementQuantity - coalesce(SUM(mi.quantity),0)), e.movementQuantity))");
@@ -147,6 +159,8 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
   private String getOperativeQuantityHQL() {
     StringBuilder operativeQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
+      operativeQuantityHql
+          .append(" e.operativeQuantity - SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN to_number(M_GET_CONVERTED_AUMQTY(p.id, il.invoicedQuantity, aum.id)) ELSE 0 END, 0))");
     } else {
       operativeQuantityHql
           .append(" e.operativeQuantity - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, mi.quantity, aum.id)), 0))");
@@ -155,11 +169,13 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
   }
 
   private String getMovementQuantityHQL() {
-    StringBuilder orderedQuantityHql = new StringBuilder();
+    StringBuilder movementQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
+      movementQuantityHql
+          .append(" (e.movementQuantity - sum(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
     } else {
-      orderedQuantityHql.append(" (e.movementQuantity-SUM(COALESCE(mi.quantity,0)))");
+      movementQuantityHql.append(" (e.movementQuantity-SUM(COALESCE(mi.quantity,0)))");
     }
-    return orderedQuantityHql.toString();
+    return movementQuantityHql.toString();
   }
 }
