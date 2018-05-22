@@ -80,10 +80,8 @@ enyo.kind({
         this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
         paymentstatus = this.model.get('multiOrders').getPaymentStatus();
       }
-
       if (!_.isNull(change) && change) {
-        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-        OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+        OB.UTIL.MultiCurrencyChange.multiChange(paymentstatus, payment, this);
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
@@ -390,8 +388,7 @@ enyo.kind({
     }
     this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
     if (paymentstatus.change) {
-      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
-      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
+      OB.UTIL.MultiCurrencyChange.multiChange(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], this);
       this.$.change.show();
       this.$.changelbl.show();
     } else {
