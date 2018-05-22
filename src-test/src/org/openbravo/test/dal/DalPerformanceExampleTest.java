@@ -22,12 +22,13 @@ package org.openbravo.test.dal;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.collection.internal.PersistentBag;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.query.Query;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
@@ -158,19 +159,16 @@ public class DalPerformanceExampleTest extends OBBaseTest {
     Assert.assertTrue(((HibernateProxy) category).getHibernateLazyInitializer().isUninitialized());
 
     // get the id and entityname in a way which does not load the object
-    final Object id = category.getId();
+    category.getId();
 
     // still unloaded
     Assert.assertTrue(((HibernateProxy) category).getHibernateLazyInitializer().isUninitialized());
 
     // now call a method directly on the object
-    final Object id2 = category.getId();
+    category.getName();
 
     // now it is loaded!
     Assert.assertFalse(((HibernateProxy) category).getHibernateLazyInitializer().isUninitialized());
-
-    // and the id's are the same ofcourse
-    Assert.assertEquals(id, id2);
   }
 
   /**
@@ -255,7 +253,8 @@ public class DalPerformanceExampleTest extends OBBaseTest {
       final String queryStr = "from BusinessPartner as bp left join bp.businessPartnerCategory where bp.organization.id "
           + OBDal.getInstance().getReadableOrganizationsInClause();
 
-      final Query qry = OBDal.getInstance().getSession().createQuery(queryStr);
+      final Query<Object[]> qry = OBDal.getInstance().getSession()
+          .createQuery(queryStr, Object[].class);
       qry.setMaxResults(1000);
       final ScrollableResults scroller = qry.scroll(ScrollMode.FORWARD_ONLY);
       while (scroller.next()) {
@@ -289,6 +288,7 @@ public class DalPerformanceExampleTest extends OBBaseTest {
    * Scrollable results
    */
   @Test
+  @Ignore("Example that creates 1000000 copies of an order")
   public void testInsertSalesOrders() {
     setTestUserContext();
     final int cnt = 100;
@@ -297,7 +297,7 @@ public class DalPerformanceExampleTest extends OBBaseTest {
       names[i] = UUID.randomUUID().toString();
     }
     final Order baseOrder = OBDal.getInstance()
-        .get(Order.class, "FD4E0C67A9454A4D983BB2F4E0D3E8BC");
+        .get(Order.class, "00247EB519C941DDA87A7F5630421924");
     for (int i = 0; i < 1000000; i++) {
       final Order copy = (Order) DalUtil.copy(baseOrder, true, true);
       copy.getOrderLineTaxList().clear();
@@ -305,6 +305,8 @@ public class DalPerformanceExampleTest extends OBBaseTest {
       for (OrderLine ol : copy.getOrderLineList()) {
         ol.getOrderLineTaxList().clear();
       }
+      copy.setPosted("N");
+      copy.setProcessed(false);
       OBDal.getInstance().save(copy);
       if ((i % 100) == 0) {
         OBDal.getInstance().flush();
