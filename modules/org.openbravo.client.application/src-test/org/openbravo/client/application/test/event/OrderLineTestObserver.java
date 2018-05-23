@@ -151,4 +151,11 @@ public class OrderLineTestObserver extends EntityPersistenceEventObserver {
   public static int getNumberOfClosedTrxs() {
     return endTrx;
   }
+
+  public static void refreshObservedEntities() {
+    Entity currentEntity = ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME);
+    if (entities[0] != currentEntity) {
+      entities[0] = currentEntity;
+    }
+  }
 }
