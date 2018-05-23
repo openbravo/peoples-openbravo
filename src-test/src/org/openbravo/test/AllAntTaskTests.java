@@ -56,6 +56,7 @@ import org.openbravo.test.dal.DalQueryTest;
 import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
 import org.openbravo.test.dal.DalUtilTest;
+import org.openbravo.test.dal.DataPoolCheckerTest;
 import org.openbravo.test.dal.DynamicEntityTest;
 import org.openbravo.test.dal.HiddenUpdateTest;
 import org.openbravo.test.dal.IssuesTest;
@@ -144,6 +145,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     DalPerformanceProxyTest.class, //
     DalQueryTest.class, //
     DalTest.class, //
+    DataPoolCheckerTest.class, //
     CentralBrokerTest.class, //
     DalUtilTest.class, //
     IssuesTest.class, //

@@ -51,6 +51,7 @@ import org.openbravo.dal.core.DalSessionFactory;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
@@ -90,7 +91,12 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * @return the singleton instance of the OBDal read-only service
+   * Attempts to return an instance of OBDal using the read-only pool. This requires that the
+   * read-only pool is enabled and the Preference "DefaultDBPoolForReports" is set to "RO". In any
+   * other case, the DEFAULT pool will be returned.
+   *
+   * @return the singleton instance of the OBDal read-only service if possible. In any other case,
+   *         the default instance will be returned.
    */
   public static OBDal getReadOnlyInstance() {
     return getInstance(ExternalConnectionPool.READONLY_POOL);
@@ -103,9 +109,19 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)) {
+    if (shouldUseDefaultPool(pool)
+        || DataPoolChecker.shouldUseDefaultPool(SessionInfo.getProcessId())) {
       return getInstance();
     }
+
+    return getOtherPoolInstance(pool);
+  }
+
+  private static boolean shouldUseDefaultPool(String pool) {
+    return ExternalConnectionPool.DEFAULT_POOL.equals(pool);
+  }
+
+  private static OBDal getOtherPoolInstance(String pool) {
     if (!otherPoolInstances.containsKey(pool)) {
       OBDal dal = OBProvider.getInstance().get(OBDal.class);
       dal.poolName = pool;
