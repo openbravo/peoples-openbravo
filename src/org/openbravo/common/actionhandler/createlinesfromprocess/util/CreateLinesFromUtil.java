@@ -188,4 +188,9 @@ public class CreateLinesFromUtil {
       throw new OBException(e);
     }
   }
+
+  public static boolean isOrderLineOrHasRelatedOrderLine(final boolean isOrderLine,
+      final BaseOBObject copiedLine) {
+    return isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null;
+  }
 }

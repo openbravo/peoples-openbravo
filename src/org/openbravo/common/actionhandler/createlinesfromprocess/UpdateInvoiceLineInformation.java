@@ -177,10 +177,9 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    * Update the prepayment amount of the Invoice
    */
   private void updateInvoicePrepaymentAmount() {
-    if (isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isOrderLine, copiedLine)) {
       BigDecimal invoicePrepaymentAmt = processingInvoice.getPrepaymentamt();
-      BigDecimal orderPrepaymentAmt = getOrderPrepaymentAmt();
-      processingInvoice.setPrepaymentamt(invoicePrepaymentAmt.add(orderPrepaymentAmt));
+      processingInvoice.setPrepaymentamt(invoicePrepaymentAmt.add(getOrderPrepaymentAmt()));
     }
   }
 

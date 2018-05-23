@@ -71,7 +71,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
     this.pickExecLineValues = pickExecuteLineValues;
 
-    if (isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isOrderLine, copiedLine)) {
       setPricesBasedOnOrderLineValues(isOrderLine ? (OrderLine) copiedLine
           : ((ShipmentInOutLine) copiedLine).getSalesOrderLine());
     } else {

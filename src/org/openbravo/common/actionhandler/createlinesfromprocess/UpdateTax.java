@@ -91,7 +91,7 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
 
   private void updateTaxableAmount() {
     BigDecimal taxBaseAmt = invoiceLine.getLineNetAmount();
-    if (isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isOrderLine, copiedLine)) {
       OrderLine originalOrderLine = (isOrderLine ? (OrderLine) copiedLine
           : ((ShipmentInOutLine) copiedLine).getSalesOrderLine());
       if (originalOrderLine.getTaxableAmount() != null) {
@@ -138,7 +138,7 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
    */
   private String getCurrentTaxId(final Product product) {
     String taxID = "";
-    if (isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isOrderLine, copiedLine)) {
       if (isOrderLine) {
         taxID = ((OrderLine) copiedLine).getTax().getId();
       } else {
