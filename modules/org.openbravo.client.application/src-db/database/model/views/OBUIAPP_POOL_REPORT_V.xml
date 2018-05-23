@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+  <database name="VIEW OBUIAPP_POOL_REPORT_V">
+    <view name="OBUIAPP_POOL_REPORT_V"><![CDATA[SELECT p.ad_process_id AS obuiapp_pool_report_v_id, p.ad_org_id, p.ad_client_id, p.name, '284' AS ad_table_id, p.isactive, p.created, p.createdby, p.updated, p.updatedby FROM ad_process p WHERE p.isreport = 'Y' UNION SELECT p.obuiapp_process_id AS obuiapp_pool_report_v_id, p.ad_org_id, p.ad_client_id, p.name, 'FF80818132D7FB620132D8129D1A0028' AS ad_table_id, p.isactive, p.created, p.createdby, p.updated, p.updatedby FROM obuiapp_process p WHERE p.uipattern = 'OBUIAPP_Report' ORDER BY 4]]></view>
+  </database>
