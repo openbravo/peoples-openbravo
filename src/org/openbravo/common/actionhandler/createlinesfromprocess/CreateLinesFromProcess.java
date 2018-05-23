@@ -125,9 +125,9 @@ public class CreateLinesFromProcess {
         OBDal.getInstance().save(newInvoiceLine);
         OBDal.getInstance().save(processingInvoice);
         createdInvoiceLinesCount++;
+        OBDal.getInstance().flush();
       }
     }
-    OBDal.getInstance().flush();
     return createdInvoiceLinesCount;
   }
 

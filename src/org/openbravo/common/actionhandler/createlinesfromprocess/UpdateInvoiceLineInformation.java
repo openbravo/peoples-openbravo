@@ -24,7 +24,6 @@ import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
@@ -32,6 +31,7 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -205,12 +205,22 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    */
   private void updateOrderReference() {
     Order processingOrder = getRelatedOrder();
-    if (processingInvoice.getSalesOrder() != null && processingOrder != null
-        && !StringUtils.equals(processingInvoice.getSalesOrder().getId(), processingOrder.getId())) {
-      processingInvoice.setSalesOrder(null);
-    } else if (processingOrder != null) {
-      processingInvoice.setSalesOrder(processingOrder);
+    if (processingOrder != null) {
+      int relatedOrderCount = getCountOfRelatedOrdersToInvoiceLinesDifferentThanOrder(processingOrder);
+      processingInvoice.setSalesOrder(relatedOrderCount != 0 ? null : processingOrder);
     }
+  }
+
+  private int getCountOfRelatedOrdersToInvoiceLinesDifferentThanOrder(Order processingOrder) {
+    StringBuilder relatedOrdersHQL = new StringBuilder(" as il ");
+    relatedOrdersHQL.append(" where il.invoice.id = :invId");
+    relatedOrdersHQL.append("  and il.salesOrderLine.salesOrder.id <> :ordId");
+
+    OBQuery<InvoiceLine> relatedOrdersQuery = OBDal.getInstance().createQuery(InvoiceLine.class,
+        relatedOrdersHQL.toString());
+    relatedOrdersQuery.setNamedParameter("invId", processingInvoice.getId());
+    relatedOrdersQuery.setNamedParameter("ordId", processingOrder.getId());
+    return relatedOrdersQuery.count();
   }
 
   private Order getRelatedOrder() {
