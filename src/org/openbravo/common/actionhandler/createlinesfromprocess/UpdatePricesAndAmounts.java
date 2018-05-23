@@ -98,7 +98,6 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
     BigDecimal priceActual = orderLine.getStandardPrice();
     BigDecimal priceList = orderLine.getListPrice();
     BigDecimal priceLimit = orderLine.getPriceLimit();
-    BigDecimal discount = orderLine.getDiscount();
 
     BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual).setScale(stdPrecision,
         RoundingMode.HALF_UP);
@@ -148,12 +147,6 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
     BigDecimal priceLimit = productPrice.getPriceLimit().setScale(pricePrecision,
         RoundingMode.HALF_UP);
 
-    BigDecimal discount = BigDecimal.ZERO;
-    if (productPrice.getListPrice().compareTo(BigDecimal.ZERO) != 0) {
-      // Discount = ((PL-PA)/PL)*100
-      discount = priceList.subtract(priceActual).multiply(new BigDecimal("100"))
-          .divide(priceList, stdPrecision, RoundingMode.HALF_UP);
-    }
     BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual).setScale(stdPrecision,
         RoundingMode.HALF_UP);
 
