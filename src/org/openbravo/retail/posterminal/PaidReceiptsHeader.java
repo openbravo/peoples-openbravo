@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2017 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -28,8 +28,6 @@ import org.openbravo.erpCommon.utility.PropertyException;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
   public static final Logger log = Logger.getLogger(PaidReceiptsHeader.class);
-  private static final String BPFILTER_QUERY = "BP";
-  private static final String DOCUMENTNOFILTER_QUERY = "DOCNO";
 
   @Inject
   @Any
@@ -59,7 +57,6 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       Map<String, Object> paramValues = new HashMap<String, Object>();
 
       paramValues.put("organization", jsonsent.getString("organization"));
-      paramValues.put("client", OBContext.getOBContext().getCurrentClient().getId());
       JSONObject json = jsonsent.getJSONObject("filters");
       if (!json.getString("filterText").isEmpty()) {
         if (useContains) {
@@ -96,13 +93,8 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String hqlPaidReceiptsBP = getBPorDocumentNoQuery(jsonsent, BPFILTER_QUERY);
-    String hqlPaidReceiptsDocNo = getBPorDocumentNoQuery(jsonsent, DOCUMENTNOFILTER_QUERY);
-    return Arrays.asList(new String[] { hqlPaidReceiptsBP, hqlPaidReceiptsDocNo });
-  }
 
-  private String getBPorDocumentNoQuery(JSONObject jsonsent, final String queryFilter)
-      throws JSONException {
+    // OBContext.setAdminMode(true);
     JSONObject json = jsonsent.getJSONObject("filters");
     String strIsLayaway = "false";
     if (json.getBoolean("isLayaway")) {
@@ -112,11 +104,13 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         + "ord.businessPartner.name as businessPartner, ord.grandTotalAmount as totalamount, ord.documentType.id as documentTypeId, '"
         + strIsLayaway
         + "' as isLayaway from Order as ord "
-        + "where ord.client.id = :client and ord.organization.id= :organization"
+        + "where ord.client='"
+        + json.getString("client")
+        + "' and ord.organization.id= :organization"
         + " and ord.obposIsDeleted = false ";
 
     if (!json.getString("filterText").isEmpty()) {
-      String hqlFilter = appendBPorDOCNOFilter(queryFilter);
+      String hqlFilter = "ord.documentNo like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
       for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
         try {
           String hql = hook.exec(hqlFilter, json.getString("filterText"));
@@ -155,17 +149,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     }
 
     hqlPaidReceipts += " order by ord.orderDate desc, ord.documentNo desc";
-    return hqlPaidReceipts;
-  }
-
-  private String appendBPorDOCNOFilter(final String queryFilter) {
-    String hqlFilter;
-    if (BPFILTER_QUERY.equals(queryFilter)) {
-      hqlFilter = "upper(ord.businessPartner.name) like upper(:filterT1)";
-    } else {
-      hqlFilter = "upper(ord.documentNo) like upper(:filterT1)";
-    }
-    return hqlFilter;
+    return Arrays.asList(new String[] { hqlPaidReceipts });
   }
 
   @Override
