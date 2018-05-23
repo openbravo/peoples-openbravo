@@ -37,7 +37,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;

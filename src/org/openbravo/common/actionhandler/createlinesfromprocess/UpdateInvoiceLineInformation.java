@@ -29,7 +29,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;

@@ -28,7 +28,6 @@ import javax.enterprise.context.Dependent;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.currency.Currency;

@@ -36,7 +36,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;

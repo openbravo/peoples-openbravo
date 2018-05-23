@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.common.actionhandler.createlinesfromprocess.util;
+package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import java.math.BigDecimal;
 
@@ -38,7 +38,7 @@ import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateLinesFromUtil {
+class CreateLinesFromUtil {
   private static final Logger log = LoggerFactory.getLogger(CreateLinesFromUtil.class);
 
   public static final String MESSAGE = "message";
@@ -48,7 +48,7 @@ public class CreateLinesFromUtil {
   private static final String MESSAGE_SUCCESS = "success";
   private static final String MESSAGE_ERROR = "error";
 
-  public static JSONObject getSuccessMessage() throws JSONException {
+  protected static JSONObject getSuccessMessage() throws JSONException {
     JSONObject errorMessage = new JSONObject();
     errorMessage.put(MESSAGE_SEVERITY, MESSAGE_SUCCESS);
     errorMessage.put(MESSAGE_TITLE, "Success");
@@ -56,7 +56,7 @@ public class CreateLinesFromUtil {
     return errorMessage;
   }
 
-  public static JSONObject getErrorMessage(final Exception e) throws JSONException {
+  protected static JSONObject getErrorMessage(final Exception e) throws JSONException {
     Throwable ex = DbUtility.getUnderlyingSQLException(e);
     String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
     JSONObject errorMessage = new JSONObject();
@@ -66,15 +66,15 @@ public class CreateLinesFromUtil {
     return errorMessage;
   }
 
-  public static boolean isOrderLine(BaseOBObject line) {
+  protected static boolean isOrderLine(BaseOBObject line) {
     return line instanceof OrderLine;
   }
 
-  public static boolean isShipmentReceiptLine(BaseOBObject line) {
+  protected static boolean isShipmentReceiptLine(BaseOBObject line) {
     return line instanceof ShipmentInOutLine;
   }
 
-  public static Invoice getCurrentInvoice(JSONObject jsonRequest) {
+  protected static Invoice getCurrentInvoice(JSONObject jsonRequest) {
     Invoice invoice = null;
     try {
       String invoiceId = jsonRequest.getString("inpcInvoiceId");
@@ -86,20 +86,21 @@ public class CreateLinesFromUtil {
     return invoice;
   }
 
-  public static String getRequestedAction(final JSONObject jsonRequest) throws JSONException {
+  protected static String getRequestedAction(final JSONObject jsonRequest) throws JSONException {
     return jsonRequest.getString(ApplicationConstants.BUTTON_VALUE);
   }
 
-  public static JSONArray getSelectedLines(final JSONObject jsonRequest) throws JSONException {
+  protected static JSONArray getSelectedLines(final JSONObject jsonRequest) throws JSONException {
     return jsonRequest.getJSONObject("_params").getJSONObject("grid").getJSONArray("_selection");
   }
 
-  public static boolean requestedActionIsDoneAndThereAreSelectedOrderLines(
+  protected static boolean requestedActionIsDoneAndThereAreSelectedOrderLines(
       final String requestedAction, final JSONArray selectedOrderLines) {
     return StringUtils.equals(requestedAction, "DONE") && selectedOrderLines.length() > 0;
   }
 
-  public static BigDecimal getOrderedQuantity(BaseOBObject line, JSONObject selectedPEValuesInLine) {
+  protected static BigDecimal getOrderedQuantity(BaseOBObject line,
+      JSONObject selectedPEValuesInLine) {
     BigDecimal orderedQuantity = null;
     if (isOrderLine(line) && ((OrderLine) line).getGoodsShipmentLine() != null) {
       orderedQuantity = ((OrderLine) line).getGoodsShipmentLine().getMovementQuantity();
@@ -119,7 +120,8 @@ public class CreateLinesFromUtil {
     }
   }
 
-  public static BigDecimal getOperativeQuantity(BaseOBObject line, JSONObject selectedPEValuesInLine) {
+  protected static BigDecimal getOperativeQuantity(BaseOBObject line,
+      JSONObject selectedPEValuesInLine) {
     BigDecimal operativeQuantity = null;
     if (isOrderLine(line) && ((OrderLine) line).getGoodsShipmentLine() != null) {
       operativeQuantity = ((OrderLine) line).getGoodsShipmentLine().getOperativeQuantity();
@@ -139,7 +141,7 @@ public class CreateLinesFromUtil {
     }
   }
 
-  public static BigDecimal getOrderQuantity(JSONObject selectedPEValuesInLine) {
+  protected static BigDecimal getOrderQuantity(JSONObject selectedPEValuesInLine) {
     try {
       return StringUtils.isEmpty(selectedPEValuesInLine.getString("orderQuantity")) ? null
           : new BigDecimal(selectedPEValuesInLine.getString("orderQuantity"));
@@ -149,7 +151,7 @@ public class CreateLinesFromUtil {
     }
   }
 
-  public static ShipmentInOutLine getShipmentInOutLine(JSONObject selectedPEValuesInLine) {
+  protected static ShipmentInOutLine getShipmentInOutLine(JSONObject selectedPEValuesInLine) {
     ShipmentInOutLine inOutLine = null;
     try {
       String inOutLineId = selectedPEValuesInLine.getString("shipmentInOutLine");
@@ -163,7 +165,7 @@ public class CreateLinesFromUtil {
     return inOutLine;
   }
 
-  public static UOM getAUM(JSONObject selectedPEValuesInLine) {
+  protected static UOM getAUM(JSONObject selectedPEValuesInLine) {
     UOM aum = null;
     try {
       String aumId = selectedPEValuesInLine.getString("operativeUOM");
@@ -177,7 +179,7 @@ public class CreateLinesFromUtil {
     return aum;
   }
 
-  public static boolean isOrderLineWithRelatedShipmentReceiptLines(BaseOBObject line,
+  protected static boolean isOrderLineWithRelatedShipmentReceiptLines(BaseOBObject line,
       JSONObject selectedPEValuesInLine) {
     try {
       return isOrderLine(line)
@@ -189,7 +191,7 @@ public class CreateLinesFromUtil {
     }
   }
 
-  public static boolean isOrderLineOrHasRelatedOrderLine(final boolean isOrderLine,
+  protected static boolean isOrderLineOrHasRelatedOrderLine(final boolean isOrderLine,
       final BaseOBObject copiedLine) {
     return isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null;
   }

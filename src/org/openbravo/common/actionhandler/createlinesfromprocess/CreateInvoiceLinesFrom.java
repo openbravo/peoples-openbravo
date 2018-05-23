@@ -25,7 +25,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.common.actionhandler.createlinesfromprocess.util.CreateLinesFromUtil;
 import org.openbravo.model.common.invoice.Invoice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
