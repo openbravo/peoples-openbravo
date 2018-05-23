@@ -285,12 +285,12 @@ public class CreateLinesFromProcess {
       line.put("product$_identifier", orderLine.getProduct().getIdentifier());
       line.put("lineNo", orderLine.getLineNo());
       line.put("orderedQuantity", shipmentInOut.getMovementQuantity().toString());
-      line.put("operativeQuantity", shipmentInOut.getOperativeQuantity() == null ? shipmentInOut
-          .getMovementQuantity().toString() : shipmentInOut.getOperativeQuantity().toString());
+      line.put("operativeQuantity", shipmentInOut.getOperativeQuantity() == null ? null
+          : shipmentInOut.getOperativeQuantity().toString());
       line.put("id", orderLine.getId());
       line.put("salesOrder", orderLine.getSalesOrder().getId());
-      line.put("operativeUOM", shipmentInOut.getOperativeUOM() == null ? shipmentInOut.getUOM()
-          .getId() : shipmentInOut.getOperativeUOM().getId());
+      line.put("operativeUOM", shipmentInOut.getOperativeUOM() == null ? null : shipmentInOut
+          .getOperativeUOM().getId());
       line.put("operativeUOM$_identifier", shipmentInOut.getOperativeUOM() == null ? shipmentInOut
           .getUOM().getIdentifier() : shipmentInOut.getOperativeUOM().getIdentifier());
       line.put("orderQuantity", "");

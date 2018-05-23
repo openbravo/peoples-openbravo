@@ -35,6 +35,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DbUtility;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +134,8 @@ class CreateLinesFromUtil {
 
   private static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
     try {
-      return StringUtils.isEmpty(selectedPEValuesInLine.getString("operativeQuantity")) ? null
+      return !selectedPEValuesInLine.has("operativeQuantity")
+          || JsonUtils.isValueEmpty(selectedPEValuesInLine.getString("operativeQuantity")) ? null
           : new BigDecimal(selectedPEValuesInLine.getString("operativeQuantity"));
     } catch (JSONException e) {
       log.error("Error getting the Operative Quantity.", e);
@@ -165,16 +167,16 @@ class CreateLinesFromUtil {
     return inOutLine;
   }
 
-  protected static UOM getAUM(JSONObject selectedPEValuesInLine) {
+  protected static UOM getAUM(BaseOBObject line) {
     UOM aum = null;
-    try {
-      String aumId = selectedPEValuesInLine.getString("operativeUOM");
-      if (StringUtils.isNotEmpty(aumId)) {
-        aum = OBDal.getInstance().get(UOM.class, aumId);
+    if (isOrderLine(line)) {
+      if (((OrderLine) line).getGoodsShipmentLine() != null) {
+        aum = ((OrderLine) line).getGoodsShipmentLine().getOperativeUOM();
+      } else {
+        aum = ((OrderLine) line).getOperativeUOM();
       }
-    } catch (JSONException e) {
-      log.error("Error getting the AUM.", e);
-      throw new OBException(e);
+    } else {
+      aum = ((ShipmentInOutLine) line).getOperativeUOM();
     }
     return aum;
   }

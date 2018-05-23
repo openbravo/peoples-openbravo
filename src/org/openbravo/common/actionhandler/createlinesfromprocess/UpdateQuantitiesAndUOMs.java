@@ -66,7 +66,7 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
     BigDecimal operativeQuantity = CreateLinesFromUtil.getOperativeQuantity(copiedLine,
         pickExecLineValues);
     BigDecimal orderQuantity = CreateLinesFromUtil.getOrderQuantity(pickExecLineValues);
-    UOM operativeUOM = CreateLinesFromUtil.getAUM(pickExecLineValues);
+    UOM operativeUOM = CreateLinesFromUtil.getAUM(copiedLine);
     UOM uOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_UOM
         : ShipmentInOutLine.PROPERTY_UOM);
     ProductUOM orderUOM = (ProductUOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_ORDERUOM
@@ -98,15 +98,12 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
 
   private boolean uomManagementIsEnabledAndAUMAndOrderUOMAreEmpty() {
     boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
-    BigDecimal operativeQuantity = CreateLinesFromUtil.getOperativeQuantity(copiedLine,
-        pickExecLineValues);
     UOM operativeUOM = (UOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_OPERATIVEUOM
         : ShipmentInOutLine.PROPERTY_OPERATIVEUOM);
     ProductUOM orderUOM = (ProductUOM) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_ORDERUOM
         : ShipmentInOutLine.PROPERTY_ORDERUOM);
 
-    return isUomManagementEnabled && orderUOM == null && operativeUOM == null
-        && operativeQuantity == null;
+    return isUomManagementEnabled && orderUOM == null && operativeUOM == null;
   }
 
   private boolean aUMIsDifferentThanUOM(final String defaultAum) {

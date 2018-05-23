@@ -159,12 +159,14 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
   private String getOperativeQuantityHQL() {
     StringBuilder operativeQuantityHql = new StringBuilder();
+    operativeQuantityHql
+        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))))");
     if (isSalesTransaction) {
       operativeQuantityHql
-          .append(" e.operativeQuantity - SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN to_number(M_GET_CONVERTED_AUMQTY(p.id, il.invoicedQuantity, aum.id)) ELSE 0 END, 0))");
+          .append(" - SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN to_number(M_GET_CONVERTED_AUMQTY(p.id, il.invoicedQuantity, coalesce(aum.id, uom.id))) ELSE 0 END, 0))");
     } else {
       operativeQuantityHql
-          .append(" e.operativeQuantity - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, mi.quantity, aum.id)), 0))");
+          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, mi.quantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))), 0))");
     }
     return operativeQuantityHql.toString();
   }
