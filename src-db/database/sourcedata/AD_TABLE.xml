@@ -11220,14 +11220,14 @@ GROUP BY
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <HQLQUERY><![CDATA[SELECT
   e.id,
   @orderedQuantity@ as orderedQuantity,
-  uom,
-  p,
-  e.lineNo,   
-  o,  
+  to_char(Ad_Column_Identifier(to_char('C_UOM'), to_char(uom.id), to_char('en_US'))) as uOM,
+  to_char(Ad_Column_Identifier(to_char('M_Product'), to_char(p.id), to_char('en_US'))) as product,
+  e.lineNo,
+  to_char(Ad_Column_Identifier(to_char('C_Order'), to_char(o.id), to_char('en_US'))) as salesOrder,  
   @operativeQuantity@ as operativeQuantity,
-(select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))),
+to_char(Ad_Column_Identifier(to_char('C_UOM'), to_char(coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))), to_char('en_US'))) as aum,
   @orderQuantity@ as orderQuantity,
-  il
+  il.id
 MAINFROM
   @fromClause@
 WHERE
