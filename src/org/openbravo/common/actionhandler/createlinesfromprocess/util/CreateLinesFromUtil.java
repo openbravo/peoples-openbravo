@@ -48,7 +48,7 @@ public class CreateLinesFromUtil {
   private static final String MESSAGE_SUCCESS = "success";
   private static final String MESSAGE_ERROR = "error";
 
-  public static JSONObject getSuccessMessage(final int recordsCopiedCount) throws JSONException {
+  public static JSONObject getSuccessMessage() throws JSONException {
     JSONObject errorMessage = new JSONObject();
     errorMessage.put(MESSAGE_SEVERITY, MESSAGE_SUCCESS);
     errorMessage.put(MESSAGE_TITLE, "Success");

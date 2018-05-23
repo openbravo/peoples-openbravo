@@ -57,10 +57,9 @@ abstract class CreateInvoiceLinesFrom<T extends BaseOBObject> extends BaseProces
         // CreateLinesFromProcess is instantiated using Weld so it can use Dependency Injection
         CreateLinesFromProcess createLinesFromProcess = WeldUtils
             .getInstanceFromStaticBeanManager(CreateLinesFromProcess.class);
-        int createdInvoiceLinesCount = createLinesFromProcess.createInvoiceLinesFromDocumentLines(
-            selectedLines, currentInvoice, getFromClass());
-        jsonRequest.put(CreateLinesFromUtil.MESSAGE,
-            CreateLinesFromUtil.getSuccessMessage(createdInvoiceLinesCount));
+        createLinesFromProcess.createInvoiceLinesFromDocumentLines(selectedLines, currentInvoice,
+            getFromClass());
+        jsonRequest.put(CreateLinesFromUtil.MESSAGE, CreateLinesFromUtil.getSuccessMessage());
       }
     } catch (Exception e) {
       log.error("Error in Invoice CreateLinesFrom Action Handler", e);
