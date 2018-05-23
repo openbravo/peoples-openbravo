@@ -116,12 +116,12 @@ public class CreateLinesFromProcess {
     lastLineNo = getLastLineNoOfCurrentInvoice();
     int createdInvoiceLinesCount = 0;
     for (int index = 0; index < selectedLines.length(); index++) {
-      BaseOBObject copiedLine = getSelectedLineInPosition(index);
-      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine,
-          getPickEditLineValuesInPosition(index))) {
+      JSONObject selectedLine = getPickEditLineValuesInPosition(index);
+      BaseOBObject copiedLine = getSelectedLineObject(selectedLine);
+      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine)) {
         processCopiedLineShipmentInOut(copiedLine);
       } else {
-        InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(copiedLine, index);
+        InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(copiedLine, selectedLine);
         processingInvoice.getInvoiceLineList().add(newInvoiceLine);
         OBDal.getInstance().save(newInvoiceLine);
         OBDal.getInstance().save(processingInvoice);
@@ -133,16 +133,15 @@ public class CreateLinesFromProcess {
   }
 
   /**
-   * Return an object instance for the line in an specified index of the selection
+   * Return an object instance for the line passed as JSONObject
    * 
-   * @param index
-   *          The ID of the selected object in the PE
+   * @param selectedLine
+   *          The JSONOBject representing the selected object in the PE
    * @return The object representing the line
    */
-  private BaseOBObject getSelectedLineInPosition(final int index) {
+  private BaseOBObject getSelectedLineObject(final JSONObject selectedLine) {
     try {
-      String selectedLineId = selectedLines.getJSONObject(index).getString("id");
-      return OBDal.getInstance().get(linesClz, selectedLineId);
+      return OBDal.getInstance().get(linesClz, selectedLine.getString("id"));
     } catch (JSONException e) {
       log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
           "Error in CreateLinesFromProcess when reading a JSONObject", e);
@@ -173,14 +172,15 @@ public class CreateLinesFromProcess {
   /**
    * Creates a new invoice line from an existing line
    * 
-   * @param index
-   *          The index of the order/shipment/receipt line to be copied in the selected lines
+   * @param copiedLine
+   *          The BaseOBObject representing the selected object in the PE
+   * @param selectedLine
+   *          The JSONOBject representing the selected object in the PE
    * @return The created invoice line
    */
-  private InvoiceLine createLineFromSelectedLineAndRunHooks(BaseOBObject copiedLine, final int index) {
+  private InvoiceLine createLineFromSelectedLineAndRunHooks(BaseOBObject copiedLine,
+      final JSONObject pickExecuteLineValues) {
     long startTime = System.currentTimeMillis();
-    JSONObject pickExecuteLineValues = getPickEditLineValuesInPosition(index);
-
     InvoiceLine newInvoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
 
     // Always increment the lineNo when adding a new invoice line
