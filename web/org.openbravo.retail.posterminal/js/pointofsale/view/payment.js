@@ -711,6 +711,22 @@ enyo.kind({
     return check;
   },
 
+  checkDrawerPreference: function () {
+    var hasCashPayment, paymentList = this.model.get('multiOrders').get('payments');
+    if (paymentList.length > 0) {
+      hasCashPayment = _.find(paymentList.models, function (item) {
+        if (item.get('isCash')) {
+          return item;
+        }
+      });
+    }
+    if (_.isUndefined(hasCashPayment) && this.model.get('multiOrders').selectedPayment !== 'OBPOS_payment.cash') {
+      this.$.donebutton.drawerpreference = false;
+      this.$.donebutton.drawerOpened = true;
+      this.$.donebutton.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+    }
+  },
+
   checkValidPayments: function (paymentstatus, selectedPayment) {
     var resultOK, me = this;
 
@@ -1323,6 +1339,7 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
+    this.owner.checkDrawerPreference();
     this.doExactPayment();
   }
 });

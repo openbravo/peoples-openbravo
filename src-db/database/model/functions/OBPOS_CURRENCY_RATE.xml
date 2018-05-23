@@ -19,9 +19,7 @@
       <parameter name="p_org_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <body><![CDATA[    
-      
-/*
+      <body><![CDATA[/*
  ************************************************************************************
  * Copyright (C) 2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
