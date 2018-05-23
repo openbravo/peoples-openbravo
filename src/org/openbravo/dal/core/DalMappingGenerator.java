@@ -222,13 +222,13 @@ public class DalMappingGenerator implements OBSingleton {
     if (entity.isClientEnabled()) {
       content
           .append(TAB2
-              + "<many-to-one name=\"client\" column=\"AD_Client_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"ADClient\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
+              + "<many-to-one name=\"client\" column=\"AD_Client_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"ADClient\" access=\"org.openbravo.dal.core.DalPropertyAccessStrategy\"/>"
               + NL);
     }
     if (entity.isOrganizationEnabled()) {
       content
           .append(TAB2
-              + "<many-to-one name=\"organization\" column=\"AD_Org_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"Organization\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\"/>"
+              + "<many-to-one name=\"organization\" column=\"AD_Org_ID\" not-null=\"true\" update=\"false\" insert=\"false\" entity-name=\"Organization\" access=\"org.openbravo.dal.core.DalPropertyAccessStrategy\"/>"
               + NL);
     }
     content.append(NL);
@@ -249,7 +249,7 @@ public class DalMappingGenerator implements OBSingleton {
     StringBuilder sb = new StringBuilder();
     final Property p = entity.getIdProperties().get(0);
     sb.append(TAB2
-        + "<many-to-one name=\"_computedColumns\" update=\"false\" insert=\"false\" access=\"org.openbravo.dal.core.OBDynamicPropertyHandler\" ");
+        + "<many-to-one name=\"_computedColumns\" update=\"false\" insert=\"false\" access=\"org.openbravo.dal.core.DalPropertyAccessStrategy\" ");
     sb.append("column=\"" + p.getColumnName() + "\" ");
     sb.append("entity-name=\"" + getComputedColumnsEntityName(entity) + "\"/>" + NL);
     return sb.toString();
@@ -431,7 +431,7 @@ public class DalMappingGenerator implements OBSingleton {
   }
 
   private String getAccessorAttribute() {
-    return " access=\"" + OBDynamicPropertyHandler.class.getName() + "\"";
+    return " access=\"" + DalPropertyAccessStrategy.class.getName() + "\"";
   }
 
   private String generateCompositeID(Entity e) {

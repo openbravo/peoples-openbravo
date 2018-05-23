@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,133 +23,159 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.hibernate.HibernateException;
-import org.hibernate.PropertyNotFoundException;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.property.access.spi.Getter;
 import org.hibernate.property.access.spi.PropertyAccess;
 import org.hibernate.property.access.spi.PropertyAccessStrategy;
+import org.hibernate.property.access.spi.Setter;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The hibernate getter/setter for a dynamic property.
- * 
- * @author mtaal
+ * A PropertyAccessor for accessing the properties of an entity via get/set pair.
  */
 @SuppressWarnings("rawtypes")
-public class OBDynamicPropertyHandler implements PropertyAccessStrategy {
-  public Getter getGetter(Class theClass, String propertyName) throws PropertyNotFoundException {
-    return new Getter(theClass, propertyName);
+class DalPropertyAccess implements PropertyAccess {
+
+  private static final Logger log = LoggerFactory.getLogger(DalPropertyAccess.class);
+
+  private final PropertyAccessStrategy strategy;
+  private final GetterMethod getter;
+  private final SetterMethod setter;
+
+  DalPropertyAccess(PropertyAccessStrategy strategy, Class containerJavaType,
+      final String propertyName) {
+    this.strategy = strategy;
+    this.getter = new GetterMethod(containerJavaType, propertyName);
+    this.setter = new SetterMethod(containerJavaType, propertyName);
   }
 
-  public Setter getSetter(Class theClass, String propertyName) throws PropertyNotFoundException {
-    return new Setter(theClass, propertyName);
+  @Override
+  public PropertyAccessStrategy getPropertyAccessStrategy() {
+    return strategy;
   }
 
-  public static class Getter implements org.hibernate.property.access.spi.Getter {
+  @Override
+  public Getter getGetter() {
+    return getter;
+  }
+
+  @Override
+  public Setter getSetter() {
+    return setter;
+  }
+
+  private static class GetterMethod implements Getter {
     private static final long serialVersionUID = 1L;
 
     private String propertyName;
     private Class theClass;
+    private transient Method method;
 
-    public Getter(Class theClass, String propertyName) {
+    public GetterMethod(Class theClass, String propertyName) {
       this.theClass = theClass;
       this.propertyName = NamingUtil.getStaticPropertyName(theClass, propertyName);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Method getMethod() {
+      if (method != null) {
+        return method;
+      }
       Property property = ModelProvider.getInstance().getEntity(theClass).getProperty(propertyName);
       String methodName = property.getGetterSetterName();
       methodName = (property.isBoolean() ? "is" : "get") + methodName.substring(0, 1).toUpperCase()
           + methodName.substring(1);
       try {
-        return theClass.getDeclaredMethod(methodName);
+        method = theClass.getDeclaredMethod(methodName);
       } catch (NoSuchMethodException | SecurityException e) {
-        // TODO HB53 ignore
+        log.debug("Could not find method {} of class {}", methodName, theClass.getName());
       }
-      return null;
+      return method;
     }
 
+    @Override
     public Member getMember() {
       return getMethod();
     }
 
+    @Override
     public String getMethodName() {
-      return getMethod().getName();
+      Method getter = getMethod();
+      if (getter == null) {
+        return null;
+      }
+      return getter.getName();
     }
 
-    public Object get(Object owner) throws HibernateException {
+    @Override
+    public Class getReturnType() {
+      Method getter = getMethod();
+      if (getter == null) {
+        return null;
+      }
+      return getter.getReturnType();
+    }
+
+    @Override
+    public Object get(Object owner) {
       return ((BaseOBObject) owner).getValue(propertyName);
     }
 
-    public Object getForInsert(Object owner, Map mergeMap, SharedSessionContractImplementor session)
-        throws HibernateException {
+    @Override
+    public Object getForInsert(Object owner, Map mergeMap, SharedSessionContractImplementor session) {
       return get(owner);
-    }
-
-    public Class getReturnType() {
-      return null;
     }
   }
 
-  public static class Setter implements org.hibernate.property.access.spi.Setter {
+  private static class SetterMethod implements Setter {
     private static final long serialVersionUID = 1L;
     private static final String ID_SETTER = "setId";
 
     private String propertyName;
     private Class theClass;
+    private transient Method method;
 
-    public Setter(Class theClass, String propertyName) {
+    public SetterMethod(Class theClass, String propertyName) {
       this.theClass = theClass;
       this.propertyName = NamingUtil.getStaticPropertyName(theClass, propertyName);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Method getMethod() {
-      if (BaseOBObject.ID.equals(propertyName)) {
-        try {
-          return theClass.getDeclaredMethod(ID_SETTER, String.class);
-        } catch (NoSuchMethodException e) {
-        } catch (SecurityException e) {
-        }
+      if (method != null) {
+        return method;
       }
-
-      return null;
+      if (!BaseOBObject.ID.equals(propertyName)) {
+        return null;
+      }
+      try {
+        method = theClass.getDeclaredMethod(ID_SETTER, String.class);
+      } catch (NoSuchMethodException | SecurityException e) {
+        log.debug("Could not find method setId(String) method of class {}", theClass.getName());
+      }
+      return method;
     }
 
+    @Override
     public String getMethodName() {
-      return null;
+      Method setter = getMethod();
+      if (setter == null) {
+        return null;
+      }
+      return setter.getName();
     }
 
-    public void set(Object target, Object value, SessionFactoryImplementor factory)
-        throws HibernateException {
+    @Override
+    public void set(Object target, Object value, SessionFactoryImplementor factory) {
       ((BaseOBObject) target).setValue(propertyName, value);
     }
-
-  }
-
-  @Override
-  public PropertyAccess buildPropertyAccess(final Class theClass, final String propertyName) {
-    final OBDynamicPropertyHandler me = this;
-    return new PropertyAccess() {
-      @Override
-      public Setter getSetter() {
-        return new Setter(theClass, propertyName);
-      }
-
-      @Override
-      public PropertyAccessStrategy getPropertyAccessStrategy() {
-        return me;
-      }
-
-      @Override
-      public Getter getGetter() {
-        return new Getter(theClass, propertyName);
-      }
-    };
   }
 }
