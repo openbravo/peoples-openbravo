@@ -51,6 +51,8 @@ public class ObserverBaseTest extends WeldBaseTest {
     OrderTestObserver.resetExecutionCount();
     OrderLineTestObserver.resetExecutionCount();
     super.setUp();
+    OrderTestObserver.refreshObservedEntities();
+    OrderLineTestObserver.refreshObservedEntities();
   }
 
   protected OrderLine pickARandomOrderLine() {
