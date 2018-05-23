@@ -58,7 +58,7 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
 
   @Override
   public int getOrder() {
-    return -50;
+    return -60;
   }
 
   /**

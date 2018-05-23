@@ -48,7 +48,7 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
 
   @Override
   public int getOrder() {
-    return -30;
+    return -40;
   }
 
   /**

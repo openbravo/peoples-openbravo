@@ -39,7 +39,7 @@ class UpdateAccAndDefPlanFromProduct implements CreateLinesFromProcessImplementa
 
   @Override
   public int getOrder() {
-    return -15;
+    return -20;
   }
 
   /**

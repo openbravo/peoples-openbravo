@@ -43,7 +43,7 @@ class UpdateProductAndAttributes implements CreateLinesFromProcessImplementation
 
   @Override
   public int getOrder() {
-    return -40;
+    return -50;
   }
 
   /**

@@ -51,7 +51,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
 
   @Override
   public int getOrder() {
-    return -20;
+    return -30;
   }
 
   /**
