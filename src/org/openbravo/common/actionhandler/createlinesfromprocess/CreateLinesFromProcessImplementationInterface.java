@@ -56,7 +56,7 @@ import org.openbravo.model.common.invoice.InvoiceLine;
  *
  */
 public interface CreateLinesFromProcessImplementationInterface {
-  public static final String CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER = "CreatelinesFromProcessHookQualifier";
+  static final String CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER = "CreatelinesFromProcessHookQualifier";
 
   /**
    * Returns the order when the concrete hook will be implemented. A positive value will execute the
