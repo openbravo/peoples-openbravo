@@ -125,7 +125,6 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
     priceInformation.setStandardPrice(priceActual);
     priceInformation.setListPrice(priceList);
     priceInformation.setLineNetAmount(lineNetAmount);
-    priceInformation.setDiscount(discount);
     priceInformation.setPriceLimit(priceLimit);
 
     setPrices(priceInformation);
@@ -180,8 +179,6 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
     priceInformation.setStandardPrice(priceActual);
     priceInformation.setListPrice(priceList);
     priceInformation.setLineNetAmount(lineNetAmount);
-
-    priceInformation.setDiscount(discount);
     priceInformation.setPriceLimit(priceLimit);
 
     setPrices(priceInformation);
@@ -260,9 +257,6 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
       this.grossBaseUnitPrice = BigDecimal.ZERO;
       this.grossListPrice = BigDecimal.ZERO;
       this.lineGrossAmount = BigDecimal.ZERO;
-    }
-
-    private void setDiscount(final BigDecimal discount) {
     }
 
     private BigDecimal getPriceLimit() {
