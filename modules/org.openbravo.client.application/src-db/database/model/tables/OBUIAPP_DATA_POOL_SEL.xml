@@ -33,11 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="OBUIAPP_PROCESS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="AD_PROCESS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="OBUIAPP_POOL_REPORT_V_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -45,14 +41,8 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_PROCESS" name="OBUIAPP_DPS_AD_PROCESS">
-        <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_DPS_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="OBUIAPP_PROCESS" name="OBUIAPP_DPS_OBUIAPP_PROCESS">
-        <reference local="OBUIAPP_PROCESS_ID" foreign="OBUIAPP_PROCESS_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBUIAPP_DPS_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>

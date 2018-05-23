@@ -33,6 +33,7 @@ import org.openbravo.database.ExternalConnectionPool;
  * Helper class used to determine if a request should use the read-only pool to retrieve data
  */
 public class DataPoolChecker {
+
   private static Map<String, String> dataPoolProcesses = new HashMap<>();
   private static String defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
 
@@ -56,7 +57,6 @@ public class DataPoolChecker {
   }
 
   /**
-   *
    * @param selectionList
    *          a list of DataPoolSelection objects
    * @return A Map<String,String> with the Process ID (either for Process and ProcessDefinition) as
@@ -66,11 +66,7 @@ public class DataPoolChecker {
     Map<String, String> processes = new HashMap<>();
 
     for (DataPoolSelection selection : selectionList) {
-      if (selection.getProcessDefintion() != null) {
-        processes.put(selection.getProcessDefintion().getId(), selection.getDataPool());
-      } else if (selection.getProcess() != null) {
-        processes.put(selection.getProcess().getId(), selection.getDataPool());
-      }
+      processes.put(selection.getReport().getId(), selection.getDataPool());
     }
 
     return processes;
@@ -105,7 +101,7 @@ public class DataPoolChecker {
 
   /**
    * Set the default pool used when requesting the read-only pool
-   * 
+   *
    * @param defaultReadOnlyPool
    *          the ID of the default pool returned when requesting read-only
    */
@@ -115,7 +111,7 @@ public class DataPoolChecker {
 
   /**
    * Set the map of processes with their assigned data pool
-   * 
+   *
    * @param dataPoolProcesses
    *          a map with the ID of the process as key and the pool type (DEFAULT|RO) as the value
    */
