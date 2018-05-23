@@ -82,6 +82,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  pl.id,");
     groupByClause.append("  ma.id,");
     groupByClause.append("  ma.serialNo,");
+    groupByClause.append("  @orderQuantity@,");
     if (isSalesTransaction) {
       groupByClause.append("  il.id,");
       groupByClause.append("  i.id");
@@ -151,7 +152,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
     } else {
       orderQuantityHql
-          .append(" e.orderQuantity * TO_NUMBER(C_DIVIDE((e.movementQuantity - coalesce(SUM(mi.quantity),0)), e.movementQuantity))");
+          .append(" e.orderQuantity * TO_NUMBER(C_DIVIDE((e.movementQuantity - coalesce(mi.quantity,0)), e.movementQuantity))");
     }
     return orderQuantityHql.toString();
   }

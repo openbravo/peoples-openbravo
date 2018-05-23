@@ -10682,11 +10682,11 @@ You can also select if transactions are allowed or not for this organization typ
 <!--631D227DC83A4898BBD041D46D829D27-->  <HQLQUERY><![CDATA[SELECT
   e.id,
   @movementQuantity@ as movementQuantity,
-  uom,
-  p,
+  to_char(Ad_Column_Identifier(to_char('C_UOM'), to_char(uom.id), to_char('en_US'))) as uOM,
+  to_char(Ad_Column_Identifier(to_char('M_Product'), to_char(p.id), to_char('en_US'))) as product,
   e.lineNo,
-  sh,
-  (select def_aum from UOM def_aum where def_aum.id = coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))),
+  to_char(Ad_Column_Identifier(to_char('M_InOut'), to_char(sh.id), to_char('en_US'))) as shipmentReceipt,
+  to_char(Ad_Column_Identifier(to_char('C_UOM'), to_char(coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))), to_char('en_US'))) as aum,
   @operativeQuantity@ as operativeQuantity,
   @orderQuantity@ as orderQuantity
 MAINFROM
