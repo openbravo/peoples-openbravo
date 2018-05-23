@@ -54,11 +54,7 @@ public class TriggerHandler {
 
   private ThreadLocal<Boolean> sessionStatus = new ThreadLocal<Boolean>();
 
-  /**
-   * Disabled all triggers in the database. This is done by creating an ADSessionStatus object and
-   * storing it in the AD_SESSION_STATUS table. Note: this method will also call
-   * {@link OBDal#flush() OBDal.flush()}.
-   */
+  /** Disables all triggers in the database */
   public void disable() {
     log.debug("Disabling triggers");
     Check.isNull(sessionStatus.get(),
@@ -86,10 +82,7 @@ public class TriggerHandler {
     sessionStatus.set(null);
   }
 
-  /**
-   * Enables triggers in the database. It does this by removing the ADSessionStatus from the
-   * database.
-   */
+  /** Enables triggers in the database */
   public void enable() {
     log.debug("Enabling triggers");
     Check.isNotNull(sessionStatus.get(),
