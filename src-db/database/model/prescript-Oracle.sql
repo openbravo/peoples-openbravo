@@ -348,7 +348,7 @@ AS
 BEGIN
   INSERT INTO AD_Session_Status (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)
       VALUES (get_uuid(), '0', '0', 'Y', TO_DATE(NOW()), '0', TO_DATE(NOW()), '0', 'Y');
-END AD_ISTRIGGERENABLED;
+END AD_Disable_Triggers;
 /-- END
 
 create or replace PROCEDURE AD_Enable_Triggers
@@ -372,5 +372,5 @@ AS
 BEGIN
   DELETE FROM AD_Session_Status
       WHERE isimporting = 'Y';
-END AD_ISTRIGGERENABLED;
+END AD_Enable_Triggers;
 /-- END
