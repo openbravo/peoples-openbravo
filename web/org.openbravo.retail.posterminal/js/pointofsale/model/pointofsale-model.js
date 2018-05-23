@@ -494,8 +494,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (orderListIndex >= orderList.length) {
           if (callback instanceof Function) {
             callback();
-            return;
           }
+          return;
         }
         var iter = orderList.at(orderListIndex);
         var amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));

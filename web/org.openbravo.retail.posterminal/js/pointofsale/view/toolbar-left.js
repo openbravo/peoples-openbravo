@@ -52,6 +52,9 @@ enyo.kind({
   events: {
     onAddNewOrder: ''
   },
+  handlers: {
+    onLeftToolbarDisabled: 'disabledButton'
+  },
   processesToListen: ['calculateReceipt'],
   disableButton: function () {
     if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -117,6 +120,9 @@ enyo.kind({
     onShowPopup: '',
     onDeleteOrder: '',
     onRemoveMultiOrders: ''
+  },
+  handlers: {
+    onLeftToolbarDisabled: 'disabledButton'
   },
   processesToListen: ['calculateReceipt'],
   disableButton: function () {
