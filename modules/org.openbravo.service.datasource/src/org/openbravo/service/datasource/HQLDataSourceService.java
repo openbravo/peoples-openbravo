@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.enterprise.inject.Any;
@@ -92,7 +93,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     // Returns the datasource properties, based on the columns of the table that is going to use the
     // datasource
     // This is needed to support client side filtering
-    List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+    List<DataSourceProperty> dataSourceProperties = new ArrayList<>();
     String tableId = (String) parameters.get("tableId");
     if (tableId != null) {
       Table table = OBDal.getInstance().get(Table.class, tableId);
@@ -193,10 +194,10 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
     String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     List<Column> columns = table.getADColumnList();
-    List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> data = new ArrayList<>();
     boolean checkIsNotNull = false;
     for (Tuple tuple : query.list()) {
-      Map<String, Object> record = new HashMap<String, Object>();
+      Map<String, Object> record = new HashMap<>();
       if (distinct != null) {
         // the whole referenced BaseOBObject is stored in the first position of the result
         BaseOBObject bob = (BaseOBObject) tuple.get(0);
@@ -354,7 +355,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     log.debug("HQL query: {}", hqlQuery);
     Query<Tuple> query = OBDal.getInstance().getSession().createQuery(hqlQuery, Tuple.class);
 
-    StringBuffer paramsLog = new StringBuffer();
+    StringBuilder paramsLog = new StringBuilder();
 
     // sets the parameters of the query
     for (String key : queryNamedParameters.keySet()) {
@@ -528,7 +529,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       // look for the property name, replace it with the column alias
       Property property = entity.getPropertyByColumnName(column.getDBColumnName());
       // Map used to replace the property name used in the criteria with its alias
-      Map<String, String> replacementMap = new HashMap<String, String>();
+      Map<String, String> replacementMap = new HashMap<>();
       String propertyNameBefore = null;
       String propertyNameAfter = null;
       if (property.isPrimitive()) {
@@ -551,9 +552,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
             table.getEntityAlias());
       }
-      for (String toBeReplaced : replacementMap.keySet()) {
-        updatedWhereClause = updatedWhereClause.replaceAll(toBeReplaced,
-            replacementMap.get(toBeReplaced));
+      for (Entry<String, String> replacement : replacementMap.entrySet()) {
+        updatedWhereClause = updatedWhereClause.replaceAll(replacement.getKey(),
+            replacement.getValue());
       }
     }
     return updatedWhereClause;
@@ -592,7 +593,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private String addAdditionalFilters(Table table, String hqlQuery, String filterWhereClause,
       Map<String, String> parameters) {
     OBContext.setAdminMode(true);
-    StringBuffer additionalFilter = new StringBuffer();
+    StringBuilder additionalFilter = new StringBuilder();
     final String entityAlias = table.getEntityAlias();
 
     // replace the carriage returns and the tabulations with blanks
@@ -638,7 +639,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     return hqlQueryWithFilters;
   }
 
-  private void addFilterWhereClause(StringBuffer additionalFilter, String filterWhereClause) {
+  private void addFilterWhereClause(StringBuilder additionalFilter, String filterWhereClause) {
     if (!filterWhereClause.trim().isEmpty()) {
       additionalFilter.append(AND + removeLeadingWhere(filterWhereClause));
     }
