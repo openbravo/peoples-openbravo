@@ -42,8 +42,8 @@ public class TriggerHandler {
   private static final Logger log = Logger.getLogger(TriggerHandler.class);
 
   private static TriggerHandler instance;
-  private boolean isPostgreSQL = "POSTGRE".equals(
-      OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
+  private boolean isPostgreSQL = "POSTGRE".equals(OBPropertiesProvider.getInstance()
+      .getOpenbravoProperties().getProperty("bbdd.rdbms"));
 
   public static TriggerHandler getInstance() {
     if (instance == null) {
@@ -57,8 +57,10 @@ public class TriggerHandler {
   /** Disables all triggers in the database */
   public void disable() {
     log.debug("Disabling triggers");
-    Check.isNull(sessionStatus.get(),
-        "There is already a ADSessionStatus present in this thread, call enable before calling disable again");
+    Check
+        .isNull(
+            sessionStatus.get(),
+            "There is already a ADSessionStatus present in this thread, call enable before calling disable again");
     Connection con = OBDal.getInstance().getConnection();
     try (PreparedStatement ps = con.prepareStatement(getDisableStatement())) {
       ps.execute();
