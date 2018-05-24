@@ -134,9 +134,8 @@ class CreateLinesFromUtil {
 
   private static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
     try {
-      return !selectedPEValuesInLine.has("operativeQuantity")
-          || JsonUtils.isValueEmpty(selectedPEValuesInLine.getString("operativeQuantity")) ? null
-          : new BigDecimal(selectedPEValuesInLine.getString("operativeQuantity"));
+      return hasNotEmptyValue(selectedPEValuesInLine, "operativeQuantity") ? new BigDecimal(
+          selectedPEValuesInLine.getString("operativeQuantity")) : null;
     } catch (JSONException e) {
       log.error("Error getting the Operative Quantity.", e);
       throw new OBException(e);
@@ -145,8 +144,8 @@ class CreateLinesFromUtil {
 
   protected static BigDecimal getOrderQuantity(JSONObject selectedPEValuesInLine) {
     try {
-      return StringUtils.isEmpty(selectedPEValuesInLine.getString("orderQuantity")) ? null
-          : new BigDecimal(selectedPEValuesInLine.getString("orderQuantity"));
+      return hasNotEmptyValue(selectedPEValuesInLine, "orderQuantity") ? new BigDecimal(
+          selectedPEValuesInLine.getString("orderQuantity")) : null;
     } catch (JSONException e) {
       log.error("Error getting the Order Quantity.", e);
       throw new OBException(e);
@@ -156,9 +155,9 @@ class CreateLinesFromUtil {
   protected static ShipmentInOutLine getShipmentInOutLine(JSONObject selectedPEValuesInLine) {
     ShipmentInOutLine inOutLine = null;
     try {
-      String inOutLineId = selectedPEValuesInLine.getString("shipmentInOutLine");
-      if (StringUtils.isNotEmpty(inOutLineId)) {
-        inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class, inOutLineId);
+      if (hasNotEmptyValue(selectedPEValuesInLine, "shipmentInOutLine")) {
+        inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
+            selectedPEValuesInLine.getString("shipmentInOutLine"));
       }
     } catch (JSONException e) {
       log.error("Error getting the Shipment/Receipt.", e);
@@ -186,7 +185,7 @@ class CreateLinesFromUtil {
     try {
       return isOrderLine(line)
           && !((OrderLine) line).getMaterialMgmtShipmentInOutLineList().isEmpty()
-          && StringUtils.isEmpty(selectedPEValuesInLine.getString("shipmentInOutLine"));
+          && !hasNotEmptyValue(selectedPEValuesInLine, "shipmentInOutLine");
     } catch (JSONException e) {
       log.error("Error getting is an order line and has related shipment/receipt.", e);
       throw new OBException(e);
@@ -196,5 +195,11 @@ class CreateLinesFromUtil {
   protected static boolean isOrderLineOrHasRelatedOrderLine(final boolean isOrderLine,
       final BaseOBObject copiedLine) {
     return isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null;
+  }
+
+  private static boolean hasNotEmptyValue(JSONObject selectedPEValuesInLine, String propertyName)
+      throws JSONException {
+    return selectedPEValuesInLine.has(propertyName)
+        && !JsonUtils.isValueEmpty(selectedPEValuesInLine.getString(propertyName));
   }
 }
