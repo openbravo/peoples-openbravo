@@ -171,6 +171,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             payment.set('totalDrops', depdrop.get('amount'));
             payment.set('totalDeposits', 0);
           }
+          payment.set('newPaymentMethod', true);
           return payment;
         }
         _.each(me.depsdropstosave.models, function (depdrop) {
@@ -238,6 +239,10 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         updateCashupInfo(paymentList.models, 0, null, function (cashUpReport) {
           setCashupObjectInCashMgmt(me.depsdropstosave.models, cashUpReport, 0);
         });
+
+        for (i = 0; i < paymentList.length; i++) {
+          paymentList.at(i).set('newPaymentMethod', false);
+        }
         };
 
     this.depsdropstosave.on('makeDeposits', function (receipt) {
@@ -309,7 +314,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         OB.UTIL.SynchronizationHelper.finished(synchId, "cashmanagement");
         enyo.$.scrim.hide();
       }
-
+      var i;
       var asyncToSyncWrapper = new Promise(function (resolve, reject) {
         OB.Dal.find(OB.Model.CashUp, {
           'isprocessed': 'N'
@@ -320,6 +325,11 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           }, function (pays) {
             me.set('listpaymentmethodid', []);
             me.payments = pays;
+            for (i = 0; i < me.payments.length; i++) {
+              if (me.payments.at(i).get('usedInCurrentTrx') !== false) {
+                me.payments.at(i).set('usedInCurrentTrx', false);
+              }
+            }
 
             function updatePaymentMethod(pay) {
               return new Promise(function (resolve, reject) {
