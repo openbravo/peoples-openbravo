@@ -66,6 +66,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  o.grandTotalAmount,");
     groupByClause.append("  e.orderedQuantity,");
     groupByClause.append("  uom.id,");
+    groupByClause.append("  uom.name,");
     groupByClause.append("  uom.symbol,");
     groupByClause.append("  p.id,");
     groupByClause.append("  p.name,");

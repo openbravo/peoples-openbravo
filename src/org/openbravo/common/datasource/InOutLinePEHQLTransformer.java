@@ -61,6 +61,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  sh.movementDate,");
     groupByClause.append("  e.movementQuantity,");
     groupByClause.append("  uom.id,");
+    groupByClause.append("  uom.name,");
     groupByClause.append("  uom.symbol,");
     groupByClause.append("  p.id,");
     groupByClause.append("  p.name,");
