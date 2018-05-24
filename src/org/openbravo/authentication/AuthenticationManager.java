@@ -576,9 +576,7 @@ public abstract class AuthenticationManager {
 
   /**
    * This method can be overridden by those subclasses that expect to retrieve the authentication
-   * result from an external login page. In that case, the subclass should also take care of
-   * creating the DB session in the {@link #doAuthenticate(HttpServletRequest, HttpServletResponse)}
-   * method.
+   * result from an external login page.
    * 
    * @return {@code true} if the authentication result is retrieved from an external login page.
    *         Otherwise, return {@false} which is the value returned by default.
