@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,7 +13,6 @@ import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -22,10 +21,12 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
@@ -82,20 +83,24 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
     // Save cash up events for payment method status
     OBPOSPaymentcashupEvents paymentcashupEvent = null;
-    List<OBPOSPaymentMethodCashup> paymentmethodcashupList = cashup
-        .getOBPOSPaymentmethodcashupList();
-    for (OBPOSPaymentMethodCashup paymentmethodcashup : paymentmethodcashupList) {
-      if (paymentmethodcashup.getPaymentType().getId().equals(paymentMethod.getId())) {
-        paymentcashupEvent = OBProvider.getInstance().get(OBPOSPaymentcashupEvents.class);
-        paymentcashupEvent.setObposPaymentmethodcashup(paymentmethodcashup);
-        paymentcashupEvent.setName(description);
-        paymentcashupEvent.setAmount(amount);
-        paymentcashupEvent.setType(type);
-        paymentcashupEvent.setCurrency(jsonsent.getString("isocode"));
-        paymentcashupEvent.setRate(origAmount.divide(amount, 2, RoundingMode.HALF_UP));
-        OBDal.getInstance().save(paymentcashupEvent);
-      }
-    }
+
+    OBCriteria<OBPOSPaymentMethodCashup> paymentMethodCashupQuery = OBDal.getInstance()
+        .createCriteria(OBPOSPaymentMethodCashup.class);
+    paymentMethodCashupQuery.add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_PAYMENTTYPE
+        + ".id", paymentMethod.getId()));
+    paymentMethodCashupQuery.add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_CASHUP + ".id",
+        cashup.getId()));
+    OBPOSPaymentMethodCashup paymentmethodcashup = (OBPOSPaymentMethodCashup) paymentMethodCashupQuery
+        .uniqueResult();
+    paymentcashupEvent = OBProvider.getInstance().get(OBPOSPaymentcashupEvents.class);
+    paymentcashupEvent.setObposPaymentmethodcashup(paymentmethodcashup);
+    paymentcashupEvent.setName(description);
+    paymentcashupEvent.setAmount(amount);
+    paymentcashupEvent.setType(type);
+    paymentcashupEvent.setCurrency(jsonsent.getString("isocode"));
+    paymentcashupEvent.setRate(origAmount.divide(amount, 2, RoundingMode.HALF_UP));
+    OBDal.getInstance().save(paymentcashupEvent);
+
     if (!jsonsent.has("defaultProcess") || jsonsent.getString("defaultProcess").equals("null")
         || "Y".equals(jsonsent.getString("defaultProcess"))) {
       GLItem glItemMain;

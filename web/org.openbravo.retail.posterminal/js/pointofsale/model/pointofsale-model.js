@@ -741,101 +741,218 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('cancelLayaway', function () {
-      var me = this;
       var finishCancelLayaway = function () {
-          var processCancelLayaway, cancelLayawayObj = {},
-              cancelLayawayModel = new OB.Model.CancelLayaway(),
+          var processCancelLayaway, cancelLayawayModel = new OB.Model.CancelLayaway(),
               documentNo = receipt.get('documentNo'),
-              process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+              process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
+              synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('finishCancelLayaway');
 
           processCancelLayaway = function () {
             receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
             receipt.set('timezoneOffset', new Date().getTimezoneOffset());
-            var auxReceipt = new OB.Model.Order();
-            OB.UTIL.clone(receipt, auxReceipt);
-            auxReceipt.prepareToSend(function () {
-              OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
-                receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-                OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-                  receipt: receipt,
-                  model: me
-                }, function (args) {
-                  receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
 
-                  var cancelLayawayObj = receipt.serializeToJSON(),
-                      paymentStatus = receipt.getPaymentStatus();
+            receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+            var cloneOrderForNew = new OB.Model.Order();
+            var cloneOrderForPrinting = new OB.Model.Order();
 
-                  cancelLayawayObj.posTerminal = OB.MobileApp.model.get('terminal').id;
+            receipt.prepareToSend(function () {
+              OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+                receipt: receipt,
+                model: me
+              }, function (args) {
+                OB.Dal.transaction(function (tx) {
+                  OB.UTIL.cashUpReport(receipt, function (cashUp) {
+                    receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
 
-                  if (paymentStatus.isNegative) {
-                    cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
-                    cancelLayawayObj.payments.forEach(function (payment) {
-                      payment.origAmount = OB.DEC.mul(payment.origAmount, -1);
-                      payment.paid = OB.DEC.mul(payment.paid, -1);
-                    });
-                  } else if (receipt.get('isDeliveredGreaterThanGross')) {
-                    cancelLayawayObj.gross = OB.DEC.mul(OB.DEC.sub(receipt.get('layawayGross'), receipt.get('deliveredQuantityAmount')), -1);
-                    cancelLayawayObj.payment = cancelLayawayObj.gross;
-                  }
-                  cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
-                  if (cancelLayawayObj.deliveredQuantityAmount) {
-                    cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
-                  }
+                    var cancelLayawayObj = receipt.serializeToJSON(),
+                        paymentStatus = receipt.getPaymentStatus();
 
-                  cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
+                    OB.UTIL.clone(receipt, cloneOrderForNew);
+                    OB.UTIL.clone(receipt, cloneOrderForPrinting);
 
-                  OB.Dal.save(cancelLayawayModel, function () {
+                    cancelLayawayObj.posTerminal = OB.MobileApp.model.get('terminal').id;
+
+                    if (paymentStatus.isNegative) {
+                      cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
+                      cancelLayawayObj.payments.forEach(function (payment) {
+                        payment.origAmount = OB.DEC.mul(payment.origAmount, -1);
+                        payment.paid = OB.DEC.mul(payment.paid, -1);
+                      });
+                    } else if (receipt.get('isDeliveredGreaterThanGross')) {
+                      cancelLayawayObj.gross = OB.DEC.mul(OB.DEC.sub(receipt.get('layawayGross'), receipt.get('deliveredQuantityAmount')), -1);
+                      cancelLayawayObj.payment = cancelLayawayObj.gross;
+                    }
+                    cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
+                    if (cancelLayawayObj.deliveredQuantityAmount) {
+                      cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
+                    }
+                    receipt.set('gross', receipt.get('layawayGross'));
+
+                    cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
                     var orderId = receipt.id;
-
-                    OB.MobileApp.model.runSyncProcess();
-                    orderList.deleteCurrent();
-                    receipt.trigger('change:gross', receipt);
-                    OB.Dal.get(OB.Model.Order, orderId, function (model) {
-                      function cancelAndNew() {
-                        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
-                      }
-                      if (model) {
-                        OB.Dal.remove(model, function (tx) {
-                          cancelAndNew();
-                        }, function (tx, err) {
-                          OB.UTIL.showError(err);
-                        });
-                      } else {
-                        cancelAndNew();
-                      }
-                    }, function (tx, err) {
-                      OB.UTIL.showError(err);
+                    OB.Dal.getInTransaction(tx, OB.Model.Order, orderId, function (model) {
+                      OB.Dal.removeInTransaction(tx, model);
                     });
+                    OB.Dal.saveInTransaction(tx, cancelLayawayModel);
+                  }, tx);
+                }, function () {
+                  //transaction error callback
+                  OB.error("[cancellayaway] The transaction failed to be commited. LayawayId: " + receipt.get('id'));
+                  OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+                }, function () {
+                  //transaction success callback
+                  OB.info("[cancellayaway] Transaction success. LayawayId: " + receipt.get('id'));
+
+                  function cancelAndNew() {
+                    if (OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew', true)) {
+                      // Check if the not delivered lines are enough to create a ticket
+                      // A ticket cannot be created only with a service that is related to a product and not deferred
+                      var linesForNewTicket = !cloneOrderForNew.get('hasServices') || (_.find(cloneOrderForNew.get('lines').models, function (line) {
+                        return line.get('deliveredQuantity') < line.get('qty') && (!line.get('relatedLines') || _.find(line.get('relatedLines'), function (relatedLine) {
+                          return relatedLine.deferred;
+                        }) || _.find(cloneOrderForNew.get('lines').models, function (relatedLine) {
+                          return relatedLine.get('deliveredQuantity') < relatedLine.get('qty');
+                        }));
+                      }));
+                      if (linesForNewTicket) {
+                        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
+                          label: OB.I18N.getLabel('OBPOS_LblOk'),
+                          action: function () {
+                            orderList.addNewOrder();
+                            var linesMap = {},
+                                order = orderList.modelorder,
+                                addRelatedLines, addLineToTicket;
+
+                            var finalCallback = function () {
+                                order.unset('preventServicesUpdate');
+                                order.get('lines').trigger('updateRelations');
+                                };
+
+                            addRelatedLines = function (index) {
+                              if (index === order.get('lines').length) {
+                                finalCallback();
+                                return;
+                              }
+                              var line = order.get('lines').at(index),
+                                  oldLine = linesMap[line.id];
+                              if (oldLine.get('relatedLines')) {
+                                line.set('relatedLines', []);
+                                _.each(oldLine.get('relatedLines'), function (relatedLine) {
+                                  var newRelatedLine = _.clone(relatedLine);
+                                  // If the service is not a deferred service, the related line, documentNo
+                                  // and orderId must be updated. If it is, is must be marked as deferred
+                                  if (!newRelatedLine.otherTicket) {
+                                    var i, keys = _.keys(linesMap);
+                                    newRelatedLine.orderDocumentNo = order.get('documentNo');
+                                    newRelatedLine.orderId = order.id;
+                                    for (i = 0; i < keys.length; i++) {
+                                      var key = keys[i];
+                                      if (newRelatedLine.orderlineId === linesMap[key].id) {
+                                        newRelatedLine.orderlineId = key;
+                                        break;
+                                      }
+                                    }
+                                  }
+                                  line.get('relatedLines').push(newRelatedLine);
+                                });
+                              }
+                              // Hook to allow any needed relation from an external module
+                              OB.UTIL.HookManager.executeHooks('OBPOS_CancelAndNewAddLineRelation', {
+                                order: order,
+                                cloneOrderForNew: cloneOrderForNew,
+                                line: line,
+                                oldLine: oldLine,
+                                linesMap: linesMap
+                              }, function (args) {
+                                addRelatedLines(index + 1);
+                              });
+                            };
+
+                            addLineToTicket = function (idx) {
+                              if (idx === cloneOrderForNew.get('lines').length) {
+                                addRelatedLines(0);
+                              } else {
+                                var line = cloneOrderForNew.get('lines').at(idx);
+                                if (line.get('deliveredQuantity') < line.get('qty')) {
+                                  order.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('deliveredQuantity')), {
+                                    isSilentAddProduct: true
+                                  }, undefined, function (success, orderline) {
+                                    if (success) {
+                                      linesMap[order.get('lines').at(order.get('lines').length - 1).id] = line;
+                                    }
+                                    addLineToTicket(idx + 1);
+                                  });
+                                } else {
+                                  addLineToTicket(idx + 1);
+                                }
+                              }
+                            };
+
+                            if (cloneOrderForNew.get('isLayaway')) {
+                              OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
+                                permission: null,
+                                orderType: 2
+                              });
+                            }
+                            order.set('bp', cloneOrderForNew.get('bp'));
+                            addLineToTicket(0);
+                          }
+                        }, {
+                          label: OB.I18N.getLabel('OBPOS_Cancel')
+                        }]);
+                      }
+                    }
+                  }
+
+                  function syncProcessCallback() {
+                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                    orderList.deleteCurrent();
+                    enyo.$.scrim.hide();
+                    cloneOrderForPrinting.set('negativeDocNo', documentNo + '*R*');
+                    receipt.trigger('print', cloneOrderForPrinting, {
+                      callback: cancelAndNew,
+                      forceCallback: true
+                    });
+                  }
+
+                  OB.MobileApp.model.runSyncProcess(function () {
+                    OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+                    syncProcessCallback();
                   }, function () {
-                    OB.error(arguments);
+                    OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+                    if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                      syncProcessCallback();
+                    }
                   });
                 });
               });
             });
-            enyo.$.scrim.hide();
-            receipt.set('negativeDocNo', documentNo + '*R*');
-            receipt.trigger('print');
           };
 
           process.exec({
             orderId: receipt.get('id'),
-            documentNo: receipt.get('documentNo')
+            documentNo: documentNo
           }, function (data) {
             if (data && data.exception) {
               if (data.exception.message) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+                OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
                 return;
               }
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+              OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
               return;
             } else if (data && data.orderCancelled) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
+              OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
               return;
             } else {
               if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                 OB.UTIL.rebuildCashupFromServer(function () {
-                  processCancelLayaway();
+                  OB.MobileApp.model.setSynchronizedCheckpoint(function () {
+                    processCancelLayaway();
+                  });
                 });
               } else {
                 processCancelLayaway();
@@ -843,9 +960,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           }, function () {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+            OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
             OB.error(arguments);
           });
           };
+
       if (receipt.overpaymentExists()) {
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
