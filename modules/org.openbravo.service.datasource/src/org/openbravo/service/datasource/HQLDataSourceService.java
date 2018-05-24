@@ -28,11 +28,13 @@ import java.util.Set;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -149,7 +151,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   protected int getCount(Map<String, String> parameters) {
     Table table = getTableFromParameters(parameters);
     boolean justCount = true;
-    Query countQuery = getQuery(table, parameters, justCount);
+    Query<Tuple> countQuery = getQuery(table, parameters, justCount);
     String hqlQuery = countQuery.getQueryString();
     int nRows = -1;
     if (hqlQuery.toUpperCase().contains(GROUPBY)) {
@@ -162,7 +164,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     return nRows;
   }
 
-  protected int getGroupedCount(Query countQuery) {
+  protected int getGroupedCount(Query<Tuple> countQuery) {
     int nRows = -1;
     ScrollableResults scrollableResults = countQuery.scroll();
     if (scrollableResults.last()) {
@@ -180,7 +182,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     OBContext.setAdminMode(true);
     boolean justCount = false;
-    Query query = getQuery(table, parameters, justCount);
+    Query<Tuple> query = getQuery(table, parameters, justCount);
 
     if (startRow > 0) {
       query.setFirstResult(startRow);
@@ -192,23 +194,21 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     List<Column> columns = table.getADColumnList();
     List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-    String[] returnAliases = query.getReturnAliases();
     boolean checkIsNotNull = false;
-    for (Object row : query.list()) {
+    for (Tuple tuple : query.list()) {
       Map<String, Object> record = new HashMap<String, Object>();
       if (distinct != null) {
-        Object[] result = (Object[]) row;
         // the whole referenced BaseOBObject is stored in the first position of the result
-        BaseOBObject bob = (BaseOBObject) result[0];
+        BaseOBObject bob = (BaseOBObject) tuple.get(0);
         if (bob == null) {
           break;
         }
         record.put(JsonConstants.ID, bob.getId());
         record.put(JsonConstants.IDENTIFIER, IdentifierProvider.getInstance().getIdentifier(bob));
       } else {
-        Object[] properties = (Object[]) row;
-        for (int i = 0; i < returnAliases.length; i++) {
-          String aliasName = returnAliases[i];
+        int i = 0;
+        for (TupleElement<?> tupleElement : tuple.getElements()) {
+          String aliasName = tupleElement.getAlias();
           String propertyName;
           if (aliasName.contains(PROPERTY_FIELD_SEPARATOR)) {
             propertyName = aliasName.replace(PROPERTY_FIELD_SEPARATOR,
@@ -222,7 +222,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
             }
             propertyName = property.getName();
           }
-          record.put(propertyName, properties[i]);
+          record.put(propertyName, tuple.get(aliasName));
+          i++;
         }
       }
       data.add(record);
@@ -263,7 +264,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    * the query will just return the number of records that fulfill the criteria. If justCount is
    * false, the query will return all the actual records that fulfill the criteria
    */
-  private Query getQuery(Table table, Map<String, String> parameters, boolean justCount) {
+  private Query<Tuple> getQuery(Table table, Map<String, String> parameters, boolean justCount) {
     OBContext.setAdminMode(true);
     String hqlQuery = table.getHqlQuery();
     // obtains the where clause from the criteria, using the AdvancedQueryBuilder
@@ -351,7 +352,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
 
     log.debug("HQL query: {}", hqlQuery);
-    Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+    Query<Tuple> query = OBDal.getInstance().getSession().createQuery(hqlQuery, Tuple.class);
 
     StringBuffer paramsLog = new StringBuffer();
 
