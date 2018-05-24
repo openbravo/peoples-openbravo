@@ -29,7 +29,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.provider.OBProvider;
@@ -362,13 +361,13 @@ public class ClusterServiceManager {
       hql.append("UPDATE ADClusterService ");
       hql.append("SET nodeID = :newNodeId, nodeName = :newNodeName, updated = :updated ");
       hql.append("WHERE service = :service AND nodeID = :formerNodeId");
-      Query updateQuery = OBDal.getInstance().getSession().createQuery(hql.toString());
-      updateQuery.setParameter("newNodeId", manager.nodeId);
-      updateQuery.setParameter("newNodeName", manager.nodeName);
-      updateQuery.setParameter("updated", now);
-      updateQuery.setParameter("service", serviceName);
-      updateQuery.setParameter("formerNodeId", formerNodeId);
-      int rowCount = updateQuery.executeUpdate();
+      int rowCount = OBDal.getInstance().getSession().createQuery(hql.toString()) //
+          .setParameter("newNodeId", manager.nodeId) //
+          .setParameter("newNodeName", manager.nodeName) //
+          .setParameter("updated", now) //
+          .setParameter("service", serviceName) //
+          .setParameter("formerNodeId", formerNodeId) //
+          .executeUpdate();
       if (rowCount == 1) {
         String replaceMsg = "Replaced node {} with node {} in charge of service " + serviceName;
         log.info(replaceMsg, formerNodeId, getNodeIdentifier());
@@ -379,11 +378,11 @@ public class ClusterServiceManager {
       StringBuilder hql = new StringBuilder();
       hql.append("UPDATE ADClusterService SET updated = :updated ");
       hql.append("WHERE service = :service AND nodeID = :currentNodeId");
-      Query updateQuery = OBDal.getInstance().getSession().createQuery(hql.toString());
-      updateQuery.setParameter("updated", now);
-      updateQuery.setParameter("service", serviceName);
-      updateQuery.setParameter("currentNodeId", manager.nodeId);
-      updateQuery.executeUpdate();
+      OBDal.getInstance().getSession().createQuery(hql.toString()) //
+          .setParameter("updated", now) //
+          .setParameter("service", serviceName) //
+          .setParameter("currentNodeId", manager.nodeId) //
+          .executeUpdate();
     }
 
     private String getNodeIdentifier() {
