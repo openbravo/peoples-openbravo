@@ -1654,7 +1654,7 @@ $BODY$ DECLARE
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
-  select set_config('my.triggers_disabled', 'Y', true);
+  perform set_config('my.triggers_disabled', 'Y', true);
 END ; $BODY$
   LANGUAGE plpgsql VOLATILE
 /-- END
@@ -1679,7 +1679,7 @@ $BODY$ DECLARE
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 BEGIN
-  select set_config('my.triggers_disabled', 'N', true);
+  perform set_config('my.triggers_disabled', 'N', true);
 END ; $BODY$
   LANGUAGE plpgsql VOLATILE
 /-- END
