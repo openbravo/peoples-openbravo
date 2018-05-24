@@ -77,4 +77,9 @@ public class AutologonAuthenticationManager extends AuthenticationManager {
       return m_sUserId;
     }
   }
+
+  @Override
+  public boolean useExternalLoginPage() {
+    return true;
+  }
 }
