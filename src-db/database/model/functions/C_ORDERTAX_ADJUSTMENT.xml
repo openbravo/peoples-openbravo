@@ -44,7 +44,7 @@ BEGIN --BODY
 
   -- Round and Adjust taxes
   IF (p_action = 'CO') THEN
-    PERFORM AD_Disable_Triggers();
+    AD_Disable_Triggers();
 
     -- Round
     UPDATE C_ORDERLINETAX
@@ -144,7 +144,7 @@ BEGIN --BODY
       END IF;
     END LOOP;
 
-    PERFORM AD_Enable_Triggers();
+    AD_Enable_Triggers();
 
   -- Recalculate amounts and taxes
   ELSIF (p_action = 'RE') THEN
@@ -158,14 +158,14 @@ BEGIN --BODY
       FROM C_ORDERLINE
       WHERE C_Order_ID = p_order_id
     ) LOOP
-      PERFORM AD_Disable_Triggers();
+      AD_Disable_Triggers();
 
       -- Remove line amounts and taxes
       DELETE FROM C_ORDERLINETAX WHERE C_OrderLine_ID = Cur_line.C_OrderLine_ID;
       SELECT Line_Gross_Amount INTO v_amount FROM C_ORDERLINE WHERE C_OrderLine_ID = Cur_line.C_OrderLine_ID;
       UPDATE C_ORDERLINE SET Line_Gross_Amount = 0 WHERE C_OrderLine_ID = Cur_line.C_OrderLine_ID;
 
-      PERFORM AD_Enable_Triggers();
+      AD_Enable_Triggers();
 
       -- Recalculate amounts and taxes
       UPDATE C_ORDERLINE SET Line_Gross_Amount = v_amount WHERE C_OrderLine_ID = Cur_line.C_OrderLine_ID;
