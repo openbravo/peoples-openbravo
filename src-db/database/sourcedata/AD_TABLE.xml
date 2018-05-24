@@ -10682,11 +10682,11 @@ You can also select if transactions are allowed or not for this organization typ
 <!--631D227DC83A4898BBD041D46D829D27-->  <HQLQUERY><![CDATA[SELECT
   e.id,
   @movementQuantity@ as movementQuantity,
-  to_char(Ad_Column_Identifier(to_char('C_UOM'), to_char(uom.id), to_char('en_US'))) as uOM,
-  to_char(Ad_Column_Identifier(to_char('M_Product'), to_char(p.id), to_char('en_US'))) as product,
+  (select uom2 from UOM uom2 where uom2.id = uom.id) as uOM,
+  (select p2 from Product p2 where p2.id = p.id) as product,
   e.lineNo,
-  to_char(Ad_Column_Identifier(to_char('M_InOut'), to_char(sh.id), to_char('en_US'))) as shipmentReceipt,
-  to_char(Ad_Column_Identifier(to_char('C_UOM'), to_char(coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))), to_char('en_US'))) as aum,
+  (select sh2 from MaterialMgmtShipmentInOut sh2 where sh2.id = sh.id) as shipmentReceipt,
+  (select aum2 from UOM aum2 where aum2.id = (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))) as operativeUOM,
   @operativeQuantity@ as operativeQuantity,
   @orderQuantity@ as orderQuantity
 MAINFROM
@@ -11220,12 +11220,12 @@ GROUP BY
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <HQLQUERY><![CDATA[SELECT
   e.id,
   @orderedQuantity@ as orderedQuantity,
-  to_char(Ad_Column_Identifier(to_char('C_UOM'), to_char(uom.id), to_char('en_US'))) as uOM,
-  to_char(Ad_Column_Identifier(to_char('M_Product'), to_char(p.id), to_char('en_US'))) as product,
+  (select uom2 from UOM uom2 where uom2.id = uom.id) as uOM,
+  (select p2 from Product p2 where p2.id = p.id) as product,
   e.lineNo,
-  to_char(Ad_Column_Identifier(to_char('C_Order'), to_char(o.id), to_char('en_US'))) as salesOrder,  
+  (select o2 from Order o2 where o2.id = o.id) as salesOrder,  
   @operativeQuantity@ as operativeQuantity,
-to_char(Ad_Column_Identifier(to_char('C_UOM'), to_char(coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id)))), to_char('en_US'))) as aum,
+  (select aum2 from UOM aum2 where aum2.id = (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))) as operativeUOM,
   @orderQuantity@ as orderQuantity,
   il.id
 MAINFROM
