@@ -579,7 +579,7 @@ public abstract class AuthenticationManager {
    * result from an external login page.
    * 
    * @return {@code true} if the authentication result is retrieved from an external login page.
-   *         Otherwise, return {@false} which is the value returned by default.
+   *         Otherwise, return {@code false} which is the value returned by default.
    */
   public boolean useExternalLoginPage() {
     return false;
