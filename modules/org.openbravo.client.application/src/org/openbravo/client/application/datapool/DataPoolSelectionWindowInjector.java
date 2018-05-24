@@ -21,16 +21,13 @@ package org.openbravo.client.application.datapool;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.application.ExtraWindowSettingsInjector;
-import org.openbravo.dal.security.EntityAccessChecker;
 
 public class DataPoolSelectionWindowInjector implements ExtraWindowSettingsInjector {
 
-  private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
   private static final String dataPoolSelectionWindowId = "48B7215F9BF6458E813E6B280DEDB958";
   private static final String readOnlyPoolUrlPropertiesKey = "bbdd.readonly.url";
 
@@ -49,6 +46,6 @@ public class DataPoolSelectionWindowInjector implements ExtraWindowSettingsInjec
 
   private boolean readOnlyPoolIsNotAvailable() {
     return !OBPropertiesProvider.getInstance().getOpenbravoProperties()
-      .containsKey(readOnlyPoolUrlPropertiesKey);
+        .containsKey(readOnlyPoolUrlPropertiesKey);
   }
 }
