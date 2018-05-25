@@ -218,8 +218,8 @@
     column: 'productStatus',
     type: 'TEXT'
   }, {
-    name: 'producAssortmentStatus',
-    column: 'producAssortmentStatus',
+    name: 'productAssortmentStatus',
+    column: 'productAssortmentStatus',
     type: 'TEXT'
   }]);
 
