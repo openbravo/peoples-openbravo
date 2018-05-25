@@ -223,11 +223,7 @@ enyo.kind({
   }],
   cleanFilter: false,
   clearAction: function (inSender, inEvent) {
-    this.multiOrdersList.reset(this.multiOrdersList.filter(function (order) {
-      if (order.get('checked')) {
-        return true;
-      }
-    }));
+    this.multiOrdersList.reset();
     return true;
   },
   disableFilters: function (value) {
@@ -460,7 +456,6 @@ enyo.kind({
         i, j;
     this.$.header.$.modalMultiOrdersTopHeader.$.title.setContent(OB.I18N.getLabel('OBPOS_LblMultiOrders'));
     this.$.body.$.listMultiOrders.cleanFilter = true;
-    this.$.body.$.listMultiOrders.multiOrdersList.reset();
     this.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(true);
     if (OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
       _.each(me.model.get('orderList').models, function (iter) {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -54,7 +54,6 @@ public class UpdateCashup {
     // These shouldn't happen in general but may happen specifically in case of unreliable networks
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
         jsonCashup.getString("posterminal"));
-
     Date cashUpReportDate = null;
     Date lastCashUpReportDate = null;
     OBPOSAppCashup cashUp = null;
@@ -224,34 +223,39 @@ public class UpdateCashup {
       JSONArray paymentCashupInfo = jsonCashup.getJSONArray("cashPaymentMethodInfo");
       for (int i = 0; i < paymentCashupInfo.length(); ++i) {
         JSONObject payment = paymentCashupInfo.getJSONObject(i);
-        // Set Amount To Keep
-        if (jsonCashup.has("cashCloseInfo")) {
-          // Get the paymentMethod id
-          JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
-          for (int j = 0; j < cashCloseInfo.length(); ++j) {
-            JSONObject paymentMethod = cashCloseInfo.getJSONObject(j);
-            if (paymentMethod.getString("paymentTypeId").equals(
-                payment.getString("paymentMethodId"))) {
-              payment.put("amountToKeep",
-                  paymentMethod.getJSONObject("paymentMethod").getString("amountToKeep"));
-              BigDecimal expected = BigDecimal.ZERO;
-              BigDecimal difference = BigDecimal.ZERO;
-              BigDecimal rate = new BigDecimal(payment.getString("rate"));
-              if (rate.compareTo(BigDecimal.ONE) == 0) {
-                expected = new BigDecimal(paymentMethod.getString("expected"));
-                difference = new BigDecimal(paymentMethod.getString("difference"));
-              } else if (paymentMethod.has("foreignExpected")) {
-                expected = new BigDecimal(paymentMethod.getString("foreignExpected"));
-                difference = new BigDecimal(
-                    paymentMethod.has("foreignDifference") ? paymentMethod
-                        .getString("foreignDifference") : paymentMethod.getString("difference"));
+        if ((payment.has("newPaymentMethod") && payment.getString("newPaymentMethod")
+            .equals("true"))
+            || (payment.has("usedInCurrentTrx") && payment.getString("usedInCurrentTrx").equals(
+                "true"))) {
+          // Set Amount To Keep
+          if (jsonCashup.has("cashCloseInfo")) {
+            // Get the paymentMethod id
+            JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
+            for (int j = 0; j < cashCloseInfo.length(); ++j) {
+              JSONObject paymentMethod = cashCloseInfo.getJSONObject(j);
+              if (paymentMethod.getString("paymentTypeId").equals(
+                  payment.getString("paymentMethodId"))) {
+                payment.put("amountToKeep",
+                    paymentMethod.getJSONObject("paymentMethod").getString("amountToKeep"));
+                BigDecimal expected = BigDecimal.ZERO;
+                BigDecimal difference = BigDecimal.ZERO;
+                BigDecimal rate = new BigDecimal(payment.getString("rate"));
+                if (rate.compareTo(BigDecimal.ONE) == 0) {
+                  expected = new BigDecimal(paymentMethod.getString("expected"));
+                  difference = new BigDecimal(paymentMethod.getString("difference"));
+                } else if (paymentMethod.has("foreignExpected")) {
+                  expected = new BigDecimal(paymentMethod.getString("foreignExpected"));
+                  difference = new BigDecimal(
+                      paymentMethod.has("foreignDifference") ? paymentMethod
+                          .getString("foreignDifference") : paymentMethod.getString("difference"));
+                }
+                payment.put("totalCounted",
+                    expected.add(difference).setScale(2, RoundingMode.HALF_UP).toString());
               }
-              payment.put("totalCounted",
-                  expected.add(difference).setScale(2, RoundingMode.HALF_UP).toString());
             }
           }
+          createPaymentMethodCashUp(cashup, payment);
         }
-        createPaymentMethodCashUp(cashup, payment);
       }
     }
   }
