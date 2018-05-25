@@ -44,9 +44,8 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
- * An {@link ApplicationInitializer} in charge of doing some initialization tasks like registering
- * core SQL functions, checking if both Tomcat and DB are configured to use the same time and
- * registering standard jmx beans.
+ * An {@link ApplicationInitializer} in charge of doing some initialization tasks like checking if
+ * both Tomcat and DB are configured to use the same time and registering some standard jmx beans.
  * 
  * @author mtaal
  */
@@ -69,23 +68,11 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   private ApplicationDictionaryCachedStructures adCachedStructures;
 
   public void initialize() {
-    registerSQLFunctions();
     checkDatabaseAndTomcatDateTime();
     registerMBeans();
     setModulesAsNotInDevelopment();
     updateDefaultPoolForReadOnly();
     updateDataPoolSelectionCache();
-  }
-
-  private void registerSQLFunctions() {
-    OBDal.getInstance().registerSQLFunction("ad_org_getcalendarowner",
-        new StandardSQLFunction("ad_org_getcalendarowner", new StringType()));
-    OBDal.getInstance().registerSQLFunction("ad_org_getperiodcontrolallow",
-        new StandardSQLFunction("ad_org_getperiodcontrolallow", new StringType()));
-    OBDal.getInstance().registerSQLFunction("m_isparent_ch_value",
-        new StandardSQLFunction("m_isparent_ch_value", new StringType()));
-    OBDal.getInstance().registerSQLFunction("m_getjsondescription",
-        new StandardSQLFunction("m_getjsondescription", StandardBasicTypes.STRING));
   }
 
   private void checkDatabaseAndTomcatDateTime() {

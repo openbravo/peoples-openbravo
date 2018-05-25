@@ -165,6 +165,7 @@ build.war: build a war file in the lib directory.
       <src path="${base.src}"/>
       <src path="../build/javasqlc/src"/>
       <src path="../src-gen"/>
+      <src path="../modules/org.openbravo.base.weld/src/"/>
       <classpath refid="apply.module.compile.classpath" />
     </javac>
   </target>
@@ -224,7 +225,7 @@ build.war: build a war file in the lib directory.
         <classpath refid="project.class.path" />      
       </javac>
       -->
-      <javac srcdir="${base.src}:${base.src.gen}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
+      <javac srcdir="${base.src}:${base.src.gen}:${base.modules}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**,*/src/**/base/weld/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
         <classpath refid="project.class.path" />      
       </javac>
       <javac srcdir="${base.src.gen}" excludes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
