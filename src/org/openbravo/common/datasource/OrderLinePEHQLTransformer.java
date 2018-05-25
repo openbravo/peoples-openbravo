@@ -64,6 +64,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  o.documentNo,");
     groupByClause.append("  o.orderDate,");
     groupByClause.append("  o.grandTotalAmount,");
+    groupByClause.append("  o.scheduledDeliveryDate,");
     groupByClause.append("  e.orderedQuantity,");
     groupByClause.append("  uom.id,");
     groupByClause.append("  uom.name,");
@@ -72,7 +73,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  p.name,");
     groupByClause.append("  e.lineNo,");
     groupByClause.append("  e.id,");
-    groupByClause.append("  e.organization.id,");
+    groupByClause.append("  org.id,");
+    groupByClause.append("  org.name,");
     groupByClause.append("  e.taxableAmount, ");
     groupByClause.append("  COALESCE(e.asset.id, o.asset.id),");
     groupByClause.append("  COALESCE(e.project.id, o.project.id),");
@@ -87,6 +89,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  pl.id,");
     groupByClause.append("  bp.id,");
     groupByClause.append("  il.id,");
+    groupByClause.append("  wh.id,");
+    groupByClause.append("  wh.name,");
+    groupByClause.append("  ma.id,");
+    groupByClause.append("  ma.serialNo,");
     groupByClause.append("  @orderQuantity@,");
     if (isSalesTransaction) {
       groupByClause.append("  e.invoicedQuantity");
@@ -158,6 +164,9 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     fromClause.append(" join e.product p");
     fromClause.append(" join o.businessPartner bp");
     fromClause.append(" join o.documentType dt");
+    fromClause.append(" join o.organization org");
+    fromClause.append(" join o.warehouse wh");
+    fromClause.append(" left join e.attributeSetValue ma");
     fromClause.append(" left join e.operativeUOM aum");
     fromClause.append(" left join e.bOMParent bomParent");
     fromClause.append(" left join e.goodsShipmentLine il");

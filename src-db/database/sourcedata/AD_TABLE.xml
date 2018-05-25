@@ -11227,7 +11227,13 @@ GROUP BY
   @operativeQuantity@ as operativeQuantity,
   (select aum2.name from UOM aum2 where aum2.id = (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))) as operativeUOM,
   @orderQuantity@ as orderQuantity,
-  il.id
+  il.id,
+  org.name as organization,
+  e.orderDate as orderDate,
+  o.scheduledDeliveryDate as scheduledDeliveryDate, 
+  wh.name as warehouse,
+  ma.serialNo as serialNo,
+  (to_char(Ad_Column_Identifier(to_char('M_AttributeSetInstance'), to_char(ma.id), to_char('en_US')))) as attributeSetValue
 MAINFROM
   @fromClause@
 WHERE
