@@ -1563,7 +1563,31 @@ enyo.kind({
             message: 'OBPOS_approval.prepaymentUnderLimit'
           }], function (approved, supervisor, approvalType) {
             if (approved) {
-              continueExecution();
+              if (OB.MobileApp.model.get('context').user.id === supervisor.get('id')) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnderpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_UnderpaymentWarningBody'), [{
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  isConfirmButton: true,
+                  action: function (popup) {
+                    var approvals = me.owner.receipt.get('approvals') || [],
+                        approval = {
+                        approvalType: {
+                          approval: 'OBPOS_approval.prepaymentUnderLimit',
+                          message: 'OBPOS_approval.prepaymentUnderLimit'
+                        },
+                        userContact: supervisor.get('id'),
+                        created: (new Date()).getTime()
+                        };
+                    approvals.push(approval);
+                    me.owner.receipt.set('approvals', approvals);
+                    popup.doHideThisPopup();
+                    continueExecution();
+                  }
+                }, {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                }]);
+              } else {
+                continueExecution();
+              }
             }
           });
         } else {
@@ -2040,7 +2064,31 @@ enyo.kind({
         message: 'OBPOS_approval.prepaymentUnderLimit'
       }], function (approved, supervisor, approvalType) {
         if (approved) {
-          continueExecuting(receipt, negativeLines, me, myModel, payments);
+          if (OB.MobileApp.model.get('context').user.id === supervisor.get('id')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnderpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_UnderpaymentWarningBody'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true,
+              action: function (popup) {
+                var approvals = me.owner.receipt.get('approvals') || [],
+                    approval = {
+                    approvalType: {
+                      approval: 'OBPOS_approval.prepaymentUnderLimitLayaway',
+                      message: 'OBPOS_approval.prepaymentUnderLimit'
+                    },
+                    userContact: supervisor.get('id'),
+                    created: (new Date()).getTime()
+                    };
+                approvals.push(approval);
+                me.owner.receipt.set('approvals', approvals);
+                popup.doHideThisPopup();
+                continueExecuting(receipt, negativeLines, me, myModel, payments);
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }]);
+          } else {
+            continueExecuting(receipt, negativeLines, me, myModel, payments);
+          }
         }
       });
     } else {
