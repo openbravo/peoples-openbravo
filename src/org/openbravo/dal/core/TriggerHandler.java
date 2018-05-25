@@ -57,10 +57,8 @@ public class TriggerHandler {
   /** Disables all triggers in the database */
   public void disable() {
     log.debug("Disabling triggers");
-    Check
-        .isNull(
-            sessionStatus.get(),
-            "There is already a ADSessionStatus present in this thread, call enable before calling disable again");
+    Check.isNull(sessionStatus.get(),
+        "Triggers were already disabled in this session, call enable before calling disable again");
     Connection con = OBDal.getInstance().getConnection();
     try (PreparedStatement ps = con.prepareStatement(getDisableStatement())) {
       ps.execute();
@@ -88,7 +86,7 @@ public class TriggerHandler {
   public void enable() {
     log.debug("Enabling triggers");
     Check.isNotNull(sessionStatus.get(),
-        "SessionStatus not set, call disable before calling this method");
+        "Triggers were not disabled in this session, call disable before calling this method");
 
     Connection con = OBDal.getInstance().getConnection();
     try (PreparedStatement ps = con.prepareStatement(getEnableStatement())) {
