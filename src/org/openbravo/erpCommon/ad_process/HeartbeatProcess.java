@@ -111,12 +111,14 @@ public class HeartbeatProcess implements Process {
     if (this.channel == Channel.SCHEDULED && !isHeartbeatActive()) {
       msg = Utility.messageBD(connection, "HB_INACTIVE", ctx.getLanguage());
       logger.logln(msg);
+      OBDal.getInstance().commitAndClose();
       return;
     }
 
     if (!HttpsUtils.isInternetAvailable()) {
       msg = Utility.messageBD(connection, "HB_INTERNET_UNAVAILABLE", ctx.getLanguage());
       logger.logln(msg);
+      OBDal.getInstance().commitAndClose();
       throw new Exception(msg);
     }
 
