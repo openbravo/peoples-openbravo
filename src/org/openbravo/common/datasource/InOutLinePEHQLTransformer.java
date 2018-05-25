@@ -74,6 +74,8 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  COALESCE(e.stDimension.id, sh.stDimension.id),");
     groupByClause.append("  COALESCE(e.ndDimension.id, sh.ndDimension.id),");
     groupByClause.append("  e.explode,");
+    groupByClause.append("  org.id,");
+    groupByClause.append("  org.name,");
     groupByClause.append("  bomParent.id,");
     groupByClause.append("  aum.id,");
     groupByClause.append("  e.operativeQuantity,");
@@ -83,6 +85,10 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  pl.id,");
     groupByClause.append("  ma.id,");
     groupByClause.append("  ma.serialNo,");
+    groupByClause.append("  wh.id,");
+    groupByClause.append("  wh.name,");
+    groupByClause.append("  sb.id,");
+    groupByClause.append("  sb.searchKey,");
     groupByClause.append("  @orderQuantity@,");
     if (isSalesTransaction) {
       groupByClause.append("  il.id,");
@@ -129,6 +135,9 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     fromClause.append(" join sh.documentType dt");
     fromClause.append(" join e.uOM uom");
     fromClause.append(" join e.product p");
+    fromClause.append(" join sh.organization org");
+    fromClause.append(" join sh.warehouse wh");
+    fromClause.append(" join e.storageBin sb");
     fromClause.append(" left join e.attributeSetValue ma");
     fromClause.append(" left join e.salesOrderLine ol");
     fromClause.append(" left join ol.salesOrder o");

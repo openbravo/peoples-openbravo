@@ -10688,7 +10688,14 @@ You can also select if transactions are allowed or not for this organization typ
   to_char(Ad_Column_Identifier(to_char('M_InOut'), to_char(sh.id), to_char('en_US'))) as shipmentReceipt,
   (select aum2.name from UOM aum2 where aum2.id = (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))) as operativeUOM,
   @operativeQuantity@ as operativeQuantity,
-  @orderQuantity@ as orderQuantity
+  @orderQuantity@ as orderQuantity,
+  org.name as organization,
+  sh.movementDate as movementDate,
+  wh.name as warehouse,
+  ma.serialNo as serialNo,
+  (to_char(Ad_Column_Identifier(to_char('M_AttributeSetInstance'), to_char(ma.id), to_char('en_US')))) as 
+ attributeSetValue,
+   sb.searchKey as storageBin
 MAINFROM
   @fromClause@
 WHERE
