@@ -66,6 +66,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  o.grandTotalAmount,");
     groupByClause.append("  o.scheduledDeliveryDate,");
     groupByClause.append("  e.orderedQuantity,");
+    groupByClause.append("  e.orderDate,");
     groupByClause.append("  uom.id,");
     groupByClause.append("  uom.name,");
     groupByClause.append("  uom.symbol,");
@@ -97,7 +98,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (isSalesTransaction) {
       groupByClause.append("  e.invoicedQuantity");
     } else {
-      groupByClause.append("  e.orderDate,");
       groupByClause.append("  e.orderUOM.id,");
       groupByClause.append("  m.id");
       groupByClause
