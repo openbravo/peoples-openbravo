@@ -25,13 +25,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
-import org.hibernate.dialect.function.StandardSQLFunction;
-import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.StringType;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.client.application.report.JmxReportCache;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -143,7 +140,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
       Organization asterisk = OBDal.getInstance().get(Organization.class, "0");
 
       defaultDbPool = Preferences.getPreferenceValue(DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE, true,
-        systemClient, asterisk, null, null, null);
+          systemClient, asterisk, null, null, null);
 
     } catch (PropertyException pe) {
       defaultDbPool = ExternalConnectionPool.READONLY_POOL;
