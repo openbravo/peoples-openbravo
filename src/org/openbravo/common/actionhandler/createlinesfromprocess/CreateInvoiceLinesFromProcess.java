@@ -83,8 +83,9 @@ public class CreateInvoiceLinesFromProcess {
    */
   public int createInvoiceLinesFromDocumentLines(final JSONArray selectedLinesParam,
       final Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesFromClass) {
-    this.selectedLines = selectedLinesParam;
     setAndValidateLinesFromClass(selectedLinesFromClass);
+    this.selectedLines = preProcessSelectedLines(selectedLinesParam);
+
     // Initialize the line number with the last one in the processing invoice.
     lastLineNo = getLastLineNoOfCurrentInvoice(currentInvoice);
 
@@ -96,6 +97,36 @@ public class CreateInvoiceLinesFromProcess {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * This method makes a pre-processing of those lines partially or completely delivered. It creates
+   * as many lines as shipment/receipts related to an order line. If the line isn't delivered it is
+   * not needed to be processed
+   * 
+   * @param selectedLinesParam
+   *          The selected lines in the P&E
+   * @return All the lines will be copied as a json array
+   */
+  private JSONArray preProcessSelectedLines(final JSONArray selectedLinesParam) {
+    JSONArray selectedProcessedLines = new JSONArray();
+    try {
+      for (int index = 0; index < selectedLinesParam.length(); index++) {
+        JSONObject selectedLine = selectedLinesParam.getJSONObject(index);
+        BaseOBObject copiedLine = OBDal.getInstance().get(linesFromClass,
+            selectedLine.getString("id"));
+        if (CreateLinesFromUtil
+            .isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine)) {
+          processCopiedLineShipmentInOut(copiedLine, selectedProcessedLines);
+        } else {
+          selectedProcessedLines.put(selectedLine);
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error pre-processing the copied lines", e);
+      throw new OBException(e);
+    }
+    return selectedProcessedLines;
   }
 
   /**
@@ -136,22 +167,21 @@ public class CreateInvoiceLinesFromProcess {
       JSONObject selectedLine = selectedLines.getJSONObject(index);
       BaseOBObject copiedLine = OBDal.getInstance().get(linesFromClass,
           selectedLine.getString("id"));
-      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine)) {
-        processCopiedLineShipmentInOut(copiedLine);
-      } else {
-        InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(currentInvoice,
-            copiedLine, selectedLine);
-        currentInvoice.getInvoiceLineList().add(newInvoiceLine);
-        OBDal.getInstance().save(newInvoiceLine);
-        OBDal.getInstance().save(currentInvoice);
-        createdInvoiceLinesCount++;
-        OBDal.getInstance().flush();
-      }
+      InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(currentInvoice,
+          copiedLine, selectedLine);
+      currentInvoice.getInvoiceLineList().add(newInvoiceLine);
+      OBDal.getInstance().save(newInvoiceLine);
+      OBDal.getInstance().save(currentInvoice);
+      createdInvoiceLinesCount++;
+      // Flush is needed to persist this created invoice line in the database to be taken into
+      // account when the invoice's order reference is updated at document level
+      OBDal.getInstance().flush();
     }
     return createdInvoiceLinesCount;
   }
 
-  private void processCopiedLineShipmentInOut(BaseOBObject copiedLine) {
+  private void processCopiedLineShipmentInOut(BaseOBObject copiedLine,
+      JSONArray relatedShipmentLinesToOrderLine) {
     StringBuilder shipmentHQLQuery = new StringBuilder(" as il");
     shipmentHQLQuery.append(" join il.shipmentReceipt sh");
     shipmentHQLQuery.append(" where il.salesOrderLine.id = :orderLineId");
@@ -166,9 +196,9 @@ public class CreateInvoiceLinesFromProcess {
     shipmentQuery.setNamedParameter("processed", true);
 
     List<ShipmentInOutLine> shipmentInOutLines = shipmentQuery.list();
-
     for (ShipmentInOutLine shipmentInOutLine : shipmentInOutLines) {
-      selectedLines.put(getShipmentInOutJson((OrderLine) copiedLine, shipmentInOutLine));
+      relatedShipmentLinesToOrderLine.put(getShipmentInOutJson((OrderLine) copiedLine,
+          shipmentInOutLine));
     }
   }
 
