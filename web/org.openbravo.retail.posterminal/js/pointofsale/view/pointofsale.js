@@ -609,6 +609,7 @@ enyo.kind({
     }
   },
   showLeftSubWindow: function (inSender, inEvent) {
+    var me = this;
     if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow]) {
       if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing) {
         var allHidden = true;
@@ -622,10 +623,21 @@ enyo.kind({
             }
           }
         }, this);
-        if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
-          this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
-          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
-          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].inEvent = inEvent;
+        if (allHidden) {
+          inEvent.checkStockCallback = function () {
+            OB.UTIL.HookManager.executeHooks('OBPOS_LeftSubWindow_beforeSetShowing', {
+              context: me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow],
+              params: inEvent
+            }, function (args) {
+              if (args && !args.cancelOperation) {
+                me.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
+                me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
+                me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].inEvent = inEvent;
+              }
+            });
+          };
+
+          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent);
         }
       }
     }
@@ -959,6 +971,8 @@ enyo.kind({
     });
   },
   returnLine: function (inSender, inEvent) {
+    var me = this,
+        productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(inEvent.line.get('product'));
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
@@ -969,7 +983,16 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
       return;
     }
-    this.model.get('order').returnLine(inEvent.line);
+    if (OB.DEC.compare(inEvent.line.get('qty')) === -1 && productStatus && productStatus.restrictsaleoutofstock && OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
+      var qtyAdded = -inEvent.line.get('qty') - inEvent.line.get('qty');
+      this.model.get('order').getStoreStock(inEvent.line.get('product'), qtyAdded, inEvent, null, function (hasStock) {
+        if (hasStock) {
+          me.model.get('order').returnLine(inEvent.line);
+        }
+      });
+    } else {
+      this.model.get('order').returnLine(inEvent.line);
+    }
   },
   exactPayment: function (inSender, inEvent) {
     this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashexact');

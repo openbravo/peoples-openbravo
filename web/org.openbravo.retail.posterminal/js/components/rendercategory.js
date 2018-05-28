@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -125,6 +125,7 @@ enyo.kind({
     this.$.expandCollapse.setShowing(this.model.get('issummary'));
     this.$.expand.setShowing(this.model.get('treeNode') !== 'EXPANDED');
     this.$.collapse.setShowing(this.model.get('treeNode') === 'EXPANDED');
-    this.owner.setShowing(this.model.get('display'));
+    var showOnlyReal = (this.owner.owner.owner.owner.owner.owner.args && this.owner.owner.owner.owner.owner.owner.args.showOnlyReal) || false;
+    this.owner.setShowing((this.model.get('realCategory') === 'N' && showOnlyReal) ? false : this.model.get('display'));
   }
 });
