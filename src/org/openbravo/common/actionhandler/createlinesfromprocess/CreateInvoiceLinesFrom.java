@@ -22,15 +22,18 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract class to be implemented by any process that creates lines from any Openbravo
+ * Abstract class to be implemented by any process that creates invoice lines from any Openbravo
  * BaseOBObject
  * 
  * @param <T>
@@ -43,36 +46,36 @@ abstract class CreateInvoiceLinesFrom<T extends BaseOBObject> extends BaseProces
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-    JSONObject jsonRequest = null;
     try {
-      // Request Parameters
-      jsonRequest = new JSONObject(content);
-      final String requestedAction = CreateLinesFromUtil.getRequestedAction(jsonRequest);
+      JSONObject jsonRequest = new JSONObject(content);
       JSONArray selectedLines = CreateLinesFromUtil.getSelectedLines(jsonRequest);
       Invoice currentInvoice = CreateLinesFromUtil.getCurrentInvoice(jsonRequest);
 
-      if (CreateLinesFromUtil.requestedActionIsDoneAndThereAreSelectedOrderLines(requestedAction,
-          selectedLines)) {
-        // CreateLinesFromProcess is instantiated using Weld so it can use Dependency Injection
-        CreateLinesFromProcess createLinesFromProcess = WeldUtils
-            .getInstanceFromStaticBeanManager(CreateLinesFromProcess.class);
-        createLinesFromProcess.createInvoiceLinesFromDocumentLines(selectedLines, currentInvoice,
-            getFromClass());
-        jsonRequest.put(CreateLinesFromUtil.MESSAGE, CreateLinesFromUtil.getSuccessMessage());
-      }
+      throwExceptionIfNoLineSelected(selectedLines);
+
+      // CreateLinesFromProcess is instantiated using Weld so it can use Dependency Injection
+      CreateLinesFromProcess createLinesFromProcess = WeldUtils
+          .getInstanceFromStaticBeanManager(CreateLinesFromProcess.class);
+      createLinesFromProcess.createInvoiceLinesFromDocumentLines(selectedLines, currentInvoice,
+          getFromClass());
+
+      jsonRequest.put(CreateLinesFromUtil.MESSAGE, CreateLinesFromUtil.getSuccessMessage());
+      return jsonRequest;
     } catch (Exception e) {
-      log.error("Error in Invoice CreateLinesFrom Action Handler", e);
-
-      try {
-        if (jsonRequest != null) {
-          jsonRequest.put(CreateLinesFromUtil.MESSAGE, CreateLinesFromUtil.getErrorMessage(e));
-        }
-      } catch (Exception e2) {
-        log.error(e.getMessage(), e2);
-      }
+      log.error("Error in CreateInvoiceLinesFrom Action Handler", e);
+      return showExceptionInViewAndRetry(e);
     }
-
-    return jsonRequest;
   }
 
+  private void throwExceptionIfNoLineSelected(JSONArray selectedLines) {
+    if (selectedLines.length() <= 0) {
+      throw new OBException(OBMessageUtils.messageBD("NotSelected"));
+    }
+  }
+
+  private JSONObject showExceptionInViewAndRetry(Exception e) {
+    return getResponseBuilder()
+        .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("error"), e.getMessage(),
+            true).retryExecution().build();
+  }
 }
