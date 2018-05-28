@@ -23,7 +23,7 @@ import org.openbravo.model.common.order.OrderLine;
 /**
  * Implementation for Create Invoice Lines From Order Lines
  */
-public class CreateInvoiceLinesFromOrderLines extends CreateInvoiceLinesFrom<OrderLine> {
+public class CreateInvoiceLinesFromOrderLines extends CreateInvoiceLinesFromHandler<OrderLine> {
   @Override
   protected Class<OrderLine> getFromClass() {
     return OrderLine.class;

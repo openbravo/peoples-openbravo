@@ -23,7 +23,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 /**
  * Implementation for Create Invoice Lines From InOut Lines
  */
-public class CreateInvoiceLinesFromInOutLines extends CreateInvoiceLinesFrom<ShipmentInOutLine> {
+public class CreateInvoiceLinesFromInOutLines extends CreateInvoiceLinesFromHandler<ShipmentInOutLine> {
   @Override
   protected Class<ShipmentInOutLine> getFromClass() {
     return ShipmentInOutLine.class;

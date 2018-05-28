@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *          Invoice lines will be created from an object whose class extends from the BaseOBObject
  */
-abstract class CreateInvoiceLinesFrom<T extends BaseOBObject> extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(CreateInvoiceLinesFrom.class);
+abstract class CreateInvoiceLinesFromHandler<T extends BaseOBObject> extends BaseProcessActionHandler {
+  private static final Logger log = LoggerFactory.getLogger(CreateInvoiceLinesFromHandler.class);
 
   protected abstract Class<T> getFromClass();
 
