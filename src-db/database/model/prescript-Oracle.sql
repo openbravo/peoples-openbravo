@@ -16,6 +16,11 @@ Begin
 End;
 /-- END
 
+Begin  
+  execute immediate 'Drop table AD_SESSION_STATUS';
+  Exception when others then null;
+End;
+/-- END
 
 DECLARE
   AUX NUMBER;
@@ -268,4 +273,104 @@ begin
      return 'N';
     END IF;
 end OBEQUALS;
+/-- END
+
+CREATE TABLE AD_SESSION_STATUS
+   (AD_SESSION_STATUS_ID VARCHAR2(32 BYTE), 
+    AD_CLIENT_ID VARCHAR2(32 BYTE) NOT NULL ENABLE, 
+    AD_ORG_ID VARCHAR2(32 BYTE) NOT NULL ENABLE, 
+    ISACTIVE CHAR(1 BYTE) DEFAULT 'Y' NOT NULL ENABLE, 
+    CREATED DATE DEFAULT SYSDATE NOT NULL ENABLE, 
+    CREATEDBY VARCHAR2(32 BYTE) NOT NULL ENABLE, 
+    UPDATED DATE DEFAULT SYSDATE NOT NULL ENABLE, 
+    UPDATEDBY VARCHAR2(32 BYTE) NOT NULL ENABLE, 
+    ISIMPORTING CHAR(1 BYTE) NOT NULL ENABLE, 
+    CONSTRAINT AD_SESSION_STATUS_ISACTIVE_CHK CHECK (ISACTIVE IN ('Y', 'N')) ENABLE, 
+    CONSTRAINT AD_SESSION_STATUS_ISIMPORT_CHK CHECK (ISIMPORTING IN ('Y', 'N')) ENABLE, 
+    CONSTRAINT AD_SESSION_STATUS_KEY PRIMARY KEY (AD_SESSION_STATUS_ID)
+   )
+/-- END
+
+create or replace FUNCTION AD_IsTriggerEnabled RETURN CHAR
+AS
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2008-2018 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+ v_aux NUMBER;
+BEGIN
+ SELECT COUNT(*)
+   INTO v_aux
+   FROM AD_Session_Status
+  WHERE IsImporting='Y';
+
+  IF v_Aux>0 THEN
+    RETURN 'N';
+  ELSE
+    RETURN 'Y';
+  END IF;
+EXCEPTION
+WHEN OTHERS THEN
+  RETURN 'Y';
+END AD_ISTRIGGERENABLED;
+/-- END
+
+create or replace PROCEDURE AD_Disable_Triggers
+AS
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2018 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  INSERT INTO AD_Session_Status (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)
+      VALUES (get_uuid(), '0', '0', 'Y', TO_DATE(NOW()), '0', TO_DATE(NOW()), '0', 'Y');
+END AD_Disable_Triggers;
+/-- END
+
+create or replace PROCEDURE AD_Enable_Triggers
+AS
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2018 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  DELETE FROM AD_Session_Status
+      WHERE isimporting = 'Y';
+END AD_Enable_Triggers;
 /-- END

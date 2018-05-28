@@ -45,10 +45,7 @@ BEGIN --BODY
 
   -- Round and Adjust taxes
   IF (p_action = 'CO') THEN
-
-    -- Disable triggers
-    INSERT INTO AD_Session_Status (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)
-    VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y');
+    AD_Disable_Triggers();
 
     -- Round
     UPDATE C_INVOICELINETAX
@@ -152,9 +149,7 @@ BEGIN --BODY
       END IF;
     END LOOP;
 
-    -- Enable triggers
-    DELETE FROM AD_Session_Status
-    WHERE isimporting = 'Y';
+    AD_Enable_Triggers();
 
   -- Recalculate amounts and taxes
   ELSIF (p_action = 'RE') THEN
@@ -169,19 +164,14 @@ BEGIN --BODY
       FROM C_INVOICELINE
       WHERE C_Invoice_ID = p_invoice_id
     ) LOOP
-
-      -- Disable triggers
-      INSERT INTO AD_Session_Status (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)
-      VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y');
+      AD_Disable_Triggers();
 
       -- Remove line amounts and taxes
       DELETE FROM C_INVOICELINETAX WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
       SELECT Line_Gross_Amount INTO v_amount FROM C_INVOICELINE WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
       UPDATE C_INVOICELINE SET Line_Gross_Amount = 0 WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
 
-      -- Enable triggers
-      DELETE FROM AD_Session_Status
-      WHERE isimporting = 'Y';
+      AD_Enable_Triggers();
 
       -- Recalculate amounts and taxes
       UPDATE C_INVOICELINE SET Line_Gross_Amount = v_amount WHERE C_InvoiceLine_ID = Cur_line.C_InvoiceLine_ID;
