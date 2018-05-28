@@ -27,17 +27,11 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.openbravo.client.application.report.JmxReportCache;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ExternalConnectionPool;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.DateTimeData;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.jmx.MBeanRegistry;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -64,12 +58,14 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   @Inject
   private ApplicationDictionaryCachedStructures adCachedStructures;
 
+  @Inject
+  private DataPoolChecker dataPoolChecker;
+
   public void initialize() {
     checkDatabaseAndTomcatDateTime();
     registerMBeans();
     setModulesAsNotInDevelopment();
-    updateDefaultPoolForReadOnly();
-    updateDataPoolSelectionCache();
+    dataPoolChecker.initialize();
   }
 
   private void checkDatabaseAndTomcatDateTime() {
@@ -126,32 +122,5 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
         .createQuery(
             "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
                 + SystemInformation.ENTITY_NAME).uniqueResult();
-  }
-
-  /**
-   * Refresh the default pool used when requesting a read-only instance of OBDal
-   */
-  public static void updateDefaultPoolForReadOnly() {
-    String defaultDbPool;
-
-    try {
-      OBContext.setAdminMode(false);
-      Client systemClient = OBDal.getInstance().get(Client.class, "0");
-      Organization asterisk = OBDal.getInstance().get(Organization.class, "0");
-
-      defaultDbPool = Preferences.getPreferenceValue(DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE, true,
-          systemClient, asterisk, null, null, null);
-
-    } catch (PropertyException pe) {
-      defaultDbPool = ExternalConnectionPool.READONLY_POOL;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    DataPoolChecker.setDefaultReadOnlyPool(defaultDbPool);
-  }
-
-  private void updateDataPoolSelectionCache() {
-    DataPoolChecker.refreshDataPoolProcesses();
   }
 }

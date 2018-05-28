@@ -457,6 +457,7 @@ public class DatabaseValidator implements SystemValidator {
     fkWhiteList.add("c_order.replacedorder_id");
     fkWhiteList.add("c_order.replacementorder_id");
     fkWhiteList.add("c_orderline.replacedorderline_id");
+    fkWhiteList.add("obuiapp_data_pool_sel.obuiapp_pool_report_v_id");
     return fkWhiteList;
   }
 

@@ -92,9 +92,10 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * Attempts to return an instance of OBDal using the read-only pool. This requires that the
-   * read-only pool is enabled and the Preference "DefaultDBPoolForReports" is set to "RO". In any
-   * other case, the DEFAULT pool will be returned.
+   * This method tries to return a read-only instance if the read-only pool is enabled in the
+   * configuration, the Preference "DefaultDBPoolForReports" is set to "RO" or there is a
+   * DataPoolSelection entry for the current process set to "RO". Otherwise, the default pool is
+   * returned.
    *
    * @return the singleton instance of the OBDal read-only service if possible. In any other case,
    *         the default instance will be returned.
@@ -111,7 +112,7 @@ public class OBDal implements OBNotSingleton {
    */
   public static OBDal getInstance(String pool) {
     if (shouldUseDefaultPool(pool)
-        || DataPoolChecker.shouldUseDefaultPool(SessionInfo.getProcessId())) {
+        || DataPoolChecker.getInstance().shouldUseDefaultPool(SessionInfo.getProcessId())) {
       return getInstance();
     }
 

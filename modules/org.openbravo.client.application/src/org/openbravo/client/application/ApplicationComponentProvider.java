@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -306,6 +306,12 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     // Procurement
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/procurement/ob-procurement.js", false));
+
+    // Hook callbacks
+    globalResources
+        .add(createStaticResource(
+            "web/org.openbravo.client.application/js/callback/ob-datapoolselection-callback.js",
+            false));
 
     // Styling
     globalResources.add(createStyleSheetResource(

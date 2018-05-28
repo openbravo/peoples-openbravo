@@ -540,9 +540,6 @@ isc.OBStandardWindow.addProperties({
         callbackFunc(data);
       }
     }
-
-    //Show info message if defined
-    this.showInfoMessage(data);
   },
 
   checkIfDefaultSavedView: function () {
@@ -1319,15 +1316,5 @@ isc.OBStandardWindow.addProperties({
     }
     // If it is not found, return the header view
     return this.view;
-  },
-
-  showInfoMessage: function (data) {
-    if (!data || !data.extraSettings || !data.extraSettings.messageKey) {
-      return;
-    }
-
-    if (this.view && this.view.messageBar && this.view.messageBar.setMessage) {
-      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, OB.I18N.getLabel(data.extraSettings.messageKey));
-    }
   }
 });

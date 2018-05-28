@@ -16,9 +16,11 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.application.datapool;
+package org.openbravo.client.application.window.hooks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
@@ -26,26 +28,38 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.application.ExtraWindowSettingsInjector;
 
+/**
+ * This class checks when Data Pool Selection screen loads that read-only pool is configured and
+ * shows a message when it's not.
+ */
 public class DataPoolSelectionWindowInjector implements ExtraWindowSettingsInjector {
 
-  private static final String dataPoolSelectionWindowId = "48B7215F9BF6458E813E6B280DEDB958";
-  private static final String readOnlyPoolUrlPropertiesKey = "bbdd.readonly.url";
+  private static final String DATA_POOL_SEL_WINDOW_ID = "48B7215F9BF6458E813E6B280DEDB958";
+  private static final String RO_POOL_URL_PROPERTIES_KEY = "bbdd.readonly.url";
+  private static final String WINDOW_ID_PARAMETER = "windowId";
+  private static final String WINDOW_MESSAGE_KEY = "messageKey";
+  private static final String EXTRA_CALLBACKS_KEY = "extraCallbacks";
+  private static final String RO_POOL_NOT_AVAILABLE_MESSAGE_KEY = "OBUIAPP_ROPoolNotAvailable";
+  private static final String SHOW_MESSAGE_CALLBACK_FUNCTION = "OB.DataPoolSel.showMessage";
 
   @Override
   public Map<String, Object> doAddSetting(Map<String, Object> parameters, JSONObject json)
       throws OBException {
     Map<String, Object> extraSettings = new HashMap<>();
-    String windowId = (String) parameters.get("windowId");
-    if (dataPoolSelectionWindowId.equals(windowId)) {
-      if (readOnlyPoolIsNotAvailable()) {
-        extraSettings.put("messageKey", "OBUIAPP_ROPoolNotAvailable");
-      }
+    String windowId = (String) parameters.get(WINDOW_ID_PARAMETER);
+    if (DATA_POOL_SEL_WINDOW_ID.equals(windowId) && readOnlyPoolIsNotAvailable()) {
+      extraSettings.put(WINDOW_MESSAGE_KEY, RO_POOL_NOT_AVAILABLE_MESSAGE_KEY);
+
+      List<String> callbackList = new ArrayList<>();
+      callbackList.add(SHOW_MESSAGE_CALLBACK_FUNCTION);
+
+      extraSettings.put(EXTRA_CALLBACKS_KEY, callbackList);
     }
     return extraSettings;
   }
 
   private boolean readOnlyPoolIsNotAvailable() {
     return !OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .containsKey(readOnlyPoolUrlPropertiesKey);
+        .containsKey(RO_POOL_URL_PROPERTIES_KEY);
   }
 }

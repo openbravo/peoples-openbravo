@@ -20,6 +20,7 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
+import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
@@ -40,6 +41,9 @@ public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserve
       DataPoolSelection.class) };
 
   private static ThreadLocal<String> dataPoolSelectionValueUpdated = new ThreadLocal<>();
+
+  @Inject
+  private DataPoolChecker dataPoolChecker;
 
   public void onTransactionBegin(@Observes TransactionBeginEvent event) {
     dataPoolSelectionValueUpdated.set(null);
@@ -81,7 +85,7 @@ public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserve
       return;
     }
 
-    DataPoolChecker.refreshDataPoolProcesses();
+    dataPoolChecker.refreshDataPoolProcesses();
   }
 
 }

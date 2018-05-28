@@ -24,53 +24,57 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.database.ExternalConnectionPool;
-import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test data pool checker behavior on various situations
  *
  * @author jarmendariz
  */
-public class DataPoolCheckerTest extends OBBaseTest {
+public class DataPoolCheckerTest extends WeldBaseTest {
 
   private final String PROCESS_ID = "process_id";
 
+  @Inject
+  DataPoolChecker dataPoolChecker;
+
   @Before
   public void resetDataPoolChecker() {
-    DataPoolChecker.setDataPoolProcesses(new HashMap<String, String>());
-    DataPoolChecker.setDefaultReadOnlyPool("");
+    dataPoolChecker.setDataPoolProcesses(new HashMap<String, String>());
+    dataPoolChecker.setDefaultReadOnlyPool("");
   }
 
   @Test
   public void testWhenProcessIsNotAvailablePreferencePoolIsUsed() {
-    DataPoolChecker.setDataPoolProcesses(new HashMap<String, String>());
-    DataPoolChecker.setDefaultReadOnlyPool(ExternalConnectionPool.DEFAULT_POOL);
+    dataPoolChecker.setDataPoolProcesses(new HashMap<String, String>());
+    dataPoolChecker.setDefaultReadOnlyPool(ExternalConnectionPool.DEFAULT_POOL);
 
     assertTrue("Should use the pool defined in preference, that is, Default",
-        DataPoolChecker.shouldUseDefaultPool(null));
+      dataPoolChecker.shouldUseDefaultPool(null));
   }
 
   @Test
   public void testWhenProcessHasNoRulePreferencePoolIsUsed() {
-    DataPoolChecker.setDataPoolProcesses(new HashMap<String, String>());
-    DataPoolChecker.setDefaultReadOnlyPool(ExternalConnectionPool.READONLY_POOL);
+    dataPoolChecker.setDataPoolProcesses(new HashMap<String, String>());
+    dataPoolChecker.setDefaultReadOnlyPool(ExternalConnectionPool.READONLY_POOL);
 
     assertFalse("No rule defined for process, should use pool defined in preference: read-only",
-        DataPoolChecker.shouldUseDefaultPool(PROCESS_ID));
+      dataPoolChecker.shouldUseDefaultPool(PROCESS_ID));
   }
 
   @Test
   public void testWhenProcessHasRuleItsPoolIsUsed() {
     Map<String, String> processes = new HashMap<>();
     processes.put(PROCESS_ID, ExternalConnectionPool.DEFAULT_POOL);
-    DataPoolChecker.setDataPoolProcesses(processes);
-    DataPoolChecker.setDefaultReadOnlyPool(ExternalConnectionPool.READONLY_POOL);
+    dataPoolChecker.setDataPoolProcesses(processes);
+    dataPoolChecker.setDefaultReadOnlyPool(ExternalConnectionPool.READONLY_POOL);
 
     assertTrue("Should use pool defined in rule for process: Default",
-        DataPoolChecker.shouldUseDefaultPool(PROCESS_ID));
+      dataPoolChecker.shouldUseDefaultPool(PROCESS_ID));
   }
 }

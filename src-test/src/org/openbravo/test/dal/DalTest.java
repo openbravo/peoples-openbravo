@@ -36,10 +36,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
 
-import java.util.HashMap;
 import java.util.List;
 
-import java.util.Map;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
@@ -57,12 +55,10 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ExternalConnectionPool;
-import org.openbravo.database.SessionInfo;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
@@ -682,53 +678,5 @@ public class DalTest extends OBBaseTest {
     } catch (Exception ignored) {
     }
     return isoCode;
-  }
-
-  /**
-   * Test the default scenario: if requesting the RO pool and no other rule overrides it, the RO
-   * pool is returned.
-   *
-   * See {@link org.openbravo.test.dal.DataPoolCheckerTest} for more info.
-   */
-  @Test
-  public void testReadOnlyInstanceIsReturnedWhenAppropriate() {
-    assumeThat("read-only pool is configured", isReadOnlyPoolDefined(), is(true));
-
-    OBDal roInstance = OBDal.getReadOnlyInstance();
-    OBDal defaultInstance = OBDal.getInstance();
-
-    assertNotEquals(roInstance, defaultInstance);
-  }
-
-  /**
-   * Test the case where a rule states that the default pool should be used for a particular
-   * process, then the default instance should be returned.
-   *
-   * See {@link org.openbravo.test.dal.DataPoolCheckerTest} for more info.
-   */
-  @Test
-  public void testDefaultInstanceIsReturnedInsteadOfReadOnly() {
-    assumeThat("read-only pool is configured", isReadOnlyPoolDefined(), is(true));
-    setupSessionAndPoolRuleToProcess("::test-process::");
-
-    OBDal roInstance = OBDal.getReadOnlyInstance();
-    OBDal defaultInstance = OBDal.getInstance();
-
-    assertEquals(roInstance, defaultInstance);
-
-    resetSessionAndPoolRule();
-  }
-
-  private void resetSessionAndPoolRule() {
-    SessionInfo.setProcessId(null);
-    DataPoolChecker.setDataPoolProcesses(new HashMap<String, String>());
-  }
-
-  private void setupSessionAndPoolRuleToProcess(String process) {
-    SessionInfo.setProcessId(process);
-
-    Map<String, String> processMap = new HashMap<>();
-    processMap.put(process, ExternalConnectionPool.DEFAULT_POOL);
-    DataPoolChecker.setDataPoolProcesses(processMap);
   }
 }
