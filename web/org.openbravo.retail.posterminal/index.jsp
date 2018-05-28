@@ -95,7 +95,7 @@ if (useServiceWorkers) {
           }
         }, false);
         window.applicationCache.addEventListener('error', function (e) {
-          OB.MobileApp.model.attributes.loadManifeststatus = e;
+          OB.MobileApp.model.set('loadManifeststatus', e);
         }, false);
       }, false);
     }());
