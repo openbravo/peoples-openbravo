@@ -56,8 +56,8 @@ public class CreateInvoiceLinesFromProcess {
 
   private static final Logger log = LoggerFactory.getLogger(CreateInvoiceLinesFromProcess.class);
 
-  // The class of the objects from the invoice lines will be created
-  private Class<? extends BaseOBObject> linesClz;
+  // The class of the objects from which the invoice lines will be created
+  private Class<? extends BaseOBObject> linesFromClass;
   private Invoice processingInvoice;
   // Last Line number of the Processing Line
   private Long lastLineNo = 0L;
@@ -77,18 +77,16 @@ public class CreateInvoiceLinesFromProcess {
    * 
    * @param selectedLinesParam
    *          Order/Shipment/Receipt Lines from which the lines are going to be copied
-   * @param selectedLinesClz
+   * @param selectedLinesFromClass
    *          The class of the lines being copied (Order/Shipment/Receipt)
    * @param currentInvoice
    * @return The number of the lines properly copied
    */
   public int createInvoiceLinesFromDocumentLines(final JSONArray selectedLinesParam,
-      Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesClz) {
+      Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesFromClass) {
 
     this.selectedLines = selectedLinesParam;
-    // Validate the object class is supported in the process.
-    this.linesClz = selectedLinesClz;
-    validateLinesClz();
+    setAndValidateLinesFromClass(selectedLinesFromClass);
 
     OBContext.setAdminMode(true);
     try {
@@ -140,7 +138,7 @@ public class CreateInvoiceLinesFromProcess {
    */
   private BaseOBObject getSelectedLineObject(final JSONObject selectedLine) {
     try {
-      return OBDal.getInstance().get(linesClz, selectedLine.getString("id"));
+      return OBDal.getInstance().get(linesFromClass, selectedLine.getString("id"));
     } catch (JSONException e) {
       log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
           "Error in CreateLinesFromProcess when reading a JSONObject", e);
@@ -159,11 +157,14 @@ public class CreateInvoiceLinesFromProcess {
   }
 
   /**
-   * Validate that the line class is supported by the process. If not then an exception is thrown
+   * Set and validate that the line class is supported by the process. If not then an exception is
+   * thrown
    */
-  private void validateLinesClz() {
-    if (!linesClz.getName().equals(OrderLine.class.getName())
-        && !linesClz.getName().equals(ShipmentInOutLine.class.getName())) {
+  private void setAndValidateLinesFromClass(final Class<? extends BaseOBObject> linesFromClass) {
+    if (linesFromClass.isAssignableFrom(OrderLine.class)
+        || linesFromClass.isAssignableFrom(ShipmentInOutLine.class)) {
+      this.linesFromClass = linesFromClass;
+    } else {
       throw new OBException("CreateLinesFromProccessInvalidDocumentType");
     }
   }
