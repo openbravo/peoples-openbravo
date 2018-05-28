@@ -90,15 +90,8 @@ public class CreateInvoiceLinesFromProcess {
 
     OBContext.setAdminMode(true);
     try {
-      long startTime = System.currentTimeMillis();
       processingInvoice = currentInvoice;
-      // Copy all the selected lines
-      int createdInvoiceLinesCount = createLinesFromSelectedLines();
-
-      long endTime = System.currentTimeMillis();
-      log.debug(String.format("CreateLinesFromProcess: Time taken to complete the process: %d ms",
-          (endTime - startTime)));
-      return createdInvoiceLinesCount;
+      return createLinesFromSelectedLines();
     } catch (Exception e) {
       log.error(OBMessageUtils.messageBD("CreateLinesFromError"),
           "Error in CreateLinesFromProcess: ", e);
@@ -180,7 +173,6 @@ public class CreateInvoiceLinesFromProcess {
    */
   private InvoiceLine createLineFromSelectedLineAndRunHooks(BaseOBObject copiedLine,
       final JSONObject pickExecuteLineValues) {
-    long startTime = System.currentTimeMillis();
     InvoiceLine newInvoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
 
     // Always increment the lineNo when adding a new invoice line
@@ -189,11 +181,6 @@ public class CreateInvoiceLinesFromProcess {
 
     // Execute Hooks to perform operations
     executeHooks(pickExecuteLineValues, copiedLine, newInvoiceLine);
-
-    long endTime = System.currentTimeMillis();
-    log.debug(String.format(
-        "CreateLinesFromProcess: Time taken to copy a line from the previous one: %d ms",
-        (endTime - startTime)));
 
     return newInvoiceLine;
   }
