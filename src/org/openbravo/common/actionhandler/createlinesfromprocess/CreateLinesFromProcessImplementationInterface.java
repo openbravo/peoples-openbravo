@@ -21,7 +21,6 @@ package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 
 /**
@@ -56,7 +55,7 @@ import org.openbravo.model.common.invoice.InvoiceLine;
  *
  */
 public interface CreateLinesFromProcessImplementationInterface {
-  static final String CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER = "CreatelinesFromProcessHookQualifier";
+  public static final String CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER = "CreatelinesFromProcessHookQualifier";
 
   /**
    * Returns the order when the concrete hook will be implemented. A positive value will execute the
@@ -67,8 +66,6 @@ public interface CreateLinesFromProcessImplementationInterface {
   /**
    * Executes the hook logic on the Create Lines From process
    * 
-   * @param currentInvoice
-   *          the Invoice we are updating
    * @param pickExecuteLineValues
    *          The values selected/calculated in the line of the Pick and Execute. These values can
    *          differ from the values of the original record been copied (copiedLine) if they are
@@ -77,8 +74,8 @@ public interface CreateLinesFromProcessImplementationInterface {
    * @param copiedLine
    *          the order/shipment/receipt line from which we are creating the invoice line
    * @param newInvoiceLine
-   *          the new invoice line created within the currentInvoice
+   *          the new invoice line created
    */
-  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
-      final BaseOBObject copiedLine, InvoiceLine newInvoiceLine);
+  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
+      final BaseOBObject copiedLine);
 }

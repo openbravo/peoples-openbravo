@@ -26,7 +26,6 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeInstance;
@@ -49,8 +48,8 @@ class UpdateProductAndAttributes implements CreateLinesFromProcessImplementation
    * Update the product and attribute set to the new invoice line
    */
   @Override
-  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
-      final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
+  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
+      final BaseOBObject selectedLine) {
     this.copiedLine = selectedLine;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
     // Update the product

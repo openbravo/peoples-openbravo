@@ -54,10 +54,10 @@ class UpdateQuantitiesAndUOMs implements CreateLinesFromProcessImplementationInt
    * Calculation of quantities and UOM-AUM Support
    */
   @Override
-  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
-      final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
+  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
+      final BaseOBObject selectedLine) {
     this.copiedLine = selectedLine;
-    this.processingInvoice = currentInvoice;
+    this.processingInvoice = newInvoiceLine.getInvoice();
     this.pickExecLineValues = pickExecuteLineValues;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
 

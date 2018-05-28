@@ -184,6 +184,7 @@ public class CreateLinesFromProcess {
 
     // Always increment the lineNo when adding a new invoice line
     newInvoiceLine.setLineNo(nextLineNo());
+    newInvoiceLine.setInvoice(processingInvoice);
 
     // Execute Hooks to perform operations
     executeHooks(pickExecuteLineValues, copiedLine, newInvoiceLine);
@@ -216,7 +217,7 @@ public class CreateLinesFromProcess {
 
         Collections.sort(hooks, new CreateLinesFromHookComparator());
         for (CreateLinesFromProcessImplementationInterface hook : hooks) {
-          hook.exec(processingInvoice, pickExecuteLineValues, line, newInvoiceLine);
+          hook.exec(newInvoiceLine, pickExecuteLineValues, line);
         }
       }
     } catch (Exception e) {

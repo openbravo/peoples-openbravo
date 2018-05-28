@@ -65,9 +65,9 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    * copied order line.
    */
   @Override
-  public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
-      final BaseOBObject selectedLine, InvoiceLine newInvoiceLine) {
-    this.processingInvoice = currentInvoice;
+  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
+      final BaseOBObject selectedLine) {
+    this.processingInvoice = newInvoiceLine.getInvoice();
     this.copiedLine = selectedLine;
     this.invoiceLine = newInvoiceLine;
     this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
@@ -111,7 +111,6 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    * Updates some invoice line information from the invoice header
    */
   private void updateInformationFromInvoice() {
-    invoiceLine.setInvoice(processingInvoice);
     invoiceLine.setClient(processingInvoice.getClient());
     invoiceLine.setDescription(processingInvoice.getDescription());
   }

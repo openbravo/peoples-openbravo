@@ -29,7 +29,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.AccDefUtility;
-import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.financialmgmt.calendar.Period;
 
@@ -46,11 +45,11 @@ class UpdateAccAndDefPlanFromProduct implements CreateLinesFromProcessImplementa
    * Calculate Acc and Def Plan from Product
    */
   @Override
-  public void exec(Invoice currentInvoice, final JSONObject pickExecuteLineValues,
-      BaseOBObject copiedLine, InvoiceLine newInvoiceLine) {
+  public void exec(InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
+      BaseOBObject copiedLine) {
     boolean isDeferred = false;
     HashMap<String, String> accDefPlanData = AccDefUtility.getDeferredPlanForInvoiceProduct(
-        currentInvoice.getId(), newInvoiceLine.getProduct().getId());
+        newInvoiceLine.getInvoice().getId(), newInvoiceLine.getProduct().getId());
     String planType = accDefPlanData.get("planType");
     String periodNumber = accDefPlanData.get("periodNumber");
     String startingPeriodId = accDefPlanData.get("startingPeriodId");
