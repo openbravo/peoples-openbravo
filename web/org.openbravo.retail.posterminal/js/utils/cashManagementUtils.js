@@ -107,6 +107,8 @@
               totalDrops = OB.DEC.add(totalDrops, newCashManagementTransaction.get('amount'));
               paymentMethod.set('totalDrops', totalDrops);
             }
+            //set used in transaction payment methods to true
+            paymentMethod.set('usedInCurrentTrx', true);
             OB.Dal.transaction(function (tx) {
               OB.Dal.saveInTransaction(tx, paymentMethod, function () {
                 var now = new Date();

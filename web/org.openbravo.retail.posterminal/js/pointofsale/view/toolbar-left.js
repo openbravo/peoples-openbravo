@@ -464,7 +464,8 @@ enyo.kind({
   tap: function () {
     var me = this,
         criteria = {},
-        paymentModels = OB.MobileApp.model.get('payments');
+        paymentModels = OB.MobileApp.model.get('payments'),
+        showMandatoryServices, checkStock;
     if (this.disabled === false) {
       if (!OB.MobileApp.model.get('isMultiOrderState') && this.model.get('order').getPaymentStatus().isNegative) {
         var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
@@ -482,44 +483,50 @@ enyo.kind({
         return;
       }
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
-      this.model.on('showPaymentTab', function (event) {
-        this.model.off('showPaymentTab');
-        this.showPaymentTab();
-      }, this);
+      OB.UTIL.StockUtils.checkOrderLinesStock([me.model.get('order')], function (hasStock) {
+        if (hasStock) {
+          me.model.on('showPaymentTab', function (event) {
+            me.model.off('showPaymentTab');
+            me.showPaymentTab();
+          });
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        criteria.remoteFilters = [];
-        criteria.remoteFilters.push({
-          columns: [],
-          operator: OB.Dal.FILTER,
-          value: 'Final_Services',
-          params: []
-        });
-        criteria.remoteFilters.push({
-          columns: ['ispack'],
-          operator: 'equals',
-          value: false,
-          fieldType: 'forceString'
-        });
-      } else {
-        criteria.productType = 'S';
-        criteria.proposalType = 'FMA';
-      }
-      OB.Dal.find(OB.Model.Product, criteria, function (data) {
-        if (data && data.length > 0 && !me.model.get('order').get('isPaid') && !me.model.get('order').get('isLayaway')) {
-          me.model.get('order').trigger('showProductList', null, 'final', function () {
-            me.model.completePayment();
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+            criteria.remoteFilters = [];
+            criteria.remoteFilters.push({
+              columns: [],
+              operator: OB.Dal.FILTER,
+              value: 'Final_Services',
+              params: []
+            });
+            criteria.remoteFilters.push({
+              columns: ['ispack'],
+              operator: 'equals',
+              value: false,
+              fieldType: 'forceString'
+            });
+          } else {
+            criteria.productType = 'S';
+            criteria.proposalType = 'FMA';
+          }
+          OB.Dal.find(OB.Model.Product, criteria, function (data) {
+            if (data && data.length > 0 && !me.model.get('order').get('isPaid') && !me.model.get('order').get('isLayaway')) {
+              me.model.get('order').trigger('showProductList', null, 'final', function () {
+                me.model.completePayment();
+                me.doClearUserInput();
+              });
+            } else {
+              me.model.completePayment(me);
+              me.doClearUserInput();
+            }
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
+          }, function (trx, error) {
+            me.model.completePayment(me);
             me.doClearUserInput();
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
           });
         } else {
-          me.model.completePayment(me);
-          me.doClearUserInput();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
         }
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
-      }, function (trx, error) {
-        me.model.completePayment(me);
-        me.doClearUserInput();
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
       });
     }
   },

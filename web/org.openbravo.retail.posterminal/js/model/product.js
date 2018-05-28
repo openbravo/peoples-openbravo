@@ -213,6 +213,14 @@
     name: 'isSerialNo',
     column: 'isSerialNo',
     type: 'BOOL'
+  }, {
+    name: 'productStatus',
+    column: 'productStatus',
+    type: 'TEXT'
+  }, {
+    name: 'productAssortmentStatus',
+    column: 'productAssortmentStatus',
+    type: 'TEXT'
   }]);
 
   Product.addIndex([{

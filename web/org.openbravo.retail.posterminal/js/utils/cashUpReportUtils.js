@@ -159,6 +159,13 @@
         OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, {
           'cashup_id': cashUp.at(0).get('id')
         }, function (payMthds) { //OB.Dal.find success
+          //set all payment methods to false
+          for (i = 0; i < payMthds.length; i++) {
+            if (payMthds.at(i).get('usedInCurrentTrx') !== false) {
+              payMthds.at(i).set('usedInCurrentTrx', false);
+              OB.Dal.saveInTransaction(tx, payMthds.at(i), null, null);
+            }
+          }
           _.each(order.get('payments').models, function (payment) {
             auxPay = payMthds.filter(function (payMthd) {
               return (payMthd.get('searchKey') === payment.get('kind')) && !payment.get('isPrePayment');
@@ -173,6 +180,8 @@
             } else {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
             }
+            //set used in transaction payment methods to true
+            auxPay.set('usedInCurrentTrx', true);
             OB.Dal.saveInTransaction(tx, auxPay, null, null);
           }, this);
           findAndSave(cashuptaxes, 0, function () {
@@ -437,7 +446,8 @@
             rate: payment.rate,
             isocode: payment.isocode,
             cashup_id: cashupId,
-            lineNo: payment.lineNo
+            lineNo: payment.lineNo,
+            newPaymentMethod: true
           }), function () {
             resolve();
           }, function () {
@@ -591,7 +601,8 @@
                   rate: payment.rate,
                   isocode: payment.isocode,
                   cashup_id: cashUp.at(0).get('id'),
-                  lineNo: payment.lineNo
+                  lineNo: payment.lineNo,
+                  newPaymentMethod: true
                 }), null, null, true);
               } else if (!OB.UTIL.isNullOrUndefined(pAux)) {
                 if (pAux.get("name") !== payment.payment._identifier) {
@@ -633,6 +644,9 @@
     }
   };
   OB.UTIL.sumCashManagementToCashup = function (payment, callback) {
+    OB.Dal.find(OB.Model.PaymentMethodCashUp, {
+      'cashup_id': payment.get('cashup_id')
+    }, function (paymentMethods) {});
     if (!OB.UTIL.isNullOrUndefined(payment)) {
       var cashupId = payment.get('cashup_id'),
           criteria = {
@@ -641,6 +655,7 @@
           };
 
       OB.Dal.find(OB.Model.PaymentMethodCashUp, criteria, function (paymentMethods) {
+
         var paymentMethod = paymentMethods.at(0),
             totalDeposits = paymentMethod.get('totalDeposits'),
             totalDrops = paymentMethod.get('totalDrops');
@@ -648,6 +663,8 @@
         paymentMethod.set('totalDeposits', totalDeposits);
         totalDrops = OB.DEC.add(totalDrops, payment.get('totalDrops'));
         paymentMethod.set('totalDrops', totalDrops);
+        //set used in transaction payment methods to true
+        paymentMethod.set('usedInCurrentTrx', true);
         OB.Dal.save(paymentMethod, function (success) {
           // Success
           OB.Dal.find(OB.Model.CashUp, {
@@ -658,6 +675,7 @@
         }, function (error) {
           // Error
         });
+
       });
     } else {
       if (callback) {
@@ -743,10 +761,17 @@
       cashPaymentMethodInfo.totalDrops = auxPay.get('totalDrops');
       cashPaymentMethodInfo.rate = curModel.rate;
       cashPaymentMethodInfo.isocode = curModel.isocode;
+      cashPaymentMethodInfo.usedInCurrentTrx = auxPay.get('usedInCurrentTrx');
+      cashPaymentMethodInfo.newPaymentMethod = auxPay.get('newPaymentMethod');
       cashPaymentMethodInfo.paymentmethod_id = auxPay.get('paymentmethod_id');
       objToSend.get('cashPaymentMethodInfo').push(cashPaymentMethodInfo);
       cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
     }, this);
+    var i;
+    for (i = 0; i < payMthds.length; i++) {
+      payMthds.at(i).set('newPaymentMethod', false);
+      OB.Dal.save(payMthds.at(i), null, null, false);
+    }
   };
 
   OB.UTIL.saveComposeInfo = function (me, callback, objToSend, cashUp, tx) {
