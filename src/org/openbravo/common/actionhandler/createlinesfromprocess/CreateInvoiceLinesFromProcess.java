@@ -41,7 +41,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.OrderLine;
@@ -86,6 +85,8 @@ public class CreateInvoiceLinesFromProcess {
       final Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesFromClass) {
     this.selectedLines = selectedLinesParam;
     setAndValidateLinesFromClass(selectedLinesFromClass);
+    // Initialize the line number with the last one in the processing invoice.
+    lastLineNo = getLastLineNoOfCurrentInvoice(currentInvoice);
 
     OBContext.setAdminMode(true);
     try {
@@ -110,28 +111,6 @@ public class CreateInvoiceLinesFromProcess {
     }
   }
 
-  private int createLinesFromSelectedLines(final Invoice currentInvoice) {
-    // Initialize the line number with the last one in the processing invoice.
-    lastLineNo = getLastLineNoOfCurrentInvoice(currentInvoice);
-    int createdInvoiceLinesCount = 0;
-    for (int index = 0; index < selectedLines.length(); index++) {
-      JSONObject selectedLine = getPickEditLineValuesInPosition(index);
-      BaseOBObject copiedLine = getSelectedLineObject(selectedLine);
-      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine)) {
-        processCopiedLineShipmentInOut(copiedLine);
-      } else {
-        InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(currentInvoice,
-            copiedLine, selectedLine);
-        currentInvoice.getInvoiceLineList().add(newInvoiceLine);
-        OBDal.getInstance().save(newInvoiceLine);
-        OBDal.getInstance().save(currentInvoice);
-        createdInvoiceLinesCount++;
-        OBDal.getInstance().flush();
-      }
-    }
-    return createdInvoiceLinesCount;
-  }
-
   /**
    * Returns the max invoice line number defined in the invoice to which the lines are going to be
    * added
@@ -151,31 +130,25 @@ public class CreateInvoiceLinesFromProcess {
     return lineNumber;
   }
 
-  private JSONObject getPickEditLineValuesInPosition(final int index) {
-    try {
-      return selectedLines.getJSONObject(index);
-    } catch (JSONException e) {
-      log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
-          "Error in CreateLinesFromProcess when reading a JSONObject", e);
-      throw new OBException(e);
+  private int createLinesFromSelectedLines(final Invoice currentInvoice) throws JSONException {
+    int createdInvoiceLinesCount = 0;
+    for (int index = 0; index < selectedLines.length(); index++) {
+      JSONObject selectedLine = selectedLines.getJSONObject(index);
+      BaseOBObject copiedLine = OBDal.getInstance().get(linesFromClass,
+          selectedLine.getString("id"));
+      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine)) {
+        processCopiedLineShipmentInOut(copiedLine);
+      } else {
+        InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(currentInvoice,
+            copiedLine, selectedLine);
+        currentInvoice.getInvoiceLineList().add(newInvoiceLine);
+        OBDal.getInstance().save(newInvoiceLine);
+        OBDal.getInstance().save(currentInvoice);
+        createdInvoiceLinesCount++;
+        OBDal.getInstance().flush();
+      }
     }
-  }
-
-  /**
-   * Return an object instance for the line passed as JSONObject
-   * 
-   * @param selectedLine
-   *          The JSONOBject representing the selected object in the PE
-   * @return The object representing the line
-   */
-  private BaseOBObject getSelectedLineObject(final JSONObject selectedLine) {
-    try {
-      return OBDal.getInstance().get(linesFromClass, selectedLine.getString("id"));
-    } catch (JSONException e) {
-      log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
-          "Error in CreateLinesFromProcess when reading a JSONObject", e);
-      throw new OBException(e);
-    }
+    return createdInvoiceLinesCount;
   }
 
   private void processCopiedLineShipmentInOut(BaseOBObject copiedLine) {
