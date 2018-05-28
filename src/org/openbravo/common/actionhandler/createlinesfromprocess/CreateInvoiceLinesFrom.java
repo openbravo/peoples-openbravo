@@ -54,8 +54,8 @@ abstract class CreateInvoiceLinesFrom<T extends BaseOBObject> extends BaseProces
       throwExceptionIfNoLineSelected(selectedLines);
 
       // CreateLinesFromProcess is instantiated using Weld so it can use Dependency Injection
-      CreateLinesFromProcess createLinesFromProcess = WeldUtils
-          .getInstanceFromStaticBeanManager(CreateLinesFromProcess.class);
+      CreateInvoiceLinesFromProcess createLinesFromProcess = WeldUtils
+          .getInstanceFromStaticBeanManager(CreateInvoiceLinesFromProcess.class);
       createLinesFromProcess.createInvoiceLinesFromDocumentLines(selectedLines, currentInvoice,
           getFromClass());
 

@@ -49,12 +49,12 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CreateLinesFromProcess {
+public class CreateInvoiceLinesFromProcess {
   @Inject
   @Any
   private Instance<CreateLinesFromProcessImplementationInterface> createLinesFromProcessHooks;
 
-  private static final Logger log = LoggerFactory.getLogger(CreateLinesFromProcess.class);
+  private static final Logger log = LoggerFactory.getLogger(CreateInvoiceLinesFromProcess.class);
 
   // The class of the objects from the invoice lines will be created
   private Class<? extends BaseOBObject> linesClz;
