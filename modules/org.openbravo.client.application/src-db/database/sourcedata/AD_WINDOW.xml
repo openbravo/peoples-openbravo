@@ -5,9 +5,9 @@
 <!--48B7215F9BF6458E813E6B280DEDB958-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--48B7215F9BF6458E813E6B280DEDB958-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--48B7215F9BF6458E813E6B280DEDB958-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--48B7215F9BF6458E813E6B280DEDB958-->  <NAME><![CDATA[Data pool selection]]></NAME>
-<!--48B7215F9BF6458E813E6B280DEDB958-->  <DESCRIPTION><![CDATA[Database pool used by reports to retrieve data.]]></DESCRIPTION>
-<!--48B7215F9BF6458E813E6B280DEDB958-->  <HELP><![CDATA[Database pool used by reports to retrieve data.]]></HELP>
+<!--48B7215F9BF6458E813E6B280DEDB958-->  <NAME><![CDATA[Data Pool Selection]]></NAME>
+<!--48B7215F9BF6458E813E6B280DEDB958-->  <DESCRIPTION><![CDATA[Defines which database pool should be used for a particular report.]]></DESCRIPTION>
+<!--48B7215F9BF6458E813E6B280DEDB958-->  <HELP><![CDATA[Defines which database pool should be used for a particular report. Reports can be defined either in the Report and Process or in the Process Definition Window. If no pool is defined for a report in this window, it should use the one defined in Preferences.]]></HELP>
 <!--48B7215F9BF6458E813E6B280DEDB958-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--48B7215F9BF6458E813E6B280DEDB958-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--48B7215F9BF6458E813E6B280DEDB958-->  <PROCESSING><![CDATA[N]]></PROCESSING>

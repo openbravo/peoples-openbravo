@@ -16,41 +16,49 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.dal.datapool;
+package org.openbravo.dal.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.client.application.DataPoolSelection;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
 
 /**
  * Helper class used to determine if a request should use the read-only pool to retrieve data
  */
-@ApplicationScoped
-public class DataPoolChecker {
+public class DataPoolChecker implements OBSingleton {
+  private static final Logger log = Logger.getLogger(DataPoolChecker.class);
+  private static final int REPORT_ID = 0;
+  private static final int DATA_POOL = 1;
 
   private Map<String, String> dataPoolProcesses = new HashMap<>();
+  private final List<String> validPoolValues = Arrays.asList(ExternalConnectionPool.DEFAULT_POOL,
+      ExternalConnectionPool.READONLY_POOL);
   private String defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
 
-  public static DataPoolChecker getInstance() {
-    return WeldUtils.getInstanceFromStaticBeanManager(DataPoolChecker.class);
+  private static DataPoolChecker instance;
+
+  public static synchronized DataPoolChecker getInstance() {
+    if (instance == null) {
+      instance = OBProvider.getInstance().get(DataPoolChecker.class);
+      instance.initialize();
+    }
+    return instance;
   }
 
   /**
    * Initializes the checker caching the list of processes with a database pool assigned and the
    * default preference as well
    */
-  public void initialize() {
+  private void initialize() {
     refreshDefaultPoolPreference();
     refreshDataPoolProcesses();
   }
@@ -59,16 +67,27 @@ public class DataPoolChecker {
    * Reload from DB the processes that should use the Read-only pool
    */
   public void refreshDataPoolProcesses() {
-    setDataPoolProcesses(convertToMap(findActiveDataPoolSelection()));
+    dataPoolProcesses = findActiveDataPoolSelection();
   }
 
-  private List<DataPoolSelection> findActiveDataPoolSelection() {
+  private Map<String, String> findActiveDataPoolSelection() {
+    Map<String, String> selection = new HashMap<>();
     OBContext.setAdminMode(false);
-    OBCriteria<DataPoolSelection> criteria = OBDal.getInstance().createCriteria(
-        DataPoolSelection.class);
-    criteria.setFilterOnActive(true);
-    List<DataPoolSelection> selection = criteria.list();
-    OBContext.restorePreviousMode();
+    try {
+      final StringBuilder hql = new StringBuilder();
+      hql.append("select dps.report.id, dps.dataPool from OBUIAPP_Data_Pool_Selection dps ");
+      hql.append("where dps.active = true");
+
+      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      for (Object item : query.list()) {
+        final Object[] values = (Object[]) item;
+        selection.put(values[REPORT_ID].toString(), values[DATA_POOL].toString());
+      }
+    } catch (Exception e) {
+      log.error("Cannot fetch DataPoolSelection", e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
 
     return selection;
   }
@@ -84,66 +103,37 @@ public class DataPoolChecker {
   }
 
   /**
-   * @param selectionList
-   *          a list of DataPoolSelection objects
-   * @return A Map<String,String> with the Process ID (either for Process and ProcessDefinition) as
-   *         key, and their corresponding DataPool as the value
-   */
-  private Map<String, String> convertToMap(List<DataPoolSelection> selectionList) {
-    Map<String, String> processes = new HashMap<>();
-
-    for (DataPoolSelection selection : selectionList) {
-      processes.put(selection.getReport().getId(), selection.getDataPool());
-    }
-
-    return processes;
-  }
-
-  /**
-   * Verifies whether the current process from SessionInfo.getProcessId() should use the default
-   * pool
+   * Verifies whether the current process should use the default pool. Process can be either a
+   * instance of Report and Process or a Process Definition.
    *
    * @return true if the current process should use the default pool
    */
-  public boolean shouldUseDefaultPool(String processId) {
-    if (processIsNotAvailable(processId)) {
-      return preferenceIsSetToDefaultPool();
-    } else {
+  protected boolean shouldUseDefaultPool(String processId) {
+    String poolUsedForProcess = defaultReadOnlyPool;
+    if (!StringUtils.isBlank(processId)) {
       String poolForProcess = dataPoolProcesses.get(processId);
       if (poolForProcess != null) {
-        return poolForProcess.equals(ExternalConnectionPool.DEFAULT_POOL);
+        poolUsedForProcess = poolForProcess;
       }
-
-      return preferenceIsSetToDefaultPool();
     }
-  }
 
-  private boolean preferenceIsSetToDefaultPool() {
-    return ExternalConnectionPool.DEFAULT_POOL.equals(defaultReadOnlyPool);
-  }
-
-  private boolean processIsNotAvailable(String processId) {
-    return StringUtils.isBlank(processId);
+    log.debug("Using pool " + poolUsedForProcess + " for report with id " + processId);
+    return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForProcess);
   }
 
   /**
    * Set the default pool used when requesting the read-only pool
    *
    * @param defaultPool
-   *          the ID of the default pool returned when requesting read-only
+   *          the ID of the default pool returned when requesting a read-only instance
    */
-  public void setDefaultReadOnlyPool(String defaultPool) {
-    defaultReadOnlyPool = defaultPool;
+  private void setDefaultReadOnlyPool(String defaultPool) {
+    if (validPoolValues.contains(defaultPool)) {
+      defaultReadOnlyPool = defaultPool;
+    } else {
+      log.warn("Preference value " + defaultPool
+          + " is not a valid Database pool. Using READONLY_POOL as the default value");
+      defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
+    }
   }
-
-  /**
-   * Set the map of processes with their assigned data pool
-   *
-   * @param processes
-   *          a map with the ID of the process as key and the pool type (DEFAULT|RO) as the value
-   */
-  public void setDataPoolProcesses(Map<String, String> processes) {
-    dataPoolProcesses = processes;
-  }
-
 }

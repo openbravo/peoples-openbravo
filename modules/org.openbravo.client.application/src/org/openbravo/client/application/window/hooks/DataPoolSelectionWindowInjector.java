@@ -35,27 +35,42 @@ import org.openbravo.client.application.ExtraWindowSettingsInjector;
 public class DataPoolSelectionWindowInjector implements ExtraWindowSettingsInjector {
 
   private static final String DATA_POOL_SEL_WINDOW_ID = "48B7215F9BF6458E813E6B280DEDB958";
+  private static final String DATA_POOL_SEL_TAB_ID = "D829B2F06F444694B7080C9BA19428E6";
+
   private static final String RO_POOL_URL_PROPERTIES_KEY = "bbdd.readonly.url";
   private static final String WINDOW_ID_PARAMETER = "windowId";
+
+  private static final String TAB_ID_KEY = "tabId";
   private static final String WINDOW_MESSAGE_KEY = "messageKey";
   private static final String EXTRA_CALLBACKS_KEY = "extraCallbacks";
+
   private static final String RO_POOL_NOT_AVAILABLE_MESSAGE_KEY = "OBUIAPP_ROPoolNotAvailable";
-  private static final String SHOW_MESSAGE_CALLBACK_FUNCTION = "OB.DataPoolSel.showMessage";
+  private static final String SHOW_MESSAGE_CALLBACK_FUNCTION = "OB.ExtraWindowSettingCallbackUtils.showInfoMessage";
 
   @Override
   public Map<String, Object> doAddSetting(Map<String, Object> parameters, JSONObject json)
       throws OBException {
     Map<String, Object> extraSettings = new HashMap<>();
+
     String windowId = (String) parameters.get(WINDOW_ID_PARAMETER);
     if (DATA_POOL_SEL_WINDOW_ID.equals(windowId) && readOnlyPoolIsNotAvailable()) {
-      extraSettings.put(WINDOW_MESSAGE_KEY, RO_POOL_NOT_AVAILABLE_MESSAGE_KEY);
-
-      List<String> callbackList = new ArrayList<>();
-      callbackList.add(SHOW_MESSAGE_CALLBACK_FUNCTION);
-
-      extraSettings.put(EXTRA_CALLBACKS_KEY, callbackList);
+      extraSettings.putAll(getShowInfoMessageSettings(DATA_POOL_SEL_TAB_ID,
+          RO_POOL_NOT_AVAILABLE_MESSAGE_KEY));
     }
+
     return extraSettings;
+  }
+
+  private Map<String, Object> getShowInfoMessageSettings(String tabId, String messageKey) {
+    Map<String, Object> settings = new HashMap<>();
+    settings.put(WINDOW_MESSAGE_KEY, messageKey);
+    settings.put(TAB_ID_KEY, tabId);
+
+    List<String> callbackList = new ArrayList<>();
+    callbackList.add(SHOW_MESSAGE_CALLBACK_FUNCTION);
+    settings.put(EXTRA_CALLBACKS_KEY, callbackList);
+
+    return settings;
   }
 
   private boolean readOnlyPoolIsNotAvailable() {

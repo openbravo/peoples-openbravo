@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.openbravo.client.application.report.JmxReportCache;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
-import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.jmx.MBeanRegistry;
@@ -47,7 +46,6 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   private static final String javaDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
   private static final long THRESHOLD = 5000; // 5 seconds
   private static final String PRODUCTION_INSTANCE = "P";
-  private static final String DEFAULT_DB_POOL_FOR_REPORTS_PREFERENCE = "DefaultDBPoolForReports";
 
   @Inject
   private StaticResourceProvider resourceProvider;
@@ -58,14 +56,10 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   @Inject
   private ApplicationDictionaryCachedStructures adCachedStructures;
 
-  @Inject
-  private DataPoolChecker dataPoolChecker;
-
   public void initialize() {
     checkDatabaseAndTomcatDateTime();
     registerMBeans();
     setModulesAsNotInDevelopment();
-    dataPoolChecker.initialize();
   }
 
   private void checkDatabaseAndTomcatDateTime() {

@@ -307,11 +307,10 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/procurement/ob-procurement.js", false));
 
-    // Hook callbacks
-    globalResources
-        .add(createStaticResource(
-            "web/org.openbravo.client.application/js/callback/ob-datapoolselection-callback.js",
-            false));
+    // Extra Window Settings Callbacks
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/callback/ob-extrawindowsettingcallback-utils.js",
+        false));
 
     // Styling
     globalResources.add(createStyleSheetResource(

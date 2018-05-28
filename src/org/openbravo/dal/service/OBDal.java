@@ -52,7 +52,6 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SQLFunctionRegister;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.dal.datapool.DataPoolChecker;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
@@ -79,6 +78,7 @@ public class OBDal implements OBNotSingleton {
 
   private static ConcurrentHashMap<String, OBDal> otherPoolInstances = new ConcurrentHashMap<>();
   private String poolName;
+  private static DataPoolChecker dataPoolChecker;
 
   /**
    * @return the singleton instance of the OBDal service
@@ -111,16 +111,20 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (shouldUseDefaultPool(pool)
-        || DataPoolChecker.getInstance().shouldUseDefaultPool(SessionInfo.getProcessId())) {
+    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)
+        || getDataPoolChecker().shouldUseDefaultPool(SessionInfo.getProcessId())) {
       return getInstance();
     }
 
     return getOtherPoolInstance(pool);
   }
 
-  private static boolean shouldUseDefaultPool(String pool) {
-    return ExternalConnectionPool.DEFAULT_POOL.equals(pool);
+  private static DataPoolChecker getDataPoolChecker() {
+    if (dataPoolChecker == null) {
+      dataPoolChecker = DataPoolChecker.getInstance();
+    }
+
+    return dataPoolChecker;
   }
 
   private static OBDal getOtherPoolInstance(String pool) {
@@ -754,4 +758,5 @@ public class OBDal implements OBNotSingleton {
     final Entity e = ModelProvider.getInstance().getEntity(entityName);
     OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
   }
+
 }

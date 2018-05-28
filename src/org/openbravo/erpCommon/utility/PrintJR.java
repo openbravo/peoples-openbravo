@@ -34,6 +34,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.data.Sqlc;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.reference.Reference;
 import org.openbravo.reference.ui.UIReference;
 import org.openbravo.utils.Replace;
@@ -46,11 +47,16 @@ public class PrintJR extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     String strProcessId = vars.getRequiredStringParameter("inpadProcessId");
+    String processType = "P";
     String strOutputType = vars.getStringParameter("inpoutputtype", "html");
-    if (!hasGeneralAccess(vars, "P", strProcessId)) {
+    if (!hasGeneralAccess(vars, processType, strProcessId)) {
       bdError(request, response, "AccessTableNoView", vars.getLanguage());
       return;
     }
+
+    SessionInfo.setProcessId(strProcessId);
+    SessionInfo.setProcessType(processType);
+
     String strReportName = PrintJRData.getReportName(this, strProcessId);
     HashMap<String, Object> parameters = createParameters(vars, strProcessId);
 
