@@ -83,8 +83,7 @@ public class CreateInvoiceLinesFromProcess {
    * @return The number of the lines properly copied
    */
   public int createInvoiceLinesFromDocumentLines(final JSONArray selectedLinesParam,
-      Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesFromClass) {
-
+      final Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesFromClass) {
     this.selectedLines = selectedLinesParam;
     setAndValidateLinesFromClass(selectedLinesFromClass);
 
@@ -93,11 +92,22 @@ public class CreateInvoiceLinesFromProcess {
       processingInvoice = currentInvoice;
       return createLinesFromSelectedLines();
     } catch (Exception e) {
-      log.error(OBMessageUtils.messageBD("CreateLinesFromError"),
-          "Error in CreateLinesFromProcess: ", e);
       throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Set and validate that the line class is supported by the process. If not then an exception is
+   * thrown
+   */
+  private void setAndValidateLinesFromClass(final Class<? extends BaseOBObject> linesFromClass) {
+    if (linesFromClass.isAssignableFrom(OrderLine.class)
+        || linesFromClass.isAssignableFrom(ShipmentInOutLine.class)) {
+      this.linesFromClass = linesFromClass;
+    } else {
+      throw new OBException("CreateLinesFromProccessInvalidDocumentType");
     }
   }
 
@@ -146,19 +156,6 @@ public class CreateInvoiceLinesFromProcess {
       log.error(OBMessageUtils.messageBD("CreateLinesFromOrderError"),
           "Error in CreateLinesFromProcess when reading a JSONObject", e);
       throw new OBException(e);
-    }
-  }
-
-  /**
-   * Set and validate that the line class is supported by the process. If not then an exception is
-   * thrown
-   */
-  private void setAndValidateLinesFromClass(final Class<? extends BaseOBObject> linesFromClass) {
-    if (linesFromClass.isAssignableFrom(OrderLine.class)
-        || linesFromClass.isAssignableFrom(ShipmentInOutLine.class)) {
-      this.linesFromClass = linesFromClass;
-    } else {
-      throw new OBException("CreateLinesFromProccessInvalidDocumentType");
     }
   }
 
