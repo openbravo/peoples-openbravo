@@ -120,33 +120,57 @@
         }
       });
       if (!_.isUndefined(receipt.get('selectedPayment')) && receipt.getChange() > 0) {
-        var payment = OB.MobileApp.model.paymentnames[receipt.get('selectedPayment')];
-        if (!payment.paymentMethod.iscash) {
-          payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
-        }
-        if (receipt.get('payment') >= receipt.get('gross') || (!_.isUndefined(receipt.get('paidInNegativeStatusAmt')) && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
-          receipt.addPayment(new OB.Model.PaymentLine({
-            'kind': payment.payment.searchKey,
-            'name': payment.payment.commercialName,
-            'amount': OB.DEC.sub(0, OB.DEC.mul(receipt.getChange(), payment.mulrate)),
-            'rate': payment.rate,
-            'mulrate': payment.mulrate,
-            'isocode': payment.isocode,
-            'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
-            'isCash': payment.paymentMethod.iscash,
-            'openDrawer': payment.paymentMethod.openDrawer,
-            'printtwice': payment.paymentMethod.printtwice
-          }), function (receipt) {
-            receipt.set('change', oldChange);
-            for (i = 0; i < receipt.get('payments').length; i++) {
-              paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-              if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
-                receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-                receipt.set('paidOnCredit', true);
-              }
-            }
+        if (OB.UTIL.MultiCurrencyChange.isActive() && OB.UTIL.MultiCurrencyChange.getChangePayments()) {
+          //adding logic for multi currency change
+          var paymentSearchKey, addPaymentCallback = _.after(OB.UTIL.MultiCurrencyChange.getChangePaymentsSize(), function () {
             triggerReceiptClose(receipt);
           });
+          for (paymentSearchKey in OB.UTIL.MultiCurrencyChange.getChangePayments()) {
+            if (OB.UTIL.MultiCurrencyChange.getChangePayments().hasOwnProperty(paymentSearchKey)) {
+              var paymentToAdd = OB.MobileApp.model.paymentnames[paymentSearchKey];
+              receipt.addPayment(new OB.Model.PaymentLine({
+                'kind': paymentToAdd.payment.searchKey,
+                'name': paymentToAdd.payment.commercialName,
+                'amount': OB.DEC.sub(0, OB.UTIL.MultiCurrencyChange.getChangePayments(paymentSearchKey)),
+                'rate': paymentToAdd.rate,
+                'mulrate': paymentToAdd.mulrate,
+                'isocode': paymentToAdd.isocode,
+                'allowOpenDrawer': paymentToAdd.paymentMethod.allowopendrawer,
+                'isCash': paymentToAdd.paymentMethod.iscash,
+                'openDrawer': paymentToAdd.paymentMethod.openDrawer,
+                'printtwice': paymentToAdd.paymentMethod.printtwice
+              }), addPaymentCallback);
+            }
+          }
+        } else {
+          var payment = OB.MobileApp.model.paymentnames[receipt.get('selectedPayment')];
+          if (!payment.paymentMethod.iscash) {
+            payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+          }
+          if (receipt.get('payment') >= receipt.get('gross') || (!_.isUndefined(receipt.get('paidInNegativeStatusAmt')) && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
+            receipt.addPayment(new OB.Model.PaymentLine({
+              'kind': payment.payment.searchKey,
+              'name': payment.payment.commercialName,
+              'amount': OB.DEC.sub(0, OB.DEC.mul(receipt.getChange(), payment.mulrate)),
+              'rate': payment.rate,
+              'mulrate': payment.mulrate,
+              'isocode': payment.isocode,
+              'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
+              'isCash': payment.paymentMethod.iscash,
+              'openDrawer': payment.paymentMethod.openDrawer,
+              'printtwice': payment.paymentMethod.printtwice
+            }), function (receipt) {
+              receipt.set('change', oldChange);
+              for (i = 0; i < receipt.get('payments').length; i++) {
+                paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+                if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
+                  receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
+                  receipt.set('paidOnCredit', true);
+                }
+              }
+              triggerReceiptClose(receipt);
+            });
+          }
         }
       } else {
         for (i = 0; i < receipt.get('payments').length; i++) {
