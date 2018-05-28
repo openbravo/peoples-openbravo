@@ -21,7 +21,7 @@ package org.openbravo.common.actionhandler.createlinesfromprocess;
 import org.openbravo.model.common.order.OrderLine;
 
 /**
- * Implementation for Create Lines From Order Lines
+ * Implementation for Create Invoice Lines From Order Lines
  */
 public class CreateInvoiceLinesFromOrderLines extends CreateInvoiceLinesFrom<OrderLine> {
   @Override
