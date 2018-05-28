@@ -527,13 +527,33 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     }
     this.singleDateMode = false;
     this.singleDateValue = null;
-    if (this.rangeItemValue !== value && sourceGrid && sourceGrid.lazyFiltering && sourceGrid.sorter) {
+    if (this.rangeChanged(data) && sourceGrid && sourceGrid.lazyFiltering && sourceGrid.sorter) {
       sourceGrid.filterHasChanged = true;
       sourceGrid.sorter.enable();
     }
     this.rangeItemValue = value;
     this.displayValue();
     this.form.grid.performAction();
+  },
+
+  rangeChanged: function (newRange) {
+    var currentStart, currentEnd, newStart, newEnd;
+    if (!newRange) {
+      return false;
+    }
+    if (!this.rangeItemValue) {
+      return true;
+    }
+    currentStart = this.getAbsoluteDate(this.rangeItemValue.start, 'start');
+    currentEnd = this.getAbsoluteDate(this.rangeItemValue.end, 'end');
+    newStart = this.getAbsoluteDate(newRange.start, 'start');
+    newEnd = this.getAbsoluteDate(newRange.end, 'end');
+    return 0 !== isc.Date.compareLogicalDates(currentStart, newStart) || 0 !== isc.Date.compareLogicalDates(currentEnd, newEnd);
+  },
+
+  getAbsoluteDate: function (date, rangePosition) {
+    var RDI = isc.OBRelativeDateItem;
+    return RDI.isRelativeDate(date) ? RDI.getAbsoluteDate(date.value, null, null, rangePosition) : date;
   },
 
   hasAdvancedCriteria: function () {
@@ -705,11 +725,8 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
       return value;
     }
     value = this.rangeItemValue;
-    var fromDate = value.start,
-        toDate = value.end,
-        RDI = isc.OBRelativeDateItem,
-        start = (RDI.isRelativeDate(fromDate) ? RDI.getAbsoluteDate(fromDate.value, null, null, 'start') : fromDate),
-        end = (RDI.isRelativeDate(toDate) ? RDI.getAbsoluteDate(toDate.value, null, null, 'end') : toDate);
+    var start = this.getAbsoluteDate(value.start, 'start'),
+        end = this.getAbsoluteDate(value.end, 'end');
 
     var prompt;
     if (start || end) {
