@@ -527,7 +527,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     }
     this.singleDateMode = false;
     this.singleDateValue = null;
-    if (this.rangeChanged(data) && sourceGrid && sourceGrid.lazyFiltering && sourceGrid.sorter) {
+    if (sourceGrid && sourceGrid.lazyFiltering && sourceGrid.sorter && this.rangeChanged(data)) {
       sourceGrid.filterHasChanged = true;
       sourceGrid.sorter.enable();
     }
