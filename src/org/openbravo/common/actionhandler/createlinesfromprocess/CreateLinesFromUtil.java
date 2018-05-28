@@ -74,15 +74,13 @@ class CreateLinesFromUtil {
   }
 
   static Invoice getCurrentInvoice(JSONObject jsonRequest) {
-    Invoice invoice = null;
     try {
-      String invoiceId = jsonRequest.getString("inpcInvoiceId");
-      invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
+      final String invoiceId = jsonRequest.getString("inpcInvoiceId");
+      return OBDal.getInstance().get(Invoice.class, invoiceId);
     } catch (JSONException e) {
       log.error("Error getting the invoice.", e);
       throw new OBException(e);
     }
-    return invoice;
   }
 
   static JSONArray getSelectedLines(final JSONObject jsonRequest) throws JSONException {
@@ -90,13 +88,11 @@ class CreateLinesFromUtil {
   }
 
   static BigDecimal getOrderedQuantity(BaseOBObject line, JSONObject selectedPEValuesInLine) {
-    BigDecimal orderedQuantity = null;
     if (isOrderLine(line) && ((OrderLine) line).getGoodsShipmentLine() != null) {
-      orderedQuantity = ((OrderLine) line).getGoodsShipmentLine().getMovementQuantity();
+      return ((OrderLine) line).getGoodsShipmentLine().getMovementQuantity();
     } else {
-      orderedQuantity = getOrderedQuantity(selectedPEValuesInLine);
+      return getOrderedQuantity(selectedPEValuesInLine);
     }
-    return orderedQuantity;
   }
 
   private static BigDecimal getOrderedQuantity(JSONObject selectedPEValuesInLine) {
@@ -110,13 +106,11 @@ class CreateLinesFromUtil {
   }
 
   static BigDecimal getOperativeQuantity(BaseOBObject line, JSONObject selectedPEValuesInLine) {
-    BigDecimal operativeQuantity = null;
     if (isOrderLine(line) && ((OrderLine) line).getGoodsShipmentLine() != null) {
-      operativeQuantity = ((OrderLine) line).getGoodsShipmentLine().getOperativeQuantity();
+      return ((OrderLine) line).getGoodsShipmentLine().getOperativeQuantity();
     } else {
-      operativeQuantity = getOperativeQuantity(selectedPEValuesInLine);
+      return getOperativeQuantity(selectedPEValuesInLine);
     }
-    return operativeQuantity;
   }
 
   private static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
@@ -154,17 +148,12 @@ class CreateLinesFromUtil {
   }
 
   static UOM getAUM(BaseOBObject line) {
-    UOM aum = null;
     if (isOrderLine(line)) {
-      if (((OrderLine) line).getGoodsShipmentLine() != null) {
-        aum = ((OrderLine) line).getGoodsShipmentLine().getOperativeUOM();
-      } else {
-        aum = ((OrderLine) line).getOperativeUOM();
-      }
+      return ((OrderLine) line).getGoodsShipmentLine() != null ? ((OrderLine) line)
+          .getGoodsShipmentLine().getOperativeUOM() : ((OrderLine) line).getOperativeUOM();
     } else {
-      aum = ((ShipmentInOutLine) line).getOperativeUOM();
+      return ((ShipmentInOutLine) line).getOperativeUOM();
     }
-    return aum;
   }
 
   static boolean isOrderLineWithRelatedShipmentReceiptLines(BaseOBObject line,
