@@ -20,15 +20,17 @@
 package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.OrderLine;
@@ -180,19 +182,53 @@ class CreateLinesFromUtil {
         && !JsonUtils.isValueEmpty(selectedPEValuesInLine.getString(propertyName));
   }
 
-  static List<ShipmentInOutLine> getRelatedShipmentLines(final OrderLine orderLine) {
-    StringBuilder shipmentHQLQuery = new StringBuilder(" as il");
+  @SuppressWarnings("unchecked")
+  static List<ShipmentInOutLineData> getRelatedShipmentLines(final OrderLine orderLine) {
+    Boolean isSalesTransaction = orderLine.getSalesOrder().isSalesTransaction();
+    StringBuilder shipmentHQLQuery = new StringBuilder(" SELECT il.id, ");
+    if (isSalesTransaction) {
+      shipmentHQLQuery.append(" il.movementQuantity,");
+      shipmentHQLQuery.append(" il.orderQuantity,");
+    } else {
+      shipmentHQLQuery.append(" il.movementQuantity - sum(coalesce(mi.quantity,0)),");
+      shipmentHQLQuery
+          .append(" il.orderQuantity * to_number(c_divide(il.movementQuantity - sum(coalesce((mi.quantity),0)), il.movementQuantity)),");
+    }
+    shipmentHQLQuery.append(" il.operativeQuantity,");
+    shipmentHQLQuery.append(" il.operativeUOM.id,");
+    shipmentHQLQuery.append(" il.uOM.id");
+    shipmentHQLQuery.append(" FROM MaterialMgmtShipmentInOutLine AS il");
     shipmentHQLQuery.append(" join il.shipmentReceipt sh");
+    if (!isSalesTransaction) {
+      shipmentHQLQuery
+          .append(" left join il.procurementPOInvoiceMatchList mi with mi.invoiceLine.id is not null");
+    }
     shipmentHQLQuery.append(" where il.salesOrderLine.id = :orderLineId");
-    shipmentHQLQuery.append("  and sh.processed = :processed");
+    shipmentHQLQuery.append("  and sh.processed = 'Y'");
     shipmentHQLQuery.append("  and sh.documentStatus in ('CO', 'CL')");
-    shipmentHQLQuery.append("  and sh.completelyInvoiced = 'N'"); // This actually is a good filter
-                                                                  // for sales flow only
+    if (isSalesTransaction) {
+      shipmentHQLQuery.append("  and sh.completelyInvoiced = 'N'");
+    }
+    if (!isSalesTransaction) {
+      shipmentHQLQuery
+          .append(" group by il.id, il.salesOrderLine.id, il.movementQuantity, il.orderQuantity,");
+      shipmentHQLQuery
+          .append("   il.operativeQuantity, il.operativeUOM.id, il.uOM.id, mi.id, mi.quantity");
+      shipmentHQLQuery.append(" having (il.movementQuantity - sum(coalesce(mi.quantity,0)) <> 0)");
+    }
 
-    OBQuery<ShipmentInOutLine> shipmentQuery = OBDal.getInstance().createQuery(
-        ShipmentInOutLine.class, shipmentHQLQuery.toString());
-    shipmentQuery.setNamedParameter("orderLineId", orderLine.getId());
-    shipmentQuery.setNamedParameter("processed", true);
-    return shipmentQuery.list();
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(shipmentHQLQuery.toString());
+    query.setString("orderLineId", orderLine.getId());
+    return getShipmentInOutLinesInformation((List<Object[]>) query.list());
+  }
+
+  static List<ShipmentInOutLineData> getShipmentInOutLinesInformation(
+      List<Object[]> shipmentInOutLineData) {
+    List<ShipmentInOutLineData> shipmentInOutLines = new ArrayList<>();
+    for (Object[] shipmentInOutLine : shipmentInOutLineData) {
+      shipmentInOutLines.add(new ShipmentInOutLineData(shipmentInOutLine));
+    }
+    return shipmentInOutLines;
   }
 }

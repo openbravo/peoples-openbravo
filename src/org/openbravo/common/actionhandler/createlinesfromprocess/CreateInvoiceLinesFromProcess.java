@@ -143,35 +143,34 @@ public class CreateInvoiceLinesFromProcess {
 
   private List<JSONObject> getRelatedShipmentLinesAsJSONObjects(final OrderLine orderLine) {
     final List<JSONObject> relatedShipmentLinesToOrderLine = new ArrayList<>();
-    for (ShipmentInOutLine shipmentInOutLine : CreateLinesFromUtil
+    for (ShipmentInOutLineData shipmentInOutLineData : CreateLinesFromUtil
         .getRelatedShipmentLines(orderLine)) {
       relatedShipmentLinesToOrderLine.add(getShipmentInOutJson((OrderLine) orderLine,
-          shipmentInOutLine));
-      OBDal.getInstance().getSession().evict(shipmentInOutLine);
+          shipmentInOutLineData));
+      OBDal
+          .getInstance()
+          .getSession()
+          .evict(
+              OBDal.getInstance().getProxy(ShipmentInOutLine.class,
+                  shipmentInOutLineData.getShipmentInOutLineId()));
     }
     return relatedShipmentLinesToOrderLine;
   }
 
-  private JSONObject getShipmentInOutJson(OrderLine orderLine, ShipmentInOutLine shipmentInOut) {
+  private JSONObject getShipmentInOutJson(OrderLine orderLine,
+      ShipmentInOutLineData shipmentInOutLineData) {
     JSONObject line = new JSONObject();
     try {
-      line.put("uOM", orderLine.getUOM().getId());
-      line.put("uOM$_identifier", orderLine.getUOM().getIdentifier());
+      line.put("uOM", shipmentInOutLineData.getUOMId());
       line.put("product", orderLine.getProduct().getId());
-      line.put("product$_identifier", orderLine.getProduct().getIdentifier());
       line.put("lineNo", orderLine.getLineNo());
-      line.put("orderedQuantity", shipmentInOut.getMovementQuantity().toString());
-      line.put("operativeQuantity", shipmentInOut.getOperativeQuantity() == null ? null
-          : shipmentInOut.getOperativeQuantity().toString());
+      line.put("orderedQuantity", shipmentInOutLineData.getMovementQuantity());
+      line.put("operativeQuantity", shipmentInOutLineData.getOperativeQuantity());
       line.put("id", orderLine.getId());
       line.put("salesOrder", orderLine.getSalesOrder().getId());
-      line.put("operativeUOM", shipmentInOut.getOperativeUOM() == null ? null : shipmentInOut
-          .getOperativeUOM().getId());
-      line.put("operativeUOM$_identifier", shipmentInOut.getOperativeUOM() == null ? shipmentInOut
-          .getUOM().getIdentifier() : shipmentInOut.getOperativeUOM().getIdentifier());
-      line.put("orderQuantity", "");
-
-      line.put("shipmentInOutLine", shipmentInOut.getId());
+      line.put("operativeUOM", shipmentInOutLineData.getOperativeUOMId());
+      line.put("orderQuantity", shipmentInOutLineData.getOrderQuantity());
+      line.put("shipmentInOutLine", shipmentInOutLineData.getShipmentInOutLineId());
       return line;
     } catch (JSONException e) {
       throw new OBException(e);
