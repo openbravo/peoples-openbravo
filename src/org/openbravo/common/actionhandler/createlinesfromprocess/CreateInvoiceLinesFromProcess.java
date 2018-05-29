@@ -19,6 +19,7 @@
 
 package org.openbravo.common.actionhandler.createlinesfromprocess;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -231,6 +232,8 @@ public class CreateInvoiceLinesFromProcess {
     // Always increment the lineNo when adding a new invoice line
     newInvoiceLine.setLineNo(nextLineNo());
     newInvoiceLine.setInvoice(currentInvoice);
+
+    newInvoiceLine.setLineNetAmount(BigDecimal.ZERO); // Temporary set to be able to save
     OBDal.getInstance().save(newInvoiceLine); // Force to set an ID
 
     // Execute Hooks to perform operations

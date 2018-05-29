@@ -154,22 +154,17 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     }
   }
 
-  /**
-   * Get the prepayment amount of the related order
-   * 
-   * @return The prepayment amount of related order
-   */
   private BigDecimal getOrderPrepaymentAmt() {
-    final OBCriteria<FIN_PaymentSchedule> obc = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedule.class);
-    Order processingOrder = getRelatedOrder();
-    if (processingOrder == null) {
+    try {
+      final OBCriteria<FIN_PaymentSchedule> obc = OBDal.getInstance().createCriteria(
+          FIN_PaymentSchedule.class);
+      obc.add(Restrictions
+          .eq(FIN_PaymentSchedule.PROPERTY_ORDER + ".id", getRelatedOrder().getId()));
+      obc.setMaxResults(1);
+      return obc.list().get(0).getPaidAmount();
+    } catch (Exception noOrderFoundOrNoPaymentScheduleFound) {
       return BigDecimal.ZERO;
     }
-    obc.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, processingOrder));
-    obc.setMaxResults(1);
-    BigDecimal paidAmt = ((FIN_PaymentSchedule) obc.uniqueResult()).getPaidAmount();
-    return paidAmt;
   }
 
   /**
