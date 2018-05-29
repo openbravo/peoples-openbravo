@@ -102,6 +102,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
 
       Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine = new HashMap<>();
       List<OrderlineServiceRelation> orderLinesServiceRelation = new ArrayList<>();
+      List<OrderLine> orderLinesCreatedFromExplodedBOM = new ArrayList<>();
+
       // get the lines associated with the order and clone them to the new
       // order line.
       for (OrderLine ordLine : objOrder.getOrderLineList()) {
@@ -129,17 +131,20 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         List<OrderlineServiceRelation> lineServiceRelation = cloneProductServiceRelation(ordLine,
             objCloneOrdLine);
         orderLinesServiceRelation.addAll(lineServiceRelation);
+        if (ordLine.getBOMParent() != null) {
+          orderLinesCreatedFromExplodedBOM.add(ordLine);
+        }
       }
 
-      for (OrderlineServiceRelation lineServiceRelation : orderLinesServiceRelation) {
-        OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(lineServiceRelation
-            .getOrderlineRelated().getId());
-        lineServiceRelation.setOrderlineRelated(clonedOrderLine);
-        OBDal.getInstance().save(lineServiceRelation);
-      }
+      fixRelatedServicesReferences(mapOriginalOrderLineWithCloneOrderLine,
+          orderLinesServiceRelation);
+
+      fixRelatedBOMProductsReferences(mapOriginalOrderLineWithCloneOrderLine,
+          orderLinesCreatedFromExplodedBOM);
 
       mapOriginalOrderLineWithCloneOrderLine.clear();
       orderLinesServiceRelation.clear();
+      orderLinesCreatedFromExplodedBOM.clear();
 
       OBDal.getInstance().save(objCloneOrder);
       OBDal.getInstance().flush();
@@ -168,6 +173,28 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     objCloneOrdLine.setOrderlineServiceRelationList(cloneServiceRelation);
 
     return cloneServiceRelation;
+  }
+
+  private void fixRelatedServicesReferences(
+      Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine,
+      List<OrderlineServiceRelation> orderLinesServiceRelation) {
+    for (OrderlineServiceRelation lineServiceRelation : orderLinesServiceRelation) {
+      OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(lineServiceRelation
+          .getOrderlineRelated().getId());
+      lineServiceRelation.setOrderlineRelated(clonedOrderLine);
+      OBDal.getInstance().save(lineServiceRelation);
+    }
+  }
+
+  private void fixRelatedBOMProductsReferences(
+      Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine,
+      List<OrderLine> orderLinesCreatedFromExplodedBOM) {
+    for (OrderLine orderLine : orderLinesCreatedFromExplodedBOM) {
+      OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(orderLine.getId());
+      String bomParentId = orderLine.getBOMParent().getId();
+      OrderLine clonedBomParent = mapOriginalOrderLineWithCloneOrderLine.get(bomParentId);
+      clonedOrderLine.setBOMParent(clonedBomParent);
+    }
   }
 
   private String getPriceListVersion(String priceList, String clientId) {
