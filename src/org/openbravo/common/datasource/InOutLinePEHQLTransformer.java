@@ -28,7 +28,8 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
 @ComponentProvider.Qualifier("631D227DC83A4898BBD041D46D829D27")
 public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
-  private boolean isSalesTransaction;
+  protected static final String EMPTY_STRING = "";
+  protected boolean isSalesTransaction;
 
   @Override
   public String transformHqlQuery(String _hqlQuery, Map<String, String> requestParameters,
@@ -45,7 +46,8 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     queryNamedParameters.put("plIncTax", priceList.isPriceIncludesTax());
     queryNamedParameters.put("cur", strCurrencyId);
 
-    String transformedHql = _hqlQuery.replace("@fromClause@", getFromClauseHQL());
+    String transformedHql = _hqlQuery.replace("@selectClause@", getSelectClauseHQL());
+    transformedHql = transformedHql.replace("@fromClause@", getFromClauseHQL());
     transformedHql = transformedHql.replace("@whereClause@", getWhereClauseHQL());
     transformedHql = transformedHql.replace("@groupByClause@", getGroupByHQL());
     transformedHql = transformedHql.replace("@movementQuantity@", getMovementQuantityHQL());
@@ -54,7 +56,11 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return transformedHql;
   }
 
-  private String getGroupByHQL() {
+  protected String getSelectClauseHQL() {
+    return EMPTY_STRING;
+  }
+
+  protected String getGroupByHQL() {
     StringBuilder groupByClause = new StringBuilder();
     groupByClause.append("  sh.id,");
     groupByClause.append("  sh.documentNo,");
@@ -106,7 +112,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return groupByClause.toString();
   }
 
-  private String getWhereClauseHQL() {
+  protected String getWhereClauseHQL() {
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" and sh.salesTransaction = :issotrx");
     whereClause.append(" and sh.documentStatus in ('CO', 'CL')");
@@ -128,7 +134,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return whereClause.toString();
   }
 
-  private String getFromClauseHQL() {
+  protected String getFromClauseHQL() {
     StringBuilder fromClause = new StringBuilder();
     fromClause.append(" MaterialMgmtShipmentInOutLine e");
     fromClause.append(" join e.shipmentReceipt sh");
@@ -154,7 +160,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return fromClause.toString();
   }
 
-  private String getOrderQuantityHQL() {
+  protected String getOrderQuantityHQL() {
     StringBuilder orderQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
       orderQuantityHql
@@ -167,7 +173,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return orderQuantityHql.toString();
   }
 
-  private String getOperativeQuantityHQL() {
+  protected String getOperativeQuantityHQL() {
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
         .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))))");
@@ -181,7 +187,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return operativeQuantityHql.toString();
   }
 
-  private String getMovementQuantityHQL() {
+  protected String getMovementQuantityHQL() {
     StringBuilder movementQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
       movementQuantityHql

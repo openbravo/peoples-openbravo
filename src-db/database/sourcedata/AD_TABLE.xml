@@ -10696,6 +10696,7 @@ You can also select if transactions are allowed or not for this organization typ
   (to_char(Ad_Column_Identifier(to_char('M_AttributeSetInstance'), to_char(ma.id), to_char('en_US')))) as 
  attributeSetValue,
    sb.searchKey as storageBin
+   @selectClause@
 MAINFROM
   @fromClause@
 WHERE
@@ -11241,6 +11242,7 @@ GROUP BY
   wh.name as warehouse,
   ma.serialNo as serialNo,
   (to_char(Ad_Column_Identifier(to_char('M_AttributeSetInstance'), to_char(ma.id), to_char('en_US')))) as attributeSetValue
+  @selectClause@
 MAINFROM
   @fromClause@
 WHERE

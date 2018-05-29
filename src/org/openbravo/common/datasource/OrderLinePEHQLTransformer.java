@@ -28,7 +28,8 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
 @ComponentProvider.Qualifier("7EB9FFD7BD4E4113A13A096EB879D358")
 public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
-  private boolean isSalesTransaction;
+  protected static final String EMPTY_STRING = "";
+  protected boolean isSalesTransaction;
 
   @Override
   public String transformHqlQuery(String _hqlQuery, Map<String, String> requestParameters,
@@ -49,7 +50,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       queryNamedParameters.put("invId", strInvoiceId);
     }
 
-    String transformedHql = _hqlQuery.replace("@fromClause@", getFromClauseHQL());
+    String transformedHql = _hqlQuery.replace("@selectClause@", getSelectClauseHQL());
+    transformedHql = transformedHql.replace("@fromClause@", getFromClauseHQL());
     transformedHql = transformedHql.replace("@whereClause@", getWhereClauseHQL());
     transformedHql = transformedHql.replace("@groupByClause@", getGroupByHQL());
     transformedHql = transformedHql.replace("@orderedQuantity@", getOrderedQuantityHQL());
@@ -58,7 +60,11 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return transformedHql;
   }
 
-  private String getGroupByHQL() {
+  protected String getSelectClauseHQL() {
+    return EMPTY_STRING;
+  }
+
+  protected String getGroupByHQL() {
     StringBuilder groupByClause = new StringBuilder();
     groupByClause.append("  o.id,");
     groupByClause.append("  o.documentNo,");
@@ -106,7 +112,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return groupByClause.toString();
   }
 
-  private String getWhereClauseHQL() {
+  protected String getWhereClauseHQL() {
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" and o.salesTransaction = :issotrx");
     whereClause.append(" and bp.id = :bp");
@@ -149,7 +155,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return whereClause.toString();
   }
 
-  private String getFromClauseHQL() {
+  protected String getFromClauseHQL() {
     StringBuilder fromClause = new StringBuilder();
     if (isSalesTransaction) {
       fromClause.append(" InvoiceCandidateV ic");
@@ -179,7 +185,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return fromClause.toString();
   }
 
-  private String getOrderQuantityHQL() {
+  protected String getOrderQuantityHQL() {
     StringBuilder orderQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
@@ -193,7 +199,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return orderQuantityHql.toString();
   }
 
-  private String getOperativeQuantityHQL() {
+  protected String getOperativeQuantityHQL() {
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
         .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))))");
@@ -214,7 +220,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return operativeQuantityHql.toString();
   }
 
-  private String getOrderedQuantityHQL() {
+  protected String getOrderedQuantityHQL() {
     StringBuilder orderedQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
       orderedQuantityHql.append(" e.orderedQuantity-COALESCE(e.invoicedQuantity,0)");
