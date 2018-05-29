@@ -146,12 +146,9 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     return (InvoiceLine) obc.uniqueResult();
   }
 
-  /**
-   * Update the prepayment amount of the Invoice
-   */
   private void updateInvoicePrepaymentAmount() {
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(),
-        getCopiedFromLine())) {
+    if (isCopiedFromOrderLine()
+        || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine())) {
       BigDecimal invoicePrepaymentAmt = getInvoice().getPrepaymentamt();
       getInvoice().setPrepaymentamt(invoicePrepaymentAmt.add(getOrderPrepaymentAmt()));
     }

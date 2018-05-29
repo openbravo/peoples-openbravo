@@ -170,9 +170,8 @@ class CreateLinesFromUtil {
     }
   }
 
-  static boolean isOrderLineOrHasRelatedOrderLine(final boolean isOrderLine,
-      final BaseOBObject copiedLine) {
-    return isOrderLine || ((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null;
+  static boolean hasRelatedOrderLine(final ShipmentInOutLine inOutLine) {
+    return inOutLine.getSalesOrderLine() != null;
   }
 
   private static boolean hasNotEmptyValue(JSONObject selectedPEValuesInLine, String propertyName)

@@ -54,14 +54,15 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
    */
   @Override
   public void exec() {
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(), getCopiedFromLine())) {
+    if (isCopiedFromOrderLine()
+        || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine())) {
       setPricesBasedOnOrderLineValues(isCopiedFromOrderLine() ? (OrderLine) getCopiedFromLine()
           : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
     } else {
       ProductPrice productPrice = getProductPriceInPriceList(
           (Product) getCopiedFromLine().get(
-              isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT : ShipmentInOutLine.PROPERTY_PRODUCT),
-          getInvoice().getPriceList());
+              isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT
+                  : ShipmentInOutLine.PROPERTY_PRODUCT), getInvoice().getPriceList());
       if (productPrice != null) {
         setPricesBasedOnPriceList(productPrice);
       } else {

@@ -73,7 +73,8 @@ class UpdateTax extends CreateLinesFromProcessHook {
 
   private void updateTaxableAmount() {
     BigDecimal taxBaseAmt = getInvoiceLine().getLineNetAmount();
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(), getCopiedFromLine())) {
+    if (isCopiedFromOrderLine()
+        || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine())) {
       OrderLine originalOrderLine = (isCopiedFromOrderLine() ? (OrderLine) getCopiedFromLine()
           : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
       if (originalOrderLine.getTaxableAmount() != null) {
@@ -120,7 +121,8 @@ class UpdateTax extends CreateLinesFromProcessHook {
    */
   private String getCurrentTaxId(final Product product) {
     String taxID = "";
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(), getCopiedFromLine())) {
+    if (isCopiedFromOrderLine()
+        || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine())) {
       if (isCopiedFromOrderLine()) {
         taxID = ((OrderLine) getCopiedFromLine()).getTax().getId();
       } else {
