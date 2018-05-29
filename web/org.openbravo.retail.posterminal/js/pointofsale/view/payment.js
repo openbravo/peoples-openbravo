@@ -1095,7 +1095,7 @@ enyo.kind({
   drawerOpened: true,
   isLocked: true,
   lasDisabledPetition: true,
-  processesToListen: ['showPaymentTab', 'updatePending', 'updatePendingMultiOrders'],
+  processesToListen: ['showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway'],
   disableButton: function () {
     this.isLocked = true;
     this.setDisabledIfSynchronized();

@@ -749,7 +749,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           var processCancelLayaway, cancelLayawayModel = new OB.Model.CancelLayaway(),
               documentNo = receipt.get('documentNo'),
               process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
-              synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('finishCancelLayaway');
+              execution = OB.UTIL.ProcessController.start('cancelLayaway');
 
           processCancelLayaway = function () {
             receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
@@ -803,7 +803,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 }, function () {
                   //transaction error callback
                   OB.error("[cancellayaway] The transaction failed to be commited. LayawayId: " + receipt.get('id'));
-                  OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+                  OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                 }, function () {
                   //transaction success callback
                   OB.info("[cancellayaway] Transaction success. LayawayId: " + receipt.get('id'));
@@ -921,10 +921,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   }
 
                   OB.MobileApp.model.runSyncProcess(function () {
-                    OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+                    OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                     syncProcessCallback();
                   }, function () {
-                    OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+                    OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                     if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                       syncProcessCallback();
                     }
@@ -941,15 +941,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             if (data && data.exception) {
               if (data.exception.message) {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
-                OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+                OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                 return;
               }
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+              OB.UTIL.ProcessController.finish('cancelLayaway', execution);
               return;
             } else if (data && data.orderCancelled) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+              OB.UTIL.ProcessController.finish('cancelLayaway', execution);
               return;
             } else {
               if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
@@ -964,7 +964,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           }, function () {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-            OB.UTIL.SynchronizationHelper.finished(synchId, "finishCancelLayaway");
+            OB.UTIL.ProcessController.finish('cancelLayaway', execution);
             OB.error(arguments);
           });
           };
