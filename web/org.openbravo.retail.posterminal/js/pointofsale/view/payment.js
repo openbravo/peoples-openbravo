@@ -81,7 +81,7 @@ enyo.kind({
         paymentstatus = this.model.get('multiOrders').getPaymentStatus();
       }
       if (!_.isNull(change) && change) {
-        OB.UTIL.MultiCurrencyChange.multiChange(paymentstatus, payment, this);
+        this.calculateChange(payment, change);
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
@@ -364,6 +364,68 @@ enyo.kind({
     }
   },
 
+  calculateChange: function (firstpayment, firstchange) {
+    // payment is the first payment to use in the change calculation
+    // change is > 0 and is in the document currency
+    // Result vars...
+    var changeLabelContent = '';
+    var changePayments = [];
+
+    // Add new change item to result vars...
+
+    function addChange(p, c) {
+      if (OB.DEC.compare(c)) {
+        if (changeLabelContent) {
+          changeLabelContent += ' + ';
+        }
+        changeLabelContent += OB.I18N.formatCurrencyWithSymbol(c, p.symbol, p.currencySymbolAtTheRight);
+        changePayments.push({
+          'key': p.payment.searchKey,
+          'amount': c
+        });
+      }
+    }
+
+    // Recursive function to calculate changes, payment by payment
+
+    function calculateNextChange(payment, change) {
+      var changeLessThan = payment.paymentMethod.changeLessThan;
+      if (changeLessThan) {
+        var paymentSearchKey = payment.payment.searchKey;
+        var changePayment = OB.DEC.mul(change, payment.mulrate);
+        var changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan)));
+        addChange(payment, changePaymentRounded);
+
+        var linkedSearchKey = payment.paymentMethod.changePaymentType;
+        if (linkedSearchKey) {
+          var linkedPayment = OB.MobileApp.model.get('payments').find(function (p) {
+            return p.paymentMethod.id === linkedSearchKey;
+          });
+          if (linkedPayment) {
+            // Recursion using the linked payment
+            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.div(changePaymentRounded, payment.mulrate)));
+          }
+        }
+      } else {
+        // No changeLessThan, so add the change and exit recursion...
+        addChange(payment, OB.DEC.mul(change, payment.mulrate));
+      }
+    }
+
+    if (OB.MobileApp.model.get('terminal').multiChange) {
+      // Here goes the logic to implement multi currency change 
+      calculateNextChange(firstpayment, firstchange);
+    } else {
+      // No multi currency change logic, add a simple change item and return
+      addChange(firstpayment, OB.DEC.mul(firstchange, firstpayment.mulrate));
+    }
+
+    // Set change calculation results
+    this.receipt.set('changePayments', changePayments);
+    this.$.change.setContent(changeLabelContent);
+    OB.MobileApp.model.set('changeReceipt', changeLabelContent);
+  },
+
   updatePending: function () {
     var execution = OB.UTIL.ProcessController.start('updatePending');
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -388,7 +450,7 @@ enyo.kind({
     }
     this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
     if (paymentstatus.change) {
-      OB.UTIL.MultiCurrencyChange.multiChange(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], this);
+      this.calculateChange(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], this.receipt.getChange());
       this.$.change.show();
       this.$.changelbl.show();
     } else {

@@ -213,7 +213,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/toolbar-right",
         "pointofsale/view/scan",
         "pointofsale/view/editline",
-        "utils/multiCurrencyChangeUtils",
         "pointofsale/view/payment",
         "pointofsale/view/ticketdiscount",
         "pointofsale/view/keyboard-toolbars",
