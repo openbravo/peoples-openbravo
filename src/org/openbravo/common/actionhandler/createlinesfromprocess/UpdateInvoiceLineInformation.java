@@ -20,13 +20,12 @@
 package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -87,24 +86,48 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   private void setAcctDimensionsToLine() {
     getInvoiceLine().setOrganization(getOrganizationForNewLine());
     getInvoiceLine().setProject(
-        (Project) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_PROJECT
-                : ShipmentInOutLine.PROPERTY_PROJECT));
+        (Project) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_PROJECT,
+            ShipmentInOutLine.PROPERTY_PROJECT));
     getInvoiceLine().setCostcenter(
-        (Costcenter) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_COSTCENTER
-                : ShipmentInOutLine.PROPERTY_COSTCENTER));
+        (Costcenter) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_COSTCENTER,
+            ShipmentInOutLine.PROPERTY_COSTCENTER));
     getInvoiceLine().setAsset(
-        (Asset) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_ASSET : ShipmentInOutLine.PROPERTY_ASSET));
+        (Asset) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_ASSET,
+            ShipmentInOutLine.PROPERTY_ASSET));
     getInvoiceLine().setStDimension(
-        (UserDimension1) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_STDIMENSION
-                : ShipmentInOutLine.PROPERTY_STDIMENSION));
+        (UserDimension1) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_STDIMENSION,
+            ShipmentInOutLine.PROPERTY_STDIMENSION));
     getInvoiceLine().setNdDimension(
-        (UserDimension2) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_NDDIMENSION
-                : ShipmentInOutLine.PROPERTY_NDDIMENSION));
+        (UserDimension2) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_NDDIMENSION,
+            ShipmentInOutLine.PROPERTY_NDDIMENSION));
+  }
+
+  /**
+   * Return the property object of the line if it has it defined or from the header if not
+   * 
+   * @param propertyNameOrder
+   *          The property name if it is an order line
+   * @param propertyNameInOut
+   *          The property name if it is a shipment/receipt line
+   * @return The object representing the property
+   */
+  private BaseOBObject getPropertyFromLineOrFromItParent(final String propertyNameOrder,
+      final String propertyNameInOut) {
+    BaseOBObject propertyValue = null;
+    if (isCopiedFromOrderLine()) {
+      propertyValue = (BaseOBObject) getCopiedFromLine().get(propertyNameOrder);
+      if (propertyValue == null) {
+        propertyValue = (BaseOBObject) ((OrderLine) getCopiedFromLine()).getSalesOrder().get(
+            propertyNameOrder);
+      }
+    } else {
+      propertyValue = (BaseOBObject) getCopiedFromLine().get(propertyNameInOut);
+      if (propertyValue == null) {
+        propertyValue = (BaseOBObject) ((ShipmentInOutLine) getCopiedFromLine())
+            .getShipmentReceipt().get(propertyNameInOut);
+      }
+    }
+    return propertyValue;
   }
 
   private Organization getOrganizationForNewLine() {
