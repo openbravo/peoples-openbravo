@@ -21,7 +21,11 @@ package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 /**
  * Interface to be implemented by the hooks to be executed on the Create Lines From Order process.
@@ -29,13 +33,6 @@ import org.openbravo.model.common.invoice.InvoiceLine;
  * Example of a hook:
  * 
  * <pre>
- * import javax.enterprise.context.Dependent;
- * import org.openbravo.client.kernel.ComponentProvider.Qualifier;
- * import org.openbravo.common.actionhandler.createlinesfromprocess.CreateLinesFromProcessImplementationInterface;
- * import org.openbravo.base.structure.BaseOBObject;
- * import org.openbravo.model.common.invoice.Invoice;
- * import org.openbravo.model.common.invoice.InvoiceLine;
- * 
  * &#064;Dependent
  * &#064;Qualifier(CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
  * public class TestHook implements CreateLinesFromProcessImplementationInterface {
@@ -46,22 +43,31 @@ import org.openbravo.model.common.invoice.InvoiceLine;
  *   }
  * 
  *   &#064;Override
- *   public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
- *       final BaseOBObject copiedLine) {
- *     newInvoiceLine.setDescription(&quot;Test&quot;);
+ *   public void exec() {
+ *     getInvoiceLine().setDescription(&quot;Test&quot;);
  *   }
  * }
  * </pre>
+ * 
+ * This class has useful public method to access to the invoice and invoice line currently being
+ * created, the BaseOBObject line (Order/InOut) from which the invoice line is being created or even
+ * the JSONObject from which the invoice line is being created.
  *
  */
-public interface CreateLinesFromProcessImplementationInterface {
+public abstract class CreateLinesFromProcessHook {
   public static final String CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER = "CreatelinesFromProcessHookQualifier";
+
+  private String invoiceId;
+  private String invoiceLineId;
+  private String copiedFromLineId;
+  private boolean isCopiedFromOrderLine;
+  private JSONObject pickedJSONObject;
 
   /**
    * Returns the order when the concrete hook will be implemented. A positive value will execute the
    * hook after the core's logic
    */
-  public int getOrder();
+  public abstract int getOrder();
 
   /**
    * Executes the hook logic on the Create Lines From process
@@ -76,6 +82,54 @@ public interface CreateLinesFromProcessImplementationInterface {
    * @param copiedLine
    *          the order/shipment/receipt line from which we are creating the invoice line
    */
-  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
-      final BaseOBObject copiedLine);
+  public abstract void exec();
+
+  void initAndExecute(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
+      final BaseOBObject copiedFromLine) {
+    init(newInvoiceLine, pickExecuteLineValues, copiedFromLine);
+    exec();
+  }
+
+  private void init(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
+      final BaseOBObject copiedFromLine) {
+    this.invoiceId = newInvoiceLine.getInvoice().getId();
+    this.invoiceLineId = newInvoiceLine.getId();
+    this.copiedFromLineId = (String) copiedFromLine.getId();
+    this.isCopiedFromOrderLine = CreateLinesFromUtil.isOrderLine(copiedFromLine);
+    this.pickedJSONObject = pickExecuteLineValues;
+  }
+
+  /**
+   * Returns the Invoice currently being created
+   */
+  public Invoice getInvoice() {
+    return OBDal.getInstance().getProxy(Invoice.class, invoiceId);
+  }
+
+  /**
+   * Returns the Invoice Line currently being created
+   */
+  public InvoiceLine getInvoiceLine() {
+    return OBDal.getInstance().getProxy(InvoiceLine.class, invoiceLineId);
+  }
+
+  /**
+   * Returns the line from which the invoice line will be created. It can be either a shipment or an
+   * order line
+   */
+  public BaseOBObject getCopiedFromLine() {
+    return OBDal.getInstance().getProxy(
+        isCopiedFromOrderLine() ? OrderLine.class : ShipmentInOutLine.class, copiedFromLineId);
+  }
+
+  /**
+   * Returns true if the line from which the invoice line will be created is an order line.
+   */
+  public boolean isCopiedFromOrderLine() {
+    return isCopiedFromOrderLine;
+  }
+
+  public JSONObject getPickExecJSONObject() {
+    return pickedJSONObject;
+  }
 }

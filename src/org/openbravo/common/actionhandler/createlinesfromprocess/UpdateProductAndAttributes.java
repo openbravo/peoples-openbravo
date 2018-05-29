@@ -21,12 +21,9 @@ package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import javax.enterprise.context.Dependent;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeInstance;
 import org.openbravo.model.common.plm.AttributeSetInstance;
@@ -34,10 +31,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 @Dependent
-@Qualifier(CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
-class UpdateProductAndAttributes implements CreateLinesFromProcessImplementationInterface {
-  private BaseOBObject copiedLine;
-  private boolean isOrderLine;
+@Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
+class UpdateProductAndAttributes extends CreateLinesFromProcessHook {
 
   @Override
   public int getOrder() {
@@ -48,19 +43,17 @@ class UpdateProductAndAttributes implements CreateLinesFromProcessImplementation
    * Update the product and attribute set to the new invoice line
    */
   @Override
-  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
-      final BaseOBObject selectedLine) {
-    this.copiedLine = selectedLine;
-    this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
+  public void exec() {
     // Update the product
-    newInvoiceLine.setProduct((Product) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_PRODUCT
-        : ShipmentInOutLine.PROPERTY_PRODUCT));
+    getInvoiceLine().setProduct(
+        (Product) getCopiedFromLine().get(
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT : ShipmentInOutLine.PROPERTY_PRODUCT));
     // Update the attributes
-    AttributeSetInstance attributeSetValue = (AttributeSetInstance) copiedLine
-        .get(isOrderLine ? OrderLine.PROPERTY_ATTRIBUTESETVALUE
+    AttributeSetInstance attributeSetValue = (AttributeSetInstance) getCopiedFromLine().get(
+        isCopiedFromOrderLine() ? OrderLine.PROPERTY_ATTRIBUTESETVALUE
             : ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE);
     if (attributeSetValue != null) {
-      newInvoiceLine.setAttributeSetValue(copyAttributeSetValue(attributeSetValue));
+      getInvoiceLine().setAttributeSetValue(copyAttributeSetValue(attributeSetValue));
     }
   }
 

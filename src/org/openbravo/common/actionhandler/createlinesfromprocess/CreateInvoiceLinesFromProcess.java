@@ -52,7 +52,7 @@ public class CreateInvoiceLinesFromProcess {
 
   @Inject
   @Any
-  private Instance<CreateLinesFromProcessImplementationInterface> createLinesFromProcessHooks;
+  private Instance<CreateLinesFromProcessHook> createLinesFromProcessHooks;
 
   // The class of the objects from which the invoice lines will be created
   private Class<? extends BaseOBObject> linesFromClass;
@@ -199,12 +199,11 @@ public class CreateInvoiceLinesFromProcess {
     int createdInvoiceLinesCount = 0;
     for (int index = 0; index < linesToProcess.length(); index++) {
       JSONObject selectedLineJS = linesToProcess.getJSONObject(index);
-      BaseOBObject selectedLine = OBDal.getInstance().get(linesFromClass,
+      BaseOBObject createdFromLine = OBDal.getInstance().get(linesFromClass,
           selectedLineJS.getString("id"));
       InvoiceLine newInvoiceLine = createLineFromSelectedLineAndRunHooks(currentInvoice,
-          selectedLine, selectedLineJS);
+          createdFromLine, selectedLineJS);
       currentInvoice.getInvoiceLineList().add(newInvoiceLine);
-      OBDal.getInstance().save(newInvoiceLine);
       OBDal.getInstance().save(currentInvoice);
       createdInvoiceLinesCount++;
       // Flush is needed to persist this created invoice line in the database to be taken into
@@ -219,22 +218,23 @@ public class CreateInvoiceLinesFromProcess {
    * 
    * @param currentInvoice
    *          The invoice currently being created
-   * @param copiedLine
+   * @param createdFromLine
    *          The BaseOBObject representing the selected object in the PE
    * @param selectedLine
    *          The JSONOBject representing the selected object in the PE
    * @return The created invoice line
    */
   private InvoiceLine createLineFromSelectedLineAndRunHooks(final Invoice currentInvoice,
-      final BaseOBObject copiedLine, final JSONObject pickExecuteLineValues) {
+      final BaseOBObject createdFromLine, final JSONObject pickExecuteLineValues) {
     InvoiceLine newInvoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
 
     // Always increment the lineNo when adding a new invoice line
     newInvoiceLine.setLineNo(nextLineNo());
     newInvoiceLine.setInvoice(currentInvoice);
+    OBDal.getInstance().save(newInvoiceLine); // Force to set an ID
 
     // Execute Hooks to perform operations
-    executeHooks(pickExecuteLineValues, copiedLine, newInvoiceLine);
+    executeHooks(pickExecuteLineValues, createdFromLine, newInvoiceLine);
 
     return newInvoiceLine;
   }
@@ -244,22 +244,22 @@ public class CreateInvoiceLinesFromProcess {
     return lastLineNo;
   }
 
-  private void executeHooks(JSONObject pickExecuteLineValues, final BaseOBObject line,
+  private void executeHooks(JSONObject pickExecuteLineValues, final BaseOBObject createdFromLine,
       InvoiceLine newInvoiceLine) {
     try {
       if (createLinesFromProcessHooks != null) {
-        final List<CreateLinesFromProcessImplementationInterface> hooks = new ArrayList<>();
-        for (CreateLinesFromProcessImplementationInterface hook : createLinesFromProcessHooks
+        final List<CreateLinesFromProcessHook> hooks = new ArrayList<>();
+        for (CreateLinesFromProcessHook hook : createLinesFromProcessHooks
             .select(new ComponentProvider.Selector(
-                CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER))) {
+                CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER))) {
           if (hook != null) {
             hooks.add(hook);
           }
         }
 
         Collections.sort(hooks, new CreateLinesFromHookComparator());
-        for (CreateLinesFromProcessImplementationInterface hook : hooks) {
-          hook.exec(newInvoiceLine, pickExecuteLineValues, line);
+        for (CreateLinesFromProcessHook hook : hooks) {
+          hook.initAndExecute(newInvoiceLine, pickExecuteLineValues, createdFromLine);
         }
       }
     } catch (Exception e) {
@@ -269,10 +269,9 @@ public class CreateInvoiceLinesFromProcess {
   }
 
   private static class CreateLinesFromHookComparator implements
-      Comparator<CreateLinesFromProcessImplementationInterface> {
+      Comparator<CreateLinesFromProcessHook> {
     @Override
-    public int compare(CreateLinesFromProcessImplementationInterface a,
-        CreateLinesFromProcessImplementationInterface b) {
+    public int compare(CreateLinesFromProcessHook a, CreateLinesFromProcessHook b) {
       return a.getOrder() < b.getOrder() ? -1 : a.getOrder() == b.getOrder() ? 0 : 1;
     }
   }

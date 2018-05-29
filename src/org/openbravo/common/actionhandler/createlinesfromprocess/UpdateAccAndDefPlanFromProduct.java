@@ -24,17 +24,14 @@ import java.util.HashMap;
 import javax.enterprise.context.Dependent;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.AccDefUtility;
-import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.financialmgmt.calendar.Period;
 
 @Dependent
-@Qualifier(CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
-class UpdateAccAndDefPlanFromProduct implements CreateLinesFromProcessImplementationInterface {
+@Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
+class UpdateAccAndDefPlanFromProduct extends CreateLinesFromProcessHook {
 
   @Override
   public int getOrder() {
@@ -45,21 +42,20 @@ class UpdateAccAndDefPlanFromProduct implements CreateLinesFromProcessImplementa
    * Calculate Acc and Def Plan from Product
    */
   @Override
-  public void exec(InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
-      BaseOBObject copiedLine) {
+  public void exec() {
     boolean isDeferred = false;
     HashMap<String, String> accDefPlanData = AccDefUtility.getDeferredPlanForInvoiceProduct(
-        newInvoiceLine.getInvoice().getId(), newInvoiceLine.getProduct().getId());
+        getInvoiceLine().getInvoice().getId(), getInvoiceLine().getProduct().getId());
     String planType = accDefPlanData.get("planType");
     String periodNumber = accDefPlanData.get("periodNumber");
     String startingPeriodId = accDefPlanData.get("startingPeriodId");
     if (StringUtils.isNotEmpty(planType) && StringUtils.isNotEmpty(periodNumber)
         && StringUtils.isNotEmpty(startingPeriodId)) {
       isDeferred = true;
-      newInvoiceLine.setDeferredPlanType(planType);
-      newInvoiceLine.setPeriodNumber(Long.valueOf(periodNumber));
-      newInvoiceLine.setPeriod(OBDal.getInstance().get(Period.class, startingPeriodId));
+      getInvoiceLine().setDeferredPlanType(planType);
+      getInvoiceLine().setPeriodNumber(Long.valueOf(periodNumber));
+      getInvoiceLine().setPeriod(OBDal.getInstance().get(Period.class, startingPeriodId));
     }
-    newInvoiceLine.setDeferred(isDeferred);
+    getInvoiceLine().setDeferred(isDeferred);
   }
 }

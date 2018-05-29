@@ -24,16 +24,13 @@ import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -46,15 +43,8 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.project.Project;
 
 @Dependent
-@Qualifier(CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
-class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementationInterface {
-
-  private Invoice processingInvoice;
-  private BaseOBObject copiedLine;
-  private InvoiceLine invoiceLine;
-  private boolean isOrderLine;
-  private JSONObject pickExecLineValues;
-
+@Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
+class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   @Override
   public int getOrder() {
     return -60;
@@ -65,14 +55,7 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    * copied order line.
    */
   @Override
-  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
-      final BaseOBObject selectedLine) {
-    this.processingInvoice = newInvoiceLine.getInvoice();
-    this.copiedLine = selectedLine;
-    this.invoiceLine = newInvoiceLine;
-    this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
-    this.pickExecLineValues = pickExecuteLineValues;
-
+  public void exec() {
     // Create to the new invoice line the reference to the order line from it is created
     updateOrderLineReference();
 
@@ -97,13 +80,14 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    * Creates to the new invoice line the reference to the order line from it is created.
    */
   private void updateOrderLineReference() {
-    if (isOrderLine) {
-      invoiceLine.setSalesOrderLine((OrderLine) copiedLine);
-      invoiceLine
-          .setGoodsShipmentLine(CreateLinesFromUtil.getShipmentInOutLine(pickExecLineValues));
-    } else if (CreateLinesFromUtil.isShipmentReceiptLine(copiedLine)) {
-      invoiceLine.setGoodsShipmentLine((ShipmentInOutLine) copiedLine);
-      invoiceLine.setSalesOrderLine(((ShipmentInOutLine) copiedLine).getSalesOrderLine());
+    if (isCopiedFromOrderLine()) {
+      getInvoiceLine().setSalesOrderLine((OrderLine) getCopiedFromLine());
+      getInvoiceLine().setGoodsShipmentLine(
+          CreateLinesFromUtil.getShipmentInOutLine(getPickExecJSONObject()));
+    } else if (CreateLinesFromUtil.isShipmentReceiptLine(getCopiedFromLine())) {
+      getInvoiceLine().setGoodsShipmentLine((ShipmentInOutLine) getCopiedFromLine());
+      getInvoiceLine().setSalesOrderLine(
+          ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
     }
   }
 
@@ -111,38 +95,42 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    * Updates some invoice line information from the invoice header
    */
   private void updateInformationFromInvoice() {
-    invoiceLine.setClient(processingInvoice.getClient());
-    invoiceLine.setDescription(processingInvoice.getDescription());
+    getInvoiceLine().setClient(getInvoice().getClient());
+    getInvoiceLine().setDescription(getInvoice().getDescription());
   }
 
   private void udpateInformationFromOrderLine() {
-    invoiceLine.setOrganization(getOrganizationForNewLine());
-    invoiceLine.setProject((Project) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_PROJECT
-        : ShipmentInOutLine.PROPERTY_PROJECT));
-    invoiceLine.setCostcenter((Costcenter) copiedLine
-        .get(isOrderLine ? OrderLine.PROPERTY_COSTCENTER : ShipmentInOutLine.PROPERTY_COSTCENTER));
-    invoiceLine.setAsset((Asset) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_ASSET
-        : ShipmentInOutLine.PROPERTY_ASSET));
-    invoiceLine
-        .setStDimension((UserDimension1) copiedLine
-            .get(isOrderLine ? OrderLine.PROPERTY_STDIMENSION
-                : ShipmentInOutLine.PROPERTY_STDIMENSION));
-    invoiceLine
-        .setNdDimension((UserDimension2) copiedLine
-            .get(isOrderLine ? OrderLine.PROPERTY_NDDIMENSION
-                : ShipmentInOutLine.PROPERTY_NDDIMENSION));
+    getInvoiceLine().setOrganization(getOrganizationForNewLine());
+    getInvoiceLine().setProject(
+        (Project) getCopiedFromLine().get(
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_PROJECT : ShipmentInOutLine.PROPERTY_PROJECT));
+    getInvoiceLine().setCostcenter(
+        (Costcenter) getCopiedFromLine().get(
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_COSTCENTER : ShipmentInOutLine.PROPERTY_COSTCENTER));
+    getInvoiceLine().setAsset(
+        (Asset) getCopiedFromLine().get(
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_ASSET : ShipmentInOutLine.PROPERTY_ASSET));
+    getInvoiceLine().setStDimension(
+        (UserDimension1) getCopiedFromLine()
+            .get(
+                isCopiedFromOrderLine() ? OrderLine.PROPERTY_STDIMENSION
+                    : ShipmentInOutLine.PROPERTY_STDIMENSION));
+    getInvoiceLine().setNdDimension(
+        (UserDimension2) getCopiedFromLine()
+            .get(
+                isCopiedFromOrderLine() ? OrderLine.PROPERTY_NDDIMENSION
+                    : ShipmentInOutLine.PROPERTY_NDDIMENSION));
   }
 
   private Organization getOrganizationForNewLine() {
-    Organization organizationForNewLine = processingInvoice.getOrganization();
+    Organization organizationForNewLine = getInvoice().getOrganization();
     Set<String> parentOrgTree = new OrganizationStructureProvider().getChildTree(
         organizationForNewLine.getId(), true);
     // If the Organization of the line that is being copied belongs to the child tree of the
     // Organization of the document header of the new line, use the organization of the line being
     // copied, else use the organization of the document header of the new line
-    Organization copiedLineOrg = ((Organization) copiedLine
-        .get(isOrderLine ? OrderLine.PROPERTY_ORGANIZATION
-            : ShipmentInOutLine.PROPERTY_ORGANIZATION));
+    Organization copiedLineOrg = ((Organization) getCopiedFromLine().get(
+        isCopiedFromOrderLine() ? OrderLine.PROPERTY_ORGANIZATION : ShipmentInOutLine.PROPERTY_ORGANIZATION));
     if (parentOrgTree.contains(copiedLineOrg.getId())) {
       organizationForNewLine = copiedLineOrg;
     }
@@ -150,22 +138,22 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
   }
 
   private void updateBOMParent() {
-    invoiceLine.setBOMParent(getInvoiceLineBOMParent());
+    getInvoiceLine().setBOMParent(getInvoiceLineBOMParent());
   }
 
   private InvoiceLine getInvoiceLineBOMParent() {
-    if (!isOrderLine && ((ShipmentInOutLine) copiedLine).getBOMParent() == null) {
+    if (!isCopiedFromOrderLine() && ((ShipmentInOutLine) getCopiedFromLine()).getBOMParent() == null) {
       return null;
     }
 
     OBCriteria<InvoiceLine> obc = OBDal.getInstance().createCriteria(InvoiceLine.class);
-    obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, processingInvoice));
-    if (isOrderLine) {
+    obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, getInvoice()));
+    if (isCopiedFromOrderLine()) {
       obc.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE,
-          ((OrderLine) copiedLine).getBOMParent()));
+          ((OrderLine) getCopiedFromLine()).getBOMParent()));
     } else {
       obc.add(Restrictions.eq(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE,
-          ((ShipmentInOutLine) copiedLine).getBOMParent()));
+          ((ShipmentInOutLine) getCopiedFromLine()).getBOMParent()));
     }
     obc.setMaxResults(1);
     return (InvoiceLine) obc.uniqueResult();
@@ -175,9 +163,9 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
    * Update the prepayment amount of the Invoice
    */
   private void updateInvoicePrepaymentAmount() {
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isOrderLine, copiedLine)) {
-      BigDecimal invoicePrepaymentAmt = processingInvoice.getPrepaymentamt();
-      processingInvoice.setPrepaymentamt(invoicePrepaymentAmt.add(getOrderPrepaymentAmt()));
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(), getCopiedFromLine())) {
+      BigDecimal invoicePrepaymentAmt = getInvoice().getPrepaymentamt();
+      getInvoice().setPrepaymentamt(invoicePrepaymentAmt.add(getOrderPrepaymentAmt()));
     }
   }
 
@@ -206,7 +194,7 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
     Order processingOrder = getRelatedOrder();
     if (processingOrder != null) {
       int relatedOrderCount = getCountOfRelatedOrdersToInvoiceLinesDifferentThanOrder(processingOrder);
-      processingInvoice.setSalesOrder(relatedOrderCount != 0 ? null : processingOrder);
+      getInvoice().setSalesOrder(relatedOrderCount != 0 ? null : processingOrder);
     }
   }
 
@@ -217,17 +205,18 @@ class UpdateInvoiceLineInformation implements CreateLinesFromProcessImplementati
 
     OBQuery<InvoiceLine> relatedOrdersQuery = OBDal.getInstance().createQuery(InvoiceLine.class,
         relatedOrdersHQL.toString());
-    relatedOrdersQuery.setNamedParameter("invId", processingInvoice.getId());
+    relatedOrdersQuery.setNamedParameter("invId", getInvoice().getId());
     relatedOrdersQuery.setNamedParameter("ordId", processingOrder.getId());
     return relatedOrdersQuery.count();
   }
 
   private Order getRelatedOrder() {
     Order processingOrder = null;
-    if (isOrderLine) {
-      processingOrder = ((OrderLine) copiedLine).getSalesOrder();
-    } else if (((ShipmentInOutLine) copiedLine).getSalesOrderLine() != null) {
-      processingOrder = ((ShipmentInOutLine) copiedLine).getSalesOrderLine().getSalesOrder();
+    if (isCopiedFromOrderLine()) {
+      processingOrder = ((OrderLine) getCopiedFromLine()).getSalesOrder();
+    } else if (((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine() != null) {
+      processingOrder = ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine()
+          .getSalesOrder();
     }
     return processingOrder;
   }

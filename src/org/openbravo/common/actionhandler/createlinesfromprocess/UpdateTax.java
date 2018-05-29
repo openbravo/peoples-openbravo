@@ -29,12 +29,10 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -43,8 +41,6 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
-import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
@@ -55,15 +51,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Dependent
-@Qualifier(CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
-class UpdateTax implements CreateLinesFromProcessImplementationInterface {
+@Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
+class UpdateTax extends CreateLinesFromProcessHook {
   private static final Logger log = LoggerFactory.getLogger(UpdateTax.class);
-
-  private Invoice processingInvoice;
-  private BaseOBObject copiedLine;
-  private InvoiceLine invoiceLine;
-  private boolean isOrderLine;
-  private JSONObject pickExecLineValues;
 
   @Override
   public int getOrder() {
@@ -75,53 +65,46 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
    * found.
    */
   @Override
-  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
-      final BaseOBObject selectedLine) {
-    this.invoiceLine = newInvoiceLine;
-    this.copiedLine = selectedLine;
-    this.processingInvoice = newInvoiceLine.getInvoice();
-    this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
-    this.pickExecLineValues = pickExecuteLineValues;
-
+  public void exec() {
     TaxRate tax = updateTaxRate();
     updateTaxAmount(tax);
     updateTaxableAmount();
   }
 
   private void updateTaxableAmount() {
-    BigDecimal taxBaseAmt = invoiceLine.getLineNetAmount();
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isOrderLine, copiedLine)) {
-      OrderLine originalOrderLine = (isOrderLine ? (OrderLine) copiedLine
-          : ((ShipmentInOutLine) copiedLine).getSalesOrderLine());
+    BigDecimal taxBaseAmt = getInvoiceLine().getLineNetAmount();
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(), getCopiedFromLine())) {
+      OrderLine originalOrderLine = (isCopiedFromOrderLine() ? (OrderLine) getCopiedFromLine()
+          : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
       if (originalOrderLine.getTaxableAmount() != null) {
         BigDecimal originalOrderedQuantity = originalOrderLine.getOrderedQuantity();
-        BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(copiedLine,
-            pickExecLineValues);
+        BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
+            getPickExecJSONObject());
         taxBaseAmt = originalOrderLine.getTaxableAmount();
         if (originalOrderedQuantity.compareTo(BigDecimal.ZERO) != 0) {
           taxBaseAmt = taxBaseAmt
               .multiply(qtyOrdered)
               .divide(originalOrderedQuantity)
-              .setScale(processingInvoice.getCurrency().getStandardPrecision().intValue(),
+              .setScale(getInvoice().getCurrency().getStandardPrecision().intValue(),
                   RoundingMode.HALF_UP);
         }
       }
     }
-    invoiceLine.setTaxableAmount(taxBaseAmt);
+    getInvoiceLine().setTaxableAmount(taxBaseAmt);
   }
 
   private void updateTaxAmount(final TaxRate tax) {
-    int stdPrecision = processingInvoice.getCurrency().getStandardPrecision().intValue();
-    BigDecimal taxAmt = invoiceLine.getLineNetAmount().multiply(tax.getRate())
+    int stdPrecision = getInvoice().getCurrency().getStandardPrecision().intValue();
+    BigDecimal taxAmt = getInvoiceLine().getLineNetAmount().multiply(tax.getRate())
         .divide(new BigDecimal("100"), 12, RoundingMode.HALF_EVEN)
         .setScale(stdPrecision, RoundingMode.HALF_UP);
-    invoiceLine.setTaxAmount(taxAmt);
+    getInvoiceLine().setTaxAmount(taxAmt);
   }
 
   private TaxRate updateTaxRate() {
     TaxRate tax = OBDal.getInstance().getProxy(TaxRate.class,
-        getCurrentTaxId(invoiceLine.getProduct()));
-    invoiceLine.setTax(tax);
+        getCurrentTaxId(getInvoiceLine().getProduct()));
+    getInvoiceLine().setTax(tax);
     return tax;
   }
 
@@ -137,20 +120,22 @@ class UpdateTax implements CreateLinesFromProcessImplementationInterface {
    */
   private String getCurrentTaxId(final Product product) {
     String taxID = "";
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isOrderLine, copiedLine)) {
-      if (isOrderLine) {
-        taxID = ((OrderLine) copiedLine).getTax().getId();
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(), getCopiedFromLine())) {
+      if (isCopiedFromOrderLine()) {
+        taxID = ((OrderLine) getCopiedFromLine()).getTax().getId();
       } else {
-        taxID = ((ShipmentInOutLine) copiedLine).getSalesOrderLine().getTax().getId();
+        taxID = ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine().getTax().getId();
       }
     } else {
-      Warehouse warehouse = ((ShipmentInOutLine) copiedLine).getShipmentReceipt().getWarehouse();
-      Project project = ((ShipmentInOutLine) copiedLine).getProject();
-      BusinessPartner businessPartner = ((ShipmentInOutLine) copiedLine).getBusinessPartner();
-      Organization organization = ((ShipmentInOutLine) copiedLine).getOrganization();
-      boolean isSalesTransaction = ((ShipmentInOutLine) copiedLine).getShipmentReceipt()
+      Warehouse warehouse = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
+          .getWarehouse();
+      Project project = ((ShipmentInOutLine) getCopiedFromLine()).getProject();
+      BusinessPartner businessPartner = ((ShipmentInOutLine) getCopiedFromLine())
+          .getBusinessPartner();
+      Organization organization = ((ShipmentInOutLine) getCopiedFromLine()).getOrganization();
+      boolean isSalesTransaction = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
           .isSalesTransaction();
-      Date scheduledDeliveryDate = ((ShipmentInOutLine) copiedLine).getShipmentReceipt()
+      Date scheduledDeliveryDate = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
           .getMovementDate();
 
       String bpLocationId = getMaxBusinessPartnerLocationId(businessPartner);

@@ -25,14 +25,10 @@ import java.util.Date;
 
 import javax.enterprise.context.Dependent;
 
-import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.currency.Currency;
-import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -40,13 +36,8 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 
 @Dependent
-@Qualifier(CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
-class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInterface {
-  private Invoice processingInvoice;
-  private BaseOBObject copiedLine;
-  private InvoiceLine invoiceLine;
-  private boolean isOrderLine;
-  private JSONObject pickExecLineValues;
+@Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
+class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
 
   @Override
   public int getOrder() {
@@ -62,21 +53,15 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
    * 
    */
   @Override
-  public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
-      final BaseOBObject selectedLine) {
-    this.invoiceLine = newInvoiceLine;
-    this.copiedLine = selectedLine;
-    this.processingInvoice = newInvoiceLine.getInvoice();
-    this.isOrderLine = CreateLinesFromUtil.isOrderLine(selectedLine);
-    this.pickExecLineValues = pickExecuteLineValues;
-
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isOrderLine, copiedLine)) {
-      setPricesBasedOnOrderLineValues(isOrderLine ? (OrderLine) copiedLine
-          : ((ShipmentInOutLine) copiedLine).getSalesOrderLine());
+  public void exec() {
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(), getCopiedFromLine())) {
+      setPricesBasedOnOrderLineValues(isCopiedFromOrderLine() ? (OrderLine) getCopiedFromLine()
+          : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
     } else {
       ProductPrice productPrice = getProductPriceInPriceList(
-          (Product) copiedLine.get(isOrderLine ? OrderLine.PROPERTY_PRODUCT
-              : ShipmentInOutLine.PROPERTY_PRODUCT), processingInvoice.getPriceList());
+          (Product) getCopiedFromLine().get(
+              isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT : ShipmentInOutLine.PROPERTY_PRODUCT),
+          getInvoice().getPriceList());
       if (productPrice != null) {
         setPricesBasedOnPriceList(productPrice);
       } else {
@@ -87,10 +72,11 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
 
   private void setPricesBasedOnOrderLineValues(OrderLine orderLine) {
     PriceInformation priceInformation = new PriceInformation();
-    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(copiedLine, pickExecLineValues);
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
+        getPickExecJSONObject());
 
     // Standard and Price precision
-    Currency invoiceCurrency = processingInvoice.getCurrency();
+    Currency invoiceCurrency = getInvoice().getCurrency();
     int stdPrecision = invoiceCurrency.getStandardPrecision().intValue();
 
     // Price List, Price Standard and discount
@@ -102,7 +88,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
         RoundingMode.HALF_UP);
 
     // Processing for Prices Including Taxes
-    if (processingInvoice.getPriceList().isPriceIncludesTax()) {
+    if (getInvoice().getPriceList().isPriceIncludesTax()) {
       BigDecimal grossUnitPrice = priceActual;
       BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
           RoundingMode.HALF_UP);
@@ -131,10 +117,11 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
 
   private void setPricesBasedOnPriceList(final ProductPrice productPrice) {
     PriceInformation priceInformation = new PriceInformation();
-    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(copiedLine, pickExecLineValues);
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
+        getPickExecJSONObject());
 
     // Standard and Price precision
-    Currency invoiceCurrency = processingInvoice.getCurrency();
+    Currency invoiceCurrency = getInvoice().getCurrency();
     int stdPrecision = invoiceCurrency.getStandardPrecision().intValue();
     int pricePrecision = invoiceCurrency.getPricePrecision().intValue();
 
@@ -150,7 +137,7 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
         RoundingMode.HALF_UP);
 
     // Processing for Prices Including Taxes
-    if (processingInvoice.getPriceList().isPriceIncludesTax()) {
+    if (getInvoice().getPriceList().isPriceIncludesTax()) {
       BigDecimal grossUnitPrice = priceActual;
       BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
           RoundingMode.HALF_UP);
@@ -183,17 +170,17 @@ class UpdatePricesAndAmounts implements CreateLinesFromProcessImplementationInte
 
   private void setPrices(final PriceInformation priceInformation) {
     // Net Prices
-    invoiceLine.setUnitPrice(priceInformation.getUnitPrice());
-    invoiceLine.setListPrice(priceInformation.getListPrice());
-    invoiceLine.setStandardPrice(priceInformation.getStandardPrice());
+    getInvoiceLine().setUnitPrice(priceInformation.getUnitPrice());
+    getInvoiceLine().setListPrice(priceInformation.getListPrice());
+    getInvoiceLine().setStandardPrice(priceInformation.getStandardPrice());
     // Gross Prices
-    invoiceLine.setGrossUnitPrice(priceInformation.getGrossUnitPrice());
-    invoiceLine.setGrossListPrice(priceInformation.getGrossListPrice());
-    invoiceLine.setBaseGrossUnitPrice(priceInformation.getGrossBaseUnitPrice());
-    invoiceLine.setGrossAmount(priceInformation.getLineGrossAmount());
+    getInvoiceLine().setGrossUnitPrice(priceInformation.getGrossUnitPrice());
+    getInvoiceLine().setGrossListPrice(priceInformation.getGrossListPrice());
+    getInvoiceLine().setBaseGrossUnitPrice(priceInformation.getGrossBaseUnitPrice());
+    getInvoiceLine().setGrossAmount(priceInformation.getLineGrossAmount());
     // Price Limit and Line Net Amount
-    invoiceLine.setPriceLimit(priceInformation.getPriceLimit());
-    invoiceLine.setLineNetAmount(priceInformation.getLineNetAmount());
+    getInvoiceLine().setPriceLimit(priceInformation.getPriceLimit());
+    getInvoiceLine().setLineNetAmount(priceInformation.getLineNetAmount());
   }
 
   /**
