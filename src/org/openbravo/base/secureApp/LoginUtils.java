@@ -79,7 +79,7 @@ public class LoginUtils {
   public static String getValidUserId(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
-      // Deley response and check for locked user
+      // Delay response and check for locked user
       UserLock lockSettings = new UserLock(login);
       lockSettings.delayResponse();
       if (lockSettings.isLockedUser()) {
