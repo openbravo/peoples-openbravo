@@ -8,7 +8,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/openbravo/workspaces/openbravo/erp/devel/pi/openbravo-webpos/WebContent/src-loc/design/org/openbravo/retail/posterminal/ad_reports/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="SUBREP_CASHUP" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="SUBREP_CashUpSubreport" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="SALES_TAXES" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="RETURNS_TAXES" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="NET_SALES_VALUE" class="java.lang.String"/>
@@ -143,7 +143,7 @@
 					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[$P{RETURNS_TAXES}]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREP_CASHUP}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREP_CashUpSubreport}]]></subreportExpression>
 			</subreport>
 			<subreport runToBottom="false">
 				<reportElement positionType="Float" mode="Transparent" x="0" y="189" width="555" height="20" isRemoveLineWhenBlank="true" uuid="6a30967c-fb74-419d-b0d1-7d46176e6c7e"/>
@@ -151,7 +151,7 @@
 					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[$P{SALES_TAXES}]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREP_CASHUP}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREP_CashUpSubreport}]]></subreportExpression>
 			</subreport>
 			<textField>
 				<reportElement positionType="Float" x="397" y="243" width="111" height="20" uuid="e63eda87-ff45-4c29-8018-0d0b56d58641"/>
