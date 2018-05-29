@@ -539,7 +539,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   rangeChanged: function (newRange) {
     var currentStart, currentEnd, newStart, newEnd;
     if (!newRange) {
-      return false;
+      return newRange !== this.rangeItemValue;
     }
     if (!this.rangeItemValue) {
       return true;
