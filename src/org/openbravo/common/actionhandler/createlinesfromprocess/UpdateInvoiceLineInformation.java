@@ -108,19 +108,10 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   }
 
   private Organization getOrganizationForNewLine() {
-    Organization organizationForNewLine = getInvoice().getOrganization();
-    Set<String> parentOrgTree = new OrganizationStructureProvider().getChildTree(
-        organizationForNewLine.getId(), true);
-    // If the Organization of the line that is being copied belongs to the child tree of the
-    // Organization of the document header of the new line, use the organization of the line being
-    // copied, else use the organization of the document header of the new line
     Organization copiedLineOrg = ((Organization) getCopiedFromLine().get(
         isCopiedFromOrderLine() ? OrderLine.PROPERTY_ORGANIZATION
             : ShipmentInOutLine.PROPERTY_ORGANIZATION));
-    if (parentOrgTree.contains(copiedLineOrg.getId())) {
-      organizationForNewLine = copiedLineOrg;
-    }
-    return organizationForNewLine;
+    return copiedLineOrg;
   }
 
   private void updateBOMParent() {
