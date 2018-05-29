@@ -147,6 +147,8 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   }
 
   private void updateInvoicePrepaymentAmount() {
+    // FIXME Prepayment should not be updated anymore if an existing invoice line linked to the
+    // order already exists
     if (isCopiedFromOrderLine()
         || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine())) {
       BigDecimal invoicePrepaymentAmt = getInvoice().getPrepaymentamt();
