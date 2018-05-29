@@ -20,6 +20,7 @@
 package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -27,6 +28,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.OrderLine;
@@ -177,5 +179,21 @@ class CreateLinesFromUtil {
       throws JSONException {
     return selectedPEValuesInLine.has(propertyName)
         && !JsonUtils.isValueEmpty(selectedPEValuesInLine.getString(propertyName));
+  }
+
+  static List<ShipmentInOutLine> getRelatedShipmentLines(final OrderLine orderLine) {
+    StringBuilder shipmentHQLQuery = new StringBuilder(" as il");
+    shipmentHQLQuery.append(" join il.shipmentReceipt sh");
+    shipmentHQLQuery.append(" where il.salesOrderLine.id = :orderLineId");
+    shipmentHQLQuery.append("  and sh.processed = :processed");
+    shipmentHQLQuery.append("  and sh.documentStatus in ('CO', 'CL')");
+    shipmentHQLQuery.append("  and sh.completelyInvoiced = 'N'"); // This actually is a good filter
+                                                                  // for sales flow only
+
+    OBQuery<ShipmentInOutLine> shipmentQuery = OBDal.getInstance().createQuery(
+        ShipmentInOutLine.class, shipmentHQLQuery.toString());
+    shipmentQuery.setNamedParameter("orderLineId", orderLine.getId());
+    shipmentQuery.setNamedParameter("processed", true);
+    return shipmentQuery.list();
   }
 }
