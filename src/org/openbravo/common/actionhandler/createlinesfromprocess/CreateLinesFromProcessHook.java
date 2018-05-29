@@ -72,15 +72,6 @@ public abstract class CreateLinesFromProcessHook {
   /**
    * Executes the hook logic on the Create Lines From process
    * 
-   * @param newInvoiceLine
-   *          the new invoice line created
-   * @param pickExecuteLineValues
-   *          The values selected/calculated in the line of the Pick and Execute. These values can
-   *          differ from the values of the original record been copied (copiedLine) if they are
-   *          recalculated in the query or changed in the Pick and Execute window (for a future
-   *          behavior)
-   * @param copiedLine
-   *          the order/shipment/receipt line from which we are creating the invoice line
    */
   public abstract void exec();
 
