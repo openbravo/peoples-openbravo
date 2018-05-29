@@ -21,11 +21,8 @@ package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import javax.enterprise.context.Dependent;
 
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.model.common.plm.AttributeInstance;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -47,48 +44,14 @@ class UpdateProductAndAttributes extends CreateLinesFromProcessHook {
     // Update the product
     getInvoiceLine().setProduct(
         (Product) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT : ShipmentInOutLine.PROPERTY_PRODUCT));
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT
+                : ShipmentInOutLine.PROPERTY_PRODUCT));
     // Update the attributes
     AttributeSetInstance attributeSetValue = (AttributeSetInstance) getCopiedFromLine().get(
         isCopiedFromOrderLine() ? OrderLine.PROPERTY_ATTRIBUTESETVALUE
             : ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE);
     if (attributeSetValue != null) {
-      getInvoiceLine().setAttributeSetValue(copyAttributeSetValue(attributeSetValue));
-    }
-  }
-
-  private AttributeSetInstance copyAttributeSetValue(final AttributeSetInstance attributeSetValue) {
-    AttributeSetInstance newAttributeSetInstance = copyAttributeSetInstance(attributeSetValue);
-    copyAttributes(attributeSetValue, newAttributeSetInstance);
-    return newAttributeSetInstance;
-  }
-
-  private AttributeSetInstance copyAttributeSetInstance(final AttributeSetInstance attributeSetValue) {
-    AttributeSetInstance newAttributeSetInstance = OBProvider.getInstance().get(
-        AttributeSetInstance.class);
-    newAttributeSetInstance.setAttributeSet(attributeSetValue.getAttributeSet());
-    newAttributeSetInstance.setSerialNo(attributeSetValue.getSerialNo());
-    newAttributeSetInstance.setLot(attributeSetValue.getLot());
-    newAttributeSetInstance.setExpirationDate(attributeSetValue.getExpirationDate());
-    newAttributeSetInstance.setDescription(attributeSetValue.getDescription());
-    newAttributeSetInstance.setLotName(attributeSetValue.getLotName());
-    newAttributeSetInstance.setLocked(attributeSetValue.isLocked());
-    newAttributeSetInstance.setLockDescription(attributeSetValue.getLockDescription());
-    OBDal.getInstance().save(newAttributeSetInstance);
-    return newAttributeSetInstance;
-  }
-
-  private void copyAttributes(final AttributeSetInstance attributeSetValueFrom,
-      final AttributeSetInstance attributeSetInstanceTo) {
-    for (AttributeInstance attrInstance : attributeSetValueFrom.getAttributeInstanceList()) {
-      AttributeInstance newAttributeInstance = OBProvider.getInstance()
-          .get(AttributeInstance.class);
-      newAttributeInstance.setAttributeSetValue(attributeSetInstanceTo);
-      newAttributeInstance.setAttribute(attrInstance.getAttribute());
-      attrInstance.setAttributeValue(attrInstance.getAttributeValue());
-      attributeSetInstanceTo.getAttributeInstanceList().add(newAttributeInstance);
-      OBDal.getInstance().save(newAttributeInstance);
-      OBDal.getInstance().save(attributeSetInstanceTo);
+      getInvoiceLine().setAttributeSetValue(attributeSetValue);
     }
   }
 }
