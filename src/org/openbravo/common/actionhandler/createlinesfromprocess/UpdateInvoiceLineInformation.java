@@ -61,7 +61,7 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     setAcctDimensionsToLine();
     updateBOMParent();
     updateInvoicePrepaymentAmount();
-    updateOrderReference();
+    setOrderReferenceInInvoiceHeaderIfLinkedOnlyToTheSameOrderOrBlankIt();
   }
 
   private void linksInvoiceLineToOrderAndInOutLine() {
@@ -169,18 +169,15 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     }
   }
 
-  /**
-   * Update the Order reference to the invoice
-   */
-  private void updateOrderReference() {
+  private void setOrderReferenceInInvoiceHeaderIfLinkedOnlyToTheSameOrderOrBlankIt() {
     Order processingOrder = getRelatedOrder();
     if (processingOrder != null) {
-      int relatedOrderCount = getCountOfRelatedOrdersToInvoiceLinesDifferentThanOrder(processingOrder);
-      getInvoice().setSalesOrder(relatedOrderCount != 0 ? null : processingOrder);
+      boolean isMultiOrderInvoice = existsOtherOrdersLinkedToThisInvoice(processingOrder);
+      getInvoice().setSalesOrder(isMultiOrderInvoice ? null : processingOrder);
     }
   }
 
-  private int getCountOfRelatedOrdersToInvoiceLinesDifferentThanOrder(Order processingOrder) {
+  private boolean existsOtherOrdersLinkedToThisInvoice(Order processingOrder) {
     StringBuilder relatedOrdersHQL = new StringBuilder(" as il ");
     relatedOrdersHQL.append(" where il.invoice.id = :invId");
     relatedOrdersHQL.append("  and il.salesOrderLine.salesOrder.id <> :ordId");
@@ -189,7 +186,8 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
         relatedOrdersHQL.toString());
     relatedOrdersQuery.setNamedParameter("invId", getInvoice().getId());
     relatedOrdersQuery.setNamedParameter("ordId", processingOrder.getId());
-    return relatedOrdersQuery.count();
+    relatedOrdersQuery.setMaxResult(1);
+    return !relatedOrdersQuery.list().isEmpty();
   }
 
   private Order getRelatedOrder() {
