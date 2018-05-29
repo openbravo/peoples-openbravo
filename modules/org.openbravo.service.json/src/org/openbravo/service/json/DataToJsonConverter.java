@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
@@ -99,15 +100,16 @@ public class DataToJsonConverter {
    */
   public List<JSONObject> convertToJsonObjects(List<Map<String, Object>> data) {
     try {
-      final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+      final List<JSONObject> jsonObjects = new ArrayList<>();
       for (Map<String, Object> dataInstance : data) {
         final JSONObject jsonObject = new JSONObject();
-        for (String key : dataInstance.keySet()) {
+        for (Entry<String, Object> entry : dataInstance.entrySet()) {
+          String key = entry.getKey();
           Property property = null;
           if (this.entity != null) {
             property = entity.getProperty(key, false);
           }
-          final Object value = dataInstance.get(key);
+          final Object value = entry.getValue();
           if (value instanceof BaseOBObject) {
             Property referencedProperty = property != null ? property.getReferencedProperty()
                 : null;
@@ -121,7 +123,6 @@ public class DataToJsonConverter {
               // server timezone offset to UTC, among other things
               convertedValue = convertPrimitiveValue(property, value);
             } else {
-              // TODO: format!
               convertedValue = convertPrimitiveValue(value);
             }
             jsonObject.put(key, convertedValue);
