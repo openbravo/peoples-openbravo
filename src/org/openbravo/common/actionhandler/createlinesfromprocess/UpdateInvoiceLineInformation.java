@@ -56,30 +56,15 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
    */
   @Override
   public void exec() {
-    // Create to the new invoice line the reference to the order line from it is created
-    updateOrderLineReference();
-
-    // Information updated from invoice header: Client, Description and Business Partner
-    updateInformationFromInvoice();
-
-    // Information updated from orderLine: Organization, Project, CostCenter, Asset, User1
-    // Dimension and User2 Dimension
-    udpateInformationFromOrderLine();
-
-    // Update the BOM Parent of the invoice line
+    linksInvoiceLineToOrderAndInOutLine();
+    setClientAndDescriptionFromInvoiceHeader();
+    setAcctDimensionsToLine();
     updateBOMParent();
-
-    // Update Invoice prepayment amount
     updateInvoicePrepaymentAmount();
-
-    // Update Invoice's order reference
     updateOrderReference();
   }
 
-  /**
-   * Creates to the new invoice line the reference to the order line from it is created.
-   */
-  private void updateOrderLineReference() {
+  private void linksInvoiceLineToOrderAndInOutLine() {
     if (isCopiedFromOrderLine()) {
       getInvoiceLine().setSalesOrderLine((OrderLine) getCopiedFromLine());
       getInvoiceLine().setGoodsShipmentLine(
@@ -94,32 +79,32 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   /**
    * Updates some invoice line information from the invoice header
    */
-  private void updateInformationFromInvoice() {
+  private void setClientAndDescriptionFromInvoiceHeader() {
     getInvoiceLine().setClient(getInvoice().getClient());
     getInvoiceLine().setDescription(getInvoice().getDescription());
   }
 
-  private void udpateInformationFromOrderLine() {
+  private void setAcctDimensionsToLine() {
     getInvoiceLine().setOrganization(getOrganizationForNewLine());
     getInvoiceLine().setProject(
         (Project) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_PROJECT : ShipmentInOutLine.PROPERTY_PROJECT));
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_PROJECT
+                : ShipmentInOutLine.PROPERTY_PROJECT));
     getInvoiceLine().setCostcenter(
         (Costcenter) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_COSTCENTER : ShipmentInOutLine.PROPERTY_COSTCENTER));
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_COSTCENTER
+                : ShipmentInOutLine.PROPERTY_COSTCENTER));
     getInvoiceLine().setAsset(
         (Asset) getCopiedFromLine().get(
             isCopiedFromOrderLine() ? OrderLine.PROPERTY_ASSET : ShipmentInOutLine.PROPERTY_ASSET));
     getInvoiceLine().setStDimension(
-        (UserDimension1) getCopiedFromLine()
-            .get(
-                isCopiedFromOrderLine() ? OrderLine.PROPERTY_STDIMENSION
-                    : ShipmentInOutLine.PROPERTY_STDIMENSION));
+        (UserDimension1) getCopiedFromLine().get(
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_STDIMENSION
+                : ShipmentInOutLine.PROPERTY_STDIMENSION));
     getInvoiceLine().setNdDimension(
-        (UserDimension2) getCopiedFromLine()
-            .get(
-                isCopiedFromOrderLine() ? OrderLine.PROPERTY_NDDIMENSION
-                    : ShipmentInOutLine.PROPERTY_NDDIMENSION));
+        (UserDimension2) getCopiedFromLine().get(
+            isCopiedFromOrderLine() ? OrderLine.PROPERTY_NDDIMENSION
+                : ShipmentInOutLine.PROPERTY_NDDIMENSION));
   }
 
   private Organization getOrganizationForNewLine() {
@@ -130,7 +115,8 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     // Organization of the document header of the new line, use the organization of the line being
     // copied, else use the organization of the document header of the new line
     Organization copiedLineOrg = ((Organization) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_ORGANIZATION : ShipmentInOutLine.PROPERTY_ORGANIZATION));
+        isCopiedFromOrderLine() ? OrderLine.PROPERTY_ORGANIZATION
+            : ShipmentInOutLine.PROPERTY_ORGANIZATION));
     if (parentOrgTree.contains(copiedLineOrg.getId())) {
       organizationForNewLine = copiedLineOrg;
     }
@@ -142,7 +128,8 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   }
 
   private InvoiceLine getInvoiceLineBOMParent() {
-    if (!isCopiedFromOrderLine() && ((ShipmentInOutLine) getCopiedFromLine()).getBOMParent() == null) {
+    if (!isCopiedFromOrderLine()
+        && ((ShipmentInOutLine) getCopiedFromLine()).getBOMParent() == null) {
       return null;
     }
 
@@ -163,7 +150,8 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
    * Update the prepayment amount of the Invoice
    */
   private void updateInvoicePrepaymentAmount() {
-    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(), getCopiedFromLine())) {
+    if (CreateLinesFromUtil.isOrderLineOrHasRelatedOrderLine(isCopiedFromOrderLine(),
+        getCopiedFromLine())) {
       BigDecimal invoicePrepaymentAmt = getInvoice().getPrepaymentamt();
       getInvoice().setPrepaymentamt(invoicePrepaymentAmt.add(getOrderPrepaymentAmt()));
     }
