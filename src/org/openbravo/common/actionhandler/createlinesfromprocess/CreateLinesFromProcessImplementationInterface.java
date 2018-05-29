@@ -46,8 +46,8 @@ import org.openbravo.model.common.invoice.InvoiceLine;
  *   }
  * 
  *   &#064;Override
- *   public void exec(final Invoice currentInvoice, final JSONObject pickExecuteLineValues,
- *       final BaseOBObject copiedLine, InvoiceLine newInvoiceLine) {
+ *   public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
+ *       final BaseOBObject copiedLine) {
  *     newInvoiceLine.setDescription(&quot;Test&quot;);
  *   }
  * }
@@ -66,6 +66,8 @@ public interface CreateLinesFromProcessImplementationInterface {
   /**
    * Executes the hook logic on the Create Lines From process
    * 
+   * @param newInvoiceLine
+   *          the new invoice line created
    * @param pickExecuteLineValues
    *          The values selected/calculated in the line of the Pick and Execute. These values can
    *          differ from the values of the original record been copied (copiedLine) if they are
@@ -73,8 +75,6 @@ public interface CreateLinesFromProcessImplementationInterface {
    *          behavior)
    * @param copiedLine
    *          the order/shipment/receipt line from which we are creating the invoice line
-   * @param newInvoiceLine
-   *          the new invoice line created
    */
   public void exec(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
       final BaseOBObject copiedLine);
