@@ -40,7 +40,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -52,8 +51,6 @@ import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.OBPOSPaymentcashupEvents;
 
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
 
 public class CashUpReport extends HttpSecureAppServlet {
@@ -319,17 +316,6 @@ public class CashUpReport extends HttpSecureAppServlet {
           returnsTaxesQuery.list(), new String[] { "LABEL", "VALUE" });
 
       /******************************* BUILD REPORT ***************************************************************/
-
-      try {
-        final String strLanguage = vars.getLanguage(), strBaseDesign = getBaseDesignPath(strLanguage);
-        final JasperReport subReportSalesTaxes = ReportingUtils.getTranslatedJasperReport(this,
-            strBaseDesign + "/org/openbravo/retail/posterminal/ad_reports/CashUpSubreport.jrxml",
-            strLanguage);
-        parameters.put("SUBREP_CASHUP", subReportSalesTaxes);
-
-      } catch (final JRException e) {
-        throw new ServletException(e.getMessage());
-      }
 
       parameters.put("STORE", OBMessageUtils.getI18NMessage("OBPOS_LblStore", new String[] {})
           + ": " + cashup.getPOSTerminal().getOrganization().getIdentifier());
