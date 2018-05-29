@@ -157,7 +157,7 @@ public class OBDal implements OBNotSingleton {
    */
   @Deprecated
   public void registerSQLFunction(String name, SQLFunction function) {
-    log.debug("Using deprecated way of registering SQL functions in Hibernate", new Exception(
+    log.info("Using deprecated way of registering SQL functions in Hibernate", new Exception(
         "Current Stack Trace"));
     final DalSessionFactory dalSessionFactory = (DalSessionFactory) SessionFactoryController
         .getInstance().getSessionFactory();

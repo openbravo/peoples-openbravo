@@ -399,8 +399,10 @@ public class IssuesTest extends OBBaseTest {
   }
 
   private Language getNonInstalledLanguage() {
-    return (Language) OBDal.getInstance().createCriteria(Language.class)
-        .add(Restrictions.eq(Language.PROPERTY_SYSTEMLANGUAGE, false)).list().get(0);
+    OBQuery<Language> query = OBDal.getInstance().createQuery(Language.class,
+        "as l where l.systemLanguage = false");
+    query.setMaxResult(1);
+    return query.uniqueResult();
   }
 
   /**

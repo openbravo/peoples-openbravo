@@ -85,6 +85,7 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
+import org.openbravo.test.productStatus.ProductStatusTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
 import org.openbravo.test.reporting.CompiledReportsCacheTest;
@@ -232,6 +233,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // Inventory Status
     InventoryStatusTest.class, //
+
+    // PLM Status
+    ProductStatusTest.class, //
 
     // Material Management
     IsCompletelyInvoicedShipment.class, //
