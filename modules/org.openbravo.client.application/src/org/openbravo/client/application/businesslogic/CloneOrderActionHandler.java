@@ -63,92 +63,9 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       String orderId = (String) parameters.get("recordId");
       User currentUser = OBContext.getOBContext().getUser();
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
-      Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
 
-      objCloneOrder.setDocumentAction("CO");
-      objCloneOrder.setDocumentStatus("DR");
-      objCloneOrder.setPosted("N");
-      objCloneOrder.setProcessed(false);
-      objCloneOrder.setDelivered(false);
-      objCloneOrder.setSalesTransaction(true);
-      objCloneOrder.setDocumentNo(null);
-      objCloneOrder.setSalesTransaction(objOrder.isSalesTransaction());
-      objCloneOrder.setCreationDate(new Date());
-      objCloneOrder.setUpdated(new Date());
-      objCloneOrder.setCreatedBy(currentUser);
-      objCloneOrder.setUpdatedBy(currentUser);
-      objCloneOrder.setReservationStatus(null);
-      // Setting order date and scheduled delivery date of header and the order lines to current
-      // date to avoid issues with tax rates. Refer issue
-      // https://issues.openbravo.com/view.php?id=23671
-      Date date = new Date();
-      Calendar cal = Calendar.getInstance();
-      cal.setTime(date);
-      cal.set(Calendar.HOUR_OF_DAY, 0);
-      cal.set(Calendar.MINUTE, 0);
-      cal.set(Calendar.SECOND, 0);
-      cal.set(Calendar.MILLISECOND, 0);
-      objCloneOrder.setOrderDate(cal.getTime());
-      objCloneOrder.setScheduledDeliveryDate(cal.getTime());
-      objCloneOrder.setGrandTotalAmount(BigDecimal.ZERO);
-      objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
+      Order objCloneOrder = cloneOrder(currentUser, objOrder);
 
-      // Calling Clone Order Hook
-      WeldUtils.getInstanceFromStaticBeanManager(CloneOrderHookCaller.class).executeHook(
-          objCloneOrder);
-
-      // save the cloned order object
-      OBDal.getInstance().save(objCloneOrder);
-
-      Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine = new HashMap<>();
-      List<OrderlineServiceRelation> orderLinesServiceRelation = new ArrayList<>();
-      List<OrderLine> orderLinesCreatedFromExplodedBOM = new ArrayList<>();
-
-      // get the lines associated with the order and clone them to the new
-      // order line.
-      for (OrderLine ordLine : objOrder.getOrderLineList()) {
-        String strPriceVersionId = getPriceListVersion(objOrder.getPriceList().getId(), objOrder
-            .getClient().getId());
-        BigDecimal bdPriceList = getPriceList(ordLine.getProduct().getId(), strPriceVersionId);
-        OrderLine objCloneOrdLine = (OrderLine) DalUtil.copy(ordLine, false);
-        objCloneOrdLine.setReservedQuantity(new BigDecimal("0"));
-        objCloneOrdLine.setDeliveredQuantity(new BigDecimal("0"));
-        objCloneOrdLine.setInvoicedQuantity(new BigDecimal("0"));
-        if (bdPriceList != null && bdPriceList.compareTo(BigDecimal.ZERO) != 0) {
-          objCloneOrdLine.setListPrice(bdPriceList);
-        }
-        objCloneOrdLine.setCreationDate(new Date());
-        objCloneOrdLine.setUpdated(new Date());
-        objCloneOrdLine.setCreatedBy(currentUser);
-        objCloneOrdLine.setUpdatedBy(currentUser);
-        objCloneOrdLine.setOrderDate(new Date());
-        objCloneOrdLine.setScheduledDeliveryDate(new Date());
-        objCloneOrder.getOrderLineList().add(objCloneOrdLine);
-        objCloneOrdLine.setSalesOrder(objCloneOrder);
-        objCloneOrdLine.setReservationStatus(null);
-
-        mapOriginalOrderLineWithCloneOrderLine.put(ordLine.getId(), objCloneOrdLine);
-        List<OrderlineServiceRelation> lineServiceRelation = cloneProductServiceRelation(ordLine,
-            objCloneOrdLine);
-        orderLinesServiceRelation.addAll(lineServiceRelation);
-        if (ordLine.getBOMParent() != null) {
-          orderLinesCreatedFromExplodedBOM.add(ordLine);
-        }
-      }
-
-      fixRelatedServicesReferences(mapOriginalOrderLineWithCloneOrderLine,
-          orderLinesServiceRelation);
-
-      fixRelatedBOMProductsReferences(mapOriginalOrderLineWithCloneOrderLine,
-          orderLinesCreatedFromExplodedBOM);
-
-      mapOriginalOrderLineWithCloneOrderLine.clear();
-      orderLinesServiceRelation.clear();
-      orderLinesCreatedFromExplodedBOM.clear();
-
-      OBDal.getInstance().save(objCloneOrder);
-      OBDal.getInstance().flush();
-      OBDal.getInstance().refresh(objCloneOrder);
       json = jsonConverter.toJsonObject(objCloneOrder, DataResolvingMode.FULL);
       OBDal.getInstance().commitAndClose();
       return json;
@@ -157,47 +74,97 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     }
   }
 
-  private List<OrderlineServiceRelation> cloneProductServiceRelation(OrderLine ordLine,
-      OrderLine objCloneOrdLine) {
+  private Order cloneOrder(final User currentUser, final Order objOrder) throws Exception {
+    Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
+    objCloneOrder.setDocumentAction("CO");
+    objCloneOrder.setDocumentStatus("DR");
+    objCloneOrder.setPosted("N");
+    objCloneOrder.setProcessed(false);
+    objCloneOrder.setDelivered(false);
+    objCloneOrder.setSalesTransaction(true);
+    objCloneOrder.setDocumentNo(null);
+    objCloneOrder.setSalesTransaction(objOrder.isSalesTransaction());
+    objCloneOrder.setCreationDate(new Date());
+    objCloneOrder.setUpdated(new Date());
+    objCloneOrder.setCreatedBy(currentUser);
+    objCloneOrder.setUpdatedBy(currentUser);
+    objCloneOrder.setReservationStatus(null);
+    // Setting order date and scheduled delivery date of header and the order lines to current
+    // date to avoid issues with tax rates. Refer issue
+    // https://issues.openbravo.com/view.php?id=23671
+    Date date = new Date();
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    objCloneOrder.setOrderDate(cal.getTime());
+    objCloneOrder.setScheduledDeliveryDate(cal.getTime());
+    objCloneOrder.setGrandTotalAmount(BigDecimal.ZERO);
+    objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
 
-    List<OrderlineServiceRelation> cloneServiceRelation = new ArrayList<>(ordLine
-        .getOrderlineServiceRelationList().size());
-    for (OrderlineServiceRelation orderLineServiceRelation : ordLine
-        .getOrderlineServiceRelationList()) {
-      OrderlineServiceRelation lineServiceRelation = (OrderlineServiceRelation) DalUtil.copy(
-          orderLineServiceRelation, false);
-      lineServiceRelation.setOrderlineRelated(orderLineServiceRelation.getOrderlineRelated());
-      lineServiceRelation.setSalesOrderLine(objCloneOrdLine);
-      cloneServiceRelation.add(lineServiceRelation);
-    }
-    objCloneOrdLine.setOrderlineServiceRelationList(cloneServiceRelation);
+    // Calling Clone Order Hook
+    WeldUtils.getInstanceFromStaticBeanManager(CloneOrderHookCaller.class).executeHook(
+        objCloneOrder);
 
-    return cloneServiceRelation;
+    // save the cloned order object
+    OBDal.getInstance().save(objCloneOrder);
+
+    // Clone the Order Lines related to the original Order
+    cloneOrderLines(currentUser, objOrder, objCloneOrder);
+
+    OBDal.getInstance().flush();
+    OBDal.getInstance().refresh(objCloneOrder);
+    return objCloneOrder;
   }
 
-  private void fixRelatedServicesReferences(
-      Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine,
-      List<OrderlineServiceRelation> orderLinesServiceRelation) {
-    for (OrderlineServiceRelation lineServiceRelation : orderLinesServiceRelation) {
-      OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(lineServiceRelation
-          .getOrderlineRelated().getId());
-      lineServiceRelation.setOrderlineRelated(clonedOrderLine);
-      OBDal.getInstance().save(lineServiceRelation);
+  private void cloneOrderLines(final User currentUser, final Order objOrder, Order objCloneOrder) {
+    Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine = new HashMap<>();
+    List<OrderlineServiceRelation> orderLinesServiceRelation = new ArrayList<>();
+    List<OrderLine> orderLinesCreatedFromExplodedBOM = new ArrayList<>();
+
+    for (OrderLine ordLine : objOrder.getOrderLineList()) {
+      String strPriceVersionId = getPriceListVersion(objOrder.getPriceList().getId(), objOrder
+          .getClient().getId());
+      BigDecimal bdPriceList = getPriceList(ordLine.getProduct().getId(), strPriceVersionId);
+      OrderLine objCloneOrdLine = (OrderLine) DalUtil.copy(ordLine, false);
+      objCloneOrdLine.setReservedQuantity(new BigDecimal("0"));
+      objCloneOrdLine.setDeliveredQuantity(new BigDecimal("0"));
+      objCloneOrdLine.setInvoicedQuantity(new BigDecimal("0"));
+      if (bdPriceList != null && bdPriceList.compareTo(BigDecimal.ZERO) != 0) {
+        objCloneOrdLine.setListPrice(bdPriceList);
+      }
+      objCloneOrdLine.setCreationDate(new Date());
+      objCloneOrdLine.setUpdated(new Date());
+      objCloneOrdLine.setCreatedBy(currentUser);
+      objCloneOrdLine.setUpdatedBy(currentUser);
+      objCloneOrdLine.setOrderDate(new Date());
+      objCloneOrdLine.setScheduledDeliveryDate(new Date());
+      objCloneOrder.getOrderLineList().add(objCloneOrdLine);
+      objCloneOrdLine.setSalesOrder(objCloneOrder);
+      objCloneOrdLine.setReservationStatus(null);
+
+      mapOriginalOrderLineWithCloneOrderLine.put(ordLine.getId(), objCloneOrdLine);
+      List<OrderlineServiceRelation> lineServiceRelation = cloneProductServiceRelation(ordLine,
+          objCloneOrdLine);
+      orderLinesServiceRelation.addAll(lineServiceRelation);
+      if (ordLine.getBOMParent() != null) {
+        orderLinesCreatedFromExplodedBOM.add(ordLine);
+      }
     }
+
+    fixRelatedServicesReferences(mapOriginalOrderLineWithCloneOrderLine, orderLinesServiceRelation);
+
+    fixRelatedBOMProductsReferences(mapOriginalOrderLineWithCloneOrderLine,
+        orderLinesCreatedFromExplodedBOM);
+
+    mapOriginalOrderLineWithCloneOrderLine.clear();
+    orderLinesServiceRelation.clear();
+    orderLinesCreatedFromExplodedBOM.clear();
   }
 
-  private void fixRelatedBOMProductsReferences(
-      Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine,
-      List<OrderLine> orderLinesCreatedFromExplodedBOM) {
-    for (OrderLine orderLine : orderLinesCreatedFromExplodedBOM) {
-      OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(orderLine.getId());
-      String bomParentId = orderLine.getBOMParent().getId();
-      OrderLine clonedBomParent = mapOriginalOrderLineWithCloneOrderLine.get(bomParentId);
-      clonedOrderLine.setBOMParent(clonedBomParent);
-    }
-  }
-
-  private String getPriceListVersion(String priceList, String clientId) {
+  private String getPriceListVersion(final String priceList, final String clientId) {
     try {
       String whereClause = " as plv left outer join plv.priceList pl where plv.active='Y' and plv.active='Y' and "
           + " pl.id = :priceList and plv.client.id = :clientId order by plv.validFromDate desc";
@@ -217,7 +184,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     }
   }
 
-  private BigDecimal getPriceList(String strProductID, String strPriceVersionId) {
+  private BigDecimal getPriceList(final String strProductID, final String strPriceVersionId) {
     BigDecimal bdPriceList = null;
     try {
       final List<Object> parameters = new ArrayList<Object>();
@@ -233,8 +200,46 @@ public class CloneOrderActionHandler extends BaseActionHandler {
     return (bdPriceList);
   }
 
-  public static BigDecimal getLineNetAmt(String strOrderId) {
+  private List<OrderlineServiceRelation> cloneProductServiceRelation(final OrderLine ordLine,
+      OrderLine objCloneOrdLine) {
+    List<OrderlineServiceRelation> cloneServiceRelation = new ArrayList<>(ordLine
+        .getOrderlineServiceRelationList().size());
+    for (OrderlineServiceRelation orderLineServiceRelation : ordLine
+        .getOrderlineServiceRelationList()) {
+      OrderlineServiceRelation lineServiceRelation = (OrderlineServiceRelation) DalUtil.copy(
+          orderLineServiceRelation, false);
+      lineServiceRelation.setOrderlineRelated(orderLineServiceRelation.getOrderlineRelated());
+      lineServiceRelation.setSalesOrderLine(objCloneOrdLine);
+      cloneServiceRelation.add(lineServiceRelation);
+    }
+    objCloneOrdLine.setOrderlineServiceRelationList(cloneServiceRelation);
 
+    return cloneServiceRelation;
+  }
+
+  private void fixRelatedServicesReferences(
+      final Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine,
+      final List<OrderlineServiceRelation> orderLinesServiceRelation) {
+    for (OrderlineServiceRelation lineServiceRelation : orderLinesServiceRelation) {
+      OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(lineServiceRelation
+          .getOrderlineRelated().getId());
+      lineServiceRelation.setOrderlineRelated(clonedOrderLine);
+      OBDal.getInstance().save(lineServiceRelation);
+    }
+  }
+
+  private void fixRelatedBOMProductsReferences(
+      final Map<String, OrderLine> mapOriginalOrderLineWithCloneOrderLine,
+      final List<OrderLine> orderLinesCreatedFromExplodedBOM) {
+    for (OrderLine orderLine : orderLinesCreatedFromExplodedBOM) {
+      OrderLine clonedOrderLine = mapOriginalOrderLineWithCloneOrderLine.get(orderLine.getId());
+      String bomParentId = orderLine.getBOMParent().getId();
+      OrderLine clonedBomParent = mapOriginalOrderLineWithCloneOrderLine.get(bomParentId);
+      clonedOrderLine.setBOMParent(clonedBomParent);
+    }
+  }
+
+  public static BigDecimal getLineNetAmt(final String strOrderId) {
     BigDecimal bdLineNetAmt = new BigDecimal("0");
     final String readLineNetAmtHql = " select (coalesce(ol.lineNetAmount,0) + coalesce(ol.freightAmount,0) + coalesce(ol.chargeAmount,0)) as LineNetAmt from OrderLine ol where ol.salesOrder.id=:orderId";
     final Query readLineNetAmtQry = OBDal.getInstance().getSession().createQuery(readLineNetAmtHql);
