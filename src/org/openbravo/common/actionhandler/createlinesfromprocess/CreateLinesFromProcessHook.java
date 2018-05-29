@@ -110,7 +110,8 @@ public abstract class CreateLinesFromProcessHook {
    */
   public BaseOBObject getCopiedFromLine() {
     return OBDal.getInstance().getProxy(
-        isCopiedFromOrderLine() ? OrderLine.class : ShipmentInOutLine.class, copiedFromLineId);
+        isCopiedFromOrderLine() ? OrderLine.ENTITY_NAME : ShipmentInOutLine.ENTITY_NAME,
+        copiedFromLineId);
   }
 
   /**
