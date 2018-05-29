@@ -57,8 +57,8 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 public abstract class CreateLinesFromProcessHook {
   public static final String CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER = "CreatelinesFromProcessHookQualifier";
 
-  private String invoiceId;
-  private String invoiceLineId;
+  private Invoice invoice;
+  private InvoiceLine invoiceLine; // Not saved yet!
   private String copiedFromLineId;
   private boolean isCopiedFromOrderLine;
   private JSONObject pickedJSONObject;
@@ -83,8 +83,8 @@ public abstract class CreateLinesFromProcessHook {
 
   private void init(final InvoiceLine newInvoiceLine, final JSONObject pickExecuteLineValues,
       final BaseOBObject copiedFromLine) {
-    this.invoiceId = newInvoiceLine.getInvoice().getId();
-    this.invoiceLineId = newInvoiceLine.getId();
+    this.invoice = newInvoiceLine.getInvoice();
+    this.invoiceLine = newInvoiceLine;
     this.copiedFromLineId = (String) copiedFromLine.getId();
     this.isCopiedFromOrderLine = CreateLinesFromUtil.isOrderLine(copiedFromLine);
     this.pickedJSONObject = pickExecuteLineValues;
@@ -94,14 +94,14 @@ public abstract class CreateLinesFromProcessHook {
    * Returns the Invoice currently being created
    */
   public Invoice getInvoice() {
-    return OBDal.getInstance().getProxy(Invoice.class, invoiceId);
+    return invoice;
   }
 
   /**
    * Returns the Invoice Line currently being created
    */
   public InvoiceLine getInvoiceLine() {
-    return OBDal.getInstance().getProxy(InvoiceLine.class, invoiceLineId);
+    return invoiceLine;
   }
 
   /**
