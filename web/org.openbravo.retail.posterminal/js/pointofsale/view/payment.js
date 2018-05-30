@@ -371,8 +371,11 @@ enyo.kind({
     }
   },
 
-  actionChange: function (inEvent, inSource) {
-    alert('Change button pressed');
+  actionChange: function (inSender, inEvent) {
+    this.doShowPopup({
+      popup: 'modalchange',
+      args: {}
+    });
   },
 
   calculateChangeReset: function () {
