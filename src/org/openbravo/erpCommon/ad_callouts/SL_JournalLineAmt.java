@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,8 +68,8 @@ public class SL_JournalLineAmt extends SimpleCallout {
 
     info.addResult("inpamtacctdr", amtAcctDr);
     info.addResult("inpamtacctcr", amtAcctCr);
-    info.addResult("inpamtsourcedr", amtAcctDr);
-    info.addResult("inpamtsourcecr", amtAcctCr);
+    info.addResult("inpamtsourcedr", amtSourceDr);
+    info.addResult("inpamtsourcecr", amtSourceCr);
     info.addResult("inpcurrencyrate", currencyRate);
     info.addResult("inpcurrencyratetype", strCurrencyRateType);
   }

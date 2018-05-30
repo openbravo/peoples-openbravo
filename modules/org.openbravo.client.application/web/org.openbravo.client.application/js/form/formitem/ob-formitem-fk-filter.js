@@ -259,8 +259,11 @@ isc.OBFKFilterTextItem.addProperties({
       if (isc.EH.getKeyName() === 'Tab') {
         this.pickList.hide();
       }
-      // restore the filter editor with the previous criteria
-      this.setCriterion(this.getAppliedCriteria());
+      if (!this.grid.sourceWidget.lazyFiltering) {
+        // restore the filter editor with the previous criteria
+        // if lazy filtering is enabled don't do this because the filter criteria may have not been applied into the grid yet
+        this.setCriterion(this.getAppliedCriteria());
+      }
       // do not perform a filter action on blur if the filtering by identifier is not allowed
     } else if (this._hasChanged && this.allowFkFilterByIdentifier !== false) {
       this.form.grid.performAction();

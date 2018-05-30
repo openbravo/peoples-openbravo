@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,14 +36,13 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentMonitorProcess;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -51,7 +50,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonToDataConverter;
 
 public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
@@ -81,7 +79,7 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
 
       // TODO:Review if we should allow this option
       // if (paidAnyAmount(invoice)) {
-      // return addMessage(jsonRequest, "@APRM_AlreadyPaidInvoice@", "error");
+      // return addMessage(jsonRequest, "APRM_AlreadyPaidInvoice", "error");
       // }
 
       String errorMsg = validateGridAmounts(gridRows, invoice);
@@ -91,7 +89,7 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       }
       if (!validateInvoiceAmounts(invoice)) {
         OBDal.getInstance().rollbackAndClose();
-        return addMessage(jsonRequest, "@APRM_ExistingPlanIsNotCorrect@", "error");
+        return addMessage(jsonRequest, "APRM_ExistingPlanIsNotCorrect", "error");
       }
 
       List<JSONObject> lToCreate = getNewRows(gridRows);
@@ -101,6 +99,9 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       HashMap<FIN_PaymentSchedule, BigDecimal> orders = getOrders(lToRemove, lToModify);
       HashMap<FIN_PaymentDetail, BigDecimal> canceledPSDs = getCanceledPSDs(lToRemove, lToModify);
 
+      WeldUtils.getInstanceFromStaticBeanManager(ModifyPaymentPlanHookCaller.class)
+          .validatePaymentSchedule(lToModify);
+
       removeRows(lToRemove, invoice);
       List<FIN_PaymentSchedule> createdPSs = createRows(lToCreate, invoice);
       createdPSs = modifyRows(lToModify, gridRows, invoice, createdPSs);
@@ -109,16 +110,17 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
 
       if (!ordersSumsZero(orders, invoice.getFINPaymentScheduleList().get(0))) {
         OBDal.getInstance().rollbackAndClose();
-        return addMessage(jsonRequest, "@APRM_AmountNotFullyAllocated@", "error");
+        return addMessage(jsonRequest, "APRM_AmountNotFullyAllocated", "error");
       }
 
       if (!validateInvoiceAmounts(invoice)) {
         OBDal.getInstance().rollbackAndClose();
-        return addMessage(jsonRequest, "@APRM_AmountMismatch@", "error");
+        return addMessage(jsonRequest, "APRM_AmountMismatch", "error");
       }
+
       // As a final step, Payment Monitor information for this invoice is updated.
       FIN_PaymentMonitorProcess.updateInvoice(invoice);
-      return addMessage(jsonRequest, "@Success@", "success");
+      return addMessage(jsonRequest, "Success", "success");
     } catch (ConstraintViolationException e) {
       OBDal.getInstance().rollbackAndClose();
       log4j.error("Exception! " + e);
@@ -134,7 +136,7 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
         }
       }
       try {
-        return addMessage(jsonRequest, "@" + constraint + "@", "error");
+        return addMessage(jsonRequest, constraint, "error");
       } catch (Exception ex) {
         log4j.error("Exception! " + ex);
         return jsonRequest;
@@ -143,7 +145,7 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       OBDal.getInstance().rollbackAndClose();
       log4j.error("Exception! " + e);
       try {
-        return addMessage(jsonRequest, "@ProcessRunError@", "error");
+        return addMessage(jsonRequest, "ProcessRunError", e.getMessage(), "error");
       } catch (Exception ex) {
         log4j.error("Exception! " + ex);
         return jsonRequest;
@@ -634,14 +636,23 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
    */
   private JSONObject addMessage(JSONObject content, String strMessage, String strSeverity)
       throws JSONException {
+    return addMessage(content, "", strMessage, strSeverity);
+  }
+
+  /**
+   * Given a JSONObject to be returned, it adds a message to it
+   * 
+   * @throws JSONException
+   */
+  private JSONObject addMessage(JSONObject content, String strTitle, String strMessage,
+      String strSeverity) throws JSONException {
     JSONObject outPut = content;
     JSONObject message = new JSONObject();
     message.put("severity", strSeverity);
-    message.put("text", Utility.parseTranslation(new DalConnectionProvider(),
-        new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext.getOBContext()
-            .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
-            OBContext.getOBContext().getRole().getId()), OBContext.getOBContext().getLanguage()
-            .getLanguage(), strMessage));
+    if (!StringUtils.isEmpty(strTitle)) {
+      message.put("title", OBMessageUtils.messageBD(strTitle));
+    }
+    message.put("text", OBMessageUtils.messageBD(strMessage));
     outPut.put("message", message);
     return outPut;
   }
@@ -688,11 +699,11 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       BigDecimal outstanding = new BigDecimal(jo.getString("outstanding"));
       BigDecimal awaitingExecution = new BigDecimal(jo.getString("awaitingExecutionAmount"));
       if (awaitingExecution.abs().compareTo(outstanding.abs()) > 0) {
-        return "@APRM_AwaitingExecutionAmountError@";
+        return "APRM_AwaitingExecutionAmountError";
       }
       if (outstanding.compareTo(BigDecimal.ZERO) != 0
           && (positive != (outstanding.compareTo(BigDecimal.ZERO) > 0))) {
-        return "@APRM_DifferentSignError@";
+        return "APRM_DifferentSignError";
       }
     }
     return null;

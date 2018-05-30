@@ -38,6 +38,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.function.SQLFunction;
 import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockServletContext;
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +51,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.DalLayerInitializer;
@@ -374,17 +376,48 @@ public class OBBaseTest {
   }
 
   /**
-   * Initializes the DALLayer, can be overridden to add specific initialization behavior.
+   * Initializes the DAL layer, can be overridden to add specific initialization behavior.
    * 
+   * @param sqlFunctions
+   *          a Map with SQL functions to be registered in Hibernate during the DAL layer
+   *          initialization. It can be null if not needed.
    * @throws Exception
    */
-  protected void initializeDalLayer() throws Exception {
-    staticInitializeDalLayer();
+  protected void initializeDalLayer(Map<String, SQLFunction> sqlFunctions) throws Exception {
+    if (areAllSqlFunctionsRegistered(sqlFunctions)) {
+      // do not re-initialize the DAL layer, as the provided SQL functions are already registered
+      return;
+    }
+    DalLayerInitializer.getInstance().setInitialized(false);
+    log.info("Creating custom DAL layer initialization...");
+    staticInitializeDalLayer(sqlFunctions);
+  }
+
+  private boolean areAllSqlFunctionsRegistered(Map<String, SQLFunction> sqlFunctions) {
+    if (sqlFunctions == null || sqlFunctions.isEmpty()) {
+      return true;
+    }
+    @SuppressWarnings("unchecked")
+    Map<String, SQLFunction> registeredFunctions = SessionFactoryController.getInstance()
+        .getConfiguration().getSqlFunctions();
+    for (String sqlFunction : sqlFunctions.keySet()) {
+      if (!registeredFunctions.containsKey(sqlFunction)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private static void staticInitializeDalLayer() throws Exception {
-    if (!DalLayerInitializer.getInstance().isInitialized()) {
-      DalLayerInitializer.getInstance().initialize(true);
+    staticInitializeDalLayer(null);
+  }
+
+  private static void staticInitializeDalLayer(Map<String, SQLFunction> sqlFunctions)
+      throws Exception {
+    DalLayerInitializer initializer = DalLayerInitializer.getInstance();
+    if (!initializer.isInitialized()) {
+      initializer.setSQLFunctions(sqlFunctions);
+      initializer.initialize(true);
     }
   }
 

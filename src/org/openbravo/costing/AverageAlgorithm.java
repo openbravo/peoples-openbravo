@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -142,7 +142,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     cost.setQuantity(transaction.getMovementQuantity());
     cost.setTotalMovementQuantity(currentStock.add(transaction.getMovementQuantity()));
-    cost.setTotalStockValuation(currentValuedStock.add(trxCost));
+    cost.setTotalStockValuation(currentValuedStock.add(trxCost.setScale(costCurrency
+        .getStandardPrecision().intValue(), RoundingMode.HALF_UP)));
     if (transaction.getMovementQuantity().signum() == 0) {
       cost.setPrice(newCost);
     } else {

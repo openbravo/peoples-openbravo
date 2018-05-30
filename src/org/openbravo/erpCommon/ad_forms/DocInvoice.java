@@ -379,7 +379,7 @@ public class DocInvoice extends AcctServer {
         BigDecimal prepayment = new BigDecimal(prepaymentamt);
         BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
         if (!prepaymentamt.equals("0")) {
-          if (grossamt.abs().compareTo(prepayment.abs()) > 0) {
+          if (grossamt.abs().compareTo(prepayment.abs()) != 0) {
             if (IsReturn.equals("Y") || isReversedInvoice) {
               fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
                   this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -748,7 +748,7 @@ public class DocInvoice extends AcctServer {
         BigDecimal prepayment = new BigDecimal(prepaymentamt);
         BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
         if (!prepaymentamt.equals("0")) {
-          if (grossamt.abs().compareTo(prepayment.abs()) > 0) {
+          if (grossamt.abs().compareTo(prepayment.abs()) != 0) {
             if (IsReturn.equals("Y") || isReversedInvoice) {
               fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
                   this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),

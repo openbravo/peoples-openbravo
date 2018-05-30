@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
@@ -38,7 +36,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
-import org.openbravo.advpaymentmngt.utility.APRMApplicationInitializer;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -127,15 +124,11 @@ public class InventoryStatusTest extends WeldBaseTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
-  @Inject
-  public APRMApplicationInitializer initializer;
-
   @Before
   public void initialize() {
     log.info("Initializing Inventory Status Test ...");
     OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORG_ID, LANGUAGE_CODE);
     initializeReservationsPreference();
-    initializer.initialize();
   }
 
   private void initializeReservationsPreference() {

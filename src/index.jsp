@@ -51,7 +51,7 @@ HttpSession currentSession = request.getSession(false);
 boolean adSessionPresent = currentSession != null && currentSession.getAttribute("#AD_SESSION_ID") != null;
 
 AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
-if (!adSessionPresent) {
+if (!adSessionPresent && !authManager.useExternalLoginPage()) {
   response.sendRedirect(authManager.getLoginURL(request));
   return;
 }
@@ -65,7 +65,7 @@ if (userId == null) {
 OBContext.setAdminMode(false);
 String sessionId = null;
 try {
-  sessionId = (String) currentSession.getAttribute("#AD_SESSION_ID");
+  sessionId = currentSession != null ? (String) currentSession.getAttribute("#AD_SESSION_ID") : null;
   if (sessionId != null && !"".equals(sessionId) && !"Y".equals(currentSession.getAttribute("forceLogin"))) {
     org.openbravo.model.ad.access.Session dbSession = OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class, sessionId);
     String currentSessionType = dbSession.getLoginStatus();
@@ -274,7 +274,7 @@ if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
   document.body.removeChild(document.getElementById('OBLoadingDiv'));
   OB.GlobalHiddenForm = document.forms.OBGlobalHiddenForm;
 <%
-  if (currentSession.getAttribute("STARTUP-MESSAGE") != null) {
+  if (currentSession != null && currentSession.getAttribute("STARTUP-MESSAGE") != null) {
     String text = (String) currentSession.getAttribute("STARTUP-MESSAGE");
     String title = (String) currentSession.getAttribute("STARTUP-MESSAGE-TITLE");
     currentSession.removeAttribute("STARTUP-MESSAGE");

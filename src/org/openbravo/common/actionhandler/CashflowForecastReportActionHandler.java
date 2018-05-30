@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
-
-import net.sf.jasperreports.engine.JRDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -44,6 +42,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 /**
  * Cashflow Forecast Action Handler for the Process Definition
@@ -119,11 +119,6 @@ public class CashflowForecastReportActionHandler extends BaseReportActionHandler
       // PDF and HTML don't require data, as it's passed as parameter to the subreports
       return null;
     }
-  }
-
-  @Override
-  protected boolean isCompilingSubreports() {
-    return true;
   }
 
   private Map<String, Object> obtainLinesFieldProvider(CashflowForecastData[] dataSummary,

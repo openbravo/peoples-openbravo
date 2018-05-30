@@ -88,7 +88,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2015-2017 Openbravo SLU
+* All portions are Copyright (C) 2015-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -483,6 +483,7 @@ DBMS_OUTPUT.PUT_LINE( 'v_warehouse_rule_id: ' || coalesce(v_warehouse_rule_id,''
         SELECT result, errormsg INTO v_auxresult, v_auxmessage
         FROM ad_pinstance
         WHERE ad_pinstance_id = p_uuid;
+        DBMS_OUTPUT.PUT_LINE('v_auxresult: ' || v_auxresult || ' v_auxmessage: ' || v_auxmessage);
         v_message := v_message || ' ' || cur_warehouse.name || ': ' || COALESCE(v_auxmessage, '@Success@');
     	IF(v_count=0) THEN 
         DELETE FROM ad_pinstance

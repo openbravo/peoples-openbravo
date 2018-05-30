@@ -103,7 +103,6 @@
   v_GrandTotal NUMBER:=0;
   v_TotalLines NUMBER:=0;
   v_Currency_ID VARCHAR2(32);
-  v_Multiplier NUMBER:=1;
   v_paymentcheck NUMBER;
   --
   v_RInvoice_ID VARCHAR2(32);
@@ -174,7 +173,6 @@
   v_prepaymentamt NUMBER;
   v_hasTaxes NUMBER;
   v_calendarId C_CALENDAR.C_CALENDAR_ID%TYPE;
-  v_calendar_owner_id AD_Org.AD_Org_ID%TYPE;
    
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -343,9 +341,8 @@ BEGIN --BODY
     /*
      * Avoids repeating the same documentno for the same organization tree within the same fiscal year
      */
-    SELECT AD_ORG_GETCALENDAROWNER(v_Org_ID) INTO v_calendar_owner_id FROM DUAL;
-    IF (v_calendar_owner_id IS NOT NULL) THEN
-      SELECT C_CALENDAR_ID INTO v_calendarId FROM AD_ORG WHERE AD_ORG_ID = v_calendar_owner_id;
+    SELECT ad_inheritedcalendar_id INTO v_calendarId FROM AD_ORG WHERE AD_ORG_ID = v_Org_ID;
+    IF (v_calendarId IS NOT NULL) THEN
       SELECT COUNT(*) INTO v_count
       FROM (SELECT Y.C_CALENDAR_ID, Y.C_YEAR_ID,
               MIN(P.STARTDATE) AS PERIODSTARTDATE, MAX(P.ENDDATE) AS PERIODENDDATE
@@ -864,23 +861,6 @@ IF (NOT FINISH_PROCESS) THEN
     END; -- FOR COMMIT
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
-    /**************************************************************************
-     * Credit Multiplier
-     *************************************************************************/
-    DECLARE
-      v_DocBaseType C_DOCTYPE.DocBaseType%TYPE;
-      v_DocTypeIsSOtrx C_DOCTYPE.IsSOtrx%TYPE;
-    BEGIN
-      -- Is it a Credit Memo?
-      SELECT DocBaseType, IsReversal, issotrx INTO v_DocBaseType, v_isReversal, v_DocTypeIsSOtrx
-      FROM C_DOCTYPE
-      WHERE C_DocType_ID=v_DocType_ID;
-      IF (v_DocBaseType IN('ARC', 'API') or (v_isReversal='Y' and v_DocTypeIsSOtrx='Y') or (v_isReversal='N' and v_DocTypeIsSOtrx='N')) THEN
-        v_Multiplier:=-1;
-      END IF;
-    END;
-  END IF;--FINISH_PROCESS
-  IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     /************************************************************************
      * Actions allowed: Reactivate
      * Modified by Jon Alegria
@@ -963,11 +943,6 @@ IF (NOT FINISH_PROCESS) THEN
         EXIT;
       END LOOP;
       IF (v_IsSOTrx='Y') THEN
-        -- Undo revenue and credit limit
-        --The next lines (3) have been commented due to the issue 19198
-        --UPDATE C_BPARTNER
-        --SET ActualLifeTimeValue=ActualLifeTimeValue -(v_Multiplier *  C_Base_Convert(v_GrandTotal, v_Currency_ID, v_Client_ID, v_DateAcct, v_Org_ID))
-        --WHERE C_BPartner_ID=v_BPartner_ID;
         FOR Cur_ReactivateInvoiceLine IN
           (SELECT C_InvoiceLine_ID, C_Orderline_ID, M_InoutLine_ID, QtyInvoiced
            FROM C_INVOICELINE
@@ -1203,7 +1178,6 @@ IF (NOT FINISH_PROCESS) THEN
      *************************************************************************/
     v_CumDiscount:=0;
     v_OldCumDiscount:=0;
-    v_Line:=10;
     SELECT MAX(LINE) INTO v_InvoiceLineSeqNo
     FROM C_INVOICELINE
     WHERE C_INVOICE_ID=v_Record_ID;
@@ -1312,7 +1286,6 @@ IF (NOT FINISH_PROCESS) THEN
         SET C_INVOICE_DISCOUNT_ID=Cur_CInvoiceDiscount.C_INVOICE_DISCOUNT_ID
         WHERE C_INVOICELINE_ID=v_InvoiceLine;
       END LOOP;
-      v_Line:=v_Line + 10;
     END LOOP;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
@@ -1344,14 +1317,6 @@ IF (NOT FINISH_PROCESS) THEN
     SET LastContact=now(),
         LastResult=v_DocumentNo
     WHERE AD_User_ID=v_BPartner_User_ID;
-    -- Update total revenue and credit limit
-    -- It is reversed in C_Allocation_Trg
-    --The next lines (5) have been commented due to the issue 19198
-    --IF (v_IsSOTrx='Y') THEN
-      --UPDATE C_BPARTNER
-      --SET ActualLifeTimeValue=ActualLifeTimeValue +(v_Multiplier *  C_Base_Convert(v_GrandTotal, v_Currency_ID, v_Client_ID, v_DateAcct, v_Org_ID))
-      --WHERE C_BPartner_ID=v_BPartner_ID;
-    --END IF;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     /**************************************************************************
@@ -1532,7 +1497,6 @@ IF (NOT FINISH_PROCESS) THEN
       v_cash VARCHAR2(32) ;
       v_IsoCode C_CURRENCY.ISO_CODE%TYPE;
       v_CashLine VARCHAR2(32) ;
-      v_line NUMBER ;
       v_BPartnerName C_BPARTNER.NAME%TYPE;
       v_GenDP_Org VARCHAR2(32);
       v_dummy VARCHAR2(2000);
@@ -1543,6 +1507,7 @@ IF (NOT FINISH_PROCESS) THEN
         AND ad_module_id <> '0';
       IF (v_count > 1) THEN
         v_dummy := AD_GET_PREFERENCE_VALUE('FinancialManagement', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+        DBMS_OUTPUT.PUT_LINE('FinancialManagement preference value: ' || v_dummy);
       ELSIF (v_count = 0) THEN
         v_ResultStr:='Generating C_Debt_Payment';
         UPDATE C_DEBT_PAYMENT

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,6 +64,7 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       for (int i = 0; i < selectedPaymentsLength; i++) {
         final JSONObject paymentJS = selectedPayments.getJSONObject(i);
         createAndProcessTransactionFromPayment(paymentJS, statementDate, dateAcct, strAccountId);
+        OBDal.getInstance().getSession().clear();
       }
       // Success Message
       return getSuccessMessage(String.format(
@@ -103,7 +104,6 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
         transaction.setTransactionDate(transactionDate);
         transaction.setDateAcct(acctDate);
         transaction.setAccount(account);
-        transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
         FIN_TransactionProcess.doTransactionProcess(ACTION_PROCESS_TRANSACTION, transaction);
       }
     } finally {

@@ -37,7 +37,7 @@
 * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
 * All Rights Reserved.
 * Contributor(s): Openbravo SLU
-* Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
+* Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
 *
 * Specifically, this derivative work is based upon the following Compiere
 * file and version.
@@ -59,6 +59,7 @@ EXCEPTION
 WHEN OTHERS THEN
   DBMS_OUTPUT.PUT_LINE(SQLERRM) ;
   RAISE;
+  RETURN NULL;
 END C_CURRENCY_CONVERT
 ]]></body>
     </function>

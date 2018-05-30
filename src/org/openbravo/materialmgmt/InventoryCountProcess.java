@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -420,7 +420,7 @@ public class InventoryCountProcess implements Process {
     hqlString.append(" , MaterialMgmtStorageDetail as sd");
     hqlString.append(" , Locator as l");
     hqlString.append(" , MaterialMgmtInventoryStatus as invs");
-    hqlString.append(" where icl.physInventory.id = ?");
+    hqlString.append(" where icl.physInventory.id = :physInventoryId");
     hqlString.append("   and sd.product = icl.product");
     hqlString.append("   and (sd.quantityOnHand < 0");
     hqlString.append("     or sd.onHandOrderQuanity < 0");
@@ -434,7 +434,7 @@ public class InventoryCountProcess implements Process {
 
     final Session session = OBDal.getInstance().getSession();
     final Query query = session.createQuery(hqlString.toString());
-    query.setString(0, inventory.getId());
+    query.setParameter("physInventoryId", inventory.getId());
     query.setMaxResults(1);
 
     if (!query.list().isEmpty()) {

@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2011 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 
@@ -123,8 +123,7 @@ public class Heartbeat extends HttpSecureAppServlet {
    * @throws ServletException
    */
   private void updateServletContainer(String serverInfo) throws ServletException {
-    final org.openbravo.erpCommon.businessUtility.HeartbeatData[] data = org.openbravo.erpCommon.businessUtility.HeartbeatData
-        .selectSystemProperties(this);
+    final HeartbeatData[] data = HeartbeatData.selectServletcontainer(this);
     if (data.length > 0) {
       String servletContainer = data[0].servletContainer;
       String servletContainerVersion = data[0].servletContainerVersion;

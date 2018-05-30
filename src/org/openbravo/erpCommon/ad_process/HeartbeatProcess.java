@@ -53,7 +53,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.HeartbeatData;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.Alert;
@@ -110,12 +109,14 @@ public class HeartbeatProcess implements Process {
     if (this.channel == Channel.SCHEDULED && !isHeartbeatActive()) {
       msg = Utility.messageBD(connection, "HB_INACTIVE", ctx.getLanguage());
       logger.logln(msg);
+      OBDal.getInstance().commitAndClose();
       return;
     }
 
     if (!HttpsUtils.isInternetAvailable()) {
       msg = Utility.messageBD(connection, "HB_INTERNET_UNAVAILABLE", ctx.getLanguage());
       logger.logln(msg);
+      OBDal.getInstance().commitAndClose();
       throw new Exception(msg);
     }
 
@@ -288,7 +289,6 @@ public class HeartbeatProcess implements Process {
         hbLog.setAntVersion(systemInfo.getProperty("antVersion"));
         hbLog.setOpenbravoVersion(systemInfo.getProperty("obVersion"));
         hbLog.setOpenbravoInstallMode(systemInfo.getProperty("obInstallMode"));
-        hbLog.setCodeRevision(systemInfo.getProperty("codeRevision"));
         hbLog.setWebServer(systemInfo.getProperty("webserver"));
         hbLog.setWebServerVersion(systemInfo.getProperty("webserverVersion"));
         hbLog.setOperatingSystem(systemInfo.getProperty("os"));
@@ -773,7 +773,7 @@ public class HeartbeatProcess implements Process {
    */
   public static boolean isShowHeartbeatRequired(String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
-    final HeartbeatData[] hbData = HeartbeatData.selectSystemProperties(connectionProvider);
+    final SystemInfoData[] hbData = SystemInfoData.selectSystemProperties(connectionProvider);
     if (hbData.length > 0) {
       final String isheartbeatactive = hbData[0].isheartbeatactive;
       final String postponeDate = hbData[0].postponeDate;

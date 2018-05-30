@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -36,7 +36,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.base.exception.OBException;
@@ -114,12 +113,6 @@ public class CostingMigrationProcess implements Process {
       if (CostingStatus.getInstance().isMigrated()) {
         throw new OBException("@CostMigratedInstance@");
       }
-
-      // FIXME: Remove when HQL based inserts are removed.
-      OBDal.getInstance().registerSQLFunction("get_uuid",
-          new StandardSQLFunction("get_uuid", new StringType()));
-      OBDal.getInstance()
-          .registerSQLFunction("now", new StandardSQLFunction("now", new DateType()));
 
       if (!isMigrationFirstPhaseCompleted()) {
         long t1 = System.currentTimeMillis();

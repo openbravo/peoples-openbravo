@@ -52,7 +52,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2017 Openbravo SLU
+* All portions are Copyright (C) 2001-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -194,7 +194,9 @@ BEGIN --BODY
 
     v_ResultStr := 'Inserting stock lines product: ' || Cur_Product.M_Product_ID;
     MRP_RUN_INSERTLINES(p_client_id, p_org_id, p_user_id, p_run, cur_product.m_product_id, (-1 * cur_product.stockmin), 0, NULL, 'MS', 'Y', NULL, NULL, NULL, NULL, NULL, p_planningdate, NULL, p_production, (CASE WHEN cur_product.stockmin > 0 THEN 'N' ELSE 'Y' END), NULL, v_aux_id);
+    DBMS_OUTPUT.PUT_LINE('Mrp_Run_Insertlines: ' || v_Aux_ID);
     MRP_RUN_INSERTLINES(p_client_id, p_org_id, p_user_id, p_run, cur_product.m_product_id, v_qtyonhand, 0, NULL, 'ST', 'Y', NULL, NULL, NULL, NULL, NULL, p_planningdate, NULL, p_production, 'Y', NULL, v_aux_id);
+    DBMS_OUTPUT.PUT_LINE('Mrp_Run_Insertlines: ' || v_Aux_ID);
 
     v_ResultStr := 'Inserting Order lines product: ' || Cur_Product.M_Product_ID;
     FOR Cur_OrderLine IN (
@@ -230,6 +232,7 @@ BEGIN --BODY
              OR (o.issotrx = 'Y' AND dt.docsubtypeso <> 'OB' AND ol.qtyordered - COALESCE(ol.qtydelivered, 0) > COALESCE(res.reservedqty, 0) - COALESCE(res.releasedqty, 0)))
     ) LOOP
       MRP_RUN_INSERTLINES(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN (-1*Cur_OrderLine.Qty*Cur_OrderLine.Weighting) ELSE (Cur_OrderLine.Qty*Cur_OrderLine.Weighting) END), (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN (-1*Cur_OrderLine.Qty*Cur_OrderLine.Weighting) ELSE (Cur_OrderLine.Qty*Cur_OrderLine.Weighting) END), NULL, (CASE Cur_OrderLine.IsSOTrx WHEN 'Y' THEN 'SO' ELSE 'PO' END), 'Y', Cur_OrderLine.C_OrderLine_ID, NULL, NULL, NULL, NULL, Cur_OrderLine.planningDate, Cur_OrderLine.dateordered, p_Production, (CASE WHEN (Cur_OrderLine.IsSOTrx = 'Y' AND p_Production = 'Y') OR (p_Production = 'N' AND Cur_OrderLine.Qty < 0 ) THEN 'N' ELSE 'Y' END), NULL, v_Aux_ID);
+      DBMS_OUTPUT.PUT_LINE('Mrp_Run_Insertlines: ' || v_Aux_ID);
     END LOOP;
 
     IF (p_Production = 'Y') THEN
@@ -282,6 +285,7 @@ BEGIN --BODY
             AND a.total <> 0
         ) LOOP
           MRP_RUN_INSERTLINES(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Phase_Dependants.M_Product_ID, Cur_Phase_Dependants.total*Cur_Phase.WEIGHTING, Cur_Phase_Dependants.Total*Cur_Phase.WEIGHTING, v_ParentLine, 'WR', 'Y', NULL, Cur_Phase.MA_WorkRequirement_ID, NULL, NULL, NULL, (CASE WHEN Cur_Phase_Dependants.Total>0 THEN Cur_Phase.EndDate ELSE Cur_Phase.StartDate END), Cur_Phase.StartDate, p_Production, (CASE WHEN Cur_Phase_Dependants.Total>0 THEN 'Y' ELSE 'N' END), NULL, v_Aux_ID);
+          DBMS_OUTPUT.PUT_LINE('Mrp_Run_Insertlines: ' || v_Aux_ID);
           MRP_RUN_INITIALIZE(p_User_ID, p_Org_ID, p_Client_ID, p_Run, p_Planner_ID,
                    Cur_Phase_Dependants.M_Product_ID, NULL, NULL, NULL, NULL, p_TimeHorizon,
                    p_PlanningDate, p_Production);
@@ -304,6 +308,7 @@ BEGIN --BODY
            AND AD_ISORGINCLUDED(sf.ad_org_id, p_org_id, p_client_id) > -1
     ) LOOP
       MRP_RUN_INSERTLINES(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, (Cur_SalesForeCast.Qty*Cur_SalesForeCast.Weighting), (Cur_SalesForeCast.Qty*Cur_SalesForeCast.Weighting), NULL, 'SF', 'Y', NULL, NULL, Cur_SalesForeCast.MRP_SALESFORECASTLINE_ID, NULL, NULL, Cur_SalesForeCast.DatePlanned, Cur_SalesForeCast.DatePlanned, p_Production, CASE WHEN (Cur_SalesForeCast.Qty < 0 AND p_Production='Y') OR (Cur_SalesForeCast.Qty > 0 AND p_Production='N') THEN 'N' ELSE 'Y' END, NULL, v_Aux_ID);
+      DBMS_OUTPUT.PUT_LINE('Mrp_Run_Insertlines: ' || v_Aux_ID);
     END LOOP;
 
     IF (p_Production = 'N') THEN
@@ -324,6 +329,7 @@ BEGIN --BODY
             AND r.m_product_id = cur_product.m_product_id
       ) LOOP
         MRP_RUN_INSERTLINES(p_Client_ID, p_Org_ID, p_User_ID, p_Run, Cur_Product.M_Product_ID, Cur_RequisitionLine.qty*Cur_RequisitionLine.Weighting, Cur_RequisitionLine.qty*Cur_RequisitionLine.Weighting, NULL, 'MF', 'Y', NULL, NULL, NULL, Cur_RequisitionLine.M_RequisitionLine_ID, NULL, Cur_RequisitionLine.DatePlanned, Cur_RequisitionLine.DatePlanned, p_Production, CASE WHEN (Cur_RequisitionLine.Qty > 0) THEN 'N' ELSE 'Y' END, NULL, v_Aux_ID);
+        DBMS_OUTPUT.PUT_LINE('Mrp_Run_Insertlines: ' || v_Aux_ID);
         UPDATE m_requisitionline
         SET lockedby = p_user_id,
             lockdate = now(),

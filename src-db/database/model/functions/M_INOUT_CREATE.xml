@@ -34,7 +34,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -376,8 +376,8 @@ BEGIN --BODY
           Ad_Sequence_Doc('DocumentNo_M_InOut', Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
         END IF;
 
-        IF (Cur_Order.DocSubTypeSO = 'WR') THEN
-          v_NEWORDERDATE := Cur_Order.DATEORDERED; -- IS A POS ORDER
+        IF (Cur_Order.DocSubTypeSO IN ('WR','WP')) THEN
+          v_NEWORDERDATE := Cur_Order.DATEORDERED; -- IS A POS ORDER OR A WAREHOUSE ORDER
         ELSE
           v_NEWORDERDATE := TRUNC(now());
         END IF;

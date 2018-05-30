@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013-2017 Openbravo SLU
+* All portions are Copyright (C) 2013-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -305,6 +305,7 @@ BEGIN
     
     IF (v_availablestock >= v_qtytorelease) THEN
       M_RESERVE_STOCK_AUTO(cur_not_allocated_stock.m_reservation_id, p_user_id, v_newreservedqty);
+      DBMS_OUTPUT.PUT_LINE('M_Reserve_Stock_Auto: ' || v_newreservedqty);
       v_pendingtoreallocate := v_pendingtoreallocate - v_qtytorelease;
       IF (v_pendingtoreallocate <= 0) THEN
         -- Reallocation completed

@@ -19,7 +19,10 @@
 
 package org.openbravo.base.session;
 
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -29,6 +32,7 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.connection.ConnectionProvider;
 import org.hibernate.connection.DriverManagerConnectionProvider;
 import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -173,9 +177,10 @@ public abstract class SessionFactoryController {
       // configuration.getProperties().setProperty(Environment.ISOLATION,
       // "" + Connection.TRANSACTION_READ_COMMITTED);
 
+      registerSqlFunctions();
+
       final DalSessionFactory dalSessionFactory = OBProvider.getInstance().get(
           DalSessionFactory.class);
-
       SessionFactory delegateSessionFactory = configuration.buildSessionFactory();
       dalSessionFactory.setDelegateSessionFactory(delegateSessionFactory);
 
@@ -194,6 +199,20 @@ public abstract class SessionFactoryController {
     } catch (final Throwable t) {
       throw new OBException(t);
     }
+  }
+
+  private void registerSqlFunctions() {
+    Map<String, SQLFunction> sqlFunctions = getSQLFunctions();
+    if (sqlFunctions == null || sqlFunctions.isEmpty()) {
+      return;
+    }
+    for (Entry<String, SQLFunction> entry : sqlFunctions.entrySet()) {
+      configuration.addSqlFunction(entry.getKey(), entry.getValue());
+    }
+  }
+
+  protected Map<String, SQLFunction> getSQLFunctions() {
+    return Collections.emptyMap();
   }
 
   protected abstract void mapModel(Configuration theConfiguration);

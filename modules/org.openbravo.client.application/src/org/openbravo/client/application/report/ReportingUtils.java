@@ -140,31 +140,9 @@ public class ReportingUtils {
   }
 
   /**
-   * @see ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider,
-   *      JRDataSource, Map, boolean)
-   */
-  public static void exportJR(String jasperFilePath, ExportType expType,
-      Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
-      ConnectionProvider connectionProvider, JRDataSource data,
-      Map<Object, Object> additionalExportParameters) throws OBException {
-    exportJR(jasperFilePath, expType, parameters, target, addProcessDefinitionParameters,
-        connectionProvider, data, additionalExportParameters, false);
-  }
-
-  /**
-   * @see ReportingUtils#exportJR(String, ExportType, Map, OutputStream, boolean,
-   *      ConnectionProvider, JRDataSource, Map, boolean)
-   */
-  public static void exportJR(String jasperFilePath, ExportType expType,
-      Map<String, Object> parameters, OutputStream outputStream,
-      boolean addProcessDefinitionParameters, ConnectionProvider connectionProvider,
-      JRDataSource data, Map<Object, Object> additionalExportParameters) throws OBException {
-    exportJR(jasperFilePath, expType, parameters, outputStream, addProcessDefinitionParameters,
-        connectionProvider, data, additionalExportParameters, false);
-  }
-
-  /**
-   * Exports the report to a file.
+   * Exports the report to a file. This method will try to compile the sub-reports (if any). Note
+   * that the sub-reports to be compiled will be the .jrxml files placed in the same folder as the
+   * main report and whose related parameter name starts with <b>SUBREP_</b>.
    * 
    * @param jasperFilePath
    *          The path to the JR template of the report.
@@ -183,10 +161,6 @@ public class ReportingUtils {
    *          The data to be used in the report, if required.
    * @param additionalExportParameters
    *          Additional export parameters than can be added to configure the resulting report.
-   * @param compileSubreports
-   *          A flag to indicate if the sub-reports should be compiled too. If true, the sub-report
-   *          jrxml files should be placed in the same folder as the main report and their related
-   *          parameter name should start with SUBREP_
    * @throws OBException
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
@@ -194,7 +168,7 @@ public class ReportingUtils {
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
       ConnectionProvider connectionProvider, JRDataSource data,
-      Map<Object, Object> additionalExportParameters, boolean compileSubreports) throws OBException {
+      Map<Object, Object> additionalExportParameters) throws OBException {
 
     JRSwapFileVirtualizer virtualizer = null;
     Map<Object, Object> exportParameters = new HashMap<>();
@@ -214,8 +188,8 @@ public class ReportingUtils {
     if (addProcessDefinitionParameters) {
       addProcessDefinitionParameters(parameters);
     }
-    JasperPrint jasperPrint = generateJasperPrint(jasperFilePath, parameters, compileSubreports,
-        connectionProvider, data);
+    JasperPrint jasperPrint = generateJasperPrint(jasperFilePath, parameters, connectionProvider,
+        data);
     if (expType == ExportType.HTML) {
       HttpSession session = (HttpSession) parameters.get("HTTP_SESSION");
       if (session != null) {
@@ -236,7 +210,9 @@ public class ReportingUtils {
   }
 
   /**
-   * Exports the report to an output stream.
+   * Exports the report to an output stream. This method will try to compile the sub-reports (if
+   * any). Note that the sub-reports to be compiled will be the .jrxml files placed in the same
+   * folder as the main report and whose related parameter name starts with <b>SUBREP_</b>.
    * 
    * @param jasperFilePath
    *          The path to the JR template of the report.
@@ -255,10 +231,6 @@ public class ReportingUtils {
    *          The data to be used in the report, if required.
    * @param additionalExportParameters
    *          Additional export parameters than can be added to configure the resulting report.
-   * @param compileSubreports
-   *          A flag to indicate if the sub-reports should be compiled too. If true, the sub-report
-   *          jrxml files should be placed in the same folder as the main report and their related
-   *          parameter name should start with SUBREP_
    * @throws OBException
    *           In case there is any error generating the report an exception is thrown with the
    *           error message.
@@ -266,8 +238,7 @@ public class ReportingUtils {
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, OutputStream outputStream,
       boolean addProcessDefinitionParameters, ConnectionProvider connectionProvider,
-      JRDataSource data, Map<Object, Object> additionalExportParameters, boolean compileSubreports)
-      throws OBException {
+      JRDataSource data, Map<Object, Object> additionalExportParameters) throws OBException {
 
     JRSwapFileVirtualizer virtualizer = null;
     Map<Object, Object> exportParameters = new HashMap<>();
@@ -287,8 +258,8 @@ public class ReportingUtils {
     if (addProcessDefinitionParameters) {
       addProcessDefinitionParameters(parameters);
     }
-    JasperPrint jasperPrint = generateJasperPrint(jasperFilePath, parameters, compileSubreports,
-        connectionProvider, data);
+    JasperPrint jasperPrint = generateJasperPrint(jasperFilePath, parameters, connectionProvider,
+        data);
     if (expType == ExportType.HTML) {
       HttpSession session = (HttpSession) parameters.get("HTTP_SESSION");
       if (session != null) {
@@ -306,6 +277,38 @@ public class ReportingUtils {
         virtualizer.cleanup();
       }
     }
+  }
+
+  /**
+   * Exports the report to a file.
+   * 
+   * @deprecated The compileSubreports parameter has no effect. Therefore, use
+   *             {@link ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider, JRDataSource, Map)}
+   *             instead.
+   */
+  public static void exportJR(String jasperFilePath, ExportType expType,
+      Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
+      ConnectionProvider connectionProvider, JRDataSource data,
+      Map<Object, Object> additionalExportParameters, boolean compileSubreports) throws OBException {
+    exportJR(jasperFilePath, expType, parameters, target, addProcessDefinitionParameters,
+        connectionProvider, data, additionalExportParameters);
+  }
+
+  /**
+   * Exports the report to an output stream.
+   * 
+   * @deprecated The compileSubreports parameter has no effect. Therefore, use
+   *             {@link ReportingUtils#exportJR(String, ExportType, Map, OutputStream, boolean, ConnectionProvider, JRDataSource, Map)}
+   *             instead.
+   */
+  @Deprecated
+  public static void exportJR(String jasperFilePath, ExportType expType,
+      Map<String, Object> parameters, OutputStream outputStream,
+      boolean addProcessDefinitionParameters, ConnectionProvider connectionProvider,
+      JRDataSource data, Map<Object, Object> additionalExportParameters, boolean compileSubreports)
+      throws OBException {
+    exportJR(jasperFilePath, expType, parameters, outputStream, addProcessDefinitionParameters,
+        connectionProvider, data, additionalExportParameters);
   }
 
   /**
@@ -930,14 +933,24 @@ public class ReportingUtils {
   /**
    * Generates a compiled, translated and filled report into a JasperPrint object.
    * 
+   * @deprecated The compileSubreports parameter has no effect. Therefore, use
+   *             {@link ReportingUtils#generateJasperPrint(String, Map, ConnectionProvider, JRDataSource)}
+   *             instead.
+   */
+  @Deprecated
+  public static JasperPrint generateJasperPrint(String jasperFilePath,
+      Map<String, Object> parameters, boolean compileSubreports,
+      ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
+    return generateJasperPrint(jasperFilePath, parameters, connectionProvider, data);
+  }
+
+  /**
+   * Generates a compiled, translated and filled report into a JasperPrint object.
+   * 
    * @param jasperFilePath
    *          The path to the JR template of the report.
    * @param parameters
    *          The parameters to be sent to Jasper Report.
-   * @param compileSubreports
-   *          A flag to indicate if the sub-reports of the report should be compiled too. If true,
-   *          the sub-report jrxml files should be placed in the same folder as the main report and
-   *          their name should start with SUBREP_
    * @param connectionProvider
    *          A connection provider in case the report needs it.
    * @param data
@@ -948,8 +961,8 @@ public class ReportingUtils {
    *           error message.
    */
   public static JasperPrint generateJasperPrint(String jasperFilePath,
-      Map<String, Object> parameters, boolean compileSubreports,
-      ConnectionProvider connectionProvider, JRDataSource data) throws OBException {
+      Map<String, Object> parameters, ConnectionProvider connectionProvider, JRDataSource data)
+      throws OBException {
     long t1 = System.currentTimeMillis();
     try {
       setReportFormatFactory(parameters);
@@ -963,12 +976,9 @@ public class ReportingUtils {
 
       String language = OBContext.getOBContext().getLanguage().getLanguage();
       JasperReport jReport;
-      if (compileSubreports && connectionProvider != null) {
-        jReport = compiledReportManager.compileReportWithSubreports(jasperFilePath, language,
-            parameters, connectionProvider);
-      } else {
-        jReport = compiledReportManager.compileReport(jasperFilePath, language);
-      }
+
+      jReport = compiledReportManager.compileReportWithSubreports(jasperFilePath, language,
+          parameters, connectionProvider);
 
       ReportFiller reportFiller = new ReportFiller(jReport, parameters);
       if (connectionProvider != null) {

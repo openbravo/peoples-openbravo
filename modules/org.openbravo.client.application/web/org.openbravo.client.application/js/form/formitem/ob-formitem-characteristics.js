@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -527,6 +527,9 @@ isc.OBCharacteristicsFilterItem.addProperties({
     // previous to the last one 
     if (this.grid && this.grid.parentElement && this.grid.parentElement.viewProperties && this.grid.parentElement.viewProperties.gridProperties && this.grid.parentElement.viewProperties.gridProperties.alias) {
       this.propertyName = this.grid.parentElement.viewProperties.gridProperties.alias;
+      if (!this.isProductEntity()) {
+        this.propertyName += '.product';
+      }
     } else {
       this.propertyName = 'e'; // "e" is the base entity
     }
@@ -564,6 +567,23 @@ isc.OBCharacteristicsFilterItem.addProperties({
     }, this.pickerIconDefaults, this.pickerIconProperties)];
 
     this.Super('init', arguments);
+  },
+
+  isProductEntity: function () {
+    var entity, theGrid;
+
+    if (this.grid && !this.grid.sourceWidget) {
+      return false; // can not retrieve entity
+    }
+    theGrid = this.grid.sourceWidget;
+    if (theGrid.view && theGrid.view.entity) {
+      // Standard view
+      entity = theGrid.view.entity;
+    } else if (theGrid.viewProperties && theGrid.viewProperties.entity) {
+      // Pick and Edit view
+      entity = theGrid.viewProperties.entity;
+    }
+    return entity === 'Product';
   },
 
   removeProductCharacteristicsCriteria: function (fullCriteria) {

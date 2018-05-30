@@ -28,6 +28,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
@@ -50,6 +53,7 @@ public class ActiveInstanceProcess implements Process {
   private static final Logger log = Logger.getLogger(ActiveInstanceProcess.class);
   private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
   private static final String EVALUATION_PURPOSE = "E";
+  private static final String PRODUCTION_PURPOSE = "P";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -141,6 +145,10 @@ public class ActiveInstanceProcess implements Process {
           if (HeartbeatProcess.isClonedInstance()) {
             insertDummyHBLog();
           }
+
+          if (PRODUCTION_PURPOSE.equals(purpose)) {
+            setModulesAsNotInDevelopment();
+          }
         } else {
           msg.setType("Error");
           msg.setMessage(ak.getErrorMessage());
@@ -157,6 +165,21 @@ public class ActiveInstanceProcess implements Process {
       log.error(result[0]);
     }
 
+  }
+
+  private void setModulesAsNotInDevelopment() {
+    if (SessionFactoryController.isRunningInWebContainer()) {
+      WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
+          .setNotInDevelopment();
+    } else {
+      // executing from ant activate.instance task
+      OBDal
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
+          .executeUpdate();
+    }
   }
 
   public static void updateShowProductionFields(String value) {

@@ -42,6 +42,7 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.domain.ReferencedTreeField;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -475,5 +476,24 @@ public class ApplicationDictionaryCachedStructures {
    */
   public boolean isInDevelopment(String moduleId) {
     return this.inDevelopmentModules.contains(moduleId);
+  }
+
+  /**
+   * Marks all modules as not in development and updates the cache status
+   */
+  public void setNotInDevelopment() {
+    setAllModulesAsNotInDevelopment();
+    inDevelopmentModules.clear();
+    useCache = true;
+    log.info("Setting all modules as not In Development");
+  }
+
+  private void setAllModulesAsNotInDevelopment() {
+    OBDal
+        .getInstance()
+        .getSession()
+        .createQuery(
+            "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
+        .executeUpdate();
   }
 }

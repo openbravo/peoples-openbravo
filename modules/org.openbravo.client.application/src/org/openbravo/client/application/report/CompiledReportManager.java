@@ -56,11 +56,6 @@ class CompiledReportManager {
     return instance;
   }
 
-  JasperReport compileReport(String reportPath, String language) throws JRException {
-    return compileReport(reportPath, language,
-        DalConnectionProvider.getReadOnlyConnectionProvider());
-  }
-
   JasperReport compileReport(String reportPath, String language,
       ConnectionProvider connectionProvider) throws JRException {
     CompiledReport compiledReport = getCompiledReport(reportPath, language);
@@ -156,7 +151,7 @@ class CompiledReportManager {
 
     public CompiledReport(JasperReport mainReport, Map<String, JasperReport> subReports) {
       this.mainReport = mainReport;
-      this.subReports = subReports;
+      this.subReports = !subReports.isEmpty() ? subReports : null;
     }
   }
 }

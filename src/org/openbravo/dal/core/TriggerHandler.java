@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,11 +21,11 @@ package org.openbravo.dal.core;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 
@@ -42,6 +42,8 @@ public class TriggerHandler {
   private static final Logger log = Logger.getLogger(TriggerHandler.class);
 
   private static TriggerHandler instance;
+  private boolean isPostgreSQL = "POSTGRE".equals(OBPropertiesProvider.getInstance()
+      .getOpenbravoProperties().getProperty("bbdd.rdbms"));
 
   public static TriggerHandler getInstance() {
     if (instance == null) {
@@ -52,30 +54,17 @@ public class TriggerHandler {
 
   private ThreadLocal<Boolean> sessionStatus = new ThreadLocal<Boolean>();
 
-  /**
-   * Disabled all triggers in the database. This is done by creating an ADSessionStatus object and
-   * storing it in the AD_SESSION_STATUS table. Note: this method will also call
-   * {@link OBDal#flush() OBDal.flush()}.
-   */
+  /** Disables all triggers in the database */
   public void disable() {
     log.debug("Disabling triggers");
-    Check.isNull(sessionStatus.get(), "There is already a ADSessionStatus present in this thread, "
-        + "call enable before calling disable again");
+    Check.isNull(sessionStatus.get(),
+        "Triggers were already disabled in this session, call enable before calling disable again");
     Connection con = OBDal.getInstance().getConnection();
-    PreparedStatement ps = null;
-    try {
-      ps = con
-          .prepareStatement("INSERT INTO AD_SESSION_STATUS (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)"
-              + " VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
-      ps.executeUpdate();
+    try (PreparedStatement ps = con.prepareStatement(getDisableStatement())) {
+      ps.execute();
       sessionStatus.set(Boolean.TRUE);
     } catch (Exception e) {
       throw new OBException("Couldn't disable triggers: ", e);
-    } finally {
-      try {
-        ps.close();
-      } catch (SQLException e) {
-      }
     }
   }
 
@@ -93,29 +82,38 @@ public class TriggerHandler {
     sessionStatus.set(null);
   }
 
-  /**
-   * Enables triggers in the database. It does this by removing the ADSessionStatus from the
-   * database.
-   */
+  /** Enables triggers in the database */
   public void enable() {
     log.debug("Enabling triggers");
-    Check.isNotNull(sessionStatus.get(), "SessionStatus not set, call disable "
-        + "before calling this method");
+    Check.isNotNull(sessionStatus.get(),
+        "Triggers were not disabled in this session, call disable before calling this method");
 
     Connection con = OBDal.getInstance().getConnection();
-    PreparedStatement ps = null;
-    try {
-      ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS WHERE isimporting = 'Y'");
-      ps.executeUpdate();
+    try (PreparedStatement ps = con.prepareStatement(getEnableStatement())) {
+      ps.execute();
     } catch (Exception e) {
-      throw new OBException("Couldn't disable triggers: ", e);
+      throw new OBException("Couldn't enable triggers: ", e);
     } finally {
       // always clear the threadlocal
       clear();
-      try {
-        ps.close();
-      } catch (SQLException e) {
-      }
     }
   }
+
+  private String getDisableStatement() {
+    if (isPostgreSQL) {
+      return "SELECT set_config('my.triggers_disabled','Y',true)";
+    } else {
+      return "INSERT INTO AD_SESSION_STATUS (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)"
+          + " VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')";
+    }
+  }
+
+  private String getEnableStatement() {
+    if (isPostgreSQL) {
+      return "SELECT set_config('my.triggers_disabled','N',true)";
+    } else {
+      return "DELETE FROM AD_SESSION_STATUS WHERE isimporting = 'Y'";
+    }
+  }
+
 }

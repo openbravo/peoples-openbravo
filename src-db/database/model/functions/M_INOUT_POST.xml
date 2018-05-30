@@ -886,7 +886,6 @@
             DECLARE
               Cur_SLines RECORD;
               Cur_ILines RECORD;
-              v_Qty NUMBER;
               v_MatchPO_ID VARCHAR2(32) ;
               v_MatchInv_ID VARCHAR2(32) ;
             BEGIN

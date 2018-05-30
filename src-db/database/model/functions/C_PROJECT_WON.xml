@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -33,7 +33,6 @@
     v_cProjectId varchar2(32);
     v_cBPartnerId varchar2(32);
     v_cBPartnerLocationId varchar2(32);
-    v_adUserId varchar2(32);
     v_billToId varchar2(32);
     v_paymentRule VARCHAR(60) ;
     v_FINpayment C_PROJECTPROPOSAL.FIN_Paymentmethod_ID%TYPE;
@@ -80,14 +79,12 @@
     IF(v_projectStatus='OP') THEN
       SELECT C_PROJECTPROPOSAL.C_BPartner_ID,
         C_PROJECTPROPOSAL.C_BPartner_Location_ID,
-        C_PROJECTPROPOSAL.AD_User_ID,
         MAX(C_BPARTNER_LOCATION.C_BPartner_Location_ID),
         C_PROJECTPROPOSAL.PaymentRule,
         C_PROJECTPROPOSAL.FIN_Paymentmethod_ID,
         C_PROJECTPROPOSAL.C_Paymentterm_ID
       INTO v_cBPartnerId,
         v_cBPartnerLocationId,
-        v_adUserId,
         v_billToId,
         v_paymentRule,
         v_FINpayment,
@@ -101,7 +98,6 @@
         AND C_PROJECTPROPOSAL.C_ProjectProposal_ID=v_Record_ID
       GROUP BY C_PROJECTPROPOSAL.C_BPartner_ID,
         C_PROJECTPROPOSAL.C_BPartner_Location_ID,
-        C_PROJECTPROPOSAL.AD_User_ID,
         C_PROJECTPROPOSAL.PaymentRule,
         C_PROJECTPROPOSAL.FIN_Paymentmethod_ID,
         C_PROJECTPROPOSAL.C_Paymentterm_ID;
@@ -125,7 +121,7 @@
           SET Updated=now(),
           UpdatedBy='0',
           C_BPartner_ID=v_cBPartnerId,
-          C_BPartner_Location_ID=v_cBPartnerLocationId, --Salesrep_ID = v_adUserId,
+          C_BPartner_Location_ID=v_cBPartnerLocationId,
           BillTo_ID=v_billToId,
           PaymentRule=v_paymentRule,
           FIN_paymentmethod_id=v_FINpayment,

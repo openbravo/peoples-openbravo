@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2012 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -44,6 +45,7 @@ import org.openbravo.utils.FormatUtilities;
 
 public class EmailManager {
   private static Logger log4j = Logger.getLogger(EmailManager.class);
+  private static final long SMTP_TIMEOUT = TimeUnit.MINUTES.toMillis(10);
 
   public static void sendEmail(String host, boolean auth, String username, String password,
       String connSecurity, int port, String senderAddress, String recipientTO, String recipientCC,
@@ -64,6 +66,9 @@ public class EmailManager {
       props.put("mail.transport.protocol", "smtp");
       props.put("mail.smtp.host", host);
       props.put("mail.smtp.port", port);
+
+      props.put("mail.smtp.timeout", SMTP_TIMEOUT);
+      props.put("mail.smtp.connectiontimeout", SMTP_TIMEOUT);
 
       if (localConnSecurity != null) {
         localConnSecurity = localConnSecurity.replaceAll(", *", ",");

@@ -575,6 +575,17 @@ public abstract class AuthenticationManager {
   }
 
   /**
+   * This method can be overridden by those subclasses that expect to retrieve the authentication
+   * result from an external login page.
+   * 
+   * @return {@code true} if the authentication result is retrieved from an external login page.
+   *         Otherwise, return {@code false} which is the value returned by default.
+   */
+  public boolean useExternalLoginPage() {
+    return false;
+  }
+
+  /**
    * A class used to keep and recover the login credentials (user and password)
    */
   protected class UserLoginInfo {

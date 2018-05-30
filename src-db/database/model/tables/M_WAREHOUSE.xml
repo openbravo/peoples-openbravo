@@ -97,8 +97,12 @@
         <reference local="M_WAREHOUSE_RULE_ID" foreign="M_WAREHOUSE_RULE_ID"/>
       </foreign-key>
       <unique name="M_WAREHOUSE_NAME">
-        <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="NAME"/>
+        <unique-column name="AD_CLIENT_ID"/>
+      </unique>
+      <unique name="M_WAREHOUSE_VALUE">
+        <unique-column name="VALUE"/>
+        <unique-column name="AD_CLIENT_ID"/>
       </unique>
       <check name="M_WAREHOUSE_ALLOCATED"><![CDATA[ISALLOCATED IN ('Y', 'N')]]></check>
       <check name="M_WAREHOUSE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

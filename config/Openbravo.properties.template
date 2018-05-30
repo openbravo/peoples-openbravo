@@ -197,8 +197,8 @@ strict.template.application=false
 
 # If these properties are set, after a failed login the response time 
 # will be delayed, and the user account can be blocked.
-login.trial.delay.increment=0
-login.trial.delay.max=0
+login.trial.delay.increment=0.2
+login.trial.delay.max=3
 login.trial.user.lock=0
 
 ##########

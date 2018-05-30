@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,21 +11,29 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
--->
+ */
+package org.openbravo.dal.core;
 
-<SqlClass name="OrgTreeData" package="org.openbravo.base.secureApp">
-<SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT AD_ORG_ID, AD_CLIENT_ID, AD_ROLE_ID, '' as userlevel
-        FROM AD_ROLE_ORGACCESS
-       WHERE AD_ROLE_ID = ?
-    </Sql>
-    <Parameter name="adRoleId"/>
-  </SqlMethod>
-  
-</SqlClass>
+import java.util.Map;
+
+import org.hibernate.dialect.function.SQLFunction;
+
+/**
+ * An interface that must be implemented by those classes intended to register SQL functions which
+ * are pretended to be used in HQL.
+ */
+public interface SQLFunctionRegister {
+
+  /**
+   * This method is executed by the {@link DalSessionFactoryController} to retrieve SQL functions
+   * that should be registered in Hibernate.
+   * 
+   * @return A Map with SQL functions to be registered in Hibernate.
+   */
+  public Map<String, SQLFunction> getSQLFunctions();
+
+}

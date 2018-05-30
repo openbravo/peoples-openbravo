@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
@@ -181,12 +182,18 @@ public class IssuesTest extends OBBaseTest {
 
   /**
    * https://issues.openbravo.com/view.php?id=18688
+   * 
+   * @throws Exception
    */
   @Test
-  public void test18688() {
+  public void test18688() throws Exception {
+    // define the map containing the SQL function to be registered in Hibernate
+    Map<String, SQLFunction> sqlFunctions = new HashMap<>();
+    sqlFunctions.put("ad_column_identifier_std", new StandardSQLFunction(
+        "ad_column_identifier_std", StandardBasicTypes.STRING));
+    initializeDalLayer(sqlFunctions);
+
     final Session session = OBDal.getInstance().getSession();
-    OBDal.getInstance().registerSQLFunction("ad_column_identifier_std",
-        new StandardSQLFunction("ad_column_identifier_std", StandardBasicTypes.STRING));
     final String qryStr = "select bc.id, ad_column_identifier_std('C_BP_Group', bc.id) from "
         + Category.ENTITY_NAME + " bc";
     final Query qry = session.createQuery(qryStr);
@@ -379,7 +386,7 @@ public class IssuesTest extends OBBaseTest {
     formTrl.setDescription("description");
     formTrl.setName("name");
     formTrl.setSpecialForm(form);
-    formTrl.setLanguage(OBDal.getInstance().createCriteria(Language.class).list().get(0));
+    formTrl.setLanguage(getNonInstalledLanguage());
 
     form.getADFormTrlList().add(formTrl);
     OBDal.getInstance().save(form);
@@ -389,6 +396,13 @@ public class IssuesTest extends OBBaseTest {
 
     // don't save anything
     OBDal.getInstance().rollbackAndClose();
+  }
+
+  private Language getNonInstalledLanguage() {
+    OBQuery<Language> query = OBDal.getInstance().createQuery(Language.class,
+        "as l where l.systemLanguage = false");
+    query.setMaxResult(1);
+    return query.uniqueResult();
   }
 
   /**
@@ -701,11 +715,11 @@ public class IssuesTest extends OBBaseTest {
     SQLQuery query = session
         .createSQLQuery("SELECT AD_REF_LIST.VALUE AS VALUE, AD_REF_LIST.NAME AS LISTNAME, TRL.NAME AS TRLNAME "
             + "FROM AD_REF_LIST LEFT OUTER JOIN "
-            + "(SELECT AD_REF_LIST_ID, NAME FROM AD_REF_LIST_TRL WHERE AD_REF_LIST_TRL.AD_LANGUAGE = ?) TRL "
+            + "(SELECT AD_REF_LIST_ID, NAME FROM AD_REF_LIST_TRL WHERE AD_REF_LIST_TRL.AD_LANGUAGE = :language) TRL "
             + "ON AD_REF_LIST.AD_REF_LIST_ID = TRL.AD_REF_LIST_ID "
-            + "WHERE AD_REF_LIST.AD_REFERENCE_ID = ?");
-    query.setString(0, "en_US");
-    query.setString(1, "800025");
+            + "WHERE AD_REF_LIST.AD_REFERENCE_ID = :referenceId");
+    query.setParameter("language", "en_US");
+    query.setParameter("referenceId", "800025");
     query.list();
   }
 
