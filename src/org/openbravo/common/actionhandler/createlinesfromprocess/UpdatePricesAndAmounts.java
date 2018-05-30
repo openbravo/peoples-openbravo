@@ -90,14 +90,14 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
 
     // Processing for Prices Including Taxes
     if (getInvoice().getPriceList().isPriceIncludesTax()) {
-      BigDecimal grossUnitPrice = priceActual;
+      BigDecimal grossUnitPrice = orderLine.getGrossUnitPrice();
       BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
           RoundingMode.HALF_UP);
 
       // Set gross price information
       priceInformation.setGrossUnitPrice(grossUnitPrice);
       priceInformation.setGrossBaseUnitPrice(grossUnitPrice);
-      priceInformation.setGrossListPrice(priceList);
+      priceInformation.setGrossListPrice(grossUnitPrice);
       priceInformation.setLineGrossAmount(grossAmount);
 
       // Update Net Prices to 0
