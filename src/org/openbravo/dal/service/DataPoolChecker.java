@@ -111,6 +111,7 @@ public class DataPoolChecker implements OBSingleton {
    */
   private void setDefaultReadOnlyPool(String defaultPool) {
     if (validPoolValues.contains(defaultPool)) {
+      log.debug("Pool {} is set as the default to use with reports", defaultPool);
       defaultReadOnlyPool = defaultPool;
     } else {
       log.warn(
@@ -133,7 +134,10 @@ public class DataPoolChecker implements OBSingleton {
 
     String poolUsedForProcess = poolForProcess != null ? poolForProcess : defaultReadOnlyPool;
 
-    log.debug("Using pool {}  for report with id {}", poolUsedForProcess, processId);
+    if (processId != null) {
+      log.debug("Using pool {} for report with id {}", poolUsedForProcess, processId);
+    }
+
     return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForProcess);
   }
 
