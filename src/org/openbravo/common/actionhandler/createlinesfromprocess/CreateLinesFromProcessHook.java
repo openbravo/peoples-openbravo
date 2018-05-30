@@ -34,8 +34,8 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
  * 
  * <pre>
  * &#064;Dependent
- * &#064;Qualifier(CreateLinesFromProcessImplementationInterface.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
- * public class TestHook implements CreateLinesFromProcessImplementationInterface {
+ * &#064;Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
+ * public class TestHook implements CreateLinesFromProcessHook {
  * 
  *   &#064;Override
  *   public int getOrder() {
