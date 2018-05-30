@@ -144,7 +144,7 @@ enyo.kind({
             kind: 'OB.UI.RegularButton',
             name: 'changebutton',
             classes: 'btn-icon-split btnlink-green',
-            style: 'padding: 5px; margin: 0px 10px 0px 0px; width: 40px; height: 25px;',
+            style: 'padding: 5px; margin: -5px 10px 0px 0px; width: 40px; height: 25px;',
             ontap: 'actionChange'
           }, {
             tag: 'span',
