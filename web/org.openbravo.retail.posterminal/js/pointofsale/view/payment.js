@@ -83,6 +83,7 @@ enyo.kind({
       if (!_.isNull(change) && change) {
         this.calculateChange(payment, change);
       } else if (!_.isNull(pending) && pending) {
+        this.calculateChangeReset();
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
       if (paymentstatus && inEvent.value.status !== "" && !this.receipt.isCalculateReceiptLocked && !this.receipt.isCalculateGrossLocked) {
@@ -364,6 +365,13 @@ enyo.kind({
     }
   },
 
+  calculateChangeReset: function () {
+    // Reset change calculation results
+    this.receipt.set('changePayments', []);
+    this.$.change.setContent('');
+    OB.MobileApp.model.set('changeReceipt', '');
+  },
+
   calculateChange: function (firstpayment, firstchange) {
     // payment is the first payment to use in the change calculation
     // change is > 0 and is in the document currency
@@ -387,6 +395,7 @@ enyo.kind({
     }
 
     // Recursive function to calculate changes, payment by payment
+
 
     function calculateNextChange(payment, change) {
       var changeLessThan = payment.paymentMethod.changeLessThan;
@@ -454,6 +463,7 @@ enyo.kind({
       this.$.change.show();
       this.$.changelbl.show();
     } else {
+      this.calculateChangeReset();
       this.$.change.hide();
       this.$.changelbl.hide();
     }
