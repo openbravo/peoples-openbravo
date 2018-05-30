@@ -84,3 +84,7 @@ OB.PROC.CreateLinesOnChangeAum = function (item, validator, value, record) {
     });
   }
 };
+
+OB.PROC.CLFROnload = function (item, view, form, grid) {
+  item.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, null, OB.I18N.getLabel('CreateFromMatchPOQtys'));
+};
