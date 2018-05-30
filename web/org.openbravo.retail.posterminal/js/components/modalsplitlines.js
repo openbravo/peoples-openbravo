@@ -458,14 +458,12 @@ enyo.kind({
           this.orderline.get('promotions').splice(index, 1, adjustedPromotion);
         }
       }, this);
-      OB.UTIL.SynchronizationHelper.finished(this.synchId, 'splitLines');
       this.receipt.set('skipCalculateReceipt', false);
       this.receipt.calculateReceipt();
     }
   },
 
   splitLines: function () {
-    this.synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('splitLines');
     this.indexToAdd = 1;
     this.qtysToAdd = this.$.bodyContent.$.qtyLines.getValues();
     this.orderline.set('splitline', true);
@@ -483,7 +481,6 @@ enyo.kind({
           this.splittedLines = [];
           this.addProductSplit(true, orderline);
         } else {
-          OB.UTIL.SynchronizationHelper.finished(this.synchId, 'splitLines');
           this.orderline.set('splitline', false);
           this.receipt.set('skipCalculateReceipt', false);
           OB.log('error ', 'Can not change units');

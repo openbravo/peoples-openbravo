@@ -1284,14 +1284,18 @@
           OB.UTIL.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
           OB.UTIL.localStorage.setItem('LastCacheGeneration', new Date().getTime());
         }
-        //Save available servers and services and initialize Request Router layer
+        //Save available servers and services and initialize Request Router layer and Proccess Controller
         if (inResponse.servers) {
           OB.UTIL.localStorage.setItem('servers', JSON.stringify(inResponse.servers));
         }
         if (inResponse.services) {
           OB.UTIL.localStorage.setItem('services', JSON.stringify(inResponse.services));
         }
+        if (inResponse.processes) {
+          OB.UTIL.localStorage.setItem('processes', JSON.stringify(inResponse.processes));
+        }
         OB.RR.RequestRouter.initialize();
+        OB.UTIL.ProcessController.initialize();
 
         me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         callback();

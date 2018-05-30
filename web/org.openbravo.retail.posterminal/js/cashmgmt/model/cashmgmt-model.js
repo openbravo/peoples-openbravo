@@ -49,14 +49,6 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_amtGreaterThanZero'));
         return;
       }
-
-      // synch logic
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("paymentDone");
-
-      function finishSynch() {
-        OB.UTIL.SynchronizationHelper.finished(synchId, "paymentDone");
-      }
-
       var asyncToSyncWrapper = new Promise(function (resolve, reject) {
         OB.Dal.find(OB.Model.CashUp, {
           'isprocessed': 'N'
@@ -103,7 +95,6 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       });
 
       asyncToSyncWrapper.then(function () {
-        finishSynch();
         if (callback) {
           callback();
         }
@@ -307,11 +298,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       var paymentMth;
       var criteria;
       // synch logic
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("cashmanagement");
       enyo.$.scrim.show();
 
       function finishSynch() {
-        OB.UTIL.SynchronizationHelper.finished(synchId, "cashmanagement");
         enyo.$.scrim.hide();
       }
       var i;

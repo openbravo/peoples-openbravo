@@ -305,6 +305,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
               + terminal.getOrganization().getIdentifier());
           result.put("servers", getServers(terminal));
           result.put("services", getServices());
+          result.put("processes", getProcesses());
           terminal.setLinked(true);
           terminal.setCurrentCacheSession(cacheSessionId);
 
