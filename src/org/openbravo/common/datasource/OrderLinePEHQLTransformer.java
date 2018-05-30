@@ -136,14 +136,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       whereClause.append(" GROUP BY ci1.salesOrderLine.id,  co1.orderedQuantity");
       whereClause
           .append(" HAVING (SUM(COALESCE(ci1.invoicedQuantity, 0))-(COALESCE(co1.orderedQuantity,0)-SUM(COALESCE(mp1.quantity,0)))) >= 0)");
-      whereClause.append(" and EXISTS");
-      whereClause.append(" (SELECT 1");
-      whereClause.append("  FROM OrderLine co2");
-      whereClause
-          .append("    left join co2.procurementPOInvoiceMatchList mp2 with mp2.invoiceLine.id is not null");
-      whereClause.append("  WHERE co2.salesOrder.id = o.id");
-      whereClause.append("  GROUP BY co2.orderedQuantity, co2.id");
-      whereClause.append("  HAVING (co2.orderedQuantity-SUM(COALESCE(mp2.quantity,0))) <> 0)");
     }
     return whereClause.toString();
   }
