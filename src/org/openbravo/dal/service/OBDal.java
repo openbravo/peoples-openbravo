@@ -93,7 +93,7 @@ public class OBDal implements OBNotSingleton {
 
   /**
    * This method tries to return a read-only instance if the read-only pool is enabled in the
-   * configuration, the Preference "DefaultDBPoolForReports" is set to "RO" or there is a
+   * configuration, the Preference "OBUIAPP_DefaultDBPoolForReports" is set to "RO" or there is a
    * DataPoolSelection entry for the current process set to "RO". Otherwise, the default pool is
    * returned.
    *

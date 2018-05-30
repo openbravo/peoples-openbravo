@@ -309,7 +309,7 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
 
     // Extra Window Settings Callbacks
     globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/callback/ob-extrawindowsettingcallback-utils.js",
+        "web/org.openbravo.client.application/js/callback/ob-extra-window-settings-actions.js",
         false));
 
     // Styling

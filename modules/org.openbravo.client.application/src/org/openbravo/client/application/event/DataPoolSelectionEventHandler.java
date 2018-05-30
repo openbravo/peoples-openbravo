@@ -40,6 +40,7 @@ public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserve
       DataPoolSelection.class) };
 
   private static ThreadLocal<String> dataPoolSelectionValueUpdated = new ThreadLocal<>();
+  private static DataPoolChecker dataPoolChecker;
 
   public void onTransactionBegin(@Observes TransactionBeginEvent event) {
     dataPoolSelectionValueUpdated.set(null);
@@ -81,7 +82,15 @@ public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserve
       return;
     }
 
-    DataPoolChecker.getInstance().refreshDataPoolProcesses();
+    getDataPoolChecker().refreshDataPoolProcesses();
+  }
+
+  private DataPoolChecker getDataPoolChecker() {
+    if (dataPoolChecker == null) {
+      dataPoolChecker = DataPoolChecker.getInstance();
+    }
+
+    return dataPoolChecker;
   }
 
 }

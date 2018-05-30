@@ -46,7 +46,7 @@ public class DataPoolSelectionWindowInjector implements ExtraWindowSettingsInjec
   private static final String EXTRA_CALLBACKS_KEY = "extraCallbacks";
 
   private static final String RO_POOL_NOT_AVAILABLE_MESSAGE_KEY = "OBUIAPP_ROPoolNotAvailable";
-  private static final String SHOW_MESSAGE_CALLBACK_FUNCTION = "OB.Utilities.ExtraWindowSettingActions.showInfoMessage";
+  private static final String SHOW_MESSAGE_CALLBACK_FUNCTION = "OB.Utilities.ExtraWindowSettingsActions.showInfoMessage";
 
   @Override
   public Map<String, Object> doAddSetting(Map<String, Object> parameters, JSONObject json)

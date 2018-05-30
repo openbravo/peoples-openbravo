@@ -39,7 +39,7 @@ public class DataPoolChecker implements OBSingleton {
   private static final int REPORT_ID = 0;
   private static final int DATA_POOL = 1;
 
-  private Map<String, String> dataPoolProcesses = new HashMap<>();
+  private Map<String, String> reportPoolMap = new HashMap<>();
   private final List<String> validPoolValues = Arrays.asList(ExternalConnectionPool.DEFAULT_POOL,
       ExternalConnectionPool.READONLY_POOL);
   private String defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
@@ -67,22 +67,23 @@ public class DataPoolChecker implements OBSingleton {
    * Reload from DB the reports that should use the Read-only pool
    */
   public void refreshDataPoolProcesses() {
-    dataPoolProcesses = findActiveDataPoolSelection();
+    reportPoolMap = findActiveDataPoolSelection();
   }
 
   /**
    * Queries for all active entries of DataPoolSelection and returns them in a new map object. This
-   * avoid concurrency issues dealing with dataPoolProcesses.
+   * avoids concurrency issues dealing with the cached Report-Pool mapping.
    * 
    * @return a new Map object with the mapping (Report_ID, POOL)
    */
+  @SuppressWarnings("unchecked")
   private Map<String, String> findActiveDataPoolSelection() {
     final StringBuilder hql = new StringBuilder();
     hql.append("select dps.report.id, dps.dataPool from OBUIAPP_Data_Pool_Selection dps ");
     hql.append("where dps.active = true");
 
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    List queryResults = query.list();
+    List<Object> queryResults = query.list();
     Map<String, String> selection = new HashMap<>(queryResults.size());
     for (Object item : queryResults) {
       final Object[] values = (Object[]) item;
@@ -95,7 +96,7 @@ public class DataPoolChecker implements OBSingleton {
   private void refreshDefaultPoolPreference() {
     final StringBuilder hql = new StringBuilder();
     hql.append("select p.searchKey from ADPreference p ");
-    hql.append("where p.property='DefaultDBPoolForReports' and p.active=true and p.client.id='0' and p.organization.id='0' ");
+    hql.append("where p.property='OBUIAPP_DefaultDBPoolForReports' and p.active=true and p.visibleAtClient.id='0' and p.visibleAtOrganization.id='0' ");
     Query defaultPoolQuery = OBDal.getInstance().getSession().createQuery(hql.toString());
     defaultPoolQuery.setMaxResults(1);
 
@@ -127,7 +128,7 @@ public class DataPoolChecker implements OBSingleton {
   boolean shouldUseDefaultPool(String processId) {
     String poolForProcess = null;
     if (!StringUtils.isBlank(processId)) {
-      poolForProcess = dataPoolProcesses.get(processId);
+      poolForProcess = reportPoolMap.get(processId);
     }
 
     String poolUsedForProcess = poolForProcess != null ? poolForProcess : defaultReadOnlyPool;
