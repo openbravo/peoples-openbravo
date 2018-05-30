@@ -101,12 +101,12 @@ enyo.kind({
         if (!_.isNull(this.receipt)) {
           this.receipt.set('selectedPayment', payment.payment.searchKey);
           paymentstatus = this.receipt.getPaymentStatus();
-          hasChange = OB.DEC.compare(this.receipt.get('change')) > 0;
+          hasChange = OB.DEC.compare(this.receipt.getChange()) > 0;
         }
       } else {
         this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
         paymentstatus = this.model.get('multiOrders').getPaymentStatus();
-        hasChange = OB.DEC.compare(this.model.get('multiOrders').get('change')) > 0;
+        hasChange = OB.DEC.compare(this.model.get('multiOrders').getChange()) > 0;
       }
       if (!_.isNull(change) && change) {
         this.calculateChange(payment, change);
@@ -173,6 +173,9 @@ enyo.kind({
           }, {
             tag: 'span',
             name: 'prepaymentexactlbl'
+          }, {
+            tag: 'span',
+            name: 'deliverychangelbl'
           }]
         }, {
           style: 'padding: 5px 0px 0px 10px; height: 17px;',
@@ -184,6 +187,9 @@ enyo.kind({
           }, {
             tag: 'span',
             name: 'totalpendinglbl'
+          }, {
+            tag: 'span',
+            name: 'remainingfortotallbl'
           }, {
             kind: 'OB.UI.RegularButton',
             name: 'changebutton',
@@ -450,7 +456,7 @@ enyo.kind({
   },
   actionChangeButton: function (inSender, inEvent) {
     var activemodel = this.activeModel(),
-        change = activemodel.get('change');
+        change = activemodel.getChange();
 
     this.doShowPopup({
       popup: 'modalchange',
@@ -609,12 +615,12 @@ enyo.kind({
       symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].currencySymbolAtTheRight;
       isCashType = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].paymentMethod.iscash;
     }
-    if (OB.DEC.compare(this.receipt.get('change')) > 0) {
+    if (OB.DEC.compare(this.receipt.getChange()) > 0) {
       this.calculateChange(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], this.receipt.getChange());
     } else {
       this.calculateChangeReset();
     }
-    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], OB.DEC.compare(this.receipt.get('change')) > 0);
+    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], OB.DEC.compare(this.receipt.getChange()) > 0);
 
     //Update styles based on the prepayment amount
     if (receiptHasPrepaymentAmount && paymentstatus.pendingAmt !== 0) {
@@ -632,14 +638,39 @@ enyo.kind({
     if ((OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('obposPrepaymentlimitamt') < this.receipt.get('gross') && pendingPrepayment > 0 && receiptHasPrepaymentAmount)) {
       this.setPrepaymentTotalPending(OB.DEC.mul(pendingPrepayment, rate, precision), symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
+      this.$.prepaymenttotalpending.applyStyle('color', 'white');
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
+      this.$.deliverychangelbl.hide();
       this.$.prepaymentsbuttons.show();
       this.$.exactbutton.hide();
     } else {
-      this.$.prepaymenttotalpending.hide();
       this.$.prepaymenttotalpendinglbl.hide();
-      this.$.prepaymentexactlbl.show();
+      if (pendingPrepayment === 0) {
+        this.$.prepaymenttotalpending.hide();
+        this.$.prepaymenttotalpending.applyStyle('color', 'white');
+        this.$.prepaymentexactlbl.show();
+        this.$.deliverychangelbl.hide();
+      } else {
+        this.$.prepaymenttotalpending.show();
+        this.$.prepaymentexactlbl.hide();
+        if (this.receipt.get('prepaymentChangeMode')) {
+          this.setPrepaymentTotalPending(OB.DEC.mul(this.receipt.getChange(), rate, precision), symbol, symbolAtRight);
+          this.$.prepaymenttotalpending.applyStyle('color', '#6cb33f');
+          this.$.deliverychangelbl.show();
+          this.$.prepaymentLine.show();
+          this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
+          this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
+          this.$.totalpending.applyStyle('font-size', '18px');
+        } else {
+          this.$.prepaymenttotalpending.applyStyle('color', 'white');
+          this.$.deliverychangelbl.hide();
+          this.$.prepaymentLine.hide();
+          this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
+          this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
+          this.$.totalpending.applyStyle('font-size', '24px');
+        }
+      }
       if (!receiptHasPrepaymentAmount) {
         this.$.prepaymentsbuttons.hide();
         this.$.exactbutton.show();
@@ -661,6 +692,7 @@ enyo.kind({
     if (paymentstatus.pendingAmt <= 0 && paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
+      this.$.remainingfortotallbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames) || this.receipt.get('orderType') === 3) {
         this.$.donebutton.show();
       }
@@ -674,7 +706,13 @@ enyo.kind({
       } else {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
       }
-      this.$.totalpendinglbl.show();
+      if (receiptHasPrepaymentAmount && paymentstatus.pendingAmt !== 0) {
+        this.$.remainingfortotallbl.show();
+        this.$.totalpendinglbl.hide();
+      } else {
+        this.$.remainingfortotallbl.hide();
+        this.$.totalpendinglbl.show();
+      }
 
       if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !paymentstatus.isNegative && !this.receipt.get('cancelLayaway')) {
         this.$.donebutton.show();
@@ -704,7 +742,7 @@ enyo.kind({
       }
       this.updateLayawayAction();
     }
-    if (paymentstatus.pendingAmt === 0 && paymentstatus.done && OB.DEC.compare(this.receipt.get('change')) <= 0 && !paymentstatus.overpayment) {
+    if (paymentstatus.pendingAmt === 0 && paymentstatus.done && OB.DEC.compare(this.receipt.getChange()) <= 0 && !paymentstatus.overpayment) {
       if (this.receipt.getGross() === 0) {
         this.$.exactlbl.hide();
         this.$.donezerolbl.show();
@@ -772,14 +810,41 @@ enyo.kind({
     if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && multiOrders.get('amountToLayaway') === 0 && pendingPrepayment > 0 && pendingPrepayment !== OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment'))) {
       this.setPrepaymentTotalPending(OB.DEC.mul(pendingPrepayment, rate, precision), symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
+      this.$.prepaymenttotalpending.applyStyle('color', 'white');
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
+      this.$.deliverychangelbl.hide();
       this.$.prepaymentsbuttons.show();
       this.$.exactbutton.hide();
     } else {
       this.$.prepaymenttotalpending.hide();
       this.$.prepaymenttotalpendinglbl.hide();
-      this.$.prepaymentexactlbl.show();
+      if (pendingPrepayment === 0) {
+        this.$.prepaymenttotalpending.hide();
+        this.$.prepaymenttotalpending.applyStyle('color', 'white');
+        this.$.prepaymentexactlbl.show();
+        this.$.deliverychangelbl.hide();
+      } else {
+        this.$.prepaymenttotalpending.show();
+        this.$.prepaymentexactlbl.hide();
+        if (multiOrders.get('prepaymentChangeMode')) {
+          this.setPrepaymentTotalPending(OB.DEC.mul(multiOrders.getChange(), rate, precision), symbol, symbolAtRight);
+          this.$.prepaymenttotalpending.applyStyle('color', '#6cb33f');
+          this.$.deliverychangelbl.show();
+          this.$.prepaymentLine.show();
+          this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
+          this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
+          this.$.totalpending.applyStyle('font-size', '18px');
+        } else {
+          this.$.prepaymenttotalpending.applyStyle('color', 'white');
+          this.$.deliverychangelbl.hide();
+          this.$.prepaymentLine.hide();
+          this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', false);
+          this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
+          this.$.totalpending.applyStyle('font-size', '24px');
+        }
+      }
+
       if (!receiptHasPrepaymentAmount) {
         this.$.prepaymentsbuttons.hide();
         this.$.exactbutton.show();
@@ -789,12 +854,12 @@ enyo.kind({
       }
     }
 
-    if (multiOrders.get('change')) {
-      this.calculateChange(selectedPayment, multiOrders.get('change'));
+    if (multiOrders.getChange()) {
+      this.calculateChange(selectedPayment, multiOrders.getChange());
     } else {
       this.calculateChangeReset();
     }
-    this.checkValidPayments(paymentStatus, selectedPayment, OB.DEC.compare(multiOrders.get('change')) > 0);
+    this.checkValidPayments(paymentStatus, selectedPayment, OB.DEC.compare(multiOrders.getChange()) > 0);
     //overpayment
     if (paymentStatus.overpayment) {
       this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentStatus.overpayment, symbol, symbolAtRight));
@@ -808,6 +873,7 @@ enyo.kind({
     if (multiOrders.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrders.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) >= 0) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
+      this.$.remainingfortotallbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.donebutton.show();
       }
@@ -815,7 +881,13 @@ enyo.kind({
     } else {
       this.setTotalPending(OB.DEC.mul(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, precision), symbol, symbolAtRight);
       this.$.totalpending.show();
-      this.$.totalpendinglbl.show();
+      if (receiptHasPrepaymentAmount && OB.DEC.compare(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment'))) > 0) {
+        this.$.remainingfortotallbl.show();
+        this.$.totalpendinglbl.hide();
+      } else {
+        this.$.remainingfortotallbl.hide();
+        this.$.totalpendinglbl.show();
+      }
       if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !paymentStatus.isNegative && multiOrders.get('amountToLayaway') === 0) {
         this.$.donebutton.show();
       } else {
@@ -845,7 +917,7 @@ enyo.kind({
         }
       }
     }
-    if (multiOrders.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrders.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) >= 0 && !multiOrders.get('change') && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) <= 0) {
+    if (multiOrders.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrders.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) >= 0 && !multiOrders.getChange() && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) <= 0) {
       if (multiOrders.get('total') === 0) {
         this.$.exactlbl.hide();
         this.$.donezerolbl.show();
@@ -1370,7 +1442,9 @@ enyo.kind({
     this.$.errorLabelArea.render();
     this.$.prepaymenttotalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemainingDelivery'));
     this.$.prepaymentexactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExactDelivery'));
+    this.$.deliverychangelbl.setContent(OB.I18N.getLabel('OBPOS_LblChangeForDelivery'));
     this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
+    this.$.remainingfortotallbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemainingTotal'));
     this.$.changelbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsChange'));
     this.$.overpaymentlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsOverpayment'));
     this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));

@@ -4674,7 +4674,7 @@
     },
     adjustPayment: function () {
       var i, max, p, sumCash, pcash, precision, multiCurrencyDifference, payments = this.get('payments'),
-          total = this.getTotal(),
+          total = this.get('prepaymentChangeMode') ? this.get('obposPrepaymentamt') : this.getTotal(),
           noCash = OB.DEC.Zero,
           defaultCash = OB.DEC.Zero,
           nonDefaultCash = OB.DEC.Zero,
@@ -4844,6 +4844,7 @@
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       precision = this.getPrecision(payment);
+      this.unset('prepaymentChangeMode');
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
@@ -4861,7 +4862,7 @@
               payments: payments,
               receipt: order
             }, function (args2) {
-              finalCallback();
+              OB.UTIL.PrepaymentUtils.managePrepaymentChange(args2.receipt, args2.paymentAdded, args2.payments, finalCallback);
             });
             };
 
@@ -4949,6 +4950,7 @@
         return;
       }
 
+      this.unset('prepaymentChangeMode');
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,
@@ -7309,7 +7311,7 @@
     },
     adjustPayment: function () {
       var i, max, p, pcash, precision, multiCurrencyDifference, payments = this.get('payments'),
-          total = OB.DEC.abs(this.getTotal()),
+          total = this.get('prepaymentChangeMode') ? this.get('obposPrepaymentamt') : OB.DEC.abs(this.getTotal()),
           paidCash = OB.DEC.Zero,
           defaultCash = OB.DEC.Zero,
           nonDefaultCash = OB.DEC.Zero,
@@ -7407,6 +7409,7 @@
       total = OB.DEC.abs(this.getTotal());
       precision = this.getPrecision(payment);
       order = this;
+      this.unset('prepaymentChangeMode');
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
@@ -7418,7 +7421,7 @@
               payments: payments,
               receipt: order
             }, function (args2) {
-              finalCallback();
+              OB.UTIL.PrepaymentUtils.managePrepaymentChange(args2.receipt, args2.paymentAdded, args2.payments, finalCallback);
             });
             };
 
@@ -7491,6 +7494,7 @@
           return;
         }
       });
+      this.unset('prepaymentChangeMode');
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePaymentMultiOrder', {
         paymentToRem: payment,
         payments: payments,

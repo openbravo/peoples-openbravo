@@ -194,13 +194,16 @@ enyo.kind({
       name: 'receiptPropertiesDialog'
     }, {
       kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
-      name: "receiptLinesPropertiesDialog"
+      name: 'receiptLinesPropertiesDialog'
+    }, {
+      kind: 'OB.UI.ModalDeliveryChange',
+      name: 'modalDeliveryChange'
     }, {
       kind: 'OB.UI.ModalPayment',
-      name: "modalpayment"
+      name: 'modalpayment'
     }, {
       kind: 'OB.UI.ModalPaymentVoid',
-      name: "modalpaymentvoid"
+      name: 'modalpaymentvoid'
     }, {
       kind: 'OB.UI.ModalProviderGroup',
       name: 'modalprovidergroup'
@@ -239,16 +242,16 @@ enyo.kind({
       name: 'modalNotValidValueForDiscount'
     }, {
       kind: 'OB.UI.ModalSalesRepresentative',
-      name: "modalsalesrepresentative"
+      name: 'modalsalesrepresentative'
     }, {
       kind: 'OB.UI.ModalMultiOrdersLayaway',
-      name: "modalmultiorderslayaway"
+      name: 'modalmultiorderslayaway'
     }, {
       kind: 'OB.UI.ModalProductCharacteristic',
-      name: "modalproductcharacteristic"
+      name: 'modalproductcharacteristic'
     }, {
       kind: 'OB.UI.ModalProductBrand',
-      name: "modalproductbrand"
+      name: 'modalproductbrand'
     }, {
       kind: 'OB.UI.ModalCategoryTree',
       name: 'modalcategorytree'
@@ -371,7 +374,7 @@ enyo.kind({
     if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
-        if (receipt.get("isPaid")) {
+        if (receipt.get('isPaid')) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PrePrintPaidReceipt', {
             context: this,
             receipt: this.model.get('order')

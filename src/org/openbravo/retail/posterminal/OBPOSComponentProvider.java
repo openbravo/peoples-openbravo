@@ -124,6 +124,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalmodulesindev",
         "components/modalselectprinters",
         "components/modalmorepaymentmethods",
+        "components/modalDeliveryChange",
         // Web POS window
         "utils/eventbus",
         "utils/attributeUtils",
@@ -284,7 +285,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/rfidWebsocket",
 
         "utils/preScanningFocusHook", "utils/orderSelectorUtils", "utils/stockUtils",
-        "utils/productStatusUtils" };
+        "utils/productStatusUtils", "utils/prepaymentUtils" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
