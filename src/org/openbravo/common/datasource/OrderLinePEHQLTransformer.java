@@ -69,27 +69,22 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  o.id,");
     groupByClause.append("  o.documentNo,");
     groupByClause.append("  o.orderDate,");
-    groupByClause.append("  o.grandTotalAmount,");
     groupByClause.append("  o.scheduledDeliveryDate,");
     groupByClause.append("  e.orderedQuantity,");
     groupByClause.append("  e.orderDate,");
-    groupByClause.append("  uom.id,");
     groupByClause.append("  uom.name,");
-    groupByClause.append("  uom.symbol,");
     groupByClause.append("  p.id,");
     groupByClause.append("  p.name,");
     groupByClause.append("  e.lineNo,");
     groupByClause.append("  e.id,");
     groupByClause.append("  org.id,");
     groupByClause.append("  org.name,");
-    groupByClause.append("  e.taxableAmount, ");
     groupByClause.append("  COALESCE(e.asset.id, o.asset.id),");
     groupByClause.append("  COALESCE(e.project.id, o.project.id),");
     groupByClause.append("  COALESCE(e.costcenter.id, o.costcenter.id),");
     groupByClause.append("  COALESCE(e.stDimension.id, o.stDimension.id),");
     groupByClause.append("  COALESCE(e.ndDimension.id, o.ndDimension.id),");
     groupByClause.append("  e.explode,");
-    groupByClause.append("  bomParent.id,");
     groupByClause.append("  aum.id,");
     groupByClause.append("  e.operativeQuantity,");
     groupByClause.append("  dt.id,");
@@ -100,12 +95,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  wh.name,");
     groupByClause.append("  ma.id,");
     groupByClause.append("  ma.serialNo,");
-    groupByClause.append("  @orderQuantity@,");
+    groupByClause.append("  @orderQuantity@");
     if (isSalesTransaction) {
-      groupByClause.append("  e.invoicedQuantity");
+      groupByClause.append(" , e.invoicedQuantity");
     } else {
-      groupByClause.append("  e.orderUOM.id,");
-      groupByClause.append("  m.id");
       groupByClause
           .append(" HAVING ((e.explode='Y') OR ((e.orderedQuantity-SUM(COALESCE(m.quantity,0))) <> 0))");
     }

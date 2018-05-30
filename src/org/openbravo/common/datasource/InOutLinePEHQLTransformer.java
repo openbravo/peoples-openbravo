@@ -68,7 +68,6 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  e.movementQuantity,");
     groupByClause.append("  uom.id,");
     groupByClause.append("  uom.name,");
-    groupByClause.append("  uom.symbol,");
     groupByClause.append("  p.id,");
     groupByClause.append("  p.name,");
     groupByClause.append("  e.id,");
@@ -95,17 +94,14 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  wh.name,");
     groupByClause.append("  sb.id,");
     groupByClause.append("  sb.searchKey,");
-    groupByClause.append("  @orderQuantity@,");
+    groupByClause.append("  @orderQuantity@");
     if (isSalesTransaction) {
-      groupByClause.append("  il.id,");
-      groupByClause.append("  i.id");
       groupByClause
           .append(" HAVING (e.movementQuantity >= 0 AND e.movementQuantity > SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
       groupByClause
           .append("  OR (e.movementQuantity < 0 AND e.movementQuantity < SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
       groupByClause.append("  OR (e.explode='Y')");
     } else {
-      groupByClause.append("  mi.id");
       groupByClause
           .append(" HAVING ((e.movementQuantity-SUM(COALESCE(mi.quantity,0))) <> 0 OR (e.explode='Y'))");
     }
