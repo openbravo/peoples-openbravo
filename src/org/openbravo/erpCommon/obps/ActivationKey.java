@@ -40,10 +40,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -111,9 +113,9 @@ public class ActivationKey {
   private boolean subscriptionActuallyConverted = false;
   private LicenseClass licenseClass;
   private LicenseType licenseType;
-  private List<String> tier1Artifacts;
-  private List<String> tier2Artifacts;
-  private List<String> goldenExcludedArtifacts;
+  private Set<String> tier1Artifacts;
+  private Set<String> tier2Artifacts;
+  private Set<String> goldenExcludedArtifacts;
   private Date lastRefreshTime;
   private boolean trial = false;
   private boolean golden = false;
@@ -609,9 +611,9 @@ public class ActivationKey {
   @SuppressWarnings("unchecked")
   private void loadRestrictions() {
     DisabledModules.reload();
-    tier1Artifacts = new ArrayList<String>();
-    tier2Artifacts = new ArrayList<String>();
-    goldenExcludedArtifacts = new ArrayList<String>();
+    tier1Artifacts = new HashSet<>();
+    tier2Artifacts = new HashSet<>();
+    goldenExcludedArtifacts = new HashSet<>();
 
     if (isActive() && licenseClass == LicenseClass.STD && !golden) {
       // Don't read restrictions for Standard instances
