@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -896,7 +896,8 @@ public class ComboTableData {
     if (aux != null) {
       StringBuilder txtAux = new StringBuilder();
       for (QueryFieldStructure auxStructure : aux) {
-        if ("ORG_LIST".equals(auxStructure.getType()) && orgList == null) {
+        if ("ORG_LIST".equals(auxStructure.getType())
+            && StringCollectionUtils.isEmptyCollection(orgList)) {
           continue;
         }
         if (!isInArray(discard, auxStructure.getType())) {
