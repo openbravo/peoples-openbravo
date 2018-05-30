@@ -104,7 +104,7 @@ public class UserLock {
     hql.append("select max(s1.creationDate)");
     hql.append("  from ADSession s1");
     hql.append(" where s1.username = :name");
-    hql.append("   and s1.loginStatus!='F')");
+    hql.append("   and s1.loginStatus != 'F'");
     Query q1 = OBDal.getInstance().getSession().createQuery(hql.toString());
     q1.setParameter("name", userName);
     Date lastFailedAttempt = (Date) q1.list().get(0);
