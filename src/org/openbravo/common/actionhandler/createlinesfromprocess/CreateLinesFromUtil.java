@@ -200,8 +200,7 @@ class CreateLinesFromUtil {
     shipmentHQLQuery.append(" FROM MaterialMgmtShipmentInOutLine AS il");
     shipmentHQLQuery.append(" join il.shipmentReceipt sh");
     if (!isSalesTransaction) {
-      shipmentHQLQuery
-          .append(" left join il.procurementPOInvoiceMatchList mi with mi.invoiceLine.id is not null");
+      shipmentHQLQuery.append(" left join il.procurementReceiptInvoiceMatchList mi");
     }
     shipmentHQLQuery.append(" where il.salesOrderLine.id = :orderLineId");
     shipmentHQLQuery.append("  and sh.processed = 'Y'");
