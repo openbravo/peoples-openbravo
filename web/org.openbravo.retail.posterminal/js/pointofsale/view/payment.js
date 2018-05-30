@@ -141,6 +141,12 @@ enyo.kind({
             tag: 'span',
             name: 'totalpendinglbl'
           }, {
+            kind: 'OB.UI.RegularButton',
+            name: 'changebutton',
+            classes: 'btn-icon-split btnlink-green',
+            style: 'padding: 5px; margin: 0px 10px 0px 0px; width: 40px; height: 25px;',
+            ontap: 'actionChange'
+          }, {
             tag: 'span',
             name: 'change',
             style: 'font-size: 24px; font-weight: bold;'
@@ -365,6 +371,10 @@ enyo.kind({
     }
   },
 
+  actionChange: function (inEvent, inSource) {
+    alert('Change button pressed');
+  },
+
   calculateChangeReset: function () {
     // Reset change calculation results
     this.receipt.set('changePayments', []);
@@ -395,7 +405,6 @@ enyo.kind({
     }
 
     // Recursive function to calculate changes, payment by payment
-
 
     function calculateNextChange(payment, change) {
       var changeLessThan = payment.paymentMethod.changeLessThan;
@@ -460,10 +469,12 @@ enyo.kind({
     this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
     if (paymentstatus.change) {
       this.calculateChange(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], this.receipt.getChange());
+      this.$.changebutton.show();
       this.$.change.show();
       this.$.changelbl.show();
     } else {
       this.calculateChangeReset();
+      this.$.changebutton.hide();
       this.$.change.hide();
       this.$.changelbl.hide();
     }
@@ -560,9 +571,12 @@ enyo.kind({
     if (paymentstatus.get('change')) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
       OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
+      this.$.changebutton.show();
       this.$.change.show();
       this.$.changelbl.show();
     } else {
+      this.calculateChangeReset();
+      this.$.changebutton.hide();
       this.$.change.hide();
       this.$.changelbl.hide();
     }

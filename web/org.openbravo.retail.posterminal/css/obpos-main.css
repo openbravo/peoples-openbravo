@@ -382,6 +382,14 @@ button.btnbp:disabled {
   background-repeat: no-repeat;
 }
 
+.btn-icon-split {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconChangeSplit.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+  background-size: 18px;
+}
+
 @media all and (max-width: 800px) {
   div[id*=stBPAssignToReceipt_scrollArea] {
     max-height: 497px !important;
