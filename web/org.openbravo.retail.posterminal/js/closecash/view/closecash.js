@@ -85,10 +85,9 @@ enyo.kind({
     isEnableNextButton: false,
     handlers: {
       onDisableNextButton: 'disableNextButton',
-      onEnableNextButton: 'enableNextButton',
-      synchronizing: 'disableButton',
-      synchronized: 'enableButton'
+      onEnableNextButton: 'enableNextButton'
     },
+    processesToListen: ['cashupWindow'],
     disableButton: function () {
       this.setDisabled(true);
     },
@@ -241,9 +240,9 @@ enyo.kind({
     OB.POS.navigate('retail.pointofsale');
   },
   init: function () {
-    this.synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("cashup");
     var me = this;
     this.inherited(arguments);
+    this.execution = OB.UTIL.ProcessController.start("cashupWindow");
 
     this.$.cashupMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.button.$.theButton.$.btnCashUp.setContent(OB.I18N.getLabel(this.titleLabel));
 
@@ -462,11 +461,9 @@ enyo.kind({
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }
   },
-
   rendered: function () {
-    OB.UTIL.SynchronizationHelper.finished(this.synchId, 'cashup');
+    OB.UTIL.ProcessController.finish('cashupWindow', this.execution);
   },
-
   refreshButtons: function () {
     // Disable/Enable buttons
     this.waterfall('onDisablePreviousButton', {

@@ -925,66 +925,63 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     invoice.getInvoiceLineList().add(line);
     OBDal.getInstance().save(line);
 
-    JSONObject taxes = orderlines.getJSONObject(numIter).optJSONObject("taxLines");
-    if (taxes != null) {
-      @SuppressWarnings("unchecked")
-      Iterator<String> itKeys = taxes.keys();
-      BigDecimal totalTaxAmount = BigDecimal.ZERO;
-      int ind = 0;
-      while (itKeys.hasNext()) {
-        String taxId = itKeys.next();
-        JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
-        InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
-        TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
-            ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
-        invoicelinetax.setTax(tax);
+    JSONObject taxes = orderlines.getJSONObject(numIter).getJSONObject("taxLines");
+    @SuppressWarnings("unchecked")
+    Iterator<String> itKeys = taxes.keys();
+    BigDecimal totalTaxAmount = BigDecimal.ZERO;
+    int ind = 0;
+    while (itKeys.hasNext()) {
+      String taxId = itKeys.next();
+      JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
+      InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
+      TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
+          ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+      invoicelinetax.setTax(tax);
 
-        // if ratio equals to one, then only one shipment line is related to orderline, then
-        // lineNetAmt and gross is populated from JSON
-        if (ratio.compareTo(BigDecimal.ONE) != 0) {
-          // if there are several shipments line to the same orderline, in the last line of the
-          // splited lines, the tax amount will be calculated as the pending tax amount
-          if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-            invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
-                .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
-            invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
-                .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
-            totalTaxAmount = totalTaxAmount.add(invoicelinetax.getTaxAmount());
-          } else {
-            BigDecimal partialTaxableAmount = BigDecimal.ZERO;
-            BigDecimal partialTaxAmount = BigDecimal.ZERO;
-            for (InvoiceLineTax ilt : invoice.getInvoiceLineTaxList()) {
-              if (ilt.getInvoiceLine().getSalesOrderLine() != null
-                  && ilt.getInvoiceLine().getSalesOrderLine().getId() == lineReferences
-                      .get(numIter).getId() && ilt.getTax() != null
-                  && ilt.getTax().getId() == tax.getId()) {
-                partialTaxableAmount = partialTaxableAmount.add(ilt.getTaxableAmount());
-                partialTaxAmount = partialTaxAmount.add(ilt.getTaxAmount());
-              }
-            }
-            invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
-                .subtract(partialTaxableAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
-            invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
-                .subtract(partialTaxAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
-          }
-        } else {
+      // if ratio equals to one, then only one shipment line is related to orderline, then
+      // lineNetAmt and gross is populated from JSON
+      if (ratio.compareTo(BigDecimal.ONE) != 0) {
+        // if there are several shipments line to the same orderline, in the last line of the
+        // splited lines, the tax amount will be calculated as the pending tax amount
+        if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
           invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
-              .setScale(pricePrecision, RoundingMode.HALF_UP));
+              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
           invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
-              .setScale(pricePrecision, RoundingMode.HALF_UP));
+              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
+          totalTaxAmount = totalTaxAmount.add(invoicelinetax.getTaxAmount());
+        } else {
+          BigDecimal partialTaxableAmount = BigDecimal.ZERO;
+          BigDecimal partialTaxAmount = BigDecimal.ZERO;
+          for (InvoiceLineTax ilt : invoice.getInvoiceLineTaxList()) {
+            if (ilt.getInvoiceLine().getSalesOrderLine() != null
+                && ilt.getInvoiceLine().getSalesOrderLine().getId() == lineReferences.get(numIter)
+                    .getId() && ilt.getTax() != null && ilt.getTax().getId() == tax.getId()) {
+              partialTaxableAmount = partialTaxableAmount.add(ilt.getTaxableAmount());
+              partialTaxAmount = partialTaxAmount.add(ilt.getTaxAmount());
+            }
+          }
+          invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
+              .subtract(partialTaxableAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
+          invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
+              .subtract(partialTaxAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
         }
-        invoicelinetax.setInvoice(invoice);
-        invoicelinetax.setInvoiceLine(line);
-        invoicelinetax.setRecalculate(true);
-        invoicelinetax.setLineNo((long) ((ind + 1) * 10));
-        ind++;
-        invoice.getInvoiceLineTaxList().add(invoicelinetax);
-        line.getInvoiceLineTaxList().add(invoicelinetax);
-        invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(line.getSalesOrderLine().getId() + lineNo
-            + (long) ((ind + 1) * 10)));
-        invoicelinetax.setNewOBObject(true);
-        OBDal.getInstance().save(invoicelinetax);
+      } else {
+        invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
+            pricePrecision, RoundingMode.HALF_UP));
+        invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
+            pricePrecision, RoundingMode.HALF_UP));
       }
+      invoicelinetax.setInvoice(invoice);
+      invoicelinetax.setInvoiceLine(line);
+      invoicelinetax.setRecalculate(true);
+      invoicelinetax.setLineNo((long) ((ind + 1) * 10));
+      ind++;
+      invoice.getInvoiceLineTaxList().add(invoicelinetax);
+      line.getInvoiceLineTaxList().add(invoicelinetax);
+      invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(line.getSalesOrderLine().getId() + lineNo
+          + (long) ((ind + 1) * 10)));
+      invoicelinetax.setNewOBObject(true);
+      OBDal.getInstance().save(invoicelinetax);
     }
 
     // Discounts & Promotions
@@ -1609,33 +1606,31 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         deleteQuery.setParameter("id", orderline.getId());
         deleteQuery.executeUpdate();
       }
-      JSONObject taxes = jsonOrderLine.optJSONObject("taxLines");
-      if (taxes != null) {
-        @SuppressWarnings("unchecked")
-        Iterator<String> itKeys = taxes.keys();
-        int ind = 0;
-        while (itKeys.hasNext()) {
-          String taxId = itKeys.next();
-          JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
-          OrderLineTax orderlinetax = OBProvider.getInstance().get(OrderLineTax.class);
-          TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
-              ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
-          orderlinetax.setTax(tax);
-          orderlinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
-              pricePrecision, RoundingMode.HALF_UP));
-          orderlinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
-              pricePrecision, RoundingMode.HALF_UP));
-          orderlinetax.setSalesOrder(order);
-          orderlinetax.setSalesOrderLine(orderline);
-          orderlinetax.setLineNo((long) ((ind + 1) * 10));
-          ind++;
-          orderline.getOrderLineTaxList().add(orderlinetax);
-          order.getOrderLineTaxList().add(orderlinetax);
-          orderlinetax.setId(OBMOBCUtils.getUUIDbyString(orderlinetax.getSalesOrderLine().getId()
-              + orderlinetax.getLineNo()));
-          orderlinetax.setNewOBObject(true);
-          OBDal.getInstance().save(orderlinetax);
-        }
+      JSONObject taxes = jsonOrderLine.getJSONObject("taxLines");
+      @SuppressWarnings("unchecked")
+      Iterator<String> itKeys = taxes.keys();
+      int ind = 0;
+      while (itKeys.hasNext()) {
+        String taxId = itKeys.next();
+        JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
+        OrderLineTax orderlinetax = OBProvider.getInstance().get(OrderLineTax.class);
+        TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
+            ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
+        orderlinetax.setTax(tax);
+        orderlinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
+            pricePrecision, RoundingMode.HALF_UP));
+        orderlinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
+            pricePrecision, RoundingMode.HALF_UP));
+        orderlinetax.setSalesOrder(order);
+        orderlinetax.setSalesOrderLine(orderline);
+        orderlinetax.setLineNo((long) ((ind + 1) * 10));
+        ind++;
+        orderline.getOrderLineTaxList().add(orderlinetax);
+        order.getOrderLineTaxList().add(orderlinetax);
+        orderlinetax.setId(OBMOBCUtils.getUUIDbyString(orderlinetax.getSalesOrderLine().getId()
+            + orderlinetax.getLineNo()));
+        orderlinetax.setNewOBObject(true);
+        OBDal.getInstance().save(orderlinetax);
       }
 
       // Discounts & Promotions

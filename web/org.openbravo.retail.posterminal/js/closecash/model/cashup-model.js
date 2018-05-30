@@ -63,7 +63,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     });
   },
   initModels: function (initModelsCallback) {
-    var synchId1 = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init1');
     //Check for orders which are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
@@ -178,13 +177,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.PaymentMethods')].loaded = true;
         synch1 = true;
         finish();
-        OB.UTIL.SynchronizationHelper.finished(synchId1, 'cashup-model.init1');
-      }, function () {
-        OB.UTIL.SynchronizationHelper.finished(synchId1, 'cashup-model.init1');
       });
     }, this);
 
-    var synchId2 = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init2');
     this.set('cashUpReport', new Backbone.Collection());
     OB.Dal.find(OB.Model.CashUp, {
       'isprocessed': 'N'
@@ -344,7 +339,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           me.get('cashUpReport').add(args.cashUpReport);
           synch2 = true;
           finish();
-          OB.UTIL.SynchronizationHelper.finished(synchId2, 'cashup-model.init2');
         });
       }, this);
     }, this);
@@ -677,7 +671,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   additionalProperties: [],
   propertyFunctions: [],
   processAndFinishCashUp: function () {
-    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('processAndFinishCashUp');
     OB.UTIL.showLoading(true);
     var currentMe = this;
     OB.Dal.find(OB.Model.CashUp, {
@@ -746,7 +739,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
             var callbackFunc = function () {
                 var synchronizedPreferenceValue;
-                OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
                 // prevent synchronized mode for cashups
                 synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(false);
                 OB.UTIL.HookManager.executeHooks('OBPOS_PrePrintCashupHook', {

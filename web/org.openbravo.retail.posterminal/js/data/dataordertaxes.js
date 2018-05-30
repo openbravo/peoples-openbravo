@@ -1087,12 +1087,9 @@
   OB.DATA.OrderTaxes = function (modelOfAnOrder) {
     modelOfAnOrder.calculateTaxes = function (callback) {
       var me = this;
-      var synchId;
-      synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('taxescalculation');
       calcTaxes(me).then(function () {
         me.trigger('paintTaxes');
         callback();
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'taxescalculation');
       });
     };
   };

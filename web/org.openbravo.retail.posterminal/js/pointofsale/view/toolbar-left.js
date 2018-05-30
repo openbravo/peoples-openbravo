@@ -53,10 +53,9 @@ enyo.kind({
     onAddNewOrder: ''
   },
   handlers: {
-    onLeftToolbarDisabled: 'disabledButton',
-    calculatingReceipt: 'disableButton',
-    calculatedReceipt: 'enableButton'
+    onLeftToolbarDisabled: 'disabledButton'
   },
+  processesToListen: ['calculateReceipt'],
   disableButton: function () {
     if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
       this.isEnabled = false;
@@ -123,10 +122,9 @@ enyo.kind({
     onRemoveMultiOrders: ''
   },
   handlers: {
-    onLeftToolbarDisabled: 'disabledButton',
-    calculatingReceipt: 'disableButton',
-    calculatedReceipt: 'enableButton'
+    onLeftToolbarDisabled: 'disabledButton'
   },
+  processesToListen: ['calculateReceipt'],
   disableButton: function () {
     this.isEnabled = false;
     this.setDisabled(true);
@@ -160,7 +158,6 @@ enyo.kind({
         hasPayments = false,
         isMultiOrders = this.model.isValidMultiOrderState();
 
-    this.disableButton();
     if (isMultiOrders) {
       this.doRemoveMultiOrders();
       return true;
@@ -237,10 +234,9 @@ enyo.kind({
   tabPanel: 'payment',
   handlers: {
     onChangedTotal: 'renderTotal',
-    onRightToolbarDisabled: 'disabledButton',
-    synchronizing: 'disableButton',
-    synchronized: 'enableButton'
+    onRightToolbarDisabled: 'disabledButton'
   },
+  processesToListen: ['calculateReceipt'],
   isEnabled: true,
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
@@ -260,12 +256,14 @@ enyo.kind({
     // the decision to enable the button is made based on several requirements that must be met
     var requirements, me = this,
         hasBeenPaid;
+    if (OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 && !isDisabled) {
+      return true;
+    }
 
     function requirementsAreMet(model) {
       // This function is in charge of managing all the requirements of the pay button to be enabled and disabled
       // Any attribute or parameter used to change the state of the button MUST be managed here
       requirements = {
-        isSynchronized: undefined,
         isModel: undefined,
         isReceipt: undefined,
         receiptId: undefined,
@@ -290,10 +288,6 @@ enyo.kind({
       }
       requirements.isToolbarEnabled = me.isEnabled;
       if (!requirements.isToolbarEnabled) {
-        return false;
-      }
-      requirements.isSynchronized = OB.UTIL.SynchronizationHelper.isSynchronized();
-      if (!requirements.isSynchronized) {
         return false;
       }
       requirements.isModel = !OB.UTIL.isNullOrUndefined(model);
@@ -385,7 +379,6 @@ enyo.kind({
     onShowPopup: ''
   },
   showPaymentTab: function () {
-    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('showPaymentTab');
     var receipt = this.model.get('order'),
         me = this;
     if (receipt.get('isQuotation')) {
@@ -424,11 +417,9 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });
       }
-      OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return;
     }
     if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid')) {
-      OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return true;
     }
     receipt.trigger('updatePending');
@@ -458,8 +449,6 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }
-
-    OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
   },
   tap: function () {
     var me = this,
@@ -482,7 +471,6 @@ enyo.kind({
         this.showPaymentTab();
         return;
       }
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
       OB.UTIL.StockUtils.checkOrderLinesStock([me.model.get('order')], function (hasStock) {
         if (hasStock) {
           me.model.on('showPaymentTab', function (event) {
@@ -518,14 +506,10 @@ enyo.kind({
               me.model.completePayment(me);
               me.doClearUserInput();
             }
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
           }, function (trx, error) {
             me.model.completePayment(me);
             me.doClearUserInput();
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
           });
-        } else {
-          OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
         }
       });
     }
@@ -559,6 +543,9 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
+  },
+  destroyComponents: function () {
+    this.inherited(arguments);
   },
   renderTotal: function (inSender, inEvent) {
     this.$.totalPrinter.renderTotal(inEvent.newTotal);

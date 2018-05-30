@@ -40,7 +40,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -52,8 +51,6 @@ import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.OBPOSPaymentcashupEvents;
 
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
 
 public class CashUpReport extends HttpSecureAppServlet {
@@ -177,7 +174,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               "OBPOS_LblStarting",
               label,
               startingbalance.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP).toString(),
-              startingbalance.toString(), "OBPOS_LblTotalStarting", conversionRate, isoCode);
+              startingbalance.toString(), "OBPOS_LblSTARTING", "OBPOS_LblTotalStarting",
+              conversionRate, isoCode);
           hashMapStartingsList.add(psData);
 
           /******************************* DROPS DEPOSIT ***************************************************************/
@@ -192,7 +190,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               RoundingMode.HALF_UP));
           psData = fillReportRow("WITHDRAWAL", paymentMethodCashup.getPaymentType().getSearchKey(),
               null, label, drop.toString(), paymentMethodCashup.getTotalreturns().toString(),
-              "OBPOS_LblTotalWithdrawals", conversionRate, isoCode);
+              "OBPOS_LblWITHDRAWAL", "OBPOS_LblTotalWithdrawals", conversionRate, isoCode);
           hashMapWithdrawalsList.add(psData);
 
           // Deposits
@@ -200,7 +198,7 @@ public class CashUpReport extends HttpSecureAppServlet {
           expected = expected.add(deposit);
           psData = fillReportRow("SALE", paymentMethodCashup.getPaymentType().getSearchKey(), null,
               label, deposit.toString(), paymentMethodCashup.getTotalsales().toString(),
-              "OBPOS_LblTotalDeposits", conversionRate, isoCode);
+              "OBPOS_LblDEPOSIT", "OBPOS_LblTotalDeposits", conversionRate, isoCode);
           hashMapSalesList.add(psData);
 
           List<OBPOSPaymentcashupEvents> paymentcashupEventsList = paymentMethodCashup
@@ -213,15 +211,16 @@ public class CashUpReport extends HttpSecureAppServlet {
               totalDrops = totalDrops.add(amount);
               psData = fillReportRow("WITHDRAWAL", paymentMethodCashup.getPaymentType()
                   .getSearchKey(), null, paymentcashupEvent.getName(), amount.toString(),
-                  paymentcashupEvent.getAmount().toString(), "OBPOS_LblTotalWithdrawals",
-                  conversionRate, isoCode);
+                  paymentcashupEvent.getAmount().toString(), "OBPOS_LblWithdrawal",
+                  "OBPOS_LblTotalWithdrawals", conversionRate, isoCode);
               hashMapWithdrawalsList.add(psData);
             } else {
               expected = expected.add(amount);
               totalDeposits = totalDeposits.add(amount);
               psData = fillReportRow("SALE", paymentMethodCashup.getPaymentType().getSearchKey(),
                   null, paymentcashupEvent.getName(), amount.toString(), paymentcashupEvent
-                      .getAmount().toString(), "OBPOS_LblTotalDeposits", conversionRate, isoCode);
+                      .getAmount().toString(), "OBPOS_LblDeposit", "OBPOS_LblTotalDeposits",
+                  conversionRate, isoCode);
               hashMapSalesList.add(psData);
             }
           }
@@ -235,7 +234,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               label,
               expected.toString(),
               expected.divide(conversionRate, 5, RoundingMode.HALF_UP)
-                  .setScale(2, RoundingMode.HALF_UP).toString(), "OBPOS_LblTotalExpected",
+                  .setScale(2, RoundingMode.HALF_UP).toString(), null, "OBPOS_LblTotalExpected",
               conversionRate, isoCode);
           hashMapExpectedList.add(psData);
 
@@ -247,7 +246,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               label,
               paymentMethodCashup.getTotalCounted().multiply(conversionRate)
                   .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
-                  .getTotalCounted().toString(), "OBPOS_LblTotalCounted", conversionRate, isoCode);
+                  .getTotalCounted().toString(), null, "OBPOS_LblTotalCounted", conversionRate,
+              isoCode);
           hashMapCountedList.add(psData);
 
           // -- DIFFERENCE --
@@ -260,7 +260,7 @@ public class CashUpReport extends HttpSecureAppServlet {
                   .setScale(2, RoundingMode.HALF_UP).subtract(expected).toString(),
               paymentMethodCashup.getTotalCounted()
                   .subtract(expected.divide(conversionRate, 5, RoundingMode.HALF_UP)).toString(),
-              "OBPOS_LblTotalDifference", conversionRate, isoCode);
+              null, "OBPOS_LblTotalDifference", conversionRate, isoCode);
           hashMapDifferenceList.add(psData);
 
           /******************************* CASH TO KEEP,CASH TO DEPOSIT ***************************************************************/
@@ -269,8 +269,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               paymentMethodCashup.getAmountToKeep());
           psData = fillReportRow("TODEPOSIT", paymentMethodCashup.getPaymentType().getSearchKey(),
               null, label, cashToDeposit.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
-                  .toString(), cashToDeposit.toString(), "OBPOS_LblTotalQtyToDepo", conversionRate,
-              isoCode);
+                  .toString(), cashToDeposit.toString(), null, "OBPOS_LblTotalQtyToDepo",
+              conversionRate, isoCode);
           hashMapCashToDepositList.add(psData);
 
           // -- TOKEEP --
@@ -281,7 +281,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               label,
               paymentMethodCashup.getAmountToKeep().multiply(conversionRate)
                   .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
-                  .getAmountToKeep().toString(), "OBPOS_LblTotalQtyToKeep", conversionRate, isoCode);
+                  .getAmountToKeep().toString(), null, "OBPOS_LblTotalQtyToKeep", conversionRate,
+              isoCode);
           hashMapCashToKeepList.add(psData);
 
         }
@@ -319,17 +320,6 @@ public class CashUpReport extends HttpSecureAppServlet {
           returnsTaxesQuery.list(), new String[] { "LABEL", "VALUE" });
 
       /******************************* BUILD REPORT ***************************************************************/
-
-      try {
-        final String strLanguage = vars.getLanguage(), strBaseDesign = getBaseDesignPath(strLanguage);
-        final JasperReport subReportSalesTaxes = ReportingUtils.getTranslatedJasperReport(this,
-            strBaseDesign + "/org/openbravo/retail/posterminal/ad_reports/CashUpSubreport.jrxml",
-            strLanguage);
-        parameters.put("SUBREP_CASHUP", subReportSalesTaxes);
-
-      } catch (final JRException e) {
-        throw new ServletException(e.getMessage());
-      }
 
       parameters.put("STORE", OBMessageUtils.getI18NMessage("OBPOS_LblStore", new String[] {})
           + ": " + cashup.getPOSTerminal().getOrganization().getIdentifier());
@@ -403,8 +393,8 @@ public class CashUpReport extends HttpSecureAppServlet {
   }
 
   private HashMap<String, String> fillReportRow(String groupField, String searchKey,
-      String i18nLabel, String label, String value, String foreignValue, String totalLabel,
-      BigDecimal conversionRate, String isoCode) {
+      String i18nLabel, String label, String value, String foreignValue, String headingLabel,
+      String totalLabel, BigDecimal conversionRate, String isoCode) {
     HashMap<String, String> result = new HashMap<String, String>();
     result.put("GROUPFIELD", groupField);
     result.put("SEARCHKEY", groupField + "_" + searchKey);
@@ -419,6 +409,7 @@ public class CashUpReport extends HttpSecureAppServlet {
       result.put("FOREIGN_VALUE", null);
       result.put("ISOCODE", null);
     }
+    result.put("HEADING_LABEL", OBMessageUtils.getI18NMessage(headingLabel, new String[] {}));
     result.put("TOTAL_LABEL", OBMessageUtils.getI18NMessage(totalLabel, new String[] {}));
     return result;
   }

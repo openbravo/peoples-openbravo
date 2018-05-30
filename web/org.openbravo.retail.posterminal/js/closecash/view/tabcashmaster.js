@@ -148,71 +148,64 @@ enyo.kind({
   },
 
   updateCashUpModel: function (model, payments, updateCallback) {
-    // wait until the application has finished all the asynchronous processes
-    // this is done to prevent the cashUpReport to be accessed before it has been initialized
-    OB.UTIL.SynchronizationHelper.executeWhenSynchronized({
-      makeSynchronous: true
-    }, function (args, callback) {
-      var cashUpReport = model.get('cashUpReport').at(0);
-      _.each(payments, function (payment) {
-        // Update share payments
-        _.each(model.get('paymentList').models, function (item) {
-          if (item.get('searchKey') === payment.searchKey) {
-            item.set('startingCash', OB.DEC.add(item.get('startingCash'), payment.startingCash));
-            item.set('totalDeposits', OB.DEC.add(item.get('totalDeposits'), payment.totalDeposits));
-            item.set('totalDrops', OB.DEC.add(item.get('totalDrops'), payment.totalDrops));
-            item.set('totalReturns', OB.DEC.add(item.get('totalReturns'), payment.totalReturns));
-            item.set('totalSales', OB.DEC.add(item.get('totalSales'), payment.totalSales));
-            var cTotalDeposits = OB.DEC.sub(item.get('totalDeposits'), OB.DEC.abs(item.get('totalDrops'))),
-                expected = OB.DEC.add(OB.DEC.add(item.get('startingCash'), OB.DEC.sub(item.get('totalSales'), OB.DEC.abs(item.get('totalReturns')))), cTotalDeposits);
-            var fromCurrencyId = item.get('paymentMethod').currency;
-            item.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
-            item.set('foreignExpected', expected);
-          }
-        });
-        // Update CashUpReport with shared payments
-        _.each(cashUpReport.get('deposits'), function (item) {
-          if (item.get('searchKey') === payment.searchKey) {
-            var sum = OB.DEC.add(OB.DEC.add(item.get('amount'), payment.totalDeposits), payment.totalSales);
-            item.set('origAmount', OB.UTIL.currency.toDefaultCurrency(item.get('currency'), sum));
-            item.set('amount', sum);
-          }
-        });
-        _.each(cashUpReport.get('drops'), function (item) {
-          if (item.get('searchKey') === payment.searchKey) {
-            var sum = OB.DEC.add(OB.DEC.add(item.get('amount'), payment.totalDrops), payment.totalReturns);
-            item.set('origAmount', OB.UTIL.currency.toDefaultCurrency(item.get('currency'), sum));
-            item.set('amount', sum);
-          }
-        });
-        _.each(cashUpReport.get('startings'), function (item) {
-          if (item.get('searchKey') === payment.searchKey) {
-            var sum = OB.DEC.add(item.get('amount'), payment.startingCash);
-            item.set('origAmount', OB.UTIL.currency.toDefaultCurrency(item.get('currency'), sum));
-            item.set('amount', sum);
-          }
-        });
+    var cashUpReport = model.get('cashUpReport').at(0);
+    _.each(payments, function (payment) {
+      // Update share payments
+      _.each(model.get('paymentList').models, function (item) {
+        if (item.get('searchKey') === payment.searchKey) {
+          item.set('startingCash', OB.DEC.add(item.get('startingCash'), payment.startingCash));
+          item.set('totalDeposits', OB.DEC.add(item.get('totalDeposits'), payment.totalDeposits));
+          item.set('totalDrops', OB.DEC.add(item.get('totalDrops'), payment.totalDrops));
+          item.set('totalReturns', OB.DEC.add(item.get('totalReturns'), payment.totalReturns));
+          item.set('totalSales', OB.DEC.add(item.get('totalSales'), payment.totalSales));
+          var cTotalDeposits = OB.DEC.sub(item.get('totalDeposits'), OB.DEC.abs(item.get('totalDrops'))),
+              expected = OB.DEC.add(OB.DEC.add(item.get('startingCash'), OB.DEC.sub(item.get('totalSales'), OB.DEC.abs(item.get('totalReturns')))), cTotalDeposits);
+          var fromCurrencyId = item.get('paymentMethod').currency;
+          item.set('expected', OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected));
+          item.set('foreignExpected', expected);
+        }
       });
-      // Update CashUpReport totals
-      cashUpReport.set('totalDeposits', _.reduce(cashUpReport.get('deposits'), function (accum, trx) {
-        return OB.DEC.add(accum, trx.get("origAmount"));
-      }, 0));
-      cashUpReport.set('totalDrops', _.reduce(cashUpReport.get('drops'), function (accum, trx) {
-        return OB.DEC.add(accum, trx.get("origAmount"));
-      }, 0));
-      cashUpReport.set('totalStartings', _.reduce(cashUpReport.get('startings'), function (accum, trx) {
-        return OB.DEC.add(accum, trx.get("origAmount"));
-      }, 0));
-      // Update totalExpected and totalDifference
-      model.set('totalExpected', _.reduce(model.get('paymentList').models, function (total, model) {
-        return OB.DEC.add(total, model.get('expected'));
-      }, 0));
-      model.set('totalDifference', OB.DEC.sub(model.get('totalDifference'), model.get('totalExpected')));
-      if (updateCallback !== undefined) {
-        updateCallback();
-      }
-      callback();
+      // Update CashUpReport with shared payments
+      _.each(cashUpReport.get('deposits'), function (item) {
+        if (item.get('searchKey') === payment.searchKey) {
+          var sum = OB.DEC.add(OB.DEC.add(item.get('amount'), payment.totalDeposits), payment.totalSales);
+          item.set('origAmount', OB.UTIL.currency.toDefaultCurrency(item.get('currency'), sum));
+          item.set('amount', sum);
+        }
+      });
+      _.each(cashUpReport.get('drops'), function (item) {
+        if (item.get('searchKey') === payment.searchKey) {
+          var sum = OB.DEC.add(OB.DEC.add(item.get('amount'), payment.totalDrops), payment.totalReturns);
+          item.set('origAmount', OB.UTIL.currency.toDefaultCurrency(item.get('currency'), sum));
+          item.set('amount', sum);
+        }
+      });
+      _.each(cashUpReport.get('startings'), function (item) {
+        if (item.get('searchKey') === payment.searchKey) {
+          var sum = OB.DEC.add(item.get('amount'), payment.startingCash);
+          item.set('origAmount', OB.UTIL.currency.toDefaultCurrency(item.get('currency'), sum));
+          item.set('amount', sum);
+        }
+      });
     });
+    // Update CashUpReport totals
+    cashUpReport.set('totalDeposits', _.reduce(cashUpReport.get('deposits'), function (accum, trx) {
+      return OB.DEC.add(accum, trx.get("origAmount"));
+    }, 0));
+    cashUpReport.set('totalDrops', _.reduce(cashUpReport.get('drops'), function (accum, trx) {
+      return OB.DEC.add(accum, trx.get("origAmount"));
+    }, 0));
+    cashUpReport.set('totalStartings', _.reduce(cashUpReport.get('startings'), function (accum, trx) {
+      return OB.DEC.add(accum, trx.get("origAmount"));
+    }, 0));
+    // Update totalExpected and totalDifference
+    model.set('totalExpected', _.reduce(model.get('paymentList').models, function (total, model) {
+      return OB.DEC.add(total, model.get('expected'));
+    }, 0));
+    model.set('totalDifference', OB.DEC.sub(model.get('totalDifference'), model.get('totalExpected')));
+    if (updateCallback !== undefined) {
+      updateCallback();
+    }
   }
 
 });
