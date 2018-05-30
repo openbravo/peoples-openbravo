@@ -19,6 +19,7 @@
 package org.openbravo.client.application.window.hooks;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,28 +46,26 @@ public class DataPoolSelectionWindowInjector implements ExtraWindowSettingsInjec
   private static final String EXTRA_CALLBACKS_KEY = "extraCallbacks";
 
   private static final String RO_POOL_NOT_AVAILABLE_MESSAGE_KEY = "OBUIAPP_ROPoolNotAvailable";
-  private static final String SHOW_MESSAGE_CALLBACK_FUNCTION = "OB.ExtraWindowSettingCallbackUtils.showInfoMessage";
+  private static final String SHOW_MESSAGE_CALLBACK_FUNCTION = "OB.Utilities.ExtraWindowSettingActions.showInfoMessage";
 
   @Override
   public Map<String, Object> doAddSetting(Map<String, Object> parameters, JSONObject json)
       throws OBException {
-    Map<String, Object> extraSettings = new HashMap<>();
 
     String windowId = (String) parameters.get(WINDOW_ID_PARAMETER);
     if (DATA_POOL_SEL_WINDOW_ID.equals(windowId) && readOnlyPoolIsNotAvailable()) {
-      extraSettings.putAll(getShowInfoMessageSettings(DATA_POOL_SEL_TAB_ID,
-          RO_POOL_NOT_AVAILABLE_MESSAGE_KEY));
+      return getShowInfoMessageSettings();
     }
 
-    return extraSettings;
+    return Collections.emptyMap();
   }
 
-  private Map<String, Object> getShowInfoMessageSettings(String tabId, String messageKey) {
-    Map<String, Object> settings = new HashMap<>();
-    settings.put(WINDOW_MESSAGE_KEY, messageKey);
-    settings.put(TAB_ID_KEY, tabId);
+  private Map<String, Object> getShowInfoMessageSettings() {
+    Map<String, Object> settings = new HashMap<>(3);
+    settings.put(WINDOW_MESSAGE_KEY, RO_POOL_NOT_AVAILABLE_MESSAGE_KEY);
+    settings.put(TAB_ID_KEY, DATA_POOL_SEL_TAB_ID);
 
-    List<String> callbackList = new ArrayList<>();
+    List<String> callbackList = new ArrayList<>(1);
     callbackList.add(SHOW_MESSAGE_CALLBACK_FUNCTION);
     settings.put(EXTRA_CALLBACKS_KEY, callbackList);
 

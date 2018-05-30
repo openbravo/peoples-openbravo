@@ -270,7 +270,7 @@ The view implementation defines the component which is capable of generating the
 <!--C41826412A134A488D94C84EB8C6EE81-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C41826412A134A488D94C84EB8C6EE81-->  <NAME><![CDATA[OBUIAPP_Pool_Report]]></NAME>
 <!--C41826412A134A488D94C84EB8C6EE81-->  <DESCRIPTION><![CDATA[Contains the Reports defined in various sources]]></DESCRIPTION>
-<!--C41826412A134A488D94C84EB8C6EE81-->  <HELP><![CDATA[Defines the Reports defines either as a Process (AD_Process) or a Process definition (OBUIAPP_Process).]]></HELP>
+<!--C41826412A134A488D94C84EB8C6EE81-->  <HELP><![CDATA[Groups all Reports defined either as a Process (AD_Process) or as a Process Definition (OBUIAPP_Process).]]></HELP>
 <!--C41826412A134A488D94C84EB8C6EE81-->  <TABLENAME><![CDATA[OBUIAPP_Pool_Report_V]]></TABLENAME>
 <!--C41826412A134A488D94C84EB8C6EE81-->  <CLASSNAME><![CDATA[DataPoolReport]]></CLASSNAME>
 <!--C41826412A134A488D94C84EB8C6EE81-->  <ISVIEW><![CDATA[Y]]></ISVIEW>

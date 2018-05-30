@@ -24,18 +24,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ExternalConnectionPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Helper class used to determine if a request should use the read-only pool to retrieve data
+ * Helper class used to determine if a report should use the read-only pool to retrieve data
  */
 public class DataPoolChecker implements OBSingleton {
-  private static final Logger log = Logger.getLogger(DataPoolChecker.class);
+  private static final Logger log = LoggerFactory.getLogger(DataPoolChecker.class);
   private static final int REPORT_ID = 0;
   private static final int DATA_POOL = 1;
 
@@ -55,7 +55,7 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   /**
-   * Initializes the checker caching the list of processes with a database pool assigned and the
+   * Initializes the checker caching the list of reports with a database pool assigned and the
    * default preference as well
    */
   private void initialize() {
@@ -64,29 +64,29 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   /**
-   * Reload from DB the processes that should use the Read-only pool
+   * Reload from DB the reports that should use the Read-only pool
    */
   public void refreshDataPoolProcesses() {
     dataPoolProcesses = findActiveDataPoolSelection();
   }
 
+  /**
+   * Queries for all active entries of DataPoolSelection and returns them in a new map object. This
+   * avoid concurrency issues dealing with dataPoolProcesses.
+   * 
+   * @return a new Map object with the mapping (Report_ID, POOL)
+   */
   private Map<String, String> findActiveDataPoolSelection() {
-    Map<String, String> selection = new HashMap<>();
-    OBContext.setAdminMode(false);
-    try {
-      final StringBuilder hql = new StringBuilder();
-      hql.append("select dps.report.id, dps.dataPool from OBUIAPP_Data_Pool_Selection dps ");
-      hql.append("where dps.active = true");
+    final StringBuilder hql = new StringBuilder();
+    hql.append("select dps.report.id, dps.dataPool from OBUIAPP_Data_Pool_Selection dps ");
+    hql.append("where dps.active = true");
 
-      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-      for (Object item : query.list()) {
-        final Object[] values = (Object[]) item;
-        selection.put(values[REPORT_ID].toString(), values[DATA_POOL].toString());
-      }
-    } catch (Exception e) {
-      log.error("Cannot fetch DataPoolSelection", e);
-    } finally {
-      OBContext.restorePreviousMode();
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    List queryResults = query.list();
+    Map<String, String> selection = new HashMap<>(queryResults.size());
+    for (Object item : queryResults) {
+      final Object[] values = (Object[]) item;
+      selection.put(values[REPORT_ID].toString(), values[DATA_POOL].toString());
     }
 
     return selection;
@@ -103,25 +103,6 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   /**
-   * Verifies whether the current process should use the default pool. Process can be either a
-   * instance of Report and Process or a Process Definition.
-   *
-   * @return true if the current process should use the default pool
-   */
-  protected boolean shouldUseDefaultPool(String processId) {
-    String poolUsedForProcess = defaultReadOnlyPool;
-    if (!StringUtils.isBlank(processId)) {
-      String poolForProcess = dataPoolProcesses.get(processId);
-      if (poolForProcess != null) {
-        poolUsedForProcess = poolForProcess;
-      }
-    }
-
-    log.debug("Using pool " + poolUsedForProcess + " for report with id " + processId);
-    return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForProcess);
-  }
-
-  /**
    * Set the default pool used when requesting the read-only pool
    *
    * @param defaultPool
@@ -131,9 +112,28 @@ public class DataPoolChecker implements OBSingleton {
     if (validPoolValues.contains(defaultPool)) {
       defaultReadOnlyPool = defaultPool;
     } else {
-      log.warn("Preference value " + defaultPool
-          + " is not a valid Database pool. Using READONLY_POOL as the default value");
-      defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
+      log.warn(
+          "Preference value {} is not a valid Database pool. Using READONLY_POOL as the default value",
+          defaultPool);
     }
   }
+
+  /**
+   * Verifies whether the current report should use the default pool. Reports can be defined either
+   * in Report and Process or in Process Definition.
+   *
+   * @return true if the current report should use the default pool
+   */
+  boolean shouldUseDefaultPool(String processId) {
+    String poolForProcess = null;
+    if (!StringUtils.isBlank(processId)) {
+      poolForProcess = dataPoolProcesses.get(processId);
+    }
+
+    String poolUsedForProcess = poolForProcess != null ? poolForProcess : defaultReadOnlyPool;
+
+    log.debug("Using pool {}  for report with id {}", poolUsedForProcess, processId);
+    return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForProcess);
+  }
+
 }

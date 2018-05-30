@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.event;
+package org.openbravo.client.application.event;
 
 import javax.enterprise.event.Observes;
 
