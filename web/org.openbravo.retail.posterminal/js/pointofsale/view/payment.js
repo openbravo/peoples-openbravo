@@ -569,8 +569,7 @@ enyo.kind({
     }
     this.checkValidPayments(paymentstatus.getPaymentStatus(), selectedPayment);
     if (paymentstatus.get('change')) {
-      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
-      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
+      this.calculateChange(selectedPayment, paymentstatus.get('change'));
       this.$.changebutton.show();
       this.$.change.show();
       this.$.changelbl.show();
