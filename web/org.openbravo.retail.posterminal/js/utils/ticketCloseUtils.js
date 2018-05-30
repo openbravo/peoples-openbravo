@@ -129,25 +129,27 @@
         }
       });
 
-      // Manage change payments
-      var addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
-        triggerReceiptClose(receipt);
-      });
-      receipt.get('changePayments').forEach(function (changePayment) {
-        var paymentToAdd = OB.MobileApp.model.paymentnames[changePayment.key];
-        receipt.addPayment(new OB.Model.PaymentLine({
-          'kind': paymentToAdd.payment.searchKey,
-          'name': paymentToAdd.payment.commercialName,
-          'amount': OB.DEC.sub(0, changePayment.amount),
-          'rate': paymentToAdd.rate,
-          'mulrate': paymentToAdd.mulrate,
-          'isocode': paymentToAdd.isocode,
-          'allowOpenDrawer': paymentToAdd.paymentMethod.allowopendrawer,
-          'isCash': paymentToAdd.paymentMethod.iscash,
-          'openDrawer': paymentToAdd.paymentMethod.openDrawer,
-          'printtwice': paymentToAdd.paymentMethod.printtwice
-        }), addPaymentCallback);
-      });
+      // Manage change payments (if there is change)
+      if (receipt.get('changePayments')) {
+        var addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
+          triggerReceiptClose(receipt);
+        });
+        receipt.get('changePayments').forEach(function (changePayment) {
+          var paymentToAdd = OB.MobileApp.model.paymentnames[changePayment.key];
+          receipt.addPayment(new OB.Model.PaymentLine({
+            'kind': paymentToAdd.payment.searchKey,
+            'name': paymentToAdd.payment.commercialName,
+            'amount': OB.DEC.sub(0, changePayment.amount),
+            'rate': paymentToAdd.rate,
+            'mulrate': paymentToAdd.mulrate,
+            'isocode': paymentToAdd.isocode,
+            'allowOpenDrawer': paymentToAdd.paymentMethod.allowopendrawer,
+            'isCash': paymentToAdd.paymentMethod.iscash,
+            'openDrawer': paymentToAdd.paymentMethod.openDrawer,
+            'printtwice': paymentToAdd.paymentMethod.printtwice
+          }), addPaymentCallback);
+        });
+      }
     });
   };
 
