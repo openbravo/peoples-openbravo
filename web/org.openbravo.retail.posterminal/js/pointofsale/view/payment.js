@@ -392,17 +392,31 @@ enyo.kind({
     var changeLabelContent = '';
     var changePayments = [];
 
+    // Get rounded change
+
+    function getChangeRounded(p, c) {
+      if (p.changeRounding) {
+        var grt = p.changeRounding.greaterRoundTo;
+        var gt = OB.DEC.sub(grt, p.changeRounding.greaterThan);
+        return OB.DEC.mul(grt, Math.trunc(OB.DEC.div(OB.DEC.add(c, gt), grt)));
+      }
+      return c;
+    }
+
     // Add new change item to result vars...
 
     function addChange(p, c) {
       if (OB.DEC.compare(c)) {
+        // Add new change Payment
         if (changeLabelContent) {
           changeLabelContent += ' + ';
         }
-        changeLabelContent += OB.I18N.formatCurrencyWithSymbol(c, p.symbol, p.currencySymbolAtTheRight);
+        var cRounded = getChangeRounded(p, c);
+        changeLabelContent += OB.I18N.formatCurrencyWithSymbol(cRounded, p.symbol, p.currencySymbolAtTheRight);
         changePayments.push({
           'key': p.payment.searchKey,
-          'amount': c
+          'amount': c,
+          'amountRounded': cRounded
         });
       }
     }
