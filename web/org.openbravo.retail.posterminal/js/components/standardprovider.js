@@ -63,6 +63,31 @@ enyo.kind({
     }
   },
   processPayment: function (paymentinfo) {
+    // This function is invoked to process a payment transaction
+    //
+    // The parameter paymentinfo is a plain js object with the following fields
+    // * receipt. The receipt model to pay
+    // * currency. The currency ISO code of the amount to process
+    // * amount. The amount to process
+    // * refund. Boolean value that indicates whether this payment is a refund or not.
+    // * providerGroup. The provider group model uses to process this payment.
+    //
+    // It returns a Promise
+    // * When resolved, the parameter must be a plain js object with the following fields:
+    //   * transaction. The transaction ID returned by the process
+    //   * authorization:. The authorization ID returned by the process
+    //   * properties.cardlogo. The value used by the provider group model to select the payment method
+    // * When rejected, the parameter must be the exception object
+    //
+    // As an example this is the processVoid() function if payment cannot be voided.
+    //
+    // processVoid: function (data) {
+    //   // This function rejects always the transaction
+    //   return Promise.reject({
+    //     inResponse: null,
+    //     message: 'Error from somewhere'
+    //   });
+    // },
     var type = paymentinfo.refund ? OBPOS_StandardProvider.TYPE_REFUND : OBPOS_StandardProvider.TYPE_SALE;
 
     var request = {
@@ -85,9 +110,13 @@ enyo.kind({
     return request;
   },
   getErrorMessage: function (exceptioninfo) {
-    // exceptioninfo.response
-    // exceptioninfo.message
-    // return OB.I18N.getLabel(...
+    // This function is invoked when processInfo function is rejected.
+    // It is invoked with the parameter exceptioninfo that contains the exception
+    // object of the reject, and must return the error message to display to the cashier
+    //
+    // In the case of OBPOS_StandardProviderVoid exceptioninfo is a plain js object with the following fields
+    // * response. The response from the hardware manager
+    // * message. The message returned by the hardware manager
     return exceptioninfo.message;
   }
 });

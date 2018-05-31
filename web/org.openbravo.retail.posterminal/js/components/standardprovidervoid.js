@@ -13,20 +13,26 @@ enyo.kind({
   name: 'OBPOS_StandardProviderVoid',
   voidConfirmation: true,
   providerComponent: null,
-  // processVoid: function (data) {
-  //   // This function removes always the transaction
-  //   return Promise.resolve();
-  // },
-  // processVoid: function (data) {
-  //   // This function rejects always the transaction
-  //   return Promise.reject({
-  //     inResponse: null,
-  //     message: 'Error from somewhere'
-  //   });
-  // },
   processVoid: function (voidpaymentinfo) {
-    // data.receipt
-    // data.payment
+    // This function is invoked to void a payment transaction
+    //
+    // The parameter voidpaymentinfo is a plain js object with the following fields
+    // * receipt. The receipt model
+    // * payment. The payment model to void
+    //
+    // It returns a Promise
+    // * When resolved, the parameter must be an empty js object
+    // * When rejected, the parameter must be the exception object
+    //
+    // As an example this is the processVoid() function if payment cannot be voided.
+    //
+    // processVoid: function (data) {
+    //   // This function rejects always the transaction
+    //   return Promise.reject({
+    //     inResponse: null,
+    //     message: 'Error from somewhere'
+    //   });
+    // },
     var request = {
       'type': OBPOS_StandardProvider.TYPE_VOID,
       'currency': voidpaymentinfo.payment.get('isocode'),
@@ -42,9 +48,13 @@ enyo.kind({
     return request;
   },
   getErrorMessage: function (exceptioninfo) {
-    // exceptioninfo.response
-    // exceptioninfo.message
-    // return OB.I18N.getLabel(...
+    // This function is invoked when processInfo function is rejected.
+    // It is invoked with the parameter exceptioninfo that contains the exception
+    // object of the reject, and must return the error message to display to the cashier
+    //
+    // In the case of OBPOS_StandardProviderVoid exceptioninfo is a plain js object with the following fields
+    // * response. The response from the hardware manager
+    // * message. The message returned by the hardware manager
     return exceptioninfo.message;
   }
 });
