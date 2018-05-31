@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2007-2015 Openbravo SLU
+ * All portions are Copyright (C) 2007-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.data.Sqlc;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.reference.Reference;
 import org.openbravo.reference.ui.UIReference;
 import org.openbravo.utils.Replace;
@@ -46,11 +47,16 @@ public class PrintJR extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     String strProcessId = vars.getRequiredStringParameter("inpadProcessId");
+    String processType = "R";
     String strOutputType = vars.getStringParameter("inpoutputtype", "html");
-    if (!hasGeneralAccess(vars, "P", strProcessId)) {
+    if (!hasGeneralAccess(vars, processType, strProcessId)) {
       bdError(request, response, "AccessTableNoView", vars.getLanguage());
       return;
     }
+
+    SessionInfo.setProcessId(strProcessId);
+    SessionInfo.setProcessType(processType);
+
     String strReportName = PrintJRData.getReportName(this, strProcessId);
     HashMap<String, Object> parameters = createParameters(vars, strProcessId);
 
