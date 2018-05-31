@@ -141,7 +141,7 @@
             'name': paymentToAdd.payment.commercialName,
             'amount': OB.DEC.sub(0, changePayment.amount),
             'amountRounded': OB.DEC.sub(0, changePayment.amountRounded),
-            'origAmountRounded': OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounde, paymentToAdd.rate)),
+            'origAmountRounded': OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounded, paymentToAdd.rate)),
             'rate': paymentToAdd.rate,
             'mulrate': paymentToAdd.mulrate,
             'isocode': paymentToAdd.isocode,
