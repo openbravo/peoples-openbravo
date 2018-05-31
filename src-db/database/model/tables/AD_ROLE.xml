@@ -58,7 +58,7 @@
         <onCreateDefault/>
       </column>
       <column name="ISMANUAL" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="PROCESSING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
@@ -70,7 +70,7 @@
         <onCreateDefault/>
       </column>
       <column name="ISADVANCED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
+        <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
       <column name="ISRESTRICTBACKEND" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">

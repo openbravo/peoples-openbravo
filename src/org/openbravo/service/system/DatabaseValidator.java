@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -457,6 +457,7 @@ public class DatabaseValidator implements SystemValidator {
     fkWhiteList.add("c_order.replacedorder_id");
     fkWhiteList.add("c_order.replacementorder_id");
     fkWhiteList.add("c_orderline.replacedorderline_id");
+    fkWhiteList.add("obuiapp_data_pool_sel.obuiapp_pool_report_v_id");
     return fkWhiteList;
   }
 
