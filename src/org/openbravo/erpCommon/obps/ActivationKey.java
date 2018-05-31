@@ -1285,10 +1285,17 @@ public class ActivationKey {
 
       Map<String, Object> params = new HashMap<String, Object>();
       params.put("publicKey", strPublicKey);
-      params.put("purpose", getProperty("purpose"));
-      params.put("instanceNo", getProperty("instanceno"));
       params.put("activate", true);
-      params.put("updated", getProperty("updated"));
+
+      if (instanceProperties != null) {
+        // this could happen ie. with old basic licenses signed with a now invalid key
+        params.put("purpose", getProperty("purpose"));
+        params.put("instanceNo", getProperty("instanceno"));
+        params.put("updated", getProperty("updated"));
+      } else {
+        params.put("purpose", OBDal.getInstance().get(SystemInformation.class, "0")
+            .getInstancePurpose());
+      }
       ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
       pb.setParams(params);
 
