@@ -367,7 +367,9 @@ enyo.kind({
   },
 
   updatePending: function () {
+    var execution = OB.UTIL.ProcessController.start('updatePending');
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      OB.UTIL.ProcessController.finish('updatePending', execution);
       return true;
     }
     var paymentstatus = this.receipt.getPaymentStatus();
@@ -458,8 +460,10 @@ enyo.kind({
     }
 
     this.updateCreditSalesAction();
+    OB.UTIL.ProcessController.finish('updatePending', execution);
   },
   updatePendingMultiOrders: function () {
+    var execution = OB.UTIL.ProcessController.start('updatePendingMultiOrders');
     var paymentstatus = this.model.get('multiOrders');
     var symbol = '',
         symbolAtRight = true,
@@ -543,6 +547,7 @@ enyo.kind({
       this.$.exactlbl.hide();
       this.$.donezerolbl.hide();
     }
+    OB.UTIL.ProcessController.finish('updatePendingMultiOrders', execution);
   },
 
   checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, button, callback) {
@@ -1087,24 +1092,25 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  handlers: {
-    synchronizing: 'isSynchronizing',
-    synchronized: 'isSynchronized'
-  },
   drawerOpened: true,
   isLocked: true,
   lasDisabledPetition: true,
-  isSynchronizing: function () {
+  processesToListen: ['showPaymentTab', 'updatePending', 'updatePendingMultiOrders', 'cancelLayaway'],
+  disableButton: function () {
     this.isLocked = true;
     this.setDisabledIfSynchronized();
   },
-  isSynchronized: function () {
+  enableButton: function () {
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
   setDisabled: function (value) {
     this.lasDisabledPetition = value;
-    this.setDisabledIfSynchronized();
+    if (value) {
+      this.disableButton();
+    } else {
+      this.enableButton();
+    }
   },
   setDisabledIfSynchronized: function () {
     var value = this.lasDisabledPetition;
@@ -1212,8 +1218,6 @@ enyo.kind({
       });
     }
 
-    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("doneButton");
-
     if (!avoidPayment) {
       if (isMultiOrder) {
         payments = this.owner.model.get('multiOrders').get('payments');
@@ -1252,7 +1256,6 @@ enyo.kind({
       if (this.avoidCompleteReceipt) {
         enyo.$.scrim.hide();
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel(errorMsgLbl));
-        OB.UTIL.SynchronizationHelper.finished(synchId, "doneButton");
         return;
       }
 
@@ -1324,7 +1327,6 @@ enyo.kind({
         }
       }
     }
-    OB.UTIL.SynchronizationHelper.finished(synchId, "doneButton");
   }
 });
 
@@ -1570,12 +1572,10 @@ enyo.kind({
         process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     if (!paymentstatus.isReturn) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("creditButtonTap");
       process.exec({
         businessPartnerId: this.model.get('order').get('bp').get('id'),
         totalPending: this.model.get('order').getPending()
       }, function (data) {
-        OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
         if (data) {
           if (data.enoughCredit) {
             me.doShowPopup({
@@ -1603,7 +1603,6 @@ enyo.kind({
         }
         me.putDisabled(false);
       }, function () {
-        OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
         me.doShowPopup({
           popup: 'modalEnoughCredit',
           args: {

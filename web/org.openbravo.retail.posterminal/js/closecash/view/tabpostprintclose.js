@@ -684,12 +684,10 @@ enyo.kind({
     if (OB.POS.modelterminal.get('terminal').ismaster) {
       if (OB.MobileApp.view.currentWindow === 'retail.cashuppartial') {
         var me = this;
-        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("tabpostprintclose");
         new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
           cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
           terminalSlave: OB.POS.modelterminal.get('terminal').isslave
         }, function (data) {
-          OB.UTIL.SynchronizationHelper.finished(synchId, "tabpostprintclose");
           if (data && !data.exception) {
             me.owner.$.cashMaster.updateCashUpModel(model, data, function () {
               me.cashUpReportChanged(model.get('cashUpReport').at(0));

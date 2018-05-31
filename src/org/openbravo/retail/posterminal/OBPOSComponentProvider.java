@@ -277,7 +277,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Websockets
         "utils/rfidWebsocket",
 
-        "utils/preScanningFocusHook", "utils/orderSelectorUtils" };
+        "utils/preScanningFocusHook", "utils/orderSelectorUtils", "utils/stockUtils",
+        "utils/productStatusUtils" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2017-02-14T16:34:45 -->
+<!-- Created with Jaspersoft Studio version 6.5.0.final using JasperReports Library version 6.5.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CashUpReport" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d48670b9-e50a-4c6e-a8ce-076369e29634">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -8,7 +7,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/openbravo/workspaces/openbravo/erp/devel/pi/openbravo-webpos/WebContent/src-loc/design/org/openbravo/retail/posterminal/ad_reports/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="SUBREP_CASHUP" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="SUBREP_CashUpSubreport" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="SALES_TAXES" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="RETURNS_TAXES" class="net.sf.jasperreports.engine.JRDataSource"/>
 	<parameter name="NET_SALES_VALUE" class="java.lang.String"/>
@@ -34,6 +33,7 @@
 	<field name="LABEL" class="java.lang.String"/>
 	<field name="VALUE" class="java.lang.String"/>
 	<field name="GROUPFIELD" class="java.lang.String"/>
+	<field name="HEADING_LABEL" class="java.lang.String"/>
 	<field name="TOTAL_LABEL" class="java.lang.String"/>
 	<field name="FOREIGN_VALUE" class="java.lang.String"/>
 	<field name="ISOCODE" class="java.lang.String"/>
@@ -43,8 +43,26 @@
 	</variable>
 	<group name="GROUPFIELD" keepTogether="true">
 		<groupExpression><![CDATA[$F{GROUPFIELD}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="30" y="0" width="478" height="20" isRemoveLineWhenBlank="true" printWhenGroupChanges="GROUPFIELD" uuid="ac2a9af3-b7cd-43b4-9db1-7c9561571433"/>
+					<box leftPadding="5" rightPadding="5">
+						<pen lineWidth="1.0" lineColor="#867D7D"/>
+						<topPen lineWidth="0.0" lineColor="#867D7D"/>
+						<leftPen lineWidth="0.0" lineColor="#867D7D"/>
+						<bottomPen lineWidth="0.0" lineColor="#867D7D"/>
+						<rightPen lineWidth="0.0" lineColor="#867D7D"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{HEADING_LABEL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
 		<groupFooter>
-			<band height="41">
+			<band height="34">
 				<textField>
 					<reportElement positionType="Float" x="397" y="0" width="111" height="20" uuid="553f4116-7a56-4538-ade5-87bf40061070"/>
 					<box leftPadding="5" rightPadding="5">
@@ -143,7 +161,7 @@
 					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[$P{RETURNS_TAXES}]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREP_CASHUP}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREP_CashUpSubreport}]]></subreportExpression>
 			</subreport>
 			<subreport runToBottom="false">
 				<reportElement positionType="Float" mode="Transparent" x="0" y="189" width="555" height="20" isRemoveLineWhenBlank="true" uuid="6a30967c-fb74-419d-b0d1-7d46176e6c7e"/>
@@ -151,7 +169,7 @@
 					<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[$P{SALES_TAXES}]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREP_CASHUP}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{SUBREP_CashUpSubreport}]]></subreportExpression>
 			</subreport>
 			<textField>
 				<reportElement positionType="Float" x="397" y="243" width="111" height="20" uuid="e63eda87-ff45-4c29-8018-0d0b56d58641"/>
@@ -291,4 +309,18 @@
 			</textField>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement x="416" y="0" width="70" height="17" uuid="f333567f-a608-4aa9-8c5f-90bb6f7d1730"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="486" y="0" width="40" height="17" uuid="91e74f25-7f52-4284-83d1-7c4a950bd3ed"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[" of  " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
 </jasperReport>

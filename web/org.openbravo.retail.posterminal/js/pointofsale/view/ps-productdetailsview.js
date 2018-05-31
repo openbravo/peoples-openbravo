@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo */
+/*global OB, Backbone, enyo, _ */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
@@ -84,35 +84,53 @@ enyo.kind({
     }
   },
   tap: function () {
-    if (this.leftSubWindow.product) {
-      var line = null;
-      if (this.leftSubWindow && this.leftSubWindow.line) {
-        line = this.leftSubWindow.line;
+    var product = this.leftSubWindow.product,
+        me = this;
+
+    if (product) {
+      var line = null,
+          lines = OB.MobileApp.model.receipt.get('lines'),
+          allLinesQty = 0;
+      if (me.leftSubWindow && me.leftSubWindow.line) {
+        line = me.leftSubWindow.line;
       }
-      var attrs = (this.leftSubWindow.inEvent && this.leftSubWindow.inEvent.attrs) ? this.leftSubWindow.inEvent.attrs : {};
+      var attrs = (me.leftSubWindow.inEvent && me.leftSubWindow.inEvent.attrs) ? me.leftSubWindow.inEvent.attrs : {};
       attrs.warehouse = {
-        id: this.leftSubWindow.warehouse.warehouseid ? this.leftSubWindow.warehouse.warehouseid : this.leftSubWindow.warehouse.id,
-        warehousename: this.leftSubWindow.warehouse.warehousename,
-        warehouseqty: this.leftSubWindow.warehouse.warehouseqty
+        id: me.leftSubWindow.warehouse.warehouseid ? this.leftSubWindow.warehouse.warehouseid : this.leftSubWindow.warehouse.id,
+        warehousename: me.leftSubWindow.warehouse.warehousename,
+        warehouseqty: me.leftSubWindow.warehouse.warehouseqty
       };
-      if (line) {
-        this.doSetLineProperty({
-          line: line,
-          property: 'warehouse',
-          value: attrs.warehouse
-        });
-        this.doCloseLeftSubWindow();
-      } else {
-        this.doAddProduct({
-          attrs: attrs,
-          options: {
-            line: line,
-            blockAddProduct: true
-          },
-          product: this.leftSubWindow.product,
-          ignoreStockTab: true
-        });
-      }
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreTapStockAddReceipt', {
+        context: me,
+        params: attrs,
+        line: line
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
+        }
+        if (line) {
+          if (attrs.warehouse.id !== line.get('warehouse').id) {
+            me.doSetLineProperty({
+              line: line,
+              property: 'warehouse',
+              value: attrs.warehouse
+            });
+          }
+          me.doCloseLeftSubWindow();
+        } else {
+          me.doAddProduct({
+            attrs: attrs,
+            options: {
+              line: line,
+              blockAddProduct: true,
+              stockScreen: true
+            },
+            product: product,
+            qty: args.qty ? args.qty : OB.DEC.One,
+            ignoreStockTab: true
+          });
+        }
+      });
     }
   }
 });
@@ -265,31 +283,37 @@ enyo.kind({
       this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [OB.MobileApp.model.get('warehouses')[0].warehousename, '0']));
     }
   },
-  getStoreStock: function () {
-    var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
-        me = this;
+  getStoreStock: function (params) {
+    var me = this;
     this.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
-    serverCallStoreDetailedStock.exec({
-      organization: OB.MobileApp.model.get('terminal').organization,
-      product: this.product.get('id')
-    }, function (data) {
+    this.bodyComponent.$.productAddToReceipt.setDisabled(true);
+    OB.UTIL.StockUtils.getReceiptLineStock(me.product.get('id'), undefined, function (data) {
       if (data && data.exception) {
         me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
         me.bodyComponent.$.stockHere.addClass('error');
-      } else if (data.product === me.product.get('id') && me.showing) {
+      } else if (data.product === me.product.get('id')) {
         if (data.qty || data.qty === 0) {
           data.product = me.product;
           me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
           if (me.localStockModel.get('warehouses').at(0)) {
+            var currentWarehouse;
             if (me.warehouse.warehouseid) {
-              me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(me.warehouse.warehouseid));
+              currentWarehouse = me.localStockModel.getWarehouseById(me.warehouse.warehouseid);
             } else {
-              me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(me.warehouse.id));
+              currentWarehouse = me.localStockModel.getWarehouseById(me.warehouse.id);
             }
+            me.loadDefaultWarehouseData(currentWarehouse);
+            me.warehouse.warehouseqty = currentWarehouse.get('warehouseqty');
+          } else {
+            me.warehouse.warehouseqty = OB.DEC.Zero;
           }
           me.bodyComponent.$.stockHere.removeClass('error');
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
         }
+        me.bodyComponent.$.productAddToReceipt.setDisabled(false);
+      }
+      if (params.checkStockCallback) {
+        params.checkStockCallback();
       }
     });
   },
@@ -307,7 +331,7 @@ enyo.kind({
         if (data && data.exception) {
           me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
           me.bodyComponent.$.stockOthers.addClass('error');
-        } else if (data.product === me.product.get('id') && me.showing && (data.qty || data.qty === 0)) {
+        } else if (data.product === me.product.get('id') && (data.qty || data.qty === 0)) {
           data.product = me.product;
           me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
           me.bodyComponent.$.stockOthers.removeClass('error');
@@ -351,7 +375,7 @@ enyo.kind({
     this.bodyComponent.$.descriptionArea.setContent(params.product.get('description'));
     this.bodyComponent.$.productAddToReceipt.setLabel();
     this.getOtherStock();
-    this.getStoreStock();
+    this.getStoreStock(params);
     return true;
   },
   header: {
