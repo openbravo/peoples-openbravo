@@ -396,9 +396,9 @@ enyo.kind({
 
     function getChangeRounded(p, c) {
       if (p.changeRounding) {
-        var grt = p.changeRounding.greaterRoundTo;
-        var gt = OB.DEC.sub(grt, p.changeRounding.greaterThan);
-        return OB.DEC.mul(grt, Math.trunc(OB.DEC.div(OB.DEC.add(c, gt), grt)));
+        var roundingto = p.changeRounding.roundingto;
+        var roundinggap = OB.DEC.sub(roundingto, p.changeRounding.roundingdownlimit);
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c, roundinggap), roundingto)));
       }
       return c;
     }
