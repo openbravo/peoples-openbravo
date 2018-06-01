@@ -221,13 +221,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         continue;
       }
       this.get('orderList').current = this.get('multiOrders').get('multiOrdersList').at(i);
-      if (this.get('orderList').current.get('payments').length === 0) {
-        this.get('orderList').deleteCurrent();
-        if (!_.isNull(this.get('multiOrders').get('multiOrdersList').at(i).id)) {
-          this.get('orderList').deleteCurrentFromDatabase(this.get('multiOrders').get('multiOrdersList').at(i));
-        }
-      } else {
-          OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+      this.get('orderList').deleteCurrent();
+      if (!_.isNull(this.get('multiOrders').get('multiOrdersList').at(i).id)) {
+        this.get('orderList').deleteCurrentFromDatabase(this.get('multiOrders').get('multiOrdersList').at(i));
       }
     }
   },
