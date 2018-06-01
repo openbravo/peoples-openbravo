@@ -144,7 +144,7 @@ public class LoginHandler extends HttpBaseServlet {
           }
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
-        } catch (AuthenticationExpirationPasswordException|ChangePasswordException exception) {
+        } catch (AuthenticationExpirationPasswordException | ChangePasswordException exception) {
           vars.removeSessionValue("#LoginErrorMsg");
           goToUpdatePassword(res, vars, exception, "../security/Login_FS.html");
         } catch (AuthenticationException e) {
@@ -231,11 +231,8 @@ public class LoginHandler extends HttpBaseServlet {
         msgType = "Error";
         action = "../security/Login_FS.html";
       }
-      // retrieve if multiple sessions for same user should be prevented
-      boolean forceNamedUserLogin = "FORCE_NAMED_USER".equals(vars.getCommand());
 
-      LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, username,
-          forceNamedUserLogin, getSessionType());
+      LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, getSessionType());
 
       SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
 
@@ -300,27 +297,6 @@ public class LoginHandler extends HttpBaseServlet {
         title = Utility.messageBD(cp, "OPS_EXPIRED_GOLDEN_TITLE", vars.getLanguage());
         updateDBSession(sessionId, false, "IOBPS");
         goToRetry(res, vars, msg, title, "Error", "../security/Login_FS.html");
-        return;
-      case CONCURRENT_NAMED_USER:
-        if (sysInfo.getSystemStatus() == null || sysInfo.getSystemStatus().equals("RB70")) {
-          // Preventing concurrency of already logged in named user in case System Status is OK.
-          // While rebuilding or if problems in the rebuild, allow same user with Sys Admin role not
-          // to kill the session that started the rebuild.
-          msg = Utility.messageBD(cp, "CONCURRENT_NAMED_USER", vars.getLanguage());
-          title = Utility.messageBD(cp, "CONCURRENT_NAMED_USER_TITLE", vars.getLanguage());
-          log4j.warn("Named Concurrent Users Reached - Session: " + sessionId);
-          vars.clearSession(true);
-          goToRetry(res, vars, msg, title, "Confirmation", "../secureApp/LoginHandler.html");
-          return;
-        } else {
-          // System is being rebuild: allowing extra System Admin sessions
-          break;
-        }
-      case ON_DEMAND_OFF_PLATFORM:
-        msg = Utility.messageBD(cp, "ON_DEMAND_OFF_PLATFORM", vars.getLanguage());
-        title = Utility.messageBD(cp, "ON_DEMAND_OFF_PLATFORM_TITLE", vars.getLanguage());
-        log4j.warn("On demand off platform");
-        goToRetry(res, vars, msg, title, msgType, action);
         return;
       case POS_TERMINALS_EXCEEDED:
         msg = Utility.messageBD(cp, "OPS_POS_TERMINALS_EXCEEDED", vars.getLanguage());
@@ -544,9 +520,6 @@ public class LoginHandler extends HttpBaseServlet {
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);
 
-      if ("Confirmation".equals(msgType)) {
-        jsonMsg.put("command", "FORCE_NAMED_USER");
-      }
       response.setContentType("application/json;charset=UTF-8");
       final PrintWriter out = response.getWriter();
       out.print(jsonMsg.toString());

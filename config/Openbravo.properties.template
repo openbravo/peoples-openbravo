@@ -201,9 +201,6 @@ login.trial.delay.increment=0.2
 login.trial.delay.max=3
 login.trial.user.lock=0
 
-# Prevents concurrent sessions for same user.
-login.limit.user.session=false
-
 ##########
 # Others #
 ##########

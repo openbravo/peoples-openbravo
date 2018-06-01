@@ -49,14 +49,12 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
@@ -672,7 +670,7 @@ public class HeartbeatProcess implements Process {
   }
 
   public enum HeartBeatOrRegistration {
-    HeartBeat, Registration, None, InstancePurpose, OutOfDemandPlatform;
+    HeartBeat, Registration, None, InstancePurpose;
   }
 
   /**
@@ -691,10 +689,6 @@ public class HeartbeatProcess implements Process {
   public static HeartBeatOrRegistration isLoginPopupRequired(String roleId, String javaDateFormat,
       ConnectionProvider connectionProvider) throws ServletException {
     if (roleId != null && "0".equals(roleId)) {
-      String sessionId = (String) RequestContext.get().getSession().getAttribute("#AD_SESSION_ID");
-      if (ActivationKey.getInstance().checkOPSLimitations(sessionId) == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
-        return HeartBeatOrRegistration.OutOfDemandPlatform;
-      }
       // Check if the instance purpose is set.
       if (isShowInstancePurposeRequired()) {
         return HeartBeatOrRegistration.InstancePurpose;
