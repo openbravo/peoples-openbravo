@@ -25,6 +25,20 @@ isc.Time.displayFormat = OB.Utilities.getTimeFormatDefinition().timeFormatter;
 // For entering times.
 isc.ClassFactory.defineClass('OBTimeItem', isc.TimeItem);
 
+isc.OBTimeItem.addClassMethods({
+  setTodaysDate: function (date) {
+    var today = new Date();
+    // Set the month initially to January to prevent error like this
+    // provided date: 15/02/2014
+    // today: 31/03/2014
+    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days 
+    date.setMonth(0);
+    date.setDate(today.getDate());
+    date.setMonth(today.getMonth());
+    date.setYear(today.getFullYear());
+  }
+});
+
 isc.OBTimeItem.addProperties({
   useTextField: true,
   operator: 'equals',
@@ -49,6 +63,7 @@ isc.OBTimeItem.addProperties({
     var newValue = value;
     if (newValue && Object.prototype.toString.call(newValue) === '[object String]') {
       newValue = isc.Time.parseInput(newValue);
+      isc.OBTimeItem.setTodaysDate(newValue);
       if (this.isAbsoluteTime) {
         // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
         // http://forums.smartclient.com/showthread.php?p=116135
@@ -91,7 +106,7 @@ isc.OBTimeItem.addProperties({
       if (this.isAbsoluteTime) {
         value = OB.Utilities.Date.addTimezoneOffset(value);
       }
-      this.setTodaysDate(value);
+      isc.OBTimeItem.setTodaysDate(value);
       if (this.isAbsoluteTime) {
         value = OB.Utilities.Date.substractTimezoneOffset(value);
       }
@@ -102,21 +117,9 @@ isc.OBTimeItem.addProperties({
   getValue: function () {
     var value = this.Super('getValue', arguments);
     if (value && isc.isA.Date(value) && !this.isAbsoluteTime) {
-      this.setTodaysDate(value);
+      isc.OBTimeItem.setTodaysDate(value);
     }
     return value;
-  },
-
-  setTodaysDate: function (date) {
-    var today = new Date();
-    // Set the month initially to January to prevent error like this
-    // provided date: 15/02/2014
-    // today: 31/03/2014
-    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days 
-    date.setMonth(0);
-    date.setDate(today.getDate());
-    date.setMonth(today.getMonth());
-    date.setYear(today.getFullYear());
   },
 
   /* The following functions allow proper timeGrid operation */
