@@ -22,6 +22,7 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.DataPoolSelection;
@@ -78,7 +79,8 @@ public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserve
   public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
     String strValueId = dataPoolSelectionValueUpdated.get();
     dataPoolSelectionValueUpdated.set(null);
-    if (StringUtils.isBlank(strValueId) || event.getTransaction().wasRolledBack()) {
+    if (StringUtils.isBlank(strValueId)
+        || event.getTransaction().getStatus() == TransactionStatus.ROLLED_BACK) {
       return;
     }
 
