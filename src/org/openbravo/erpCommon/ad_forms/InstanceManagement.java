@@ -338,19 +338,16 @@ public class InstanceManagement extends HttpSecureAppServlet {
       xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
 
-    if (!activationKey.isOPSInstance())
-      xmlDocument.setParameter("instanceInfo",
-          Utility.messageBD(cp, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n"));
-    else
-      xmlDocument.setParameter("instanceInfo",
-          getLicenseDescription(activationKey, vars.getLanguage()));
+    String instanceInfo = activationKey.isOPSInstance() ? //
+    getLicenseDescription(activationKey, vars.getLanguage())
+        : Utility.messageBD(cp, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n");
+    xmlDocument.setParameter("instanceInfo", instanceInfo);
 
     if (activationKey.hasExpirationDate()) {
-      if (activationKey.getPendingDays() != null)
-        xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
-      else
-        xmlDocument.setParameter("OPSdaysLeft",
-            Utility.messageBD(cp, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n"));
+      String daysLeft = activationKey.getPendingDays() != null ? //
+      activationKey.getPendingDays().toString()
+          : Utility.messageBD(cp, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n");
+      xmlDocument.setParameter("OPSdaysLeft", daysLeft);
     }
 
     xmlDocument.setParameter("moduleActions",
@@ -364,7 +361,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-
   }
 
   private String getLicenseDescription(ActivationKey ak, String lang) {
