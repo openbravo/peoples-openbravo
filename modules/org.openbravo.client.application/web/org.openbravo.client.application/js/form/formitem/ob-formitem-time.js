@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -271,7 +271,7 @@ isc.OBTimeItemGrid.addProperties({
   _waitingForReFocus: [],
 
   dateObjToTimeString: function (dateObj) {
-    var lengthThreshold, tmpString, isPM = false,
+    var tmpString, isPM = false,
         dateString = '';
     if (this.precission === 'hour' || this.precission === 'minute' || this.precission === 'second') {
       tmpString = dateObj.getHours();
@@ -313,7 +313,6 @@ isc.OBTimeItemGrid.addProperties({
     return dateString;
   },
   timeStringToDateObj: function (stringTime) {
-    var lengthThreshold;
     if (stringTime.length < 3) {
       stringTime = stringTime + ':00:00';
     } else if (stringTime.length < 6) {
@@ -355,17 +354,11 @@ isc.OBTimeItemGrid.addProperties({
   },
   getDiffText: function (date, reference) {
     var diffMs = (date - reference),
-        diffDays = (diffMs / 86400000),
         diffHrs = ((diffMs % 86400000) / 3600000),
         diffMins = (((diffMs % 86400000) % 3600000) / 60000),
         diffSecs = ((((diffMs % 86400000) % 3600000) % 60000) / 1000),
         diffText = '';
 
-    if (diffDays >= 0) {
-      diffDays = Math.floor(diffDays);
-    } else {
-      diffDays = Math.ceil(diffDays);
-    }
     if (diffHrs >= 0) {
       diffHrs = Math.floor(diffHrs);
     } else {
@@ -577,8 +570,6 @@ isc.OBTimeItemGrid.addProperties({
     }
   },
   updatePosition: function () {
-    var me = this,
-        interval;
     if (this.formItem) {
       this.placeNear(this.formItem.getPageLeft() + 2, this.formItem.getPageTop() + 26);
     }
