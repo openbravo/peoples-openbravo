@@ -195,6 +195,7 @@
                 }], {
                   autoDismiss: false,
                   onHideFunction: function (popup) {
+                    OB.UTIL.showLoading(true);
                     terminalModel.propertiesReady(me.properties);
                   }
                 });
