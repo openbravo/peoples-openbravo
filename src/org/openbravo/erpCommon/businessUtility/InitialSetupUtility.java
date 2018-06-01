@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -594,6 +594,8 @@ public class InitialSetupUtility {
     newRole.setDescription(name);
     newRole.setUserLevel(strUserLevel);
     newRole.setClientAdmin(isClientAdmin);
+    newRole.setManual(false);
+    newRole.setAdvanced(true);
     OBDal.getInstance().save(newRole);
     OBDal.getInstance().flush();
     return newRole;

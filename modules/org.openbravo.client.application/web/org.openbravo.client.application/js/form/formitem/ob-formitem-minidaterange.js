@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -453,15 +453,19 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   },
 
   getFieldCriterionFromGrid: function () {
-    var currentGridCriteria, fieldCriterion, criteria;
-    if (this.grid && this.grid.sourceWidget && this.grid.sourceWidget.getCriteria) {
-      currentGridCriteria = this.grid.sourceWidget.getCriteria();
+    var currentGridCriteria, fieldCriterion, criteria, sourceGrid = this.getSourceGrid();
+    if (sourceGrid && sourceGrid.getCriteria) {
+      currentGridCriteria = sourceGrid.getCriteria();
       if (currentGridCriteria) {
         criteria = currentGridCriteria.criteria || [];
         fieldCriterion = criteria.find('fieldName', this.getFieldName());
       }
     }
     return fieldCriterion;
+  },
+
+  getSourceGrid: function () {
+    return this.grid && this.grid.sourceWidget;
   },
 
   clearFilterValues: function () {
@@ -515,16 +519,41 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
 
   rangeDialogCallback: function (value) {
     var data = value,
-        illegalStart = data && data.start && !this.isCorrectRangeValue(data.start);
-    var illegalEnd = data && data.end && !this.isCorrectRangeValue(data.end);
+        illegalStart = data && data.start && !this.isCorrectRangeValue(data.start),
+        illegalEnd = data && data.end && !this.isCorrectRangeValue(data.end),
+        sourceGrid = this.getSourceGrid();
     if (illegalStart || illegalEnd) {
       return;
     }
     this.singleDateMode = false;
     this.singleDateValue = null;
+    if (sourceGrid && sourceGrid.lazyFiltering && sourceGrid.sorter && this.rangeChanged(data)) {
+      sourceGrid.filterHasChanged = true;
+      sourceGrid.sorter.enable();
+    }
     this.rangeItemValue = value;
     this.displayValue();
     this.form.grid.performAction();
+  },
+
+  rangeChanged: function (newRange) {
+    var currentStart, currentEnd, newStart, newEnd;
+    if (!newRange) {
+      return newRange !== this.rangeItemValue;
+    }
+    if (!this.rangeItemValue) {
+      return true;
+    }
+    currentStart = this.getAbsoluteDate(this.rangeItemValue.start, 'start');
+    currentEnd = this.getAbsoluteDate(this.rangeItemValue.end, 'end');
+    newStart = this.getAbsoluteDate(newRange.start, 'start');
+    newEnd = this.getAbsoluteDate(newRange.end, 'end');
+    return 0 !== isc.Date.compareLogicalDates(currentStart, newStart) || 0 !== isc.Date.compareLogicalDates(currentEnd, newEnd);
+  },
+
+  getAbsoluteDate: function (date, rangePosition) {
+    var RDI = isc.OBRelativeDateItem;
+    return RDI.isRelativeDate(date) ? RDI.getAbsoluteDate(date.value, null, null, rangePosition) : date;
   },
 
   hasAdvancedCriteria: function () {
@@ -696,11 +725,8 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
       return value;
     }
     value = this.rangeItemValue;
-    var fromDate = value.start,
-        toDate = value.end,
-        RDI = isc.OBRelativeDateItem,
-        start = (RDI.isRelativeDate(fromDate) ? RDI.getAbsoluteDate(fromDate.value, null, null, 'start') : fromDate),
-        end = (RDI.isRelativeDate(toDate) ? RDI.getAbsoluteDate(toDate.value, null, null, 'end') : toDate);
+    var start = this.getAbsoluteDate(value.start, 'start'),
+        end = this.getAbsoluteDate(value.end, 'end');
 
     var prompt;
     if (start || end) {

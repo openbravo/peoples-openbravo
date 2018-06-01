@@ -71,6 +71,7 @@ public class OBDal implements OBNotSingleton {
 
   private static ConcurrentHashMap<String, OBDal> otherPoolInstances = new ConcurrentHashMap<>();
   private String poolName;
+  private static DataPoolChecker dataPoolChecker;
 
   /**
    * @return the singleton instance of the OBDal service
@@ -84,7 +85,13 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * @return the singleton instance of the OBDal read-only service
+   * This method tries to return a read-only instance if the read-only pool is enabled in the
+   * configuration, the Preference "OBUIAPP_DefaultDBPoolForReports" is set to "RO" or there is a
+   * DataPoolSelection entry for the current process set to "RO". Otherwise, the default pool is
+   * returned.
+   *
+   * @return the singleton instance of the OBDal read-only service if possible. In any other case,
+   *         the default instance will be returned.
    */
   public static OBDal getReadOnlyInstance() {
     return getInstance(ExternalConnectionPool.READONLY_POOL);
@@ -97,9 +104,23 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)) {
+    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)
+        || getDataPoolChecker().shouldUseDefaultPool(SessionInfo.getProcessId())) {
       return getInstance();
     }
+
+    return getOtherPoolInstance(pool);
+  }
+
+  private static DataPoolChecker getDataPoolChecker() {
+    if (dataPoolChecker == null) {
+      dataPoolChecker = DataPoolChecker.getInstance();
+    }
+
+    return dataPoolChecker;
+  }
+
+  private static OBDal getOtherPoolInstance(String pool) {
     if (!otherPoolInstances.containsKey(pool)) {
       OBDal dal = OBProvider.getInstance().get(OBDal.class);
       dal.poolName = pool;

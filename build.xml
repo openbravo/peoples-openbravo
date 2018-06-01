@@ -100,6 +100,15 @@ export.database: exports database structure and data to xml files.
     <equals arg1="${ant.java.version}" arg2="1.7"/>
   </condition>
 
+  <condition property="html.version" value="-html5" else="">
+    <not>
+      <or>
+        <equals arg1="${ant.java.version}" arg2="1.7"/>
+        <equals arg1="${ant.java.version}" arg2="1.8"/>
+      </or>
+    </not>
+  </condition>
+
   <condition property="calculate.core.rev">
    <istrue value="${calculate.core.revision}"/>
   </condition>
@@ -525,7 +534,7 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="generate.java.doc">
-    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing}">
+    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing} ${html.version}">
       <sourcepath>
         <pathelement path="${base.src}" />
         <pathelement path="${base.src.test}/src" />
