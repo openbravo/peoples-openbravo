@@ -215,26 +215,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
   deleteMultiOrderList: function () {
     var i;
-
-    var checkIsPrepaymentExit = function (paymentList) {
-        var hasnoPrepaymentPayment;
-        if (paymentList.length > 0) {
-          hasnoPrepaymentPayment = _.find(paymentList.models, function (item) {
-            if (!item.get('isPrePayment')) {
-              return item;
-            }
-          });
-        }
-        return (_.isUndefined(hasnoPrepaymentPayment));
-        };
-
     for (i = 0; this.get('multiOrders').get('multiOrdersList').length > i; i++) {
       if (!this.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, it means that this is either a new order or a newly generated layaway (not a loaded layaway)
         this.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
         continue;
       }
       this.get('orderList').current = this.get('multiOrders').get('multiOrdersList').at(i);
-      if (checkIsPrepaymentExit(this.get('orderList').current.get('payments'))) {
+      if (this.get('orderList').current.get('payments').length === 0) {
         this.get('orderList').deleteCurrent();
         if (!_.isNull(this.get('multiOrders').get('multiOrdersList').at(i).id)) {
           this.get('orderList').deleteCurrentFromDatabase(this.get('multiOrders').get('multiOrdersList').at(i));
