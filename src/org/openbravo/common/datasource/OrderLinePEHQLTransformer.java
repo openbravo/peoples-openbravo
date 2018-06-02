@@ -95,6 +95,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  wh.name,");
     groupByClause.append("  ma.id,");
     groupByClause.append("  ma.serialNo,");
+    groupByClause.append("  ma.expirationDate,");
+    groupByClause.append("  ma.lotName,");
     groupByClause.append("  @orderQuantity@");
     if (isSalesTransaction) {
       groupByClause.append(" , e.invoicedQuantity");

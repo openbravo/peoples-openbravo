@@ -10710,7 +10710,7 @@ You can also select if transactions are allowed or not for this organization typ
   uom.name as uOM,
   p.name as product,
   e.lineNo,
-  to_char(Ad_Column_Identifier(to_char('M_InOut'), to_char(sh.id), to_char('en_US'))) as shipmentReceipt,
+  (sh.documentNo || ' - ' || to_char(trunc(sh.movementDate)) || ' - ' || '@bpName@') as shipmentReceipt,
   (select aum2.name from UOM aum2 where aum2.id = (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))) as operativeUOM,
   @operativeQuantity@ as operativeQuantity,
   @orderQuantity@ as orderQuantity,
@@ -10718,10 +10718,11 @@ You can also select if transactions are allowed or not for this organization typ
   sh.movementDate as movementDate,
   wh.name as warehouse,
   ma.serialNo as serialNo,
-  (to_char(Ad_Column_Identifier(to_char('M_AttributeSetInstance'), to_char(ma.id), to_char('en_US')))) as 
- attributeSetValue,
-   sb.searchKey as storageBin
-   @selectClause@
+  ma.lotName as lotName,
+  ma.expirationDate as expirationDate,
+  sh.documentNo as documentNo,
+  sb.searchKey as storageBin
+  @selectClause@
 MAINFROM
   @fromClause@
 WHERE
@@ -11256,7 +11257,7 @@ GROUP BY
   uom.name as uOM,
   p.name as product,
   e.lineNo,
-  (to_char(Ad_Column_Identifier(to_char('C_Order'), to_char(o.id), to_char('en_US')))) as salesOrder,  
+  (o.documentNo || ' - ' || to_char(trunc(o.orderDate)) || ' - ' || o.grandTotalAmount) as salesOrder,  
   @operativeQuantity@ as operativeQuantity,
   (select aum2.name from UOM aum2 where aum2.id = (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))) as operativeUOM,
   @orderQuantity@ as orderQuantity,
@@ -11266,7 +11267,10 @@ GROUP BY
   o.scheduledDeliveryDate as scheduledDeliveryDate, 
   wh.name as warehouse,
   ma.serialNo as serialNo,
-  (to_char(Ad_Column_Identifier(to_char('M_AttributeSetInstance'), to_char(ma.id), to_char('en_US')))) as attributeSetValue
+  ma.lotName as lotName,
+  ma.expirationDate as expirationDate,
+  o.documentNo as documentNo,
+  o.grandTotalAmount as grandTotalAmount
   @selectClause@
 MAINFROM
   @fromClause@
