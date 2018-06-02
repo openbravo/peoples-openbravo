@@ -370,19 +370,52 @@
               lastCashUpPayments = lastCashUp.get('cashPaymentMethodInfo');
               //lastCashUpPayments = JSON.parse(lastCashUp.get('cashPaymentMethodInfo'));
             } else {
-              // Set all  to 0
-              lastCashUpPayments = null;
+              if (arguments[0].exception) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_NotEnoughDataInCache') + OB.I18N.getLabel('OBMOBC_LoadingErrorBody'), [{
+                  label: OB.I18N.getLabel('OBMOBC_Reload'),
+                  action: function () {
+                    window.location.reload();
+                  }
+                }], {
+                  onShowFunction: function (popup) {
+                    popup.$.headerCloseButton.hide();
+                  },
+                  autoDismiss: false
+                });
+                return;
+              } else {
+                // Set all  to 0
+                lastCashUpPayments = null;
+              }
             }
             OB.UTIL.initializePaymentMethodCashup(lastCashUpPayments, null, true, promises);
             Promise.all(promises).then(callback);
           }, function () {
-            // error
-            //console.error("OB.Model.CashUp fail");
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_NotEnoughDataInCache') + OB.I18N.getLabel('OBMOBC_LoadingErrorBody'), [{
+              label: OB.I18N.getLabel('OBMOBC_Reload'),
+              action: function () {
+                window.location.reload();
+              }
+            }], {
+              onShowFunction: function (popup) {
+                popup.$.headerCloseButton.hide();
+              },
+              autoDismiss: false
+            });
           });
         }
       }, function () {
-        // error
-        //console.error("OB.Model.CashUp find");
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_NotEnoughDataInCache') + OB.I18N.getLabel('OBMOBC_LoadingErrorBody'), [{
+          label: OB.I18N.getLabel('OBMOBC_Reload'),
+          action: function () {
+            window.location.reload();
+          }
+        }], {
+          onShowFunction: function (popup) {
+            popup.$.headerCloseButton.hide();
+          },
+          autoDismiss: false
+        });
       });
     }, function () {
       // error
