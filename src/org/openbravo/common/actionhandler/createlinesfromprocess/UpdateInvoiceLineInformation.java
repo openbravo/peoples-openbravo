@@ -56,7 +56,8 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   @Override
   public void exec() {
     linksInvoiceLineToOrderAndInOutLine();
-    setClientAndDescriptionFromInvoiceHeader();
+    setClientFromInvoiceHeader();
+    setDescriptionFromCopiedLine();
     setAcctDimensionsToLine();
     updateBOMParent();
     updateInvoicePrepaymentAmount();
@@ -75,12 +76,16 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     }
   }
 
-  /**
-   * Updates some invoice line information from the invoice header
-   */
-  private void setClientAndDescriptionFromInvoiceHeader() {
+  private void setClientFromInvoiceHeader() {
     getInvoiceLine().setClient(getInvoice().getClient());
-    getInvoiceLine().setDescription(getInvoice().getDescription());
+  }
+
+  private void setDescriptionFromCopiedLine() {
+    if (isCopiedFromOrderLine()) {
+      getInvoiceLine().setDescription(((OrderLine) getCopiedFromLine()).getDescription());
+    } else {
+      getInvoiceLine().setDescription(((ShipmentInOutLine) getCopiedFromLine()).getDescription());
+    }
   }
 
   private void setAcctDimensionsToLine() {
