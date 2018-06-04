@@ -357,7 +357,7 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblLayawayReceipt',
   tap: function () {
-    var negativeLines, me = this;
+    var negativeLines, deliveredLines, me = this;
     if (this.disabled) {
       return true;
     }
@@ -372,6 +372,15 @@ enyo.kind({
       });
       if (negativeLines) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+        return true;
+      }
+    }
+    if (this.model.get('order').get('doCancelAndReplace')) {
+      deliveredLines = _.find(this.model.get('order').get('lines').models, function (line) {
+        return line.get('deliveredQuantity') && OB.DEC.compare(line.get('deliveredQuantity')) === 1;
+      });
+      if (deliveredLines) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_LayawaysOrdersWithDeliveries'));
         return true;
       }
     }
@@ -403,34 +412,13 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isQuotation', function (model) {
-      if (!model.get('isQuotation')) {
-        me.updateVisibility(true);
-      } else {
-        me.updateVisibility(false);
-      }
-    }, this);
-    receipt.on('change:orderType', function (model) {
-      if ((model.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) || model.get('orderType') === 2) {
+    receipt.on('change:isEditable change:isQuotation change:orderType', function (model) {
+      if (!model.get('isEditable') || model.get('isQuotation') || (model.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) || model.get('orderType') === 2) {
         me.updateVisibility(false);
       } else {
         me.updateVisibility(true);
       }
     }, this);
-    receipt.on('change:isEditable change:replacedorder', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false) {
-          me.updateVisibility(false);
-          return;
-        }
-        if (newValue.get('isEditable') === true && (newValue.get('isQuotation') || newValue.get('replacedorder'))) {
-          me.updateVisibility(false);
-          return;
-        }
-      }
-      me.updateVisibility(true);
-    }, this);
-
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
       if (changedModel.isOrder()) {
         if (model.get('order').get('isEditable') && !this.model.get('order').get('isQuotation')) {

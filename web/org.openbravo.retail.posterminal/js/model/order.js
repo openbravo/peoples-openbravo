@@ -4038,8 +4038,7 @@
       me.set('doCancelAndReplace', true);
 
       OB.Dal.remove(this, function () {
-        var deliveredQty = 0,
-            linesWithDeferred = [];
+        var deliveredLine, linesWithDeferred = [];
         me.get('lines').each(function (line) {
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
@@ -4054,11 +4053,14 @@
         me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
         me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
-        _.each(me.get('lines').models, function (line) {
-          deliveredQty += line.get('deliveredQuantity');
+        deliveredLine = _.find(me.get('lines').models, function (line) {
+          return line.get('deliveredQuantity') && OB.DEC.compare(line.get('deliveredQuantity')) === 1;
         });
-        if (me.get('isLayaway') || (OB.MobileApp.model.get('terminal').terminalType.layawayorder && deliveredQty === 0)) {
-          me.set('orderType', 2);
+        if (me.get('isLayaway') || (OB.MobileApp.model.get('terminal').terminalType.layawayorder && !deliveredLine)) {
+          OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
+            permission: null,
+            orderType: 2
+          });
         }
         me.set('isLayaway', false);
 
