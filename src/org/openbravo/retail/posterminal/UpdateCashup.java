@@ -58,8 +58,8 @@ public class UpdateCashup {
     Date lastCashUpReportDate = null;
     OBPOSAppCashup cashUp = null;
     Query cashUpQuery = OBDal.getInstance().getSession()
-        .createQuery("from OBPOS_App_Cashup where id=?");
-    cashUpQuery.setString(0, cashUpId);
+        .createQuery("from OBPOS_App_Cashup where id=:cashUpId");
+    cashUpQuery.setString("cashUpId", cashUpId);
     // The record will be locked to this process until it ends. Other requests to process this cash
     // up will be locked until this one finishes
     cashUpQuery.setLockOptions(LockOptions.UPGRADE);
@@ -109,8 +109,8 @@ public class UpdateCashup {
         throw new OBException("Cashup JSON seems to be corrupted: ", e);
       } catch (Exception e) {
         Query maybeCashupWasCreatedInParallel = OBDal.getInstance().getSession()
-            .createQuery("from OBPOS_App_Cashup where id=?");
-        maybeCashupWasCreatedInParallel.setString(0, cashUpId);
+            .createQuery("from OBPOS_App_Cashup where id=:cashUpId");
+        maybeCashupWasCreatedInParallel.setString("cashUpId", cashUpId);
         cashUp = (OBPOSAppCashup) maybeCashupWasCreatedInParallel.uniqueResult();
         // If cashup exists, then other process (such as OpenTill) created it in parallel, and
         // everything is fine. Otherwise, the process should fail.
@@ -349,11 +349,11 @@ public class UpdateCashup {
       for (OBPOSAppCashup appCashup : appCashupList) {
         // Determine if exist close slave cashup for slave terminal and this master cashup
         query = "select count(*) from " + OBPOSAppCashup.ENTITY_NAME + " where "
-            + OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = ? and "
+            + OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = :terminalId and "
             + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'Y' and "
             + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'Y' and "
             + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is not null and "
-            + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id = ?";
+            + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id = :parentCashup";
         if (countAppCashup(query, appCashup.getPOSTerminal().getId(), cashUp.getId()) == 0) {
           log.debug("Master/Slave association (" + new Date() + "): Associating slave terminal: "
               + appCashup.getPOSTerminal().getName() + " and Cashup id: " + appCashup.getId()
@@ -365,7 +365,7 @@ public class UpdateCashup {
     } else if (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null) {
       // Determine if exist open master cashup
       String query = "select count(*) from " + OBPOSAppCashup.ENTITY_NAME + " where "
-          + OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = ? and "
+          + OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = :terminalId and "
           + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'Y' and "
           + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'Y' and "
           + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is not null and "
@@ -395,9 +395,9 @@ public class UpdateCashup {
   private static Long countAppCashup(String query, String posterminal, String parentCashUp) {
     final Session session = OBDal.getInstance().getSession();
     final Query count = session.createQuery(query);
-    count.setParameter(0, posterminal);
+    count.setParameter("terminalId", posterminal);
     if (parentCashUp != null) {
-      count.setParameter(1, parentCashUp);
+      count.setParameter("parentCashup", parentCashUp);
     }
     Long value = (Long) count.uniqueResult();
     return value != null ? value.longValue() : 0;

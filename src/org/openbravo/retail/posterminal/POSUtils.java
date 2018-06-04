@@ -348,11 +348,11 @@ public class POSUtils {
     if (lastDocNum == null) {
       if (curDbms.equals("POSTGRE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.orderdocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
             + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else if (curDbms.equals("ORACLE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.orderdocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
             + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else {
         // unknow DBMS
@@ -361,7 +361,7 @@ public class POSUtils {
         return 0;
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
-      query.setString(0, searchKey);
+      query.setString("appValue", searchKey);
 
       Object result = query.uniqueResult();
       if (result == null) {
@@ -436,11 +436,11 @@ public class POSUtils {
     if (quotationlastDocNum == null) {
       if (curDbms.equals("POSTGRE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.quotationdocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
             + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else if (curDbms.equals("ORACLE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.quotationdocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
             + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else {
         // unknow DBMS
@@ -449,7 +449,7 @@ public class POSUtils {
         return 0;
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
-      query.setString(0, searchKey);
+      query.setString("appValue", searchKey);
 
       Object result = query.uniqueResult();
       if (result == null) {
@@ -523,11 +523,11 @@ public class POSUtils {
     if (returnlastDocNum == null) {
       if (curDbms.equals("POSTGRE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.returndocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
             + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else if (curDbms.equals("ORACLE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.returndocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
             + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else {
         // unknow DBMS
@@ -536,7 +536,7 @@ public class POSUtils {
         return 0;
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
-      query.setString(0, searchKey);
+      query.setString("appValue", searchKey);
       Object result = query.uniqueResult();
       if (result == null) {
         maxDocNo = 0;

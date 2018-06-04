@@ -144,11 +144,11 @@ public class PaidReceipts extends JSONProcessSimple {
         String hqlPaidReceiptsLines = "select " + hqlPropertiesLines.getHqlSelect() + //
             "  from OrderLine as ordLine " + //
             "  left join ordLine.returnReason as returnReason " + //
-            " where ordLine.salesOrder.id=? and ordLine.obposIsDeleted = false"; //
+            " where ordLine.salesOrder.id=:salesOrderId and ordLine.obposIsDeleted = false"; //
         hqlPaidReceiptsLines += " order by ordLine.lineNo";
         Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaidReceiptsLines);
-        paidReceiptsLinesQuery.setString(0, orderid);
+        paidReceiptsLinesQuery.setString("salesOrderId", orderid);
 
         JSONArray paidReceiptsLines = hqlPropertiesLines.getJSONArray(paidReceiptsLinesQuery);
 
@@ -164,22 +164,23 @@ public class PaidReceipts extends JSONProcessSimple {
               .getPropertyExtensions(extensionsShipLines);
           String hqlPaidReceiptsShipLines = "select "
               + hqlPropertiesShipLines.getHqlSelect() //
-              + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ? "
+              + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= :salesOrderLineId "
               + " and m.shipmentReceipt.isnettingshipment = false";
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           Query paidReceiptsShipLinesQuery = OBDal.getInstance().getSession()
               .createQuery(hqlPaidReceiptsShipLines);
-          paidReceiptsShipLinesQuery.setString(0, paidReceiptLine.getString("lineId"));
+          paidReceiptsShipLinesQuery.setString("salesOrderLineId",
+              paidReceiptLine.getString("lineId"));
           paidReceiptLine.put("shipmentlines",
               hqlPropertiesShipLines.getJSONArray(paidReceiptsShipLinesQuery));
 
           if (paidReceiptLine.has("goodsShipmentLine")
               && !paidReceiptLine.getString("goodsShipmentLine").equals("null")) {
             String hqlShipLines = "select ordLine.goodsShipmentLine.salesOrderLine.salesOrder.documentNo, ordLine.goodsShipmentLine.salesOrderLine.id "
-                + "from OrderLine as ordLine where ordLine.id = ? ";
+                + "from OrderLine as ordLine where ordLine.id = :lineId ";
             OBDal.getInstance().getSession().createQuery(hqlShipLines);
             Query shipLines = OBDal.getInstance().getSession().createQuery(hqlShipLines);
-            shipLines.setString(0, paidReceiptLine.getString("lineId"));
+            shipLines.setString("lineId", paidReceiptLine.getString("lineId"));
 
             for (Object obj : shipLines.list()) {
               Object[] line = (Object[]) obj;
@@ -255,13 +256,15 @@ public class PaidReceipts extends JSONProcessSimple {
           // Related lines
           HQLPropertyList hqlPropertiesRelatedLines = ModelExtensionUtils
               .getPropertyExtensions(extensionsRelatedLines);
-          String hqlPaidReceiptsRelatedLines = "select " + hqlPropertiesRelatedLines.getHqlSelect() //
-              + " from OrderlineServiceRelation as olsr where salesOrderLine.id = ? " //
+          String hqlPaidReceiptsRelatedLines = "select "
+              + hqlPropertiesRelatedLines.getHqlSelect() //
+              + " from OrderlineServiceRelation as olsr where salesOrderLine.id = :salesOrderLineId " //
               + " order by olsr.orderlineRelated.lineNo";
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           Query paidReceiptsRelatedLinesQuery = OBDal.getInstance().getSession()
               .createQuery(hqlPaidReceiptsRelatedLines);
-          paidReceiptsRelatedLinesQuery.setString(0, paidReceiptLine.getString("lineId"));
+          paidReceiptsRelatedLinesQuery.setString("salesOrderLineId",
+              paidReceiptLine.getString("lineId"));
           JSONArray relatedLines = hqlPropertiesRelatedLines
               .getJSONArray(paidReceiptsRelatedLinesQuery);
 
@@ -278,10 +281,11 @@ public class PaidReceipts extends JSONProcessSimple {
                 jsonObject.put("otherTicket", false);
                 jsonObject.put("deferred", false);
               }
-              String hqlRelatedLinePromotions = "select olo.totalAmount from OrderLineOffer olo where olo.salesOrderLine.id = ?";
+              String hqlRelatedLinePromotions = "select olo.totalAmount from OrderLineOffer olo where olo.salesOrderLine.id = :salesOrderLineId";
               Query relatedLinePromotionsQuery = OBDal.getInstance().getSession()
                   .createQuery(hqlRelatedLinePromotions);
-              relatedLinePromotionsQuery.setString(0, jsonObject.getString("orderlineId"));
+              relatedLinePromotionsQuery.setString("salesOrderLineId",
+                  jsonObject.getString("orderlineId"));
               JSONArray promos = new JSONArray();
               for (Object promotionAmt : relatedLinePromotionsQuery.list()) {
                 JSONObject jsonPromo = new JSONObject();
@@ -299,7 +303,8 @@ public class PaidReceipts extends JSONProcessSimple {
 
         HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
             .getPropertyExtensions(extensionsPayments);
-        String hqlPaymentsIn = "select " + hqlPropertiesPayments.getHqlSelect()
+        String hqlPaymentsIn = "select "
+            + hqlPropertiesPayments.getHqlSelect()
             + "from FIN_Payment_ScheduleDetail as scheduleDetail "
             + "join scheduleDetail.paymentDetails as paymentDetail "
             + "join paymentDetail.finPayment as finPayment "
@@ -307,12 +312,12 @@ public class PaidReceipts extends JSONProcessSimple {
             + "left join finPayment.reversedPayment as reversedPayment "
             + "left join finPayment.obposAppCashup as obposAppCashup "
             + "left join finPayment.oBPOSPOSTerminal as oBPOSPOSTerminal "
-            + "where order.id=? " //
+            + "where order.id= :orderId " //
             + "group by " + hqlPropertiesPayments.getHqlGroupBy()
             + " order by finPayment.documentNo";
         Query paidReceiptsPaymentsQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaymentsIn);
-        paidReceiptsPaymentsQuery.setString(0, orderid);
+        paidReceiptsPaymentsQuery.setString("orderId", orderid);
         JSONArray listPaymentsIn = hqlPropertiesPayments.getJSONArray(paidReceiptsPaymentsQuery);
 
         String accountIds = "";
@@ -421,10 +426,9 @@ public class PaidReceipts extends JSONProcessSimple {
                 + "obpos_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
                 + "obpos_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
                 + "p.account.currency.iSOCode as isocode " //
-                + "from FIN_Payment as p where p.id=?)";
+                + "from FIN_Payment as p where p.id=:paymentId)";
             Query paymentTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentType);
-            // paidReceiptsQuery.setString(0, id);
-            paymentTypeQuery.setString(0, objectIn.getString("paymentId"));
+            paymentTypeQuery.setString("paymentId", objectIn.getString("paymentId"));
 
             if (paymentTypeQuery.list().size() > 0) {
 
@@ -491,9 +495,9 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceipt.put("receiptPayments", listpaidReceiptsPayments);
 
         // TODO: make this extensible
-        String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name, orderTax.tax.cascade as cascade, orderTax.tax.docTaxAmount as docTaxAmount, orderTax.tax.lineNo as lineNo, orderTax.tax.taxBase.id as taxBase from OrderTax as orderTax where orderTax.salesOrder.id=?";
+        String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name, orderTax.tax.cascade as cascade, orderTax.tax.docTaxAmount as docTaxAmount, orderTax.tax.lineNo as lineNo, orderTax.tax.taxBase.id as taxBase from OrderTax as orderTax where orderTax.salesOrder.id=:salesOrderId";
         Query ReceiptTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlReceiptTaxes);
-        ReceiptTaxesQuery.setString(0, orderid);
+        ReceiptTaxesQuery.setString("salesOrderId", orderid);
         JSONArray jsonListTaxes = new JSONArray();
         for (Object objTax : ReceiptTaxesQuery.list()) {
           Object[] objTaxInfo = (Object[]) objTax;
@@ -516,9 +520,9 @@ public class PaidReceipts extends JSONProcessSimple {
         // Approvals
         if (paidReceipt.getBoolean("isLayaway")) {
           final String hqlApproval = "select a.approvalType, a.userContact.id "
-              + "from OBPOS_Order_Approval a where a.salesOrder.id = ?";
+              + "from OBPOS_Order_Approval a where a.salesOrder.id = :salesOrderId";
           Query queryApprovals = OBDal.getInstance().getSession().createQuery(hqlApproval);
-          queryApprovals.setString(0, orderid);
+          queryApprovals.setString("salesOrderId", orderid);
           JSONArray jsonListApproval = new JSONArray();
           for (Object objApproval : queryApprovals.list()) {
             Object[] objApprovalInfo = (Object[]) objApproval;
@@ -583,19 +587,19 @@ public class PaidReceipts extends JSONProcessSimple {
 
       // OBPOS Errors
       String hqlError = "select line.id from OBPOS_Errors_Line line inner join line.obposErrors error "
-          + "where error.client.id = ? and line.recordID in (?) and error.typeofdata = 'Order' and error.orderstatus = 'N' ";
+          + "where error.client.id = :clientId and line.recordID in (:recordIdList) and error.typeofdata = 'Order' and error.orderstatus = 'N' ";
       Query errorQuery = OBDal.getInstance().getSession().createQuery(hqlError);
-      errorQuery.setString(0, OBContext.getOBContext().getCurrentClient().getId());
-      errorQuery.setString(1, ids);
+      errorQuery.setString("clientId", OBContext.getOBContext().getCurrentClient().getId());
+      errorQuery.setString("recordIdList", ids);
       if (errorQuery.list().size() > 0) {
         return true;
       }
 
       String hqlError2 = "select imp.id from C_IMPORT_ENTRY imp "
-          + "where imp.client.id = ? and imp.typeofdata = 'Order' and imp.importStatus = 'Error' "
+          + "where imp.client.id = :clientId and imp.typeofdata = 'Order' and imp.importStatus = 'Error' "
           + "and (" + orIds + ")";
       Query errorQuery2 = OBDal.getInstance().getSession().createQuery(hqlError2);
-      errorQuery2.setString(0, OBContext.getOBContext().getCurrentClient().getId());
+      errorQuery2.setString("clientId", OBContext.getOBContext().getCurrentClient().getId());
       if (errorQuery2.list().size() > 0) {
         return true;
       }
