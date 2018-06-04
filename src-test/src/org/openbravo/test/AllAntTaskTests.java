@@ -44,6 +44,7 @@ import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
 import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.copyLinesFromOrders.CopyLinesFromOrdersTest;
 import org.openbravo.test.costing.TestCosting;
+import org.openbravo.test.createlinesfrom.CreateLinesFromTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -297,6 +298,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // CopyFromOrders refactor
     CopyLinesFromOrdersTest.class,
+
+    // Create Lines From refactor
+    CreateLinesFromTest.class,
 
     // Referenced Inventory
     ReferencedInventoryTestSuite.class,
