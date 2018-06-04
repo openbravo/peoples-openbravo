@@ -13303,7 +13303,7 @@ _2.add(isc.addProperties(p,_13))}
 _9.setProperty(_14,"");this.setShowHeader(true);if(_1.canReorderLanes)this.canReorderFields=_1.canReorderLanes;if(_1.minLaneWidth!=null)this.minFieldWidth=_1.minLaneWidth;this.data=_9}else{var _22=_1.chosenDate;_2[0].frozen=true;_2.add({name:"day1",align:"center",date:_1.chosenDate});if(this.isWeekView()){var _23=8;for(var i=2;i<_23;i++){_2.add({name:"day"+i,align:"center"})}
 this.setShowHeader(true);if(!_1.showWeekends){var _24=this.showLabelColumn&&this.labelColumnPosition=="left"?1:0;var _25=Date.getWeekendDays();for(var i=_24;i<_2.length;i++){var _26=((i-_24)+_1.firstDayOfWeek)%7;if(_25.contains(_26)){_2[i].showIf="return false;"}}}
 _22=this.chosenWeekStart}else{this.setShowHeader(false)}
-this.data=isc.DaySchedule.$126v(_1,this,this.scaffoldingStartDate)}
+this.data=isc.DaySchedule.$126v(_1,this,_22)}
 if(this.showLabelColumn&&this.labelColumnPosition=="right"){_2.add(_3)}
 this.setFields(_2)},isc.A.getDateFromPoint=function isc_DaySchedule_getDateFromPoint(_1,_2,_3,_4){var _5=this.calendar;if(_4){}
 if(_1==null&&_2==null){_2=this.body.getOffsetY();_1=this.body.getOffsetX()}
