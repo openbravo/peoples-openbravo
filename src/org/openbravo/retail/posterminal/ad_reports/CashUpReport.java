@@ -234,8 +234,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               label,
               expected.toString(),
               expected.divide(conversionRate, 5, RoundingMode.HALF_UP)
-                  .setScale(2, RoundingMode.HALF_UP).toString(), null, "OBPOS_LblTotalExpected",
-              conversionRate, isoCode);
+                  .setScale(2, RoundingMode.HALF_UP).toString(), "OBPOS_LblEXPECTED",
+              "OBPOS_LblTotalExpected", conversionRate, isoCode);
           hashMapExpectedList.add(psData);
 
           // -- COUNTED --
@@ -246,8 +246,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               label,
               paymentMethodCashup.getTotalCounted().multiply(conversionRate)
                   .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
-                  .getTotalCounted().toString(), null, "OBPOS_LblTotalCounted", conversionRate,
-              isoCode);
+                  .getTotalCounted().toString(), "OBPOS_LblCOUNTED", "OBPOS_LblTotalCounted",
+              conversionRate, isoCode);
           hashMapCountedList.add(psData);
 
           // -- DIFFERENCE --
@@ -260,7 +260,7 @@ public class CashUpReport extends HttpSecureAppServlet {
                   .setScale(2, RoundingMode.HALF_UP).subtract(expected).toString(),
               paymentMethodCashup.getTotalCounted()
                   .subtract(expected.divide(conversionRate, 5, RoundingMode.HALF_UP)).toString(),
-              null, "OBPOS_LblTotalDifference", conversionRate, isoCode);
+              "OBPOS_LblDIFFERENCE", "OBPOS_LblTotalDifference", conversionRate, isoCode);
           hashMapDifferenceList.add(psData);
 
           /******************************* CASH TO KEEP,CASH TO DEPOSIT ***************************************************************/
@@ -269,8 +269,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               paymentMethodCashup.getAmountToKeep());
           psData = fillReportRow("TODEPOSIT", paymentMethodCashup.getPaymentType().getSearchKey(),
               null, label, cashToDeposit.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
-                  .toString(), cashToDeposit.toString(), null, "OBPOS_LblTotalQtyToDepo",
-              conversionRate, isoCode);
+                  .toString(), cashToDeposit.toString(), "OBPOS_LblTotal_To_Deposit",
+              "OBPOS_LblTotalQtyToDepo", conversionRate, isoCode);
           hashMapCashToDepositList.add(psData);
 
           // -- TOKEEP --
@@ -281,8 +281,8 @@ public class CashUpReport extends HttpSecureAppServlet {
               label,
               paymentMethodCashup.getAmountToKeep().multiply(conversionRate)
                   .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
-                  .getAmountToKeep().toString(), null, "OBPOS_LblTotalQtyToKeep", conversionRate,
-              isoCode);
+                  .getAmountToKeep().toString(), "OBPOS_LblTotal_To_Keep",
+              "OBPOS_LblTotalQtyToKeep", conversionRate, isoCode);
           hashMapCashToKeepList.add(psData);
 
         }
