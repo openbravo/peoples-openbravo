@@ -1,16 +1,60 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" manifest="../../org.openbravo.mobile.core/OBPOS_Main/AppCacheManifest?_appName=WebPOS">
+
+<%@ page import="org.openbravo.erpCommon.businessUtility.Preferences" %>
+<%@ page import="org.openbravo.erpCommon.utility.PropertyNotFoundException" %>
+<%@ page import="org.openbravo.erpCommon.businessUtility.Preferences.QueryFilter" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%
+
+/**
+catch OBPOS_UseServiceWorkersForOffline preferences value to know if we want to use SW or AppCache
+*/
+String toServiceWorker="";
+String toAppCache="";
+boolean useServiceWorkers = false; 
+String browserType = request.getHeader("User-Agent");
+if(browserType.contains("Safari") && browserType.contains("Version")){
+  useServiceWorkers=false;
+}else{
+  try{
+    Map<QueryFilter, Boolean> queryFilters = new HashMap<QueryFilter, Boolean>();
+    queryFilters.put(QueryFilter.ACTIVE, true);
+    queryFilters.put(QueryFilter.CLIENT, false);
+    queryFilters.put(QueryFilter.ORGANIZATION, false);
+    useServiceWorkers=Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, null, null,
+    null, null, (String) null, queryFilters).equals("Y");
+  }catch(PropertyNotFoundException e) {
+    //If preference is not set, we will use ServiceWorkers
+    useServiceWorkers=true;
+  }
+}
+
+if (useServiceWorkers) {
+  toServiceWorker = "../org.openbravo.mobile.core/source/offline/ob-fetch-manifest.js";
+} else {
+  toAppCache = "../../org.openbravo.mobile.core/OBPOS_Main/AppCacheManifest?_appName=WebPOS";
+}
+%>
+<html xmlns="http://www.w3.org/1999/xhtml" manifest=<%=toAppCache%>>
+
 <head>
   <title>Openbravo POS</title>
   <meta charset="utf-8">
   <meta name="description" content="Openbravo Point of Sale window">
   <meta name="author" content="Openbravo, S.L.U.">
 
+  
   <%@include file="../org.openbravo.mobile.core/assets/include/mobile.jsp" %>
 
   <link rel="shortcut icon" type="image/x-icon" href="../../web/images/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS"/>
 
+  <script>
+    window.ServiceWorkerUtil={};
+    window.ServiceWorkerUtil.useServiceWorkers=<%=useServiceWorkers%>;
+  </script>
+  
   <script>
     (function () {
       /**
@@ -51,7 +95,7 @@
           }
         }, false);
         window.applicationCache.addEventListener('error', function (e) {
-          OB.MobileApp.model.attributes.loadManifeststatus = e;
+          OB.MobileApp.model.set('loadManifeststatus', e);
         }, false);
       }, false);
     }());
@@ -72,5 +116,6 @@
       }
     }());
   </script>
+  <script src=<%=toServiceWorker%>></script>
 </body>
 </html>
