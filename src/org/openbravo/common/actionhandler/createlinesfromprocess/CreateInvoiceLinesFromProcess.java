@@ -75,19 +75,19 @@ public class CreateInvoiceLinesFromProcess {
    * </ul>
    * 
    * @param selectedLinesParam
-   *          Order/Shipment/Receipt Lines selected by the user from which the invoice lines will be
-   *          created
-   * @param selectedLinesFromClass
-   *          The class of the lines being copied (Order/InOut)
+   *          Order/InOut Lines selected by the user from which the invoice lines will be created
    * @param currentInvoice
    *          The invoice currently being created
+   * @param selectedLinesFromClass
+   *          The class of the lines being copied (Order/InOut)
+   * 
    * @return The number of invoice lines created by the process
    */
   public int createInvoiceLinesFromDocumentLines(final JSONArray selectedLinesParam,
       final Invoice currentInvoice, final Class<? extends BaseOBObject> selectedLinesFromClass) {
     OBContext.setAdminMode(true);
     try {
-      setAndValidateLinesFromClass(selectedLinesFromClass);
+      validateAndSetLinesFromClassOrThrowException(selectedLinesFromClass);
       // Initialize the line number with the last one in the processing invoice.
       lastLineNo = getLastLineNoOfCurrentInvoice(currentInvoice);
       return createInvoiceLines(currentInvoice, getLinesToProcess(selectedLinesParam));
@@ -98,17 +98,26 @@ public class CreateInvoiceLinesFromProcess {
     }
   }
 
-  /**
-   * Set and validate that the line class is supported by the process. If not then an exception is
-   * thrown
-   */
-  private void setAndValidateLinesFromClass(final Class<? extends BaseOBObject> linesFromClass) {
-    if (linesFromClass.isAssignableFrom(OrderLine.class)
-        || linesFromClass.isAssignableFrom(ShipmentInOutLine.class)) {
-      this.linesFromClass = linesFromClass;
+  private void validateAndSetLinesFromClassOrThrowException(
+      final Class<? extends BaseOBObject> clazz) {
+    if (clazz.isAssignableFrom(OrderLine.class) || clazz.isAssignableFrom(ShipmentInOutLine.class)) {
+      this.linesFromClass = clazz;
     } else {
       throw new OBException("CreateLinesFromProccessInvalidDocumentType");
     }
+  }
+
+  private Long getLastLineNoOfCurrentInvoice(final Invoice currentInvoice) {
+    OBCriteria<InvoiceLine> obc = OBDal.getInstance().createCriteria(InvoiceLine.class);
+    obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, currentInvoice));
+    obc.setProjection(Projections.max(InvoiceLine.PROPERTY_LINENO));
+    Long lineNumber = 0L;
+    obc.setMaxResults(1);
+    Object o = obc.uniqueResult();
+    if (o != null) {
+      lineNumber = (Long) o;
+    }
+    return lineNumber;
   }
 
   /**
@@ -175,25 +184,6 @@ public class CreateInvoiceLinesFromProcess {
     } catch (JSONException e) {
       throw new OBException(e);
     }
-  }
-
-  /**
-   * Returns the max invoice line number defined in the invoice to which the lines are going to be
-   * added
-   *
-   * @return The max invoice line number
-   */
-  private Long getLastLineNoOfCurrentInvoice(final Invoice currentInvoice) {
-    OBCriteria<InvoiceLine> obc = OBDal.getInstance().createCriteria(InvoiceLine.class);
-    obc.add(Restrictions.eq(InvoiceLine.PROPERTY_INVOICE, currentInvoice));
-    obc.setProjection(Projections.max(InvoiceLine.PROPERTY_LINENO));
-    Long lineNumber = 0L;
-    obc.setMaxResults(1);
-    Object o = obc.uniqueResult();
-    if (o != null) {
-      lineNumber = (Long) o;
-    }
-    return lineNumber;
   }
 
   private int createInvoiceLines(final Invoice currentInvoice, final JSONArray linesToProcess)
