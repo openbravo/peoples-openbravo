@@ -198,7 +198,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
 
     createShipment = !isQuotation && !isDeleted && !paidReceipt
-        && jsonorder.optBoolean("generateShipment", false);
+        && jsonorder.optBoolean("generateShipment", true);
 
     doCancelAndReplace = jsonorder.optBoolean("doCancelAndReplace", false);
     doCancelLayaway = jsonorder.optBoolean("cancelLayaway", false);
