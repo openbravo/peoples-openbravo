@@ -195,6 +195,12 @@ enyo.kind({
       kind: 'OB.UI.ModalPaymentVoid',
       name: "modalpaymentvoid"
     }, {
+      kind: 'OB.UI.ModalProviderGroup',
+      name: 'modalprovidergroup'
+    }, {
+      kind: 'OB.UI.ModalProviderGroupVoid',
+      name: 'modalprovidergroupvoid'
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
       name: 'modalConfigurationRequiredForCrossStore'
     }, {
@@ -1054,6 +1060,46 @@ enyo.kind({
         }, me.model.get('order'), inEvent.payment);
         };
 
+    var callRemoveCallback = function () {
+        if (inEvent.removeCallback) {
+          inEvent.removeCallback();
+        }
+        };
+
+    var showProviderVoidInstance = function (providerinstance) {
+        me.doShowPopup({
+          popup: 'modalprovidergroupvoid',
+          args: {
+            'removeTransaction': removeTransaction,
+            'onhide': callRemoveCallback,
+            'receipt': me.model.get('order'),
+            'payment': inEvent.payment,
+            'providerinstance': providerinstance
+          }
+        });
+        };
+
+    var callProviderVoidInstance = function () {
+        var providerinstance = enyo.createFromKind(inEvent.payment.get('paymentData').provider.provider + 'Void');
+        if (providerinstance.voidConfirmation) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPaymentMethod'), OB.I18N.getLabel('OBPOS_MsgConfirmRemovePayment'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              showProviderVoidInstance(providerinstance);
+            }
+          }, {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+            action: callRemoveCallback
+          }], {
+            autoDismiss: false,
+            onHideFunction: callRemoveCallback
+          });
+        } else {
+          showProviderVoidInstance(providerinstance);
+        }
+        };
+
     if (inEvent.payment.get('paymentData')) {
       paymentProvider = eval(OB.MobileApp.model.paymentnames[inEvent.payment.get('kind')].paymentMethod.paymentProvider);
       if (paymentProvider && paymentProvider.prototype.voidTransaction && paymentProvider.prototype.voidTransaction instanceof Function) {
@@ -1065,7 +1111,9 @@ enyo.kind({
       voidConfirmation = inEvent.payment.get('paymentData').voidConfirmation;
 
       if (voidConfirmation === false) {
-        if (voidTransaction !== undefined) {
+        if (inEvent.payment.get('paymentData').provider) {
+          callProviderVoidInstance();
+        } else if (voidTransaction !== undefined) {
           callVoidTransaction();
         } else {
           removeTransaction();
@@ -1077,7 +1125,9 @@ enyo.kind({
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         isConfirmButton: true,
         action: function () {
-          if (voidTransaction !== undefined) {
+          if (inEvent.payment.get('paymentData').provider) {
+            callProviderVoidInstance();
+          } else if (voidTransaction !== undefined) {
             callVoidTransaction();
           } else {
             removeTransaction();

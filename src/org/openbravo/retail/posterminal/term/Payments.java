@@ -45,9 +45,11 @@ public class Payments extends JSONTerminalProperty {
           + "coalesce(c.symbol, pmc.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
           + "coalesce(f.currentBalance, 0) as currentBalance, "
           + "coalesce(c.obposPosprecision, null) as obposPosprecision, "
-          + "img.bindaryData as image, img.mimetype as mimetype "
+          + "img.bindaryData as image, img.mimetype as mimetype, "
+          + "providerGroup, paymentType "
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
           + "left outer join p.paymentMethod as pm left outer join pm.image as img left outer join pm.currency as pmc "
+          + "left outer join pm.obposPaymentgroup as providerGroup left outer join pm.obposPaymentmethodType as paymentType "
           + "where p.obposApplications.id = :posID  "
           + "and p.$readableSimpleCriteria and p.$activeCriteria and pm.$activeCriteria"
           + "order by p.line, p.commercialName";
@@ -117,6 +119,12 @@ public class Payments extends JSONTerminalProperty {
                     + Base64.encodeBase64String((byte[]) objPayment[9]));
           } else {
             payment.put("image", objPayment[9]);
+          }
+          if (objPayment[11] != null) {
+            payment.put("providerGroup", converter.toJsonObject((BaseOBObject) objPayment[11],
+                DataResolvingMode.FULL_TRANSLATABLE));
+            payment.put("paymentType",
+                converter.toJsonObject((BaseOBObject) objPayment[12], DataResolvingMode.FULL));
           }
 
           respArray.put(payment);

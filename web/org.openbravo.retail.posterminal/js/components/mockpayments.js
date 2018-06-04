@@ -1,16 +1,19 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo, $ */
+/*global enyo, _ */
 
 enyo.kind({
   name: 'OB.UI.MockPayment',
+  events: {
+    onHideThisPopup: ''
+  },
   components: [{
     components: [{
       classes: 'row-fluid',
@@ -44,6 +47,22 @@ enyo.kind({
     this.$.lblAmount.setContent(OB.I18N.getLabel('OBPOS_LblModalAmount'));
     this.$.paymenttype.setContent(this.paymentType);
     this.$.paymentamount.setContent(OB.I18N.formatCurrency(this.paymentAmount));
+
+    if (!this.paymentMethod.allowoverpayment) {
+      this.exitWithMessage(OB.I18N.getLabel('OBPOS_OverpaymentNotAvailable'));
+    }
+    if (_.isNumber(this.paymentMethod.overpaymentLimit) && this.paymentAmount > this.receipt.get('gross') + this.paymentMethod.overpaymentLimit - this.receipt.get('payment')) {
+      this.exitWithMessage(OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit'));
+    }
+  },
+  exitWithMessage: function (message) {
+    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPaymentMethod'), message, [{
+      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+      isConfirmButton: true
+    }], {
+      autoDismiss: false
+    });
+    setTimeout(this.doHideThisPopup.bind(this), 0);
   }
 });
 

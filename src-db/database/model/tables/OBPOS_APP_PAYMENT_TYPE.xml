@@ -193,6 +193,14 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="OBPOS_PAYMENTGROUP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_PAYMENTMETHOD_TYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -226,8 +234,14 @@
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_APPPAYTYPE_GLITEM_WOFF">
         <reference local="C_GLITEM_WRITEOFF_ID" foreign="C_GLITEM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="OBPOS_PAYMENTGROUP" name="OBPOS_APPPAYTYPE_PAYGROUP">
+        <reference local="OBPOS_PAYMENTGROUP_ID" foreign="OBPOS_PAYMENTGROUP_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="FIN_PAYMENTMETHOD" name="OBPOS_APPPAYTYPE_PAYMTH">
         <reference local="FIN_PAYMENTMETHOD_ID" foreign="FIN_PAYMENTMETHOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PAYMENTMETHOD_TYPE" name="OBPOS_APPPAYTYPE_PAYTYPE">
+        <reference local="OBPOS_PAYMENTMETHOD_TYPE_ID" foreign="OBPOS_PAYMENTMETHOD_TYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APPPAYTYPE_TERM">
         <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>
@@ -264,6 +278,7 @@
       <check name="OBPOS_APPPAYTYPE_KEYPAD_CHK"><![CDATA[SHOWKEYPAD IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_MOVEEVRY_CHK"><![CDATA[ALLOWMOVEEVERYTHING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_OVERPAY_CHK"><![CDATA[ALLOWOVERPAYMENT IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAYTYPE_PROV_CHK"><![CDATA[OBPOS_PAYMENTGROUP_ID IS NULL OR OBPOS_PAYMENTMETHOD_TYPE_ID IS NOT NULL]]></check>
       <check name="OBPOS_APPPAYTYPE_PTWICE_CHK"><![CDATA[PRINTTWICE IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_SHARED_CHK"><![CDATA[ISSHARED IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_VARAMT_CHK"><![CDATA[ALLOWVARIABLEAMOUNT IN ('Y', 'N')]]></check>
