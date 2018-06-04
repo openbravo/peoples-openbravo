@@ -119,6 +119,9 @@ enyo.kind({
     var currentChange = inEvent.receipt.get('changePayments').find(function (item) {
       return item.key === this.payment.payment.searchKey;
     }, this);
-    this.$.textline.setValue(currentChange ? currentChange.amountRounded : '');
+    this.$.textline.setValue(currentChange ? currentChange.amountRounded : 0);
+    setTimeout(function () {
+      this.$.textline.hasNode().setSelectionRange(0, this.$.textline.getValue().length);
+    }.bind(this), 100);
   }
 });
