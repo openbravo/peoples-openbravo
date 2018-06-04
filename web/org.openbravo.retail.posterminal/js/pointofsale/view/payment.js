@@ -27,6 +27,16 @@ enyo.kind({
     onmouseover: 'pauseAnimation',
     onmouseout: 'resumeAnimation'
   },
+  statics: {
+    getChangeRounded: function (p, c) {
+      if (p.changeRounding) {
+        var roundingto = p.changeRounding.roundingto;
+        var roundinggap = p.changeRounding.roundingdownlimit;
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c, roundinggap), roundingto)));
+      }
+      return c;
+    }
+  },
   getSelectedPayment: function () {
     if (this.receipt && this.receipt.get('selectedPayment')) {
       return this.receipt.get('selectedPayment');
@@ -144,7 +154,7 @@ enyo.kind({
             name: 'changebutton',
             classes: 'btn-icon-split btnlink-green',
             style: 'padding: 5px; margin: -5px 10px 0px 0px; width: 40px; height: 25px;',
-            ontap: 'actionChange'
+            ontap: 'actionChangeButton'
           }, {
             tag: 'span',
             name: 'change',
@@ -370,10 +380,12 @@ enyo.kind({
     }
   },
 
-  actionChange: function (inSender, inEvent) {
+  actionChangeButton: function (inSender, inEvent) {
     this.doShowPopup({
       popup: 'modalchange',
-      args: {}
+      args: {
+        receipt: this.receipt
+      }
     });
   },
 
@@ -399,17 +411,6 @@ enyo.kind({
     var changeLabelContent = '';
     var changePayments = [];
 
-    // Get rounded change
-
-    function getChangeRounded(p, c) {
-      if (p.changeRounding) {
-        var roundingto = p.changeRounding.roundingto;
-        var roundinggap = p.changeRounding.roundingdownlimit;
-        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c, roundinggap), roundingto)));
-      }
-      return c;
-    }
-
     // Add new change item to result vars...
 
     function addChange(p, c) {
@@ -418,7 +419,7 @@ enyo.kind({
         if (changeLabelContent) {
           changeLabelContent += ' + ';
         }
-        var cRounded = getChangeRounded(p, c);
+        var cRounded = OB.OBPOSPointOfSale.UI.Payment.getChangeRounded(p, c);
         changeLabelContent += OB.I18N.formatCurrencyWithSymbol(cRounded, p.symbol, p.currencySymbolAtTheRight);
         changePayments.push({
           'key': p.payment.searchKey,
