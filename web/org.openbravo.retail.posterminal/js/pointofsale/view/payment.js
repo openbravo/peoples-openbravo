@@ -1430,9 +1430,6 @@ enyo.kind({
               line.set('obposIspaid', true);
             }
           });
-          if (Math.abs(me.owner.receipt.get('payment')) < Math.abs(me.owner.receipt.get('gross')) && !me.owner.receipt.get('paidOnCredit')) {
-            me.owner.receipt.set('hasPrepayment', true);
-          }
         }
 
         if (!avoidPayment) {

@@ -510,6 +510,9 @@
             currentReceipt.set('created', creationDate.getTime());
             currentReceipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
             currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+            if (OB.UTIL.isNullOrUndefined(currentReceipt.get('amountToLayaway'))) {
+              currentReceipt.set('donePressed', true);
+            }
             // multiterminal support
             // be sure that the active terminal is the one set as the order proprietary
             currentReceipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
@@ -520,11 +523,10 @@
                 line.set('obposCanbedelivered', true);
                 line.set('obposIspaid', true);
               }
-              if (Math.abs(currentReceipt.get('payment')) < Math.abs(currentReceipt.get('gross')) && OB.UTIL.isNullOrUndefined(currentReceipt.get('amountToLayaway'))) {
+              if (Math.abs(currentReceipt.get('payment')) < Math.abs(currentReceipt.get('gross')) && currentReceipt.get('donePressed')) {
                 if (line.get('obposCanbedelivered')) {
                   line.set('obposIspaid', true);
                 }
-                currentReceipt.set('hasPrepayment', true);
               }
             });
 

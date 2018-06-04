@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.CallableStatement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,6 +40,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
@@ -81,6 +83,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.retail.posterminal.utility.AttributesUtils;
 import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
 import org.openbravo.retail.posterminal.utility.ShipmentInOut_Utils;
+import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
 import org.openbravo.service.json.JsonConstants;
@@ -110,10 +113,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isDeleted = false;
   private boolean isModified = false;
   private boolean doCancelAndReplace = false;
+  private boolean doCancelLayaway = false;
   private boolean paidReceipt = false;
   private boolean deliver = false;
 
   private boolean hasPrepayment = false;
+  private boolean donePressed = false;
+  private boolean paidOnCredit = false;
 
   @Inject
   @Any
@@ -168,39 +174,34 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
+    boolean fullyPaid = jsonorder.getDouble("payment") >= Math.abs(jsonorder.getDouble("gross"));
+    boolean isLayaway = jsonorder.getBoolean("isLayaway")
+        || (jsonorder.has("orderType") && jsonorder.optLong("orderType") == 2);
+
     documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
 
-    isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+    isQuotation = jsonorder.optBoolean("isQuotation", false);
 
-    paidReceipt = (jsonorder.getLong("orderType") == 0 || jsonorder.getLong("orderType") == 1)
-        && jsonorder.has("isPaid") && jsonorder.getBoolean("isPaid");
+    paidReceipt = jsonorder.optBoolean("isPaid", false);
 
-    hasPrepayment = jsonorder.optBoolean("hasPrepayment", false);
+    donePressed = jsonorder.optBoolean("donePressed", false);
+    hasPrepayment = donePressed && !fullyPaid;
+    paidOnCredit = !paidReceipt && jsonorder.optBoolean("paidOnCredit", false);
 
-    newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
-    notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-        && jsonorder.getDouble("payment") < Math.abs(jsonorder.getDouble("gross"))
-        && !jsonorder.optBoolean("paidOnCredit") && !jsonorder.has("paidInNegativeStatusAmt")
-        && !hasPrepayment;
-    creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
-        && (jsonorder.optBoolean("paidOnCredit") || jsonorder.optBoolean("donePressed", false));
-    partialpaidLayaway = jsonorder.getBoolean("isLayaway")
-        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
-    fullypaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-        && (jsonorder.getDouble("payment") >= jsonorder.getDouble("gross") || jsonorder
-            .has("paidInNegativeStatusAmt"));
+    newLayaway = jsonorder.getLong("orderType") == 2;
+    notpaidLayaway = isLayaway && !paidOnCredit && !donePressed;
+    creditpaidLayaway = isLayaway && (paidOnCredit || (donePressed && !fullyPaid));
+    partialpaidLayaway = jsonorder.optBoolean("isLayaway", false) && !fullyPaid;
+    fullypaidLayaway = isLayaway && fullyPaid;
 
-    isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
+    isDeleted = jsonorder.optBoolean("obposIsDeleted", false);
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
 
-    createShipment = !isQuotation && !isDeleted && !paidReceipt;
-    if (jsonorder.has("generateShipment")) {
-      createShipment &= jsonorder.getBoolean("generateShipment");
-    }
+    createShipment = !isQuotation && !isDeleted && !paidReceipt
+        && jsonorder.optBoolean("generateShipment", false);
 
-    doCancelAndReplace = jsonorder.has("doCancelAndReplace")
-        && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
+    doCancelAndReplace = jsonorder.optBoolean("doCancelAndReplace", false);
+    doCancelLayaway = jsonorder.optBoolean("cancelLayaway", false);
 
     deliver = jsonorder.optBoolean("deliver", true);
   }
@@ -1255,6 +1256,32 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
+  public static BigDecimal convertCurrencyOrder(Order order, BigDecimal amt) {
+    int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
+        .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
+    List<Object> parameters = new ArrayList<Object>();
+    List<Class<?>> types = new ArrayList<Class<?>>();
+    parameters.add(amt.setScale(pricePrecision, RoundingMode.HALF_UP));
+    types.add(BigDecimal.class);
+    parameters.add(order.getCurrency());
+    types.add(BaseOBObject.class);
+    parameters.add(order.getBusinessPartner().getPriceList().getCurrency());
+    types.add(BaseOBObject.class);
+    parameters.add(order.getOrderDate());
+    types.add(Timestamp.class);
+    parameters.add("S");
+    types.add(String.class);
+    parameters.add(OBContext.getOBContext().getCurrentClient());
+    types.add(BaseOBObject.class);
+    parameters.add(OBContext.getOBContext().getCurrentOrganization());
+    types.add(BaseOBObject.class);
+    parameters.add('A');
+    types.add(Character.class);
+
+    return (BigDecimal) CallStoredProcedure.getInstance().call("c_currency_convert_precision",
+        parameters, types);
+  }
+
   @Deprecated
   public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
@@ -1337,7 +1364,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     for (int i = 0; i < payments.length(); i++) {
       JSONObject payment = payments.getJSONObject(i);
       OBPOSAppPayment paymentType = null;
-      if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
+      if (payment.optBoolean("isPrePayment", false)) {
         continue;
       }
 
@@ -1385,15 +1412,43 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (useOrderDocumentNoForRelatedDocs) {
           paymentCount++;
         }
-        if (jsonorder.optBoolean("donePressed", false) && !isQuotation && !isDeleted
-            && !notpaidLayaway && !payment.has("isPrePayment")) {
-          order.getBusinessPartner().setCreditUsed(
-              order.getBusinessPartner().getCreditUsed()
-                  .subtract(new BigDecimal(payment.getDouble("amount"))));
+        if (paidReceipt && donePressed) {
+          // Update customer credit. Subtract the amount paid to the existing credit.
+          OBContext.setAdminMode(false);
+          try {
+            BigDecimal creditPaid = BigDecimal.valueOf(payment.getDouble("amount")).setScale(
+                pricePrecision, RoundingMode.HALF_UP);
+            if (!order.getCurrency()
+                .equals(order.getBusinessPartner().getPriceList().getCurrency())) {
+              creditPaid = convertCurrencyOrder(order,
+                  BigDecimal.valueOf(payment.getDouble("amount")));
+            }
+            order.getBusinessPartner().setCreditUsed(
+                order.getBusinessPartner().getCreditUsed().subtract(creditPaid));
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         }
         processPayments(paymentSchedule, order, paymentType, payment, tempWriteoffAmt, jsonorder,
             account);
         writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
+      }
+    }
+    if (paidOnCredit || (!paidReceipt && hasPrepayment)) {
+      // Update customer credit. Credit generated.
+      OBContext.setAdminMode(false);
+      try {
+        BigDecimal creditGenerated = gross.subtract(paymentAmt).setScale(pricePrecision,
+            RoundingMode.HALF_UP);
+
+        if (!order.getCurrency().equals(order.getBusinessPartner().getPriceList().getCurrency())) {
+          creditGenerated = convertCurrencyOrder(order, gross.subtract(paymentAmt));
+        }
+        // Same currency, no conversion required
+        order.getBusinessPartner().setCreditUsed(
+            order.getBusinessPartner().getCreditUsed().add(creditGenerated));
+      } finally {
+        OBContext.restorePreviousMode();
       }
     }
 
@@ -1409,8 +1464,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     OBContext.setAdminMode(false);
     try {
       boolean totalIsNegative = jsonorder.getDouble("gross") < 0;
-      boolean checkPaidOnCreditChecked = (jsonorder.has("paidOnCredit") && jsonorder
-          .getBoolean("paidOnCredit"));
       int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
           .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
@@ -1442,9 +1495,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .setScale(pricePrecision, RoundingMode.HALF_UP);
         }
       } else if (writeoffAmt.signum() == -1
-          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway
-              && !checkPaidOnCreditChecked && !hasPrepayment && !doCancelLayaway) || jsonorder
-                .has("paidInNegativeStatusAmt"))) {
+          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !paidOnCredit
+              && !hasPrepayment && !doCancelLayaway) || jsonorder.has("paidInNegativeStatusAmt"))) {
         // If the overpayment is negative and the order is not a fully or not paid layaway, a
         // quotation nor an order paid on credit, or the overpayment is negative and having a
         // positive tickets in which the created payments are negative (this may occur in C&R flow)
@@ -1698,7 +1750,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         finPayment.setAmount(origAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
       }
 
-      if (checkPaidOnCreditChecked) {
+      if (paidOnCredit) {
         List<FIN_PaymentDetail> paymentDetailList = finPayment.getFINPaymentDetailList();
         if (paymentDetailList.size() > 0) {
           for (FIN_PaymentDetail paymentDetail : paymentDetailList) {

@@ -10,7 +10,6 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,7 +61,6 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
-import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "Invoice")
@@ -556,39 +554,6 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
       invoice.getInvoiceTaxList().add(invoiceTax);
     }
 
-    // Update customer credit
-    OBContext.setAdminMode(false);
-    try {
-      BigDecimal total = invoice.getGrandTotalAmount().setScale(pricePrecision,
-          RoundingMode.HALF_UP);
-
-      JSONArray payments = jsoninvoice.getJSONArray("payments");
-      for (i = 0; i < payments.length(); i++) {
-        JSONObject payment = payments.getJSONObject(i);
-        if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
-          total = total.subtract(BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
-              pricePrecision, RoundingMode.HALF_UP));
-        }
-      }
-
-      if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
-        total = convertCurrencyInvoice(invoice);
-      }
-
-      // Same currency, no conversion required
-      boolean donePressed = jsoninvoice.optBoolean("donePressed", false);
-      boolean paidOnCredit = jsoninvoice.optBoolean("paidOnCredit", false)
-          || jsoninvoice.optBoolean("paidPartiallyOnCredit", false);
-      if (donePressed && paidOnCredit) {
-        total = total.negate();
-      }
-      invoice.getBusinessPartner().setCreditUsed(
-          invoice.getBusinessPartner().getCreditUsed().add(total));
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
   }
 
   protected void updateTaxes(Invoice invoice) throws JSONException {
@@ -608,33 +573,6 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
       taxInv.setTaxAmount(taxAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
       OBDal.getInstance().save(taxInv);
     }
-  }
-
-  public static BigDecimal convertCurrencyInvoice(Invoice invoice) {
-    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null ? invoice
-        .getCurrency().getPricePrecision().intValue() : invoice.getCurrency()
-        .getObposPosprecision().intValue();
-    List<Object> parameters = new ArrayList<Object>();
-    List<Class<?>> types = new ArrayList<Class<?>>();
-    parameters.add(invoice.getGrandTotalAmount().setScale(pricePrecision, RoundingMode.HALF_UP));
-    types.add(BigDecimal.class);
-    parameters.add(invoice.getCurrency());
-    types.add(BaseOBObject.class);
-    parameters.add(invoice.getBusinessPartner().getPriceList().getCurrency());
-    types.add(BaseOBObject.class);
-    parameters.add(invoice.getInvoiceDate());
-    types.add(Timestamp.class);
-    parameters.add("S");
-    types.add(String.class);
-    parameters.add(OBContext.getOBContext().getCurrentClient());
-    types.add(BaseOBObject.class);
-    parameters.add(OBContext.getOBContext().getCurrentOrganization());
-    types.add(BaseOBObject.class);
-    parameters.add('A');
-    types.add(Character.class);
-
-    return (BigDecimal) CallStoredProcedure.getInstance().call("c_currency_convert_precision",
-        parameters, types);
   }
 
   public JSONObject handlePayments(JSONObject jsoninvoice, Order order, Invoice invoice,
