@@ -174,7 +174,11 @@
               return;
             }
             if (payment.get('amount') < 0) {
-              auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), payment.get('amount')));
+              if (payment.has('amountRounded')) {
+                auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), payment.get('amountRounded')));
+              } else {
+                auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), payment.get('amount')));
+              }
             } else if (orderType === 3) { // void layaway 
               auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), payment.get('amount')));
             } else {
