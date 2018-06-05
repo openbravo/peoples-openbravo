@@ -60,7 +60,7 @@ public class Payments extends JSONTerminalProperty {
 
       final Query paymentsquery = querybuilder.getDalQuery();
 
-      paymentsquery.setString("posID", posId);
+      paymentsquery.setParameter("posID", posId);
 
       DataToJsonConverter converter = new DataToJsonConverter();
 

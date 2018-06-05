@@ -361,7 +361,7 @@ public class POSUtils {
         return 0;
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
-      query.setString("appValue", searchKey);
+      query.setParameter("appValue", searchKey);
 
       Object result = query.uniqueResult();
       if (result == null) {
@@ -449,7 +449,7 @@ public class POSUtils {
         return 0;
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
-      query.setString("appValue", searchKey);
+      query.setParameter("appValue", searchKey);
 
       Object result = query.uniqueResult();
       if (result == null) {
@@ -536,7 +536,7 @@ public class POSUtils {
         return 0;
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
-      query.setString("appValue", searchKey);
+      query.setParameter("appValue", searchKey);
       Object result = query.uniqueResult();
       if (result == null) {
         maxDocNo = 0;

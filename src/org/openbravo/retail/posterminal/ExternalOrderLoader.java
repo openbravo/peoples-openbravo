@@ -1027,7 +1027,7 @@ public class ExternalOrderLoader extends OrderLoader {
         // The record will be locked to this process until it ends.
         Query terminalQuery = OBDal.getInstance().getSession()
             .createQuery("from OBPOS_Applications where id=:terminalId");
-        terminalQuery.setString("terminalId", posTerminal.getId());
+        terminalQuery.setParameter("terminalId", posTerminal.getId());
         terminalQuery.setLockOptions(LockOptions.UPGRADE);
         OBPOSApplications lockedTerminal = (OBPOSApplications) terminalQuery.uniqueResult();
         OBDal.getInstance().getSession().evict(lockedTerminal);
@@ -1307,7 +1307,7 @@ public class ExternalOrderLoader extends OrderLoader {
             + " and organization.id " + OBDal.getInstance().getReadableOrganizationsInClause();
 
         final Query qry = OBDal.getInstance().getSession().createQuery(qryStr);
-        qry.setString("value", value);
+        qry.setParameter("value", value);
         final java.util.List<?> values = qry.list();
         if (values.isEmpty() || values.size() > 1) {
           return null;

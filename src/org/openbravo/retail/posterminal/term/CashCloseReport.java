@@ -58,8 +58,8 @@ public class CashCloseReport extends JSONProcessSimple {
         + " and olt.salesOrderLine.salesOrder.documentType.id=:docTypeId  and olt.salesOrderLine.salesOrder.obposApplications.id=:applicationId "
         + " group by olt.tax.name order by olt.tax.name asc";
     Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
-    salesTaxesQuery.setString("docTypeId", terminal.getObposTerminaltype().getDocumentType().getId());
-    salesTaxesQuery.setString("applicationId", posTerminalId);
+    salesTaxesQuery.setParameter("docTypeId", terminal.getObposTerminaltype().getDocumentType().getId());
+    salesTaxesQuery.setParameter("applicationId", posTerminalId);
     JSONArray salesTaxes = new JSONArray();
     BigDecimal totalSalesTax = BigDecimal.ZERO;
     for (Object obj : salesTaxesQuery.list()) {
@@ -82,8 +82,8 @@ public class CashCloseReport extends JSONProcessSimple {
         + "and ord.documentType.id=:docTypeId and ord.obposApplications.id=:applicationId ";
 
     Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
-    salesQuery.setString("docTypeId", terminal.getObposTerminaltype().getDocumentType().getId());
-    salesQuery.setString("applicationId", posTerminalId);
+    salesQuery.setParameter("docTypeId", terminal.getObposTerminaltype().getDocumentType().getId());
+    salesQuery.setParameter("applicationId", posTerminalId);
     BigDecimal totalNetAmount = (BigDecimal) salesQuery.uniqueResult();
     if (totalNetAmount == null) {
       totalNetAmount = BigDecimal.ZERO;
@@ -95,9 +95,9 @@ public class CashCloseReport extends JSONProcessSimple {
     // Total returns computation
 
     Query returnTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
-    returnTaxesQuery.setString("docTypeId", terminal.getObposTerminaltype().getDocumentTypeForReturns()
+    returnTaxesQuery.setParameter("docTypeId", terminal.getObposTerminaltype().getDocumentTypeForReturns()
         .getId());
-    returnTaxesQuery.setString("applicationId", posTerminalId);
+    returnTaxesQuery.setParameter("applicationId", posTerminalId);
     JSONArray returnTaxes = new JSONArray();
     BigDecimal totalReturnsTax = BigDecimal.ZERO;
     for (Object obj : returnTaxesQuery.list()) {
@@ -111,8 +111,8 @@ public class CashCloseReport extends JSONProcessSimple {
     }
 
     Query returnsQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
-    returnsQuery.setString("docTypeId", terminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
-    returnsQuery.setString("applicationId", posTerminalId);
+    returnsQuery.setParameter("docTypeId", terminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
+    returnsQuery.setParameter("applicationId", posTerminalId);
     BigDecimal totalReturnsAmount = (BigDecimal) returnsQuery.uniqueResult();
     if (totalReturnsAmount == null) {
       totalReturnsAmount = BigDecimal.ZERO;
@@ -135,7 +135,7 @@ public class CashCloseReport extends JSONProcessSimple {
         + "where obposApplications.id = :applicationId group by  p.commercialName, p.financialAccount.currency, p.financialAccount, p.financialAccount.currentBalance, p.obposApplications.organization.currency, p.obposApplications.client.id, p.obposApplications.organization.id, p.financialAccount.currency.iSOCode "
         + " order by p.commercialName";
     Query paymentsQuery = OBDal.getInstance().getSession().createQuery(hqlPayments);
-    paymentsQuery.setString("applicationId", posTerminalId);
+    paymentsQuery.setParameter("applicationId", posTerminalId);
     for (Object payObj : paymentsQuery.list()) {
       Object[] objpayments = (Object[]) payObj;
 
@@ -143,7 +143,7 @@ public class CashCloseReport extends JSONProcessSimple {
           + "from org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction as trans "
           + "where trans.account.id = :transAccountId and trans.reconciliation is null";
       Query startingCashQuery = OBDal.getInstance().getSession().createQuery(hqlStartingCash);
-      startingCashQuery.setString("transAccountId", objpayments[0].toString());
+      startingCashQuery.setParameter("transAccountId", objpayments[0].toString());
       BigDecimal startingCash = BigDecimal.ZERO;
       for (Object obj : startingCashQuery.list()) {
         Object[] objstartingCash = (Object[]) obj;
@@ -181,7 +181,7 @@ public class CashCloseReport extends JSONProcessSimple {
         + "where (trans.gLItem=payment.paymentMethod.gLItemForDrops or trans.gLItem=payment.paymentMethod.gLItemForDeposits) and trans.reconciliation is null "
         + "and payment.obposApplications=:applicationId and trans.account=payment.financialAccount order by payment.commercialName";
     Query dropsDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlDropsDeposits);
-    dropsDepositsQuery.setString("applicationId", posTerminalId);
+    dropsDepositsQuery.setParameter("applicationId", posTerminalId);
     for (Object obj : dropsDepositsQuery.list()) {
       Object[] objdropdeposit = (Object[]) obj;
       JSONObject dropDeposit = new JSONObject();
@@ -213,7 +213,7 @@ public class CashCloseReport extends JSONProcessSimple {
         + " order by obpay.commercialName";
 
     Query salesDepositsQuery = OBDal.getInstance().getSession().createQuery(hqlSalesDeposits);
-    salesDepositsQuery.setString("applicationId", posTerminalId);
+    salesDepositsQuery.setParameter("applicationId", posTerminalId);
     for (Object obj : salesDepositsQuery.list()) {
       Object[] obja = (Object[]) obj;
       JSONObject salesDep = new JSONObject();
@@ -237,7 +237,7 @@ public class CashCloseReport extends JSONProcessSimple {
         + " order by obpay.commercialName";
 
     Query returnDropsQuery = OBDal.getInstance().getSession().createQuery(hqlReturnsDrop);
-    returnDropsQuery.setString("applicationId", posTerminalId);
+    returnDropsQuery.setParameter("applicationId", posTerminalId);
     for (Object obj : returnDropsQuery.list()) {
       Object[] obja = (Object[]) obj;
       JSONObject returnDrop = new JSONObject();

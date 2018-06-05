@@ -59,7 +59,7 @@ public class UpdateCashup {
     OBPOSAppCashup cashUp = null;
     Query cashUpQuery = OBDal.getInstance().getSession()
         .createQuery("from OBPOS_App_Cashup where id=:cashUpId");
-    cashUpQuery.setString("cashUpId", cashUpId);
+    cashUpQuery.setParameter("cashUpId", cashUpId);
     // The record will be locked to this process until it ends. Other requests to process this cash
     // up will be locked until this one finishes
     cashUpQuery.setLockOptions(LockOptions.UPGRADE);
@@ -110,7 +110,7 @@ public class UpdateCashup {
       } catch (Exception e) {
         Query maybeCashupWasCreatedInParallel = OBDal.getInstance().getSession()
             .createQuery("from OBPOS_App_Cashup where id=:cashUpId");
-        maybeCashupWasCreatedInParallel.setString("cashUpId", cashUpId);
+        maybeCashupWasCreatedInParallel.setParameter("cashUpId", cashUpId);
         cashUp = (OBPOSAppCashup) maybeCashupWasCreatedInParallel.uniqueResult();
         // If cashup exists, then other process (such as OpenTill) created it in parallel, and
         // everything is fine. Otherwise, the process should fail.
