@@ -22,18 +22,19 @@ package org.openbravo.common.actionhandler.createlinesfromprocess;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.model.pricing.pricelist.ProductPrice;
 
 @Dependent
 @Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
@@ -59,15 +60,11 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
       setPricesBasedOnOrderLineValues(isCopiedFromOrderLine() ? (OrderLine) getCopiedFromLine()
           : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
     } else {
-      ProductPrice productPrice = getProductPriceInPriceList(
-          (Product) getCopiedFromLine().get(
+      Product product = (Product) getCopiedFromLine()
+          .get(
               isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT
-                  : ShipmentInOutLine.PROPERTY_PRODUCT), getInvoice().getPriceList());
-      if (productPrice != null) {
-        setPricesBasedOnPriceList(productPrice);
-      } else {
-        setPricesToZero();
-      }
+                  : ShipmentInOutLine.PROPERTY_PRODUCT);
+      setPricesBasedOnBOM(product, getInvoice().getPriceList());
     }
   }
 
@@ -81,7 +78,11 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     int stdPrecision = invoiceCurrency.getStandardPrecision().intValue();
 
     // Price List, Price Standard and discount
-    BigDecimal priceActual = orderLine.getStandardPrice();
+    BigDecimal priceActual = orderLine.getUnitPrice();
+    BigDecimal priceStd = orderLine.getStandardPrice();
+    if (orderLine.isCancelPriceAdjustment() && orderLine.getSalesOrder().isSalesTransaction()) {
+      priceActual = priceStd;
+    }
     BigDecimal priceList = orderLine.getListPrice();
     BigDecimal priceLimit = orderLine.getPriceLimit();
 
@@ -106,64 +107,129 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
       priceActual = BigDecimal.ZERO;
       priceList = BigDecimal.ZERO;
       priceLimit = BigDecimal.ZERO;
+      priceStd = BigDecimal.ZERO;
     }
 
     priceInformation.setUnitPrice(priceActual);
-    priceInformation.setStandardPrice(priceActual);
+    priceInformation.setStandardPrice(priceStd);
     priceInformation.setListPrice(priceList);
     priceInformation.setLineNetAmount(lineNetAmount);
     priceInformation.setPriceLimit(priceLimit);
 
     setPrices(priceInformation);
-
   }
 
-  private void setPricesBasedOnPriceList(final ProductPrice productPrice) {
-    PriceInformation priceInformation = new PriceInformation();
-    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
-        getPickExecJSONObject());
+  private void setPricesBasedOnBOM(Product product, PriceList invoicePriceList) {
+    PriceInformation priceInformation = getBOMPrices(product, invoicePriceList);
+    if (priceInformation == null) {
+      setPricesToZero();
+    } else {
+      BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
+          getPickExecJSONObject());
 
-    // Standard and Price precision
-    Currency invoiceCurrency = getInvoice().getCurrency();
-    int stdPrecision = invoiceCurrency.getStandardPrecision().intValue();
-    int pricePrecision = invoiceCurrency.getPricePrecision().intValue();
+      // Standard and Price precision
+      Currency invoiceCurrency = getInvoice().getCurrency();
+      int stdPrecision = invoiceCurrency.getStandardPrecision().intValue();
+      int pricePrecision = invoiceCurrency.getPricePrecision().intValue();
 
-    // Price List, Price Standard and discount
-    BigDecimal priceActual = productPrice.getStandardPrice().setScale(pricePrecision,
-        RoundingMode.HALF_UP);
-    BigDecimal priceList = productPrice.getListPrice().setScale(pricePrecision,
-        RoundingMode.HALF_UP);
-    BigDecimal priceLimit = productPrice.getPriceLimit().setScale(pricePrecision,
-        RoundingMode.HALF_UP);
-
-    BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual).setScale(stdPrecision,
-        RoundingMode.HALF_UP);
-
-    // Processing for Prices Including Taxes
-    if (getInvoice().getPriceList().isPriceIncludesTax()) {
-      BigDecimal grossUnitPrice = priceActual;
-      BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
+      // Price List, Price Standard and Price Limit
+      BigDecimal priceActual = priceInformation.getOffersPriceInvoice().setScale(pricePrecision,
+          RoundingMode.HALF_UP);
+      BigDecimal priceStd = priceInformation.getStandardPrice().setScale(pricePrecision,
+          RoundingMode.HALF_UP);
+      BigDecimal priceList = priceInformation.getListPrice().setScale(pricePrecision,
+          RoundingMode.HALF_UP);
+      BigDecimal priceLimit = priceInformation.getPriceLimit().setScale(pricePrecision,
           RoundingMode.HALF_UP);
 
-      // Set gross price information
-      priceInformation.setGrossUnitPrice(grossUnitPrice);
-      priceInformation.setGrossBaseUnitPrice(grossUnitPrice);
-      priceInformation.setGrossListPrice(priceList);
-      priceInformation.setLineGrossAmount(grossAmount);
+      BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual).setScale(stdPrecision,
+          RoundingMode.HALF_UP);
 
-      // Update Net Prices to 0
-      priceActual = BigDecimal.ZERO;
-      priceList = BigDecimal.ZERO;
-      priceLimit = BigDecimal.ZERO;
+      // Processing for Prices Including Taxes
+      if (getInvoice().getPriceList().isPriceIncludesTax()) {
+        BigDecimal grossUnitPrice = priceStd;
+        BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
+            RoundingMode.HALF_UP);
+
+        // Set gross price information
+        priceInformation.setGrossUnitPrice(grossUnitPrice);
+        priceInformation.setGrossBaseUnitPrice(grossUnitPrice);
+        priceInformation.setGrossListPrice(priceList);
+        priceInformation.setLineGrossAmount(grossAmount);
+
+        // Update Net Prices to 0
+        priceActual = BigDecimal.ZERO;
+        priceList = BigDecimal.ZERO;
+        priceLimit = BigDecimal.ZERO;
+        priceStd = BigDecimal.ZERO;
+      }
+
+      priceInformation.setUnitPrice(priceActual);
+      priceInformation.setStandardPrice(priceStd);
+      priceInformation.setListPrice(priceList);
+      priceInformation.setLineNetAmount(lineNetAmount);
+      priceInformation.setPriceLimit(priceLimit);
+
+      setPrices(priceInformation);
     }
+  }
 
-    priceInformation.setUnitPrice(priceActual);
-    priceInformation.setStandardPrice(priceActual);
-    priceInformation.setListPrice(priceList);
-    priceInformation.setLineNetAmount(lineNetAmount);
-    priceInformation.setPriceLimit(priceLimit);
+  /**
+   * Returns the defined product price in a selected pricelist taking into account BOM prices and
+   * offers or null if the product doesn't has any price defined on the price list
+   * 
+   * @param product
+   *          The product where the price is searched.
+   * @param priceList
+   *          The price list where the product price is searched.
+   * @return The product price defined for the product in the price list or NULL if any.
+   */
+  private PriceInformation getBOMPrices(Product product, PriceList priceList) {
+    Object[] bomPrices = selectBOMPrices(product, priceList);
+    if (bomPrices == null) {
+      return null;
+    }
+    PriceInformation priceInformation = new PriceInformation();
+    priceInformation.setStandardPrice((BigDecimal) bomPrices[0]);
+    priceInformation.setListPrice((BigDecimal) bomPrices[1]);
+    priceInformation.setPriceLimit((BigDecimal) bomPrices[2]);
+    priceInformation.setOffersPriceInvoice((BigDecimal) bomPrices[3]);
+    return priceInformation;
+  }
 
-    setPrices(priceInformation);
+  @SuppressWarnings("unchecked")
+  private Object[] selectBOMPrices(Product product, PriceList priceList) {
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
+        getPickExecJSONObject());
+    StringBuilder obq = new StringBuilder(" SELECT ");
+    obq.append("   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), ");
+    obq.append("   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), ");
+    obq.append("   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), ");
+    obq.append("   TO_NUMBER(ROUND(M_GET_OFFERS_PRICE(TO_DATE(:dateInvoiced), :bpId, :productID, TO_NUMBER(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id))), TO_NUMBER(:qtyOrdered), :priceListID), :pricePrecision)) ");
+    obq.append(" from PricingProductPrice pp ");
+    obq.append("   join pp.priceListVersion plv ");
+    obq.append(" where pp.product.id = :productID");
+    obq.append("   and plv.priceList.id = :priceListID");
+    obq.append("   and plv.active = true");
+    obq.append("   and (plv.validFromDate is null or plv.validFromDate <= :validFromDate)");
+    obq.append(" order by plv.validFromDate desc");
+
+    final Session session = OBDal.getInstance().getSession();
+    final Query obQuery = session.createQuery(obq.toString());
+    obQuery.setString("productID", product.getId());
+    obQuery.setString("priceListID", priceList.getId());
+    obQuery.setDate("validFromDate", new Date());
+    obQuery.setDate("dateInvoiced", getInvoice().getInvoiceDate());
+    obQuery.setString("bpId", getInvoice().getBusinessPartner().getId());
+    obQuery.setBigDecimal("qtyOrdered", qtyOrdered);
+    obQuery.setLong("pricePrecision", getInvoice().getCurrency().getPricePrecision());
+    obQuery.setMaxResults(1);
+    List<Object[]> prices = (List<Object[]>) obQuery.list();
+    if (prices.isEmpty()) {
+      return null;
+    } else {
+      return (Object[]) prices.get(0);
+    }
   }
 
   private void setPricesToZero() {
@@ -186,35 +252,6 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     getInvoiceLine().setLineNetAmount(priceInformation.getLineNetAmount());
   }
 
-  /**
-   * Return the defined product price in a selected pricelist or null if the product doesn't has any
-   * price defined on the price list
-   * 
-   * @param product
-   *          The product where the price is searched.
-   * @param priceList
-   *          The price list where the product price is searched.
-   * @return The product price defined for the product in the price list or NULL if any.
-   */
-  private ProductPrice getProductPriceInPriceList(final Product product, final PriceList priceList) {
-    StringBuilder obq = new StringBuilder("");
-    obq.append(" as pp ");
-    obq.append(" join pp.priceListVersion plv ");
-    obq.append(" where pp.product.id = :productID");
-    obq.append(" and plv.priceList.id = :priceListID");
-    obq.append(" and plv.active = true");
-    obq.append(" and (plv.validFromDate is null or plv.validFromDate <= :validFromDate)");
-    obq.append(" order by plv.validFromDate desc");
-
-    OBQuery<ProductPrice> obQuery = OBDal.getInstance().createQuery(ProductPrice.class,
-        obq.toString());
-    obQuery.setNamedParameter("productID", product.getId());
-    obQuery.setNamedParameter("priceListID", priceList.getId());
-    obQuery.setNamedParameter("validFromDate", new Date());
-    obQuery.setMaxResult(1);
-    return obQuery.uniqueResult();
-  }
-
   private static class PriceInformation {
     // Net Prices
     BigDecimal unitPrice;
@@ -228,6 +265,8 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     BigDecimal priceLimit;
     // Amounts
     BigDecimal lineNetAmount;
+    // Offer
+    BigDecimal offersPriceInvoice;
 
     private PriceInformation() {
       this.priceLimit = BigDecimal.ZERO;
@@ -239,6 +278,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
       this.grossBaseUnitPrice = BigDecimal.ZERO;
       this.grossListPrice = BigDecimal.ZERO;
       this.lineGrossAmount = BigDecimal.ZERO;
+      this.offersPriceInvoice = BigDecimal.ZERO;
     }
 
     private BigDecimal getPriceLimit() {
@@ -311,6 +351,14 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
 
     private void setLineNetAmount(BigDecimal lineNetAmount) {
       this.lineNetAmount = lineNetAmount;
+    }
+
+    private BigDecimal getOffersPriceInvoice() {
+      return offersPriceInvoice;
+    }
+
+    private void setOffersPriceInvoice(BigDecimal offersPrice) {
+      this.offersPriceInvoice = offersPrice;
     }
   }
 }
