@@ -205,7 +205,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     obq.append("   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), ");
     obq.append("   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), ");
     obq.append("   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), ");
-    obq.append("   TO_NUMBER(ROUND(M_GET_OFFERS_PRICE(TO_DATE(:dateInvoiced), :bpId, :productID, TO_NUMBER(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id))), TO_NUMBER(:qtyOrdered), :priceListID), :pricePrecision)) ");
+    obq.append("   TO_NUMBER(ROUND(M_GET_OFFERS_PRICE(:dateInvoiced, :bpId, :productID, TO_NUMBER(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id))), TO_NUMBER(:qtyOrdered), :priceListID), :pricePrecision)) ");
     obq.append(" from PricingProductPrice pp ");
     obq.append("   join pp.priceListVersion plv ");
     obq.append(" where pp.product.id = :productID");
