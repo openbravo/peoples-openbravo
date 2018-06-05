@@ -1288,15 +1288,11 @@
           OB.UTIL.localStorage.setItem('LastCacheGeneration', new Date().getTime());
         }
         //Save available servers and services and initialize Request Router layer and Proccess Controller
-        if (inResponse.servers) {
-          OB.UTIL.localStorage.setItem('servers', JSON.stringify(inResponse.servers));
-        }
-        if (inResponse.services) {
-          OB.UTIL.localStorage.setItem('services', JSON.stringify(inResponse.services));
-        }
-        if (inResponse.processes) {
-          OB.UTIL.localStorage.setItem('processes', JSON.stringify(inResponse.processes));
-        }
+        _.each(_.keys(inResponse.properties), function (key) {
+          if (inResponse.properties[key]) {
+            OB.UTIL.localStorage.setItem(key, JSON.stringify(inResponse.properties[key]));
+          }
+        });
         OB.RR.RequestRouter.initialize();
         OB.UTIL.ProcessController.initialize();
 

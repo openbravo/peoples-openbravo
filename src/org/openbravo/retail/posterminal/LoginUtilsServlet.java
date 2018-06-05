@@ -356,7 +356,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       List<OBPOSApplications> apps = qApp.list();
       if (apps.size() == 1) {
         terminal = ((OBPOSApplications) apps.get(0));
-        result.put("servers", getServers(terminal));
+        JSONObject properties = (JSONObject) result.get("properties");
+        properties.put("servers", getServers(terminal));
       }
     }
 
