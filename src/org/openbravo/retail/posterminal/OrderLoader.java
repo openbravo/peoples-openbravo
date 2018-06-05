@@ -175,8 +175,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
 
     boolean fullyPaid = jsonorder.getDouble("payment") >= Math.abs(jsonorder.getDouble("gross"));
-    boolean isLayaway = jsonorder.getBoolean("isLayaway")
-        || (jsonorder.has("orderType") && jsonorder.optLong("orderType") == 2);
+    boolean isLayaway = jsonorder.optBoolean("isLayaway", false)
+        || jsonorder.optLong("orderType") == 2;
 
     documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
 
