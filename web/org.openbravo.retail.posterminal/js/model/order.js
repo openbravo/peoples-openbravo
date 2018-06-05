@@ -4039,19 +4039,6 @@
 
       OB.Dal.remove(this, function () {
         var deliveredLine, linesWithDeferred = [];
-        me.get('lines').each(function (line) {
-          idMap[line.get('id')] = OB.UTIL.get_UUID();
-          line.set('replacedorderline', line.get('id'));
-          line.set('id', idMap[line.get('id')]);
-        }, me);
-
-        me.set('replacedorder_documentNo', me.get('documentNo'));
-        me.set('replacedorder', me.get('id'));
-        me.set('id', null);
-        me.set('session', OB.MobileApp.model.get('session'));
-
-        me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
-        me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
         me.set('hasbeenpaid', 'N');
         me.set('isPaid', false);
@@ -4067,6 +4054,20 @@
           });
         }
         me.set('isLayaway', false);
+
+        me.get('lines').each(function (line) {
+          idMap[line.get('id')] = OB.UTIL.get_UUID();
+          line.set('replacedorderline', line.get('id'));
+          line.set('id', idMap[line.get('id')]);
+        }, me);
+
+        me.set('replacedorder_documentNo', me.get('documentNo'));
+        me.set('replacedorder', me.get('id'));
+        me.set('id', null);
+        me.set('session', OB.MobileApp.model.get('session'));
+
+        me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
+        me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
         me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
         if (!me.get('salesRepresentative')) {

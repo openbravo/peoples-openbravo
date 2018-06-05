@@ -388,8 +388,8 @@ enyo.kind({
       this.show();
       //We have to ensure that there is not another handler showing this div
     } else if (model.get('orderType') === 2 && model.get('replacedorder')) {
-      this.addStyles('width: 90%; color: #5353C5; line-height:30px');
-      this.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
+      this.addStyles('width: 90%; color: lightblue; line-height:30px');
+      this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway') + ': ' + OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
       this.show();
       //We have to ensure that there is not another handler showing this div
     } else if (model.get('orderType') === 3) {
@@ -472,8 +472,13 @@ enyo.kind({
 
   changeReplacedorder: function (model) {
     if (model.get('replacedorder')) {
-      this.addStyles('width: 90%; color: #5353C5; line-height:30px');
-      this.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
+      if (model.get('orderType') === 2) {
+        this.addStyles('width: 90%; color: lightblue; line-height:30px');
+        this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway') + ': ' + OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
+      } else {
+        this.addStyles('width: 90%; color: #5353C5; line-height:30px');
+        this.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
+      }
       this.show();
     } else if (model.get('orderType') === 2) {
       this.addStyles('width: 60%; color: lightblue;');
