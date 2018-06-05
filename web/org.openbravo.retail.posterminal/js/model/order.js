@@ -4053,6 +4053,10 @@
         me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
         me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
+        me.set('hasbeenpaid', 'N');
+        me.unset('isPaid');
+        me.set('isEditable', true);
+
         deliveredLine = _.find(me.get('lines').models, function (line) {
           return line.get('deliveredQuantity') && OB.DEC.compare(line.get('deliveredQuantity')) === 1;
         });
@@ -4090,10 +4094,6 @@
           linesWithDeferred.push(OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter2'));
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotModifiableLines'), linesWithDeferred);
         }
-
-        me.set('hasbeenpaid', 'N');
-        me.set('isPaid', false);
-        me.set('isEditable', true);
 
         me.set('orderDate', new Date());
         me.set('creationDate', null);
