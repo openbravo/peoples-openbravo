@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -101,5 +101,38 @@ public class FICTest extends BaseDataSourceTestDal {
 
     // ...and compare it with the returned value
     assertThat(ficDateFromValue, startsWith(utcFormattedDateTime));
+  }
+
+  /**
+   * Tests that the FIC returns the expected value for a combo which links to the parent tab after
+   * clearing the organization field in the sub-tab.
+   * 
+   * See issue #38635
+   */
+  @Test
+  public void selectCorrectComboValueAfterClearingOrgField() throws Exception {
+    final String selectedRoleId = "C7E9112E632348F396B4967517E62805";
+    StringBuilder urlParams = new StringBuilder();
+    urlParams.append("?MODE=CHANGE");
+    urlParams.append("&PARENT_ID=" + selectedRoleId);
+    urlParams.append("&TAB_ID=351"); // Org Access tab
+    urlParams.append("&ROW_ID=null");
+    urlParams.append("&CHANGED_COLUMN=inpadOrgId");
+    urlParams
+        .append("&_action=org.openbravo.client.application.window.FormInitializationComponent");
+
+    JSONObject content = new JSONObject();
+    content.put("inpadOrgId", "null"); // clearing organization field
+    content.put("inpadRoleId", selectedRoleId);
+
+    String response = doRequest("/org.openbravo.client.kernel" + urlParams.toString(),
+        content.toString(), 200, "POST", "application/json");
+
+    JSONObject columnValues = new JSONObject(response).getJSONObject("columnValues");
+    assertTrue("AD_Role_ID column should be returned", columnValues.has("AD_Role_ID"));
+
+    JSONObject role = columnValues.getJSONObject("AD_Role_ID");
+    assertTrue("AD_Role_ID column value is correct",
+        role.has("value") && selectedRoleId.equals(role.getString("value")));
   }
 }
