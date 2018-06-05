@@ -57,7 +57,20 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@orderedQuantity@", getOrderedQuantityHQL());
     transformedHql = transformedHql.replace("@operativeQuantity@", getOperativeQuantityHQL());
     transformedHql = transformedHql.replace("@orderQuantity@", getOrderQuantityHQL());
+    transformedHql = changeAdditionalFiltersIfIsSalesTransaction(transformedHql);
     return transformedHql;
+  }
+
+  private String changeAdditionalFiltersIfIsSalesTransaction(String transformedHql) {
+    // If Create Lines From SO then change the CLIENT and ORG filters to use InvoiceCandidateV
+    // instead of the order line
+    String additionalFilters = transformedHql;
+    if (isSalesTransaction) {
+      additionalFilters = additionalFilters.replace("e.client.id in (", "ic.client.id in (");
+      additionalFilters = additionalFilters.replace("e.organization in (",
+          "ic.organization.id in (");
+    }
+    return additionalFilters;
   }
 
   protected String getSelectClauseHQL() {
