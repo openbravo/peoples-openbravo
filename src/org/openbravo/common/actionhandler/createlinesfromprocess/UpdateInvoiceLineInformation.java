@@ -90,53 +90,30 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
 
   private void setAcctDimensionsToLine() {
     getInvoiceLine().setOrganization(getOrganizationForNewLine());
-    getInvoiceLine().setProject(
-        (Project) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_PROJECT,
-            ShipmentInOutLine.PROPERTY_PROJECT));
-    getInvoiceLine().setCostcenter(
-        (Costcenter) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_COSTCENTER,
-            ShipmentInOutLine.PROPERTY_COSTCENTER));
-    getInvoiceLine().setAsset(
-        (Asset) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_ASSET,
-            ShipmentInOutLine.PROPERTY_ASSET));
+    getInvoiceLine().setProject((Project) getPropertyFromCopiedFromLineOrHeader("project"));
+    getInvoiceLine()
+        .setCostcenter((Costcenter) getPropertyFromCopiedFromLineOrHeader("costcenter"));
+    getInvoiceLine().setAsset((Asset) getPropertyFromCopiedFromLineOrHeader("asset"));
     getInvoiceLine().setStDimension(
-        (UserDimension1) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_STDIMENSION,
-            ShipmentInOutLine.PROPERTY_STDIMENSION));
+        (UserDimension1) getPropertyFromCopiedFromLineOrHeader("stDimension"));
     getInvoiceLine().setNdDimension(
-        (UserDimension2) getPropertyFromLineOrFromItParent(OrderLine.PROPERTY_NDDIMENSION,
-            ShipmentInOutLine.PROPERTY_NDDIMENSION));
-  }
-
-  /**
-   * Return the property object of the line if it has it defined or from the header if not
-   * 
-   * @param propertyNameOrder
-   *          The property name if it is an order line
-   * @param propertyNameInOut
-   *          The property name if it is a shipment/receipt line
-   * @return The object representing the property
-   */
-  private BaseOBObject getPropertyFromLineOrFromItParent(final String propertyNameOrder,
-      final String propertyNameInOut) {
-    BaseOBObject propertyValue = null;
-    if (isCopiedFromOrderLine()) {
-      propertyValue = (BaseOBObject) getCopiedFromLine().get(propertyNameOrder);
-      if (propertyValue == null) {
-        propertyValue = (BaseOBObject) ((OrderLine) getCopiedFromLine()).getSalesOrder().get(
-            propertyNameOrder);
-      }
-    } else {
-      propertyValue = (BaseOBObject) getCopiedFromLine().get(propertyNameInOut);
-      if (propertyValue == null) {
-        propertyValue = (BaseOBObject) ((ShipmentInOutLine) getCopiedFromLine())
-            .getShipmentReceipt().get(propertyNameInOut);
-      }
-    }
-    return propertyValue;
+        (UserDimension2) getPropertyFromCopiedFromLineOrHeader("ndDimension"));
   }
 
   private Organization getOrganizationForNewLine() {
     return (Organization) getCopiedFromLine().get("organization");
+  }
+
+  private BaseOBObject getPropertyFromCopiedFromLineOrHeader(final String propertyName) {
+    final BaseOBObject copiedFromProperty = (BaseOBObject) getCopiedFromLine().get(propertyName);
+    if (copiedFromProperty == null) {
+      // Parent property
+      return isCopiedFromOrderLine() ? (BaseOBObject) ((OrderLine) getCopiedFromLine())
+          .getSalesOrder().get(propertyName)
+          : (BaseOBObject) ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt().get(
+              propertyName);
+    }
+    return copiedFromProperty;
   }
 
   private void updateBOMParent() {
