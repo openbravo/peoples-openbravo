@@ -479,7 +479,7 @@
         var price = line.get('price'),
             gross = line.get('gross'),
             totalDiscount = 0,
-            grossListPrice = line.get('priceList'),
+            grossListPrice = line.get('grossListPrice') || line.get('priceList'),
             grossUnitPrice, discountPercentage, base;
 
         // Calculate inline discount: discount applied before promotions
