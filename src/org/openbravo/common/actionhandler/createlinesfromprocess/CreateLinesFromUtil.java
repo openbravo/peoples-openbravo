@@ -73,7 +73,7 @@ class CreateLinesFromUtil {
     return line instanceof OrderLine;
   }
 
-  static boolean isShipmentReceiptLine(BaseOBObject line) {
+  static boolean isInOutLine(BaseOBObject line) {
     return line instanceof ShipmentInOutLine;
   }
 

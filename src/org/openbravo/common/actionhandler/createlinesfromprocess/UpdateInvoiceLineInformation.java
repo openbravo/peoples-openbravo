@@ -69,7 +69,7 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
       getInvoiceLine().setSalesOrderLine((OrderLine) getCopiedFromLine());
       getInvoiceLine().setGoodsShipmentLine(
           CreateLinesFromUtil.getShipmentInOutLine(getPickExecJSONObject()));
-    } else if (CreateLinesFromUtil.isShipmentReceiptLine(getCopiedFromLine())) {
+    } else if (isCopiedFromInOutLine()) {
       getInvoiceLine().setGoodsShipmentLine((ShipmentInOutLine) getCopiedFromLine());
       getInvoiceLine().setSalesOrderLine(
           ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());

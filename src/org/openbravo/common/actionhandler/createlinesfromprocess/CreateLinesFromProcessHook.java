@@ -61,6 +61,7 @@ public abstract class CreateLinesFromProcessHook {
   private InvoiceLine invoiceLine; // Not saved yet!
   private String copiedFromLineId;
   private boolean isCopiedFromOrderLine;
+  private boolean isCopiedFromInOutLine;
   private JSONObject pickedJSONObject;
 
   /**
@@ -87,6 +88,7 @@ public abstract class CreateLinesFromProcessHook {
     this.invoiceLine = newInvoiceLine;
     this.copiedFromLineId = (String) copiedFromLine.getId();
     this.isCopiedFromOrderLine = CreateLinesFromUtil.isOrderLine(copiedFromLine);
+    this.isCopiedFromInOutLine = CreateLinesFromUtil.isInOutLine(copiedFromLine);
     this.pickedJSONObject = pickExecuteLineValues;
   }
 
@@ -121,7 +123,12 @@ public abstract class CreateLinesFromProcessHook {
     return isCopiedFromOrderLine;
   }
 
+  public boolean isCopiedFromInOutLine() {
+    return isCopiedFromInOutLine;
+  }
+
   public JSONObject getPickExecJSONObject() {
     return pickedJSONObject;
   }
+
 }
