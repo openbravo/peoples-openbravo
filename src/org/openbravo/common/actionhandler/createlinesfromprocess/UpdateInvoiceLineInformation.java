@@ -170,6 +170,17 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     }
   }
 
+  private Order getRelatedOrder() {
+    Order processingOrder = null;
+    if (isCopiedFromOrderLine()) {
+      processingOrder = ((OrderLine) getCopiedFromLine()).getSalesOrder();
+    } else if (((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine() != null) {
+      processingOrder = ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine()
+          .getSalesOrder();
+    }
+    return processingOrder;
+  }
+
   private boolean existsOtherOrdersLinkedToThisInvoice(Order processingOrder) {
     StringBuilder relatedOrdersHQL = new StringBuilder(" as il ");
     relatedOrdersHQL.append(" where il.invoice.id = :invId");
@@ -181,16 +192,5 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     relatedOrdersQuery.setNamedParameter("ordId", processingOrder.getId());
     relatedOrdersQuery.setMaxResult(1);
     return !relatedOrdersQuery.list().isEmpty();
-  }
-
-  private Order getRelatedOrder() {
-    Order processingOrder = null;
-    if (isCopiedFromOrderLine()) {
-      processingOrder = ((OrderLine) getCopiedFromLine()).getSalesOrder();
-    } else if (((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine() != null) {
-      processingOrder = ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine()
-          .getSalesOrder();
-    }
-    return processingOrder;
   }
 }
