@@ -556,9 +556,9 @@ public class ResetAccounting {
   }
 
   private static HashMap<String, Integer> treatExceptions(String myQuery, String recordId,
-      String table, Set<String> orgIds, String client, Date dateFrom, Date dateTo,
-      String calendarId, String datefrom, String dateto, String dbt, String orgPeriodControl,
-      String targetOrganization) {
+      String table, Set<String> orgIds, String client, Date periodStartingDate,
+      Date periodEndingDate, String calendarId, String parameterDateFrom, String parameterDateTo,
+      String dbt, String orgPeriodControl, String targetOrganization) {
     HashMap<String, Integer> results = new HashMap<String, Integer>();
     try {
       results.put("deleted", 0);
@@ -571,10 +571,12 @@ public class ResetAccounting {
       query.setString("clientId", client);
       query.setString("dbt", dbt);
       query.setString("tableId", table);
-      query.setDate("dateFrom", StringUtils.isNotEmpty(datefrom) ? OBDateUtils.getDate(datefrom)
-          : dateFrom);
-      query
-          .setDate("dateTo", StringUtils.isNotEmpty(dateto) ? OBDateUtils.getDate(dateto) : dateTo);
+      query.setDate("dateFrom",
+          StringUtils.isNotEmpty(parameterDateFrom) ? OBDateUtils.getDate(parameterDateFrom)
+              : periodStartingDate);
+      query.setDate("dateTo",
+          StringUtils.isNotEmpty(parameterDateTo) ? OBDateUtils.getDate(parameterDateTo)
+              : periodEndingDate);
       query.setString("organization", targetOrganization);
       if (recordId != null && !"".equals(recordId)) {
         query.setMaxResults(1);
@@ -592,13 +594,13 @@ public class ResetAccounting {
         List<AccountingFact> facts = factCrit.list();
         Set<Date> exceptionDates = new HashSet<Date>();
         for (AccountingFact fact : facts) {
-          if (dateFrom.compareTo(fact.getAccountingDate()) != 0
-              || dateTo.compareTo(fact.getAccountingDate()) != 0) {
+          if (periodStartingDate.compareTo(fact.getAccountingDate()) != 0
+              || periodEndingDate.compareTo(fact.getAccountingDate()) != 0) {
             exceptionDates.add(fact.getAccountingDate());
           }
         }
         if (checkDates(exceptionDates, client, orgIds, facts.get(0).getDocumentCategory(),
-            calendarId, datefrom, dateto, orgPeriodControl)) {
+            calendarId, parameterDateFrom, parameterDateTo, orgPeriodControl)) {
           List<String> toDelete = new ArrayList<String>();
           toDelete.add(transaction);
           results = delete(toDelete, table, client);
