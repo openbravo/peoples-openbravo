@@ -7,13 +7,14 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, _, enyo */
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalChange',
   handlers: {
-    'onActionOK': 'actionOK'
+    'onActionOK': 'actionOK',
+    'onActionInput': 'actionInput'
   },
   bodyContent: {
     name: 'bodyattributes',
@@ -53,11 +54,28 @@ enyo.kind({
     }, this);
   },
   executeOnShow: function () {
-    //this.$.bodyContent.$.bodymessage.setContent(this.args.message);
     this.waterfall('onActionShow', this.args);
   },
   actionOK: function (inSender, inEvent) {
     alert('OK');
+    // var i;
+    // var lines = this.$.bodyContent.$.paymentlines.getComponents();
+    // for (i = 0; i < lines.length; i ++) {
+    //   var change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate);
+    // }
+    // this.receipt.set('changePayments');
+    // this.doHideThisPopup();
+  },
+  actionInput: function (inSender, inEvent) {
+    // var i;
+    // var lines = this.$.bodyContent.$.paymentlines.getComponents();
+    // for (i = 0; i < lines.length; i ++) {
+    // }
+    // this.$.bodyContent.$.paymentlines.getComponents().forEach(function (item) {
+    //   if (inSender === item) {
+    //   }
+    //   console.log(item.name + '-> ' + item.$.textline.getValue());
+    // });
   }
 });
 
@@ -98,7 +116,8 @@ enyo.kind({
       kind: 'enyo.Input',
       type: 'text',
       classes: 'input',
-      style: 'width: 100%; margin-bottom:0px; text-align: right;'
+      style: 'width: 100%; margin-bottom:0px; text-align: right;',
+      oninput: 'actionInput'
     }]
   }, {
     name: 'infoline',
@@ -111,15 +130,26 @@ enyo.kind({
     this.inherited(arguments);
     this.$.labelLine.content = this.payment.payment.commercialName;
   },
+  actionInput: function (inSender, inEvent) {
+    var value = parseFloat(this.$.textline.getValue());
+    var valueOK = !_.isNaN(value) && value >= 0 && value <= this.maxValue;
+    this.$.textline.addStyles('background-color: ' + (valueOK ? 'inherit' : '#fe7f7f') + ';');
+    return this.bubble('onActionInput', {
+      'result': valueOK
+    });
+  },
   actionShow: function (inSender, inEvent) {
     var change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate);
-    var cRounded = OB.OBPOSPointOfSale.UI.Payment.getChangeRounded(this.payment, change);
+    var cRounded = OB.Payments.Change.getChangeRounded(this.payment, change);
+    this.maxValue = cRounded;
     this.$.infoline.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(cRounded, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
 
     var currentChange = inEvent.receipt.get('changePayments').find(function (item) {
       return item.key === this.payment.payment.searchKey;
     }, this);
-    this.$.textline.setValue(currentChange ? currentChange.amountRounded : 0);
+    var amountRounded = currentChange ? currentChange.amountRounded : 0;
+    this.$.textline.setValue(amountRounded);
+    this.$.textline.addStyles('background-color: inherit;');
     setTimeout(function () {
       this.$.textline.hasNode().setSelectionRange(0, this.$.textline.getValue().length);
     }.bind(this), 100);
