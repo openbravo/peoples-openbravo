@@ -183,10 +183,16 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
   protected String getMovementQuantityHQL() {
     StringBuilder movementQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
+      movementQuantityHql.append(" (e.movementQuantity - COALESCE(");
       movementQuantityHql
-          .append(" (e.movementQuantity - sum(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
+          .append(" (SELECT SUM(il2.invoicedQuantity) FROM e.invoiceLineList il2 left join il2.invoice i2");
+      movementQuantityHql.append(" WHERE i2.documentStatus = 'CO')");
+      movementQuantityHql.append(" ,0))");
     } else {
-      movementQuantityHql.append(" (e.movementQuantity-SUM(COALESCE(mi.quantity,0)))");
+      movementQuantityHql.append(" (e.movementQuantity - COALESCE(");
+      movementQuantityHql
+          .append(" (SELECT SUM(mi2.quantity) FROM e.procurementReceiptInvoiceMatchList mi2)");
+      movementQuantityHql.append(" ,0))");
     }
     return movementQuantityHql.toString();
   }

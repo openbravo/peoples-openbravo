@@ -216,8 +216,11 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (isSalesTransaction) {
       orderedQuantityHql.append(" e.orderedQuantity-COALESCE(e.invoicedQuantity,0)");
     } else {
-      orderedQuantityHql.append(" e.orderedQuantity-SUM(COALESCE(m.quantity,0))-COALESCE(");
-      orderedQuantityHql.append(" (SELECT SUM(COALESCE(ci.invoicedQuantity, 0))");
+      orderedQuantityHql.append(" e.orderedQuantity");
+      orderedQuantityHql.append(" - COALESCE((SELECT SUM(COALESCE(mp.quantity, 0))");
+      orderedQuantityHql
+          .append("  FROM e.procurementPOInvoiceMatchList mp where mp.invoiceLine.id is not null),0)");
+      orderedQuantityHql.append(" - COALESCE((SELECT SUM(COALESCE(ci.invoicedQuantity, 0))");
       orderedQuantityHql.append("  FROM OrderLine co");
       orderedQuantityHql.append("    LEFT JOIN co.invoiceLineList ci");
       orderedQuantityHql.append("  WHERE ci.invoice.id= :invId");
