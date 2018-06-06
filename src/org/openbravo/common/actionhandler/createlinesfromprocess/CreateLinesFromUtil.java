@@ -207,8 +207,8 @@ class CreateLinesFromUtil {
     shipmentHQLQuery.append("  and sh.documentStatus in ('CO', 'CL')");
     if (isSalesTransaction) {
       shipmentHQLQuery.append("  and sh.completelyInvoiced = 'N'");
-    }
-    if (!isSalesTransaction) {
+      shipmentHQLQuery.append("  and il.reinvoice = 'N'"); // IsInvoiced='N'
+    } else {
       shipmentHQLQuery
           .append(" group by il.id, il.salesOrderLine.id, il.movementQuantity, il.orderQuantity,");
       shipmentHQLQuery
