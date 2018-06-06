@@ -27,16 +27,6 @@ enyo.kind({
     onmouseover: 'pauseAnimation',
     onmouseout: 'resumeAnimation'
   },
-  statics: {
-    getChangeRounded: function (p, c) {
-      if (p.changeRounding) {
-        var roundingto = p.changeRounding.roundingto;
-        var roundinggap = p.changeRounding.roundingdownlimit;
-        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c, roundinggap), roundingto)));
-      }
-      return c;
-    }
-  },
   getSelectedPayment: function () {
     if (this.receipt && this.receipt.get('selectedPayment')) {
       return this.receipt.get('selectedPayment');
@@ -379,7 +369,6 @@ enyo.kind({
       this.$.creditsalesaction.hide();
     }
   },
-
   actionChangeButton: function (inSender, inEvent) {
     this.doShowPopup({
       popup: 'modalchange',
@@ -388,46 +377,19 @@ enyo.kind({
       }
     });
   },
-
   calculateChangeReset: function () {
-    // Reset change calculation results
-    this.receipt.set('changePayments', []);
-    OB.MobileApp.model.set('changeReceipt', '');
+    var emptypaymentchange = new OB.Payments.Change();
 
-    // Reset change UI
-    this.$.changebutton.hide();
-    this.$.change.setContent('');
-    this.$.change.hide();
-    this.$.changelbl.hide();
-
-    // Now that Change has been calculated, then calculate if there is enough (yes)
+    // Update receipt and UI with empty paymentChange.
+    this.applyPaymentChange(emptypaymentchange);
+    // Now that Change has been calculated, then calculate if there is enough
     this.calculateEnoughChange();
   },
-
   calculateChange: function (firstpayment, firstchange) {
     // payment is the first payment to use in the change calculation
     // change is > 0 and is in the document currency
     // Result vars...
-    var changeLabelContent = '';
-    var changePayments = [];
-
-    // Add new change item to result vars...
-
-    function addChange(p, c) {
-      if (OB.DEC.compare(c)) {
-        // Add new change Payment
-        if (changeLabelContent) {
-          changeLabelContent += ' + ';
-        }
-        var cRounded = OB.OBPOSPointOfSale.UI.Payment.getChangeRounded(p, c);
-        changeLabelContent += OB.I18N.formatCurrencyWithSymbol(cRounded, p.symbol, p.currencySymbolAtTheRight);
-        changePayments.push({
-          'key': p.payment.searchKey,
-          'amount': c,
-          'amountRounded': cRounded
-        });
-      }
-    }
+    var paymentchange = new OB.Payments.Change();
 
     // Recursive function to calculate changes, payment by payment
 
@@ -437,7 +399,7 @@ enyo.kind({
         var paymentSearchKey = payment.payment.searchKey;
         var changePayment = OB.DEC.mul(change, payment.mulrate);
         var changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan)));
-        addChange(payment, changePaymentRounded);
+        paymentchange.add(payment, changePaymentRounded);
 
         var linkedSearchKey = payment.paymentMethod.changePaymentType;
         if (linkedSearchKey) {
@@ -451,7 +413,7 @@ enyo.kind({
         }
       } else {
         // No changeLessThan, so add the change and exit recursion...
-        addChange(payment, OB.DEC.mul(change, payment.mulrate));
+        paymentchange.add(payment, OB.DEC.mul(change, payment.mulrate));
       }
     }
 
@@ -460,23 +422,14 @@ enyo.kind({
       calculateNextChange(firstpayment, firstchange);
     } else {
       // No multi currency change logic, add a simple change item and return
-      addChange(firstpayment, OB.DEC.mul(firstchange, firstpayment.mulrate));
+      paymentchange.add(firstpayment, OB.DEC.mul(firstchange, firstpayment.mulrate));
     }
 
-    // Set change calculation results
-    this.receipt.set('changePayments', changePayments);
-    OB.MobileApp.model.set('changeReceipt', changeLabelContent);
-
-    // Set change UI
-    this.$.changebutton.show();
-    this.$.change.setContent(changeLabelContent);
-    this.$.change.show();
-    this.$.changelbl.show();
-
+    // Update receipt and UI with new calculations
+    this.applyPaymentChange(paymentchange);
     // Now that Change has been calculated, then calculate if there is enough
     this.calculateEnoughChange();
   },
-
   calculateEnoughChange: function () {
     var result = this.receipt.get('changePayments').some(function (itemchange) {
       var p = OB.MobileApp.model.paymentnames[itemchange.key];
@@ -489,8 +442,22 @@ enyo.kind({
     // Enable / disable receipt buttons done and exact
     this.$.donebutton.setLocalDisabled(result);
     this.$.exactbutton.setLocalDisabled(result);
-  },
 
+    // Update flag
+    this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
+  },
+  applyPaymentChange: function (paymentchange) {
+    // Set change calculation results
+    this.receipt.set('changePayments', paymentchange.payments);
+    OB.MobileApp.model.set('changeReceipt', paymentchange.label);
+
+    // Set change UI
+    var showing = paymentchange.payments.length > 0;
+    this.$.changebutton.setShowing(showing);
+    this.$.change.setContent(paymentchange.label);
+    this.$.change.setShowing(showing);
+    this.$.changelbl.setShowing(showing);
+  },
   updatePending: function () {
     var execution = OB.UTIL.ProcessController.start('updatePending');
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -1801,5 +1768,42 @@ enyo.kind({
     this.setDisabled(true);
     enyo.$.scrim.show();
     receipt.trigger('paymentDone', me.allowOpenDrawer);
+  }
+});
+
+enyo.kind({
+  kind: 'enyo.Component',
+  name: 'OB.Payments.Change',
+  statics: {
+    getChangeRounded: function (p, c) {
+      if (p.changeRounding) {
+        var roundingto = p.changeRounding.roundingto;
+        var roundinggap = p.changeRounding.roundingdownlimit;
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c, roundinggap), roundingto)));
+      }
+      return c;
+    }
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.label = '';
+    this.payments = [];
+  },
+  add: function (p, c) {
+    // p is the payment of the new change to add
+    // c is the change to add in the payment currency
+    if (OB.DEC.compare(c)) {
+      // Add new change Payment
+      if (this.label) {
+        this.label += ' + ';
+      }
+      var cRounded = OB.Payments.Change.getChangeRounded(p, c);
+      this.label += OB.I18N.formatCurrencyWithSymbol(cRounded, p.symbol, p.currencySymbolAtTheRight);
+      this.payments.push({
+        'key': p.payment.searchKey,
+        'amount': c,
+        'amountRounded': cRounded
+      });
+    }
   }
 });
