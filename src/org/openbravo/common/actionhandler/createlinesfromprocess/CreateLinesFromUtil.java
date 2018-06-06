@@ -183,7 +183,7 @@ class CreateLinesFromUtil {
   }
 
   @SuppressWarnings("unchecked")
-  static List<ShipmentInOutLineData> getRelatedShipmentLines(final OrderLine orderLine) {
+  static List<InOutLineData> getRelatedNotInvoicedInOutLines(final OrderLine orderLine) {
     Boolean isSalesTransaction = orderLine.getSalesOrder().isSalesTransaction();
     StringBuilder shipmentHQLQuery = new StringBuilder(" SELECT il.id, ");
     if (isSalesTransaction) {
@@ -219,15 +219,14 @@ class CreateLinesFromUtil {
     final Session session = OBDal.getInstance().getSession();
     final Query query = session.createQuery(shipmentHQLQuery.toString());
     query.setString("orderLineId", orderLine.getId());
-    return getShipmentInOutLinesInformation((List<Object[]>) query.list());
+    return getInOutLinesInformation((List<Object[]>) query.list());
   }
 
-  private static List<ShipmentInOutLineData> getShipmentInOutLinesInformation(
-      List<Object[]> shipmentInOutLineData) {
-    List<ShipmentInOutLineData> shipmentInOutLines = new ArrayList<>();
-    for (Object[] shipmentInOutLine : shipmentInOutLineData) {
-      shipmentInOutLines.add(new ShipmentInOutLineData(shipmentInOutLine));
+  private static List<InOutLineData> getInOutLinesInformation(List<Object[]> inOutLinesData) {
+    List<InOutLineData> inOutLines = new ArrayList<>();
+    for (Object[] inOutLine : inOutLinesData) {
+      inOutLines.add(new InOutLineData(inOutLine));
     }
-    return shipmentInOutLines;
+    return inOutLines;
   }
 }

@@ -25,7 +25,7 @@ import java.math.BigDecimal;
  * Class to store Shipment/Receipt Lines Information data
  *
  */
-class ShipmentInOutLineData {
+class InOutLineData {
   private String shipmentInOutLineId;
   private BigDecimal movementQuantity;
   private BigDecimal orderQuantity;
@@ -33,7 +33,7 @@ class ShipmentInOutLineData {
   private String operativeUOMId;
   private String uomId;
 
-  ShipmentInOutLineData(Object[] data) {
+  InOutLineData(Object[] data) {
     this.shipmentInOutLineId = (String) data[0];
     this.movementQuantity = (BigDecimal) data[1];
     this.orderQuantity = (BigDecimal) data[2];

@@ -135,11 +135,12 @@ public class CreateInvoiceLinesFromProcess {
       JSONObject selectedLine = selectedLinesParam.getJSONObject(index);
       BaseOBObject copiedLine = OBDal.getInstance().get(linesFromClass,
           selectedLine.getString("id"));
-      List<JSONObject> relatedShipmentLinesNotAlreadyInvoiced = getRelatedShipmentLinesAsJSONObjects((OrderLine) copiedLine);
-      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine)
-          && !relatedShipmentLinesNotAlreadyInvoiced.isEmpty()) {
-        for (JSONObject shipmentLineRelatedToOrderLine : relatedShipmentLinesNotAlreadyInvoiced) {
-          linesToProcess.put(shipmentLineRelatedToOrderLine);
+      List<JSONObject> relatedInOutLinesNotAlreadyInvoiced = getRelatedInOutLinesNotAlreadyInvoiced(
+          selectedLine, copiedLine);
+      if (relatedInOutLinesNotAlreadyInvoiced != null
+          && !relatedInOutLinesNotAlreadyInvoiced.isEmpty()) {
+        for (JSONObject inOutLineRelatedToOrderLine : relatedInOutLinesNotAlreadyInvoiced) {
+          linesToProcess.put(inOutLineRelatedToOrderLine);
         }
       } else {
         // Two possibilities: Order line not linked to InOut line or InOut line
@@ -149,11 +150,22 @@ public class CreateInvoiceLinesFromProcess {
     return linesToProcess;
   }
 
-  private List<JSONObject> getRelatedShipmentLinesAsJSONObjects(final OrderLine orderLine) {
+  private List<JSONObject> getRelatedInOutLinesNotAlreadyInvoiced(JSONObject selectedLine,
+      BaseOBObject copiedLine) {
+    boolean isOrderLineWithRelatedShipmentReceiptLines = CreateLinesFromUtil
+        .isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine);
+    List<JSONObject> relatedInOutLinesNotAlreadyInvoiced = null;
+    if (isOrderLineWithRelatedShipmentReceiptLines) {
+      relatedInOutLinesNotAlreadyInvoiced = getRelatedNotInvoicedInOutLinesAsJSONObjects((OrderLine) copiedLine);
+    }
+    return relatedInOutLinesNotAlreadyInvoiced;
+  }
+
+  private List<JSONObject> getRelatedNotInvoicedInOutLinesAsJSONObjects(final OrderLine orderLine) {
     final List<JSONObject> relatedShipmentLinesToOrderLine = new ArrayList<>();
-    for (ShipmentInOutLineData shipmentInOutLineData : CreateLinesFromUtil
-        .getRelatedShipmentLines(orderLine)) {
-      relatedShipmentLinesToOrderLine.add(getShipmentInOutJson((OrderLine) orderLine,
+    for (InOutLineData shipmentInOutLineData : CreateLinesFromUtil
+        .getRelatedNotInvoicedInOutLines(orderLine)) {
+      relatedShipmentLinesToOrderLine.add(getInOutLineJson((OrderLine) orderLine,
           shipmentInOutLineData));
       OBDal
           .getInstance()
@@ -165,8 +177,7 @@ public class CreateInvoiceLinesFromProcess {
     return relatedShipmentLinesToOrderLine;
   }
 
-  private JSONObject getShipmentInOutJson(OrderLine orderLine,
-      ShipmentInOutLineData shipmentInOutLineData) {
+  private JSONObject getInOutLineJson(OrderLine orderLine, InOutLineData shipmentInOutLineData) {
     JSONObject line = new JSONObject();
     try {
       line.put("uOM", shipmentInOutLineData.getUOMId());
