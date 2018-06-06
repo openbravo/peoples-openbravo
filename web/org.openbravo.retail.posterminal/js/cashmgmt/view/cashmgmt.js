@@ -22,9 +22,6 @@ enyo.kind({
     span: 6,
     tap: function () {
       OB.POS.hwserver.checkDrawer(function () {
-        if (!OB.MobileApp.view.$.containerWindow.showing) {
-          OB.MobileApp.model.trigger('allModelsLoaded');
-        }
         OB.POS.navigate('retail.pointofsale');
       });
     }
@@ -47,9 +44,6 @@ enyo.kind({
     },
     tap: function () {
       OB.POS.hwserver.checkDrawer(function () {
-        if (!OB.MobileApp.view.$.containerWindow.showing) {
-          OB.MobileApp.model.trigger('allModelsLoaded');
-        }
         this.model.depsdropstosave.trigger('makeDeposits');
       }, this);
     }
