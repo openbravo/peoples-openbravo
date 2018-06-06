@@ -308,7 +308,7 @@ enyo.kind({
       }
       requirements.receiptBpId = receipt.get('bp').get('id');
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
-      requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
+      requirements.isReceiptLinesLengthGreaterThanZero = (model.get('orderList').current.get('lines').length > 0) ? model.get('orderList').current.get('lines').length > 0 : receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
       hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
       requirements.isLocallyGeneratedPayments = !OB.UTIL.isNullOrUndefined(receipt.get('payments').find(function (payment) {
@@ -566,11 +566,6 @@ enyo.kind({
     }, this);
     this.model.get('order').on('change:id', function () {
       this.disabledChanged(false);
-    }, this);
-    this.model.get('order').get('lines').on('add', function () {
-      if (this.disabled) {
-        this.disabledChanged(false);
-      }
     }, this);
     // the button state must be set only once, in the initialization
     this.setDisabled(true);
