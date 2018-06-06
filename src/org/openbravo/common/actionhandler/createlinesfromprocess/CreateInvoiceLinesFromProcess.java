@@ -135,8 +135,10 @@ public class CreateInvoiceLinesFromProcess {
       JSONObject selectedLine = selectedLinesParam.getJSONObject(index);
       BaseOBObject copiedLine = OBDal.getInstance().get(linesFromClass,
           selectedLine.getString("id"));
-      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine)) {
-        for (JSONObject shipmentLineRelatedToOrderLine : getRelatedShipmentLinesAsJSONObjects((OrderLine) copiedLine)) {
+      List<JSONObject> relatedShipmentLinesNotAlreadyInvoiced = getRelatedShipmentLinesAsJSONObjects((OrderLine) copiedLine);
+      if (CreateLinesFromUtil.isOrderLineWithRelatedShipmentReceiptLines(copiedLine, selectedLine)
+          && !relatedShipmentLinesNotAlreadyInvoiced.isEmpty()) {
+        for (JSONObject shipmentLineRelatedToOrderLine : relatedShipmentLinesNotAlreadyInvoiced) {
           linesToProcess.put(shipmentLineRelatedToOrderLine);
         }
       } else {
