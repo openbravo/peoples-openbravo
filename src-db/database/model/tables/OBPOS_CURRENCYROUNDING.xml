@@ -59,5 +59,7 @@
         <unique-column name="C_CURRENCY_ID"/>
       </unique>
       <check name="OBPOS_CURROUND_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_CURROUND_ROUNDGTZERO"><![CDATA[ROUNDINGTO > 0 AND ROUNDINGDOWNLIMIT >= 0]]></check>
+      <check name="OBPOS_CURROUND_ROUNDREL"><![CDATA[ROUNDINGTO >= ROUNDINGDOWNLIMIT]]></check>
     </table>
   </database>
