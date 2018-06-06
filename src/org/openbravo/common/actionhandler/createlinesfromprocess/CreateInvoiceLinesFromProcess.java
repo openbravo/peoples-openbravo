@@ -42,10 +42,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
-import org.openbravo.model.common.invoice.InvoiceLineAccountingDimension;
 import org.openbravo.model.common.order.OrderLine;
-import org.openbravo.model.common.order.OrderLineAccountingDimension;
-import org.openbravo.model.materialmgmt.transaction.InOutLineAccountingDimension;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,82 +195,13 @@ public class CreateInvoiceLinesFromProcess {
       currentInvoice.getInvoiceLineList().add(newInvoiceLine);
       OBDal.getInstance().save(newInvoiceLine);
       OBDal.getInstance().save(currentInvoice);
-      createAccountDimensionsToInvoiceLineFromCopiedLine(newInvoiceLine, createdFromLine);
+      new InsertAcctDimensions(newInvoiceLine, createdFromLine).createAndSaveAcctDimensionLines();
       // Flush is needed to persist this created invoice line in the database to be taken into
       // account when the invoice's order reference is updated at document level
       OBDal.getInstance().flush();
       createdInvoiceLinesCount++;
     }
     return createdInvoiceLinesCount;
-  }
-
-  private void createAccountDimensionsToInvoiceLineFromCopiedLine(InvoiceLine invoiceLine,
-      BaseOBObject createdFromLine) {
-    if (CreateLinesFromUtil.isOrderLine(createdFromLine)) {
-      saveOrderLineAcctDimension(invoiceLine, createdFromLine);
-    } else {
-      saveInOutLineAcctDimension(invoiceLine, createdFromLine);
-    }
-  }
-
-  private void saveOrderLineAcctDimension(InvoiceLine invoiceLine, BaseOBObject createdFromLine) {
-    OrderLine orderLine = ((OrderLine) createdFromLine);
-    List<OrderLineAccountingDimension> orderLineAccDimensions = orderLine
-        .getOrderLineAccountingDimensionList();
-    for (OrderLineAccountingDimension orderLineAccDimension : orderLineAccDimensions) {
-      createInvoiceLineAccDimension(invoiceLine, orderLineAccDimension, null);
-    }
-  }
-
-  private void saveInOutLineAcctDimension(InvoiceLine invoiceLine, BaseOBObject createdFromLine) {
-    ShipmentInOutLine inOutLine = ((ShipmentInOutLine) createdFromLine);
-    List<InOutLineAccountingDimension> inOutLineAccDimensions = inOutLine
-        .getInOutLineAccountingDimensionList();
-    for (InOutLineAccountingDimension inOutLineAccDimension : inOutLineAccDimensions) {
-      createInvoiceLineAccDimension(invoiceLine, null, inOutLineAccDimension);
-    }
-  }
-
-  /**
-   * Creates a new InvoiceLineAccountingDimension to an invoice line from an
-   * OrderLineAccountingDimension if it is passed or from InOutLineAccountingDimension if not
-   * 
-   * @param invoiceLine
-   *          The invoice line of the accounting dimension
-   * @param orderLineAccDimension
-   *          The order line accounting dimension is copied
-   * @param inOutLineAccDimension
-   *          The inout line accounting dimension is copied
-   */
-  private void createInvoiceLineAccDimension(InvoiceLine invoiceLine,
-      OrderLineAccountingDimension orderLineAccDimension,
-      InOutLineAccountingDimension inOutLineAccDimension) {
-    InvoiceLineAccountingDimension invoiceLineAccDimension = OBProvider.getInstance().get(
-        InvoiceLineAccountingDimension.class);
-    invoiceLineAccDimension.setActivity(orderLineAccDimension != null ? orderLineAccDimension
-        .getActivity() : inOutLineAccDimension.getActivity());
-    invoiceLineAccDimension
-        .setAmount(orderLineAccDimension != null ? orderLineAccDimension.getAmount()
-            : inOutLineAccDimension.getQuantity().multiply(invoiceLine.getStandardPrice()));
-    invoiceLineAccDimension.setAsset(orderLineAccDimension != null ? orderLineAccDimension
-        .getAsset() : inOutLineAccDimension.getAsset());
-    invoiceLineAccDimension
-        .setBusinessPartner(orderLineAccDimension != null ? orderLineAccDimension
-            .getBusinessPartner() : inOutLineAccDimension.getBusinessPartner());
-    invoiceLineAccDimension.setCostcenter(orderLineAccDimension != null ? orderLineAccDimension
-        .getCostcenter() : inOutLineAccDimension.getCostcenter());
-    invoiceLineAccDimension.setNdDimension(orderLineAccDimension != null ? orderLineAccDimension
-        .getNdDimension() : inOutLineAccDimension.getNdDimension());
-    invoiceLineAccDimension.setOrganization(orderLineAccDimension != null ? orderLineAccDimension
-        .getOrganization() : inOutLineAccDimension.getOrganization());
-    invoiceLineAccDimension.setProduct(orderLineAccDimension != null ? orderLineAccDimension
-        .getProduct() : inOutLineAccDimension.getProduct());
-    invoiceLineAccDimension.setProject(orderLineAccDimension != null ? orderLineAccDimension
-        .getProject() : inOutLineAccDimension.getProject());
-    invoiceLineAccDimension.setStDimension(orderLineAccDimension != null ? orderLineAccDimension
-        .getStDimension() : inOutLineAccDimension.getStDimension());
-    invoiceLineAccDimension.setInvoiceLine(invoiceLine);
-    OBDal.getInstance().save(invoiceLineAccDimension);
   }
 
   /**
