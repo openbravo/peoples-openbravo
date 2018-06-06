@@ -389,24 +389,28 @@ enyo.kind({
     // payment is the first payment to use in the change calculation
     // change is > 0 and is in the document currency
     // Result vars...
-    var paymentchange = new OB.Payments.Change();
-    var s = firstpayment.obposPosprecision;
+    var paymentchange, s;
+
+    paymentchange = new OB.Payments.Change();
+    s = firstpayment.obposPosprecision;
 
     // Recursive function to calculate changes, payment by payment
 
     function calculateNextChange(payment, change) {
-      var s = payment.obposPosprecision;
-      var changeLessThan = payment.paymentMethod.changeLessThan;
+      var s, changeLessThan, paymentSearchKey, changePayment, changePaymentRounded, linkedPayment;
+
+      s = payment.obposPosprecision;
+      changeLessThan = payment.paymentMethod.changeLessThan;
       if (changeLessThan) {
-        var paymentSearchKey = payment.payment.searchKey;
-        var changePayment = OB.DEC.mul(change, payment.mulrate, s);
+        paymentSearchKey = payment.payment.searchKey;
+        changePayment = OB.DEC.mul(change, payment.mulrate, s);
         // Using 5 as rounding precision as a maximum precsion for all currencies
-        var changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), s);
+        changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), s);
         paymentchange.add(payment, changePaymentRounded);
 
         var linkedSearchKey = payment.paymentMethod.changePaymentType;
         if (linkedSearchKey) {
-          var linkedPayment = OB.MobileApp.model.get('payments').find(function (p) {
+          linkedPayment = OB.MobileApp.model.get('payments').find(function (p) {
             return p.paymentMethod.id === linkedSearchKey;
           });
           if (linkedPayment) {

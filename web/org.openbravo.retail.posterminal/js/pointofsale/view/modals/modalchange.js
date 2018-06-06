@@ -131,24 +131,29 @@ enyo.kind({
     this.$.labelLine.content = this.payment.payment.commercialName;
   },
   actionInput: function (inSender, inEvent) {
-    var value = parseFloat(this.$.textline.getValue());
-    var valueOK = !_.isNaN(value) && value >= 0 && value <= this.maxValue;
+    var value, valueOK;
+
+    value = parseFloat(this.$.textline.getValue());
+    valueOK = !_.isNaN(value) && value >= 0 && value <= this.maxValue;
     this.$.textline.addStyles('background-color: ' + (valueOK ? 'inherit' : '#fe7f7f') + ';');
     return this.bubble('onActionInput', {
       'result': valueOK
     });
   },
   actionShow: function (inSender, inEvent) {
-    var s = this.payment.obposPosprecision;
-    var change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, s);
-    var cRounded = OB.Payments.Change.getChangeRounded(this.payment, change);
+    var s, change, cRounded, currentChange, amountRounded;
+
+    s = this.payment.obposPosprecision;
+    change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, s);
+    cRounded = OB.Payments.Change.getChangeRounded(this.payment, change);
     this.maxValue = cRounded;
     this.$.infoline.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(cRounded, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
 
-    var currentChange = inEvent.receipt.get('changePayments').find(function (item) {
+    currentChange = inEvent.receipt.get('changePayments').find(function (item) {
       return item.key === this.payment.payment.searchKey;
     }, this);
-    var amountRounded = currentChange ? currentChange.amountRounded : 0;
+
+    amountRounded = currentChange ? currentChange.amountRounded : 0;
     this.$.textline.setValue(amountRounded);
     this.$.textline.addStyles('background-color: inherit;');
     setTimeout(function () {
