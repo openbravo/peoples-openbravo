@@ -8,7 +8,6 @@
  */
 package org.openbravo.retail.posterminal.term;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +19,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -54,6 +54,7 @@ import org.openbravo.service.json.JsonConstants;
 
 public class Terminal extends JSONProcessSimple {
   public static final String terminalPropertyExtension = "OBPOS_TerminalExtension";
+  private static final Logger log = Logger.getLogger(Terminal.class);
 
   @Inject
   @Any
@@ -280,7 +281,9 @@ public class Terminal extends JSONProcessSimple {
       result.put("result", "0");
       return result;
 
-    } catch (IOException e) {
+    } catch (Exception e) {
+      log.error("Terminal exception: " + e.getMessage() + "Stacktrace: "
+          + e.getStackTrace().toString());
       return null;
     } finally {
       OBContext.restorePreviousMode();
