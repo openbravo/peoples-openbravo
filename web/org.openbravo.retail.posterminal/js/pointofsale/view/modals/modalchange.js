@@ -12,6 +12,9 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalChange',
+  events: {
+    onHideThisPopup: ''
+  },
   handlers: {
     'onActionOK': 'actionOK',
     'onActionInput': 'actionInput'
@@ -57,14 +60,28 @@ enyo.kind({
     this.waterfall('onActionShow', this.args);
   },
   actionOK: function (inSender, inEvent) {
-    alert('OK');
-    // var i;
-    // var lines = this.$.bodyContent.$.paymentlines.getComponents();
-    // for (i = 0; i < lines.length; i ++) {
-    //   var change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate);
-    // }
-    // this.receipt.set('changePayments');
-    // this.doHideThisPopup();
+    var lines, result, i, l, change;
+
+    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    result = [];
+
+    for (i = 0; i < lines.length; i++) {
+      l = lines[i];
+      if (l.hasErrors) {
+        OB.UTIL.showError(OB.I18N.getLabel('....'));
+        return;
+      }
+      change = parseFloat(l.$.textline.getValue());
+      if (OB.DEC.compare(change) > 0) {
+        result.push({
+          'payment': l.payment,
+          'change': change
+        });
+      }
+    }
+
+    this.args.callback(result);
+    this.doHideThisPopup();
   },
   actionInput: function (inSender, inEvent) {
     // var i;
@@ -131,13 +148,12 @@ enyo.kind({
     this.$.labelLine.content = this.payment.payment.commercialName;
   },
   actionInput: function (inSender, inEvent) {
-    var value, valueOK;
+    var value = parseFloat(this.$.textline.getValue());
+    this.hasErrors = _.isNaN(value) || value < 0 || value > this.maxValue;
+    this.$.textline.addStyles('background-color: ' + (this.hasErrors ? '#fe7f7f' : 'inherit') + ';');
 
-    value = parseFloat(this.$.textline.getValue());
-    valueOK = !_.isNaN(value) && value >= 0 && value <= this.maxValue;
-    this.$.textline.addStyles('background-color: ' + (valueOK ? 'inherit' : '#fe7f7f') + ';');
     return this.bubble('onActionInput', {
-      'result': valueOK
+      'hasErrors': this.hasErrors
     });
   },
   actionShow: function (inSender, inEvent) {
@@ -145,7 +161,10 @@ enyo.kind({
 
     s = this.payment.obposPosprecision;
     change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, s);
-    cRounded = OB.Payments.Change.getChangeRounded(this.payment, change);
+    cRounded = OB.Payments.Change.getChangeRounded({
+      'payment': this.payment,
+      'change': change
+    });
     this.maxValue = cRounded;
     this.$.infoline.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(cRounded, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
 
@@ -156,6 +175,7 @@ enyo.kind({
     amountRounded = currentChange ? currentChange.amountRounded : 0;
     this.$.textline.setValue(amountRounded);
     this.$.textline.addStyles('background-color: inherit;');
+    this.hasErrors = false;
     setTimeout(function () {
       this.$.textline.hasNode().setSelectionRange(0, this.$.textline.getValue().length);
     }.bind(this), 100);

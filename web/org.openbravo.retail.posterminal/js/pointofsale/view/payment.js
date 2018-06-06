@@ -369,11 +369,22 @@ enyo.kind({
       this.$.creditsalesaction.hide();
     }
   },
+  processChangeList: function (changelist) {
+    var paymentchange = new OB.Payments.Change();
+
+    changelist.forEach(function (item) {
+      paymentchange.add(item);
+    }, this);
+
+    this.applyPaymentChange(paymentchange);
+    this.calculateEnoughChange();
+  },
   actionChangeButton: function (inSender, inEvent) {
     this.doShowPopup({
       popup: 'modalchange',
       args: {
-        receipt: this.receipt
+        'receipt': this.receipt,
+        'callback': this.processChangeList.bind(this)
       }
     });
   },
@@ -406,7 +417,10 @@ enyo.kind({
         changePayment = OB.DEC.mul(change, payment.mulrate, s);
         // Using 5 as rounding precision as a maximum precsion for all currencies
         changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), s);
-        paymentchange.add(payment, changePaymentRounded);
+        paymentchange.add({
+          'payment': payment,
+          'change': changePaymentRounded
+        });
 
         var linkedSearchKey = payment.paymentMethod.changePaymentType;
         if (linkedSearchKey) {
@@ -420,7 +434,10 @@ enyo.kind({
         }
       } else {
         // No changeLessThan, so add the change and exit recursion...
-        paymentchange.add(payment, OB.DEC.mul(change, payment.mulrate, s));
+        paymentchange.add({
+          'payment': payment,
+          'change': OB.DEC.mul(change, payment.mulrate, s)
+        });
       }
     }
 
@@ -429,7 +446,10 @@ enyo.kind({
       calculateNextChange(firstpayment, firstchange);
     } else {
       // No multi currency change logic, add a simple change item and return
-      paymentchange.add(firstpayment, OB.DEC.mul(firstchange, firstpayment.mulrate, s), s);
+      paymentchange.add({
+        'payment': firstpayment,
+        'change': OB.DEC.mul(firstchange, firstpayment.mulrate, s)
+      });
     }
 
     // Update receipt and UI with new calculations
@@ -1782,13 +1802,15 @@ enyo.kind({
   kind: 'enyo.Component',
   name: 'OB.Payments.Change',
   statics: {
-    getChangeRounded: function (p, c) {
-      if (p.changeRounding) {
-        var s = p.obposPosprecision;
-        var roundingto = p.changeRounding.roundingto;
-        var roundinggap = p.changeRounding.roundingdownlimit;
+    getChangeRounded: function (c) {
+      var s, roundingto, roundinggap;
+
+      if (c.payment.changeRounding) {
+        s = c.payment.obposPosprecision;
+        roundingto = c.payment.changeRounding.roundingto;
+        roundinggap = c.payment.changeRounding.roundingdownlimit;
         // Using 5 as rounding precision as a maximum precsion for all currencies
-        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c, roundinggap, s), roundingto, 5)), s);
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c.change, roundinggap, s), roundingto, 5)), s);
       }
       return c;
     }
@@ -1798,19 +1820,19 @@ enyo.kind({
     this.label = '';
     this.payments = [];
   },
-  add: function (p, c) {
-    // p is the payment of the new change to add
-    // c is the change to add in the payment currency
-    if (OB.DEC.compare(c)) {
+  add: function (c) {
+    // c.payment is the payment of the new change to add
+    // c.change is the change to add in the payment currency
+    if (OB.DEC.compare(c.change)) {
       // Add new change Payment
       if (this.label) {
         this.label += ' + ';
       }
-      var cRounded = OB.Payments.Change.getChangeRounded(p, c);
-      this.label += OB.I18N.formatCurrencyWithSymbol(cRounded, p.symbol, p.currencySymbolAtTheRight);
+      var cRounded = OB.Payments.Change.getChangeRounded(c);
+      this.label += OB.I18N.formatCurrencyWithSymbol(cRounded, c.payment.symbol, c.payment.currencySymbolAtTheRight);
       this.payments.push({
-        'key': p.payment.searchKey,
-        'amount': c,
+        'key': c.payment.payment.searchKey,
+        'amount': c.change,
         'amountRounded': cRounded
       });
     }
