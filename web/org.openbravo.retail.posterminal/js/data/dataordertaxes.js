@@ -834,7 +834,7 @@
               taxesline[taxId].net = net;
               taxesline[taxId].amount = amount;
               if (taxes[taxId]) {
-                taxes[taxId].net = OB.DEC.add(taxes[taxId].net, OB.DEC.mul(discountedprice, line.get('qty')));
+                taxes[taxId].net = OB.DEC.add(taxes[taxId].net, net);
                 if (discountedNet !== linenet) {
                   roundingLoses = discountedprice.subtract(discountedprice).multiply(new BigDecimal('2'));
                   if (roundingLoses.compareTo(BigDecimal.prototype.ZERO) !== 0) {
