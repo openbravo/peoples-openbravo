@@ -390,15 +390,18 @@ enyo.kind({
     // change is > 0 and is in the document currency
     // Result vars...
     var paymentchange = new OB.Payments.Change();
+    var s = firstpayment.obposPosprecision;
 
     // Recursive function to calculate changes, payment by payment
 
     function calculateNextChange(payment, change) {
+      var s = payment.obposPosprecision;
       var changeLessThan = payment.paymentMethod.changeLessThan;
       if (changeLessThan) {
         var paymentSearchKey = payment.payment.searchKey;
-        var changePayment = OB.DEC.mul(change, payment.mulrate);
-        var changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan)));
+        var changePayment = OB.DEC.mul(change, payment.mulrate, s);
+        // Using 5 as rounding precision as a maximum precsion for all currencies
+        var changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), s);
         paymentchange.add(payment, changePaymentRounded);
 
         var linkedSearchKey = payment.paymentMethod.changePaymentType;
@@ -408,12 +411,12 @@ enyo.kind({
           });
           if (linkedPayment) {
             // Recursion using the linked payment
-            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.div(changePaymentRounded, payment.mulrate)));
+            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.div(changePaymentRounded, payment.mulrate, s), s));
           }
         }
       } else {
         // No changeLessThan, so add the change and exit recursion...
-        paymentchange.add(payment, OB.DEC.mul(change, payment.mulrate));
+        paymentchange.add(payment, OB.DEC.mul(change, payment.mulrate, s));
       }
     }
 
@@ -422,7 +425,7 @@ enyo.kind({
       calculateNextChange(firstpayment, firstchange);
     } else {
       // No multi currency change logic, add a simple change item and return
-      paymentchange.add(firstpayment, OB.DEC.mul(firstchange, firstpayment.mulrate));
+      paymentchange.add(firstpayment, OB.DEC.mul(firstchange, firstpayment.mulrate, s), s);
     }
 
     // Update receipt and UI with new calculations
@@ -1777,9 +1780,11 @@ enyo.kind({
   statics: {
     getChangeRounded: function (p, c) {
       if (p.changeRounding) {
+        var s = p.obposPosprecision;
         var roundingto = p.changeRounding.roundingto;
         var roundinggap = p.changeRounding.roundingdownlimit;
-        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c, roundinggap), roundingto)));
+        // Using 5 as rounding precision as a maximum precsion for all currencies
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c, roundinggap, s), roundingto, 5)), s);
       }
       return c;
     }

@@ -46,7 +46,7 @@ public class Payments extends JSONTerminalProperty {
           + "coalesce(c.iSOCode, pmc.iSOCode) as isocode, "
           + "coalesce(c.symbol, pmc.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
           + "coalesce(f.currentBalance, 0) as currentBalance, "
-          + "coalesce(c.obposPosprecision, null) as obposPosprecision, "
+          + "coalesce(p.paymentMethod.currency.obposPosprecision, p.paymentMethod.currency.pricePrecision) as obposPosprecision, "
           + "img.bindaryData as image, img.mimetype as mimetype, "
           + "providerGroup, paymentType "
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "

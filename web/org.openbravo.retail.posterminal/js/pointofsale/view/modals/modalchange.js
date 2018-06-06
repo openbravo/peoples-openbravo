@@ -139,7 +139,8 @@ enyo.kind({
     });
   },
   actionShow: function (inSender, inEvent) {
-    var change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate);
+    var s = this.payment.obposPosprecision;
+    var change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, s);
     var cRounded = OB.Payments.Change.getChangeRounded(this.payment, change);
     this.maxValue = cRounded;
     this.$.infoline.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(cRounded, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
