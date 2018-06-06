@@ -91,8 +91,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  p.name,");
     groupByClause.append("  e.lineNo,");
     groupByClause.append("  e.id,");
-    groupByClause.append("  org.id,");
-    groupByClause.append("  org.name,");
     groupByClause.append("  COALESCE(e.asset.id, o.asset.id),");
     groupByClause.append("  COALESCE(e.project.id, o.project.id),");
     groupByClause.append("  COALESCE(e.costcenter.id, o.costcenter.id),");
@@ -101,16 +99,12 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  e.explode,");
     groupByClause.append("  aum.id,");
     groupByClause.append("  e.operativeQuantity,");
-    groupByClause.append("  dt.id,");
+    groupByClause.append("  o.documentType.id,");
     groupByClause.append("  pl.id,");
-    groupByClause.append("  bp.id,");
+    groupByClause.append("  o.businessPartner.id,");
     groupByClause.append("  il.id,");
     groupByClause.append("  wh.id,");
     groupByClause.append("  wh.name,");
-    groupByClause.append("  ma.id,");
-    groupByClause.append("  ma.serialNo,");
-    groupByClause.append("  ma.expirationDate,");
-    groupByClause.append("  ma.lotName,");
     groupByClause.append("  @orderQuantity@");
     if (isSalesTransaction) {
       groupByClause.append(" , e.invoicedQuantity");
@@ -124,7 +118,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
   protected String getWhereClauseHQL() {
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" and o.salesTransaction = :issotrx");
-    whereClause.append(" and bp.id = :bp");
+    whereClause.append(" and o.businessPartner.id = :bp");
     whereClause.append(" and pl.priceIncludesTax = :plIncTax");
     whereClause.append(" and o.currency.id = :cur");
     if (isSalesTransaction) {
@@ -169,11 +163,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     fromClause.append(" join o.priceList pl");
     fromClause.append(" join e.uOM uom");
     fromClause.append(" join e.product p");
-    fromClause.append(" join o.businessPartner bp");
-    fromClause.append(" join o.documentType dt");
-    fromClause.append(" join o.organization org");
     fromClause.append(" join o.warehouse wh");
-    fromClause.append(" left join e.attributeSetValue ma");
     fromClause.append(" left join e.operativeUOM aum");
     fromClause.append(" left join e.bOMParent bomParent");
     fromClause.append(" left join e.goodsShipmentLine il");
@@ -191,11 +181,11 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (isSalesTransaction) {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
       orderQuantityHql
-          .append(" , e.orderQuantity * TO_NUMBER(C_DIVIDE((e.orderedQuantity - coalesce(e.invoicedQuantity,0)), e.orderedQuantity)))");
+          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / e.orderedQuantity))");
     } else {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
       orderQuantityHql
-          .append(" , e.orderQuantity * TO_NUMBER(C_DIVIDE((e.orderedQuantity - coalesce(e.invoicedQuantity,0)), e.orderedQuantity)))");
+          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / e.orderedQuantity))");
     }
     return orderQuantityHql.toString();
   }
@@ -203,15 +193,15 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
   protected String getOperativeQuantityHQL() {
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
-        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))))");
+        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))))");
     if (isSalesTransaction) {
       operativeQuantityHql
-          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, e.invoicedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))), 0))");
+          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, e.invoicedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))), 0))");
     } else {
       operativeQuantityHql
           .append("  -SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, m.quantity, aum.id)),0))-COALESCE(");
       operativeQuantityHql
-          .append(" (SELECT SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, ci.invoicedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, dt.id))))), 0))");
+          .append(" (SELECT SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, ci.invoicedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))), 0))");
       operativeQuantityHql.append("  FROM OrderLine co");
       operativeQuantityHql.append("    LEFT JOIN co.invoiceLineList ci");
       operativeQuantityHql.append("  WHERE ci.invoice.id = :invId");
