@@ -69,7 +69,7 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
       getInvoiceLine().setSalesOrderLine((OrderLine) getCopiedFromLine());
       getInvoiceLine().setGoodsShipmentLine(
           CreateLinesFromUtil.getShipmentInOutLine(getPickExecJSONObject()));
-    } else if (isCopiedFromInOutLine()) {
+    } else {
       getInvoiceLine().setGoodsShipmentLine((ShipmentInOutLine) getCopiedFromLine());
       getInvoiceLine().setSalesOrderLine(
           ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
@@ -136,10 +136,7 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   }
 
   private Organization getOrganizationForNewLine() {
-    Organization copiedLineOrg = ((Organization) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_ORGANIZATION
-            : ShipmentInOutLine.PROPERTY_ORGANIZATION));
-    return copiedLineOrg;
+    return (Organization) getCopiedFromLine().get("organization");
   }
 
   private void updateBOMParent() {
