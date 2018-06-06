@@ -1,7 +1,7 @@
 /*
  *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * The contents of this file are subject to the Openbravo    License
+ * Version  1.1  (the  "License"),  being   the  Mozilla     License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
  * the License at http://www.openbravo.com/legal/license.html 
@@ -25,7 +25,7 @@ import java.math.BigDecimal;
  * Class to store Shipment/Receipt Lines Information data
  *
  */
-public class ShipmentInOutLineData {
+class ShipmentInOutLineData {
   private String shipmentInOutLineId;
   private BigDecimal movementQuantity;
   private BigDecimal orderQuantity;
@@ -33,7 +33,7 @@ public class ShipmentInOutLineData {
   private String operativeUOMId;
   private String uomId;
 
-  public ShipmentInOutLineData(Object[] data) {
+  ShipmentInOutLineData(Object[] data) {
     this.shipmentInOutLineId = (String) data[0];
     this.movementQuantity = (BigDecimal) data[1];
     this.orderQuantity = (BigDecimal) data[2];
@@ -42,51 +42,51 @@ public class ShipmentInOutLineData {
     this.uomId = (String) data[5];
   }
 
-  public String getShipmentInOutLineId() {
+  String getShipmentInOutLineId() {
     return shipmentInOutLineId;
   }
 
-  public void setShipmentInOutLineId(String shipmentInOutLineId) {
+  void setShipmentInOutLineId(String shipmentInOutLineId) {
     this.shipmentInOutLineId = shipmentInOutLineId;
   }
 
-  public BigDecimal getMovementQuantity() {
+  BigDecimal getMovementQuantity() {
     return movementQuantity;
   }
 
-  public void setMovementQuantity(BigDecimal movementQuantity) {
+  void setMovementQuantity(BigDecimal movementQuantity) {
     this.movementQuantity = movementQuantity;
   }
 
-  public BigDecimal getOrderQuantity() {
+  BigDecimal getOrderQuantity() {
     return orderQuantity;
   }
 
-  public void setOrderQuantity(BigDecimal orderQuantity) {
+  void setOrderQuantity(BigDecimal orderQuantity) {
     this.orderQuantity = orderQuantity;
   }
 
-  public BigDecimal getOperativeQuantity() {
+  BigDecimal getOperativeQuantity() {
     return operativeQuantity;
   }
 
-  public void setOperativeQuantity(BigDecimal operativeQuantity) {
+  void setOperativeQuantity(BigDecimal operativeQuantity) {
     this.operativeQuantity = operativeQuantity;
   }
 
-  public String getOperativeUOMId() {
+  String getOperativeUOMId() {
     return operativeUOMId;
   }
 
-  public void setOperativeUOMId(String operativeUOMId) {
+  void setOperativeUOMId(String operativeUOMId) {
     this.operativeUOMId = operativeUOMId;
   }
 
-  public String getUOMId() {
+  String getUOMId() {
     return uomId;
   }
 
-  public void setUOMId(String uOMId) {
+  void setUOMId(String uOMId) {
     this.uomId = uOMId;
   }
 

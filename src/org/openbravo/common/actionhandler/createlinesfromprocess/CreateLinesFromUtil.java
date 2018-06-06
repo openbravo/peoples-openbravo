@@ -222,7 +222,7 @@ class CreateLinesFromUtil {
     return getShipmentInOutLinesInformation((List<Object[]>) query.list());
   }
 
-  static List<ShipmentInOutLineData> getShipmentInOutLinesInformation(
+  private static List<ShipmentInOutLineData> getShipmentInOutLinesInformation(
       List<Object[]> shipmentInOutLineData) {
     List<ShipmentInOutLineData> shipmentInOutLines = new ArrayList<>();
     for (Object[] shipmentInOutLine : shipmentInOutLineData) {
