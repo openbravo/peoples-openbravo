@@ -480,7 +480,7 @@ enyo.kind({
 
     // Set change UI
     var showing = paymentchange.payments.length > 0;
-    this.$.changebutton.setShowing(showing);
+    this.$.changebutton.setShowing(OB.MobileApp.model.get('terminal').multiChange && showing);
     this.$.change.setContent(paymentchange.label);
     this.$.change.setShowing(showing);
     this.$.changelbl.setShowing(showing);
