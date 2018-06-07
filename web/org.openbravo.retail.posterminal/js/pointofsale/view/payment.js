@@ -400,10 +400,8 @@ enyo.kind({
     // payment is the first payment to use in the change calculation
     // change is > 0 and is in the document currency
     // Result vars...
-    var paymentchange, s;
-
-    paymentchange = new OB.Payments.Change();
-    s = firstpayment.obposPosprecision;
+    var paymentchange = new OB.Payments.Change(),
+        usedpaymentsids = {};
 
     // Recursive function to calculate changes, payment by payment
 
@@ -423,12 +421,13 @@ enyo.kind({
         });
 
         var linkedSearchKey = payment.paymentMethod.changePaymentType;
-        if (linkedSearchKey) {
+        if (linkedSearchKey && !usedpaymentsids[linkedSearchKey]) {
           linkedPayment = OB.MobileApp.model.get('payments').find(function (p) {
             return p.paymentMethod.id === linkedSearchKey;
           });
           if (linkedPayment) {
             // Recursion using the linked payment
+            usedpaymentsids[linkedSearchKey] = true; // mark payment as used to avoid cycles.
             calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.div(changePaymentRounded, payment.mulrate, s), s));
           }
         }
@@ -448,7 +447,7 @@ enyo.kind({
       // No multi currency change logic, add a simple change item and return
       paymentchange.add({
         'payment': firstpayment,
-        'change': OB.DEC.mul(firstchange, firstpayment.mulrate, s)
+        'change': OB.DEC.mul(firstchange, firstpayment.mulrate, firstpayment.obposPosprecision)
       });
     }
 
