@@ -25,8 +25,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -105,9 +105,9 @@ public class UserLock {
     hql.append("  from ADSession s1");
     hql.append(" where s1.username = :name");
     hql.append("   and s1.loginStatus != 'F'");
-    Query q1 = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Date> q1 = OBDal.getInstance().getSession().createQuery(hql.toString(), Date.class);
     q1.setParameter("name", userName);
-    Date lastFailedAttempt = (Date) q1.list().get(0);
+    Date lastFailedAttempt = q1.list().get(0);
 
     if (lastFailedAttempt == null) {
       Calendar yesterday = Calendar.getInstance();
@@ -124,13 +124,13 @@ public class UserLock {
     hql.append("   and s.username = :name");
     hql.append("   and s.creationDate > :lastFail");
 
-    Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Long> q = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
     q.setParameter("name", userName);
     q.setParameter("lastFail", lastFailedAttempt);
 
-    numberOfFails = ((Long) q.list().get(0)).intValue();
+    numberOfFails = q.list().get(0).intValue();
     log4j.debug("Time taken to check user lock " + (System.currentTimeMillis() - t)
-        + "ms. Time of 2nd query " + ((System.currentTimeMillis() - t1))
+        + "ms. Time of 2nd query " + (System.currentTimeMillis() - t1)
         + "ms. Number of failed login attempts: " + numberOfFails);
 
     if (numberOfFails == 0) {
