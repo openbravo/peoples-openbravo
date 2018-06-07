@@ -10,7 +10,7 @@
 /*global OB, _, enyo */
 
 enyo.kind({
-  name: 'OB.UI.ModalChangeCashLine',
+  name: 'OB.UI.ModalChangeLine',
   handlers: {
     onActionShow: 'actionShow'
   },
