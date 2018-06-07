@@ -60,7 +60,7 @@ enyo.kind({
     this.waterfall('onActionShow', this.args);
   },
   actionOK: function (inSender, inEvent) {
-    var lines, result, i, l, change;
+    var lines, result, i, l;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
     result = [];
@@ -71,13 +71,10 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CHANGEAMOUNTSNOTVALID'));
         return;
       }
-      change = parseFloat(l.$.textline.getValue());
-      if (OB.DEC.compare(change) > 0) {
-        result.push({
-          'payment': l.payment,
-          'change': change
-        });
-      }
+      result.push({
+        'payment': l.payment,
+        'change': parseFloat(l.$.textline.getValue())
+      });
     }
 
     this.args.callback(result);
