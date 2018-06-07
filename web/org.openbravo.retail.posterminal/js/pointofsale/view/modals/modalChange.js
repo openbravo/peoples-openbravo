@@ -68,7 +68,7 @@ enyo.kind({
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
       if (l.hasErrors) {
-        OB.UTIL.showError(OB.I18N.getLabel('....'));
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CHANGEAMOUNTSNOTVALID'));
         return;
       }
       change = parseFloat(l.$.textline.getValue());
