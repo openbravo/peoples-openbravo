@@ -82,22 +82,6 @@
       }, doOpenClassicWindow);
     },
 
-    // ** {{{ openInstanceManagementForm() }}} **
-    //
-    // Opens the Instance Activation window.
-    //
-    openInstanceManagementForm: function () {
-      L.ViewManager.openView('OBClassicWindow', {
-        command: 'DEFAULT',
-        formId: '8D6282279F464B1696B0EE3E23023B65',
-        icon: 'Form',
-        id: '/ad_forms/InstanceManagement.html',
-        obManualURL: '/ad_forms/InstanceManagement.html',
-        tabTitle: OB.I18N.getLabel('OBUIAPP_InstanceActivation'),
-        viewId: 'OBClassicWindow'
-      });
-    },
-
     // ** {{{ sendDirectLink(action, form) }}} **
     //
     // Shows a new tab with the clicked link content
