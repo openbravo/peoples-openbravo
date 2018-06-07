@@ -811,6 +811,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                       cancelLayawayObj.gross = OB.DEC.mul(OB.DEC.sub(receipt.get('layawayGross'), receipt.getDeliveredQuantityAmount()), -1);
                       if (paymentStatus.isNegative) {
+                        cancelLayawayObj.payment = OB.DEC.add(OB.DEC.sub(receipt.get('canceledorder').getGross(), receipt.get('canceledorder').getPayment()), cancelLayawayObj.payment);
                         cancelLayawayObj.payments.forEach(function (payment) {
                           payment.origAmount = OB.DEC.mul(payment.origAmount, -1);
                           payment.paid = OB.DEC.mul(payment.paid, -1);
