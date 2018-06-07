@@ -84,15 +84,27 @@ enyo.kind({
     this.doHideThisPopup();
   },
   actionInput: function (inSender, inEvent) {
-    // var i;
-    // var lines = this.$.bodyContent.$.paymentlines.getComponents();
-    // for (i = 0; i < lines.length; i ++) {
-    // }
-    // this.$.bodyContent.$.paymentlines.getComponents().forEach(function (item) {
-    //   if (inSender === item) {
-    //   }
-    //   console.log(item.name + '-> ' + item.$.textline.getValue());
-    // });
+    var lines, linecalc, originalValue, change, s, linecalcchange;
+
+    if (inEvent.hasErrors) {
+      return; // do not perform automatic calculation in the case of input error
+    }
+
+    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    if (lines.length !== 2) {
+      return; // only perform automatic calculation in the case or 2 cash payments
+    }
+
+    linecalc = lines[inEvent.line === lines[0] ? 1 : 0];
+    originalValue = OB.DEC.mul(inEvent.value, inEvent.line.payment.rate);
+    change = OB.DEC.sub(this.args.receipt.getChange(), originalValue);
+    s = linecalc.payment.obposPosprecision;
+    linecalcchange = OB.DEC.mul(change, linecalc.payment.mulrate, s);
+
+    linecalc.assignValidValue(OB.Payments.Change.getChangeRounded({
+      'payment': linecalc.payment,
+      'change': linecalcchange
+    }));
   }
 });
 
@@ -153,11 +165,13 @@ enyo.kind({
     this.$.textline.addStyles('background-color: ' + (this.hasErrors ? '#fe7f7f' : 'inherit') + ';');
 
     return this.bubble('onActionInput', {
-      'hasErrors': this.hasErrors
+      'value': value,
+      'hasErrors': this.hasErrors,
+      'line': this
     });
   },
   actionShow: function (inSender, inEvent) {
-    var s, change, cRounded, currentChange, amountRounded;
+    var s, change, cRounded, currentChange;
 
     s = this.payment.obposPosprecision;
     change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, s);
@@ -172,7 +186,9 @@ enyo.kind({
       return item.key === this.payment.payment.searchKey;
     }, this);
 
-    amountRounded = currentChange ? currentChange.amountRounded : 0;
+    this.assignValidValue(currentChange ? currentChange.amountRounded : 0);
+  },
+  assignValidValue: function (amountRounded) {
     this.$.textline.setValue(amountRounded);
     this.$.textline.addStyles('background-color: inherit;');
     this.hasErrors = false;
