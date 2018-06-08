@@ -140,13 +140,30 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   }
 
   private void updateInvoicePrepaymentAmount() {
-    // FIXME Prepayment should not be updated anymore if an existing invoice line linked to the
-    // order already exists
-    if (isCopiedFromOrderLine()
-        || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine())) {
+    if ((isCopiedFromOrderLine() || CreateLinesFromUtil
+        .hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine()))
+        && !thereAreInvoiceLinesLinkedToTheOrderCopiedFromLine()) {
       BigDecimal invoicePrepaymentAmt = getInvoice().getPrepaymentamt();
       getInvoice().setPrepaymentamt(invoicePrepaymentAmt.add(getOrderPrepaymentAmt()));
     }
+  }
+
+  private boolean thereAreInvoiceLinesLinkedToTheOrderCopiedFromLine() {
+    Order order = isCopiedFromOrderLine() ? ((OrderLine) getCopiedFromLine()).getSalesOrder()
+        : ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt().getSalesOrder();
+    if (order != null) {
+      StringBuffer where = new StringBuffer();
+      where.append(" as o");
+      where.append(" where o.id = :orderId");
+      where.append("   and exists (");
+      where.append("     select 1 from " + InvoiceLine.ENTITY_NAME + " as il");
+      where.append("       join il." + InvoiceLine.PROPERTY_SALESORDERLINE + " as ol");
+      where.append("     where ol." + OrderLine.PROPERTY_SALESORDER + ".id = o.id)");
+      OBQuery<Order> qryOrder = OBDal.getInstance().createQuery(Order.class, where.toString());
+      qryOrder.setNamedParameter("orderId", order.getId());
+      return qryOrder.count() != 0;
+    }
+    return false;
   }
 
   private BigDecimal getOrderPrepaymentAmt() {
