@@ -1519,7 +1519,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       final List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = new ArrayList<FIN_PaymentScheduleDetail>();
       final HashMap<String, BigDecimal> paymentAmountMap = new HashMap<String, BigDecimal>();
       if (payment.has("isReversePayment")) {
-        // If the current payment is a reversal payment, a new psd must be added for each psd in the
+        // If the current payment is a reversal payment, a new PSD must be added for each PSD in the
         // reversed payment
         final StringBuffer reversedPSDHQL = new StringBuffer();
         reversedPSDHQL.append("SELECT psd ");
@@ -1545,8 +1545,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleDetailList.add(newPSD);
           paymentAmountMap.put(newPSD.getId(), newPSD.getAmount());
           // Created the paymentScheduleDetail with the remaining after adding the reversal payment.
-          // If there is an existing psd with the remaining amount add the reversed quantity to that
-          // psd instead of creating a new one
+          // If there is an existing PSD with the remaining amount add the reversed quantity to that
+          // PSD instead of creating a new one
           final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
               .createCriteria(FIN_PaymentScheduleDetail.class);
           remainingPSDCriteria.add(Restrictions.eq(
@@ -1629,30 +1629,24 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if ((!isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
               || (isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
             // There can be the possibility that the user is paying more than the remaining amount.
-            // In this case, a new PSD must be created for the over payment, and a remaining PSD
-            // must be created. This occurs only in a special case, that is when paying more than
-            // the remaining to pay using a cash payment method and there's no enough change to
-            // return in that payment method. That payment is not set as over payment, even when the
-            // amount is higher than the expected amount. After this payment, another one will come
-            // but in negative to set the paid and outstanding amounts to 0.
+            // In this case, the previously created PSD must be updated to add this amount. This
+            // occurs only in a special case, that is when paying more than the remaining to pay
+            // using a cash payment method and there's no enough change to return in that payment
+            // method. That payment is not set as over payment, even when the amount is higher than
+            // the expected amount. After this payment, another one will come but in negative to set
+            // the paid and outstanding amounts to 0.
             FIN_PaymentSchedule newPSInvoice = null;
             if (paymentScheduleDetailList.size() != 0) {
-              // If a newly introduced PSD has an invoice, the new ones to create must also have it
-              if (paymentScheduleDetailList.get(paymentScheduleDetailList.size() - 1)
-                  .getInvoicePaymentSchedule() != null) {
-                newPSInvoice = paymentScheduleDetailList.get(paymentScheduleDetailList.size() - 1)
-                    .getInvoicePaymentSchedule();
+              final FIN_PaymentScheduleDetail newPSD = paymentScheduleDetailList
+                  .get(paymentScheduleDetailList.size() - 1);
+              newPSD.setAmount(newPSD.getAmount().add(remainingAmount));
+              OBDal.getInstance().save(newPSD);
+              paymentAmountMap.put(newPSD.getId(), newPSD.getAmount());
+              // If the PSD has an invoice, the new remaining PSD must have the invoice set
+              if (newPSD.getInvoicePaymentSchedule() != null) {
+                newPSInvoice = newPSD.getInvoicePaymentSchedule();
               }
             }
-            final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
-            newPSD.setNewOBObject(true);
-            newPSD.setOrderPaymentSchedule(paymentSchedule);
-            newPSD.setInvoicePaymentSchedule(newPSInvoice);
-            newPSD.setAmount(remainingAmount);
-            newPSD.setBusinessPartner(order.getBusinessPartner());
-            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-            OBDal.getInstance().save(newPSD);
             final FIN_PaymentScheduleDetail newRemainingPSD = OBProvider.getInstance().get(
                 FIN_PaymentScheduleDetail.class);
             newRemainingPSD.setNewOBObject(true);
@@ -1663,8 +1657,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
                 newRemainingPSD);
             OBDal.getInstance().save(newRemainingPSD);
-            paymentScheduleDetailList.add(newPSD);
-            paymentAmountMap.put(newPSD.getId(), newPSD.getAmount());
           }
         } else {
           // The quantity that is being introduced has a different sign to the pending quantity.
