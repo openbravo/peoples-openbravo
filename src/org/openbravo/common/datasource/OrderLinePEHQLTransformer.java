@@ -118,10 +118,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
   protected String getWhereClauseHQL() {
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" and o.salesTransaction = :issotrx");
-    whereClause.append(" and o.businessPartner.id = :bp");
     whereClause.append(" and pl.priceIncludesTax = :plIncTax");
     whereClause.append(" and o.currency.id = :cur");
     if (isSalesTransaction) {
+      whereClause.append(" and ic.businessPartner.id = :bp");
       whereClause.append(" and (");
       whereClause.append("     ic.term in ('D', 'S') and ic.deliveredQuantity <> 0");
       whereClause.append("  or (ic.term = 'I' AND EXISTS");
@@ -133,6 +133,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       whereClause.append("  or (ic.term = 'O' and ic.orderedQuantity = ic.deliveredQuantity)");
       whereClause.append(" )");
     } else {
+      whereClause.append(" and o.businessPartner.id = :bp");
       whereClause.append(" and o.documentStatus in ('CO', 'CL')");
       whereClause.append(" and o.invoiceTerms <> 'N'");
       whereClause.append(" and NOT EXISTS");
