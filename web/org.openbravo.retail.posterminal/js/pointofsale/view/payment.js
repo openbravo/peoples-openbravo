@@ -369,22 +369,15 @@ enyo.kind({
       this.$.creditsalesaction.hide();
     }
   },
-  processChangeList: function (changelist) {
-    var paymentchange = new OB.Payments.Change();
-
-    changelist.forEach(function (item) {
-      paymentchange.add(item);
-    }, this);
-
-    this.applyPaymentChange(paymentchange);
-    this.calculateEnoughChange();
-  },
   actionChangeButton: function (inSender, inEvent) {
     this.doShowPopup({
       popup: 'modalchange',
       args: {
         'receipt': this.receipt,
-        'callback': this.processChangeList.bind(this)
+        'callback': function (paymentchange) {
+          this.applyPaymentChange(paymentchange);
+          this.calculateEnoughChange();
+        }.bind(this)
       }
     });
   },
@@ -423,10 +416,11 @@ enyo.kind({
             changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), s);
             paymentchange.add({
               'payment': payment,
-              'change': changePaymentRounded
+              'amount': changePaymentRounded,
+              'origAmount': OB.DEC.mul(changePaymentRounded, payment.rate)
             });
             // Recursion using the linked payment
-            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.div(changePaymentRounded, payment.mulrate, s), s));
+            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.mul(changePaymentRounded, payment.rate, s), s));
             return;
           }
         }
@@ -435,7 +429,8 @@ enyo.kind({
       // Then add add change payment for the remaining change and exit
       paymentchange.add({
         'payment': payment,
-        'change': OB.DEC.mul(change, payment.mulrate, s)
+        'amount': OB.DEC.mul(change, payment.mulrate, s),
+        'origAmount': change
       });
     }
 
@@ -446,7 +441,8 @@ enyo.kind({
       // No multi currency change logic, add a simple change item and return
       paymentchange.add({
         'payment': firstpayment,
-        'change': OB.DEC.mul(firstchange, firstpayment.mulrate, firstpayment.obposPosprecision)
+        'amount': OB.DEC.mul(firstchange, firstpayment.mulrate, firstpayment.obposPosprecision),
+        'origAmount': firstchange
       });
     }
 
@@ -471,7 +467,7 @@ enyo.kind({
     // Update flag
     this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
   },
-  applyPaymentChange: function (paymentchange, change) {
+  applyPaymentChange: function (paymentchange) {
     // Set change calculation results
     this.receipt.set('changePayments', paymentchange.payments);
     OB.MobileApp.model.set('changeReceipt', paymentchange.label);
@@ -1808,9 +1804,9 @@ enyo.kind({
         roundingto = c.payment.changeRounding.roundingto;
         roundinggap = c.payment.changeRounding.roundingdownlimit;
         // Using 5 as rounding precision as a maximum precsion for all currencies
-        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c.change, OB.DEC.sub(roundingto, roundinggap), s), roundingto, 5)), s);
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c.amount, OB.DEC.sub(roundingto, roundinggap), s), roundingto, 5)), s);
       }
-      return c.change;
+      return c.amount;
     }
   },
   create: function () {
@@ -1820,18 +1816,20 @@ enyo.kind({
   },
   add: function (c) {
     // c.payment is the payment of the new change to add
-    // c.change is the change to add in the payment currency
-    if (OB.DEC.compare(c.change)) {
+    // c.amount is the change to add in the payment currency
+    // c.origAmount is the change to add in the document currency
+    if (OB.DEC.compare(c.origAmount)) {
       // Add new change Payment
       if (this.label) {
         this.label += ' + ';
       }
-      var cRounded = OB.Payments.Change.getChangeRounded(c);
-      this.label += OB.I18N.formatCurrencyWithSymbol(cRounded, c.payment.symbol, c.payment.currencySymbolAtTheRight);
+      var amountRounded = OB.Payments.Change.getChangeRounded(c);
+      this.label += OB.I18N.formatCurrencyWithSymbol(amountRounded, c.payment.symbol, c.payment.currencySymbolAtTheRight);
       this.payments.push({
         'key': c.payment.payment.searchKey,
-        'amount': c.change,
-        'amountRounded': cRounded
+        'amount': c.amount,
+        'amountRounded': amountRounded,
+        'origAmount': c.origAmount
       });
     }
   }

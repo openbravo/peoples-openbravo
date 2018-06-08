@@ -60,10 +60,10 @@ enyo.kind({
     this.waterfall('onActionShow', this.args);
   },
   actionOK: function (inSender, inEvent) {
-    var lines, result, i, l;
+    var lines, paymentchange, amount, i, l;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
-    result = [];
+    paymentchange = new OB.Payments.Change();
 
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
@@ -71,13 +71,15 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CHANGEAMOUNTSNOTVALID'));
         return;
       }
-      result.push({
+      amount = parseFloat(l.$.textline.getValue());
+      paymentchange.add({
         'payment': l.payment,
-        'change': parseFloat(l.$.textline.getValue())
+        'amount': amount,
+        'origAmount': OB.DEC.mul(amount, l.payment.rate)
       });
     }
 
-    this.args.callback(result);
+    this.args.callback(paymentchange);
     this.doHideThisPopup();
   },
   actionInput: function (inSender, inEvent) {
@@ -100,7 +102,7 @@ enyo.kind({
 
     linecalc.assignValidValue(OB.Payments.Change.getChangeRounded({
       'payment': linecalc.payment,
-      'change': linecalcchange
+      'amount': linecalcchange
     }));
   }
 });

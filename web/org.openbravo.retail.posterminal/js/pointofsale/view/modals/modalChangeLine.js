@@ -59,7 +59,7 @@ enyo.kind({
     change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, s);
     cRounded = OB.Payments.Change.getChangeRounded({
       'payment': this.payment,
-      'change': change
+      'amount': change
     });
     this.maxValue = cRounded;
     this.$.infoline.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(cRounded, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));

@@ -141,6 +141,7 @@
             'name': paymentToAdd.payment.commercialName,
             'amount': OB.DEC.sub(0, changePayment.amount, paymentToAdd.obposPosprecision),
             'amountRounded': OB.DEC.sub(0, changePayment.amountRounded, paymentToAdd.obposPosprecision),
+            // 'origAmount': OB.DEC.sub(0, changePayment.origAmount),
             'origAmountRounded': OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounded, paymentToAdd.rate)),
             'rate': paymentToAdd.rate,
             'mulrate': paymentToAdd.mulrate,
