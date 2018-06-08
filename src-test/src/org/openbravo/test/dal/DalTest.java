@@ -61,6 +61,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
@@ -742,5 +743,37 @@ public class DalTest extends OBBaseTest {
         "as bp where bp.client = :client");
     q.setNamedParameter("client", OBContext.getOBContext().getCurrentClient());
     assertThat("Can use OBContext object as OBQuery parameter value", q.list(), notNullValue());
+  }
+
+  @Test
+  public void testNullabilityCheckIsDisabled() {
+    User newUser = getNewUser();
+    OBContext.setAdminMode(true);
+    String userId = null;
+    try {
+      // We should be able to create the User without explicitly setting its not nullable
+      // properties like the "lastPasswordUpdate" property.
+      OBDal.getInstance().save(newUser);
+      OBDal.getInstance().flush();
+      userId = newUser.getId();
+    } catch (Exception ex) {
+      log.error("Could not create new user", ex);
+    } finally {
+      OBDal.getInstance().rollbackAndClose(); // do not need to persist the new User in DB
+      OBContext.restorePreviousMode();
+    }
+    assertThat("Created User without setting its not-nullable properties", userId, notNullValue());
+  }
+
+  private User getNewUser() {
+    final User newUser = OBProvider.getInstance().get(User.class);
+    newUser.setClient(OBContext.getOBContext().getCurrentClient());
+    newUser.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+    newUser.setName("Name");
+    newUser.setDescription("Description");
+    newUser.setUsername("UserName");
+    newUser.setPassword("Password");
+    newUser.setDefaultLanguage(OBContext.getOBContext().getLanguage());
+    return newUser;
   }
 }
