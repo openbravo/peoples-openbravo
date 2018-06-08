@@ -139,8 +139,8 @@
           receipt.addPayment(new OB.Model.PaymentLine({
             'kind': paymentToAdd.payment.searchKey,
             'name': paymentToAdd.payment.commercialName,
-            'amount': OB.DEC.sub(0, changePayment.amount),
-            'amountRounded': OB.DEC.sub(0, changePayment.amountRounded),
+            'amount': OB.DEC.sub(0, changePayment.amount, paymentToAdd.obposPosprecision),
+            'amountRounded': OB.DEC.sub(0, changePayment.amountRounded, paymentToAdd.obposPosprecision),
             'origAmountRounded': OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounded, paymentToAdd.rate)),
             'rate': paymentToAdd.rate,
             'mulrate': paymentToAdd.mulrate,

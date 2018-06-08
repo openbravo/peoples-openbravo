@@ -471,7 +471,7 @@ enyo.kind({
     // Update flag
     this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
   },
-  applyPaymentChange: function (paymentchange) {
+  applyPaymentChange: function (paymentchange, change) {
     // Set change calculation results
     this.receipt.set('changePayments', paymentchange.payments);
     OB.MobileApp.model.set('changeReceipt', paymentchange.label);
