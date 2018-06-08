@@ -749,7 +749,7 @@ enyo.kind({
     this.$.onlycashpaymentmethod.hide();
 
     // Do the checkins
-    this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
+    this.updateAddPaymentAction();
     if (this.checkValidOverpayment(paymentstatus)) {
       if (selectedPayment.paymentMethod.iscash && paymentstatus.changeAmt > 0) {
         resultOK = this.checkValidCashChange(paymentstatus, selectedPayment);
@@ -774,7 +774,7 @@ enyo.kind({
               this.$.donebutton.setLocalDisabled(true);
               this.$.exactbutton.setLocalDisabled(true);
             }
-            me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
+            me.updateAddPaymentAction();
             this.setStatusButtons(lsuccess, 'Done');
             this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Layaway', function (success) {
               this.setStatusButtons(success, 'Layaway');
@@ -784,7 +784,7 @@ enyo.kind({
             });
           });
         }
-      } else if (!this.receipt.stopAddingPayments) {
+      } else if (!this.getAddPaymentAction()) {
         this.$.donebutton.setLocalDisabled(false);
         this.$.exactbutton.setLocalDisabled(false);
         this.$.creditsalesaction.setLocalDisabled(false);
@@ -792,7 +792,7 @@ enyo.kind({
       }
 
     } else {
-      me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
+      me.updateAddPaymentAction();
       // Finally set status of buttons
       this.setStatusButtons(resultOK, 'Done');
       this.setStatusButtons(resultOK, 'Layaway');
@@ -807,8 +807,17 @@ enyo.kind({
       this.$.allAttributesNeedValue.show();
     }
 
-
     this.alignErrorMessages();
+  },
+  updateAddPaymentAction: function () {
+    if (this.model.get('leftColumnViewManager').isOrder()) {
+      this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
+    } else if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.model.get('multiOrders').stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
+    }
+  },
+  getAddPaymentAction: function () {
+    return this.model.get('leftColumnViewManager').isOrder() ? this.receipt.stopAddingPayments : this.model.get('multiOrders').stopAddingPayments;
   },
   alignErrorMessages: function () {
     if (OB.MobileApp.view.currentWindow === 'retail.pointofsale' && typeof (this.$.errorLabelArea) !== 'undefined') {
@@ -1128,7 +1137,7 @@ enyo.kind({
     }
     // if there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
     // the button 'Done' will be desabled (except for the case of doing a cancel and replace)
-    if (!value) {
+    if (!value && this.model && this.model.get('leftColumnViewManager').isOrder()) {
       if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0) {
         if (!this.owner.receipt.get('doCancelAndReplace') && (this.owner.receipt.get('isLayaway') ? (OB.DEC.number(this.owner.receipt.getPayment()) < OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit())) : (this.owner.receipt.getPrePaymentQty() === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()))) && !this.owner.receipt.isNewReversed()) {
           value = true;
