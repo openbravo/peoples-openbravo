@@ -93,7 +93,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       processPayment(payment, strAction, paymentDate, comingFrom, selectedCreditLineIds, doFlush);
       bundle.setResult(msg);
     } catch (Exception e) {
-      log4j.error(e.getMessage());
+      log4j.debug(e.getMessage());
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD("Error"));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
@@ -1137,8 +1137,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           OBContext.restorePreviousMode();
         }
       }
+    } catch (final OBException e) {
+      throw e;
     } catch (final Exception e) {
-      log4j.error(e.getMessage());
+      log4j.error(e.getMessage(), e);
       msg = OBMessageUtils.translateError(FIN_Utility.getExceptionMessage(e)).getMessage();
       throw new OBException(msg);
     }
