@@ -89,7 +89,7 @@ public class DalTest extends OBBaseTest {
   public ExpectedException thrown = ExpectedException.none();
 
   /**
-   * Test to assert save false in a null char(1) column - Part I
+   * Test to assert save false in a null char(1) column - Part I.
    */
   @Test
   public void testASaveBooleanValue1() {
@@ -103,7 +103,7 @@ public class DalTest extends OBBaseTest {
   }
 
   /**
-   * Test to assert save false in a null char(1) column - Part II
+   * Test to assert save false in a null char(1) column - Part II.
    */
   @Test
   public void testBSaveBooleanValue2() {
@@ -701,7 +701,7 @@ public class DalTest extends OBBaseTest {
   }
 
   /**
-   * Test to check that proxies are not initialized when retrieving their identifier
+   * Test to check that proxies are not initialized when retrieving their identifier.
    */
   @Test
   public void proxyShouldNotBeInitialized() {
@@ -712,7 +712,7 @@ public class DalTest extends OBBaseTest {
 
   /**
    * Test to check that proxies are initialized when retrieving a property different from the
-   * identifier
+   * identifier.
    */
   @Test
   public void proxyShouldBeInitialized() {
@@ -723,7 +723,7 @@ public class DalTest extends OBBaseTest {
 
   /**
    * Test to check that it is possible to retrieve the identifier of a proxy that references a
-   * non-existent record
+   * non-existent record.
    */
   @Test
   public void canRetrieveIdOfNonExistentProxy() {
@@ -734,7 +734,7 @@ public class DalTest extends OBBaseTest {
 
   /**
    * Test to check that it is possible to use OBContext cached objects as the value for OBQuery
-   * parameters even if they have not been previously loaded into the session
+   * parameters even if they have not been previously loaded into the session.
    */
   @Test
   public void canUseOBContextParamNotPresentInSession() {
@@ -745,6 +745,10 @@ public class DalTest extends OBBaseTest {
     assertThat("Can use OBContext object as OBQuery parameter value", q.list(), notNullValue());
   }
 
+  /**
+   * Test to verify that Hibernate's property nullability check is disabled when creating entities
+   * through DAL.
+   */
   @Test
   public void testNullabilityCheckIsDisabled() {
     User newUser = getNewUser();
