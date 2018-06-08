@@ -406,38 +406,37 @@ enyo.kind({
     // Recursive function to calculate changes, payment by payment
 
     function calculateNextChange(payment, change) {
-      var s, changeLessThan, paymentSearchKey, changePayment, changePaymentRounded, linkedPayment;
+      var s, changeLessThan, linkedSearchKey, changePayment, changePaymentRounded, linkedPayment;
 
+      usedpaymentsids[payment.paymentMethod.id] = true; // mark this payment as used to avoid cycles.
       s = payment.obposPosprecision;
       changeLessThan = payment.paymentMethod.changeLessThan;
       if (changeLessThan) {
-        paymentSearchKey = payment.payment.searchKey;
-        changePayment = OB.DEC.mul(change, payment.mulrate, s);
-        // Using 5 as rounding precision as a maximum precsion for all currencies
-        changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), s);
-        paymentchange.add({
-          'payment': payment,
-          'change': changePaymentRounded
-        });
-
-        var linkedSearchKey = payment.paymentMethod.changePaymentType;
+        linkedSearchKey = payment.paymentMethod.changePaymentType;
         if (linkedSearchKey && !usedpaymentsids[linkedSearchKey]) {
           linkedPayment = OB.MobileApp.model.get('payments').find(function (p) {
             return p.paymentMethod.id === linkedSearchKey;
           });
           if (linkedPayment) {
+            changePayment = OB.DEC.mul(change, payment.mulrate, s);
+            // Using 5 as rounding precision as a maximum precsion for all currencies
+            changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), s);
+            paymentchange.add({
+              'payment': payment,
+              'change': changePaymentRounded
+            });
             // Recursion using the linked payment
-            usedpaymentsids[linkedSearchKey] = true; // mark payment as used to avoid cycles.
             calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.div(changePaymentRounded, payment.mulrate, s), s));
+            return;
           }
         }
-      } else {
-        // No changeLessThan, so add the change and exit recursion...
-        paymentchange.add({
-          'payment': payment,
-          'change': OB.DEC.mul(change, payment.mulrate, s)
-        });
       }
+      // No changeLessThan and no linked payment to continue,
+      // Then add add change payment for the remaining change and exit
+      paymentchange.add({
+        'payment': payment,
+        'change': OB.DEC.mul(change, payment.mulrate, s)
+      });
     }
 
     if (OB.MobileApp.model.get('terminal').multiChange) {
