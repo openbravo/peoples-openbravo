@@ -676,7 +676,7 @@
         FROM ad_preference
         WHERE property = 'StockReservations';
         IF (v_count > 1) THEN
-          v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+          v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', v_client_id, v_org_id, v_User, NULL, NULL);
           DBMS_OUTPUT.PUT_LINE('StockReservations preference value: ' || v_dummy);
         ELSIF (v_count = 1) THEN
           UPDATE c_orderline
@@ -1308,7 +1308,7 @@
       WHERE property = 'StockReservations';
       IF (v_count > 0) THEN
         IF (v_count > 1) THEN
-          v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
+          v_dummy := AD_GET_PREFERENCE_VALUE('StockReservations', 'Y', v_client_id, v_org_id, v_User, NULL, NULL);
           DBMS_OUTPUT.PUT_LINE('StockReservations preference value: ' || v_dummy);
         END IF;
         DECLARE
