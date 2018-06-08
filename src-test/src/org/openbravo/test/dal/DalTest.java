@@ -750,7 +750,7 @@ public class DalTest extends OBBaseTest {
    * through DAL.
    */
   @Test
-  public void testNullabilityCheckIsDisabled() {
+  public void nullabilityCheckIsDisabled() {
     User newUser = getNewUser();
     OBContext.setAdminMode(true);
     String userId = null;
