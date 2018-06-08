@@ -327,29 +327,28 @@
               receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
               OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
                 receipt: receipt,
-                model: model
+                model: model,
+                transaction: tx
               }, function (args) {
                 receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
                 OB.UTIL.setScanningFocus(true);
                 receipt.set('hasbeenpaid', 'Y');
                 // Important: at this point, the receipt is considered final. Nothing must alter it
                 OB.UTIL.clone(receipt, frozenReceipt);
-                OB.Dal.transaction(function (trx) {
-                  // when all the properties of the receipt have been set, keep a copy
-                  if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.Dal.saveInTransaction(trx, receipt, successCallback);
-                  } else {
-                    OB.UTIL.calculateCurrentCash(null, trx);
-                    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
-                      OB.trace('Saving receipt.');
-                      OB.Dal.saveInTransaction(trx, receipt, function () {
-                        successCallback();
-                        // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                        receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                      });
-                    }, trx);
-                  }
-                });
+                // when all the properties of the receipt have been set, keep a copy
+                if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                  OB.Dal.saveInTransaction(args.tx, receipt, successCallback);
+                } else {
+                  OB.UTIL.calculateCurrentCash(null, args.tx);
+                  OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
+                    OB.trace('Saving receipt.');
+                    OB.Dal.saveInTransaction(args.tx, receipt, function () {
+                      successCallback();
+                      // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                      receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+                    });
+                  }, args.tx);
+                }
               });
             }, tx);
           }, function () {
