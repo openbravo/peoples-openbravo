@@ -1037,6 +1037,7 @@
     },
 
     clearWith: function (_order) {
+      var execution = OB.UTIL.ProcessController.start('clearWith');
       // verify that the clearWith is not used for any other purpose than to update and fire the events of the UI receipt
       OB.UTIL.Debug.execute(function () {
         var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
@@ -1118,6 +1119,7 @@
       this.set('isEditable', _order.get('isEditable'));
       this.trigger('change');
       this.trigger('clear');
+      OB.UTIL.ProcessController.finish('clearWith', execution);
     },
 
     removeUnit: function (line, qty) {
