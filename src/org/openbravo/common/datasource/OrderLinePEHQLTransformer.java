@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
@@ -57,6 +58,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@orderedQuantity@", getOrderedQuantityHQL());
     transformedHql = transformedHql.replace("@operativeQuantity@", getOperativeQuantityHQL());
     transformedHql = transformedHql.replace("@orderQuantity@", getOrderQuantityHQL());
+    transformedHql = transformedHql.replace("@operativeUOM@", getOperativeUOM());
     transformedHql = changeAdditionalFiltersIfIsSalesTransaction(transformedHql);
     return transformedHql;
   }
@@ -182,11 +184,11 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (isSalesTransaction) {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
       orderQuantityHql
-          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / e.orderedQuantity))");
+          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity = 0 then 1 else e.orderedQuantity end)))");
     } else {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
       orderQuantityHql
-          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / e.orderedQuantity))");
+          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity = 0 then 1 else e.orderedQuantity end)))");
     }
     return orderQuantityHql.toString();
   }
@@ -229,5 +231,17 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       orderedQuantityHql.append("  GROUP BY ci.salesOrderLine.id , co.orderedQuantity),0)");
     }
     return orderedQuantityHql.toString();
+  }
+
+  protected String getOperativeUOM() {
+    StringBuilder operativeUOMHql = new StringBuilder();
+    if (UOMUtil.isUomManagementEnabled()) {
+      operativeUOMHql.append(" (select aum2.name from UOM aum2 where aum2.id = ");
+      operativeUOMHql
+          .append(" (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))) ");
+    } else {
+      operativeUOMHql.append("'' ");
+    }
+    return operativeUOMHql.toString();
   }
 }

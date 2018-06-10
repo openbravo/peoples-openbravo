@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
@@ -57,6 +58,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@movementQuantity@", getMovementQuantityHQL());
     transformedHql = transformedHql.replace("@operativeQuantity@", getOperativeQuantityHQL());
     transformedHql = transformedHql.replace("@orderQuantity@", getOrderQuantityHQL());
+    transformedHql = transformedHql.replace("@operativeUOM@", getOperativeUOM());
     return transformedHql;
   }
 
@@ -161,7 +163,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
     } else {
       orderQuantityHql
-          .append(" e.orderQuantity * TO_NUMBER((e.movementQuantity - coalesce(mi.quantity,0)) / e.movementQuantity)");
+          .append(" e.orderQuantity * TO_NUMBER((e.movementQuantity - coalesce(mi.quantity,0)) / (case when e.movementQuantity = 0 then 1 else e.movementQuantity end))");
     }
     return orderQuantityHql.toString();
   }
@@ -195,5 +197,17 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
       movementQuantityHql.append(" ,0))");
     }
     return movementQuantityHql.toString();
+  }
+
+  protected String getOperativeUOM() {
+    StringBuilder operativeUOMHql = new StringBuilder();
+    if (UOMUtil.isUomManagementEnabled()) {
+      operativeUOMHql.append(" (select aum2.name from UOM aum2 where aum2.id = ");
+      operativeUOMHql
+          .append(" (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, sh.documentType.id))))) ");
+    } else {
+      operativeUOMHql.append("'' ");
+    }
+    return operativeUOMHql.toString();
   }
 }
