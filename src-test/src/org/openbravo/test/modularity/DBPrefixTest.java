@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+
+import javax.persistence.PersistenceException;
 
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
@@ -154,18 +156,15 @@ public class DBPrefixTest extends OBBaseTest {
       OBDal.getInstance().remove(dbPrefix);
       OBDal.getInstance().commitAndClose();
       // thrown when using pgsql
-    } catch (org.hibernate.exception.GenericJDBCException e) {
-      exception = true;
-      OBDal.getInstance().rollbackAndClose();
-      // thrown when using oracle
-    } catch (org.hibernate.QueryTimeoutException e) {
+    } catch (PersistenceException e) {
       exception = true;
       OBDal.getInstance().rollbackAndClose();
     }
-    if (isValid)
+    if (isValid) {
       assertFalse("Not inserted a valid prefix:" + name, exception);
-    else
+    } else {
       assertTrue("Inserted a non-valid prefix:" + name, exception);
+    }
     OBDal.getInstance().flush();
   }
 }
