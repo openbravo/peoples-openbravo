@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,20 @@ isc.Time.displayFormat = OB.Utilities.getTimeFormatDefinition().timeFormatter;
 // == OBTimeItem ==
 // For entering times.
 isc.ClassFactory.defineClass('OBTimeItem', isc.TimeItem);
+
+isc.OBTimeItem.addClassMethods({
+  setTodaysDate: function (date) {
+    var today = new Date();
+    // Set the month initially to January to prevent error like this
+    // provided date: 15/02/2014
+    // today: 31/03/2014
+    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days 
+    date.setMonth(0);
+    date.setDate(today.getDate());
+    date.setMonth(today.getMonth());
+    date.setYear(today.getFullYear());
+  }
+});
 
 isc.OBTimeItem.addProperties({
   useTextField: true,
@@ -49,6 +63,7 @@ isc.OBTimeItem.addProperties({
     var newValue = value;
     if (newValue && Object.prototype.toString.call(newValue) === '[object String]') {
       newValue = isc.Time.parseInput(newValue);
+      isc.OBTimeItem.setTodaysDate(newValue);
       if (this.isAbsoluteTime) {
         // In the case of an absolute time, the time needs to be converted in order to avoid the UTC conversion
         // http://forums.smartclient.com/showthread.php?p=116135
@@ -91,7 +106,7 @@ isc.OBTimeItem.addProperties({
       if (this.isAbsoluteTime) {
         value = OB.Utilities.Date.addTimezoneOffset(value);
       }
-      this.setTodaysDate(value);
+      isc.OBTimeItem.setTodaysDate(value);
       if (this.isAbsoluteTime) {
         value = OB.Utilities.Date.substractTimezoneOffset(value);
       }
@@ -102,21 +117,9 @@ isc.OBTimeItem.addProperties({
   getValue: function () {
     var value = this.Super('getValue', arguments);
     if (value && isc.isA.Date(value) && !this.isAbsoluteTime) {
-      this.setTodaysDate(value);
+      isc.OBTimeItem.setTodaysDate(value);
     }
     return value;
-  },
-
-  setTodaysDate: function (date) {
-    var today = new Date();
-    // Set the month initially to January to prevent error like this
-    // provided date: 15/02/2014
-    // today: 31/03/2014
-    // date.setDate(today.getDate()) would result in Mon Mar 02 2014 18:00:00 GMT+0100 (CET), because february does not have 31 days 
-    date.setMonth(0);
-    date.setDate(today.getDate());
-    date.setMonth(today.getMonth());
-    date.setYear(today.getFullYear());
   },
 
   /* The following functions allow proper timeGrid operation */
@@ -271,7 +274,7 @@ isc.OBTimeItemGrid.addProperties({
   _waitingForReFocus: [],
 
   dateObjToTimeString: function (dateObj) {
-    var lengthThreshold, tmpString, isPM = false,
+    var tmpString, isPM = false,
         dateString = '';
     if (this.precission === 'hour' || this.precission === 'minute' || this.precission === 'second') {
       tmpString = dateObj.getHours();
@@ -313,7 +316,6 @@ isc.OBTimeItemGrid.addProperties({
     return dateString;
   },
   timeStringToDateObj: function (stringTime) {
-    var lengthThreshold;
     if (stringTime.length < 3) {
       stringTime = stringTime + ':00:00';
     } else if (stringTime.length < 6) {
@@ -355,17 +357,11 @@ isc.OBTimeItemGrid.addProperties({
   },
   getDiffText: function (date, reference) {
     var diffMs = (date - reference),
-        diffDays = (diffMs / 86400000),
         diffHrs = ((diffMs % 86400000) / 3600000),
         diffMins = (((diffMs % 86400000) % 3600000) / 60000),
         diffSecs = ((((diffMs % 86400000) % 3600000) % 60000) / 1000),
         diffText = '';
 
-    if (diffDays >= 0) {
-      diffDays = Math.floor(diffDays);
-    } else {
-      diffDays = Math.ceil(diffDays);
-    }
     if (diffHrs >= 0) {
       diffHrs = Math.floor(diffHrs);
     } else {
@@ -577,8 +573,6 @@ isc.OBTimeItemGrid.addProperties({
     }
   },
   updatePosition: function () {
-    var me = this,
-        interval;
     if (this.formItem) {
       this.placeNear(this.formItem.getPageLeft() + 2, this.formItem.getPageTop() + 26);
     }

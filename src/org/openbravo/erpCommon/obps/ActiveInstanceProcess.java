@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -197,7 +197,7 @@ public class ActiveInstanceProcess implements Process {
 
   /**
    * Sends the request for the activation key.
-   *
+   * 
    * @param publickey
    *          Instance's public key
    * @param purpose
@@ -234,10 +234,6 @@ public class ActiveInstanceProcess implements Process {
     content += "&sysId=" + URLEncoder.encode(SystemInfo.getSystemIdentifier(), "utf-8");
     content += "&dbId=" + URLEncoder.encode(SystemInfo.getDBIdentifier(), "utf-8");
     content += "&macId=" + URLEncoder.encode(SystemInfo.getMacAddress(), "utf-8");
-
-    if (ActivationKey.getInstance().isOffPlatform()) {
-      content += "&offPlatform=true";
-    }
 
     if (!StringUtils.isBlank(updated)) {
       content += "&updated=" + updated;

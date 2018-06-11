@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,8 @@ package org.openbravo.erpCommon.ad_forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -33,18 +35,17 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.obps.ActiveInstanceProcess;
+import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions;
 import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.LeftTabsBar;
-import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
@@ -52,6 +53,7 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.System;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class InstanceManagement extends HttpSecureAppServlet {
@@ -116,6 +118,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
       throws IOException, ServletException {
     OBError msg = new OBError();
     OBContext.setAdminMode();
+    ConnectionProvider cp = new DalConnectionProvider(false);
     try {
       // Check for commercial modules installed in the instance
       OBCriteria<Module> qMods = OBDal.getInstance().createCriteria(Module.class);
@@ -131,9 +134,10 @@ public class InstanceManagement extends HttpSecureAppServlet {
         deactivable = false;
         commercialModules += "<br/>" + mod.getName();
       }
+
       if (!deactivable) {
         msg.setType("Error");
-        msg.setMessage(Utility.messageBD(this, "CannotDeactivateWithCommercialModules",
+        msg.setMessage(Utility.messageBD(cp, "CannotDeactivateWithCommercialModules",
             vars.getLanguage())
             + commercialModules);
       } else {
@@ -143,7 +147,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
         sys.setInstanceKey(null);
         ActivationKey.reload();
         msg.setType("Success");
-        msg.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+        msg.setMessage(Utility.messageBD(cp, "Success", vars.getLanguage()));
 
         ActiveInstanceProcess.updateShowProductionFields("N");
 
@@ -156,7 +160,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     } catch (Exception e) {
       log4j.error("Error deactivating instance", e);
       msg.setType("Error");
-      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+      msg.setMessage(Utility.parseTranslation(cp, vars, vars.getLanguage(), e.getMessage()));
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -193,7 +197,8 @@ public class InstanceManagement extends HttpSecureAppServlet {
     } catch (Exception e) {
       log4j.error(e);
       msg.setType("Error");
-      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+      msg.setMessage(Utility.parseTranslation(new DalConnectionProvider(false), vars,
+          vars.getLanguage(), e.getMessage()));
     }
     vars.setMessage("InstanceManagement", msg);
     printPageClosePopUp(response, vars, "");
@@ -244,6 +249,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     String discard[] = { "", "", "", "", "", "", "", "" };
 
     switch (activationKey.getSubscriptionStatus()) {
+    case INVALID:
     case COMMUNITY:
       discard[0] = "OPSInstance";
       discard[1] = "OPSActiveTitle";
@@ -299,79 +305,55 @@ public class InstanceManagement extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    // Interface parameters
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InstanceManagement", false, "", "",
-        "", false, "ad_forms", strReplaceWith, false, true);
+    xmlDocument.setParameter("theme", vars.getTheme());
+
+    ConnectionProvider cp = new DalConnectionProvider(false);
+
+    ToolBar toolbar = new ToolBar(cp, vars.getLanguage(), "InstanceManagement", false, "", "", "",
+        false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-    try {
-      final WindowTabs tabs = new WindowTabs(this, vars,
-          "org.openbravo.erpCommon.ad_forms.InstanceManagement");
-      xmlDocument.setParameter("theme", vars.getTheme());
-      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
-          strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (final Exception ex) {
-      throw new ServletException(ex);
+    OBError myMessage = null;
+    ActivationMsg msg = activationKey.getActivationMessage();
+    if (msg == null) {
+      myMessage = vars.getMessage("InstanceManagement");
+    } else {
+      myMessage = new OBError();
+      myMessage.setType(activationKey.getMessageType());
+      String msgTxt = Utility.parseTranslation(cp, vars, vars.getLanguage(), msg.getMsgText());
+
+      OBError originalMessage = vars.getMessage("InstanceManagement");
+      if (originalMessage != null) {
+        msgTxt = originalMessage.getMessage() + "<br/>" + msgTxt;
+      }
+      myMessage.setMessage(msgTxt);
+      myMessage.setType(msg.getSeverity().toString());
     }
 
-    // Message
-    {
-      OBError myMessage = null;
-      ActivationMsg msg = activationKey.getActivationMessage();
-      if (msg == null) {
-        myMessage = vars.getMessage("InstanceManagement");
-      } else {
-        myMessage = new OBError();
-        myMessage.setType(activationKey.getMessageType());
-        String msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMsgText());
-
-        OBError originalMessage = vars.getMessage("InstanceManagement");
-        if (originalMessage != null) {
-          msgTxt = originalMessage.getMessage() + "<br/>" + msgTxt;
-        }
-        myMessage.setMessage(msgTxt);
-        myMessage.setType(msg.getSeverity().toString());
-      }
-
-      if (myMessage == null
-          && activationKey.checkOPSLimitations(null) == LicenseRestriction.ON_DEMAND_OFF_PLATFORM) {
-        myMessage = new OBError();
-        myMessage.setType("Warning");
-        myMessage.setMessage(Utility.messageBD(this, "OffDemandPlatform", vars.getLanguage()));
-      }
-
-      vars.removeMessage("InstanceManagement");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+    vars.removeMessage("InstanceManagement");
+    if (myMessage != null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
 
-    if (!activationKey.isOPSInstance())
-      xmlDocument.setParameter("instanceInfo",
-          Utility.messageBD(this, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n"));
-    else
-      xmlDocument.setParameter("instanceInfo", activationKey.toString(this, vars.getLanguage()));
+    String instanceInfo = activationKey.isOPSInstance() ? //
+    getLicenseDescription(activationKey, vars.getLanguage())
+        : Utility.messageBD(cp, "OPSCommunityInstance", vars.getLanguage()).replace("\\n", "\n");
+    xmlDocument.setParameter("instanceInfo", instanceInfo);
 
     if (activationKey.hasExpirationDate()) {
-      if (activationKey.getPendingDays() != null)
-        xmlDocument.setParameter("OPSdaysLeft", activationKey.getPendingDays().toString());
-      else
-        xmlDocument.setParameter("OPSdaysLeft",
-            Utility.messageBD(this, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n"));
+      String daysLeft = activationKey.getPendingDays() != null ? //
+      activationKey.getPendingDays().toString()
+          : Utility.messageBD(cp, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n");
+      xmlDocument.setParameter("OPSdaysLeft", daysLeft);
     }
 
     xmlDocument.setParameter("moduleActions",
         activationKey.getInstanceActivationExtraActionsHtml(xmlEngine));
 
-    String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
+    String cacheMsg = Utility.messageBD(cp, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
         "\\n", "\n");
     cacheMsg = "var cacheMsg = \"" + cacheMsg + "\"";
     xmlDocument.setParameter("cacheMsg", cacheMsg);
@@ -379,7 +361,101 @@ public class InstanceManagement extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
 
+  private String getLicenseDescription(ActivationKey ak, String lang) {
+    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateFormat.java");
+
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    StringBuilder sb = new StringBuilder();
+    if (ak.getInstanceProperties() != null) {
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCustomer", lang))
+          .append("</td><td>").append(ak.getProperty("customer")).append("</td></tr>");
+
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSLicenseEdition", lang))
+          .append("</td><td>")
+          .append(
+              Utility.getListValueName("OBPSLicenseEdition", ak.getLicenseClass().getCode(), lang))
+          .append("</td></tr>");
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSLicenseType", lang))
+          .append("</td><td>")
+          .append(Utility.getListValueName("OPSLicenseType", ak.getProperty("lincensetype"), lang));
+      if (ak.isTrial()) {
+        sb.append(" (" + Utility.messageBD(conn, "OPSTrialLicense", lang) + ")");
+      }
+      sb.append("</td></tr>");
+      Date startDate = ak.getStartDate();
+      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
+      if (startDate != null) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSStartDate", lang))
+            .append("</td><td>").append(outputFormat.format(startDate)).append("</td></tr>");
+      }
+
+      Date endDate = ak.getEndDate();
+      if (endDate != null) {
+        sb.append("<tr><td>")
+            .append(Utility.messageBD(conn, "OPSEndDate", lang))
+            .append("</td><td>")
+            .append(
+                (ak.getProperty("enddate") == null ? Utility.messageBD(conn, "OPSNoEndDate", lang)
+                    : outputFormat.format(endDate))).append("</td></tr>");
+      }
+
+      Long maxUsers = ak.getMaxUsers();
+      sb.append("<tr><td>")
+          .append(Utility.messageBD(conn, "OPSConcurrentUsers", lang))
+          .append("</td><td>")
+          .append(
+              (maxUsers == null || maxUsers == 0L) ? Utility.messageBD(conn, "OPSUnlimitedUsers",
+                  lang) : maxUsers).append("</td></tr>");
+      if (ak.getProperty("limituserswarn") != null) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
+            .append("</td><td>").append(ak.getProperty("limituserswarn")).append("</td></tr>");
+      }
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
+          .append("</td><td>");
+      sb.append(ak.getActiveSessions(null));
+      sb.append("</td></tr>");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
+          .append("</td><td>").append(ak.getProperty("instanceno")).append("\n");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstancePurpose", lang))
+          .append("</td><td>")
+          .append(Utility.getListValueName("InstancePurpose", ak.getProperty("purpose"), lang))
+          .append("</td></tr>");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSLimitation", lang))
+          .append("</td><td>");
+      sb.append(ak.getWSExplanation(conn, lang));
+      sb.append("</td></tr>");
+
+      if (!ak.hasUnlimitedWsAccess()) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
+            .append("</td><td>");
+        sb.append(ak.getNumberWSDayCounter());
+        sb.append("</td></tr>");
+      }
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
+          .append("</td><td>");
+      sb.append(ak.getPOSTerminalsExplanation());
+      sb.append("</td></tr>");
+
+      for (ModuleLicenseRestrictions.AdditionalInfo addInfo : ak.getAdditionalMessageInfo()) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, addInfo.getKey(), lang))
+            .append("</td><td>");
+        sb.append(addInfo.getValue());
+        sb.append("</td></tr>");
+      }
+
+    } else {
+      sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
+    }
+    return sb.toString();
   }
 
   private void printPageNotActive(HttpServletResponse response, VariablesSecureApp vars)
@@ -416,47 +492,25 @@ public class InstanceManagement extends HttpSecureAppServlet {
         .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    // Interface parameters
-    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InstanceManagement", false, "",
-        "", "", false, "ad_forms", strReplaceWith, false, true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
+    xmlDocument.setParameter("theme", vars.getTheme());
 
-    try {
-      final WindowTabs tabs = new WindowTabs(this, vars,
-          "org.openbravo.erpCommon.ad_forms.InstanceManagement");
-      xmlDocument.setParameter("theme", vars.getTheme());
-      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "InstanceManagement.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "InstanceManagement.html",
-          strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (final Exception ex) {
-      throw new ServletException(ex);
-    }
+    ConnectionProvider cp = new DalConnectionProvider(false);
 
-    // Message
-    {
-      final OBError myMessage = vars.getMessage("InstanceManagement");
-      vars.removeMessage("InstanceManagement");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+    final OBError myMessage = vars.getMessage("InstanceManagement");
+    vars.removeMessage("InstanceManagement");
+    if (myMessage != null) {
+      xmlDocument.setParameter("messageType", myMessage.getType());
+      xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+      xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
 
     final SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
     // Purpose combo
     try {
-      String validation = ActivationKey.getInstance().isOffPlatform() ? "50AFB21662F74D7DAEA5EA721AA7F2BA"
-          : "";
-      ComboTableData comboTableData = new ComboTableData(this, "LIST", "", "InstancePurpose",
-          validation, Utility.getContext(this, vars, "#AccessibleOrgTree", "InstanceManagement"),
-          Utility.getContext(this, vars, "#User_Client", "InstanceManagement"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "InstanceManagement",
+      ComboTableData comboTableData = new ComboTableData(cp, "LIST", "", "InstancePurpose", "",
+          Utility.getContext(cp, vars, "#AccessibleOrgTree", "InstanceManagement"),
+          Utility.getContext(cp, vars, "#User_Client", "InstanceManagement"), 0);
+      Utility.fillSQLParameters(cp, vars, null, comboTableData, "InstanceManagement",
           sysInfo.getInstancePurpose());
       if (sysInfo.getInstancePurpose() != null) {
         xmlDocument.setParameter("paramSelPurpose", sysInfo.getInstancePurpose());
@@ -511,6 +565,7 @@ public class InstanceManagement extends HttpSecureAppServlet {
     pb.setParams(params);
 
     OBError msg = new OBError();
+    ConnectionProvider cp = new DalConnectionProvider(false);
     try {
       new ActiveInstanceProcess().execute(pb);
       msg = (OBError) pb.getResult();
@@ -519,17 +574,17 @@ public class InstanceManagement extends HttpSecureAppServlet {
       ActivationKey ak = ActivationKey.getInstance();
       if (result && ak.isActive() && ak.isTrial() && !ak.isHeartbeatActive()) {
         msg.setType("Warning");
-        msg.setTitle(Utility.messageBD(this, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage()));
-        msg.setMessage(Utility.messageBD(this, "OPS_NOT_HB_ACTIVE", vars.getLanguage()));
+        msg.setTitle(Utility.messageBD(cp, "OPS_NOT_HB_ACTIVE_TITLE", vars.getLanguage()));
+        msg.setMessage(Utility.messageBD(cp, "OPS_NOT_HB_ACTIVE", vars.getLanguage()));
       }
     } catch (Exception e) {
       log4j.error("Error Activating instance", e);
       msg.setType("Error");
-      msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
+      msg.setMessage(Utility.parseTranslation(cp, vars, vars.getLanguage(), e.getMessage()));
       result = false;
     }
 
-    msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMessage()));
+    msg.setMessage(Utility.parseTranslation(cp, vars, vars.getLanguage(), msg.getMessage()));
     vars.setMessage("InstanceManagement", msg);
     return result;
   }
