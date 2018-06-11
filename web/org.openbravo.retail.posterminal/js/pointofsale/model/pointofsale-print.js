@@ -35,6 +35,7 @@
   var PrintReceipt = function (model) {
       var terminal = OB.MobileApp.model.get('terminal');
 
+      this.model = model;
       this.receipt = model.get('order');
       this.multiOrders = model.get('multiOrders');
       this.multiOrders.on('print', function (order, args) {
@@ -112,6 +113,7 @@
       order: receipt,
       template: template,
       forcedtemplate: printargs.forcedtemplate,
+      model: me.model,
       callback: printargs.callback
     }, function (args) {
       function printPDF(receipt, args) {
