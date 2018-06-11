@@ -1810,17 +1810,27 @@ enyo.kind({
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
                   isConfirmButton: true,
                   action: function (popup) {
-                    var approvals = me.owner.receipt.get('approvals') || [],
-                        approval = {
-                        approvalType: {
-                          approval: 'OBPOS_approval.prepaymentUnderLimit',
-                          message: 'OBPOS_approval.prepaymentUnderLimit'
-                        },
-                        userContact: supervisor.get('id'),
-                        created: (new Date()).getTime()
-                        };
-                    approvals.push(approval);
-                    me.owner.receipt.set('approvals', approvals);
+                    var approvals, approval = {
+                      approvalType: {
+                        approval: 'OBPOS_approval.prepaymentUnderLimit',
+                        message: 'OBPOS_approval.prepaymentUnderLimit'
+                      },
+                      userContact: supervisor.get('id'),
+                      created: (new Date()).getTime()
+                    };
+
+                    if (myModel.get('leftColumnViewManager').isOrder()) {
+                      approvals = me.owner.receipt.get('approvals') || [];
+                      approvals.push(approval);
+                      me.owner.receipt.set('approvals', approvals);
+                    } else {
+                      myModel.get('multiOrders').get('multiOrdersList').forEach(function (order) {
+                        approvals = order.get('approvals') || [];
+                        approvals.push(approval);
+                        order.set('approvals', approvals);
+                      });
+                    }
+
                     popup.doHideThisPopup();
                     continueExecution();
                   }

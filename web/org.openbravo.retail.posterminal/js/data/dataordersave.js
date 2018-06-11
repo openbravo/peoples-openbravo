@@ -204,7 +204,7 @@
             frozenReceipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             frozenReceipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
-            frozenReceipt.get("approvals").forEach(function (approval) {
+            frozenReceipt.get('approvals').forEach(function (approval) {
               if (typeof (approval.approvalType) === 'object') {
                 approval.approvalMessage = OB.I18N.getLabel(approval.approvalType.message, approval.approvalType.params);
                 approval.approvalType = approval.approvalType.approval;
@@ -500,6 +500,13 @@
 
               // Set the quantities to deliver
               currentReceipt.setQuantitiesToDeliver();
+
+              currentReceipt.get('approvals').forEach(function (approval) {
+                if (typeof (approval.approvalType) === 'object') {
+                  approval.approvalMessage = OB.I18N.getLabel(approval.approvalType.message, approval.approvalType.params);
+                  approval.approvalType = approval.approvalType.approval;
+                }
+              });
 
               me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
 
