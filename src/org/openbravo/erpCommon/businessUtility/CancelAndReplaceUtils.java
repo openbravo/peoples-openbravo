@@ -1459,7 +1459,9 @@ public class CancelAndReplaceUtils {
           .list();
       BigDecimal remainingAmount = new BigDecimal(amount.toString());
       for (final FIN_PaymentScheduleDetail remainingPSD : pendingPaymentScheduleDetailList) {
-        if (remainingAmount.compareTo(BigDecimal.ZERO) == 1) {
+        final boolean isNegativeDetail = remainingPSD.getAmount().compareTo(BigDecimal.ZERO) == -1;
+        if ((!isNegativeDetail && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
+            || (isNegativeDetail && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
           final BigDecimal auxAmount = new BigDecimal(remainingPSD.getAmount().toString());
           if (remainingPSD.getAmount().compareTo(remainingAmount) == 1) {
             // The PSD with the remaining amount is bigger to the amount to create, so it must be
@@ -1467,6 +1469,7 @@ public class CancelAndReplaceUtils {
             final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
                 FIN_PaymentScheduleDetail.class);
             newPSD.setNewOBObject(true);
+            newPSD.setOrganization(order.getOrganization());
             newPSD.setOrderPaymentSchedule(paymentSchedule);
             newPSD.setInvoicePaymentSchedule(remainingPSD.getInvoicePaymentSchedule());
             newPSD.setAmount(remainingPSD.getAmount().subtract(remainingAmount));
@@ -1474,6 +1477,7 @@ public class CancelAndReplaceUtils {
             paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
             OBDal.getInstance().save(newPSD);
             remainingPSD.setAmount(remainingAmount);
+            OBDal.getInstance().save(remainingPSD);
           }
           remainingAmount = remainingAmount.subtract(auxAmount);
           FIN_AddPayment.updatePaymentDetail(remainingPSD, _nettingPayment,
@@ -1481,6 +1485,27 @@ public class CancelAndReplaceUtils {
         } else {
           break;
         }
+      }
+      if (remainingAmount.compareTo(BigDecimal.ZERO) != 0) {
+        // If the new order has a lower amount than the initially paid amount, the payment must have
+        // a bigger amount than the order, and the outstanding amount must be negative
+        final FIN_PaymentScheduleDetail lastRemainingPSD = pendingPaymentScheduleDetailList
+            .get(pendingPaymentScheduleDetailList.size() - 1);
+        lastRemainingPSD.setAmount(lastRemainingPSD.getAmount().add(remainingAmount));
+        OBDal.getInstance().save(lastRemainingPSD);
+        // And the remaining PSD must be created with the quantity in negative
+        final FIN_PaymentScheduleDetail newRemainingPSD = OBProvider.getInstance().get(
+            FIN_PaymentScheduleDetail.class);
+        newRemainingPSD.setNewOBObject(true);
+        newRemainingPSD.setOrganization(order.getOrganization());
+        newRemainingPSD.setOrderPaymentSchedule(paymentSchedule);
+        newRemainingPSD.setInvoicePaymentSchedule(lastRemainingPSD.getInvoicePaymentSchedule());
+        newRemainingPSD.setAmount(remainingAmount.negate());
+        newRemainingPSD.setBusinessPartner(order.getBusinessPartner());
+        paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newRemainingPSD);
+        OBDal.getInstance().save(newRemainingPSD);
+        FIN_AddPayment.updatePaymentDetail(lastRemainingPSD, _nettingPayment,
+            lastRemainingPSD.getAmount(), false);
       }
     }
     return _nettingPayment;
