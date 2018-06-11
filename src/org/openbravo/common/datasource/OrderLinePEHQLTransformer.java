@@ -184,11 +184,11 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (isSalesTransaction) {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
       orderQuantityHql
-          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity = 0 then 1 else e.orderedQuantity end)))");
+          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
     } else {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
       orderQuantityHql
-          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity = 0 then 1 else e.orderedQuantity end)))");
+          .append(" , e.orderQuantity * TO_NUMBER((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
     }
     return orderQuantityHql.toString();
   }

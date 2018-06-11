@@ -163,7 +163,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
     } else {
       orderQuantityHql
-          .append(" e.orderQuantity * TO_NUMBER((e.movementQuantity - coalesce(mi.quantity,0)) / (case when e.movementQuantity = 0 then 1 else e.movementQuantity end))");
+          .append(" e.orderQuantity * ((e.movementQuantity - coalesce(mi.quantity,0)) / (case when e.movementQuantity <> 0 then e.movementQuantity else null end))");
     }
     return orderQuantityHql.toString();
   }
