@@ -759,7 +759,7 @@
           var cashMgmt = OB.DEC.sub(totalDeps, totalDrops);
           cash = OB.DEC.add(OB.DEC.add(startingCash, OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
           payment.currentCash = OB.UTIL.currency.toDefaultCurrency(payment.paymentMethod.currency, cash);
-          payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, cash);
+          payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, payment.currentCash);
         }, this);
         if (typeof callback === 'function') {
           callback();
