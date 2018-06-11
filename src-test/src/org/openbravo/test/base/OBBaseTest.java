@@ -397,9 +397,11 @@ public class OBBaseTest {
     if (sqlFunctions == null || sqlFunctions.isEmpty()) {
       return true;
     }
-    @SuppressWarnings("unchecked")
     Map<String, SQLFunction> registeredFunctions = SessionFactoryController.getInstance()
         .getConfiguration().getSqlFunctions();
+    if (registeredFunctions == null) {
+      return false;
+    }
     for (String sqlFunction : sqlFunctions.keySet()) {
       if (!registeredFunctions.containsKey(sqlFunction)) {
         return false;
