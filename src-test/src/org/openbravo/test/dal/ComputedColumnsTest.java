@@ -129,8 +129,8 @@ public class ComputedColumnsTest extends OBBaseTest {
     boolean thrown = false;
     try {
       qOrder.count();
-    } catch (QueryException e) {
-      thrown = e.getMessage().startsWith(EXCEPTION_MSG);
+    } catch (IllegalArgumentException e) {
+      thrown = e.getCause().getMessage().startsWith(EXCEPTION_MSG);
     }
 
     // ... it shouldn't be possible, proxy should be used to reach it
