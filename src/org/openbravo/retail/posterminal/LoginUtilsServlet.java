@@ -122,6 +122,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           .getOrganizationStructureProvider(terminalObj.getClient().getId())
           .getNaturalTree(terminalObj.getOrganization().getId()));
 
+      String extraFilter = "";
+      if (!doFilterUserOnlyByTerminalAccessPreference()) {
+        extraFilter = "not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or ";
+      }
+
       String hqlUser = "select distinct user.name, user.username, user.id "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, "
           + "ADFormAccess formAccess, OBPOS_Applications terminal "
@@ -132,7 +137,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           + "user.username is not null and "
           + "user.password is not null and "
           + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
-          + "(not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
+          + "(" + extraFilter + "exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
           + "terminal.searchKey = :theTerminalSearchKey and "
           + "user.id = userRoles.userContact.id and userRoles.role.id = role.id and "
           + "userRoles.role.id = formAccess.role.id and "
@@ -196,6 +201,21 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     }
     result.put("data", data);
     return result;
+  }
+
+  public static boolean doFilterUserOnlyByTerminalAccessPreference() {
+    try {
+      OBContext.setAdminMode(false);
+      final String value = Preferences.getPreferenceValue(
+          "OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true, OBContext.getOBContext()
+              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+              .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+      return "Y".equals(value);
+    } catch (Exception e) {
+      return false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   @Override
