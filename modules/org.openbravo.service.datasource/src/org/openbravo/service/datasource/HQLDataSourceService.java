@@ -195,7 +195,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     List<Column> columns = table.getADColumnList();
     List<Map<String, Object>> data = new ArrayList<>();
-    boolean checkIsNotNull = false;
     for (Tuple tuple : query.list()) {
       Map<String, Object> record = new HashMap<>();
       if (distinct != null) {
@@ -209,21 +208,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       } else {
         int i = 0;
         for (TupleElement<?> tupleElement : tuple.getElements()) {
-          String aliasName = tupleElement.getAlias();
-          String propertyName;
-          if (aliasName.contains(PROPERTY_FIELD_SEPARATOR)) {
-            propertyName = aliasName.replace(PROPERTY_FIELD_SEPARATOR,
-                JsonConstants.FIELD_SEPARATOR);
-          } else {
-            Property property = entity.getPropertyByColumnName(aliasName.toLowerCase(),
-                checkIsNotNull);
-            if (property == null) {
-              property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName()
-                  .toLowerCase());
-            }
-            propertyName = property.getName();
-          }
-          record.put(propertyName, tuple.get(aliasName));
+          String alias = tupleElement.getAlias();
+          String propertyName = getPropertyName(entity, alias, columns.get(i).getDBColumnName());
+          record.put(propertyName, alias != null ? tuple.get(alias) : tuple.get(i));
           i++;
         }
       }
@@ -231,6 +218,21 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
     OBContext.restorePreviousMode();
     return data;
+  }
+
+  private String getPropertyName(Entity entity, String alias, String columnName) {
+    if (alias == null) {
+      return entity.getPropertyByColumnName(columnName.toLowerCase()).getName();
+    }
+    if (alias.contains(PROPERTY_FIELD_SEPARATOR)) {
+      return alias.replace(PROPERTY_FIELD_SEPARATOR, JsonConstants.FIELD_SEPARATOR);
+    }
+    boolean checkIsNotNull = false;
+    Property property = entity.getPropertyByColumnName(alias.toLowerCase(), checkIsNotNull);
+    if (property == null) {
+      property = entity.getPropertyByColumnName(columnName.toLowerCase());
+    }
+    return property.getName();
   }
 
   /**
