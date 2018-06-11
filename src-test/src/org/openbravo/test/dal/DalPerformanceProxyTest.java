@@ -36,6 +36,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
@@ -105,8 +106,9 @@ public class DalPerformanceProxyTest extends OBBaseTest {
     try {
       setTestAdminContext();
 
+      DalConnectionProvider dcp = new DalConnectionProvider(false);
       final StatelessSession session = SessionFactoryController.getInstance().getSessionFactory()
-          .openStatelessSession();
+          .openStatelessSession(dcp.getConnection());
       session.beginTransaction();
       for (int i = 0; i < CNT; i++) {
         BusinessPartner bp = OBProvider.getInstance().get(BusinessPartner.class);

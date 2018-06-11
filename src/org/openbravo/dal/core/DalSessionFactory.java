@@ -49,6 +49,7 @@ import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
 import org.hibernate.engine.spi.FilterDefinition;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.internal.SessionFactoryImpl;
+import org.hibernate.internal.StatelessSessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
@@ -162,7 +163,7 @@ public class DalSessionFactory implements SessionFactory {
   @Override
   public StatelessSession openStatelessSession() {
     final StatelessSession session = delegateSessionFactory.openStatelessSession();
-    initializeDBSessionInfo((SessionImplementor) session);
+    initializeDBSessionInfo((StatelessSessionImpl) session);
     return session;
   }
 
@@ -172,11 +173,11 @@ public class DalSessionFactory implements SessionFactory {
   @Override
   public StatelessSession openStatelessSession(Connection connection) {
     final StatelessSession session = delegateSessionFactory.openStatelessSession(connection);
-    initializeDBSessionInfo((SessionImplementor) session);
+    initializeDBSessionInfo((StatelessSessionImpl) session);
     return session;
   }
 
-  private void initializeDBSessionInfo(SessionImplementor session) {
+  private void initializeDBSessionInfo(StatelessSessionImpl session) {
     Connection conn = session.connection();
     SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("bbdd.rdbms"));
