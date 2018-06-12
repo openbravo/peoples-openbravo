@@ -23,6 +23,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -169,6 +171,9 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
   }
 
   protected String getOperativeQuantityHQL() {
+    if (!UOMUtil.isUomManagementEnabled()) {
+      return " '' ";
+    }
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
         .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, sh.documentType.id))))))");

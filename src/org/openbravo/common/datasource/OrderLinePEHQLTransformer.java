@@ -194,6 +194,9 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
   }
 
   protected String getOperativeQuantityHQL() {
+    if (!UOMUtil.isUomManagementEnabled()) {
+      return " '' ";
+    }
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
         .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))))");
