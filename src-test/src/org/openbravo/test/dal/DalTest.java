@@ -780,4 +780,24 @@ public class DalTest extends OBBaseTest {
     newUser.setDefaultLanguage(OBContext.getOBContext().getLanguage());
     return newUser;
   }
+
+  @Test
+  public void evictAnEvictedObjectShouldNotFail() {
+    User user = getNewUser();
+    OBContext.setAdminMode(true);
+    boolean fail = false;
+    try {
+      OBDal.getInstance().save(user);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().evict(user);
+      // This second evict has no effect but it should not fail
+      OBDal.getInstance().getSession().evict(user);
+    } catch (IllegalArgumentException iaex) {
+      fail = true;
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+      OBContext.restorePreviousMode();
+    }
+    assertThat("Can evict same object twice", fail, equalTo(false));
+  }
 }

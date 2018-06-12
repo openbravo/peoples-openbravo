@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -481,6 +481,17 @@ public class OBInterceptor extends EmptyInterceptor {
       getInterceptorListener().preFlush(entities);
     }
     super.preFlush(entities);
+  }
+
+  // allow Hibernate to determine that the object is a valid entity
+  // this is needed to avoid throwing an exception when evicting an already evicted object
+  @Override
+  public String getEntityName(Object entity) {
+    if (!(entity instanceof BaseOBObject)) {
+      return null;
+    }
+    BaseOBObject bob = (BaseOBObject) entity;
+    return bob.getEntityName();
   }
 
 }
