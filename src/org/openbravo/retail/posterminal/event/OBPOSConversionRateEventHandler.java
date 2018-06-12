@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.OBPOSConversionRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,20 +66,22 @@ public class OBPOSConversionRateEventHandler extends EntityPersistenceEventObser
   private void throwIfExistsRecord(final OBPOSConversionRate conversionRate) {
     // Check if exists another record using this currencyFrom - currencyTo in the same dates
     if (existsRecord(conversionRate.getId(), conversionRate.getClient(),
-        conversionRate.getCurrency(), conversionRate.getToCurrency(),
-        conversionRate.getValidFromDate(), conversionRate.getValidToDate())) {
+        conversionRate.getOrganization(), conversionRate.getCurrency(),
+        conversionRate.getToCurrency(), conversionRate.getValidFromDate(),
+        conversionRate.getValidToDate())) {
       throw new OBException(OBMessageUtils.messageBD("20504"));
     }
   }
 
   // Check if exists another record using this currencyFrom - currencyTo in the same dates
-  private boolean existsRecord(String id, Client client, Currency currencyFrom,
-      Currency currencyTo, Date validFrom, Date validTo) {
+  private boolean existsRecord(String id, Client client, Organization organization,
+      Currency currencyFrom, Currency currencyTo, Date validFrom, Date validTo) {
     StringBuilder hql = new StringBuilder();
     hql.append(" SELECT t." + OBPOSConversionRate.PROPERTY_ID);
     hql.append(" FROM " + OBPOSConversionRate.ENTITY_NAME + " as t");
     hql.append(" WHERE :id != t. " + OBPOSConversionRate.PROPERTY_ID);
     hql.append(" AND :client = t. " + OBPOSConversionRate.PROPERTY_CLIENT);
+    hql.append(" AND :organization = t. " + OBPOSConversionRate.PROPERTY_ORGANIZATION);
     hql.append(" AND :currencyFrom = t. " + OBPOSConversionRate.PROPERTY_CURRENCY);
     hql.append(" AND :currencyTo = t. " + OBPOSConversionRate.PROPERTY_TOCURRENCY);
     hql.append(" AND ((:validFrom between t." + OBPOSConversionRate.PROPERTY_VALIDFROMDATE
@@ -91,6 +94,7 @@ public class OBPOSConversionRateEventHandler extends EntityPersistenceEventObser
     final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
     query.setParameter("id", id);
     query.setParameter("client", client);
+    query.setParameter("organization", organization);
     query.setParameter("currencyFrom", currencyFrom);
     query.setParameter("currencyTo", currencyTo);
     query.setParameter("validFrom", validFrom);
