@@ -160,7 +160,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       countQuery = getQuery(table, parameters, justCount);
       return getGroupedCount(countQuery);
     } else {
-      nRows = ((Number) countQuery.uniqueResult()).intValue();
+      nRows = ((Number) countQuery.uniqueResult().get(0)).intValue();
     }
     return nRows;
   }
