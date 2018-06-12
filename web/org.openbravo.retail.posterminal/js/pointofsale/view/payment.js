@@ -33,8 +33,8 @@ enyo.kind({
     }
     return null;
   },
-  setTotalPending: function (pending, mulrate, symbol, currencySymbolAtTheRight, inSender, inEvent) {
-    this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, mulrate), symbol, currencySymbolAtTheRight));
+  setTotalPending: function (pending, symbol, currencySymbolAtTheRight) {
+    this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(pending, symbol, currencySymbolAtTheRight));
   },
   clearPaymentMethodSelect: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
@@ -83,7 +83,7 @@ enyo.kind({
         this.calculateChange(payment, change);
       } else if (!_.isNull(pending) && pending) {
         this.calculateChangeReset();
-        this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
+        this.setTotalPending(OB.DEC.mul(pending, payment.mulrate, payment.obposPosprecision), payment.symbol, payment.currencySymbolAtTheRight);
       }
       if (paymentstatus && inEvent.value.status !== "" && !this.receipt.isCalculateReceiptLocked && !this.receipt.isCalculateGrossLocked) {
         this.checkValidPayments(paymentstatus, payment);
@@ -488,6 +488,7 @@ enyo.kind({
     var paymentstatus = this.receipt.getPaymentStatus();
     var symbol = '',
         rate = OB.DEC.One,
+        precision = null,
         symbolAtRight = true,
         isCashType = true;
 
@@ -498,6 +499,7 @@ enyo.kind({
     if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')])) {
       symbol = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].symbol;
       rate = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].mulrate;
+      precision = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].obposPosprecision;
       symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].currencySymbolAtTheRight;
       isCashType = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].paymentMethod.iscash;
     }
@@ -525,7 +527,7 @@ enyo.kind({
       this.updateCreditSalesAction();
       this.$.layawayaction.hide();
     } else {
-      this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
+      this.setTotalPending(OB.DEC.mul(this.receipt.getPending(), rate, precision), symbol, symbolAtRight);
       this.$.totalpending.show();
       if (paymentstatus.isNegative) {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_ReturnRemaining'));
@@ -577,6 +579,7 @@ enyo.kind({
     var symbol = '',
         symbolAtRight = true,
         rate = OB.DEC.One,
+        precision = null,
         isCashType = true,
         selectedPayment;
     this.updateExtraInfo('');
@@ -593,6 +596,7 @@ enyo.kind({
     if (!_.isUndefined(selectedPayment)) {
       symbol = selectedPayment.symbol;
       rate = selectedPayment.mulrate;
+      precision = selectedPayment.obposPosprecision;
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
@@ -620,7 +624,7 @@ enyo.kind({
       }
       this.updateCreditSalesAction();
     } else {
-      this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
+      this.setTotalPending(OB.DEC.mul(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, precision), symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.donebutton.hide();

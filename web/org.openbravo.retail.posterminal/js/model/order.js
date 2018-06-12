@@ -4518,7 +4518,7 @@
     },
 
     addPayment: function (payment, callback) {
-      var payments, total;
+      var payments, total, precision;
       var i, max, p, order;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
@@ -4547,6 +4547,7 @@
 
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
+      precision = this.getPrecision(payment);
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
@@ -4588,7 +4589,7 @@
             for (i = 0, max = payments.length; i < max; i++) {
               p = payments.at(i);
               if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
-                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
                   p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
                 }
@@ -4601,7 +4602,7 @@
             for (i = 0, max = payments.length; i < max; i++) {
               p = payments.at(i);
               if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria && !p.get('reversedPaymentId') && !p.get('isPrePayment')) {
-                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
                   p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
                 }
@@ -6928,7 +6929,7 @@
       }
     },
     addPayment: function (payment, callback) {
-      var payments, total;
+      var payments, total, precision;
       var i, max, p, order;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
@@ -6947,6 +6948,7 @@
 
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
+      precision = this.getPrecision(payment);
       order = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
@@ -6978,7 +6980,7 @@
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
             if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
@@ -6993,7 +6995,7 @@
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
             if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
