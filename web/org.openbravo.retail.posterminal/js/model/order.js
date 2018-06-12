@@ -4358,15 +4358,8 @@
       }
     },
     getPrecision: function (payment) {
-      var i, p, max;
-      for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
-        p = OB.MobileApp.model.get('payments')[i];
-        if (p.payment.searchKey === payment.paymenttype) {
-          if (p.obposPrecision) {
-            return p.obposPrecision;
-          }
-        }
-      }
+      var p = OB.MobileApp.model.paymentnames[payment.get('kind')];
+      return p ? p.obposPosprecision : OB.DEC.getScale();
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
       //returns a result with the sum up of every payments based on origAmount field
@@ -4396,9 +4389,10 @@
       //Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
       var differenceInForeingCurrency;
+      var p = this.getPrecision(currentPayment);
       differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
       if (currentPayment && currentPayment.get('rate')) {
-        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'));
+        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'), p);
         return differenceInForeingCurrency;
       } else {
         return differenceInDefaultCurrency;
@@ -4448,7 +4442,7 @@
           //and finally we transform this difference to the foreign amount
           //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
           //in the default currency is satisfied
-          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount'), precision), precision)) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (OB.DEC.abs(p.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
               p.set('origAmount', multiCurrencyDifference);
@@ -6806,15 +6800,8 @@
       };
     },
     getPrecision: function (payment) {
-      var i, p, max;
-      for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
-        p = OB.MobileApp.model.get('payments')[i];
-        if (p.payment.searchKey === payment.paymenttype) {
-          if (p.obposPrecision) {
-            return p.obposPrecision;
-          }
-        }
-      }
+      var p = OB.MobileApp.model.paymentnames[payment.get('kind')];
+      return p ? p.obposPosprecision : OB.DEC.getScale();
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
       //returns a result with the sum up of every payments based on origAmount field
@@ -6844,9 +6831,10 @@
       //Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
       var differenceInForeingCurrency;
+      var p = this.getPrecision(currentPayment);
       differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
       if (currentPayment && currentPayment.get('rate')) {
-        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'));
+        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'), p);
         return differenceInForeingCurrency;
       } else {
         return differenceInDefaultCurrency;
@@ -6878,7 +6866,7 @@
           //and finally we transform this difference to the foreign amount
           //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
           //in the default currency is satisfied
-          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount'), precision), precision)) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (p.get('origAmount') !== multiCurrencyDifference) {
               p.set('origAmount', multiCurrencyDifference);
