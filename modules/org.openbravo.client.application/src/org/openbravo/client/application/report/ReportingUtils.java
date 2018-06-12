@@ -286,6 +286,7 @@ public class ReportingUtils {
    *             {@link ReportingUtils#exportJR(String, ExportType, Map, File, boolean, ConnectionProvider, JRDataSource, Map)}
    *             instead.
    */
+  @Deprecated
   public static void exportJR(String jasperFilePath, ExportType expType,
       Map<String, Object> parameters, File target, boolean addProcessDefinitionParameters,
       ConnectionProvider connectionProvider, JRDataSource data,
