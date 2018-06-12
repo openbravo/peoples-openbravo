@@ -4622,7 +4622,7 @@
     addPayment: function (payment, callback) {
       var payments, total, i, max, p, order, paymentSign, finalCallback;
 
-      if (!this.get('paidOnCredit') && !this.get('paidPartiallyOnCredit') && this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
+      if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && OB.DEC.abs(this.getPrePaymentQty()) >= OB.DEC.abs(this.getTotal()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
         return;
       }
