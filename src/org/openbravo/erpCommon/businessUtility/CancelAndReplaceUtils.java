@@ -1458,10 +1458,10 @@ public class CancelAndReplaceUtils {
       final List<FIN_PaymentScheduleDetail> pendingPaymentScheduleDetailList = paymentScheduleDetailCriteria
           .list();
       BigDecimal remainingAmount = new BigDecimal(amount.toString());
+      final boolean isRemainingNegative = remainingAmount.compareTo(BigDecimal.ZERO) == -1;
       for (final FIN_PaymentScheduleDetail remainingPSD : pendingPaymentScheduleDetailList) {
-        final boolean isNegativeDetail = remainingPSD.getAmount().compareTo(BigDecimal.ZERO) == -1;
-        if ((!isNegativeDetail && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
-            || (isNegativeDetail && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
+        if ((!isRemainingNegative && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
+            || (isRemainingNegative && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
           final BigDecimal auxAmount = new BigDecimal(remainingPSD.getAmount().toString());
           if (remainingPSD.getAmount().compareTo(remainingAmount) == 1) {
             // The PSD with the remaining amount is bigger to the amount to create, so it must be
@@ -1486,7 +1486,8 @@ public class CancelAndReplaceUtils {
           break;
         }
       }
-      if (remainingAmount.compareTo(BigDecimal.ZERO) != 0) {
+      if ((!isRemainingNegative && remainingAmount.compareTo(BigDecimal.ZERO) == 1)
+          || (isRemainingNegative && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
         // If the new order has a lower amount than the initially paid amount, the payment must have
         // a bigger amount than the order, and the outstanding amount must be negative
         final FIN_PaymentScheduleDetail lastRemainingPSD = pendingPaymentScheduleDetailList
