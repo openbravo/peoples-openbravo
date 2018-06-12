@@ -781,6 +781,10 @@ public class DalTest extends OBBaseTest {
     return newUser;
   }
 
+  /**
+   * Test to verify that evict() does not fail when invoking it with an already evicted
+   * BaseOBObject.
+   */
   @Test
   public void evictAnEvictedObjectShouldNotFail() {
     User user = getNewUser();
