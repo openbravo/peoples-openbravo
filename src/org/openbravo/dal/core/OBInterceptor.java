@@ -484,7 +484,7 @@ public class OBInterceptor extends EmptyInterceptor {
   }
 
   // allow Hibernate to determine that the object is a valid entity
-  // this is needed to avoid throwing an exception when evicting an already evicted object
+  // this is needed to avoid throwing an exception when evicting an already evicted BaseOBObject
   @Override
   public String getEntityName(Object entity) {
     if (!(entity instanceof BaseOBObject)) {
