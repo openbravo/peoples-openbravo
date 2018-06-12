@@ -802,6 +802,6 @@ public class DalTest extends OBBaseTest {
       OBDal.getInstance().rollbackAndClose();
       OBContext.restorePreviousMode();
     }
-    assertThat("Can evict same object twice", fail, equalTo(false));
+    assertThat("Can evict same BaseOBObject twice", fail, equalTo(false));
   }
 }
