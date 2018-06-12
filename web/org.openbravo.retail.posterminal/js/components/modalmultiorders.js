@@ -217,6 +217,13 @@ enyo.kind({
           renderHeader: 'OB.UI.ModalMultiOrdersHeader',
           renderLine: 'OB.UI.ListMultiOrdersLine',
           renderEmpty: 'OB.UI.RenderEmpty'
+        }, {
+          name: 'renderLoading',
+          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+          showing: false,
+          initComponents: function () {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }]
       }]
     }]
@@ -234,6 +241,7 @@ enyo.kind({
         toMatch = 0,
         orderModels = [],
         re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
+    me.$.renderLoading.hide();
     me.filters = inEvent.filters;
     var limit;
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
@@ -247,10 +255,17 @@ enyo.kind({
     this.clearAction();
     // Disable the filters button
     me.disableFilters(true);
+    this.$.multiorderslistitemprinter.$.tempty.hide();
+    this.$.multiorderslistitemprinter.$.tbody.hide();
+    this.$.multiorderslistitemprinter.$.tlimit.hide();
+    this.$.renderLoading.show();
     processHeader.exec({
       filters: me.filters,
       _limit: limit
     }, function (data) {
+      me.$.renderLoading.hide();
+      me.$.multiorderslistitemprinter.$.tbody.show();
+      me.$.multiorderslistitemprinter.$.tempty.show();
       if (data) {
         if (data.exception) {
           me.disableFilters(false);
@@ -289,13 +304,13 @@ enyo.kind({
             me.multiOrdersList.add(iter);
           }
         });
-
         me.disableFilters(false);
       } else {
         me.disableFilters(false);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
     }, function (error) {
+      me.$.renderLoading.hide();
       me.disableFilters(false);
       me.multiOrdersList.reset();
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), (error && error.exception && error.exception.message) ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
