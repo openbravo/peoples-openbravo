@@ -22,10 +22,11 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.materialmgmt.UOMUtil;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
@@ -33,6 +34,7 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 @ComponentProvider.Qualifier("631D227DC83A4898BBD041D46D829D27")
 public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
   protected static final String EMPTY_STRING = "";
+  protected static final String CREATE_INVOICE_LINES_FORM_INOUT_WINDOW = "E4524BA1D1354AAD8B31C290672D8417";
   protected boolean isSalesTransaction;
 
   @Override
@@ -61,7 +63,31 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@operativeQuantity@", getOperativeQuantityHQL());
     transformedHql = transformedHql.replace("@orderQuantity@", getOrderQuantityHQL());
     transformedHql = transformedHql.replace("@operativeUOM@", getOperativeUOM());
+    transformedHql = transformedHql.replace("@filterByDocumentsProcessedSinceNDaysAgo@",
+        getSinceHowManyDaysAgoInOutsShouldBeFiltered());
     return transformedHql;
+  }
+
+  /**
+   * Return the value of FilterByDocumentsProcessedSinceNDaysAgo preference to be used to define a
+   * starting range date filter to limit the shipment/receipts records to be returned by the query
+   * 
+   * @return The value of the preference if exists for the Create Invoice Lines From
+   *         Shipment/Receipt window, or since one year (365 days) if not or exists any conflict in
+   *         the preference definition
+   */
+  protected String getSinceHowManyDaysAgoInOutsShouldBeFiltered() {
+    int daysCount = 365;
+    try {
+      Window window = OBDal.getInstance().get(Window.class, CREATE_INVOICE_LINES_FORM_INOUT_WINDOW);
+      String value = Preferences.getPreferenceValue("FilterByDocumentsProcessedSinceNDaysAgo",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), window);
+      daysCount = Integer.valueOf(value);
+    } catch (Exception ignore) {
+    }
+    return String.valueOf(daysCount);
   }
 
   protected String getSelectClauseHQL() {

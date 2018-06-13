@@ -22,14 +22,18 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.materialmgmt.UOMUtil;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
 @ComponentProvider.Qualifier("7EB9FFD7BD4E4113A13A096EB879D358")
 public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
   protected static final String EMPTY_STRING = "";
+  protected static final String CREATE_INVOICE_LINES_FORM_ORDER_WINDOW = "D0E067F649AC457D9EA2CDAC2E8571D7";
   protected boolean isSalesTransaction;
 
   @Override
@@ -59,8 +63,31 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@operativeQuantity@", getOperativeQuantityHQL());
     transformedHql = transformedHql.replace("@orderQuantity@", getOrderQuantityHQL());
     transformedHql = transformedHql.replace("@operativeUOM@", getOperativeUOM());
+    transformedHql = transformedHql.replace("@filterByDocumentsProcessedSinceNDaysAgo@",
+        getSinceHowManyDaysAgoOrdersShouldBeFiltered());
     transformedHql = changeAdditionalFiltersIfIsSalesTransaction(transformedHql);
     return transformedHql;
+  }
+
+  /**
+   * Returns the value of FilterByDocumentsProcessedSinceNDaysAgo preference to be used to define a
+   * starting range date filter to limit the order records to be returned by the query
+   * 
+   * @return The value of the preference if exists for the Create Invoice Lines From Order window,
+   *         or since one year (365 days) if not or exists any conflict in the preference definition
+   */
+  protected String getSinceHowManyDaysAgoOrdersShouldBeFiltered() {
+    int daysCount = 365;
+    try {
+      Window window = OBDal.getInstance().get(Window.class, CREATE_INVOICE_LINES_FORM_ORDER_WINDOW);
+      String value = Preferences.getPreferenceValue("FilterByDocumentsProcessedSinceNDaysAgo",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), window);
+      daysCount = Integer.valueOf(value);
+    } catch (Exception ignore) {
+    }
+    return String.valueOf(daysCount);
   }
 
   private String changeAdditionalFiltersIfIsSalesTransaction(String transformedHql) {
