@@ -1524,12 +1524,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         final StringBuffer reversedPSDHQL = new StringBuffer();
         reversedPSDHQL.append("SELECT psd ");
         reversedPSDHQL.append("FROM FIN_Payment_ScheduleDetail psd ");
+        reversedPSDHQL.append("JOIN psd.orderPaymentSchedule ps ");
         reversedPSDHQL.append("JOIN psd.paymentDetails pd ");
         reversedPSDHQL.append("JOIN pd.finPayment p ");
-        reversedPSDHQL.append("WHERE p.id = :paymentId");
+        reversedPSDHQL.append("WHERE p.id = :paymentId ");
+        reversedPSDHQL.append("AND ps.id = :paymentSchId");
         final Query<FIN_PaymentScheduleDetail> reversedPSDQuery = OBDal.getInstance().getSession()
             .createQuery(reversedPSDHQL.toString(), FIN_PaymentScheduleDetail.class);
         reversedPSDQuery.setParameter("paymentId", payment.getString("reversedPaymentId"));
+        reversedPSDQuery.setParameter("paymentSchId", paymentSchedule.getId());
         final List<FIN_PaymentScheduleDetail> reversedPSDList = reversedPSDQuery.list();
         for (final FIN_PaymentScheduleDetail reversedPSD : reversedPSDList) {
           // Create the new paymentScheduleDetail for the reversal payment
