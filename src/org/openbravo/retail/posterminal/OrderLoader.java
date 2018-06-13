@@ -2719,31 +2719,39 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
           }
 
-          if (outstandingPaidAmount.signum() >= 0) {
-            if (checkPaidOnCreditChecked
-                && outstandingPaidAmount.compareTo(paymentScheduleInv.getOutstandingAmount()) >= 0) {
-              psdAmount = paymentScheduleInv.getOutstandingAmount();
-              outstandingPaidAmount = outstandingPaidAmount.subtract(paymentScheduleInv
-                  .getOutstandingAmount());
-            } else {
-              psdAmount = outstandingPaidAmount;
-              outstandingPaidAmount = BigDecimal.ZERO;
-            }
-          } else {
+          if (checkPaidOnCreditChecked) {
             if (paymentScheduleInv.getOutstandingAmount().signum() >= 0) {
-              psdAmount = outstandingPaidAmount;
-              outstandingPaidAmount = BigDecimal.ZERO;
-            } else {
-              if (checkPaidOnCreditChecked
-                  && outstandingPaidAmount.compareTo(paymentScheduleInv.getOutstandingAmount()) <= 0) {
-                psdAmount = paymentScheduleInv.getOutstandingAmount();
-                outstandingPaidAmount = outstandingPaidAmount.subtract(paymentScheduleInv
-                    .getOutstandingAmount());
+              if (outstandingPaidAmount.signum() >= 0) {
+                if (outstandingPaidAmount.compareTo(paymentScheduleInv.getOutstandingAmount()) >= 0) {
+                  psdAmount = paymentScheduleInv.getOutstandingAmount();
+                  outstandingPaidAmount = outstandingPaidAmount.subtract(paymentScheduleInv
+                      .getOutstandingAmount());
+                } else {
+                  psdAmount = outstandingPaidAmount;
+                  outstandingPaidAmount = BigDecimal.ZERO;
+                }
               } else {
                 psdAmount = outstandingPaidAmount;
                 outstandingPaidAmount = BigDecimal.ZERO;
               }
+            } else {
+              if (outstandingPaidAmount.signum() >= 0) {
+                psdAmount = outstandingPaidAmount;
+                outstandingPaidAmount = BigDecimal.ZERO;
+              } else {
+                if (outstandingPaidAmount.compareTo(paymentScheduleInv.getOutstandingAmount()) <= 0) {
+                  psdAmount = paymentScheduleInv.getOutstandingAmount();
+                  outstandingPaidAmount = outstandingPaidAmount.subtract(paymentScheduleInv
+                      .getOutstandingAmount());
+                } else {
+                  psdAmount = outstandingPaidAmount;
+                  outstandingPaidAmount = BigDecimal.ZERO;
+                }
+              }
             }
+          } else {
+            psdAmount = outstandingPaidAmount;
+            outstandingPaidAmount = BigDecimal.ZERO;
           }
 
           paymentScheduleDetail.setAmount(psdAmount);

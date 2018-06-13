@@ -4524,8 +4524,7 @@
     },
 
     addPayment: function (payment, callback) {
-      var payments, total;
-      var i, max, p, order;
+      var payments, total, i, max, p, order, paymentSign;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
@@ -4594,9 +4593,10 @@
             for (i = 0, max = payments.length; i < max; i++) {
               p = payments.at(i);
               if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
-                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+                paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
+                p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign), p.get('amount')));
                 if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
@@ -4607,9 +4607,10 @@
             for (i = 0, max = payments.length; i < max; i++) {
               p = payments.at(i);
               if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria && !p.get('reversedPaymentId') && !p.get('isPrePayment')) {
-                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+                paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
+                p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign), p.get('amount')));
                 if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
