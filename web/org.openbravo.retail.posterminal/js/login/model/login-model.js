@@ -1155,7 +1155,7 @@
       var next = this.getLastDocumentnoSuffixInOrderlist() + 1;
       return {
         documentnoSuffix: next,
-        documentNo: OB.MobileApp.model.get('terminal').docNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, 7)
+        documentNo: OB.MobileApp.model.get('terminal').docNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, OB.MobileApp.model.get('terminal').documentnoPadding)
       };
     },
     // call this method to get a new quotation document number
@@ -1163,7 +1163,7 @@
       var next = this.getLastQuotationnoSuffixInOrderlist() + 1;
       return {
         quotationnoSuffix: next,
-        documentNo: OB.MobileApp.model.get('terminal').quotationDocNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, 7)
+        documentNo: OB.MobileApp.model.get('terminal').quotationDocNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, OB.MobileApp.model.get('terminal').documentnoPadding)
       };
     },
     // call this method to get a new Return document number
@@ -1171,7 +1171,7 @@
       var next = this.getLastReturnnoSuffixInOrderlist() + 1;
       return {
         documentnoSuffix: next,
-        documentNo: OB.MobileApp.model.get('terminal').returnDocNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, 7)
+        documentNo: OB.MobileApp.model.get('terminal').returnDocNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, OB.MobileApp.model.get('terminal').documentnoPadding)
       };
     },
 

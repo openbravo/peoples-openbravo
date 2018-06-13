@@ -79,6 +79,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("postype", "terminalType"));
     list.add(new HQLProperty("pos.printoffline", "printoffline"));
     list.add(new HQLProperty("pos.ismaster", "ismaster"));
+    list.add(new HQLProperty("pos.documentnoPadding", "documentnoPadding"));
     list.add(new HQLProperty(
         "CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END", "isslave"));
     list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
