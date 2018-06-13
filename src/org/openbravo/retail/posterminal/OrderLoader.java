@@ -2868,9 +2868,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       // If there is a rounded amount add a new payment detail against "Rounded Difference" GL Item
       if (roundAmount.compareTo(BigDecimal.ZERO) != 0) {
         if (paymentType.getPaymentMethod().getGlitemRound() == null) {
-          throw new OBException("G/L Item for Rounding field is empty for "
-              + paymentType.getPaymentMethod().getSearchKey().toString()
-              + " POS Terminal Type Payment Method");
+          throw new OBException(String.format(OBMessageUtils
+              .messageBD("OBPOS_MissingRoundingDifference"), paymentType.getPaymentMethod()
+              .getSearchKey()));
+
         }
         FIN_AddPayment.saveGLItem(finPayment, roundAmount, paymentType.getPaymentMethod()
             .getGlitemRound(),
