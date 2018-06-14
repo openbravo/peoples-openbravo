@@ -98,7 +98,7 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     paymentcashupEvent.setAmount(amount);
     paymentcashupEvent.setType(type);
     paymentcashupEvent.setCurrency(jsonsent.getString("isocode"));
-    paymentcashupEvent.setRate(origAmount.divide(amount, 2, RoundingMode.HALF_UP));
+        paymentcashupEvent.setRate(paymentmethodcashup.getRate());
     OBDal.getInstance().save(paymentcashupEvent);
 
     if (!jsonsent.has("defaultProcess") || jsonsent.getString("defaultProcess").equals("null")
