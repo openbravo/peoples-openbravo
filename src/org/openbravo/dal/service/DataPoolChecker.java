@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.database.ExternalConnectionPool;
@@ -76,20 +76,19 @@ public class DataPoolChecker implements OBSingleton {
    * 
    * @return a new Map object with the mapping (Report_ID, POOL)
    */
-  @SuppressWarnings("unchecked")
   private Map<String, String> findActiveDataPoolSelection() {
     final StringBuilder hql = new StringBuilder();
     hql.append("select dps.report.id, dps.dataPool from OBUIAPP_Data_Pool_Selection dps ");
     hql.append("where dps.active = true");
 
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    List<Object> queryResults = query.list();
+    Query<Object[]> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Object[].class);
+    List<Object[]> queryResults = query.list();
+
     Map<String, String> selection = new HashMap<>(queryResults.size());
-    for (Object item : queryResults) {
-      final Object[] values = (Object[]) item;
+    for (Object[] values : queryResults) {
       selection.put(values[REPORT_ID].toString(), values[DATA_POOL].toString());
     }
-
     return selection;
   }
 
@@ -97,10 +96,10 @@ public class DataPoolChecker implements OBSingleton {
     final StringBuilder hql = new StringBuilder();
     hql.append("select p.searchKey from ADPreference p ");
     hql.append("where p.property='OBUIAPP_DefaultDBPoolForReports' and p.active=true and p.visibleAtClient.id='0' and p.visibleAtOrganization.id='0' ");
-    Query defaultPoolQuery = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<String> defaultPoolQuery = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), String.class);
     defaultPoolQuery.setMaxResults(1);
-
-    setDefaultReadOnlyPool((String) defaultPoolQuery.uniqueResult());
+    setDefaultReadOnlyPool(defaultPoolQuery.uniqueResult());
   }
 
   /**
