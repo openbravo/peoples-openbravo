@@ -697,9 +697,7 @@ public class OBContext implements OBNotSingleton {
       readableOrgs.addAll(getOrganizations(getCurrentClient()));
     } else {
       for (final String o : os) {
-        if (!readableOrgs.contains(o)) {
-          readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
-        }
+        readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
       }
     }
     readableOrgs.add("0");
