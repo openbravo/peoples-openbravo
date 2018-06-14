@@ -23,7 +23,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	SELECT System_Identifier, Isheartbeatactive, Isproxyrequired, Proxy_Server, Proxy_Port, 
-      	Servlet_Container, Servlet_Container_Version, Webserver, Webserver_Version, 
+      	Webserver, Webserver_Version, 
       	Ant_Version, OB_Version, OB_InstallMode, Postpone_Date
       	FROM AD_System_Info
     ]]></Sql>
@@ -59,18 +59,6 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	select Proxy_Port from ad_system_info
-    ]]></Sql>
-   </SqlMethod>
-   <SqlMethod name="selectServletContainer" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	select Servlet_Container from ad_system_info
-    ]]></Sql>
-   </SqlMethod>
-   <SqlMethod name="selectServletContainerVersion" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-      	select Servlet_Container_Version from ad_system_info
     ]]></Sql>
    </SqlMethod>
    <SqlMethod name="selectAntVersion" type="preparedStatement" return="string">

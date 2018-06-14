@@ -56,6 +56,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.ServerVersionChecker;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -164,10 +165,10 @@ public class SystemInfo {
         systemInfo.put(i, getWebserver()[1]);
         break;
       case SERVLET_CONTAINER:
-        systemInfo.put(i, SystemInfoData.selectServletContainer(conn));
+        systemInfo.put(i, ServerVersionChecker.getServerName());
         break;
       case SERVLET_CONTAINER_VERSION:
-        systemInfo.put(i, SystemInfoData.selectServletContainerVersion(conn));
+        systemInfo.put(i, ServerVersionChecker.getServerVersion());
         break;
       case ANT_VERSION:
         systemInfo.put(i, getVersion(SystemInfoData.selectAntVersion(conn)));
