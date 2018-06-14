@@ -31,10 +31,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
@@ -537,14 +537,28 @@ public class SessionHandler implements OBNotSingleton {
    * 
    * @param qryStr
    *          the HQL query
+   * @param clazz
+   *          the class of the query's resulting objects
    * @return a new Query object
    */
-  public Query createQuery(String qryStr) {
-    return createQuery(DEFAULT_POOL, qryStr);
+  public <T> Query<T> createQuery(String qryStr, Class<T> clazz) {
+    return createQuery(DEFAULT_POOL, qryStr, clazz);
   }
 
-  private Query createQuery(String pool, String qryStr) {
-    return getSession(pool).createQuery(qryStr);
+  /**
+   * Create a query object from the current getSession().
+   * 
+   * @param qryStr
+   *          the HQL query
+   * @return a new Query object
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends Object> Query<T> createQuery(String qryStr) {
+    return (Query<T>) createQuery(DEFAULT_POOL, qryStr, Object.class);
+  }
+
+  private <T> Query<T> createQuery(String pool, String qryStr, Class<T> clazz) {
+    return getSession(pool).createQuery(qryStr, clazz);
   }
 
   /**
@@ -557,7 +571,7 @@ public class SessionHandler implements OBNotSingleton {
   private void begin(String pool) {
     Check.isTrue(sessions.get(pool) == null, "Session must be null before begin");
     setSession(pool, createSession(pool));
-    getSession(pool).setFlushMode(FlushMode.COMMIT);
+    getSession(pool).setHibernateFlushMode(FlushMode.COMMIT);
     Check.isTrue(getTransaction(pool) == null, "tx must be null before begin");
     setTransaction(pool, getSession(pool).beginTransaction());
     setAvailablePool(pool);
