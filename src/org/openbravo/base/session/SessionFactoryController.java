@@ -145,7 +145,7 @@ public abstract class SessionFactoryController {
     // which are actually used
     // NOTE: reads the hibernate.properties in the root of the classpath
     try {
-      configuration = new Configuration();
+      configuration = buildConfiguration();
       mapModel(configuration);
       setInterceptor(configuration);
 
@@ -181,6 +181,17 @@ public abstract class SessionFactoryController {
     } catch (final Throwable t) {
       throw new OBException(t);
     }
+  }
+
+  /**
+   * Creates the Configuration instance used to build the SessionFactory. It can be extended by the
+   * subclasses for example if they need to register a Service Provider Interface to customize the
+   * Hibernate internals.
+   * 
+   * @return a {@code Configuration} instance used to build the {@code SessionFactory}
+   */
+  protected Configuration buildConfiguration() {
+    return new Configuration();
   }
 
   private void registerSqlFunctions() {
