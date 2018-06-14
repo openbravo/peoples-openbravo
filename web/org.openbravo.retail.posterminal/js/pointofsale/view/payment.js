@@ -1558,9 +1558,19 @@ enyo.kind({
     receiptHasPrepaymentAmount = receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
     if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && receiptHasPrepaymentAmount && pendingPrepayment > 0) {
       if (OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimit', true)) {
-        var approval = _.find(me.owner.receipt.get('approvals'), function (approval) {
-          return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
-        });
+        var approval;
+        if (myModel.get('leftColumnViewManager').isOrder()) {
+          approval = _.find(me.owner.receipt.get('approvals'), function (approval) {
+            return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
+          });
+        } else {
+          approval = myModel.get('multiOrders').get('multiOrdersList').every(function (order) {
+            var approval = _.find(order.get('approvals'), function (approval) {
+              return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
+            });
+            return approval;
+          });
+        }
         if (!approval) {
           OB.UTIL.Approval.requestApproval(
           me.model, [{

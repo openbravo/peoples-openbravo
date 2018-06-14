@@ -1222,7 +1222,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         };
         newApprovals.push(approval);
       }
-      order.set('approvals', newApprovals);
+      order.set('approvals', newApprovals, {
+        silent: true
+      });
     }
 
 
