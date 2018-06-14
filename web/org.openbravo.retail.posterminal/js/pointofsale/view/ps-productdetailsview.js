@@ -206,8 +206,8 @@ enyo.kind({
     name: 'contextImage',
     components: [{
       name: 'productImage',
-      baseStyle: 'background:#ffffff url(data:image/png;base64,xxImgBinaryDataxx) center center no-repeat;background-size:contain;margin: auto; height: 100%; width: 100%; background-size: contain;',
-      style: 'background-color:#ffffff; background-repeat: no-repeat; background-position: center center; background-size: contain; margin: auto; height: 100%; width: 100%;'
+      tag: 'img',
+      classes: 'product_image'
     }]
   }, {
     style: 'margin: 5px 15px;',
@@ -366,7 +366,8 @@ enyo.kind({
       this.bodyComponent.$.contextImage.show();
     }
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-      this.bodyComponent.$.productImage.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(params.product.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+      this.bodyComponent.$.productImage.setSrc(OB.UTIL.getImageURL(params.product.get('id')));
+      this.bodyComponent.$.productImage.setAttribute('onerror', 'if (this.src != "../org.openbravo.mobile.core/assets/img/box.png") this.src = "../org.openbravo.mobile.core/assets/img/box.png"; ');
     } else {
       this.bodyComponent.$.productImage.applyStyle('background-image', 'url(data:image/png;base64,' + params.product.get('img') + ')');
     }

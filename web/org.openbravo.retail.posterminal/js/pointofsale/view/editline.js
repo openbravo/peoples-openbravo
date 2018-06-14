@@ -754,7 +754,7 @@ enyo.kind({
               components: [{
                 tag: 'img',
                 name: 'icon',
-                style: 'margin: auto; height: 100%; width: 100%; background-size: contain; background-repeat:no-repeat; background-position:center;'
+                classes: 'product_image'
               }]
             }, {
               name: 'editlineimage',
@@ -821,9 +821,10 @@ enyo.kind({
       }
       if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
         if (this.selectedModels && this.selectedModels.length > 1) {
-          this.$.icon.applyStyle('background-image', 'url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+          this.$.icon.setSrc("../org.openbravo.mobile.core/assets/img/box.png");
         } else {
-          this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.line.get('product').get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+          this.$.icon.setSrc(OB.UTIL.getImageURL(this.line.get('product').get('id')));
+          this.$.icon.setAttribute('onerror', 'if (this.src != "../org.openbravo.mobile.core/assets/img/box.png") this.src = "../org.openbravo.mobile.core/assets/img/box.png"; ');
         }
         this.$.editlineimage.hide();
       } else {

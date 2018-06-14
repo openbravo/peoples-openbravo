@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -43,7 +43,7 @@ enyo.kind({
             components: [{
               tag: 'img',
               name: 'icon',
-              style: 'margin: auto; height: 100%; width: 100%; background-size: contain; background-repeat:no-repeat; background-position:center;'
+              classes: 'product_image'
             }]
           }]
         }]
@@ -223,9 +223,10 @@ enyo.kind({
 
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
       if (this.model.get('imgId')) {
-        this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '_min), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+        this.$.icon.setSrc(OB.UTIL.getImageURL(this.model.get('id')));
+        this.$.icon.setAttribute('onerror', 'if (this.src != "../org.openbravo.mobile.core/assets/img/box.png") this.src = "../org.openbravo.mobile.core/assets/img/box.png"; ');
       } else {
-        this.$.icon.applyStyle('background-image', 'url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
+        this.$.icon.setSrc("../org.openbravo.mobile.core/assets/img/box.png");
       }
       this.$.thumbnail.hide();
     } else {
