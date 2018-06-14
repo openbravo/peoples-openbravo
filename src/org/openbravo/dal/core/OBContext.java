@@ -37,7 +37,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -651,20 +651,19 @@ public class OBContext implements OBNotSingleton {
       Set<String> additionalOrgs, boolean isActiveOrganization) {
 
     if (orgList != null) {
-      return new ArrayList<String>(orgList);
+      return new ArrayList<>(orgList);
     }
 
-    String propertyActive = isActiveOrganization ? "Y" : "N";
-    final Query qry = SessionHandler.getInstance().createQuery(
+    final Query<String> qry = SessionHandler.getInstance().createQuery(
         "select o.id from " + Organization.class.getName() + " o, "
             + RoleOrganization.class.getName() + " roa where o." + Organization.PROPERTY_ID
             + "=roa." + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID
             + " and roa." + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID
             + "= :targetRoleId" + " and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
-            + Organization.PROPERTY_ACTIVE + "= :active");
-    qry.setString("targetRoleId", targetRole.getId());
-    qry.setString("active", propertyActive);
-    @SuppressWarnings("unchecked")
+            + Organization.PROPERTY_ACTIVE + "= :active", String.class);
+    qry.setParameter("targetRoleId", targetRole.getId());
+    qry.setParameter("active", isActiveOrganization);
+
     List<String> currentOrgList = qry.list();
 
     if (additionalOrgs != null) {
@@ -674,15 +673,14 @@ public class OBContext implements OBNotSingleton {
         }
       }
     }
-    return new ArrayList<String>(currentOrgList);
+    return new ArrayList<>(currentOrgList);
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getOrganizations(Client client) {
-    final Query qry = SessionHandler.getInstance().createQuery(
+    final Query<String> qry = SessionHandler.getInstance().createQuery(
         "select o.id from " + Organization.class.getName() + " o where " + "o."
             + Organization.PROPERTY_CLIENT + "=:client and o." + Organization.PROPERTY_ACTIVE
-            + "='Y'");
+            + "='Y'", String.class);
     qry.setParameter("client", client);
     organizationList = qry.list();
     return organizationList;
@@ -984,14 +982,15 @@ public class OBContext implements OBNotSingleton {
       Check.isTrue(getCurrentClient().isActive(), "Current Client " + getCurrentClient().getName()
           + " is not active!");
       if (languageCode != null) {
-        final Query qry = SessionHandler.getInstance().createQuery(
+        final Query<Language> qry = SessionHandler.getInstance().createQuery(
             "select l from " + Language.class.getName() + " l where l."
-                + Language.PROPERTY_LANGUAGE + "=:languageCode ");
+                + Language.PROPERTY_LANGUAGE + "=:languageCode ", Language.class);
         qry.setParameter("languageCode", languageCode);
-        if (qry.list().isEmpty()) {
+        List<Language> languages = qry.list();
+        if (languages.isEmpty()) {
           throw new IllegalArgumentException("No language found for code " + languageCode);
         }
-        setLanguage((Language) qry.list().get(0));
+        setLanguage(languages.get(0));
       } else if (getUser().getDefaultLanguage() != null
           && getUser().getDefaultLanguage().isActive()) {
         setLanguage(getUser().getDefaultLanguage());
@@ -1005,23 +1004,23 @@ public class OBContext implements OBNotSingleton {
 
       Check.isNotNull(getLanguage(), "Language may not be null");
 
-      final Query trl = SessionHandler.getInstance().createQuery(
+      final Query<Long> trl = SessionHandler.getInstance().createQuery(
           "select count(*) from " + Language.class.getName() + " l where l."
-              + Language.PROPERTY_SYSTEMLANGUAGE + "= true ");
+              + Language.PROPERTY_SYSTEMLANGUAGE + "= true ", Long.class);
 
       // There are translations installed in the system when there are more than one system
       // language. There's always at last one which is the base language.
-      setTranslationInstalled(((Long) trl.list().get(0)) > 1);
+      setTranslationInstalled(trl.list().get(0) > 1);
 
       setReadableClients(role);
 
       // note sometimes the warehouseId is an empty string
       // this happens when it is set from the session variables
       if (warehouseId != null && warehouseId.trim().length() > 0) {
-        final Query qry = SessionHandler.getInstance().createQuery(
-            "select w from " + Warehouse.class.getName() + " w where w.id=:id");
+        final Query<Warehouse> qry = SessionHandler.getInstance().createQuery(
+            "select w from " + Warehouse.class.getName() + " w where w.id=:id", Warehouse.class);
         qry.setParameter("id", warehouseId);
-        setWarehouse((Warehouse) qry.list().get(0));
+        setWarehouse(qry.uniqueResult());
       } else if (getUser().getDefaultWarehouse() != null) {
         setWarehouse(getUser().getDefaultWarehouse());
       }
@@ -1050,21 +1049,20 @@ public class OBContext implements OBNotSingleton {
     return true;
   }
 
-  @SuppressWarnings({ "unchecked" })
   private <T extends Object> T getOne(Class<T> clz, String qryStr, Map<String, String> parameters,
       boolean doCheck) {
-    final Query qry = SessionHandler.getInstance().createQuery(qryStr);
+    final Query<T> qry = SessionHandler.getInstance().createQuery(qryStr, clz);
     qry.setProperties(parameters);
     qry.setMaxResults(1);
-    final List<?> result = qry.list();
+    final List<T> result = qry.list();
     if (doCheck && result.size() != 1) {
       log.error("The query '" + qryStr + "' returned " + result.size()
           + " results while only 1 result was expected");
     }
-    if (result.size() == 0) {
+    if (result.isEmpty()) {
       return null;
     }
-    return (T) result.get(0);
+    return result.get(0);
   }
 
   public User getUser() {
