@@ -1016,7 +1016,7 @@
       });
 
       // If the receipt is not editable avoid the calculation of taxes
-      if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
+      if (!receipt.get('isEditable') && !_.isUndefined(receipt.get('forceCalculateTaxes')) && !receipt.get('forceCalculateTaxes')) {
         return regenerateTaxesInfo(receipt);
       }
 
