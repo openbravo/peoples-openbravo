@@ -63,6 +63,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.test.base.TestConstants.Org;
 
 /**
  * OBBaseTest class which can/should be extended by most other test classes which want to make use
@@ -172,12 +173,12 @@ public class OBBaseTest {
   /**
    * Record ID of Organization "F&amp;B España - Región Norte"
    */
-  protected static final String TEST_ORG_ID = "E443A31992CB4635AFCAEABE7183CE85";
+  protected static final String TEST_ORG_ID = Org.ESP_NORTE;
 
   /**
    * Record ID of Organization "F&amp;B US West Coast"
    */
-  protected static final String TEST_US_ORG_ID = "BAE22373FEBE4CCCA24517E23F0C8A48";
+  protected static final String TEST_US_ORG_ID = Org.US_WEST;
 
   /**
    * Record ID of Warehouse "España Región Norte"
