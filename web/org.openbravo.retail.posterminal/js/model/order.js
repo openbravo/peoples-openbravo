@@ -4425,13 +4425,17 @@
           if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
             // The default cash method
             cash = OB.DEC.add(cash, p.get('origAmount'));
-            pcash = p;
             paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+            if (!p.get('isPrePayment') && !p.get('isReversePayment')) {
+              pcash = p;
+            }
           } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
             // Another cash method
             origCash = OB.DEC.add(origCash, p.get('origAmount'));
-            pcash = p;
             paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+            if (!p.get('isPrePayment') && !p.get('isReversePayment')) {
+              pcash = p;
+            }
           } else {
             nocash = OB.DEC.add(nocash, p.get('origAmount'));
           }
@@ -4502,7 +4506,7 @@
           pcash.set('paid', OB.DEC.Zero);
           this.set('payment', OB.DEC.add(OB.DEC.abs(nocash), processedPaymentsAmount));
           this.set('change', OB.DEC.add(OB.DEC.sub(cash, processedPaymentsAmount), origCash));
-        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, OB.DEC.sub(cash, processedPaymentsAmount)), origCash), total)) > 0) {
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
           //The change value will be computed through a rounded total value, to ensure that the total plus change
@@ -4515,7 +4519,7 @@
         }
       } else {
         if (payments.length > 0) {
-          this.set('payment', OB.DEC.abs(nocash));
+          this.set('payment', OB.DEC.abs(OB.DEC.add(nocash, paidCash)));
         } else {
           this.set('payment', OB.DEC.Zero);
         }
