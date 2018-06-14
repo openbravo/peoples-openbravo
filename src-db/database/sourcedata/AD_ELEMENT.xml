@@ -2706,6 +2706,8 @@ So, if this field is set to 60, the master data will be refreshed every 60 minut
 <!--D814B14F0A4C4F73B8FAD54F8B373475-->  <COLUMNNAME><![CDATA[Documentno_Padding]]></COLUMNNAME>
 <!--D814B14F0A4C4F73B8FAD54F8B373475-->  <NAME><![CDATA[Order Document No Padding]]></NAME>
 <!--D814B14F0A4C4F73B8FAD54F8B373475-->  <PRINTNAME><![CDATA[Order Document No Padding]]></PRINTNAME>
+<!--D814B14F0A4C4F73B8FAD54F8B373475-->  <DESCRIPTION><![CDATA[This field defines the size of the document number sequence in Web POS per terminal. By default the size is 7.]]></DESCRIPTION>
+<!--D814B14F0A4C4F73B8FAD54F8B373475-->  <HELP><![CDATA[This field defines the size of the document number sequence in Web POS per terminal. By default the size is 7.]]></HELP>
 <!--D814B14F0A4C4F73B8FAD54F8B373475-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--D814B14F0A4C4F73B8FAD54F8B373475-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--D814B14F0A4C4F73B8FAD54F8B373475--></AD_ELEMENT>
