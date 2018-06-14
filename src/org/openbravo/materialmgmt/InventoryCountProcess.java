@@ -34,9 +34,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.Session;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.exception.GenericJDBCException;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.internal.SessionImpl;
@@ -174,23 +171,6 @@ public class InventoryCountProcess implements Process {
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     runChecks(inventory);
 
-    // In case get_uuid is not already registered, it's registered now.
-    final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
-        .getSessionFactory()).getJdbcServices().getDialect();
-    Map<String, SQLFunction> function = dialect.getFunctions();
-    if (!function.containsKey("get_uuid")) {
-      dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
-    }
-    if (!function.containsKey("now")) {
-      dialect.getFunctions().put("now", new StandardSQLFunction("now", new DateType()));
-    }
-    if (!function.containsKey("to_date")) {
-      dialect.getFunctions().put("to_date", new StandardSQLFunction("to_date", new DateType()));
-    }
-    if (!function.containsKey("to_timestamp")) {
-      dialect.getFunctions().put("to_timestamp",
-          new StandardSQLFunction("to_timestamp", new DateType()));
-    }
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + MaterialTransaction.ENTITY_NAME + "(");
     insert.append(" id ");

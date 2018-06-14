@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.hibernate.dialect.function.NoArgSQLFunction;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
@@ -46,7 +47,9 @@ public class KernelSQLFunctionRegister implements SQLFunctionRegister {
         StandardBasicTypes.STRING));
     sqlFunctions.put("m_getjsondescription", new StandardSQLFunction("m_getjsondescription",
         StandardBasicTypes.STRING));
-    sqlFunctions.put("now", new StandardSQLFunction("now", StandardBasicTypes.DATE));
+    sqlFunctions.put("now", new NoArgSQLFunction("now", StandardBasicTypes.TIMESTAMP));
+    sqlFunctions.put("to_timestamp", new StandardSQLFunction("to_timestamp",
+        StandardBasicTypes.TIMESTAMP));
     return sqlFunctions;
   }
 }

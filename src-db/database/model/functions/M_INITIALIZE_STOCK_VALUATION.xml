@@ -68,7 +68,8 @@ BEGIN
           SELECT SUM(a.qty) as stock, ROUND(SUM(sumcost), v_costprecission) as valuation, aux_warehouse_id as m_warehouse_id
           FROM (
             SELECT trx.m_product_id, w.m_warehouse_id AS aux_warehouse_id,
-                trx.movementqty AS qty, c_currency_convert_precision(SUM (CASE WHEN trx.movementqty < 0 THEN -tc.cost ELSE tc.cost END), tc.c_currency_id, v_currency_id, tc.dateacct, NULL, p_client, Cur_legal_entities.ad_org_id, 'C') AS sumcost
+                CASE WHEN (LAG(trx.m_transaction_id, 1) OVER (ORDER BY trx.m_transaction_id) = trx.m_transaction_id) THEN 0 ELSE trx.movementqty END AS qty,
+                c_currency_convert_precision(SUM (CASE WHEN trx.movementqty < 0 THEN -tc.cost ELSE tc.cost END), tc.c_currency_id, v_currency_id, tc.dateacct, NULL, p_client, Cur_legal_entities.ad_org_id, 'C') AS sumcost
             FROM m_transaction trx
               JOIN m_locator l ON (trx.m_locator_id=l.m_locator_id)
               LEFT JOIN m_warehouse w ON w.m_warehouse_id = CASE Cur_legal_entities.warehouse_dimension WHEN 'Y' THEN l.m_warehouse_id ELSE '-1' END
