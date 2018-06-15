@@ -22,10 +22,8 @@ package org.openbravo.common.actionhandler.createlinesfromprocess;
 import javax.enterprise.context.Dependent;
 
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 @Dependent
 @Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
@@ -41,17 +39,8 @@ class UpdateProductAndAttributes extends CreateLinesFromProcessHook {
    */
   @Override
   public void exec() {
-    // Update the product
-    getInvoiceLine().setProduct(
-        (Product) getCopiedFromLine().get(
-            isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT
-                : ShipmentInOutLine.PROPERTY_PRODUCT));
-    // Update the attributes
-    AttributeSetInstance attributeSetValue = (AttributeSetInstance) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_ATTRIBUTESETVALUE
-            : ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE);
-    if (attributeSetValue != null) {
-      getInvoiceLine().setAttributeSetValue(attributeSetValue);
-    }
+    getInvoiceLine().setProduct((Product) getCopiedFromLine().getValue("product"));
+    getInvoiceLine().setAttributeSetValue(
+        (AttributeSetInstance) getCopiedFromLine().getValue("attributeSetValue"));
   }
 }
