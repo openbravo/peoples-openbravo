@@ -172,7 +172,7 @@ public class WritableReadableOrganizationClientTest extends OBBaseTest {
   public void readSibilingOrganizationsShouldBeAllowed() {
     RoleOrganization disabledAccess = null;
     try {
-      // given a role with access to España and España Sur Organizations
+      // given a role with access to España and España Norte Organizations
       OBContext.setAdminMode(false);
       Role espAdminRole = OBDal.getInstance().get(Role.class, Roles.ESP_ADMIN);
       for (RoleOrganization orgAccess : espAdminRole.getADRoleOrganizationList()) {
