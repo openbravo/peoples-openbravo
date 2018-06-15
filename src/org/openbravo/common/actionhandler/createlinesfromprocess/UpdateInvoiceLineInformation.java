@@ -152,7 +152,7 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     Order order = isCopiedFromOrderLine() ? ((OrderLine) getCopiedFromLine()).getSalesOrder()
         : ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt().getSalesOrder();
     if (order != null) {
-      StringBuffer where = new StringBuffer();
+      StringBuilder where = new StringBuilder();
       where.append(" as o");
       where.append(" where o.id = :orderId");
       where.append("   and exists (");
