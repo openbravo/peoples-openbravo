@@ -66,47 +66,15 @@ class UpdateTax extends CreateLinesFromProcessHook {
    */
   @Override
   public void exec() {
-    TaxRate tax = updateTaxRate();
-    updateTaxAmount(tax);
+    updateTaxRate();
+    updateTaxAmount();
     updateTaxableAmount();
   }
 
-  private void updateTaxableAmount() {
-    BigDecimal taxBaseAmt = getInvoiceLine().getLineNetAmount();
-    if (isCopiedFromOrderLine()
-        || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine())) {
-      OrderLine originalOrderLine = (isCopiedFromOrderLine() ? (OrderLine) getCopiedFromLine()
-          : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
-      if (originalOrderLine.getTaxableAmount() != null) {
-        BigDecimal originalOrderedQuantity = originalOrderLine.getOrderedQuantity();
-        BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
-            getPickExecJSONObject());
-        taxBaseAmt = originalOrderLine.getTaxableAmount();
-        if (originalOrderedQuantity.compareTo(BigDecimal.ZERO) != 0) {
-          taxBaseAmt = taxBaseAmt
-              .multiply(qtyOrdered)
-              .divide(originalOrderedQuantity)
-              .setScale(getInvoice().getCurrency().getStandardPrecision().intValue(),
-                  RoundingMode.HALF_UP);
-        }
-      }
-    }
-    getInvoiceLine().setTaxableAmount(taxBaseAmt);
-  }
-
-  private void updateTaxAmount(final TaxRate tax) {
-    int stdPrecision = getInvoice().getCurrency().getStandardPrecision().intValue();
-    BigDecimal taxAmt = getInvoiceLine().getLineNetAmount().multiply(tax.getRate())
-        .divide(new BigDecimal("100"), 12, RoundingMode.HALF_EVEN)
-        .setScale(stdPrecision, RoundingMode.HALF_UP);
-    getInvoiceLine().setTaxAmount(taxAmt);
-  }
-
-  private TaxRate updateTaxRate() {
+  private void updateTaxRate() {
     TaxRate tax = OBDal.getInstance().getProxy(TaxRate.class,
         getCurrentTaxId(getInvoiceLine().getProduct()));
     getInvoiceLine().setTax(tax);
-    return tax;
   }
 
   /**
@@ -175,4 +143,38 @@ class UpdateTax extends CreateLinesFromProcessHook {
     return (String) obc.uniqueResult();
   }
 
+  private void updateTaxAmount() {
+    int stdPrecision = getInvoice().getCurrency().getStandardPrecision().intValue();
+    BigDecimal taxAmt = getInvoiceLine().getLineNetAmount()
+        .multiply(getInvoiceLine().getTax().getRate())
+        .divide(new BigDecimal("100"), RoundingMode.HALF_EVEN)
+        .setScale(stdPrecision, RoundingMode.HALF_UP);
+    getInvoiceLine().setTaxAmount(taxAmt);
+  }
+
+  private void updateTaxableAmount() {
+    BigDecimal taxBaseAmt = getInvoiceLine().getLineNetAmount();
+    if (isCopiedFromOrderLine()
+        || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine())) {
+      taxBaseAmt = calculateAlternateTaxBaseAmtProrating(taxBaseAmt);
+    }
+    getInvoiceLine().setTaxableAmount(taxBaseAmt);
+  }
+
+  private BigDecimal calculateAlternateTaxBaseAmtProrating(final BigDecimal invoiceLineNetAmt) {
+    BigDecimal taxBaseAmt = invoiceLineNetAmt;
+    final OrderLine originalOrderLine = (isCopiedFromOrderLine() ? (OrderLine) getCopiedFromLine()
+        : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
+    if (originalOrderLine.getTaxableAmount() != null) {
+      BigDecimal originalOrderedQuantity = originalOrderLine.getOrderedQuantity();
+      BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
+          getPickExecJSONObject());
+      taxBaseAmt = originalOrderLine.getTaxableAmount();
+      if (originalOrderedQuantity.compareTo(BigDecimal.ZERO) != 0) {
+        taxBaseAmt = taxBaseAmt.multiply(qtyOrdered).divide(originalOrderedQuantity,
+            getInvoice().getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_UP);
+      }
+    }
+    return taxBaseAmt;
+  }
 }
