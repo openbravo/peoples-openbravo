@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -60,10 +61,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
       setPricesBasedOnOrderLineValues(isCopiedFromOrderLine() ? (OrderLine) getCopiedFromLine()
           : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
     } else {
-      Product product = (Product) getCopiedFromLine()
-          .get(
-              isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT
-                  : ShipmentInOutLine.PROPERTY_PRODUCT);
+      Product product = (Product) getCopiedFromLine().get("product");
       setPricesBasedOnBOM(product, getInvoice().getPriceList());
     }
   }
@@ -117,6 +115,21 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     priceInformation.setPriceLimit(priceLimit);
 
     setPrices(priceInformation);
+  }
+
+  private void setPrices(final PriceInformation priceInformation) {
+    // Net Prices
+    getInvoiceLine().setUnitPrice(priceInformation.getUnitPrice());
+    getInvoiceLine().setListPrice(priceInformation.getListPrice());
+    getInvoiceLine().setStandardPrice(priceInformation.getStandardPrice());
+    // Gross Prices
+    getInvoiceLine().setGrossUnitPrice(priceInformation.getGrossUnitPrice());
+    getInvoiceLine().setGrossListPrice(priceInformation.getGrossListPrice());
+    getInvoiceLine().setBaseGrossUnitPrice(priceInformation.getGrossBaseUnitPrice());
+    getInvoiceLine().setGrossAmount(priceInformation.getLineGrossAmount());
+    // Price Limit and Line Net Amount
+    getInvoiceLine().setPriceLimit(priceInformation.getPriceLimit());
+    getInvoiceLine().setLineNetAmount(priceInformation.getLineNetAmount());
   }
 
   private void setPricesBasedOnBOM(Product product, PriceList invoicePriceList) {
@@ -186,7 +199,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
    */
   private PriceInformation getBOMPrices(Product product, PriceList priceList) {
     Object[] bomPrices = selectBOMPrices(product, priceList);
-    if (bomPrices == null) {
+    if (bomPrices.length == 0) {
       return null;
     }
     PriceInformation priceInformation = new PriceInformation();
@@ -226,9 +239,9 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     obQuery.setMaxResults(1);
     List<Object[]> prices = (List<Object[]>) obQuery.list();
     if (prices.isEmpty()) {
-      return null;
+      return ArrayUtils.EMPTY_OBJECT_ARRAY;
     } else {
-      return (Object[]) prices.get(0);
+      return prices.get(0);
     }
   }
 
@@ -237,36 +250,21 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     setPrices(zeroPrices);
   }
 
-  private void setPrices(final PriceInformation priceInformation) {
+  private class PriceInformation {
     // Net Prices
-    getInvoiceLine().setUnitPrice(priceInformation.getUnitPrice());
-    getInvoiceLine().setListPrice(priceInformation.getListPrice());
-    getInvoiceLine().setStandardPrice(priceInformation.getStandardPrice());
+    private BigDecimal unitPrice;
+    private BigDecimal standardPrice;
+    private BigDecimal listPrice;
     // Gross Prices
-    getInvoiceLine().setGrossUnitPrice(priceInformation.getGrossUnitPrice());
-    getInvoiceLine().setGrossListPrice(priceInformation.getGrossListPrice());
-    getInvoiceLine().setBaseGrossUnitPrice(priceInformation.getGrossBaseUnitPrice());
-    getInvoiceLine().setGrossAmount(priceInformation.getLineGrossAmount());
-    // Price Limit and Line Net Amount
-    getInvoiceLine().setPriceLimit(priceInformation.getPriceLimit());
-    getInvoiceLine().setLineNetAmount(priceInformation.getLineNetAmount());
-  }
-
-  private static class PriceInformation {
-    // Net Prices
-    BigDecimal unitPrice;
-    BigDecimal standardPrice;
-    BigDecimal listPrice;
-    // Gross Prices
-    BigDecimal grossUnitPrice;
-    BigDecimal grossBaseUnitPrice;
-    BigDecimal grossListPrice;
-    BigDecimal lineGrossAmount;
-    BigDecimal priceLimit;
+    private BigDecimal grossUnitPrice;
+    private BigDecimal grossBaseUnitPrice;
+    private BigDecimal grossListPrice;
+    private BigDecimal lineGrossAmount;
+    private BigDecimal priceLimit;
     // Amounts
-    BigDecimal lineNetAmount;
+    private BigDecimal lineNetAmount;
     // Offer
-    BigDecimal offersPriceInvoice;
+    private BigDecimal offersPriceInvoice;
 
     private PriceInformation() {
       this.priceLimit = BigDecimal.ZERO;
