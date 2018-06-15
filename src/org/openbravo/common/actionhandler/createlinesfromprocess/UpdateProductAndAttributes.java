@@ -39,8 +39,8 @@ class UpdateProductAndAttributes extends CreateLinesFromProcessHook {
    */
   @Override
   public void exec() {
-    getInvoiceLine().setProduct((Product) getCopiedFromLine().getValue("product"));
+    getInvoiceLine().setProduct((Product) getCopiedFromLine().get("product"));
     getInvoiceLine().setAttributeSetValue(
-        (AttributeSetInstance) getCopiedFromLine().getValue("attributeSetValue"));
+        (AttributeSetInstance) getCopiedFromLine().get("attributeSetValue"));
   }
 }

@@ -27,11 +27,9 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.UOMUtil;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductUOM;
 import org.openbravo.model.common.uom.UOM;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 @Dependent
 @Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
@@ -51,14 +49,9 @@ class UpdateQuantitiesAndUOMs extends CreateLinesFromProcessHook {
         getPickExecJSONObject());
     BigDecimal operativeQuantity = CreateLinesFromUtil.getOperativeQuantity(getCopiedFromLine(),
         getPickExecJSONObject());
-    BigDecimal orderQuantity = CreateLinesFromUtil.getOrderQuantity(getPickExecJSONObject());
     UOM operativeUOM = CreateLinesFromUtil.getAUM(getCopiedFromLine());
-    UOM uOM = (UOM) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_UOM : ShipmentInOutLine.PROPERTY_UOM);
-    ProductUOM orderUOM = (ProductUOM) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_ORDERUOM : ShipmentInOutLine.PROPERTY_ORDERUOM);
-    Product product = (Product) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_PRODUCT : ShipmentInOutLine.PROPERTY_PRODUCT);
+    ProductUOM orderUOM = (ProductUOM) getCopiedFromLine().get("orderUOM");
+    Product product = (Product) getCopiedFromLine().get("product");
 
     if (uomManagementIsEnabledAndAUMAndOrderUOMAreEmpty()) {
       String defaultAum = UOMUtil.getDefaultAUMForDocument(product.getId(), getInvoice()
@@ -73,28 +66,26 @@ class UpdateQuantitiesAndUOMs extends CreateLinesFromProcessHook {
     }
 
     getInvoiceLine().setInvoicedQuantity(orderedQuantity);
-    getInvoiceLine().setUOM(uOM);
+    getInvoiceLine().setUOM((UOM) getCopiedFromLine().get("uOM"));
     if (UOMUtil.isUomManagementEnabled()) {
       getInvoiceLine().setOperativeQuantity(operativeQuantity);
       getInvoiceLine().setOperativeUOM(operativeUOM);
     }
-    getInvoiceLine().setOrderQuantity(orderQuantity);
+    getInvoiceLine()
+        .setOrderQuantity(CreateLinesFromUtil.getOrderQuantity(getPickExecJSONObject()));
     getInvoiceLine().setOrderUOM(orderUOM);
   }
 
   private boolean uomManagementIsEnabledAndAUMAndOrderUOMAreEmpty() {
     boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
-    UOM operativeUOM = (UOM) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_OPERATIVEUOM : ShipmentInOutLine.PROPERTY_OPERATIVEUOM);
-    ProductUOM orderUOM = (ProductUOM) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_ORDERUOM : ShipmentInOutLine.PROPERTY_ORDERUOM);
+    UOM operativeUOM = (UOM) getCopiedFromLine().get("operativeUOM");
+    ProductUOM orderUOM = (ProductUOM) getCopiedFromLine().get("orderUOM");
 
     return isUomManagementEnabled && orderUOM == null && operativeUOM == null;
   }
 
   private boolean aUMIsDifferentThanUOM(final String defaultAum) {
-    UOM uOM = (UOM) getCopiedFromLine().get(
-        isCopiedFromOrderLine() ? OrderLine.PROPERTY_UOM : ShipmentInOutLine.PROPERTY_UOM);
+    UOM uOM = (UOM) getCopiedFromLine().get("uOM");
     return !StringUtils.equals(defaultAum, uOM.getId());
   }
 
