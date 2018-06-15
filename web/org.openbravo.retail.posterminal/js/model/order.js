@@ -4506,12 +4506,12 @@
           pcash.set('paid', OB.DEC.Zero);
           this.set('payment', OB.DEC.add(OB.DEC.abs(nocash), processedPaymentsAmount));
           this.set('change', OB.DEC.add(OB.DEC.sub(cash, processedPaymentsAmount), origCash));
-        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
+        } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(nocash, paidCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
           this.set('payment', OB.DEC.abs(total));
           //The change value will be computed through a rounded total value, to ensure that the total plus change
           //add up to the paid amount without any kind of precission loss
-          this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
+          this.set('change', OB.DEC.sub(OB.DEC.add(nocash, paidCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
           pcash.set('paid', auxCash);
           this.set('payment', OB.DEC.abs(OB.DEC.add(OB.DEC.add(nocash, cash), origCash)));
