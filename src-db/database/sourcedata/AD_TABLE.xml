@@ -10707,17 +10707,17 @@ You can also select if transactions are allowed or not for this organization typ
 <!--631D227DC83A4898BBD041D46D829D27-->  <HQLQUERY><![CDATA[SELECT
   e.id,
   @movementQuantity@ as movementQuantity,
-  uom.name as uOM,
-  p.name as product,
+  (select uom.name from UOM uom where uom.id = e.uOM.id) as uOM,
+  (select p.name from Product p where p.id = e.product.id) as product,
   e.lineNo,
   (sh.documentNo || ' - ' || to_char(trunc(sh.movementDate)) || ' - ' || '@bpName@') as shipmentReceipt,
   @operativeUOM@ as operativeUOM,
   @operativeQuantity@ as operativeQuantity,
   @orderQuantity@ as orderQuantity,
   sh.movementDate as movementDate,
-  wh.name as warehouse,
+  (select wh.name from Warehouse wh where wh.id = sh.warehouse.id) as warehouse,
   sh.documentNo as documentNo,
-  sb.searchKey as storageBin
+  (select sb.searchKey from Locator sb where sb.id = e.storageBin.id) as storageBin
   @selectClause@
 MAINFROM
   @fromClause@

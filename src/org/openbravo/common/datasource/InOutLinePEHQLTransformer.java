@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -100,10 +100,8 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  sh.documentNo,");
     groupByClause.append("  sh.movementDate,");
     groupByClause.append("  e.movementQuantity,");
-    groupByClause.append("  uom.id,");
-    groupByClause.append("  uom.name,");
-    groupByClause.append("  p.id,");
-    groupByClause.append("  p.name,");
+    groupByClause.append("  e.uOM.id,");
+    groupByClause.append("  e.product.id,");
     groupByClause.append("  e.id,");
     groupByClause.append("  e.lineNo,");
     groupByClause.append("  ol.id,");
@@ -113,17 +111,15 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  COALESCE(e.stDimension.id, sh.stDimension.id),");
     groupByClause.append("  COALESCE(e.ndDimension.id, sh.ndDimension.id),");
     groupByClause.append("  e.explode,");
-    groupByClause.append("  bomParent.id,");
-    groupByClause.append("  aum.id,");
+    groupByClause.append("  e.bOMParent.id,");
+    groupByClause.append("  e.operativeUOM.id,");
     groupByClause.append("  e.operativeQuantity,");
     groupByClause.append("  sh.documentType.id,");
     groupByClause.append("  ol.id,");
     groupByClause.append("  o.id,");
-    groupByClause.append("  pl.id,");
-    groupByClause.append("  wh.id,");
-    groupByClause.append("  wh.name,");
-    groupByClause.append("  sb.id,");
-    groupByClause.append("  sb.searchKey,");
+    groupByClause.append("  o.priceList.id,");
+    groupByClause.append("  sh.warehouse.id,");
+    groupByClause.append("  e.storageBin.id,");
     groupByClause.append("  @orderQuantity@");
     if (isSalesTransaction) {
       groupByClause
@@ -145,7 +141,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     whereClause.append(" and sh.processed = 'Y'");
     whereClause.append(" and sh.logistic <> 'Y'");
     whereClause.append(" and sh.businessPartner.id = :bp");
-    whereClause.append(" and (ol.id is null or pl.priceIncludesTax = :plIncTax)");
+    whereClause.append(" and (ol.id is null or o.priceIncludesTax = :plIncTax)");
     whereClause.append(" and (o.id is null or o.currency.id = :cur)");
     if (isSalesTransaction) {
       whereClause.append(" and sh.completelyInvoiced = 'N'");
@@ -164,15 +160,8 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     StringBuilder fromClause = new StringBuilder();
     fromClause.append(" MaterialMgmtShipmentInOutLine e");
     fromClause.append(" join e.shipmentReceipt sh");
-    fromClause.append(" join e.uOM uom");
-    fromClause.append(" join e.product p");
-    fromClause.append(" join sh.warehouse wh");
-    fromClause.append(" join e.storageBin sb");
     fromClause.append(" left join e.salesOrderLine ol");
     fromClause.append(" left join ol.salesOrder o");
-    fromClause.append(" left join o.priceList pl");
-    fromClause.append(" left join e.operativeUOM aum");
-    fromClause.append(" left join e.bOMParent bomParent");
     if (isSalesTransaction) {
       fromClause.append(" left join e.invoiceLineList il");
       fromClause.append(" left join il.invoice i");
@@ -202,13 +191,13 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     }
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
-        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.movementQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, sh.documentType.id))))))");
+        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(e.product.id, e.movementQuantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, sh.documentType.id))))))");
     if (isSalesTransaction) {
       operativeQuantityHql
-          .append(" - SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN to_number(M_GET_CONVERTED_AUMQTY(p.id, il.invoicedQuantity, coalesce(aum.id, uom.id))) ELSE 0 END, 0))");
+          .append(" - SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN to_number(M_GET_CONVERTED_AUMQTY(e.product.id, il.invoicedQuantity, coalesce(e.operativeUOM.id, e.uOM.id))) ELSE 0 END, 0))");
     } else {
       operativeQuantityHql
-          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, mi.quantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, sh.documentType.id))))), 0))");
+          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(e.product.id, mi.quantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, sh.documentType.id))))), 0))");
     }
     return operativeQuantityHql.toString();
   }
@@ -235,7 +224,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     if (UOMUtil.isUomManagementEnabled()) {
       operativeUOMHql.append(" (select aum2.name from UOM aum2 where aum2.id = ");
       operativeUOMHql
-          .append(" (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, sh.documentType.id))))) ");
+          .append(" (coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, sh.documentType.id))))) ");
     } else {
       operativeUOMHql.append("'' ");
     }
