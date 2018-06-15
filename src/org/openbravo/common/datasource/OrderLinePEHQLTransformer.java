@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -129,7 +129,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  aum.id,");
     groupByClause.append("  e.operativeQuantity,");
     groupByClause.append("  o.documentType.id,");
-    groupByClause.append("  pl.id,");
     groupByClause.append("  o.businessPartner.id,");
     groupByClause.append("  il.id,");
     groupByClause.append("  wh.id,");
@@ -147,7 +146,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
   protected String getWhereClauseHQL() {
     StringBuilder whereClause = new StringBuilder();
     whereClause.append(" and o.salesTransaction = :issotrx");
-    whereClause.append(" and pl.priceIncludesTax = :plIncTax");
+    whereClause.append(" and o.priceIncludesTax = :plIncTax");
     whereClause.append(" and o.currency.id = :cur");
     if (isSalesTransaction) {
       whereClause.append(" and ic.businessPartner.id = :bp");
@@ -190,7 +189,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       fromClause.append(" OrderLine e");
       fromClause.append(" join e.salesOrder o");
     }
-    fromClause.append(" join o.priceList pl");
     fromClause.append(" join e.uOM uom");
     fromClause.append(" join e.product p");
     fromClause.append(" join o.warehouse wh");
