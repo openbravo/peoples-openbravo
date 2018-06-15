@@ -1822,18 +1822,25 @@ enyo.kind({
     // c.payment is the payment of the new change to add
     // c.amount is the change to add in the payment currency
     // c.origAmount is the change to add in the document currency
+    var paymentlabel, amountRounded;
+
     if (OB.DEC.compare(c.origAmount)) {
       // Add new change Payment
       if (this.label) {
         this.label += ' + ';
       }
-      var amountRounded = OB.Payments.Change.getChangeRounded(c);
-      this.label += OB.I18N.formatCurrencyWithSymbol(amountRounded, c.payment.symbol, c.payment.currencySymbolAtTheRight);
+      amountRounded = OB.Payments.Change.getChangeRounded(c);
+      paymentlabel = OB.I18N.formatCurrencyWithSymbol(amountRounded, c.payment.symbol, c.payment.currencySymbolAtTheRight);
+      this.label += paymentlabel;
+      if (OB.DEC.compare(OB.DEC.sub(c.amount, amountRounded, c.payment.obposPosprecision))) {
+        paymentlabel += ' (Orig ' + OB.I18N.formatCurrencyWithSymbol(c.amount, c.payment.symbol, c.payment.currencySymbolAtTheRight) + ')';
+      }
       this.payments.push({
         'key': c.payment.payment.searchKey,
         'amount': c.amount,
         'amountRounded': amountRounded,
-        'origAmount': c.origAmount
+        'origAmount': c.origAmount,
+        'label': paymentlabel
       });
     }
   }
