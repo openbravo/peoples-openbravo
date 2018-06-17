@@ -130,7 +130,7 @@ public class OrderGroupingProcessor {
 
     // random string is created as random numeric between 0 and 1000000
     Random rnd = new Random();
-    final String strExecutionId = "WebPOS_CashUp_" + String.valueOf(rnd.nextInt(1000000));
+    final String strExecutionId = SequenceIdData.getUUID().substring(0, 30);
 
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
       // Extend sql to separate invoices for sales and returns
