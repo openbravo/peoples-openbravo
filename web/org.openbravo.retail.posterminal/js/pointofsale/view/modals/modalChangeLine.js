@@ -47,9 +47,9 @@ enyo.kind({
     this.$.textline.addStyles('background-color: ' + (this.hasErrors ? '#fe7f7f' : 'inherit') + ';');
 
     return this.bubble('onActionInput', {
-      'value': value,
-      'hasErrors': this.hasErrors,
-      'line': this
+      value: value,
+      hasErrors: this.hasErrors,
+      line: this
     });
   },
   actionShow: function (inSender, inEvent) {
@@ -58,8 +58,8 @@ enyo.kind({
     precision = this.payment.obposPosprecision;
     change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, precision);
     cRounded = OB.Payments.Change.getChangeRounded({
-      'payment': this.payment,
-      'amount': change
+      payment: this.payment,
+      amount: change
     });
     this.maxValue = cRounded;
     this.$.infoline.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(cRounded, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));

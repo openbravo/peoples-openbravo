@@ -373,8 +373,8 @@ enyo.kind({
     this.doShowPopup({
       popup: 'modalchange',
       args: {
-        'receipt': this.receipt,
-        'callback': this.applyPaymentChange.bind(this)
+        receipt: this.receipt,
+        callback: this.applyPaymentChange.bind(this)
       }
     });
   },
@@ -407,9 +407,9 @@ enyo.kind({
             // Using 5 as rounding precision as a maximum precsion for all currencies
             changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), precision);
             paymentchange.add({
-              'payment': payment,
-              'amount': changePaymentRounded,
-              'origAmount': OB.DEC.mul(changePaymentRounded, payment.rate)
+              payment: payment,
+              amount: changePaymentRounded,
+              origAmount: OB.DEC.mul(changePaymentRounded, payment.rate)
             });
             calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.mul(changePaymentRounded, payment.rate, precision), precision));
             return;
@@ -419,9 +419,9 @@ enyo.kind({
       // No changeLessThan and no linked payment to continue,
       // Then add add change payment for the remaining change and exit
       paymentchange.add({
-        'payment': payment,
-        'amount': OB.DEC.mul(change, payment.mulrate, precision),
-        'origAmount': change
+        payment: payment,
+        amount: OB.DEC.mul(change, payment.mulrate, precision),
+        origAmount: change
       });
     }
 
@@ -431,9 +431,9 @@ enyo.kind({
     } else {
       // No multi currency change logic, add a simple change item and return
       paymentchange.add({
-        'payment': firstpayment,
-        'amount': OB.DEC.mul(firstchange, firstpayment.mulrate, firstpayment.obposPosprecision),
-        'origAmount': firstchange
+        payment: firstpayment,
+        amount: OB.DEC.mul(firstchange, firstpayment.mulrate, firstpayment.obposPosprecision),
+        origAmount: firstchange
       });
     }
 
@@ -1827,11 +1827,11 @@ enyo.kind({
       }
       this.label += paymentLabel;
       this.payments.push({
-        'key': change.payment.payment.searchKey,
-        'amount': change.amount,
-        'amountRounded': amountRounded,
-        'origAmount': change.origAmount,
-        'label': paymentLabel
+        key: change.payment.payment.searchKey,
+        amount: change.amount,
+        amountRounded: amountRounded,
+        origAmount: change.origAmount,
+        label: paymentLabel
       });
     }
   }

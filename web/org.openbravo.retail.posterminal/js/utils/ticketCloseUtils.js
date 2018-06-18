@@ -137,21 +137,21 @@
         receipt.get('changePayments').forEach(function (changePayment) {
           var paymentToAdd = OB.MobileApp.model.paymentnames[changePayment.key];
           receipt.addPayment(new OB.Model.PaymentLine({
-            'kind': paymentToAdd.payment.searchKey,
-            'name': paymentToAdd.payment.commercialName,
-            'amount': OB.DEC.sub(0, changePayment.amount, paymentToAdd.obposPosprecision),
-            'amountRounded': OB.DEC.sub(0, changePayment.amountRounded, paymentToAdd.obposPosprecision),
-            'origAmount': OB.DEC.sub(0, changePayment.origAmount),
-            'origAmountRounded': OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounded, paymentToAdd.rate)),
-            'rate': paymentToAdd.rate,
-            'mulrate': paymentToAdd.mulrate,
-            'isocode': paymentToAdd.isocode,
-            'allowOpenDrawer': paymentToAdd.paymentMethod.allowopendrawer,
-            'isCash': paymentToAdd.paymentMethod.iscash,
-            'openDrawer': paymentToAdd.paymentMethod.openDrawer,
-            'printtwice': paymentToAdd.paymentMethod.printtwice,
-            'paymentData': {
-              'label': changePayment.label
+            kind: paymentToAdd.payment.searchKey,
+            name: paymentToAdd.payment.commercialName,
+            amount: OB.DEC.sub(0, changePayment.amount, paymentToAdd.obposPosprecision),
+            amountRounded: OB.DEC.sub(0, changePayment.amountRounded, paymentToAdd.obposPosprecision),
+            origAmount: OB.DEC.sub(0, changePayment.origAmount),
+            origAmountRounded: OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounded, paymentToAdd.rate)),
+            rate: paymentToAdd.rate,
+            mulrate: paymentToAdd.mulrate,
+            isocode: paymentToAdd.isocode,
+            allowOpenDrawer: paymentToAdd.paymentMethod.allowopendrawer,
+            isCash: paymentToAdd.paymentMethod.iscash,
+            openDrawer: paymentToAdd.paymentMethod.openDrawer,
+            printtwice: paymentToAdd.paymentMethod.printtwice,
+            paymentData: {
+              label: changePayment.label
             }
           }), addPaymentCallback);
         });

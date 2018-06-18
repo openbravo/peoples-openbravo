@@ -16,8 +16,8 @@ enyo.kind({
     onHideThisPopup: ''
   },
   handlers: {
-    'onActionOK': 'actionOK',
-    'onActionInput': 'actionInput'
+    onActionOK: 'actionOK',
+    onActionInput: 'actionInput'
   },
   bodyContent: {
     name: 'bodyattributes',
@@ -73,9 +73,9 @@ enyo.kind({
       }
       amount = parseFloat(l.$.textline.getValue());
       paymentchange.add({
-        'payment': l.payment,
-        'amount': amount,
-        'origAmount': OB.DEC.mul(amount, l.payment.rate)
+        payment: l.payment,
+        amount: amount,
+        origAmount: OB.DEC.mul(amount, l.payment.rate)
       });
     }
 
@@ -101,8 +101,8 @@ enyo.kind({
     linechange = OB.DEC.mul(change, line.payment.mulrate, precision);
 
     line.assignValidValue(OB.Payments.Change.getChangeRounded({
-      'payment': line.payment,
-      'amount': linechange
+      payment: line.payment,
+      amount: linechange
     }));
   }
 });
