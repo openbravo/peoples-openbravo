@@ -4358,8 +4358,8 @@
       }
     },
     getPrecision: function (payment) {
-      var p = OB.MobileApp.model.paymentnames[payment.get('kind')];
-      return p ? p.obposPosprecision : OB.DEC.getScale();
+      var terminalpayment = OB.MobileApp.model.paymentnames[payment.get('kind')];
+      return terminalpayment ? terminalpayment.obposPosprecision : OB.DEC.getScale();
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
       //returns a result with the sum up of every payments based on origAmount field
@@ -6799,8 +6799,8 @@
       };
     },
     getPrecision: function (payment) {
-      var p = OB.MobileApp.model.paymentnames[payment.get('kind')];
-      return p ? p.obposPosprecision : OB.DEC.getScale();
+      var terminalpayment = OB.MobileApp.model.paymentnames[payment.get('kind')];
+      return terminalpayment ? terminalpayment.obposPosprecision : OB.DEC.getScale();
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
       //returns a result with the sum up of every payments based on origAmount field

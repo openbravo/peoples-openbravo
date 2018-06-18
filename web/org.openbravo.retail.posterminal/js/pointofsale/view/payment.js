@@ -374,20 +374,12 @@ enyo.kind({
       popup: 'modalchange',
       args: {
         'receipt': this.receipt,
-        'callback': function (paymentchange) {
-          this.applyPaymentChange(paymentchange);
-          this.calculateEnoughChange();
-        }.bind(this)
+        'callback': this.applyPaymentChange.bind(this)
       }
     });
   },
   calculateChangeReset: function () {
-    var emptypaymentchange = new OB.Payments.Change();
-
-    // Update receipt and UI with empty paymentChange.
-    this.applyPaymentChange(emptypaymentchange);
-    // Now that Change has been calculated, then calculate if there is enough
-    this.calculateEnoughChange();
+    this.applyPaymentChange(new OB.Payments.Change());
   },
   calculateChange: function (firstpayment, firstchange) {
     // payment is the first payment to use in the change calculation
@@ -399,10 +391,10 @@ enyo.kind({
     // Recursive function to calculate changes, payment by payment
 
     function calculateNextChange(payment, change) {
-      var s, changeLessThan, linkedSearchKey, changePayment, changePaymentRounded, linkedPayment;
+      var precision, changeLessThan, linkedSearchKey, changePayment, changePaymentRounded, linkedPayment;
 
       usedpaymentsids[payment.paymentMethod.id] = true; // mark this payment as used to avoid cycles.
-      s = payment.obposPosprecision;
+      precision = payment.obposPosprecision;
       changeLessThan = payment.paymentMethod.changeLessThan;
       if (changeLessThan) {
         linkedSearchKey = payment.paymentMethod.changePaymentType;
@@ -411,16 +403,15 @@ enyo.kind({
             return p.paymentMethod.id === linkedSearchKey;
           });
           if (linkedPayment) {
-            changePayment = OB.DEC.mul(change, payment.mulrate, s);
+            changePayment = OB.DEC.mul(change, payment.mulrate, precision);
             // Using 5 as rounding precision as a maximum precsion for all currencies
-            changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), s);
+            changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), precision);
             paymentchange.add({
               'payment': payment,
               'amount': changePaymentRounded,
               'origAmount': OB.DEC.mul(changePaymentRounded, payment.rate)
             });
-            // Recursion using the linked payment
-            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.mul(changePaymentRounded, payment.rate, s), s));
+            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.mul(changePaymentRounded, payment.rate, precision), precision));
             return;
           }
         }
@@ -429,7 +420,7 @@ enyo.kind({
       // Then add add change payment for the remaining change and exit
       paymentchange.add({
         'payment': payment,
-        'amount': OB.DEC.mul(change, payment.mulrate, s),
+        'amount': OB.DEC.mul(change, payment.mulrate, precision),
         'origAmount': change
       });
     }
@@ -448,10 +439,20 @@ enyo.kind({
 
     // Update receipt and UI with new calculations
     this.applyPaymentChange(paymentchange);
-    // Now that Change has been calculated, then calculate if there is enough
-    this.calculateEnoughChange();
   },
-  calculateEnoughChange: function () {
+  applyPaymentChange: function (paymentchange) {
+    // Set change calculation results
+    this.receipt.set('changePayments', paymentchange.payments);
+    OB.MobileApp.model.set('changeReceipt', paymentchange.label);
+
+    // Set change UI
+    var showing = paymentchange.payments.length > 0;
+    this.$.changebutton.setShowing(OB.MobileApp.model.get('terminal').multiChange && showing);
+    this.$.change.setContent(paymentchange.label);
+    this.$.change.setShowing(showing);
+    this.$.changelbl.setShowing(showing);
+
+    // Calculate if there is enough change
     var result = this.receipt.get('changePayments').some(function (itemchange) {
       var p = OB.MobileApp.model.paymentnames[itemchange.key];
       return p.foreignCash < itemchange.amountRounded;
@@ -466,18 +467,6 @@ enyo.kind({
 
     // Update flag
     this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
-  },
-  applyPaymentChange: function (paymentchange) {
-    // Set change calculation results
-    this.receipt.set('changePayments', paymentchange.payments);
-    OB.MobileApp.model.set('changeReceipt', paymentchange.label);
-
-    // Set change UI
-    var showing = paymentchange.payments.length > 0;
-    this.$.changebutton.setShowing(OB.MobileApp.model.get('terminal').multiChange && showing);
-    this.$.change.setContent(paymentchange.label);
-    this.$.change.setShowing(showing);
-    this.$.changelbl.setShowing(showing);
   },
   updatePending: function () {
     var execution = OB.UTIL.ProcessController.start('updatePending');
@@ -1800,17 +1789,17 @@ enyo.kind({
   kind: 'enyo.Component',
   name: 'OB.Payments.Change',
   statics: {
-    getChangeRounded: function (c) {
-      var s, roundingto, roundinggap;
+    getChangeRounded: function (change) {
+      var precision, roundingto, roundinggap;
 
-      if (c.payment.changeRounding) {
-        s = c.payment.obposPosprecision;
-        roundingto = c.payment.changeRounding.roundingto;
-        roundinggap = c.payment.changeRounding.roundingdownlimit;
+      if (change.payment.changeRounding) {
+        precision = change.payment.obposPosprecision;
+        roundingto = change.payment.changeRounding.roundingto;
+        roundinggap = change.payment.changeRounding.roundingdownlimit;
         // Using 5 as rounding precision as a maximum precsion for all currencies
-        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(c.amount, OB.DEC.sub(roundingto, roundinggap), s), roundingto, 5)), s);
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(change.amount, OB.DEC.sub(roundingto, roundinggap), precision), roundingto, 5)), precision);
       }
-      return c.amount;
+      return change.amount;
     }
   },
   create: function () {
@@ -1818,18 +1807,18 @@ enyo.kind({
     this.label = '';
     this.payments = [];
   },
-  add: function (c) {
-    // c.payment is the payment of the new change to add
-    // c.amount is the change to add in the payment currency
-    // c.origAmount is the change to add in the document currency
+  add: function (change) {
+    // change.payment is the payment of the new change to add
+    // change.amount is the change to add in the payment currency
+    // change.origAmount is the change to add in the document currency
     var formattedRounded, amountRounded, paymentLabel;
 
-    if (OB.DEC.compare(c.origAmount)) {
+    if (OB.DEC.compare(change.origAmount)) {
       // Add new change Payment
-      amountRounded = OB.Payments.Change.getChangeRounded(c);
-      formattedRounded = OB.I18N.formatCurrencyWithSymbol(amountRounded, c.payment.symbol, c.payment.currencySymbolAtTheRight);
-      if (OB.DEC.compare(OB.DEC.sub(c.amount, amountRounded, c.payment.obposPosprecision))) {
-        paymentLabel = OB.I18N.getLabel('OBPOS_OriginalAmount', [formattedRounded, OB.I18N.formatCurrencyWithSymbol(c.amount, c.payment.symbol, c.payment.currencySymbolAtTheRight)]);
+      amountRounded = OB.Payments.Change.getChangeRounded(change);
+      formattedRounded = OB.I18N.formatCurrencyWithSymbol(amountRounded, change.payment.symbol, change.payment.currencySymbolAtTheRight);
+      if (OB.DEC.compare(OB.DEC.sub(change.amount, amountRounded, change.payment.obposPosprecision))) {
+        paymentLabel = OB.I18N.getLabel('OBPOS_OriginalAmount', [formattedRounded, OB.I18N.formatCurrencyWithSymbol(change.amount, change.payment.symbol, change.payment.currencySymbolAtTheRight)]);
       } else {
         paymentLabel = formattedRounded;
       }
@@ -1838,10 +1827,10 @@ enyo.kind({
       }
       this.label += paymentLabel;
       this.payments.push({
-        'key': c.payment.payment.searchKey,
-        'amount': c.amount,
+        'key': change.payment.payment.searchKey,
+        'amount': change.amount,
         'amountRounded': amountRounded,
-        'origAmount': c.origAmount,
+        'origAmount': change.origAmount,
         'label': paymentLabel
       });
     }

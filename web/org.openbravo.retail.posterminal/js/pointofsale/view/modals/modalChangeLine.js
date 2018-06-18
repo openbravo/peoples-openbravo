@@ -53,10 +53,10 @@ enyo.kind({
     });
   },
   actionShow: function (inSender, inEvent) {
-    var s, change, cRounded, currentChange;
+    var precision, change, cRounded, currentChange;
 
-    s = this.payment.obposPosprecision;
-    change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, s);
+    precision = this.payment.obposPosprecision;
+    change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, precision);
     cRounded = OB.Payments.Change.getChangeRounded({
       'payment': this.payment,
       'amount': change

@@ -68,7 +68,7 @@ enyo.kind({
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
       if (l.hasErrors) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CHANGEAMOUNTSNOTVALID'));
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ChangeAmountsNotValid'));
         return;
       }
       amount = parseFloat(l.$.textline.getValue());
@@ -83,26 +83,26 @@ enyo.kind({
     this.doHideThisPopup();
   },
   actionInput: function (inSender, inEvent) {
-    var lines, linecalc, originalValue, change, s, linecalcchange;
+    var lines, line, originalValue, change, precision, linechange;
 
     if (inEvent.hasErrors) {
-      return; // do not perform automatic calculation in the case of input error
+      return;
     }
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
     if (lines.length !== 2) {
-      return; // only perform automatic calculation in the case or 2 cash payments
+      return;
     }
 
-    linecalc = lines[inEvent.line === lines[0] ? 1 : 0];
+    line = lines[inEvent.line === lines[0] ? 1 : 0];
     originalValue = OB.DEC.mul(inEvent.value, inEvent.line.payment.rate);
     change = OB.DEC.sub(this.args.receipt.getChange(), originalValue);
-    s = linecalc.payment.obposPosprecision;
-    linecalcchange = OB.DEC.mul(change, linecalc.payment.mulrate, s);
+    precision = line.payment.obposPosprecision;
+    linechange = OB.DEC.mul(change, line.payment.mulrate, precision);
 
-    linecalc.assignValidValue(OB.Payments.Change.getChangeRounded({
-      'payment': linecalc.payment,
-      'amount': linecalcchange
+    line.assignValidValue(OB.Payments.Change.getChangeRounded({
+      'payment': line.payment,
+      'amount': linechange
     }));
   }
 });
