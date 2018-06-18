@@ -151,7 +151,7 @@
             'openDrawer': paymentToAdd.paymentMethod.openDrawer,
             'printtwice': paymentToAdd.paymentMethod.printtwice,
             'paymentData': {
-              'change': 'change payment'
+              'label': changePayment.label
             }
           }), addPaymentCallback);
         });
@@ -233,4 +233,17 @@
     }
   };
 
+  OB.UTIL.getChangeLabelFromChangePayments = function (changePayments) {
+    return changePayments.map(function (item) {
+      return item.label;
+    }).join(' + ');
+  };
+
+  OB.UTIL.getChangeLabelFromPayments = function (payments) {
+    return payments.filter(function (payment) {
+      return payment.get('amount') < 0;
+    }).map(function (payment) {
+      return payment.get('paymentData').label;
+    }).join(' + ');
+  };
 }());

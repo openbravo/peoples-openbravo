@@ -1822,25 +1822,27 @@ enyo.kind({
     // c.payment is the payment of the new change to add
     // c.amount is the change to add in the payment currency
     // c.origAmount is the change to add in the document currency
-    var paymentlabel, amountRounded;
+    var formattedRounded, amountRounded, paymentLabel;
 
     if (OB.DEC.compare(c.origAmount)) {
       // Add new change Payment
+      amountRounded = OB.Payments.Change.getChangeRounded(c);
+      formattedRounded = OB.I18N.formatCurrencyWithSymbol(amountRounded, c.payment.symbol, c.payment.currencySymbolAtTheRight);
+      if (OB.DEC.compare(OB.DEC.sub(c.amount, amountRounded, c.payment.obposPosprecision))) {
+        paymentLabel = OB.I18N.getLabel('OBPOS_OriginalAmount', [formattedRounded, OB.I18N.formatCurrencyWithSymbol(c.amount, c.payment.symbol, c.payment.currencySymbolAtTheRight)]);
+      } else {
+        paymentLabel = formattedRounded;
+      }
       if (this.label) {
         this.label += ' + ';
       }
-      amountRounded = OB.Payments.Change.getChangeRounded(c);
-      paymentlabel = OB.I18N.formatCurrencyWithSymbol(amountRounded, c.payment.symbol, c.payment.currencySymbolAtTheRight);
-      this.label += paymentlabel;
-      if (OB.DEC.compare(OB.DEC.sub(c.amount, amountRounded, c.payment.obposPosprecision))) {
-        paymentlabel += ' (Orig ' + OB.I18N.formatCurrencyWithSymbol(c.amount, c.payment.symbol, c.payment.currencySymbolAtTheRight) + ')';
-      }
+      this.label += paymentLabel;
       this.payments.push({
         'key': c.payment.payment.searchKey,
         'amount': c.amount,
         'amountRounded': amountRounded,
         'origAmount': c.origAmount,
-        'label': paymentlabel
+        'label': paymentLabel
       });
     }
   }
