@@ -2742,11 +2742,18 @@
           modelsAffectedByCache: ['ProductPrice']
         });
       } else {
-        me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
-          if (callback) {
-            callback(success, orderline);
-          }
-        });
+        // With the preference OBPOS_allowProductsNoPriceInMainPricelist
+        // it is possible to add product without price in the terminal's main list
+        if (OB.UTIL.isNullOrUndefined(p.get('listPrice')) && !p.get('ispack')) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_productWithoutPriceInPriceList', [p.get('_identifier')]));
+          callback(false, null);
+        } else {
+          me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+            if (callback) {
+              callback(success, orderline);
+            }
+          });
+        }
       }
     },
 
