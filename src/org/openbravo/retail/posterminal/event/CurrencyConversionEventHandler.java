@@ -60,7 +60,8 @@ public class CurrencyConversionEventHandler extends EntityPersistenceEventObserv
       hql.append("select " + TerminalTypePaymentMethod.PROPERTY_ID);
       hql.append(" from " + TerminalTypePaymentMethod.ENTITY_NAME + " ttpm");
       hql.append(" where " + TerminalTypePaymentMethod.PROPERTY_CURRENCY + ".id = :currencyId");
-      hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGELESSTHAN + " is not null");
+      hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_ACTIVE + " = true");
+      hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGEPAYMENTTYPE + " is not null");
       hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGEPAYMENTTYPE + " is not null");
       hql.append(" and ad_isorgincluded(ttpm.organization.id, :organizationId, :clientId) <> -1");
       Query qry = OBDal.getInstance().getSession().createQuery(hql.toString());

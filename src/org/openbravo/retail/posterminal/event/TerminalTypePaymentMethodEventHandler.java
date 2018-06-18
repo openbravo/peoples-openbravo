@@ -72,6 +72,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
         hql.append("select " + OBPOSCurrencyRounding.PROPERTY_ID);
         hql.append(" from " + OBPOSCurrencyRounding.ENTITY_NAME + " cr");
         hql.append(" where " + OBPOSCurrencyRounding.PROPERTY_CURRENCY + ".id = :currencyId");
+        hql.append(" and " + OBPOSCurrencyRounding.PROPERTY_ACTIVE + " = true");
         hql.append(" and ad_isorgincluded(:organizationId, cr.organization.id, :clientId) <> -1");
         Query qry = OBDal.getInstance().getSession().createQuery(hql.toString());
         qry.setParameter("currencyId", ttpm.getCurrency().getId());
