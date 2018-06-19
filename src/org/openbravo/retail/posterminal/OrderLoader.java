@@ -2844,8 +2844,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
           account == null ? paymentType.getFinancialAccount() : account, (downRounding ? amount
               : amountRounded).toString(), calculatedDate, order.getOrganization(), null, detail,
-          paymentAmount, false, false, order.getCurrency(), mulrate, downRounding ? origAmount
-              : origAmountRounded, true, payment.has("id") ? payment.getString("id") : null);
+          paymentAmount, false, false, order.getCurrency(), mulrate, origAmountRounded, true,
+          payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
       // overpayment for positive writeoffAmt and for negative overpayments generated in a positive
