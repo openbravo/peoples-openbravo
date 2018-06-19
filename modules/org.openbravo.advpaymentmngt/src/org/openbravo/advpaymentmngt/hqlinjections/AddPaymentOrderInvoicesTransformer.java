@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -255,12 +255,12 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       whereClause.append(" ord.salesTransaction = :isSalesTransaction");
       whereClause.append(" and ord.currency.id = :currencyId ) ");
     }
+    whereClause.append(")");
 
     if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
       whereClause.append(" and bp.id = :businessPartnerId ");
     }
 
-    whereClause.append(")");
     return whereClause;
 
   }
