@@ -16,26 +16,23 @@ enyo.kind({
   },
   components: [{
     name: 'labelLine',
-    classes: 'properties-label',
-    style: 'padding: 5px 8px 0px 0px; font-size: 15px;',
+    classes: 'properties-label changedialog-properties-label',
     content: ''
   }, {
-    classes: 'modal-dialog-receipt-properties-text',
-    style: 'border: 1px solid #F0F0F0; float: left; width: 180px;',
+    classes: 'modal-dialog-receipt-properties-text changedialog-properties-text',
     components: [{
       name: 'textline',
       kind: 'enyo.Input',
       type: 'text',
-      classes: 'input',
-      style: 'width: 100%; margin-bottom:0px; text-align: right;',
+      classes: 'input changedialog-properties-input',
       oninput: 'actionInput'
     }]
   }, {
     name: 'infoline',
-    style: 'float: left; color: #6f6f6f; font-size: 12px; margin-left: 25px;',
+    classes: 'changedialog-properties-info',
     content: ''
   }, {
-    style: 'clear: both'
+    classes: 'changedialog-properties-end'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -44,7 +41,9 @@ enyo.kind({
   actionInput: function (inSender, inEvent) {
     var value = parseFloat(this.$.textline.getValue());
     this.hasErrors = _.isNaN(value) || value < 0 || value > this.maxValue;
-    this.$.textline.addStyles('background-color: ' + (this.hasErrors ? '#fe7f7f' : 'inherit') + ';');
+    this.$.textline.removeClass('changedialog-properties-validation-ok');
+    this.$.textline.removeClass('changedialog-properties-validation-error');
+    this.$.textline.addClass(this.hasErrors ? 'changedialog-properties-validation-error' : 'changedialog-properties-validation-ok');
 
     return this.bubble('onActionInput', {
       value: value,
@@ -72,7 +71,7 @@ enyo.kind({
   },
   assignValidValue: function (amountRounded) {
     this.$.textline.setValue(amountRounded);
-    this.$.textline.addStyles('background-color: inherit;');
+    this.$.textline.addClass('changedialog-properties-validation-ok');
     this.hasErrors = false;
     setTimeout(function () {
       this.$.textline.hasNode().setSelectionRange(0, this.$.textline.getValue().length);

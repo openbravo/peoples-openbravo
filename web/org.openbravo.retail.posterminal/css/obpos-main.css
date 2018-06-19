@@ -739,3 +739,43 @@ button.btnbp:disabled {
   padding: 0px;
   margin: 0px;
 }
+
+.changedialog-properties {
+  background-color: #ffffff;
+}
+
+.changedialog-properties-label {
+  padding: 5px 8px 0px 0px;
+  font-size: 15px;
+}
+
+.changedialog-properties-text {
+  border: 1px solid #F0F0F0;
+  float: left;
+  width: 180px;
+}
+
+.changedialog-properties-input {
+  width: 100%;
+  margin-bottom: 0px;
+  text-align: right;
+}
+
+.changedialog-properties-info {
+  float: left;
+  color: #6f6f6f;
+  font-size: 12px;
+  margin-left: 25px;
+}
+
+.changedialog-properties-end {
+  clear: both;
+}
+
+.changedialog-properties-validation-ok {
+  background-color: inherit;
+}
+
+.changedialog-properties-validation-error {
+  background-color: #fe7f7f;
+}

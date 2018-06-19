@@ -24,15 +24,12 @@ enyo.kind({
     components: [{
       kind: 'Scroller',
       maxHeight: '225px',
-      style: 'background-color: #ffffff;',
+      classes: 'changedialog-properties',
       thumb: true,
       horizontal: 'hidden',
       components: [{
         name: 'paymentlines'
       }]
-    }, {
-      name: 'bodytext',
-      style: 'visibility: hidden;'
     }]
   },
   bodyButtons: {
