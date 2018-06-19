@@ -317,7 +317,7 @@ OB.UTIL.getPriceListName = function (priceListId, callback) {
  * It can work online in case that user has done at least once the same approvalType
  * in this same browser. Data regarding privileged users is stored in supervisor table
  */
-OB.UTIL.checkApproval = function (approvalType, username, password, callback, windowModel) {
+OB.UTIL.checkApproval = function (approvalType, username, password, callback, windowModel, attrs) {
   enyo.$.scrim.show();
   OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
   var approvalList = [];
@@ -328,7 +328,8 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
   new OB.DS.Process('org.openbravo.retail.posterminal.utility.CheckApproval').exec({
     u: username,
     p: password,
-    approvalType: JSON.stringify(approvalList)
+    approvalType: JSON.stringify(approvalList),
+    attrs: attrs
   }, enyo.bind(this, function (response, message) {
     var approved = false;
     if (response.exception) {
