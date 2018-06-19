@@ -1796,8 +1796,9 @@ enyo.kind({
         precision = change.payment.obposPosprecision;
         roundingto = change.payment.changeRounding.roundingto;
         roundinggap = change.payment.changeRounding.roundingdownlimit;
-        // Using 5 as rounding precision as a maximum precsion for all currencies
-        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(change.amount, OB.DEC.sub(roundingto, roundinggap), precision), roundingto, 5)), precision);
+        // Using 5 as rounding precision as a maximum precsion for all currencies before rounding.
+        // And after rounding using Math.trunc using the payment precision.
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(change.amount, OB.DEC.sub(roundingto, roundinggap, 5), 5), roundingto, 5)), precision);
       }
       return change.amount;
     }
