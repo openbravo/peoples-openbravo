@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.utility.Tree;
@@ -92,21 +92,20 @@ public class TreeUtility {
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     final String qryStr = "select t from " + Tree.class.getName() + " t where treetype='"
         + treeType + "' and client.id='" + clientId + "'";
-    final Query qry = SessionHandler.getInstance().createQuery(qryStr);
-
-    @SuppressWarnings("unchecked")
+    final Query<Tree> qry = SessionHandler.getInstance().createQuery(qryStr, Tree.class);
     final List<Tree> ts = qry.list();
-    final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+
+    final List<TreeNode> treeNodes = new ArrayList<>();
     for (final Tree t : ts) {
       final String nodeQryStr = "select tn from " + TreeNode.class.getName()
           + " tn where tn.tree.id='" + t.getId() + "'";
-      final Query nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr);
-      @SuppressWarnings("unchecked")
+      final Query<TreeNode> nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr,
+          TreeNode.class);
       final List<TreeNode> tns = nodeQry.list();
       treeNodes.addAll(tns);
     }
 
-    final List<Node> nodes = new ArrayList<Node>(treeNodes.size());
+    final List<Node> nodes = new ArrayList<>(treeNodes.size());
     for (final TreeNode tn : treeNodes) {
       final Node on = new Node();
       on.setTreeNode(tn);
@@ -120,7 +119,7 @@ public class TreeUtility {
     for (final Node on : nodes) {
       naturalTrees.put(on.getTreeNode().getNode(), on.getNaturalTree());
       if (on.getChildren() != null) {
-        Set<String> os = new HashSet<String>();
+        Set<String> os = new HashSet<>();
         for (Node o : on.getChildren())
           os.add(o.getTreeNode().getNode());
         childTrees.put(on.getTreeNode().getNode(), os);
