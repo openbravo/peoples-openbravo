@@ -11250,8 +11250,8 @@ GROUP BY
 <!--7EB9FFD7BD4E4113A13A096EB879D358-->  <HQLQUERY><![CDATA[SELECT
   e.id,
   @orderedQuantity@ as orderedQuantity,
-  uom.name as uOM,
-  p.name as product,
+  (select uom.name from UOM uom where uom.id = e.uOM.id) as uOM,
+  (select p.name from Product p where p.id = e.product.id) as product,
   e.lineNo,
   (o.documentNo || ' - ' || to_char(trunc(o.orderDate)) || ' - ' || o.grandTotalAmount) as salesOrder,  
   @operativeQuantity@ as operativeQuantity,
@@ -11260,7 +11260,7 @@ GROUP BY
   il.id,
   e.orderDate as orderDate,
   o.scheduledDeliveryDate as scheduledDeliveryDate, 
-  wh.name as warehouse,  
+  (select wh.name from Warehouse wh where wh.id = o.warehouse.id) as warehouse,  
   o.documentNo as documentNo,
   o.grandTotalAmount as grandTotalAmount
   @selectClause@

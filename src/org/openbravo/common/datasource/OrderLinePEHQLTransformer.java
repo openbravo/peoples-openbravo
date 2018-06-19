@@ -115,9 +115,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  o.scheduledDeliveryDate,");
     groupByClause.append("  e.orderedQuantity,");
     groupByClause.append("  e.orderDate,");
-    groupByClause.append("  uom.name,");
-    groupByClause.append("  p.id,");
-    groupByClause.append("  p.name,");
     groupByClause.append("  e.lineNo,");
     groupByClause.append("  e.id,");
     groupByClause.append("  COALESCE(e.asset.id, o.asset.id),");
@@ -126,13 +123,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  COALESCE(e.stDimension.id, o.stDimension.id),");
     groupByClause.append("  COALESCE(e.ndDimension.id, o.ndDimension.id),");
     groupByClause.append("  e.explode,");
-    groupByClause.append("  aum.id,");
     groupByClause.append("  e.operativeQuantity,");
     groupByClause.append("  o.documentType.id,");
     groupByClause.append("  o.businessPartner.id,");
     groupByClause.append("  il.id,");
-    groupByClause.append("  wh.id,");
-    groupByClause.append("  wh.name,");
     groupByClause.append("  @orderQuantity@");
     if (isSalesTransaction) {
       groupByClause.append(" , e.invoicedQuantity");
@@ -189,11 +183,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       fromClause.append(" OrderLine e");
       fromClause.append(" join e.salesOrder o");
     }
-    fromClause.append(" join e.uOM uom");
-    fromClause.append(" join e.product p");
-    fromClause.append(" join o.warehouse wh");
-    fromClause.append(" left join e.operativeUOM aum");
-    fromClause.append(" left join e.bOMParent bomParent");
     fromClause.append(" left join e.goodsShipmentLine il");
 
     if (!isSalesTransaction) {
@@ -224,15 +213,15 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     }
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
-        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(p.id, e.orderedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))))");
+        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(e.product.id, e.orderedQuantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))))");
     if (isSalesTransaction) {
       operativeQuantityHql
-          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, e.invoicedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))), 0))");
+          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(e.product.id, e.invoicedQuantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))), 0))");
     } else {
       operativeQuantityHql
-          .append("  -SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, m.quantity, aum.id)),0))-COALESCE(");
+          .append("  -SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(e.product.id, m.quantity, e.operativeUOM.id)),0))-COALESCE(");
       operativeQuantityHql
-          .append(" (SELECT SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(p.id, ci.invoicedQuantity, coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))), 0))");
+          .append(" (SELECT SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(e.product.id, ci.invoicedQuantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))), 0))");
       operativeQuantityHql.append("  FROM OrderLine co");
       operativeQuantityHql.append("    LEFT JOIN co.invoiceLineList ci");
       operativeQuantityHql.append("  WHERE ci.invoice.id = :invId");
@@ -266,7 +255,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (UOMUtil.isUomManagementEnabled()) {
       operativeUOMHql.append(" (select aum2.name from UOM aum2 where aum2.id = ");
       operativeUOMHql
-          .append(" (coalesce(aum.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(p.id, o.documentType.id))))) ");
+          .append(" (coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))) ");
     } else {
       operativeUOMHql.append("'' ");
     }
