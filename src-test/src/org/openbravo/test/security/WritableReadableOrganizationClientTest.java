@@ -19,8 +19,8 @@
 
 package org.openbravo.test.security;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -199,7 +199,7 @@ public class WritableReadableOrganizationClientTest extends OBBaseTest {
 
       // and it should not be able to read them if it has no access to their ancestor
       assertThat("Role should not be able to read any US organization", readableOrgs,
-          not(anyOf(hasItem(Orgs.US_EST), hasItem(Orgs.US_WEST), hasItem(Orgs.US))));
+          allOf(not(hasItem(Orgs.US_EST)), not(hasItem(Orgs.US_WEST)), not(hasItem(Orgs.US))));
     } finally {
       if (disabledAccess != null) {
         disabledAccess.setActive(true);
