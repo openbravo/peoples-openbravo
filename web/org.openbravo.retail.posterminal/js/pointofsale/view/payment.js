@@ -1825,7 +1825,7 @@ enyo.kind({
       if (this.label) {
         this.label += ' + ';
       }
-      this.label += paymentLabel;
+      this.label += formattedRounded;
       this.payments.push({
         key: change.payment.payment.searchKey,
         amount: change.amount,
