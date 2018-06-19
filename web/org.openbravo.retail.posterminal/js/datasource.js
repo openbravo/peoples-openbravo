@@ -22,7 +22,9 @@ OB.DS.HWResource.prototype.getData = function (callback) {
     OB.UTIL.loadResource(this.resource, function (data) {
       this.resourcedata = data;
       callback(this.resourcedata);
-    }, this);
+    }, this, {
+      uuid: OB.UTIL.localStorage.getItem('templateVersion')
+    });
   }
 };
 

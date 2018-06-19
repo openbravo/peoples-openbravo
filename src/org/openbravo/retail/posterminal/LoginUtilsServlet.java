@@ -49,6 +49,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.retail.posterminal.utility.OBPOSPrintTemplateReader;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
@@ -366,6 +367,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     JSONObject result = super.initActions(request);
 
     final String terminalName = request.getParameter("terminalName");
+    JSONObject properties = (JSONObject) result.get("properties");
     if (terminalName != null) {
       OBPOSApplications terminal = null;
       OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
@@ -376,11 +378,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       List<OBPOSApplications> apps = qApp.list();
       if (apps.size() == 1) {
         terminal = ((OBPOSApplications) apps.get(0));
-        JSONObject properties = (JSONObject) result.get("properties");
         properties.put("servers", getServers(terminal));
       }
     }
-
+    properties.put("templateVersion", OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
     String value;
     try {
 
