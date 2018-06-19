@@ -454,8 +454,8 @@ enyo.kind({
 
     // Calculate if there is enough change
     var result = this.receipt.get('changePayments').some(function (itemchange) {
-      var p = OB.MobileApp.model.paymentnames[itemchange.key];
-      return p.foreignCash < itemchange.amountRounded;
+      var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
+      return paymentMethod.foreignCash < itemchange.amountRounded;
     });
 
     // Show / hide not enough message
