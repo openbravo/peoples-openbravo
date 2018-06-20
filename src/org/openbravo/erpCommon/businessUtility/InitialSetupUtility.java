@@ -293,7 +293,8 @@ public class InitialSetupUtility {
    *             trees defined in the DA_TreeType type list reference Returns the relation of trees
    *             defined in the reference list of the application dictionary called AD_TreeType Type
    * 
-   * @return java.util.List&lt;org.openbravo.model.ad.domain.List&gt;: the relation of AD list elements
+   * @return java.util.List&lt;org.openbravo.model.ad.domain.List&gt;: the relation of AD list
+   *         elements
    * @throws Exception
    */
   @Deprecated
@@ -960,9 +961,9 @@ public class InitialSetupUtility {
    * @param treeNodes
    *          relation of nodes in ADTreeNode belonging to the accounting tree to sort out
    * @param mapSequence
-   *          HashMap&lt;String,Long&gt; where the String belongs to the value of a c_elementvalue, and
-   *          Long to the sequence that must be assigned to the node that represents that element
-   *          value in ADTreeNode
+   *          HashMap&lt;String,Long&gt; where the String belongs to the value of a c_elementvalue,
+   *          and Long to the sequence that must be assigned to the node that represents that
+   *          element value in ADTreeNode
    * @param mapElementValueValue
    *          each tree node in treeNodes has one entry in mapElementValueId to link it's value with
    *          the c_elementvalue_id of that element in c_elementvalue table
@@ -1876,7 +1877,8 @@ public class InitialSetupUtility {
    * Returns the relation of ad_ref_list elements for the reference with AD_Reference_id='181'
    * (Acct.schema elements)
    * 
-   * @return List&lt;org.openbravo.model.ad.domain.List&gt; with the relation of ad_ref_list elements
+   * @return List&lt;org.openbravo.model.ad.domain.List&gt; with the relation of ad_ref_list
+   *         elements
    * @throws Exception
    */
   public static List<org.openbravo.model.ad.domain.List> getAcctSchemaElements() throws Exception {
