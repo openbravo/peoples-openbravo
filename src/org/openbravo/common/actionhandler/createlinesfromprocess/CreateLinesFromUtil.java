@@ -91,15 +91,7 @@ class CreateLinesFromUtil {
     return jsonRequest.getJSONObject("_params").getJSONObject("grid").getJSONArray("_selection");
   }
 
-  static BigDecimal getOrderedQuantity(BaseOBObject line, JSONObject selectedPEValuesInLine) {
-    if (isOrderLine(line) && ((OrderLine) line).getGoodsShipmentLine() != null) {
-      return ((OrderLine) line).getGoodsShipmentLine().getMovementQuantity();
-    } else {
-      return getOrderedQuantity(selectedPEValuesInLine);
-    }
-  }
-
-  private static BigDecimal getOrderedQuantity(JSONObject selectedPEValuesInLine) {
+  static BigDecimal getOrderedQuantity(JSONObject selectedPEValuesInLine) {
     try {
       return new BigDecimal(selectedPEValuesInLine.getString(selectedPEValuesInLine
           .has("orderedQuantity") ? "orderedQuantity" : "movementQuantity"));
@@ -109,15 +101,7 @@ class CreateLinesFromUtil {
     }
   }
 
-  static BigDecimal getOperativeQuantity(BaseOBObject line, JSONObject selectedPEValuesInLine) {
-    if (isOrderLine(line) && ((OrderLine) line).getGoodsShipmentLine() != null) {
-      return ((OrderLine) line).getGoodsShipmentLine().getOperativeQuantity();
-    } else {
-      return getOperativeQuantity(selectedPEValuesInLine);
-    }
-  }
-
-  private static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
+  static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
     try {
       return hasNotEmptyValue(selectedPEValuesInLine, "operativeQuantity") ? new BigDecimal(
           selectedPEValuesInLine.getString("operativeQuantity")) : null;

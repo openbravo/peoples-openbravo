@@ -167,8 +167,7 @@ class UpdateTax extends CreateLinesFromProcessHook {
         : ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
     if (originalOrderLine.getTaxableAmount() != null) {
       BigDecimal originalOrderedQuantity = originalOrderLine.getOrderedQuantity();
-      BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
-          getPickExecJSONObject());
+      BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getPickExecJSONObject());
       taxBaseAmt = originalOrderLine.getTaxableAmount();
       if (originalOrderedQuantity.compareTo(BigDecimal.ZERO) != 0) {
         taxBaseAmt = taxBaseAmt.multiply(qtyOrdered).divide(originalOrderedQuantity,

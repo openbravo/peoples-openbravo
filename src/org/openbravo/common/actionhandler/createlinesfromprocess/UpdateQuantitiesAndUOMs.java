@@ -45,10 +45,9 @@ class UpdateQuantitiesAndUOMs extends CreateLinesFromProcessHook {
    */
   @Override
   public void exec() {
-    BigDecimal orderedQuantity = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
-        getPickExecJSONObject());
-    BigDecimal operativeQuantity = CreateLinesFromUtil.getOperativeQuantity(getCopiedFromLine(),
-        getPickExecJSONObject());
+    BigDecimal orderedQuantity = CreateLinesFromUtil.getOrderedQuantity(getPickExecJSONObject());
+    BigDecimal operativeQuantity = CreateLinesFromUtil
+        .getOperativeQuantity(getPickExecJSONObject());
     UOM operativeUOM = CreateLinesFromUtil.getAUM(getCopiedFromLine());
     ProductUOM orderUOM = (ProductUOM) getCopiedFromLine().get("orderUOM");
     Product product = (Product) getCopiedFromLine().get("product");

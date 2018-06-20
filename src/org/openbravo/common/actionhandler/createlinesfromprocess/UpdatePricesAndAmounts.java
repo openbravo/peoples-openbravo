@@ -68,8 +68,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
 
   private void setPricesBasedOnOrderLineValues(OrderLine orderLine) {
     PriceInformation priceInformation = new PriceInformation();
-    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
-        getPickExecJSONObject());
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getPickExecJSONObject());
 
     // Standard and Price precision
     Currency invoiceCurrency = getInvoice().getCurrency();
@@ -137,8 +136,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     if (priceInformation == null) {
       setPricesToZero();
     } else {
-      BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
-          getPickExecJSONObject());
+      BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getPickExecJSONObject());
 
       // Standard and Price precision
       Currency invoiceCurrency = getInvoice().getCurrency();
@@ -212,8 +210,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
 
   @SuppressWarnings("unchecked")
   private Object[] selectBOMPrices(Product product, PriceList priceList) {
-    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getCopiedFromLine(),
-        getPickExecJSONObject());
+    BigDecimal qtyOrdered = CreateLinesFromUtil.getOrderedQuantity(getPickExecJSONObject());
     StringBuilder obq = new StringBuilder(" SELECT ");
     obq.append("   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), ");
     obq.append("   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), ");
