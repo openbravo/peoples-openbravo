@@ -285,21 +285,32 @@ public class InventoryCountProcess implements Process {
     StringBuffer where = new StringBuffer();
     where.append(" as icl");
     where.append("   join icl." + InventoryCountLine.PROPERTY_PRODUCT + " as p");
+    where.append("   join icl." + Product.PROPERTY_STORAGEBIN + " as sb");
     where.append("   join p." + Product.PROPERTY_ATTRIBUTESET + " as aset");
     where.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory");
     where.append("   and aset." + AttributeSet.PROPERTY_REQUIREATLEASTONEVALUE + " = true");
     where.append("   and coalesce(p." + Product.PROPERTY_USEATTRIBUTESETVALUEAS + ", '-') <> 'F'");
     where.append("   and coalesce(icl." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
         + ", '0') = '0'");
+    where.append("   and not (icl." + InventoryCountLine.PROPERTY_QUANTITYCOUNT + " = 0");
+    where.append("     and (select 1 from " + StorageDetail.ENTITY_NAME + " sd");
+    where.append("        where sb.id = sd." + StorageDetail.PROPERTY_STORAGEBIN + ".id");
+    where.append("          and p.id = sd." + StorageDetail.PROPERTY_PRODUCT + ".id");
+    where.append("          and sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE + " = '0'");
+    where.append("          and sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " < 0 ) = 1)");
     where.append("  order by icl." + InventoryCountLine.PROPERTY_LINENO);
     OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
         where.toString());
     iclQry.setNamedParameter("inventory", inventory.getId());
     iclQry.setMaxResult(1);
-    Object icl = iclQry.uniqueResult();
-    if (icl != null) {
-      throw new OBException(OBMessageUtils.parseTranslation("@Inline@ "
-          + ((InventoryCountLine) icl).getLineNo() + " @productWithoutAttributeSet@"));
+    try {
+      Object icl = iclQry.uniqueResult();
+      if (icl != null) {
+        throw new OBException(OBMessageUtils.parseTranslation("@Inline@ "
+            + ((InventoryCountLine) icl).getLineNo() + " @productWithoutAttributeSet@"));
+      }
+    } catch (Exception e) {
+      throw e;
     }
 
     // duplicated product
