@@ -95,6 +95,11 @@
         <index-column name="C_INVOICELINE_ID"/>
         <whereClause><![CDATA[C_INVOICELINE_ID IS NOT NULL]]></whereClause>
       </index>
+      <index name="M_MATCHPO_ORDLINE_INVLINE" unique="false">
+        <index-column name="C_ORDERLINE_ID"/>
+        <index-column name="C_INVOICELINE_ID"/>
+        <whereClause><![CDATA[C_INVOICELINE_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="M_MATCHPO_POSTED" unique="false">
         <index-column name="POSTED"/>
       </index>

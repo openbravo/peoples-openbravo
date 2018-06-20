@@ -26,6 +26,14 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
+import static org.openbravo.test.base.TestConstants.Orgs.ESP;
+import static org.openbravo.test.base.TestConstants.Orgs.ESP_NORTE;
+import static org.openbravo.test.base.TestConstants.Orgs.ESP_SUR;
+import static org.openbravo.test.base.TestConstants.Orgs.FB_GROUP;
+import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
+import static org.openbravo.test.base.TestConstants.Orgs.US;
+import static org.openbravo.test.base.TestConstants.Orgs.US_EST;
+import static org.openbravo.test.base.TestConstants.Orgs.US_WEST;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,15 +70,6 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(Parameterized.class)
 public class AllowedOrganizationsTest extends OBBaseTest {
-  private static final String MAIN = "0";
-  private static final String FB_GROUP = "19404EAD144C49A0AF37D54377CF452D";
-  private static final String US = "2E60544D37534C0B89E765FE29BC0B43";
-  private static final String US_EST = "7BABA5FF80494CAFA54DEBD22EC46F01";
-  private static final String US_WEST = "BAE22373FEBE4CCCA24517E23F0C8A48";
-  private static final String ESP = "B843C30461EA4501935CB1D125C9C25A";
-  private static final String ESP_SUR = "DC206C91AA6A4897B44DA897936E0EC3";
-  private static final String ESP_NORTE = "E443A31992CB4635AFCAEABE7183CE85";
-
   private static final Map<String, String> ORG_NAMES = ImmutableMap.<String, String> builder()
       .put(MAIN, "Main") //
       .put(FB_GROUP, "F&B International Group") //

@@ -37,7 +37,9 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.common.hooks.ConvertQuotationIntoOrderHookManager;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -278,6 +280,9 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     OBDal.getInstance().flush();
     OBDal.getInstance().refresh(newSalesOrder);
 
+    // Hook entry point
+    executeHooks(newSalesOrder);
+
     // If prices are going to be recalculated, call C_Order_Post
     callCOrderPost(newSalesOrder, recalculatePrices);
     OBDal.getInstance().flush();
@@ -475,6 +480,13 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     olDiscount.setProduct(newSalesOrderDiscount.getDiscount().getProduct());
     olDiscount.setDescription(newSalesOrderDiscount.getDiscount().getProduct().getName());
     return olDiscount;
+  }
+
+  private void executeHooks(Order salesOrder) {
+    ConvertQuotationIntoOrderHookManager manager = WeldUtils
+        .getInstanceFromStaticBeanManager(ConvertQuotationIntoOrderHookManager.class);
+
+    manager.executeHooks(salesOrder);
   }
 
 }
