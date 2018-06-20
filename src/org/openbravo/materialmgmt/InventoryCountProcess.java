@@ -24,7 +24,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -35,14 +34,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.Session;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.exception.GenericJDBCException;
-import org.hibernate.impl.SessionFactoryImpl;
-import org.hibernate.impl.SessionImpl;
-import org.hibernate.type.DateType;
-import org.hibernate.type.StringType;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -174,23 +166,6 @@ public class InventoryCountProcess implements Process {
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     runChecks(inventory);
 
-    // In case get_uuid is not already registered, it's registered now.
-    final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
-        .getSessionFactory()).getDialect();
-    Map<String, SQLFunction> function = dialect.getFunctions();
-    if (!function.containsKey("get_uuid")) {
-      dialect.getFunctions().put("get_uuid", new StandardSQLFunction("get_uuid", new StringType()));
-    }
-    if (!function.containsKey("now")) {
-      dialect.getFunctions().put("now", new StandardSQLFunction("now", new DateType()));
-    }
-    if (!function.containsKey("to_date")) {
-      dialect.getFunctions().put("to_date", new StandardSQLFunction("to_date", new DateType()));
-    }
-    if (!function.containsKey("to_timestamp")) {
-      dialect.getFunctions().put("to_timestamp",
-          new StandardSQLFunction("to_timestamp", new DateType()));
-    }
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + MaterialTransaction.ENTITY_NAME + "(");
     insert.append(" id ");

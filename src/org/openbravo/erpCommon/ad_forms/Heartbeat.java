@@ -49,8 +49,6 @@ public class Heartbeat extends HttpSecureAppServlet {
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    updateServletContainer(request.getSession().getServletContext().getServerInfo());
-
     if (vars.commandIn("DEFAULT", "DEFAULT_MODULE", "UPDATE_MODULE", "UPGRADE_MODULE")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("CONFIGURE", "CONFIGURE_MODULE_UPDATE", "CONFIGURE_MODULE_INSTALL",
@@ -114,29 +112,6 @@ public class Heartbeat extends HttpSecureAppServlet {
 
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  /**
-   * Updates the servlet container information on the System Information table.
-   * 
-   * @param serverInfo
-   * @throws ServletException
-   */
-  private void updateServletContainer(String serverInfo) throws ServletException {
-    final HeartbeatData[] data = HeartbeatData.selectServletcontainer(this);
-    if (data.length > 0) {
-      String servletContainer = data[0].servletContainer;
-      String servletContainerVersion = data[0].servletContainerVersion;
-      if ((servletContainer == null || servletContainer.equals(""))
-          && (servletContainerVersion == null || servletContainerVersion.equals(""))) {
-        if (serverInfo != null && serverInfo.contains("/")) {
-          servletContainer = serverInfo.split("/")[0];
-          servletContainerVersion = serverInfo.split("/")[1];
-
-          HeartbeatData.updateServletContainer(this, servletContainer, servletContainerVersion);
-        }
-      }
-    }
   }
 
   /**

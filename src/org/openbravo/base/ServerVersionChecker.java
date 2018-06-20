@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,10 +40,16 @@ public class ServerVersionChecker implements ServletContextListener {
 
   private static final Logger log = LoggerFactory.getLogger(ServerVersionChecker.class);
 
+  private static String serverName;
+  private static String serverVersion;
+
   @Override
   public void contextInitialized(ServletContextEvent event) {
+
     String serverInfo = event.getServletContext().getServerInfo();
     log.debug("Server: " + serverInfo);
+
+    setServerInfo(serverInfo);
 
     if (!isRunningOnTomcat(serverInfo)) {
       log.info("Running on " + serverInfo);
@@ -62,6 +68,17 @@ public class ServerVersionChecker implements ServletContextListener {
           "The minimum Tomcat version required deploy Openbravo is {}. Trying to deploy it in {} is not allowed. Please, upgrade Tomcat.",
           MINIMUM_TOMCAT_VERSION, serverInfo);
       System.exit(1);
+    }
+  }
+
+  private void setServerInfo(String serverInfo) {
+    try {
+      Matcher versionMatcher = Pattern.compile("([^\\d/]*)[/]?([\\d\\.]*)").matcher(serverInfo);
+      if (versionMatcher.find()) {
+        serverName = versionMatcher.group(1);
+        serverVersion = versionMatcher.group(2);
+      }
+    } catch (Exception ignore) {
     }
   }
 
@@ -84,4 +101,15 @@ public class ServerVersionChecker implements ServletContextListener {
   @Override
   public void contextDestroyed(ServletContextEvent sce) {
   }
+
+  /** Returns current Servlet Container's name (ie. "Apache Tomcat") */
+  public static String getServerName() {
+    return serverName;
+  }
+
+  /** Returns current Servlet Container's full version (ie. "8.5.31") */
+  public static String getServerVersion() {
+    return serverVersion;
+  }
+
 }

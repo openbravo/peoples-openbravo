@@ -73,14 +73,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SERVLET_CONTAINER" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="SERVLET_CONTAINER_VERSION" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="WEBSERVER" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
         <default/>
         <onCreateDefault/>

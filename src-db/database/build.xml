@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -199,8 +199,8 @@ export.database.structure: Exports the database structure in the xml's files.
         </fileset>
       </classpath>
       <transaction>
-          UPDATE AD_SYSTEM_INFO SET LAST_DBUPDATE=NOW()
-        </transaction>
+          UPDATE AD_SYSTEM_INFO SET LAST_DBUPDATE = NOW(), ANT_VERSION = SUBSTR('${ant.version}', 1, 60)
+      </transaction>
     </sql>
   </target>
 </project>
