@@ -3453,7 +3453,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--54D373EA63F04066A251C6CACB80256D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--54D373EA63F04066A251C6CACB80256D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--54D373EA63F04066A251C6CACB80256D-->  <VALUE><![CDATA[OBPOS_apppaytype_changelog_chk]]></VALUE>
-<!--54D373EA63F04066A251C6CACB80256D-->  <MSGTEXT><![CDATA["Change Less Than" and "Change Payment" both have to be filled or both have to be empty.]]></MSGTEXT>
+<!--54D373EA63F04066A251C6CACB80256D-->  <MSGTEXT><![CDATA["Change Less Than" and "Change Payment" both have to be filled or both have to be empty. If both are filled "Change Less Than" has to be a positive value.]]></MSGTEXT>
 <!--54D373EA63F04066A251C6CACB80256D-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--54D373EA63F04066A251C6CACB80256D-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--54D373EA63F04066A251C6CACB80256D-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
