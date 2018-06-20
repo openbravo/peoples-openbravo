@@ -80,7 +80,7 @@ class UpdateQuantitiesAndUOMs extends CreateLinesFromProcessHook {
     UOM operativeUOM = (UOM) getCopiedFromLine().get("operativeUOM");
     ProductUOM orderUOM = (ProductUOM) getCopiedFromLine().get("orderUOM");
 
-    return isUomManagementEnabled && orderUOM == null && operativeUOM == null;
+    return isUomManagementEnabled && (orderUOM == null || operativeUOM == null);
   }
 
   private boolean aUMIsDifferentThanUOM(final String defaultAum) {
