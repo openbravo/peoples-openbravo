@@ -53,10 +53,11 @@ enyo.kind({
     });
   },
   actionShow: function (inSender, inEvent) {
-    var precision, change, cRounded, currentChange;
+    var paymentstatus, precision, change, cRounded, currentChange;
 
+    paymentstatus = inEvent.receipt.getPaymentStatus();
     precision = this.payment.obposPosprecision;
-    change = OB.DEC.mul(inEvent.receipt.get('change'), this.payment.mulrate, precision);
+    change = OB.DEC.mul(paymentstatus.changeAmt, this.payment.mulrate, precision);
     cRounded = OB.Payments.Change.getChangeRounded({
       payment: this.payment,
       amount: change
@@ -73,6 +74,7 @@ enyo.kind({
   },
   assignValidValue: function (amountRounded) {
     this.$.textline.setValue(amountRounded);
+    this.$.textline.removeClass('changedialog-properties-validation-error');
     this.$.textline.addClass('changedialog-properties-validation-ok');
     this.hasErrors = false;
     setTimeout(function () {

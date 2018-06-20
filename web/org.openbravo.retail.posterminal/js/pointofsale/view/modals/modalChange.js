@@ -43,18 +43,19 @@ enyo.kind({
     this.inherited(arguments);
     this.$.header.setContent(OB.I18N.getLabel('OBPOS_ChangeSplit'));
 
+    var i = 0;
     OB.MobileApp.model.get('payments').forEach(function (payment) {
       if (payment.paymentMethod.iscash) {
         this.$.bodyContent.$.paymentlines.createComponent({
           kind: 'OB.UI.ModalChangeLine',
           name: 'line_' + payment.payment.searchKey,
+          index: i++,
           payment: payment
         });
       }
     }, this);
   },
   executeOnShow: function () {
-    this.paymentstatus = this.args.receipt.getPaymentStatus();
     this.waterfall('onActionShow', this.args);
   },
   actionOK: function (inSender, inEvent) {
@@ -85,7 +86,7 @@ enyo.kind({
     this.doHideThisPopup();
   },
   actionInput: function (inSender, inEvent) {
-    var lines, line, originalValue, change, precision, linechange;
+    var lines, line, paymentstatus, originalValue, change, precision, linechange;
 
     if (inEvent.hasErrors) {
       return;
@@ -96,9 +97,10 @@ enyo.kind({
       return;
     }
 
+    paymentstatus = this.args.receipt.getPaymentStatus();
     line = lines[inEvent.line === lines[0] ? 1 : 0];
-    originalValue = OB.DEC.mul(inEvent.value, inEvent.line.payment.rate);
-    change = OB.DEC.sub(this.args.receipt.getChange(), originalValue);
+    originalValue = Math.min(OB.DEC.mul(inEvent.value, inEvent.line.payment.rate), paymentstatus.changeAmt);
+    change = OB.DEC.sub(paymentstatus.changeAmt, originalValue);
     precision = line.payment.obposPosprecision;
     linechange = OB.DEC.mul(change, line.payment.mulrate, precision);
 
