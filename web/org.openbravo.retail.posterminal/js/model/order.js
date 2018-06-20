@@ -4445,7 +4445,7 @@
           if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount'), precision), precision)) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (OB.DEC.abs(p.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
-              p.set('origAmount', multiCurrencyDifference);
+              p.set('origAmount', p.get('changePayment') ? OB.DEC.mul(multiCurrencyDifference, new BigDecimal("-1")) : multiCurrencyDifference);
             }
           }
         } else {
@@ -6868,7 +6868,7 @@
           if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount'), precision), precision)) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (p.get('origAmount') !== multiCurrencyDifference) {
-              p.set('origAmount', multiCurrencyDifference);
+              p.set('origAmount', p.get('changePayment') ? OB.DEC.mul(multiCurrencyDifference, new BigDecimal("-1")) : multiCurrencyDifference);
             }
           }
         } else {

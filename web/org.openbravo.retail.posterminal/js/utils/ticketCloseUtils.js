@@ -150,6 +150,7 @@
             isCash: paymentToAdd.paymentMethod.iscash,
             openDrawer: paymentToAdd.paymentMethod.openDrawer,
             printtwice: paymentToAdd.paymentMethod.printtwice,
+            changePayment: true,
             paymentData: {
               label: changePayment.label
             }
