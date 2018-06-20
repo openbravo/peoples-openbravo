@@ -40,6 +40,7 @@ enyo.kind({
   },
   actionInput: function (inSender, inEvent) {
     var value = parseFloat(this.$.textline.getValue());
+    this.edited = true;
     this.hasErrors = _.isNaN(value) || value < 0 || value > this.maxValue;
     this.$.textline.removeClass('changedialog-properties-validation-ok');
     this.$.textline.removeClass('changedialog-properties-validation-error');
@@ -62,6 +63,7 @@ enyo.kind({
     });
     this.maxValue = cRounded;
     this.$.infoline.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(cRounded, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
+    this.edited = false;
 
     currentChange = inEvent.receipt.get('changePayments').find(function (item) {
       return item.key === this.payment.payment.searchKey;

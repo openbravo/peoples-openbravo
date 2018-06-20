@@ -374,7 +374,7 @@ enyo.kind({
       popup: 'modalchange',
       args: {
         receipt: this.receipt,
-        callback: this.applyPaymentChange.bind(this)
+        applyPaymentChange: this.applyPaymentChange.bind(this)
       }
     });
   },

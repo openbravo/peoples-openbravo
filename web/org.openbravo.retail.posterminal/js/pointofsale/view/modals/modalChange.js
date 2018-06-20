@@ -54,16 +54,19 @@ enyo.kind({
     }, this);
   },
   executeOnShow: function () {
+    this.paymentstatus = this.args.receipt.getPaymentStatus();
     this.waterfall('onActionShow', this.args);
   },
   actionOK: function (inSender, inEvent) {
-    var lines, paymentchange, amount, i, l;
+    var lines, paymentchange, amount, edited, i, l;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
     paymentchange = new OB.Payments.Change();
+    edited = false;
 
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
+      edited = edited || l.edited;
       if (l.hasErrors) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ChangeAmountsNotValid'));
         return;
@@ -76,7 +79,9 @@ enyo.kind({
       });
     }
 
-    this.args.callback(paymentchange);
+    if (edited) {
+      this.args.applyPaymentChange(paymentchange);
+    }
     this.doHideThisPopup();
   },
   actionInput: function (inSender, inEvent) {
