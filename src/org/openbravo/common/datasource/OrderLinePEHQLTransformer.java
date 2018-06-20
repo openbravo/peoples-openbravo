@@ -127,6 +127,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  o.documentType.id,");
     groupByClause.append("  o.businessPartner.id,");
     groupByClause.append("  il.id,");
+    groupByClause.append("  e.uOM.id, e.product.id, e.operativeUOM.id, o.warehouse.id,");
     groupByClause.append("  @orderQuantity@");
     if (isSalesTransaction) {
       groupByClause.append(" , e.invoicedQuantity");
