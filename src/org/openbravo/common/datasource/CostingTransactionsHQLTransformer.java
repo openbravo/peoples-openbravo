@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.costing.CostAdjustmentUtils;
@@ -171,7 +171,8 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
         + Costing.PROPERTY_ENDINGDATE + " desc, trx."
         + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY);
 
-    Query prevCostingQuery = OBDal.getInstance().getSession().createQuery(query.toString());
+    Query<String> prevCostingQuery = OBDal.getInstance().getSession()
+        .createQuery(query.toString(), String.class);
     prevCostingQuery.setParameter("productId", transaction.getProduct().getId());
     prevCostingQuery.setParameter("refid", MOVEMENTTYPE_REF_ID);
     prevCostingQuery.setParameter("movementDate", transaction.getMovementDate());
@@ -188,7 +189,6 @@ public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
     prevCostingQuery.setParameter("clientId", transaction.getClient().getId());
     prevCostingQuery.setMaxResults(1);
 
-    @SuppressWarnings("unchecked")
     final List<String> preCostingIdList = prevCostingQuery.list();
 
     Costing prevCosting = null;

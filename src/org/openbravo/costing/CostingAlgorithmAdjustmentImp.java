@@ -26,10 +26,10 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
@@ -248,11 +248,12 @@ public abstract class CostingAlgorithmAdjustmentImp {
       where.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
       where.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT
           + ".id = :costAdjustment");
-      Query calQry = OBDal.getInstance().getSession().createQuery(where.toString());
+      Query<Long> calQry = OBDal.getInstance().getSession()
+          .createQuery(where.toString(), Long.class);
       calQry.setParameter("costAdjustment", strCostAdjId);
       calQry.setMaxResults(1);
 
-      nextLineNo = (Long) calQry.uniqueResult();
+      nextLineNo = calQry.uniqueResult();
     }
     nextLineNo += 10L;
     return nextLineNo;

@@ -8,7 +8,7 @@
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
+ * under the License.
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
  * All portions are Copyright (C) 2017-2018 Openbravo SLU
@@ -41,8 +41,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -3591,13 +3591,13 @@ public class TestCostingUtils {
   }
 
   // Get Cost Adjustments created for a product
-  @SuppressWarnings("unchecked")
   public static List<CostAdjustment> getCostAdjustment(String productId) {
     try {
       String myQuery = "SELECT DISTINCT t1 "
           + "FROM CostAdjustment t1 LEFT JOIN t1.costAdjustmentLineList t2 LEFT JOIN t2.inventoryTransaction t3 "
           + "WHERE t3.product.id = :productId " + "ORDER BY t1.documentNo";
-      Query query = OBDal.getInstance().getSession().createQuery(myQuery);
+      Query<CostAdjustment> query = OBDal.getInstance().getSession()
+          .createQuery(myQuery, CostAdjustment.class);
       query.setString("productId", productId);
       List<CostAdjustment> costAdjustmentList = query.list();
       return costAdjustmentList.isEmpty() ? null : costAdjustmentList;
@@ -3607,14 +3607,14 @@ public class TestCostingUtils {
   }
 
   // Get Physical Inventory
-  @SuppressWarnings("unchecked")
   public static List<InventoryCount> getPhysicalInventory(String inventoryAmountUpdateId) {
     try {
       String myQuery = "SELECT t1 "
           + "FROM MaterialMgmtInventoryCount t1, InventoryAmountUpdate t2 LEFT JOIN t2.inventoryAmountUpdateLineList t3 LEFT JOIN t3.inventoryAmountUpdateLineInventoriesList t4 "
           + "WHERE (t4.initInventory = t1 OR t4.closeInventory = t1) AND t2.id = :inventoryAmountUpdateId "
           + "ORDER BY t1.name";
-      Query query = OBDal.getInstance().getSession().createQuery(myQuery);
+      Query<InventoryCount> query = OBDal.getInstance().getSession()
+          .createQuery(myQuery, InventoryCount.class);
       query.setString("inventoryAmountUpdateId", inventoryAmountUpdateId);
       return query.list();
     } catch (Exception e) {
@@ -3740,16 +3740,16 @@ public class TestCostingUtils {
     hql.append(" and tc.costAdjustmentLine is not null");
     if (landedCost != null && landedCost.getCostAdjustment() != null) {
       hql.append(" and tc.costAdjustmentLine.costAdjustment.id <> :costAdjusmentID");
-
     }
 
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<BigDecimal> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), BigDecimal.class);
     query.setParameter("transactionID", transaction.getId());
     if (landedCost != null && landedCost.getCostAdjustment() != null) {
       query.setParameter("costAdjusmentID", landedCost.getCostAdjustment().getId());
     }
 
-    return (BigDecimal) query.uniqueResult();
+    return query.uniqueResult();
   }
 
   // Assert common fields in all tables

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -370,7 +370,6 @@ public class ProcessGoods extends HttpSecureAppServlet {
     return data;
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getReceiptLinesWithoutStock(String receiptId) {
     StringBuffer where = new StringBuffer();
     where.append(" select iol." + ShipmentInOutLine.PROPERTY_ID);
@@ -392,7 +391,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
         + ShipmentInOutLine.PROPERTY_ORDERUOM + ", '0')");
     where.append(" )");
 
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> qry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), String.class);
     qry.setParameter("receipt", OBDal.getInstance().get(ShipmentInOut.class, receiptId));
     return qry.list();
   }

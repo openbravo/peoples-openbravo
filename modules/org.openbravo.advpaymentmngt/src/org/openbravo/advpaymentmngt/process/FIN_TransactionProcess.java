@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,9 +23,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.LockOptions;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -373,12 +373,13 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
     StringBuilder queryStr = new StringBuilder(
         "select a from FIN_Financial_Account a where id = :id");
     final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(queryStr.toString());
+    final Query<FIN_FinancialAccount> query = session.createQuery(queryStr.toString(),
+        FIN_FinancialAccount.class);
     query.setParameter("id", account.getId());
     query.setMaxResults(1);
     query.setLockOptions(LockOptions.UPGRADE);
     OBDal.getInstance().getSession().evict(account);
-    return (FIN_FinancialAccount) query.uniqueResult();
+    return query.uniqueResult();
   }
 
 }

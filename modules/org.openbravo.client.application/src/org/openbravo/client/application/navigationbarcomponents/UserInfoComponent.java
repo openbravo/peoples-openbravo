@@ -23,7 +23,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.KernelServlet;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
@@ -108,10 +108,11 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
     final StringBuilder hql = new StringBuilder();
     hql.append("select ur.role.id, ur.role.name, ur.client.id, ur.client.name from ADUserRoles ur ");
     hql.append("where ur.active=true and ur.userContact.id=:userId and ur.role.active=true and ur.role.isrestrictbackend=false ");
-    Query rolesQry = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Object[]> rolesQry = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Object[].class);
     rolesQry.setString("userId", OBContext.getOBContext().getUser().getId());
-    for (Object entry : rolesQry.list()) {
-      userRoles.add(new RoleInfo((Object[]) entry));
+    for (Object[] entry : rolesQry.list()) {
+      userRoles.add(new RoleInfo(entry));
     }
     return userRoles;
   }

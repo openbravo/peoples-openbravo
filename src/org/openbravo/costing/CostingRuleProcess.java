@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,9 +30,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -311,6 +311,7 @@ public class CostingRuleProcess implements Process {
     insert.append(" and t." + MaterialTransaction.PROPERTY_ACTIVE + " = true");
     insert.append(" and t." + MaterialTransaction.PROPERTY_CLIENT + ".id = :client");
 
+    @SuppressWarnings("rawtypes")
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setParameterList("orgs", childOrgs);
     queryInsert.setTimestamp("date", date);
@@ -333,6 +334,7 @@ public class CostingRuleProcess implements Process {
     update.append(" and " + MaterialTransaction.PROPERTY_ACTIVE + " = true");
     update.append(" and " + MaterialTransaction.PROPERTY_CLIENT + ".id = :client");
 
+    @SuppressWarnings("rawtypes")
     Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
     queryUpdate.setParameter("currency", client.getCurrency());
     queryUpdate.setParameterList("orgs", childOrgs);
@@ -481,6 +483,7 @@ public class CostingRuleProcess implements Process {
     select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
 
+    @SuppressWarnings("rawtypes")
     Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
     stockLinesQry.setParameterList("orgs", childOrgs);
     if (date != null) {
@@ -732,6 +735,7 @@ public class CostingRuleProcess implements Process {
         + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + ".id");
     update.append(" )");
 
+    @SuppressWarnings("rawtypes")
     Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
     queryUpdate.setTimestamp("date", startingDate);
     queryUpdate.setString("cr", ruleId);
@@ -742,6 +746,7 @@ public class CostingRuleProcess implements Process {
   }
 
   private void deleteLastTransaction() {
+    @SuppressWarnings("rawtypes")
     Query queryDelete = OBDal.getInstance().getSession()
         .createQuery("delete from " + TransactionLast.ENTITY_NAME);
     queryDelete.executeUpdate();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -27,10 +27,10 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
@@ -403,7 +403,8 @@ public class FinancialUtils {
     hql.append(" AND t1." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> 0");
     hql.append(" AND t1." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> t1."
         + FIN_Payment.PROPERTY_USEDCREDIT);
-    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    final Query<String> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), String.class);
     query.setParameter("businessPartnerId", businessPartnerId);
     query.setParameter("currencyId", currencyId);
     ScrollableResults scroll = query.scroll(ScrollMode.SCROLL_SENSITIVE);

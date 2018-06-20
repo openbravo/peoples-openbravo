@@ -24,8 +24,8 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -84,6 +84,7 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
       where.append(")");
       try {
         final Session session = OBDal.getInstance().getSession();
+        @SuppressWarnings("rawtypes")
         final Query charConfQuery = session.createQuery(where.toString());
         charConfQuery.setParameter("user", OBContext.getOBContext().getUser());
         charConfQuery.setParameter("characteristicValue", chv);

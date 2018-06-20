@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -87,10 +87,10 @@ public class RoleInfo {
     final StringBuilder hql = new StringBuilder();
     hql.append("select ro.organization.id, ro.organization.name from ADRoleOrganization ro ");
     hql.append("where ro.active=true and ro.role.id=:roleId and ro.organization.active=true ");
-    Query roleOrgs = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Object[]> roleOrgs = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Object[].class);
     roleOrgs.setString("roleId", roleId);
-    for (Object entry : roleOrgs.list()) {
-      final Object[] orgInfo = (Object[]) entry;
+    for (Object[] orgInfo : roleOrgs.list()) {
       roleOrganizations.put((String) orgInfo[0], (String) orgInfo[1]);
     }
     return roleOrganizations;
@@ -113,11 +113,12 @@ public class RoleInfo {
     final StringBuilder hql = new StringBuilder();
     hql.append("select w.id, w.name, w.organization.id from Warehouse w ");
     hql.append("where w.active=true and w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true ");
-    Query orgWarehouses = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Object[]> orgWarehouses = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Object[].class);
     orgWarehouses.setParameterList("orgList", getOrganizations().keySet());
     orgWarehouses.setString("clientId", clientId);
-    for (Object entry : orgWarehouses.list()) {
-      RoleWarehouseInfo warehouseInfo = new RoleWarehouseInfo((Object[]) entry);
+    for (Object[] entry : orgWarehouses.list()) {
+      RoleWarehouseInfo warehouseInfo = new RoleWarehouseInfo(entry);
       for (Map.Entry<String, List<RoleWarehouseInfo>> ow : organizationWarehouses.entrySet()) {
         Set<String> naturalTree = getOrganizationStructureProvider().getNaturalTree(ow.getKey());
         if (naturalTree.contains(warehouseInfo.getWarehouseOrganizationId())) {

@@ -11,14 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 package org.openbravo.service.importprocess;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -43,6 +43,7 @@ public class ImportReprocessErrorEntries extends DalBaseProcess {
     // don't do client/org check on resetting import error status
     OBContext.setAdminMode(false);
     try {
+      @SuppressWarnings("rawtypes")
       final Query qry = OBDal
           .getInstance()
           .getSession()

@@ -42,9 +42,9 @@ import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -305,22 +305,27 @@ public class ImportEntryManager {
     try {
       // check if it is not there already or already archived
       {
-        final Query qry = SessionHandler.getInstance().getSession()
-            .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id");
+        final Query<Number> qry = SessionHandler
+            .getInstance()
+            .getSession()
+            .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id",
+                Number.class);
         qry.setParameter("id", id);
-        if (((Number) qry.uniqueResult()).intValue() > 0) {
+        if (qry.uniqueResult().intValue() > 0) {
           log.debug("Entry already exists, ignoring it, id/typeofdata " + id + "/" + typeOfData
               + " json " + json);
           return;
         }
       }
       {
-        final Query qry = SessionHandler
+        final Query<Number> qry = SessionHandler
             .getInstance()
             .getSession()
-            .createQuery("select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id");
+            .createQuery(
+                "select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id",
+                Number.class);
         qry.setParameter("id", id);
-        if (((Number) qry.uniqueResult()).intValue() > 0) {
+        if (qry.uniqueResult().intValue() > 0) {
           log.debug("Entry already archived, ignoring it, id/typeofdata " + id + "/" + typeOfData
               + " json " + json);
           return;
@@ -611,8 +616,8 @@ public class ImportEntryManager {
                     + ImportEntry.PROPERTY_CREATIONDATE + ", "
                     + ImportEntry.PROPERTY_CREATEDTIMESTAMP;
 
-                final Query entriesQry = OBDal.getInstance().getSession()
-                    .createQuery(importEntryQryStr);
+                final Query<ImportEntry> entriesQry = OBDal.getInstance().getSession()
+                    .createQuery(importEntryQryStr, ImportEntry.class);
                 entriesQry.setFirstResult(0);
                 entriesQry.setFetchSize(100);
                 entriesQry.setMaxResults(manager.importBatchSize);

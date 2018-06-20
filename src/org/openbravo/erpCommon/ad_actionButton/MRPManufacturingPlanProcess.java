@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,9 +23,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -165,6 +165,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     deleteLines.append(" delete from " + ProductionRunLine.ENTITY_NAME);
     deleteLines.append(" where " + ProductionRunLine.PROPERTY_MANUFACTURINGPLAN + ".id = :prodRun");
     deleteLines.append("   and " + ProductionRunLine.PROPERTY_FIXED + " = false");
+    @SuppressWarnings("rawtypes")
     Query delete = OBDal.getInstance().getSession().createQuery(deleteLines.toString());
     delete.setString("prodRun", strManufacturingMRPID);
     delete.executeUpdate();

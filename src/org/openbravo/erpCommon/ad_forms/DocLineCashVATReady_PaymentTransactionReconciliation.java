@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.InvoiceTaxCashVAT_V;
@@ -106,7 +106,7 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
             + ".id = :finPaymentDetailID ");
         hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + " = false");
         hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_ACTIVE + " = true");
-        Query obq = OBDal.getInstance().getSession().createQuery(hql.toString());
+        Query<String> obq = OBDal.getInstance().getSession().createQuery(hql.toString());
         obq.setParameter("finPaymentDetailID", finPaymentDetailID);
         this.invoiceTaxCashVAT_V.addAll(obq.list());
       } finally {

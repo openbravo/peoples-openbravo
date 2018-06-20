@@ -28,12 +28,12 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
@@ -638,10 +638,10 @@ public class MatchTransactionDao {
           .append(" and not exists (select 1 from FIN_BankStatementLine as bsl where bsl.financialAccountTransaction = e)");
       hqlString.append(" and e.transactionDate <= :date");
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hqlString.toString());
+      final Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
       query.setParameter("account", reconciliation.getAccount().getId());
       query.setParameter("date", reconciliation.getEndingDate());
-      total = (BigDecimal) query.uniqueResult();
+      total = query.uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }

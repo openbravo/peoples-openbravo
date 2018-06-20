@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -168,7 +168,8 @@ public class UpdateActuals extends DalBaseProcess {
         if (!"".equals(user1)) {
           queryString.append(" and e.ndDimension.id in (").append(user2Tree).append(")");
         }
-        Query query = OBDal.getInstance().getSession().createQuery(queryString.toString());
+        Query<Object[]> query = OBDal.getInstance().getSession()
+            .createQuery(queryString.toString(), Object[].class);
         query.setReadOnly(true);
         query.setString("accountingSchema", accountingSchema);
         if (!"".equals(businessPartner))
@@ -185,11 +186,10 @@ public class UpdateActuals extends DalBaseProcess {
 
         BigDecimal credit = BigDecimal.ZERO;
         BigDecimal debit = BigDecimal.ZERO;
-        for (Object obj : query.list()) {
-          if (obj != null) {
-            Object[] row = (Object[]) obj;
-            credit = (BigDecimal) ((row[0] != null) ? row[0] : new BigDecimal(0));
-            debit = (BigDecimal) ((row[1] != null) ? row[1] : new BigDecimal(0));
+        for (Object[] row : query.list()) {
+          if (row != null) {
+            credit = (row[0] != null) ? (BigDecimal) row[0] : new BigDecimal(0);
+            debit = (row[1] != null) ? (BigDecimal) row[1] : new BigDecimal(0);
           }
         }
 

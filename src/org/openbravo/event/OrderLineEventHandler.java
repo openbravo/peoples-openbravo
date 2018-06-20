@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,7 @@ package org.openbravo.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -57,6 +57,7 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
       hql.append(" where ol.sOPOReference.id = :thisLine ");
       hql.append(" and ol.client.id = :clientId ");
 
+      @SuppressWarnings("rawtypes")
       Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
       query.setString("thisLine", thisLine.getId());
       query.setString("clientId", thisLine.getClient().getId());

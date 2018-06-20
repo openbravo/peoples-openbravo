@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -58,6 +58,7 @@ public class ResetStockValuation extends BaseProcessActionHandler {
         sql.append("\n and sv." + StockValuation.PROPERTY_ORGANIZATION + ".id = :org");
       }
 
+      @SuppressWarnings("rawtypes")
       Query delQry = OBDal.getInstance().getSession().createQuery(sql.toString());
       delQry.setParameter("client", OBContext.getOBContext().getCurrentClient().getId());
       if (strOrgID != null) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -593,6 +593,7 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     final StringBuffer hqlString = new StringBuffer();
     hqlString
         .append(" delete from MaterialMgmtShipmentInOutLine where shipmentReceipt.id = :mInOutId ");
+    @SuppressWarnings("rawtypes")
     Query deleteQry = OBDal.getInstance().getSession().createQuery(hqlString.toString());
     deleteQry.setString("mInOutId", inOut.getId());
     deleteQry.executeUpdate();
@@ -628,7 +629,8 @@ public class M_inoutlinetrgTest extends OBBaseTest {
       hqlString.append(" and sd.orderUOM.id is null ");
     }
 
-    Query query = OBDal.getInstance().getSession().createQuery(hqlString.toString());
+    Query<StorageDetail> query = OBDal.getInstance().getSession()
+        .createQuery(hqlString.toString(), StorageDetail.class);
     query.setParameter("productId", _product.getId());
     query.setParameter("locatorId", _locator.getId());
     query.setParameter("uomId", uom.getId());
@@ -638,9 +640,9 @@ public class M_inoutlinetrgTest extends OBBaseTest {
     }
     query.setMaxResults(1);
 
-    List<?> queryList = query.list();
+    List<StorageDetail> queryList = query.list();
     if (!queryList.isEmpty()) {
-      return (StorageDetail) queryList.get(0);
+      return queryList.get(0);
     }
     return null;
   }

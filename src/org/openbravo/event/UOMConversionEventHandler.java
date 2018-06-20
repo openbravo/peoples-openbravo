@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,7 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -47,8 +47,7 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -61,8 +60,7 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -120,7 +118,8 @@ public class UOMConversionEventHandler extends EntityPersistenceEventObserver {
       hql.append("AND t1." + UOMConversion.PROPERTY_CLIENT + " = :client");
     }
 
-    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    final Query<String> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), String.class);
     query.setParameter("uomFrom", uomFrom);
     query.setParameter("uomTo", uomTo);
     if (!client.getId().equals("0")) {

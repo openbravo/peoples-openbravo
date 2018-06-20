@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,9 +30,9 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -320,7 +320,7 @@ public class CashVATUtil {
       hql.append(" and itcv.isManualSettlement = true ");
 
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hql.toString());
+      final Query<String> query = session.createQuery(hql.toString(), String.class);
       query.setParameter("invoiceId", invoice.getId());
       query.setMaxResults(1);
 
@@ -369,12 +369,12 @@ public class CashVATUtil {
       hql.append(" and coalesce(itcv." + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + ", 'N') = 'N' ");
 
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hql.toString());
+      final Query<Object[]> query = session.createQuery(hql.toString(), Object[].class);
       query.setParameter("cInvoiceTaxID", cInvoiceTaxID);
 
       final Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
 
-      final Object[] o = (Object[]) query.uniqueResult();
+      final Object[] o = query.uniqueResult();
       result.put("percentage", (BigDecimal) o[0]);
       result.put("taxableAmt", (BigDecimal) o[1]);
       result.put("taxAmt", (BigDecimal) o[2]);
@@ -407,10 +407,10 @@ public class CashVATUtil {
           + InvoiceTaxCashVAT_V.PROPERTY_INVOICE + "." + Invoice.PROPERTY_ID);
 
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hql.toString());
+      final Query<BigDecimal> query = session.createQuery(hql.toString(), BigDecimal.class);
       query.setParameter("taxId", cTaxID);
       query.setParameter("invoiceId", cInvoiceId);
-      final BigDecimal percentage = (BigDecimal) query.uniqueResult();
+      final BigDecimal percentage = query.uniqueResult();
       return percentage == null ? BigDecimal.ZERO : percentage;
     } finally {
       OBContext.restorePreviousMode();

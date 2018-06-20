@@ -33,8 +33,8 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -247,7 +247,6 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
     return ids;
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getAccessibleWarehousesIds(String clientId, String orgId)
       throws JSONException {
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
@@ -255,10 +254,11 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
     final StringBuilder hql = new StringBuilder();
     hql.append("select w.id from Warehouse w ");
     hql.append("where w.active=true and w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true");
-    Query orgWarehouses = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<String> orgWarehouses = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), String.class);
     orgWarehouses.setParameterList("orgList", osp.getNaturalTree(orgId));
     orgWarehouses.setString("clientId", clientId);
-    return (List<String>) orgWarehouses.list();
+    return orgWarehouses.list();
   }
 
   private JSONObject getUserInfo(String resp) {

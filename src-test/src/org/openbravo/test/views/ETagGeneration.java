@@ -28,7 +28,7 @@ import java.net.HttpURLConnection;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -83,8 +83,8 @@ public class ETagGeneration extends BaseDataSourceTestDal {
   }
 
   private Boolean hasModulesInDevelopment() {
-    final Query indevelMods = OBDal.getInstance().getSession()
-        .createQuery("select 1 from ADModule m where m.inDevelopment=true");
+    final Query<Object> indevelMods = OBDal.getInstance().getSession()
+        .createQuery("select 1 from ADModule m where m.inDevelopment=true", Object.class);
     indevelMods.setMaxResults(1);
     return indevelMods.list().size() > 0;
   }

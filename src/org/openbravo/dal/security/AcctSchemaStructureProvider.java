@@ -19,7 +19,6 @@
 
 package org.openbravo.dal.security;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,7 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
     acctSchemaByOrg.put(orgId, getAcctSchemasFromDB(orgId, clientID));
   }
 
-  private ArrayList<String> getAcctSchemasFromDB(String orgId, String clientID) {
+  private List<String> getAcctSchemasFromDB(String orgId, String clientID) {
     try {
       OBContext.setAdminMode(true);
       String where = " select a.id"
@@ -71,7 +70,7 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
       final Query<String> qry = OBDal.getInstance().getSession().createQuery(where, String.class);
       qry.setParameter("clientId", clientID);
       qry.setParameter("orgId", orgId);
-      return (ArrayList<String>) qry.list();
+      return qry.list();
     } finally {
       OBContext.restorePreviousMode();
     }

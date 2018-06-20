@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,9 +37,9 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -515,11 +515,10 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     hqlString
         .append(" where p.year = y  and p.endingDate < :date and y.calendar = :calendar order by p.startingDate");
     final Session session = OBDal.getReadOnlyInstance().getSession();
-    final Query query = session.createQuery(hqlString.toString());
+    final Query<Year> query = session.createQuery(hqlString.toString(), Year.class);
     query.setParameter("date", startingDate);
     query.setParameter("calendar", calendar);
-    for (Object resultObject : query.list()) {
-      final Year previousYear = (Year) resultObject;
+    for (Year previousYear : query.list()) {
       if (!(result.contains(previousYear))) {
         result.add(previousYear);
       }
@@ -537,14 +536,11 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     hqlString.append(" where p.year = :year");
 
     final Session session = OBDal.getReadOnlyInstance().getSession();
-    final Query query = session.createQuery(hqlString.toString());
+    final Query<Object[]> query = session.createQuery(hqlString.toString(), Object[].class);
     query.setParameter("year", year);
-    for (Object resultObject : query.list()) {
-      if (resultObject.getClass().isArray()) {
-        final Object[] values = (Object[]) resultObject;
-        result.put("startingDate", (Date) values[0]);
-        result.put("endingDate", (Date) values[1]);
-      }
+    for (Object[] values : query.list()) {
+      result.put("startingDate", (Date) values[0]);
+      result.put("endingDate", (Date) values[1]);
     }
     return result;
   }
@@ -704,7 +700,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     out.close();
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getRoleOrganizationList(String roleId) {
     try {
       OBContext.setAdminMode(false);
@@ -712,7 +707,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       hqlString.append(" select " + RoleOrganization.PROPERTY_ORGANIZATION + ".id");
       hqlString.append(" from " + RoleOrganization.ENTITY_NAME);
       hqlString.append(" where " + RoleOrganization.PROPERTY_ROLE + ".id = :roleId");
-      Query query = OBDal.getReadOnlyInstance().getSession().createQuery(hqlString.toString());
+      Query<String> query = OBDal.getReadOnlyInstance().getSession()
+          .createQuery(hqlString.toString(), String.class);
       query.setParameter("roleId", roleId);
       return query.list();
     } finally {

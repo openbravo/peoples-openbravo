@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,13 +24,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.ad_forms.AcctSchema;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -81,7 +82,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
               + "', o.id, o.client) <> -1 ");
           hsqlScript.append("and o.generalLedger is not null ");
           final Session session = OBDal.getInstance().getSession();
-          final Query query = session.createQuery(hsqlScript.toString());
+          final Query<AcctSchema> query = session.createQuery(hsqlScript.toString(),
+              AcctSchema.class);
           if (query.list().size() != 1) {
             throw new OBException("@FIN_NoMultiAccountingAllowed@");
           }

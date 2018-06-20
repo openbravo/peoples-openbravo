@@ -29,11 +29,11 @@ import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
@@ -108,9 +108,10 @@ public class CostAdjustmentProcess {
     query.append(" where " + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " = :ca");
     query.append("   and " + CostAdjustmentLine.PROPERTY_ISSOURCE + " = true");
 
-    Query qryMinDate = OBDal.getInstance().getSession().createQuery(query.toString());
+    Query<Date> qryMinDate = OBDal.getInstance().getSession()
+        .createQuery(query.toString(), Date.class);
     qryMinDate.setParameter("ca", costAdjustment);
-    Date minDate = (Date) qryMinDate.uniqueResult();
+    Date minDate = qryMinDate.uniqueResult();
     try {
       Date maxDate = CostingUtils.getMaxTransactionDate(costAdjustment.getOrganization());
       Period periodClosed = CostingUtils.periodClosed(costAdjustment.getOrganization(), minDate,
@@ -207,6 +208,7 @@ public class CostAdjustmentProcess {
     updateQuery.append(".id = :adjustmentId and ");
     updateQuery.append(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED);
     updateQuery.append(" = true ");
+    @SuppressWarnings("rawtypes")
     Query adjustmentLineQuery = OBDal.getInstance().getSession()
         .createQuery(updateQuery.toString());
     adjustmentLineQuery.setString("adjustmentId", costAdjustment.getId());

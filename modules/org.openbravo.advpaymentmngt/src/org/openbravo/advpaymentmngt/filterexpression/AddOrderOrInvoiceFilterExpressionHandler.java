@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,8 +28,8 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
@@ -107,10 +107,10 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
     hqlString.append(" group by coalesce(ipspm, opspm)");
 
     final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(hqlString.toString());
+    final Query<String> query = session.createQuery(hqlString.toString(), String.class);
     query.setParameter("paymentId", paymentId);
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
-    for (Object pmId : query.list()) {
+    for (String pmId : query.list()) {
       if (!payment.getPaymentMethod().getId().equals(pmId)) {
         return true;
       }

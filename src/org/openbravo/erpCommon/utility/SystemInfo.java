@@ -53,9 +53,9 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -646,9 +646,10 @@ public class SystemInfo {
     hql.append("       max(s.creationDate) as lastLogin, ");
     hql.append("       count(*) as totalLogins");
     hql.append("  from ADSession s");
-    Query q = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Object[]> q = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Object[].class);
     if (q.list().size() != 0) {
-      Object[] logInfo = (Object[]) q.list().get(0);
+      Object[] logInfo = q.list().get(0);
       firstLogin = (Date) logInfo[0];
       lastLogin = (Date) logInfo[1];
       numberOfLogins = (Long) logInfo[2];
@@ -776,7 +777,6 @@ public class SystemInfo {
 
   }
 
-  @SuppressWarnings("unchecked")
   private static List<Long> getWsLogins(String type, Date fromDate) {
     StringBuilder hql = new StringBuilder();
     hql.append("select count(*)\n");
@@ -784,7 +784,7 @@ public class SystemInfo {
     hql.append(" where loginStatus = :type\n");
     hql.append("   and creationDate > :firstDay\n");
     hql.append(" group by day(creationDate), month(creationDate), year(creationDate)\n");
-    Query qWs = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Long> qWs = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
     qWs.setParameter("firstDay", fromDate);
     qWs.setParameter("type", type);
     return qWs.list();

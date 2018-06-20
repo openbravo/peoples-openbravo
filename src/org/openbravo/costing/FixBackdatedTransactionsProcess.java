@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,9 +25,9 @@ import java.util.Set;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -195,7 +195,8 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
     }
     select.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
 
-    Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<MaterialTransaction> stockLinesQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), MaterialTransaction.class);
     stockLinesQry.setParameterList("orgs", childOrgs);
     stockLinesQry.setTimestamp("startDate", startDate);
     if (endDate != null) {

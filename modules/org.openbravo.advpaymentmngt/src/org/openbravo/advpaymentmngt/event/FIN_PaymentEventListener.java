@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,7 +24,7 @@ import java.util.List;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -179,6 +179,7 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     hql.append("where paymentExecutionProcess.id <> :paymentExecutionProcessId ");
     hql.append("and payment.id = :paymentId ");
 
+    @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
     updateQry.setString("paymentExecutionProcessId", executionProcess.getId());
     updateQry.setString("paymentId", payment.getId());
@@ -201,6 +202,7 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     hql.append("delete from APRM_PendingPaymentInvoice ");
     hql.append("where payment.id = :paymentId ");
 
+    @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
     updateQry.setString("paymentId", payment.getId());
     rowCount = updateQry.executeUpdate();

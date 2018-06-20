@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,7 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -48,8 +48,7 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -63,8 +62,7 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -95,7 +93,8 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     hql.append(" OR (:validFrom < t." + ConversionRate.PROPERTY_VALIDFROMDATE
         + " AND :validTo > t." + ConversionRate.PROPERTY_VALIDTODATE + "))");
 
-    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    final Query<String> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), String.class);
     query.setParameter("id", id);
     query.setParameter("client", client);
     query.setParameter("currencyFrom", currencyFrom);

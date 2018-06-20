@@ -37,9 +37,9 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.LockOptions;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.base.model.Entity;
@@ -387,12 +387,12 @@ public class FIN_Utility {
   private static Sequence lockSequence(Sequence seq) {
     StringBuilder where = new StringBuilder("select s from ADSequence s where id = :id");
     final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(where.toString());
+    final Query<Sequence> query = session.createQuery(where.toString(), Sequence.class);
     query.setParameter("id", seq.getId());
     query.setMaxResults(1);
     query.setLockOptions(LockOptions.UPGRADE);
     OBDal.getInstance().getSession().evict(seq);
-    return (Sequence) query.uniqueResult();
+    return query.uniqueResult();
   }
 
   /**
@@ -1278,15 +1278,10 @@ public class FIN_Utility {
     hql.append(" and to_date('").append(dateAcct).append("') >= p.startingDate ");
     hql.append(" and to_date('").append(dateAcct).append("') < p.endingDate + 1 ");
 
-    final Query qry = session.createQuery(hql.toString());
+    final Query<String> qry = session.createQuery(hql.toString(), String.class);
 
-    String period = (String) (qry.list().get(0));
-
-    if (period == null) {
-      return false;
-    } else {
-      return true;
-    }
+    String period = qry.list().get(0);
+    return period != null;
   }
 
   public static boolean periodControlOpened(String tableName, String recordId, String idColumnName,
@@ -1391,7 +1386,6 @@ public class FIN_Utility {
   /**
    * Returns Payment Details from a Payment ordered by Invoice and Order
    */
-  @SuppressWarnings("unchecked")
   public static List<String> getOrderedPaymentDetailList(String paymentId) {
 
     List<String> pdList = null;
@@ -1411,7 +1405,8 @@ public class FIN_Utility {
       whereClause.append(", coalesce(psd."
           + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + ",'0')");
 
-      Query query = OBDal.getInstance().getSession().createQuery(whereClause.toString());
+      Query<String> query = OBDal.getInstance().getSession()
+          .createQuery(whereClause.toString(), String.class);
       query.setParameter("paymentId", paymentId);
       pdList = query.list();
 
@@ -1433,9 +1428,9 @@ public class FIN_Utility {
     hql.append(" from FIN_Payment p ");
     hql.append(" where p.reversedPayment = '").append(payment.getId()).append("' ");
 
-    final Query qry = session.createQuery(hql.toString());
+    final Query<Long> qry = session.createQuery(hql.toString(), Long.class);
 
-    return ((Long) qry.list().get(0) > Long.parseLong("0"));
+    return qry.list().get(0) > Long.parseLong("0");
   }
 
   /**

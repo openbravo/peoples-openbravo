@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -31,8 +31,8 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -290,16 +290,16 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
       OBContext.setAdminMode(true);
       final String hql = "select count(*) from FinancialMgmtAccountingFact fa where ad_isorgincluded(fa.organization.id, :parentOrgId, :clientId) <> -1";
       final Session session = OBDal.getInstance().getSession();
-      final Query hqlQuery = session.createQuery(hql.toString());
+      final Query<Long> hqlQuery = session.createQuery(hql.toString(), Long.class);
       hqlQuery.setParameter("parentOrgId", ORG_FB_SPAIN);
       hqlQuery.setParameter("clientId", CLIENT_FB);
       long start = System.currentTimeMillis();
-      final long hqlCount = (long) hqlQuery.uniqueResult();
+      final long hqlCount = hqlQuery.uniqueResult();
       long hqlTime = System.currentTimeMillis() - start;
       log.info("AD_IsOrgIncluded time: " + hqlTime);
 
       final String hqlLegacy = "select count(*) from FinancialMgmtAccountingFact fa where ad_isorgincluded_treenode(fa.organization.id, :parentOrgId, :clientId) <> -1";
-      final Query hqlLegacyQuery = session.createQuery(hqlLegacy.toString());
+      final Query<Long> hqlLegacyQuery = session.createQuery(hqlLegacy.toString(), Long.class);
       hqlLegacyQuery.setParameter("parentOrgId", ORG_FB_SPAIN);
       hqlLegacyQuery.setParameter("clientId", CLIENT_FB);
       start = System.currentTimeMillis();

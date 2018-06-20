@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,9 +23,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
@@ -156,7 +156,8 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     dateWhere.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
 
-    Query dateQry = OBDal.getInstance().getSession().createQuery(dateWhere.toString());
+    Query<Date> dateQry = OBDal.getInstance().getSession()
+        .createQuery(dateWhere.toString(), Date.class);
     dateQry.setParameter("client", trx.getClient());
     dateQry.setParameterList("orgs", orgs);
     dateQry.setParameter("product", trx.getProduct());
@@ -166,7 +167,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
       dateQry.setParameter("warehouse", warehouse);
     }
     dateQry.setMaxResults(1);
-    Date date = (Date) dateQry.uniqueResult();
+    Date date = dateQry.uniqueResult();
 
     // Get transactions with movement/process date after trx and before next Inventory Amount Update
     // (include closing inventory lines and exclude opening inventory lines of it)
@@ -209,7 +210,8 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
       where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
     }
 
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> qry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), String.class);
     qry.setParameter("client", trx.getClient());
     qry.setParameterList("orgs", orgs);
     qry.setParameter("product", trx.getProduct());
@@ -267,7 +269,8 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     where.append(" order by min(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
 
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> qry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), String.class);
     qry.setParameter("client", trx.getClient());
     qry.setParameterList("orgs", orgs);
     qry.setParameter("product", trx.getProduct());

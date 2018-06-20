@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -122,7 +122,8 @@ public class OBLedgerUtils {
     where.append(" from " + AcctSchema.ENTITY_NAME);
     where.append(" where " + AcctSchema.PROPERTY_CLIENT + ".id = :clientId");
     where.append(" order by " + AcctSchema.PROPERTY_NAME);
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> qry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), String.class);
     qry.setParameter("clientId", clientId);
     qry.setMaxResults(1);
     return (String) qry.uniqueResult();

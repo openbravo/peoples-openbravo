@@ -32,10 +32,10 @@ import java.util.StringTokenizer;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.base.exception.OBException;
@@ -414,7 +414,8 @@ public abstract class FIN_BankStatementImport {
       whereClause.append(" and b." + BusinessPartner.PROPERTY_ORGANIZATION + ".id in (");
       whereClause.append(Utility.getInStrSet(new OrganizationStructureProvider()
           .getNaturalTree(organization.getId())) + ") ");
-      final Query bl = OBDal.getInstance().getSession().createQuery(whereClause.toString());
+      final Query<Object[]> bl = OBDal.getInstance().getSession()
+          .createQuery(whereClause.toString(), Object[].class);
       businessPartnersScroll = bl.scroll(ScrollMode.SCROLL_SENSITIVE);
 
       if (!businessPartnersScroll.next()) {

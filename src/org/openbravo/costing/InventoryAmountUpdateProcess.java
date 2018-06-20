@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -282,16 +282,17 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
             + ".id in (:orgs)");
 
-        Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
+        Query<Date> trxsubQry = OBDal.getInstance().getSession()
+            .createQuery(subSelect.toString(), Date.class);
         trxsubQry.setParameter("date", localDate);
         trxsubQry.setParameter("product", product.getId());
         if (warehouse != null) {
           trxsubQry.setParameter("warehouse", warehouse.getId());
         }
         trxsubQry.setParameterList("orgs", childOrgs);
-        Object trxprocessDate = trxsubQry.uniqueResult();
+        Date trxprocessDate = trxsubQry.uniqueResult();
         if (trxprocessDate != null) {
-          localDate = (Date) trxprocessDate;
+          localDate = trxprocessDate;
           select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
               + " < :date");
         } else {
@@ -316,7 +317,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
 
-    Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Object[]> stockLinesQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Object[].class);
     stockLinesQry.setParameterList("orgs", childOrgs);
     if (localDate != null) {
       stockLinesQry.setTimestamp("date", localDate);

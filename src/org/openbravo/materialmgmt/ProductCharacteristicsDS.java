@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -33,7 +33,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -224,9 +224,9 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     String hql = hqlBuilder.toString();
     log.debug("HQL:\n " + hql);
 
-    Query qTree;
+    Query<Object[]> qTree;
     try {
-      qTree = OBDal.getInstance().getSession().createQuery(hql);
+      qTree = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
     } catch (Exception e) {
       if (StringUtils.isNotBlank(customSelectorWhereClause)
           || StringUtils.isNotBlank(gridWhereClause)) {
@@ -258,8 +258,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
     String currentCharId = null;
     JSONArray responseData = new JSONArray();
-    for (Object rawNode : qTree.list()) {
-      Object[] node = (Object[]) rawNode;
+    for (Object[] node : qTree.list()) {
       String charId = (String) node[CHAR_ID];
       String nodeId = (String) node[VAL_ID];
 

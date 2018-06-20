@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Level;
 import org.hibernate.LazyInitializationException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.KernelUtils;
@@ -168,7 +168,7 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
     String hql = "select distinct f.tab.id " //
         + "from ADField f "//
         + "where f.column.table != f.tab.table";
-    Query qTabs = OBDal.getInstance().getSession().createQuery(hql);
+    Query<String> qTabs = OBDal.getInstance().getSession().createQuery(hql, String.class);
 
     // Force using cache even there are mods in dev
     HiddenObjectHelper.set(adcs, "useCache", true);
@@ -177,7 +177,6 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
 
     ArrayList<Callable<Long>> threads = new ArrayList<Callable<Long>>();
 
-    @SuppressWarnings("unchecked")
     List<String> tabIds = qTabs.list();
     for (String tabId : tabIds) {
       threads.add(new TabLoader(adcs, tabId, false));

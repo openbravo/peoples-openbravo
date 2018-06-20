@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -39,8 +39,7 @@ public class FIN_ReconciliationEventListener extends EntityPersistenceEventObser
     return entities;
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -68,6 +67,7 @@ public class FIN_ReconciliationEventListener extends EntityPersistenceEventObser
         + FIN_Reconciliation.PROPERTY_ENDINGBALANCE + " - :balance");
     update.append(" where " + FIN_Reconciliation.PROPERTY_ACCOUNT + ".id = :accountId");
     update.append(" and " + FIN_Reconciliation.PROPERTY_TRANSACTIONDATE + " > :date");
+    @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
     updateQry.setBigDecimal("balance", balance);
     updateQry.setString("accountId", rec.getAccount().getId());

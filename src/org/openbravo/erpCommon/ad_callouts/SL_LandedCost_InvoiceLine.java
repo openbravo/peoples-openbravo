@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,8 +22,8 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -57,7 +57,7 @@ public class SL_LandedCost_InvoiceLine extends SimpleCallout {
       hqlString.append(" from LandedCostCost as e");
       hqlString.append(" where e.invoiceLine = :invoiceLine");
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hqlString.toString());
+      final Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
       query.setParameter("invoiceLine", invoiceLine);
       totalAssigned = (BigDecimal) query.uniqueResult();
 

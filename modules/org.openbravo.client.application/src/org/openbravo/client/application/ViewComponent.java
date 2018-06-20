@@ -30,9 +30,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -273,17 +273,17 @@ public class ViewComponent extends BaseComponent {
     }
 
     String tabHql = "select max(updated) from OBUIAPP_GC_Tab where tab.window.id = :windowId";
-    Query qryTabData = OBDal.getInstance().getSession().createQuery(tabHql);
+    Query<Date> qryTabData = OBDal.getInstance().getSession().createQuery(tabHql, Date.class);
     qryTabData.setParameter("windowId", window.getId());
-    Date tabUpdated = (Date) qryTabData.uniqueResult();
+    Date tabUpdated = qryTabData.uniqueResult();
     if (tabUpdated != null && lastModification.compareTo(tabUpdated) < 0) {
       lastModification = tabUpdated;
     }
 
     String fieldHql = "select max(updated) from OBUIAPP_GC_Field where obuiappGcTab.tab.window.id = :windowId";
-    Query qryFieldData = OBDal.getInstance().getSession().createQuery(fieldHql);
+    Query<Date> qryFieldData = OBDal.getInstance().getSession().createQuery(fieldHql, Date.class);
     qryFieldData.setParameter("windowId", window.getId());
-    Date fieldUpdated = (Date) qryFieldData.uniqueResult();
+    Date fieldUpdated = qryFieldData.uniqueResult();
     if (fieldUpdated != null && lastModification.compareTo(fieldUpdated) < 0) {
       lastModification = fieldUpdated;
     }
@@ -327,7 +327,6 @@ public class ViewComponent extends BaseComponent {
     return updated == null ? "" : updated.toString();
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getFieldsWithDisplayLogicAtServerLevel(String windowID) {
     StringBuilder where = new StringBuilder();
     where.append(" select displayLogicEvaluatedInTheServer");
@@ -338,7 +337,7 @@ public class ViewComponent extends BaseComponent {
     where.append("                  where t.window.id = :windowId)");
 
     Session session = OBDal.getInstance().getSession();
-    Query query = session.createQuery(where.toString());
+    Query<String> query = session.createQuery(where.toString(), String.class);
     query.setParameter("windowId", windowID);
 
     return query.list();
@@ -356,9 +355,9 @@ public class ViewComponent extends BaseComponent {
     where.append(" and coalesce(p.visibleAtOrganization, '0') = '0'");
 
     Session session = OBDal.getInstance().getSession();
-    Query query = session.createQuery(where.toString());
+    Query<Date> query = session.createQuery(where.toString(), Date.class);
     query.setParameterList("properties", preferenceSet);
-    Date lastUpdated = (Date) query.uniqueResult();
+    Date lastUpdated = query.uniqueResult();
 
     return lastUpdated;
   }

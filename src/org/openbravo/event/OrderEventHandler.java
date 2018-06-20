@@ -26,8 +26,8 @@ import javax.enterprise.event.Observes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -202,6 +202,7 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     StringBuilder deleteHql = new StringBuilder();
     deleteHql.append(" delete from " + OrderDiscount.ENTITY_NAME);
     deleteHql.append(" where " + OrderDiscount.PROPERTY_SALESORDER + ".id = :orderId");
+    @SuppressWarnings("rawtypes")
     Query deleteQry = OBDal.getInstance().getSession().createQuery(deleteHql.toString());
     deleteQry.setParameter("orderId", orderParameters.getOrderId());
     deleteQry.executeUpdate();

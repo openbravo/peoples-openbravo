@@ -30,8 +30,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
 import org.openbravo.dal.core.DalUtil;
@@ -135,7 +135,6 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
     final StringBuilder hql = new StringBuilder();
     hql.append("SELECT widgetClassAccess.widgetClass.id ");
@@ -145,7 +144,8 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     if (!StringUtils.isEmpty(additionalWhereClause)) {
       hql.append(additionalWhereClause);
     }
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<String> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), String.class);
     if (StringUtils.isEmpty(roleId)) {
       query.setString("roleId", OBContext.getOBContext().getRole().getId());
     } else {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,8 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -200,10 +200,11 @@ public class AttachmentUtils {
     final StringBuilder hql = new StringBuilder();
     hql.append("SELECT MAX(pv.updated) FROM OBUIAPP_ParameterValue pv");
     hql.append(" WHERE pv.file.id =:fileId");
-    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    final Query<Date> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Date.class);
     query.setParameter("fileId", attachment.getId());
     query.setMaxResults(1);
-    Date metadataLastUpdate = (Date) query.uniqueResult();
+    Date metadataLastUpdate = query.uniqueResult();
     if (metadataLastUpdate == null || attachment.getUpdated().after(metadataLastUpdate)) {
       return attachment.getUpdated();
     }
@@ -229,8 +230,8 @@ public class AttachmentUtils {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
     final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM " + entity.getName()
         + " AS a WHERE a.id=:recordId";
-    final Query query = OBDal.getInstance().getSession().createQuery(hql);
-    query.setString("recordId", recordId);
+    final Query<Object> query = OBDal.getInstance().getSession().createQuery(hql, Object.class);
+    query.setParameter("recordId", recordId);
     try {
       return query.uniqueResult();
     } catch (Exception e) {
