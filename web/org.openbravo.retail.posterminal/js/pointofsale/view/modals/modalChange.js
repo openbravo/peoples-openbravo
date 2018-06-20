@@ -59,11 +59,14 @@ enyo.kind({
     this.waterfall('onActionShow', this.args);
   },
   actionOK: function (inSender, inEvent) {
-    var lines, paymentchange, amount, edited, i, l;
+    var paymentstatus, changeRounding, indexRounding, lines, paymentchangemap, paymentchange, amount, origAmount, edited, i, l;
 
+    paymentstatus = this.args.receipt.getPaymentStatus();
+    changeRounding = paymentstatus.changeAmt;
+    indexRounding = -1;
     lines = this.$.bodyContent.$.paymentlines.getComponents();
-    paymentchange = new OB.Payments.Change();
     edited = false;
+    paymentchangemap = [];
 
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
@@ -73,14 +76,30 @@ enyo.kind({
         return;
       }
       amount = parseFloat(l.$.textline.getValue());
-      paymentchange.add({
+      origAmount = Math.min(OB.DEC.mul(amount, l.payment.rate), paymentstatus.changeAmt);
+      paymentchangemap.push({
         payment: l.payment,
         amount: amount,
-        origAmount: OB.DEC.mul(amount, l.payment.rate)
+        origAmount: origAmount
       });
+
+      changeRounding = OB.DEC.sub(changeRounding, origAmount);
+      if ((!l.payment.paymentMethod.changePaymentType && indexRounding < 0) || i === lines.length - 1) {
+        // Line used for rounding is selected as the first line that does no have *changePaymentType*
+        // or in case of all lines have *changePaymentType* then the last line
+        // This guaranties *lineRounding* is assigned in case lines.length > 0
+        indexRounding = i;
+      }
     }
 
     if (edited) {
+      if (lines.length === 2 && OB.DEC.compare(changeRounding)) {
+        // The origAmount of the selected change line is adjusted in order to guaranty the change
+        // of the receipt is the sum of the origAmount of all change lines
+        paymentchangemap[indexRounding].origAmount = OB.DEC.add(paymentchangemap[indexRounding].origAmount, changeRounding);
+      }
+      paymentchange = new OB.Payments.Change();
+      paymentchangemap.forEach(paymentchange.add.bind(paymentchange));
       this.args.applyPaymentChange(paymentchange);
     }
     this.doHideThisPopup();
