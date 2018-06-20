@@ -1944,8 +1944,8 @@ public class InitialSetupUtility {
       OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
       obc.createAlias(DataSet.PROPERTY_MODULE, "m");
       obc.add(Restrictions.eq(DataSet.PROPERTY_MODULE, module));
-      String[] organizationAccessLevel = { "3", "1" };
-      String[] systemAccessLevel = { "3", "6" };
+      Object[] organizationAccessLevel = { "3", "1" };
+      Object[] systemAccessLevel = { "3", "6" };
       obc.add(Restrictions.or(Restrictions.and(
           Restrictions.ne(DataSet.PROPERTY_ORGANIZATION, getZeroOrg()),
           Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, organizationAccessLevel)), Restrictions

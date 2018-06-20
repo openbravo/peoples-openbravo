@@ -213,7 +213,7 @@ public class MyOBUtils {
     OBCriteria<WidgetInstance> criteria = getWidgetInstanceCriteria(priority, client, null, role);
     criteria.setFilterOnReadableOrganization(false);
     criteria.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
-        + Organization.PROPERTY_ID, orgIds));
+        + Organization.PROPERTY_ID, (Object[]) orgIds));
     return criteria;
   }
 
