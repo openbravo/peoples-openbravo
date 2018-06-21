@@ -3737,12 +3737,12 @@
               lines.splice(index, 1);
               addProductsOfLines(receipt, lines, index, callback, promotionLines);
             }
-          }, null, function () {
-            // Product doesn't exists, execute the same code as it was not included in pricelist
-            promotionLines.splice(index, 1);
-            lines.splice(index, 1);
-            addProductsOfLines(receipt, lines, index, callback, promotionLines);
           });
+        }, null, function () {
+          // Product doesn't exists, execute the same code as it was not included in pricelist
+          promotionLines.splice(index, 1);
+          lines.splice(index, 1);
+          addProductsOfLines(receipt, lines, index, callback, promotionLines);
         });
       };
       _.each(this.get('lines').models, function (line) {
