@@ -88,8 +88,8 @@ public class TriggerHandler {
     Check.isNotNull(sessionStatus.get(),
         "Triggers were not disabled in this session, call disable before calling this method");
 
-    try (Connection con = OBDal.getInstance().getConnection();
-        PreparedStatement ps = con.prepareStatement(getEnableStatement())) {
+    Connection con = OBDal.getInstance().getConnection();
+    try (PreparedStatement ps = con.prepareStatement(getEnableStatement())) {
       ps.execute();
     } catch (Exception e) {
       throw new OBException("Couldn't enable triggers: ", e);
