@@ -23,7 +23,7 @@ OB.DS.HWResource.prototype.getData = function (callback) {
       this.resourcedata = data;
       callback(this.resourcedata);
     }, this, {
-      uuid: OB.UTIL.localStorage.getItem('templateVersion')
+      hash: OB.UTIL.localStorage.getItem('templateVersion')
     });
   }
 };
