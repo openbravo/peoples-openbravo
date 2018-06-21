@@ -1682,7 +1682,7 @@ public class PaymentReportDao {
    * elsewise it returns false
    */
   private boolean isBeforeStatus(String firstValue, String secondValue) {
-    String[] strStatus = { firstValue, secondValue };
+    Object[] strStatus = { firstValue, secondValue };
     boolean isBefore = false;
 
     OBContext.setAdminMode(true);
@@ -1747,7 +1747,7 @@ public class PaymentReportDao {
       obCriteriaTrans.add(Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_FINPAYMENT));
       obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_PROCESSED, true));
       obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ORGANIZATION,
-          organizations));
+          (Object[]) organizations));
 
       // Empty Business Partner included
       if (StringUtils.equals(strcNoBusinessPartner, "include")) {
@@ -1849,7 +1849,7 @@ public class PaymentReportDao {
         localStrfinPaymSt = localStrfinPaymSt.replace(")", "");
         localStrfinPaymSt = localStrfinPaymSt.replace("'", "");
         localStrfinPaymSt = localStrfinPaymSt.replace(" ", "");
-        String[] status = localStrfinPaymSt.split(",");
+        Object[] status = localStrfinPaymSt.split(",");
         obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_STATUS, status));
       }
 
@@ -1861,10 +1861,10 @@ public class PaymentReportDao {
 
       // payment type
       if (StringUtils.equalsIgnoreCase(strPaymType, "FINPR_Receivables")) {
-        String[] status = { "PWNC", "RPPC" };
+        Object[] status = { "PWNC", "RPPC" };
         obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_STATUS, status));
       } else if (StringUtils.equalsIgnoreCase(strPaymType, "FINPR_Payables")) {
-        String[] status = { "RDNC", "RPPC" };
+        Object[] status = { "RDNC", "RPPC" };
         obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_STATUS, status));
       }
 

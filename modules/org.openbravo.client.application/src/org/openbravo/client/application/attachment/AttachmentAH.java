@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -159,7 +159,8 @@ public class AttachmentAH extends BaseActionHandler {
     String tableId = tab.getTable().getId();
 
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-        Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
+        Restrictions.eq("table.id", tableId),
+        Restrictions.in("record", (Object[]) recordIds.split(",")));
     // do not filter by the attachment's organization
     // if the user has access to the record where the file its attached, it has access to all
     // its attachments

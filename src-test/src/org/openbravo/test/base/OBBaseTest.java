@@ -506,7 +506,7 @@ public class OBBaseTest {
     if (userIds == null) {
       setTestUserContext();
 
-      String[] excludedUserIds = { "100", TEST_USER_ID };
+      Object[] excludedUserIds = { "100", TEST_USER_ID };
       OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
       obc.add(Restrictions.not(Restrictions.in(User.PROPERTY_ID, excludedUserIds)));
       obc.add(Restrictions.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));

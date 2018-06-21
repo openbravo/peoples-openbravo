@@ -167,7 +167,7 @@ public class AttachmentUtils {
   public static List<JSONObject> getTabAttachmentsForRows(Tab tab, String[] recordIds) {
     String tableId = tab.getTable().getId();
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-        Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
+        Restrictions.eq("table.id", tableId), Restrictions.in("record", (Object[]) recordIds));
     attachmentFiles.addOrderBy("creationDate", false);
     List<JSONObject> attachments = new ArrayList<>();
     // do not filter by the attachment's organization
