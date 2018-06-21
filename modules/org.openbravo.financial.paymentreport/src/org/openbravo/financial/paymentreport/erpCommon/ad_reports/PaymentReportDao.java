@@ -43,6 +43,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.hibernate.sql.JoinType;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -1687,7 +1688,7 @@ public class PaymentReportDao {
     OBContext.setAdminMode(true);
     try {
       OBCriteria<List> obCriteria = OBDal.getReadOnlyInstance().createCriteria(List.class);
-      obCriteria.createAlias(List.PROPERTY_REFERENCE, "r", OBCriteria.LEFT_JOIN);
+      obCriteria.createAlias(List.PROPERTY_REFERENCE, "r", JoinType.LEFT_OUTER_JOIN);
       obCriteria.add(Restrictions.ilike("r."
           + org.openbravo.model.ad.domain.Reference.PROPERTY_NAME, "FIN_Payment status"));
       obCriteria.add(Restrictions.in(List.PROPERTY_SEARCHKEY, strStatus));
@@ -1734,15 +1735,15 @@ public class PaymentReportDao {
       OBCriteria<FIN_FinaccTransaction> obCriteriaTrans = OBDal.getReadOnlyInstance()
           .createCriteria(FIN_FinaccTransaction.class);
       obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER, "bp",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.createAlias("bp." + BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY, "bpc",
-          OBCriteria.LEFT_JOIN);
-      obCriteriaTrans
-          .createAlias(FIN_FinaccTransaction.PROPERTY_PROJECT, "p", OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
+      obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_PROJECT, "p",
+          JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_CURRENCY, "c",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_ACCOUNT, "acc",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.add(Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_FINPAYMENT));
       obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_PROCESSED, true));
       obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ORGANIZATION,
