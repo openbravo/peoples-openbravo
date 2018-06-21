@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -503,6 +503,7 @@ enyo.kind({
     kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
     columns: ['product', 'quantity', 'price', 'gross'],
+    scrollWhenSelected: true,
     renderLine: 'OB.UI.RenderOrderLine',
     renderEmpty: 'OB.UI.RenderOrderLineEmpty',
     //defined on redenderorderline.js
@@ -560,13 +561,7 @@ enyo.kind({
       renderEmpty: 'OB.UI.RenderTaxLineEmpty',
       //defined on redenderorderline.js
       listStyle: 'nonselectablelist',
-      columns: ['tax', 'base', 'totaltax'],
-      executeAfterRender: function () {
-        if (this.owner.$.listOrderLines.scrollToBottom) {
-          this.owner.$.listOrderLines.getScrollArea().scrollToBottom();
-        }
-        this.owner.$.listOrderLines.scrollToBottom = false;
-      }
+      columns: ['tax', 'base', 'totaltax']
     }, {
       tag: 'li',
       components: [{
@@ -673,14 +668,6 @@ enyo.kind({
     this.$.totalReceiptLine.renderQty(this.order.getQty());
     this.$.totalTaxLine.renderTax(OB.DEC.sub(this.order.getTotal(), this.order.getNet()));
     this.$.listOrderLines.setCollection(this.order.get('lines'));
-    this.$.listOrderLines.collection.on('add change:qty change:promotions', function (model, list) {
-      me.$.listOrderLines.scrollToBottom = false;
-      if (me.$.listOrderLines.collection.models.length > 0 && me.$.listOrderLines.collection.models[me.$.listOrderLines.collection.models.length - 1]._changing) {
-        me.$.listOrderLines.scrollToBottom = true;
-      } else if (list && list.models && list.length > 0 && model.id === list.models[list.length - 1].id) {
-        me.$.listOrderLines.scrollToBottom = true;
-      }
-    });
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
     this.order.on('change:cancelLayaway change:voidLayaway', function (model) {

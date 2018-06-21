@@ -677,9 +677,6 @@
     }
   };
   OB.UTIL.sumCashManagementToCashup = function (payment, callback) {
-    OB.Dal.find(OB.Model.PaymentMethodCashUp, {
-      'cashup_id': payment.get('cashup_id')
-    }, function (paymentMethods) {});
     if (!OB.UTIL.isNullOrUndefined(payment)) {
       var cashupId = payment.get('cashup_id'),
           criteria = {

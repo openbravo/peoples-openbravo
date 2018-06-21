@@ -1290,7 +1290,7 @@
         //Save available servers and services and initialize Request Router layer and Proccess Controller
         _.each(_.keys(inResponse.properties), function (key) {
           if (inResponse.properties[key]) {
-            OB.UTIL.localStorage.setItem(key, JSON.stringify(inResponse.properties[key]));
+            OB.UTIL.localStorage.setItem(key, typeof (inResponse.properties[key]) === 'string' ? inResponse.properties[key] : JSON.stringify(inResponse.properties[key]));
           }
         });
         OB.RR.RequestRouter.initialize();

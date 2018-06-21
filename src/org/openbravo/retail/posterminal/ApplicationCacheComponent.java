@@ -26,6 +26,7 @@ import javax.enterprise.context.RequestScoped;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
+import org.openbravo.retail.posterminal.utility.OBPOSPrintTemplateReader;
 
 /**
  * 
@@ -72,8 +73,8 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     // default print templates
     resources.add("../../web/org.openbravo.retail.posterminal/res/printcashup.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printcashmgmt.xml");
-    resources.add("../../web/org.openbravo.retail.posterminal/res/displaytotal.xml");
-    resources.add("../../web/org.openbravo.retail.posterminal/res/opendrawer.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/displaytotal.xml" +"?uuid="+OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
+    resources.add("../../web/org.openbravo.retail.posterminal/res/opendrawer.xml" +"?uuid="+OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
     resources.add("../../web/org.openbravo.retail.posterminal/res/printclosedreceipt.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printinvoice.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printlayaway.xml");
@@ -81,9 +82,9 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreceipt.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreturn.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreturninvoice.xml");
-    resources.add("../../web/org.openbravo.retail.posterminal/res/welcome.xml");
-    resources.add("../../web/org.openbravo.retail.posterminal/res/goodbye.xml");
-    resources.add("../../web/org.openbravo.retail.posterminal/res/checkdrawerstatus.xml");
+    resources.add("../../web/org.openbravo.retail.posterminal/res/welcome.xml" +"?uuid="+OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
+    resources.add("../../web/org.openbravo.retail.posterminal/res/goodbye.xml" +"?uuid="+OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
+    resources.add("../../web/org.openbravo.retail.posterminal/res/checkdrawerstatus.xml" +"?uuid="+OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
     resources.add("../../web/org.openbravo.retail.posterminal/res/displayreceipt.xml");
 
     // App Icon
@@ -92,7 +93,7 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     OBContext.setAdminMode(true);
     try {
       for (PrintTemplate template : OBDal.getInstance().createCriteria(PrintTemplate.class).list()) {
-        resources.add("../../web/org.openbravo.retail.posterminal/" + template.getTemplatePath());
+        resources.add("../../web/org.openbravo.retail.posterminal/" + template.getTemplatePath() +"?uuid="+OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
       }
     } finally {
       OBContext.restorePreviousMode();
