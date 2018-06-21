@@ -770,9 +770,15 @@ button.btnbp:disabled {
 
 .changedialog-properties-info {
   float: left;
+  margin-left: 25px;
   color: #6f6f6f;
   font-size: 12px;
-  margin-left: 25px;
+  text-align: right;
+}
+
+.changedialog-properties-info-text {
+  line-height: 20px;
+  width: 110px;
 }
 
 .changedialog-properties-end {
