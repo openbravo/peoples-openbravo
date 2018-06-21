@@ -191,31 +191,26 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     }
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
-        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(e.product.id, e.movementQuantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, sh.documentType.id))))))");
-    if (isSalesTransaction) {
-      operativeQuantityHql
-          .append(" - SUM(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN to_number(M_GET_CONVERTED_AUMQTY(e.product.id, il.invoicedQuantity, coalesce(e.operativeUOM.id, e.uOM.id))) ELSE 0 END, 0))");
-    } else {
-      operativeQuantityHql
-          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(e.product.id, mi.quantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, sh.documentType.id))))), 0))");
-    }
+        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(e.product.id, ");
+    operativeQuantityHql.append(getMovementQuantityHQL());
+    operativeQuantityHql
+        .append(" , coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, sh.documentType.id))))))");
+
     return operativeQuantityHql.toString();
   }
 
   protected String getMovementQuantityHQL() {
     StringBuilder movementQuantityHql = new StringBuilder();
+    movementQuantityHql.append(" (e.movementQuantity - COALESCE(");
     if (isSalesTransaction) {
-      movementQuantityHql.append(" (e.movementQuantity - COALESCE(");
       movementQuantityHql
           .append(" (SELECT SUM(il2.invoicedQuantity) FROM e.invoiceLineList il2 left join il2.invoice i2");
       movementQuantityHql.append(" WHERE i2.documentStatus = 'CO')");
-      movementQuantityHql.append(" ,0))");
     } else {
-      movementQuantityHql.append(" (e.movementQuantity - COALESCE(");
       movementQuantityHql
           .append(" (SELECT SUM(mi2.quantity) FROM e.procurementReceiptInvoiceMatchList mi2)");
-      movementQuantityHql.append(" ,0))");
     }
+    movementQuantityHql.append(" ,0))");
     return movementQuantityHql.toString();
   }
 

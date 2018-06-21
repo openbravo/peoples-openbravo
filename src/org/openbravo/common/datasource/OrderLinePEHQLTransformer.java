@@ -214,21 +214,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     }
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql
-        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(e.product.id, e.orderedQuantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))))");
-    if (isSalesTransaction) {
-      operativeQuantityHql
-          .append(" - SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(e.product.id, e.invoicedQuantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))), 0))");
-    } else {
-      operativeQuantityHql
-          .append("  -SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(e.product.id, m.quantity, e.operativeUOM.id)),0))-COALESCE(");
-      operativeQuantityHql
-          .append(" (SELECT SUM(COALESCE(to_number(M_GET_CONVERTED_AUMQTY(e.product.id, ci.invoicedQuantity, coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))), 0))");
-      operativeQuantityHql.append("  FROM OrderLine co");
-      operativeQuantityHql.append("    LEFT JOIN co.invoiceLineList ci");
-      operativeQuantityHql.append("  WHERE ci.invoice.id = :invId");
-      operativeQuantityHql.append("    AND co.id = e.id");
-      operativeQuantityHql.append("  GROUP BY ci.salesOrderLine.id , co.orderedQuantity),0)");
-    }
+        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(e.product.id, ");
+    operativeQuantityHql.append(getOrderedQuantityHQL());
+    operativeQuantityHql
+        .append(" , coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))))");
     return operativeQuantityHql.toString();
   }
 
