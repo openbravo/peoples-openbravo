@@ -128,8 +128,6 @@ public class OrderGroupingProcessor {
           .getDocumentTypeForReturns().getName()));
     }
 
-    // random string is created as random numeric between 0 and 1000000
-    Random rnd = new Random();
     final String strExecutionId = SequenceIdData.getUUID().substring(0, 30);
 
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
