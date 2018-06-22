@@ -130,7 +130,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         UPDATE AD_Process_Request
-        SET Updatedby = ?, 
+        SET Updatedby = ?,
+            Updated = NOW(),
             AD_User_ID = ?, 
             Status = ?, 
             Channel = ?,
