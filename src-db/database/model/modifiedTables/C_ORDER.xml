@@ -59,9 +59,6 @@
       <index name="EM_OBPOS_ORDER_ISLAYAWAY" unique="false">
         <index-column name="EM_OBPOS_ISLAYAWAY"/>
       </index>
-      <index name="EM_OBPOS_ORDERDATE" unique="false">
-        <index-column name="DATEORDERED"/>
-      </index>
       <index name="EM_OBPOS_REJECTED_QUOTAT_IND" unique="false">
         <index-column name="EM_OBPOS_REJECTED_QUOTAT_ID"/>
         <whereClause><![CDATA[EM_OBPOS_REJECTED_QUOTAT_ID IS NOT NULL]]></whereClause>

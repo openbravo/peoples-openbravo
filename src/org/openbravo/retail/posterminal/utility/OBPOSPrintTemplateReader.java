@@ -16,7 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.StaticResourceComponent;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.retail.posterminal.PrintTemplate;
 
@@ -26,18 +26,20 @@ import org.openbravo.retail.posterminal.PrintTemplate;
  * @author mdj
  */
 public class OBPOSPrintTemplateReader {
-  private static final Logger log = Logger.getLogger(StaticResourceComponent.class);
+  private static final Logger log = Logger.getLogger(OBPOSPrintTemplateReader.class);
   String printTemplateIdentifier = null;
   private static OBPOSPrintTemplateReader instance = new OBPOSPrintTemplateReader();
 
-  public static OBPOSPrintTemplateReader getInstance() {
+  public static final OBPOSPrintTemplateReader getInstance() {
     return instance;
   }
 
   public String getPrintTemplatesIdentifier() {
     if(printTemplateIdentifier == null) {
       final StringBuffer sb = new StringBuffer();
-      for (PrintTemplate template : OBDal.getInstance().createCriteria(PrintTemplate.class).list()) {
+      OBCriteria<PrintTemplate> criteria = OBDal.getInstance().createCriteria(PrintTemplate.class);
+      criteria.addOrderBy(PrintTemplate.PROPERTY_ID, true);
+      for (PrintTemplate template : criteria.list()) {
         try {
           ConfigParameters confParam = ConfigParameters
               .retrieveFrom(RequestContext.getServletContext());
