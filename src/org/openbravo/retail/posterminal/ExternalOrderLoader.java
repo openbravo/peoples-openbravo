@@ -45,6 +45,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -510,6 +511,8 @@ public class ExternalOrderLoader extends OrderLoader {
     setDefaults(orderJson);
 
     setClientOrg(orderJson);
+    
+    disableConcurrencyCheck(orderJson);
 
     final OBPOSApplications posTerminal = getPOSTerminal(orderJson);
 
@@ -556,6 +559,17 @@ public class ExternalOrderLoader extends OrderLoader {
     }
 
     transformPayments(orderJson);
+  }
+
+  private void disableConcurrencyCheck(JSONObject orderJson) throws JSONException{
+
+    if (orderJson.has("id")) {
+      final Order order = OBDal.getInstance().get(Order.class, orderJson.get("id"));
+      if(order!=null) {
+        orderJson.put("loaded", POSUtils.dateFormatUTC.format(OBMOBCUtils
+            .convertToUTC(order.getUpdated())));
+      }
+    }
   }
 
   // set the special attributes which are needed to cover/handle create, pay and ship
