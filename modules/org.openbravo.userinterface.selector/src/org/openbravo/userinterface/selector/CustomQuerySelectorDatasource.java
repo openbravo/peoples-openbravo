@@ -84,10 +84,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     // creation of formats is done here because they are not thread safe
     final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
     final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
-    final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    final List<Object> typedParameters = new ArrayList<Object>();
+    final List<Map<String, Object>> result = new ArrayList<>();
+    final List<Object> typedParameters = new ArrayList<>();
     // Defaulted to endRow + 2 to check for more records while scrolling.
-    int totalRows = endRow + 2, rowCount = 0;
+    int totalRows = endRow + 2;
+    int rowCount = 0;
 
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
 
@@ -127,7 +128,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
       for (Tuple tuple : selQuery.list()) {
         rowCount++;
-        final Map<String, Object> data = new LinkedHashMap<String, Object>();
+        final Map<String, Object> data = new LinkedHashMap<>();
         for (SelectorField field : fields) {
           // TODO: throw an exception if the display expression doesn't match any returned alias.
           for (TupleElement<?> tupleElement : tuple.getElements()) {
@@ -147,13 +148,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         }
         result.add(data);
       }
-      if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER))) {
-        if (startRow < endRow) {
-          if (rowCount < endRow) {
-            totalRows = rowCount;
-          }
-          parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(totalRows));
+      if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER)) && startRow < endRow) {
+        if (rowCount < endRow) {
+          totalRows = rowCount;
         }
+        parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(totalRows));
       }
     } finally {
       OBContext.restorePreviousMode();
