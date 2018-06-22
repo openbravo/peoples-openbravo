@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,14 +32,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -109,11 +112,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       String sortBy = parameters.get("_sortBy");
       HQL += getSortClause(sortBy, sel);
 
-      Query selQuery = OBDal.getInstance().getSession().createQuery(HQL);
+      Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(HQL, Tuple.class);
+
       for (int i = 0; i < typedParameters.size(); i++) {
         selQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
       }
-      String[] queryAliases = selQuery.getReturnAliases();
 
       if (startRow > 0) {
         selQuery.setFirstResult(startRow);
@@ -122,21 +125,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         selQuery.setMaxResults(endRow - startRow + 1);
       }
 
-      for (Object objResult : selQuery.list()) {
+      for (Tuple tuple : selQuery.list()) {
         rowCount++;
         final Map<String, Object> data = new LinkedHashMap<String, Object>();
-        Object[] resultList = new Object[1];
-        if (objResult instanceof Object[]) {
-          resultList = (Object[]) objResult;
-        } else {
-          resultList[0] = objResult;
-        }
-
         for (SelectorField field : fields) {
           // TODO: throw an exception if the display expression doesn't match any returned alias.
-          for (int i = 0; i < queryAliases.length; i++) {
-            if (queryAliases[i].equals(field.getDisplayColumnAlias())) {
-              Object value = resultList[i];
+          for (TupleElement<?> tupleElement : tuple.getElements()) {
+            String alias = tupleElement.getAlias();
+            if (alias != null && alias.equals(field.getDisplayColumnAlias())) {
+              Object value = tuple.get(alias);
               if (value instanceof Date) {
                 value = xmlDateFormat.format(value);
               }
@@ -144,7 +141,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
                 value = xmlDateTimeFormat.format(value);
                 value = JsonUtils.convertToCorrectXSDFormat((String) value);
               }
-              data.put(queryAliases[i], value);
+              data.put(alias, value);
             }
           }
         }
@@ -526,15 +523,20 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    *          order by.
    * @param sel
    *          The Selector that it is being used.
-   * @return The index of the query column related to the field.
+   * @return The index of the query column related to the field. Note that 0 will be returned if
+   *         there is no query column with an alias equal to the provided field name.
    */
   private int getFieldSortIndex(String fieldName, Selector sel) {
-    final String[] queryAliases = OBDal.getInstance().getSession()
-        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1")).getReturnAliases();
-    for (int i = 0; i < queryAliases.length; i++) {
-      if (queryAliases[i].equals(fieldName)) {
-        return i + 1;
+    Query<Tuple> query = OBDal.getInstance().getSession()
+        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1"), Tuple.class);
+    query.setMaxResults(1);
+    Tuple tuple = query.uniqueResult();
+    int i = 1;
+    for (TupleElement<?> tupleElement : tuple.getElements()) {
+      if (tupleElement.getAlias().equals(fieldName)) {
+        return i;
       }
+      i++;
     }
     return 0;
   }
