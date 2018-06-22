@@ -1612,13 +1612,21 @@ enyo.kind({
         }
         me.putDisabled(false);
       }, function () {
-        me.doShowPopup({
-          popup: 'modalEnoughCredit',
-          args: {
-            order: me.model.get('order'),
-            message: 'OBPOS_Unabletocheckcredit'
-          }
-        });
+        if (OB.MobileApp.model.hasPermission('OBPOS_AllowSellOnCreditWhileOffline', true)) {
+          me.doShowPopup({
+            popup: 'modalEnoughCredit',
+            args: {
+              order: me.model.get('order'),
+              message: 'OBPOS_Unabletocheckcredit'
+            }
+          });
+        } else {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_SellingOnCreditHeader'), OB.I18N.getLabel('OBPOS_UnabletoSellOncredit'), [{
+            isConfirmButton: true,
+            label: OB.I18N.getLabel('OBMOBC_LblOk')
+          }]);
+        }
+        me.putDisabled(false);
       });
       //    } else if (this.model.get('order').get('orderType') === 1) {
     } else if (paymentstatus.isReturn) {
