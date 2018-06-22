@@ -566,8 +566,8 @@ public class ExternalOrderLoader extends OrderLoader {
     if (orderJson.has("id")) {
       final Order order = OBDal.getInstance().get(Order.class, orderJson.get("id"));
       if(order!=null) {
-        orderJson.put("loaded", POSUtils.dateFormatUTC.format(OBMOBCUtils
-            .convertToUTC(order.getUpdated())));
+        orderJson.put("loaded", OBMOBCUtils
+            .convertToUTCDateComingFromServer(order.getUpdated()));
       }
     }
   }
