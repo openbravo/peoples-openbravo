@@ -133,7 +133,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       groupByClause.append(" , e.invoicedQuantity");
     } else {
       groupByClause
-          .append(" HAVING ((e.explode='Y') OR ((e.orderedQuantity-SUM(COALESCE(m.quantity,0))-SUM(COALESCE(il.invoicedQuantity,0))) <> 0))");
+          .append(" HAVING ((e.explode='Y') OR ((e.orderedQuantity-SUM(COALESCE(m.quantity,0))) <> 0");
+      groupByClause
+          .append(" AND (SUM(COALESCE(il.invoicedQuantity,0))-COALESCE(e.orderedQuantity,0)-SUM(COALESCE(m.quantity,0)) < 0)");
+      groupByClause.append("))");
     }
     return groupByClause.toString();
   }
