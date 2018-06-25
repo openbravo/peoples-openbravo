@@ -211,7 +211,7 @@ public class CostAdjustmentProcess {
     @SuppressWarnings("rawtypes")
     Query adjustmentLineQuery = OBDal.getInstance().getSession()
         .createQuery(updateQuery.toString());
-    adjustmentLineQuery.setString("adjustmentId", costAdjustment.getId());
+    adjustmentLineQuery.setParameter("adjustmentId", costAdjustment.getId());
     adjustmentLineQuery.executeUpdate();
   }
 

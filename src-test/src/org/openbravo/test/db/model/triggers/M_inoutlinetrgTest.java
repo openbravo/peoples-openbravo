@@ -595,7 +595,7 @@ public class M_inoutlinetrgTest extends OBBaseTest {
         .append(" delete from MaterialMgmtShipmentInOutLine where shipmentReceipt.id = :mInOutId ");
     @SuppressWarnings("rawtypes")
     Query deleteQry = OBDal.getInstance().getSession().createQuery(hqlString.toString());
-    deleteQry.setString("mInOutId", inOut.getId());
+    deleteQry.setParameter("mInOutId", inOut.getId());
     deleteQry.executeUpdate();
     OBDal.getInstance().getConnection().commit();
     OBDal.getInstance().refresh(inOut);

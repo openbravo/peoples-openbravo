@@ -102,13 +102,13 @@ public class ResetAccounting {
             myQuery = myQuery + " and e.recordID = :recordId ";
           }
           for (String dbt : docbasetypes) {
-            List<Date[]> periods = new ArrayList<Date[]>();
+            List<Date[]> periods = new ArrayList<>();
             // organizationPeriod: hashmap with organizations allow period control and their open
             // periods
-            Map<String, List<Date[]>> organizationPeriod = new HashMap<String, List<Date[]>>();
+            Map<String, List<Date[]>> organizationPeriod = new HashMap<>();
             // organizationPeriodControl: hashmap with organizations and their organization allow
             // period control associated
-            Map<String, String> organizationPeriodControl = new HashMap<String, String>();
+            Map<String, String> organizationPeriodControl = new HashMap<>();
 
             String myQuery1 = "select ad_org_id, ad_org_getperiodcontrolallow(ad_org_id) from ad_org where ad_org_id in (:orgIds)";
 
@@ -160,17 +160,17 @@ public class ResetAccounting {
                 final Query<String> query = OBDal.getInstance().getSession()
                     .createQuery(myQuery + consDate.toString(), String.class);
                 if (localRecordId != null && !"".equals(localRecordId)) {
-                  query.setString("recordId", localRecordId);
+                  query.setParameter("recordId", localRecordId);
                 }
                 query.setParameterList("orgIds", orgIds);
-                query.setString("clientId", client);
-                query.setString("dbt", dbt);
-                query.setString("tableId", table);
+                query.setParameter("clientId", client);
+                query.setParameter("dbt", dbt);
+                query.setParameter("tableId", table);
                 query.setDate("dateFrom",
                     StringUtils.isNotEmpty(strdatefrom) ? OBDateUtils.getDate(strdatefrom) : p[0]);
                 query.setDate("dateTo",
                     StringUtils.isNotEmpty(strdateto) ? OBDateUtils.getDate(strdateto) : p[1]);
-                query.setString("organization", organization);
+                query.setParameter("organization", organization);
                 if (localRecordId != null && !"".equals(localRecordId)) {
                   query.setMaxResults(1);
                 } else {
@@ -264,7 +264,7 @@ public class ResetAccounting {
 
   private static HashMap<String, Integer> delete(List<String> transactions, String tableId,
       String client) throws OBException {
-    HashMap<String, Integer> result = new HashMap<String, Integer>();
+    HashMap<String, Integer> result = new HashMap<>();
     if (transactions.size() == 0) {
       result.put("deleted", 0);
       result.put("updated", 0);
@@ -282,9 +282,9 @@ public class ResetAccounting {
           + "and f.client.id=:clientId and f.recordID2=fact.recordID2)";
       @SuppressWarnings("rawtypes")
       final Query updateBalanced = OBDal.getInstance().getSession().createQuery(strUpdateBalanced);
-      updateBalanced.setString("tableId", tableId);
+      updateBalanced.setParameter("tableId", tableId);
       updateBalanced.setParameterList("transactions", transactions);
-      updateBalanced.setString("clientId", client);
+      updateBalanced.setParameter("clientId", client);
       updateBalanced.executeUpdate();
       Table table = OBDal.getInstance().get(Table.class, tableId);
       if (!table.isView()) {
@@ -308,9 +308,9 @@ public class ResetAccounting {
         int updated = update.executeUpdate();
         @SuppressWarnings("rawtypes")
         final Query delete = OBDal.getInstance().getSession().createQuery(strDelete);
-        delete.setString("tableId", tableId);
+        delete.setParameter("tableId", tableId);
         delete.setParameterList("transactions", transactions);
-        delete.setString("clientId", client);
+        delete.setParameter("clientId", client);
         int deleted = delete.executeUpdate();
         result.put("deleted", deleted);
         result.put("updated", updated);
@@ -445,10 +445,10 @@ public class ResetAccounting {
       myQuery = myQuery + "and e.recordID=:recordId";
     }
     Query<String> query = OBDal.getInstance().getSession().createQuery(myQuery, String.class);
-    query.setString("clientId", clientId);
-    query.setString("tableId", tableId);
+    query.setParameter("clientId", clientId);
+    query.setParameter("tableId", tableId);
     if (!"".equals(recordId)) {
-      query.setString("recordId", recordId);
+      query.setParameter("recordId", recordId);
       query.setMaxResults(1);
     }
     List<String> docbasetypes = query.list();
@@ -478,10 +478,10 @@ public class ResetAccounting {
     Query<Period> query = OBDal.getInstance().getSession().createQuery(myQuery, Period.class);
     // TODO: Review orgIds
     // query.setParameterList("orgIds", orgIds);
-    query.setString("calendarId", calendarId);
-    query.setString("clientId", clientId);
-    query.setString("docbasetype", docBaseType);
-    query.setString("orgPeriodControl", orgPeriodControl);
+    query.setParameter("calendarId", calendarId);
+    query.setParameter("clientId", clientId);
+    query.setParameter("docbasetype", docBaseType);
+    query.setParameter("orgPeriodControl", orgPeriodControl);
 
     try {
       if (!("".equals(datefrom))) {
@@ -500,11 +500,11 @@ public class ResetAccounting {
       String docBaseType, String orgPeriodControl, Set<String> orgIds) {
     String myQuery = "select distinct e.period from FinancialMgmtAccountingFact e , FinancialMgmtPeriodControl p where p.period=e.period and p.periodStatus = 'O' and e.client.id = :clientId and e.table.id = :tableId and e.recordID=:recordId and p.documentCategory = :docbasetype and p.organization.id  = :orgPeriodControl and e.organization.id in (:orgIds)";
     Query<Period> query = OBDal.getInstance().getSession().createQuery(myQuery, Period.class);
-    query.setString("clientId", clientId);
-    query.setString("tableId", tableId);
-    query.setString("recordId", recordId);
-    query.setString("docbasetype", docBaseType);
-    query.setString("orgPeriodControl", orgPeriodControl);
+    query.setParameter("clientId", clientId);
+    query.setParameter("tableId", tableId);
+    query.setParameter("recordId", recordId);
+    query.setParameter("docbasetype", docBaseType);
+    query.setParameter("orgPeriodControl", orgPeriodControl);
     query.setParameterList("orgIds", orgIds);
     query.setMaxResults(1);
     Period period = query.uniqueResult();
@@ -544,14 +544,14 @@ public class ResetAccounting {
     Query<String> query = OBDal.getInstance().getSession().createQuery(myQuery, String.class);
     List<String> accountingSchemaIds = getAccountingSchemaIds(clientId, adOrgId);
     query.setParameterList("accountingSchemaIds", accountingSchemaIds);
-    query.setString("clientId", clientId);
+    query.setParameter("clientId", clientId);
     return query.list();
   }
 
   private static List<String> getAccountingSchemaIds(String clientId, String orgIg) {
     String myQuery = "select distinct accountingSchema.id from OrganizationAcctSchema where client.id = :clientId and active= true and organization.id in (:orgIds)";
     Query<String> query = OBDal.getInstance().getSession().createQuery(myQuery, String.class);
-    query.setString("clientId", clientId);
+    query.setParameter("clientId", clientId);
     query.setParameterList("orgIds", new OrganizationStructureProvider().getNaturalTree(orgIg));
     return query.list();
 
@@ -568,19 +568,19 @@ public class ResetAccounting {
       final Query<String> query = OBDal.getInstance().getSession()
           .createQuery(myQuery, String.class);
       if (recordId != null && !"".equals(recordId)) {
-        query.setString("recordId", recordId);
+        query.setParameter("recordId", recordId);
       }
       query.setParameterList("orgIds", orgIds);
-      query.setString("clientId", client);
-      query.setString("dbt", dbt);
-      query.setString("tableId", table);
+      query.setParameter("clientId", client);
+      query.setParameter("dbt", dbt);
+      query.setParameter("tableId", table);
       query.setDate("dateFrom",
           StringUtils.isNotEmpty(parameterDateFrom) ? OBDateUtils.getDate(parameterDateFrom)
               : periodStartingDate);
       query.setDate("dateTo",
           StringUtils.isNotEmpty(parameterDateTo) ? OBDateUtils.getDate(parameterDateTo)
               : periodEndingDate);
-      query.setString("organization", targetOrganization);
+      query.setParameter("organization", targetOrganization);
       if (recordId != null && !"".equals(recordId)) {
         query.setMaxResults(1);
       }

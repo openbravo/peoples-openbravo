@@ -110,7 +110,7 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
     hql.append("where ur.active=true and ur.userContact.id=:userId and ur.role.active=true and ur.role.isrestrictbackend=false ");
     Query<Object[]> rolesQry = OBDal.getInstance().getSession()
         .createQuery(hql.toString(), Object[].class);
-    rolesQry.setString("userId", OBContext.getOBContext().getUser().getId());
+    rolesQry.setParameter("userId", OBContext.getOBContext().getUser().getId());
     for (Object[] entry : rolesQry.list()) {
       userRoles.add(new RoleInfo(entry));
     }

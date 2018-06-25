@@ -181,8 +181,8 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
 
     @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
-    updateQry.setString("paymentExecutionProcessId", executionProcess.getId());
-    updateQry.setString("paymentId", payment.getId());
+    updateQry.setParameter("paymentExecutionProcessId", executionProcess.getId());
+    updateQry.setParameter("paymentId", payment.getId());
     rowCount = updateQry.executeUpdate();
     return rowCount;
   }
@@ -204,7 +204,7 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
 
     @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
-    updateQry.setString("paymentId", payment.getId());
+    updateQry.setParameter("paymentId", payment.getId());
     rowCount = updateQry.executeUpdate();
     return rowCount;
   }

@@ -3598,7 +3598,7 @@ public class TestCostingUtils {
           + "WHERE t3.product.id = :productId " + "ORDER BY t1.documentNo";
       Query<CostAdjustment> query = OBDal.getInstance().getSession()
           .createQuery(myQuery, CostAdjustment.class);
-      query.setString("productId", productId);
+      query.setParameter("productId", productId);
       List<CostAdjustment> costAdjustmentList = query.list();
       return costAdjustmentList.isEmpty() ? null : costAdjustmentList;
     } catch (Exception e) {
@@ -3615,7 +3615,7 @@ public class TestCostingUtils {
           + "ORDER BY t1.name";
       Query<InventoryCount> query = OBDal.getInstance().getSession()
           .createQuery(myQuery, InventoryCount.class);
-      query.setString("inventoryAmountUpdateId", inventoryAmountUpdateId);
+      query.setParameter("inventoryAmountUpdateId", inventoryAmountUpdateId);
       return query.list();
     } catch (Exception e) {
       throw new OBException(e);

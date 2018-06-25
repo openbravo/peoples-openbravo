@@ -89,7 +89,7 @@ public class RoleInfo {
     hql.append("where ro.active=true and ro.role.id=:roleId and ro.organization.active=true ");
     Query<Object[]> roleOrgs = OBDal.getInstance().getSession()
         .createQuery(hql.toString(), Object[].class);
-    roleOrgs.setString("roleId", roleId);
+    roleOrgs.setParameter("roleId", roleId);
     for (Object[] orgInfo : roleOrgs.list()) {
       roleOrganizations.put((String) orgInfo[0], (String) orgInfo[1]);
     }
@@ -116,7 +116,7 @@ public class RoleInfo {
     Query<Object[]> orgWarehouses = OBDal.getInstance().getSession()
         .createQuery(hql.toString(), Object[].class);
     orgWarehouses.setParameterList("orgList", getOrganizations().keySet());
-    orgWarehouses.setString("clientId", clientId);
+    orgWarehouses.setParameter("clientId", clientId);
     for (Object[] entry : orgWarehouses.list()) {
       RoleWarehouseInfo warehouseInfo = new RoleWarehouseInfo(entry);
       for (Map.Entry<String, List<RoleWarehouseInfo>> ow : organizationWarehouses.entrySet()) {

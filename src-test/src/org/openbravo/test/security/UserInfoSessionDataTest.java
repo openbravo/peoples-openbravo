@@ -257,7 +257,7 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
     Query<String> orgWarehouses = OBDal.getInstance().getSession()
         .createQuery(hql.toString(), String.class);
     orgWarehouses.setParameterList("orgList", osp.getNaturalTree(orgId));
-    orgWarehouses.setString("clientId", clientId);
+    orgWarehouses.setParameter("clientId", clientId);
     return orgWarehouses.list();
   }
 

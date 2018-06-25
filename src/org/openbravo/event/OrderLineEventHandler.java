@@ -59,8 +59,8 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
 
       @SuppressWarnings("rawtypes")
       Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-      query.setString("thisLine", thisLine.getId());
-      query.setString("clientId", thisLine.getClient().getId());
+      query.setParameter("thisLine", thisLine.getId());
+      query.setParameter("clientId", thisLine.getClient().getId());
       query.executeUpdate();
     } finally {
       OBContext.restorePreviousMode();

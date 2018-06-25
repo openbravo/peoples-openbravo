@@ -518,8 +518,8 @@ public class CostingMigrationProcess implements Process {
         @SuppressWarnings("rawtypes")
         Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
         updateQry.setParameter("currency", client.getCurrency());
-        updateQry.setString("clientId", client.getId());
-        updateQry.setString("currencyId", client.getCurrency().getId());
+        updateQry.setParameter("clientId", client.getId());
+        updateQry.setParameter("currencyId", client.getCurrency().getId());
         updateQry.executeUpdate();
       }
       OBDal.getInstance().flush();
@@ -1018,7 +1018,7 @@ public class CostingMigrationProcess implements Process {
 
     @SuppressWarnings("rawtypes")
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
-    queryInsert.setString("ar", alertRule.getId());
+    queryInsert.setParameter("ar", alertRule.getId());
     int inserted = queryInsert.executeUpdate();
     log4j.debug("** inserted alert recipients: " + inserted);
   }
@@ -1091,9 +1091,9 @@ public class CostingMigrationProcess implements Process {
       Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
       final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
       String startingDate = dateFormatter.format(new Date());
-      queryInsert.setString("startingDate", startingDate);
-      queryInsert.setString("limitDate", startingDate);
-      queryInsert.setString("limitDate2", startingDate);
+      queryInsert.setParameter("startingDate", startingDate);
+      queryInsert.setParameter("limitDate", startingDate);
+      queryInsert.setParameter("limitDate2", startingDate);
       n = queryInsert.executeUpdate();
 
       OBDal.getInstance().flush();

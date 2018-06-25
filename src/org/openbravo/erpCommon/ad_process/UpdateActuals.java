@@ -171,16 +171,16 @@ public class UpdateActuals extends DalBaseProcess {
         Query<Object[]> query = OBDal.getInstance().getSession()
             .createQuery(queryString.toString(), Object[].class);
         query.setReadOnly(true);
-        query.setString("accountingSchema", accountingSchema);
+        query.setParameter("accountingSchema", accountingSchema);
         if (!"".equals(businessPartner))
-          query.setString("businessPartner", businessPartner);
+          query.setParameter("businessPartner", businessPartner);
         if (StringUtils.isNotEmpty(businessPartnerCategory)) {
-          query.setString("businessPartnerCategory", businessPartnerCategory);
+          query.setParameter("businessPartnerCategory", businessPartnerCategory);
         }
         if (!"".equals(period))
-          query.setString("period", period);
+          query.setParameter("period", period);
         if (!"".equals(product))
-          query.setString("product", product);
+          query.setParameter("product", product);
 
         log4j.debug("Query String" + query.getQueryString());
 

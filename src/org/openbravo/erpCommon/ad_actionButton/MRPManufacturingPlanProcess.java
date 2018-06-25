@@ -167,7 +167,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     deleteLines.append("   and " + ProductionRunLine.PROPERTY_FIXED + " = false");
     @SuppressWarnings("rawtypes")
     Query delete = OBDal.getInstance().getSession().createQuery(deleteLines.toString());
-    delete.setString("prodRun", strManufacturingMRPID);
+    delete.setParameter("prodRun", strManufacturingMRPID);
     delete.executeUpdate();
     OBDal.getInstance().flush();
   }

@@ -147,9 +147,9 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     Query<String> query = OBDal.getInstance().getSession()
         .createQuery(hql.toString(), String.class);
     if (StringUtils.isEmpty(roleId)) {
-      query.setString("roleId", OBContext.getOBContext().getRole().getId());
+      query.setParameter("roleId", OBContext.getOBContext().getRole().getId());
     } else {
-      query.setString("roleId", roleId);
+      query.setParameter("roleId", roleId);
     }
     List<String> widgetClassIds = query.list();
     List<String> anonymousWidgetClasses;

@@ -70,7 +70,7 @@ public class FIN_ReconciliationEventListener extends EntityPersistenceEventObser
     @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
     updateQry.setBigDecimal("balance", balance);
-    updateQry.setString("accountId", rec.getAccount().getId());
+    updateQry.setParameter("accountId", rec.getAccount().getId());
     updateQry.setTimestamp("date", rec.getTransactionDate());
     updateQry.executeUpdate();
   }
