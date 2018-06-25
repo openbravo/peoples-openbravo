@@ -190,11 +190,10 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
       return " '' ";
     }
     StringBuilder operativeQuantityHql = new StringBuilder();
-    operativeQuantityHql
-        .append(" coalesce(e.operativeQuantity, to_number(M_GET_CONVERTED_AUMQTY(e.product.id, ");
+    operativeQuantityHql.append(" to_number(M_GET_CONVERTED_AUMQTY(e.product.id, ");
     operativeQuantityHql.append(getMovementQuantityHQL());
     operativeQuantityHql
-        .append(" , coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, sh.documentType.id))))))");
+        .append(" , coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, sh.documentType.id)))))");
 
     return operativeQuantityHql.toString();
   }
