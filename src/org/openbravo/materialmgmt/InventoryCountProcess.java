@@ -297,7 +297,7 @@ public class InventoryCountProcess implements Process {
     where.append("        where sb.id = sd." + StorageDetail.PROPERTY_STORAGEBIN + ".id");
     where.append("          and p.id = sd." + StorageDetail.PROPERTY_PRODUCT + ".id");
     where.append("          and sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE + " = '0'");
-    where.append("          and sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " < 0 ) = 1)");
+    where.append("          and sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " <> 0 ) = 1)");
     where.append("  order by icl." + InventoryCountLine.PROPERTY_LINENO);
     OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
         where.toString());
