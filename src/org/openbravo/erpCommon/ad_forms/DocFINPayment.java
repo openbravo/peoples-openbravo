@@ -140,7 +140,8 @@ public class DocFINPayment extends AcctServer {
           psId = psi != null ? psi.getId() : null;
           continue;
         } else {
-          if (amountAndWriteOff.get("merged").compareTo(BigDecimal.ONE) == 0) {
+          if (amountAndWriteOff.get("merged").compareTo(BigDecimal.ONE) == 0
+              && StringUtils.isNotEmpty(data[i].getField("MergedPaymentDetailId"))) {
             // keeps only the current line while merging the amounts
             data[i - 1] = null;
             totalAmount = totalAmount.add(amount);
