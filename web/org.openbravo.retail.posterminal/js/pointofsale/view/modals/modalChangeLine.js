@@ -47,7 +47,7 @@ enyo.kind({
   actionInput: function (inSender, inEvent) {
     var value = parseFloat(this.$.textline.getValue());
     this.edited = true;
-    this.hasErrors = _.isNaN(value) || value < 0 || value > this.maxValue;
+    this.hasErrors = _.isNaN(value) || value < 0 || value > this.maxValue || OB.DEC.compare(OB.DEC.sub(value, this.calculateAmount(value), this.payment.obposPosprecision));
     this.displayStatus();
 
     return this.bubble('onActionInput', {
@@ -57,36 +57,34 @@ enyo.kind({
     });
   },
   actionShowRemaining: function (inSender, inEvent) {
-    var remaining = this.calculateAmount(inEvent.value);
+    var value = OB.DEC.mul(inEvent.value, this.payment.mulrate, this.payment.obposPosprecision);
+    var remaining = this.calculateAmount(value);
 
     switch (OB.DEC.compare(remaining)) {
     case -1:
       this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingOverpaid'));
       this.isComplete = false;
-      this.isOverpaid = true;
       break;
     case 0:
       this.$.inforemaining.setContent('');
       this.isComplete = true;
-      this.isOverpaid = false;
       break;
     default:
       this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingChange', [OB.I18N.formatCurrencyWithSymbol(remaining, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
       this.isComplete = false;
-      this.isOverpaid = false;
       break;
     }
     this.displayStatus();
   },
   actionShow: function (inSender, inEvent) {
-    var currentChange;
+    var value, currentChange;
 
-    this.maxValue = this.calculateAmount(inEvent.receipt.getPaymentStatus().changeAmt);
+    value = OB.DEC.mul(inEvent.receipt.getPaymentStatus().changeAmt, this.payment.mulrate, this.payment.obposPosprecision);
+    this.maxValue = this.calculateAmount(value);
     this.$.infomax.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(this.maxValue, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
     this.$.inforemaining.setContent('');
     this.edited = false;
-    this.isComplete = false;
-    this.isOverpaid = false;
+    this.isComplete = true;
 
     currentChange = inEvent.receipt.get('changePayments').find(function (item) {
       return item.key === this.payment.payment.searchKey;
@@ -103,14 +101,41 @@ enyo.kind({
     }.bind(this), 100);
   },
   calculateAmount: function (value) {
-    return OB.Payments.Change.getChangeRounded({
-      payment: this.payment,
-      amount: OB.DEC.mul(value, this.payment.mulrate, this.payment.obposPosprecision)
-    });
+    var changeLessThan;
+
+    changeLessThan = this.payment.paymentMethod.changeLessThan;
+    if (changeLessThan) {
+      return OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(value, changeLessThan, 5)), this.payment.obposPosprecision);
+    } else {
+      return OB.Payments.Change.getChangeRounded({
+        payment: this.payment,
+        amount: value
+      });
+    }
+  },
+  getBestValue: function () {
+    var amount, rounded, precision, roundingto, roundinggap;
+
+    // Gets the best amount that is rounded to the same value.
+    // This is needed to estimate if the sum of all change amounts correspond to the  exact change
+    amount = parseFloat(this.$.textline.getValue());
+    if (!_.isNaN(amount) && this.payment.changeRounding) {
+      rounded = OB.Payments.Change.getChangeRounded({
+        payment: this.payment,
+        amount: amount
+      });
+      precision = this.payment.obposPosprecision;
+      roundingto = this.payment.changeRounding.roundingto;
+      roundinggap = this.payment.changeRounding.roundingdownlimit;
+      amount = OB.DEC.sub(rounded, OB.DEC.sub(roundingto, roundinggap, precision), precision);
+      amount = Math.min(amount, this.maxValue);
+      amount = Math.max(amount, 0);
+    }
+    return amount;
   },
   displayStatus: function () {
     this.$.textline.removeClass('changedialog-properties-validation-ok');
     this.$.textline.removeClass('changedialog-properties-validation-error');
-    this.$.textline.addClass(this.hasErrors || this.isOverpaid ? 'changedialog-properties-validation-error' : 'changedialog-properties-validation-ok');
+    this.$.textline.addClass(this.hasErrors ? 'changedialog-properties-validation-error' : 'changedialog-properties-validation-ok');
   }
 });

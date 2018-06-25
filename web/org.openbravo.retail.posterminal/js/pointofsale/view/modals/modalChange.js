@@ -56,20 +56,21 @@ enyo.kind({
     }, this);
   },
   executeOnShow: function () {
+    var lines;
+
     this.waterfall('onActionShow', this.args);
+    lines = this.$.bodyContent.$.paymentlines.getComponents();
     this.calculateRemaining();
   },
   calculateRemaining: function () {
-    var i, l, paymentstatus, lines, amount, origAmount, changeRounding;
+    var i, l, lines, origAmount, changeRounding;
 
-    paymentstatus = this.args.receipt.getPaymentStatus();
     lines = this.$.bodyContent.$.paymentlines.getComponents();
-    changeRounding = paymentstatus.changeAmt;
+    changeRounding = this.args.receipt.getPaymentStatus().changeAmt;
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
       if (!l.hasErrors) {
-        amount = parseFloat(l.$.textline.getValue());
-        origAmount = Math.min(OB.DEC.mul(amount, l.payment.rate), paymentstatus.changeAmt);
+        origAmount = OB.DEC.mul(l.getBestValue(), l.payment.rate);
         changeRounding = OB.DEC.sub(changeRounding, origAmount);
       }
     }
@@ -99,7 +100,9 @@ enyo.kind({
         return;
       }
       amount = parseFloat(l.$.textline.getValue());
-      origAmount = Math.min(OB.DEC.mul(amount, l.payment.rate), paymentstatus.changeAmt);
+      origAmount = OB.DEC.mul(amount, l.payment.rate);
+      origAmount = Math.min(origAmount, paymentstatus.changeAmt);
+      origAmount = Math.max(origAmount, 0);
       paymentchangemap.push({
         payment: l.payment,
         amount: amount,
@@ -128,23 +131,30 @@ enyo.kind({
     this.doHideThisPopup();
   },
   actionInput: function (inSender, inEvent) {
-    var lines, line, paymentstatus, originalValue, change, precision, linechange;
+    var lines, line, originalValue, change, precision, linechange, changeLessThan;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
+
     if (!inEvent.hasErrors && lines.length === 2) {
-      paymentstatus = this.args.receipt.getPaymentStatus();
       line = lines[inEvent.line === lines[0] ? 1 : 0];
-      originalValue = Math.min(OB.DEC.mul(inEvent.value, inEvent.line.payment.rate), paymentstatus.changeAmt);
-      change = OB.DEC.sub(paymentstatus.changeAmt, originalValue);
+      originalValue = OB.DEC.mul(inEvent.value, inEvent.line.payment.rate);
+      change = OB.DEC.sub(this.args.receipt.getPaymentStatus().changeAmt, originalValue);
       precision = line.payment.obposPosprecision;
       linechange = OB.DEC.mul(change, line.payment.mulrate, precision);
+      changeLessThan = line.payment.paymentMethod.changeLessThan;
+      if (changeLessThan) {
+        linechange = OB.DEC.mul(changeLessThan, Math.round(OB.DEC.div(linechange, changeLessThan, 5)), precision);
+      } else {
+        linechange = OB.Payments.Change.getChangeRounded({
+          payment: line.payment,
+          amount: linechange
+        });
+      }
+      linechange = Math.min(linechange, line.maxValue);
+      linechange = Math.max(linechange, 0);
 
-      line.assignValidValue(OB.Payments.Change.getChangeRounded({
-        payment: line.payment,
-        amount: linechange
-      }));
+      line.assignValidValue(linechange);
     }
-
     this.calculateRemaining();
   }
 });
