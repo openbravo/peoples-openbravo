@@ -47,7 +47,7 @@ enyo.kind({
   actionInput: function (inSender, inEvent) {
     var value = parseFloat(this.$.textline.getValue());
     this.edited = true;
-    this.hasErrors = _.isNaN(value) || value < 0 || value > this.maxValue || OB.DEC.compare(OB.DEC.sub(value, this.calculateAmount(value), this.payment.obposPosprecision));
+    this.hasErrors = _.isNaN(value) || value < 0 || OB.DEC.compare(OB.DEC.sub(value, this.calculateAmount(value), this.payment.obposPosprecision));
     this.displayStatus();
 
     return this.bubble('onActionInput', {
@@ -64,14 +64,17 @@ enyo.kind({
     case -1:
       this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingOverpaid'));
       this.isComplete = false;
+      this.isOverpaid = true;
       break;
     case 0:
       this.$.inforemaining.setContent('');
       this.isComplete = true;
+      this.isOverpaid = false;
       break;
     default:
       this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingChange', [OB.I18N.formatCurrencyWithSymbol(remaining, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
       this.isComplete = false;
+      this.isOverpaid = false;
       break;
     }
     this.displayStatus();
@@ -85,6 +88,7 @@ enyo.kind({
     this.$.inforemaining.setContent('');
     this.edited = false;
     this.isComplete = true;
+    this.isOverpaid = false;
 
     currentChange = inEvent.receipt.get('changePayments').find(function (item) {
       return item.key === this.payment.payment.searchKey;
@@ -136,6 +140,6 @@ enyo.kind({
   displayStatus: function () {
     this.$.textline.removeClass('changedialog-properties-validation-ok');
     this.$.textline.removeClass('changedialog-properties-validation-error');
-    this.$.textline.addClass(this.hasErrors ? 'changedialog-properties-validation-error' : 'changedialog-properties-validation-ok');
+    this.$.textline.addClass(this.hasErrors || this.isOverpaid ? 'changedialog-properties-validation-error' : 'changedialog-properties-validation-ok');
   }
 });
