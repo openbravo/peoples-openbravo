@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2017 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Vector;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
@@ -37,6 +37,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
@@ -58,14 +62,15 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
+import org.openbravo.erpCommon.utility.poc.EmailInfo;
 import org.openbravo.erpCommon.utility.poc.EmailType;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 import org.openbravo.erpCommon.utility.reporting.Report;
-import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
+import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.system.Language;
@@ -74,12 +79,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
@@ -760,46 +760,16 @@ public class PrintController extends HttpSecureAppServlet {
     emailBody = emailBody.replaceAll("@doc_desc@",
         Matcher.quoteReplacement(report.getDocDescription()));
 
-    String host = null;
-    boolean auth = true;
-    String username = null;
-    String password = null;
-    String connSecurity = null;
-    int port = 25;
-
     OBContext.setAdminMode(true);
+    EmailServerConfiguration mailConfig = null;
     try {
-      final EmailServerConfiguration mailConfig = OBDal.getInstance().get(
-          EmailServerConfiguration.class, vars.getStringParameter("fromEmailId"));
-
-      host = mailConfig.getSmtpServer();
-
-      if (!mailConfig.isSMTPAuthentification()) {
-        auth = false;
-      }
-      username = mailConfig.getSmtpServerAccount();
-      password = FormatUtilities.encryptDecrypt(mailConfig.getSmtpServerPassword(), false);
-      connSecurity = mailConfig.getSmtpConnectionSecurity();
-      port = mailConfig.getSmtpPort().intValue();
+      mailConfig = OBDal.getInstance().get(EmailServerConfiguration.class,
+          vars.getStringParameter("fromEmailId"));
     } finally {
       OBContext.restorePreviousMode();
     }
 
-    final String recipientTO = toEmail;
-    final String recipientCC = vars.getStringParameter("ccEmail");
-    final String recipientBCC = vars.getStringParameter("bccEmail");
-    final String replyTo = replyToEmail;
-    final String contentType = "text/plain; charset=utf-8";
-
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("From: " + senderAddress);
-      log4j.debug("Recipient TO (contact email): " + recipientTO);
-      log4j.debug("Recipient CC: " + recipientCC);
-      log4j.debug("Recipient BCC (user email): " + recipientBCC);
-      log4j.debug("Reply-to (sales rep email): " + replyTo);
-    }
-
-    List<File> attachments = new ArrayList<File>();
+    List<File> attachments = new ArrayList<>();
     attachments.add(new File(attachmentFileLocation));
 
     if (object != null) {
@@ -811,10 +781,22 @@ public class PrintController extends HttpSecureAppServlet {
       }
     }
 
+    final EmailInfo email = new EmailInfo.Builder().setRecipientTO(toEmail)
+        .setRecipientCC(vars.getStringParameter("ccEmail"))
+        .setRecipientBCC(vars.getStringParameter("bccEmail")).setReplyTo(replyToEmail)
+        .setSubject(emailSubject).setContent(emailBody).setContentType("text/plain; charset=utf-8")
+        .setAttachments(attachments).setSentDate(new Date()).build();
+
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("From: " + senderAddress);
+      log4j.debug("Recipient TO (contact email): " + email.getRecipientTO());
+      log4j.debug("Recipient CC: " + email.getRecipientCC());
+      log4j.debug("Recipient BCC (user email): " + email.getRecipientBCC());
+      log4j.debug("Reply-to (sales rep email): " + email.getReplyTo());
+    }
+
     try {
-      EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
-          recipientTO, recipientCC, recipientBCC, replyTo, emailSubject, emailBody, contentType,
-          attachments, new Date(), null);
+      EmailManager.sendEmail(mailConfig, email);
     } catch (Exception exception) {
       log4j.error(exception);
       final String exceptionClass = exception.getClass().toString().replace("class ", "");
@@ -841,8 +823,9 @@ public class PrintController extends HttpSecureAppServlet {
         log4j.debug("New email id: " + newEmailId);
 
       EmailData.insertEmail(conn, this, newEmailId, vars.getClient(), report.getOrgId(),
-          vars.getUser(), EmailType.OUTGOING.getStringValue(), replyTo, recipientTO, recipientCC,
-          recipientBCC, Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
+          vars.getUser(), EmailType.OUTGOING.getStringValue(), email.getReplyTo(),
+          email.getRecipientTO(), email.getRecipientCC(), email.getRecipientBCC(),
+          Utility.formatDate(new Date(), "yyyyMMddHHmmss"), emailSubject, emailBody,
           report.getBPartnerId(),
           ToolsData.getTableId(this, report.getDocumentType().getTableName()),
           documentData.documentId);
