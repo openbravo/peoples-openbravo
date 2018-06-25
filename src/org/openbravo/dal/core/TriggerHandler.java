@@ -108,7 +108,7 @@ public class TriggerHandler {
         ps.executeUpdate();
       }
     } catch (Exception e) {
-      throw new OBException("Couldn't disable triggers: ", e);
+      throw new OBException("Couldn't enable triggers: ", e);
     } finally {
       // always clear the threadlocal
       clear();
