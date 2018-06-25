@@ -49,7 +49,6 @@ import org.openbravo.materialmgmt.hook.InventoryCountCheckHook;
 import org.openbravo.materialmgmt.hook.InventoryCountProcessHook;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.calendar.Period;
@@ -283,22 +282,29 @@ public class InventoryCountProcess implements Process {
     }
     // Products without attribute set.
     StringBuffer where = new StringBuffer();
-    where.append(" as icl");
-    where.append("   join icl." + InventoryCountLine.PROPERTY_PRODUCT + " as p");
-    where.append("   join icl." + Product.PROPERTY_STORAGEBIN + " as sb");
-    where.append("   join p." + Product.PROPERTY_ATTRIBUTESET + " as aset");
-    where.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory");
-    where.append("   and aset." + AttributeSet.PROPERTY_REQUIREATLEASTONEVALUE + " = true");
-    where.append("   and coalesce(p." + Product.PROPERTY_USEATTRIBUTESETVALUEAS + ", '-') <> 'F'");
-    where.append("   and coalesce(icl." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
-        + ", '0') = '0'");
-    where.append("   and not (icl." + InventoryCountLine.PROPERTY_QUANTITYCOUNT + " = 0");
-    where.append("     and (select 1 from " + StorageDetail.ENTITY_NAME + " sd");
-    where.append("        where sb.id = sd." + StorageDetail.PROPERTY_STORAGEBIN + ".id");
-    where.append("          and p.id = sd." + StorageDetail.PROPERTY_PRODUCT + ".id");
-    where.append("          and sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE + " = '0'");
-    where.append("          and sd." + StorageDetail.PROPERTY_QUANTITYONHAND + " <> 0 ) = 1)");
-    where.append("  order by icl." + InventoryCountLine.PROPERTY_LINENO);
+    where.append(" as icl ");
+    where.append("   join icl.product as p ");
+    where.append("   join icl.storageBin as sb ");
+    where.append("   join p.attributeSet as aset ");
+    where.append(" where icl.physInventory.id = :inventory ");
+    where.append("   and aset.requireAtLeastOneValue = true ");
+    where.append("   and coalesce(p.useAttributeSetValueAs, '-') <> 'F' ");
+    where.append("   and coalesce(icl.attributeSetValue, '0') = '0' ");
+    // Allow to regularize to 0 any existing Stock without attribute for this Product
+    // (this situation can happen when there is a bug in a different part of the code,
+    // but the user should be able always to zero this stock)
+    where.append("   and (icl.quantityCount <> 0 ");
+    where.append("        or (icl.quantityCount = 0 ");
+    where.append("            and not exists (select 1 from MaterialMgmtStorageDetail sd ");
+    where.append("                                     where sd.storageBin.id = sb.id ");
+    where.append("                                     and sd.product.id = p.id ");
+    where.append("                                     and sd.attributeSetValue = '0' ");
+    where.append("                                     and sd.uOM.id = icl.uOM.id ");
+    where.append("                                     and sd.quantityOnHand <> 0 ");
+    where.append("                                    and sd.quantityInDraftTransactions <> 0 ) ");
+    where.append("                           ) ");
+    where.append("           ) ");
+    where.append("  order by icl.lineNo ");
     OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
         where.toString());
     iclQry.setNamedParameter("inventory", inventory.getId());
