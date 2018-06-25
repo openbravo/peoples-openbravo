@@ -52,6 +52,7 @@ enyo.kind({
     } else {
       var payment, change, pending, isMultiOrders, paymentstatus;
       payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+      this.$.noenoughchangelbl.hide();
       if (_.isUndefined(payment)) {
         return true;
       }
@@ -451,22 +452,18 @@ enyo.kind({
     this.$.change.setContent(paymentchange.label);
     this.$.change.setShowing(showing);
     this.$.changelbl.setShowing(showing);
-
-    // Calculate if there is enough change
-    var result = this.receipt.get('changePayments').some(function (itemchange) {
+  },
+  checkEnoughMultiChange: function () {
+    return this.receipt.get('changePayments').every(function (itemchange) {
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
-      return paymentMethod.foreignCash < itemchange.amountRounded;
+      return paymentMethod.foreignCash >= itemchange.amountRounded;
     });
-
-    // Show / hide not enough message
-    this.$.noenoughchangelbl.setShowing(result);
-
-    // Enable / disable receipt buttons done and exact
-    this.$.donebutton.setLocalDisabled(result);
-    this.$.exactbutton.setLocalDisabled(result);
-
-    // Update flag
-    this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
+  },
+  getOrigAmountChange: function (payment) {
+    var changepayment = this.receipt.get('changePayments').find(function (itemchange) {
+      return itemchange.searchKey === payment.searchKey;
+    });
+    return changepayment ? changepayment.origAmount : 0;
   },
   updatePending: function () {
     var execution = OB.UTIL.ProcessController.start('updatePending');
@@ -492,12 +489,12 @@ enyo.kind({
       symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].currencySymbolAtTheRight;
       isCashType = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].paymentMethod.iscash;
     }
-    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
     if (paymentstatus.change) {
       this.calculateChange(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], this.receipt.getChange());
     } else {
       this.calculateChangeReset();
     }
+    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
     if (paymentstatus.overpayment) {
       this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentstatus.overpayment, symbol, symbolAtRight));
       this.$.overpayment.show();
@@ -589,12 +586,12 @@ enyo.kind({
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
-    this.checkValidPayments(paymentstatus.getPaymentStatus(), selectedPayment);
     if (paymentstatus.get('change')) {
       this.calculateChange(selectedPayment, paymentstatus.get('change'));
     } else {
       this.calculateChangeReset();
     }
+    this.checkValidPayments(paymentstatus.getPaymentStatus(), selectedPayment);
     //overpayment
     if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
       this.$.overpayment.setContent(OB.I18N.formatCurrency(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))));
@@ -656,6 +653,8 @@ enyo.kind({
         reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
+      var changeAmt;
+
       // If there are reverse payments search for those of cash payment method. It will be needed to check if there is enough cash to reverse those payments.
       if (paymentstatus.isReversal) {
         paymentstatus.payments.each(function (payment) {
@@ -689,10 +688,11 @@ enyo.kind({
             }
           });
         } else if (!_.isUndefined(paymentstatus)) {
+          changeAmt = this.getOrigAmountChange(selectedPayment);
           if (button === 'Layaway' || button === 'Credit') {
-            requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt);
+            requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, changeAmt);
           } else {
-            requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
+            requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, changeAmt), paymentstatus.pendingAmt);
           }
         }
 
@@ -701,6 +701,8 @@ enyo.kind({
         } else if (!_.isUndefined(requiredCash)) {
           hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
         }
+
+        hasEnoughCash = hasEnoughCash && this.checkEnoughMultiChange();
       }
 
       if (hasEnoughCash && ((button === 'Layaway' || button === 'Credit') || (button === 'Done' && hasAllEnoughCash))) {
@@ -708,7 +710,7 @@ enyo.kind({
       } else {
         return callback.call(scope, false); // check failed.
       }
-    });
+    }.bind(this));
   },
 
   checkValidOverpayment: function (paymentstatus) {
@@ -752,7 +754,7 @@ enyo.kind({
       return true;
     }
 
-    requiredCash = paymentstatus.changeAmt;
+    requiredCash = this.getOrigAmountChange(selectedPayment);
     if (!OB.UTIL.isNullOrUndefined(requiredCash)) {
       requiredCash = OB.DEC.toNumber(requiredCash);
     }
@@ -802,10 +804,12 @@ enyo.kind({
           this.$.onlycashpaymentmethod.show();
         } else if (alternativePaymentInfo && alternativePaymentInfo.currentCash < change) {
           check = false;
+          this.$.noenoughchangelbl.show();
         }
       } else {
         if (currentcash < change) {
           check = false;
+          this.$.noenoughchangelbl.show();
         }
       }
     }
@@ -841,6 +845,7 @@ enyo.kind({
       this.$.overpaymentexceedlimit.hide();
       this.$.allAttributesNeedValue.hide();
     }
+    this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
 
     // Do the checkins
@@ -861,7 +866,16 @@ enyo.kind({
           resultOK = true;
         } else {
           resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
+            var lsuccess = success;
+            if (lsuccess) {
+              lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+            } else {
+              this.$.noenoughchangelbl.show();
+              this.$.donebutton.setLocalDisabled(true);
+              this.$.exactbutton.setLocalDisabled(true);
+            }
             me.updateAddPaymentAction();
+            this.setStatusButtons(lsuccess, 'Done');
             this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Layaway', function (success) {
               this.setStatusButtons(success, 'Layaway');
             });
@@ -871,6 +885,8 @@ enyo.kind({
           });
         }
       } else if (!this.getAddPaymentAction()) {
+        this.$.donebutton.setLocalDisabled(false);
+        this.$.exactbutton.setLocalDisabled(false);
         this.$.creditsalesaction.setLocalDisabled(false);
         this.updateLayawayAction();
       }
@@ -878,7 +894,11 @@ enyo.kind({
     } else {
       me.updateAddPaymentAction();
       // Finally set status of buttons
+      this.setStatusButtons(resultOK, 'Done');
       this.setStatusButtons(resultOK, 'Layaway');
+    }
+    if (resultOK) {
+      this.$.noenoughchangelbl.hide();
     }
 
     // check that all attributes has value
@@ -1019,7 +1039,20 @@ enyo.kind({
     return msgToReturn;
   },
   setStatusButtons: function (resultOK, button) {
-    if (button === 'Layaway') {
+    if (button === 'Done') {
+      if (resultOK) {
+        this.$.donebutton.setLocalDisabled(false);
+        this.$.exactbutton.setLocalDisabled(false);
+      } else {
+        if (this.$.changeexceedlimit.showing || this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
+          this.$.noenoughchangelbl.hide();
+        } else {
+          this.$.noenoughchangelbl.show();
+        }
+        this.$.donebutton.setLocalDisabled(true);
+        this.$.exactbutton.setLocalDisabled(true);
+      }
+    } else if (button === 'Layaway') {
       this.updateLayawayAction(resultOK ? false : true);
     } else if (button === 'Credit') {
       if (resultOK) {
