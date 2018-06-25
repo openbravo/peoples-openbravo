@@ -223,7 +223,7 @@ public class CostingMigrationProcess implements Process {
     delete.append(" where " + Alert.PROPERTY_ALERTRULE + " = :alertRule ");
     @SuppressWarnings("rawtypes")
     Query queryDelete = OBDal.getInstance().getSession().createQuery(delete.toString());
-    queryDelete.setEntity("alertRule", legacyCostAvailableAlert);
+    queryDelete.setParameter("alertRule", legacyCostAvailableAlert);
     queryDelete.executeUpdate();
 
     if (legacyCostAvailableAlert.isActive()) {

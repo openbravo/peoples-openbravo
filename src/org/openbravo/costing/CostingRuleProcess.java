@@ -314,7 +314,7 @@ public class CostingRuleProcess implements Process {
     @SuppressWarnings("rawtypes")
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setParameterList("orgs", childOrgs);
-    queryInsert.setTimestamp("date", date);
+    queryInsert.setParameter("date", date);
     queryInsert.setParameter("client", client.getId());
     int n1 = queryInsert.executeUpdate();
     log4j.debug("InitializeOldTrx inserted " + n1 + " records. Took: "
@@ -338,7 +338,7 @@ public class CostingRuleProcess implements Process {
     Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
     queryUpdate.setParameter("currency", client.getCurrency());
     queryUpdate.setParameterList("orgs", childOrgs);
-    queryUpdate.setTimestamp("date", date);
+    queryUpdate.setParameter("date", date);
     queryUpdate.setParameter("client", client.getId());
     int n2 = queryUpdate.executeUpdate();
     log4j.debug("InitializeOldTrx updated " + n2 + " records. Took: "
@@ -487,7 +487,7 @@ public class CostingRuleProcess implements Process {
     Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
     stockLinesQry.setParameterList("orgs", childOrgs);
     if (date != null) {
-      stockLinesQry.setTimestamp("date", date);
+      stockLinesQry.setParameter("date", date);
     }
     stockLinesQry.setFetchSize(1000);
     ScrollableResults stockLines = stockLinesQry.scroll(ScrollMode.FORWARD_ONLY);
@@ -737,7 +737,7 @@ public class CostingRuleProcess implements Process {
 
     @SuppressWarnings("rawtypes")
     Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
-    queryUpdate.setTimestamp("date", startingDate);
+    queryUpdate.setParameter("date", startingDate);
     queryUpdate.setParameter("cr", ruleId);
     queryUpdate.executeUpdate();
 

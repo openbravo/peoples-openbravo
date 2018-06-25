@@ -69,9 +69,9 @@ public class FIN_ReconciliationEventListener extends EntityPersistenceEventObser
     update.append(" and " + FIN_Reconciliation.PROPERTY_TRANSACTIONDATE + " > :date");
     @SuppressWarnings("rawtypes")
     Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
-    updateQry.setBigDecimal("balance", balance);
+    updateQry.setParameter("balance", balance);
     updateQry.setParameter("accountId", rec.getAccount().getId());
-    updateQry.setTimestamp("date", rec.getTransactionDate());
+    updateQry.setParameter("date", rec.getTransactionDate());
     updateQry.executeUpdate();
   }
 }

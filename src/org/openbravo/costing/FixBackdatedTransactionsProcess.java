@@ -198,9 +198,9 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
     Query<MaterialTransaction> stockLinesQry = OBDal.getInstance().getSession()
         .createQuery(select.toString(), MaterialTransaction.class);
     stockLinesQry.setParameterList("orgs", childOrgs);
-    stockLinesQry.setTimestamp("startDate", startDate);
+    stockLinesQry.setParameter("startDate", startDate);
     if (endDate != null) {
-      stockLinesQry.setTimestamp("endDate", endDate);
+      stockLinesQry.setParameter("endDate", endDate);
     }
 
     stockLinesQry.setFetchSize(1000);

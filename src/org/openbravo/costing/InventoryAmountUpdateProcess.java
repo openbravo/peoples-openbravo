@@ -321,7 +321,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         .createQuery(select.toString(), Object[].class);
     stockLinesQry.setParameterList("orgs", childOrgs);
     if (localDate != null) {
-      stockLinesQry.setTimestamp("date", localDate);
+      stockLinesQry.setParameter("date", localDate);
     }
     if (warehouse != null) {
       stockLinesQry.setParameter("warehouse", warehouse);

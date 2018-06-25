@@ -63,7 +63,7 @@ public class PriceDifferenceUtil {
     }
     update.setParameterList("orgIds",
         new OrganizationStructureProvider().getChildTree(organization.getId(), true));
-    update.setDate("date", movementdate);
+    update.setParameter("date", movementdate);
     update.setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
 
     update.executeUpdate();

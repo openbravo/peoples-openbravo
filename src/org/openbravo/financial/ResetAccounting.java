@@ -166,9 +166,9 @@ public class ResetAccounting {
                 query.setParameter("clientId", client);
                 query.setParameter("dbt", dbt);
                 query.setParameter("tableId", table);
-                query.setDate("dateFrom",
+                query.setParameter("dateFrom",
                     StringUtils.isNotEmpty(strdatefrom) ? OBDateUtils.getDate(strdatefrom) : p[0]);
-                query.setDate("dateTo",
+                query.setParameter("dateTo",
                     StringUtils.isNotEmpty(strdateto) ? OBDateUtils.getDate(strdateto) : p[1]);
                 query.setParameter("organization", organization);
                 if (localRecordId != null && !"".equals(localRecordId)) {
@@ -385,10 +385,10 @@ public class ResetAccounting {
             new OrganizationStructureProvider().getNaturalTree(adOrgId));
         try {
           if (!("".equals(datefrom))) {
-            update.setDate("dateFrom", OBDateUtils.getDate(datefrom));
+            update.setParameter("dateFrom", OBDateUtils.getDate(datefrom));
           }
           if (!("".equals(dateto))) {
-            update.setDate("dateTo", OBDateUtils.getDate(dateto));
+            update.setParameter("dateTo", OBDateUtils.getDate(dateto));
           }
         } catch (ParseException e) {
           log4j.error("Restore - Error parsisng dates", e);
@@ -485,10 +485,10 @@ public class ResetAccounting {
 
     try {
       if (!("".equals(datefrom))) {
-        query.setDate("dateFrom", OBDateUtils.getDate(datefrom));
+        query.setParameter("dateFrom", OBDateUtils.getDate(datefrom));
       }
       if (!("".equals(dateto))) {
-        query.setDate("dateTo", OBDateUtils.getDate(dateto));
+        query.setParameter("dateTo", OBDateUtils.getDate(dateto));
       }
     } catch (ParseException e) {
       log4j.error("GetOpenPeriods - error parsing dates", e);
@@ -574,10 +574,10 @@ public class ResetAccounting {
       query.setParameter("clientId", client);
       query.setParameter("dbt", dbt);
       query.setParameter("tableId", table);
-      query.setDate("dateFrom",
+      query.setParameter("dateFrom",
           StringUtils.isNotEmpty(parameterDateFrom) ? OBDateUtils.getDate(parameterDateFrom)
               : periodStartingDate);
-      query.setDate("dateTo",
+      query.setParameter("dateTo",
           StringUtils.isNotEmpty(parameterDateTo) ? OBDateUtils.getDate(parameterDateTo)
               : periodEndingDate);
       query.setParameter("organization", targetOrganization);
