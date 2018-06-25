@@ -101,21 +101,17 @@ public class TriggerHandler {
     log.debug("Enabling triggers");
     Check.isNotNull(sessionStatus.get(), "SessionStatus not set, call disable "
         + "before calling this method");
-
-    Connection con = OBDal.getInstance().getConnection();
-    PreparedStatement ps = null;
     try {
-      ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS WHERE isimporting = 'Y'");
-      ps.executeUpdate();
+      Connection con = OBDal.getInstance().getConnection();
+      try (PreparedStatement ps = con
+          .prepareStatement("DELETE FROM AD_SESSION_STATUS WHERE isimporting = 'Y'")) {
+        ps.executeUpdate();
+      }
     } catch (Exception e) {
       throw new OBException("Couldn't disable triggers: ", e);
     } finally {
       // always clear the threadlocal
       clear();
-      try {
-        ps.close();
-      } catch (SQLException e) {
-      }
     }
   }
 }
