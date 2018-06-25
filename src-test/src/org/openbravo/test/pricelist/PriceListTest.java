@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,7 @@ import org.openbravo.test.pricelist.data.PriceListTestData13;
 import org.openbravo.test.pricelist.data.PriceListTestData14;
 import org.openbravo.test.pricelist.data.PriceListTestData15;
 import org.openbravo.test.pricelist.data.PriceListTestData16;
+import org.openbravo.test.pricelist.data.PriceListTestData17;
 import org.openbravo.test.pricelist.data.PriceListTestData2;
 import org.openbravo.test.pricelist.data.PriceListTestData3;
 import org.openbravo.test.pricelist.data.PriceListTestData4;
@@ -108,6 +109,7 @@ public class PriceListTest extends OBBaseTest {
   private boolean isSalesPrice;
   private boolean isBasedOnCost;
   private boolean isPriceIncludesTax;
+  private boolean isDefault;
 
   // Price List Version
   private String basePriceListVersionId;
@@ -120,6 +122,7 @@ public class PriceListTest extends OBBaseTest {
     this.isSalesPrice = data.isSalesPrice();
     this.isBasedOnCost = data.isBasedOnCost();
     this.isPriceIncludesTax = data.isPriceIncludesTax();
+    this.isDefault = data.isDefault();
     this.basePriceListVersionId = data.getBasePriceListVersionId();
     this.expectedProductPricesData = data.getExpectedProductPrices();
   }
@@ -208,7 +211,12 @@ public class PriceListTest extends OBBaseTest {
                 "16",
                 "Price List Schema with four different rules applied. Unit Price and List Price discounts applied.",
                 new PriceListTestData16() //
-            } });
+            },
+            {
+                "17",
+                "Data used for Test: Price List Schema with more than one rule applied. One rule with 50% unit price for one product, and second one with one product of of same Category and an unit price of 50%",
+                new PriceListTestData17() //
+            }, });
   }
 
   @Test
@@ -413,6 +421,7 @@ public class PriceListTest extends OBBaseTest {
     pl.setSalesPriceList(isSalesPrice);
     pl.setCostBasedPriceList(isBasedOnCost);
     pl.setPriceIncludesTax(isPriceIncludesTax);
+    pl.setDefault(isDefault);
     OBDal.getInstance().save(pl);
     return pl;
   }
