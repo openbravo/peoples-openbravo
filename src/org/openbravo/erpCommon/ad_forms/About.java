@@ -23,27 +23,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.modules.ModuleTreeData;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBVersion;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.financialmgmt.accounting.coa.AccountingCombination;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class About extends HttpSecureAppServlet {
@@ -52,31 +46,11 @@ public class About extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    getFAAccountList(false, "732913485BB040FFA4643FF06D1AA095");
+
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
     } else
       pageError(response);
-  }
-
-  private void getFAAccountList(boolean isReceipt, String acctSchemaId) {
-    Set<String> result = new HashSet<String>();
-    final StringBuilder hqlString = new StringBuilder();
-    if (isReceipt) {
-      hqlString.append("select distinct faa.inTransitPaymentAccountIN");
-    } else {
-      hqlString.append("select distinct faa.fINOutIntransitAcct");
-    }
-    hqlString.append(" from FIN_Financial_Account_Acct as faa");
-    hqlString.append(" where faa.accountingSchema.id = :acctSchemaId");
-    final Session session = OBDal.getInstance().getSession();
-    final Query<AccountingCombination> query = session.createQuery(hqlString.toString(),
-        AccountingCombination.class);
-    query.setParameter("acctSchemaId", acctSchemaId);
-    for (AccountingCombination value : query.list()) {
-      System.out.println(value);
-      result.add(value.getAccount().getId());
-    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
