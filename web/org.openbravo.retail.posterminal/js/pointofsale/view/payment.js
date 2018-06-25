@@ -375,7 +375,15 @@ enyo.kind({
       popup: 'modalchange',
       args: {
         receipt: this.receipt,
-        applyPaymentChange: this.applyPaymentChange.bind(this)
+        applyPaymentChange: function (paymentchange) {
+          var paymentstatus, selectedPayment;
+
+          this.applyPaymentChange(paymentchange);
+
+          paymentstatus = this.receipt.getPaymentStatus();
+          selectedPayment = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')];
+          this.checkValidPayments(paymentstatus, selectedPayment);
+        }.bind(this)
       }
     });
   },
