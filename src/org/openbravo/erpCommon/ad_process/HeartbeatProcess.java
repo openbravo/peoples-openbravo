@@ -30,7 +30,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -38,15 +37,17 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -558,12 +559,11 @@ public class HeartbeatProcess implements Process {
    *          The identifier of the beat on the heartbeat server.
    * @throws JSONException
    */
-  @SuppressWarnings("unchecked")
   private void processCustomQueries(JSONArray jsonArrayCQueries, String beatId)
       throws JSONException {
-    if ("null".equals(jsonArrayCQueries.get(0)))
+    if ("null".equals(jsonArrayCQueries.get(0))) {
       return;
-
+    }
     JSONObject jsonObjectCQReturn = new JSONObject();
     for (int i = 0; i < jsonArrayCQueries.length(); i++) {
       JSONObject jsonCustomQuery = (JSONObject) jsonArrayCQueries.get(i);
@@ -577,41 +577,36 @@ public class HeartbeatProcess implements Process {
           HeartbeatLogCustomQuery hbLogCQ = logCustomQuery(strQName, strQType, strHQL);
 
           Session obSession = OBDal.getInstance().getSession();
-          Query customQuery = obSession.createQuery(strHQL);
-          String[] properties = customQuery.getReturnAliases();
+          Query<Tuple> customQuery = obSession.createQuery(strHQL, Tuple.class);
           JSONArray jsonArrayResultRows = new JSONArray();
           int row = 0;
-
-          for (Object objResult : (List<Object>) customQuery.list()) {
+          List<Tuple> tupleList = customQuery.list();
+          List<String> properties = null;
+          boolean initProperties = true;
+          for (Tuple tuple : tupleList) {
             row += 1;
             JSONArray jsonArrayResultRowValues = new JSONArray();
-
-            Object[] resultList = new Object[1];
-            if (objResult instanceof Object[])
-              resultList = (Object[]) objResult;
-            else
-              resultList[0] = objResult;
-
-            for (int j = 0; j < resultList.length; j++) {
-              jsonArrayResultRowValues.put(resultList[j]);
-
-              String fieldName = null;
-              if (properties != null && properties.length > j) {
-                fieldName = properties[j];
+            properties = new ArrayList<>();
+            int j = 0;
+            for (TupleElement<?> tupleElement : tuple.getElements()) {
+              jsonArrayResultRowValues.put(tuple.get(j));
+              String alias = tupleElement.getAlias();
+              if (initProperties) {
+                properties.add(alias);
               }
-              if (fieldName == null) {
-                fieldName = "??";
-              }
-              logCustomQueryResult(hbLogCQ, row, fieldName, resultList[j].toString());
+              String fieldName = alias != null ? alias : "??";
+              logCustomQueryResult(hbLogCQ, row, fieldName, tuple.get(j).toString());
             }
             jsonArrayResultRows.put(jsonArrayResultRowValues);
+            initProperties = false;
           }
 
-          if (customQuery.list().isEmpty())
+          if (tupleList.isEmpty()) {
             jsonArrayResultRows.put("null");
+          }
 
           JSONObject jsonResult = new JSONObject();
-          jsonResult.put("properties", properties == null ? null : Arrays.asList(properties));
+          jsonResult.put("properties", properties == null ? null : properties);
           jsonResult.put("values", jsonArrayResultRows);
           jsonObjectCQReturn.put(strQId, jsonResult);
         } else {
