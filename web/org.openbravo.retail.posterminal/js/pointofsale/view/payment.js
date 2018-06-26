@@ -1865,7 +1865,8 @@ enyo.kind({
 
     if (OB.DEC.compare(change.origAmount)) {
       // Add new change Payment
-      amountRounded = OB.Payments.Change.getChangeRounded(change);
+      // Calculate amountRounded only in case it is not forced by caller
+      amountRounded = _.isNumber(change.amountRounded) ? change.amountRounded : OB.Payments.Change.getChangeRounded(change);
       formattedRounded = OB.I18N.formatCurrencyWithSymbol(amountRounded, change.payment.symbol, change.payment.currencySymbolAtTheRight);
       if (OB.DEC.compare(OB.DEC.sub(change.amount, amountRounded, change.payment.obposPosprecision))) {
         paymentLabel = OB.I18N.getLabel('OBPOS_OriginalAmount', [formattedRounded, OB.I18N.formatCurrencyWithSymbol(change.amount, change.payment.symbol, change.payment.currencySymbolAtTheRight)]);

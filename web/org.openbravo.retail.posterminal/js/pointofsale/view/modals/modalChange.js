@@ -123,6 +123,8 @@ enyo.kind({
         // The origAmount of the selected change line is adjusted in order to guaranty the change
         // of the receipt is the sum of the origAmount of all change lines
         paymentchangemap[indexRounding].origAmount = OB.DEC.add(paymentchangemap[indexRounding].origAmount, changeRounding);
+        paymentchangemap[indexRounding].amountRounded = paymentchangemap[indexRounding].amount;
+        paymentchangemap[indexRounding].amount = OB.DEC.mul(paymentchangemap[indexRounding].origAmount, lines[indexRounding].payment.mulrate, lines[indexRounding].payment.obposPosprecision);
       }
       paymentchange = new OB.Payments.Change();
       paymentchangemap.forEach(paymentchange.add.bind(paymentchange));
