@@ -52,8 +52,8 @@ public class CheckApproval extends HttpServlet {
   private Instance<ApprovalPreCheckHook> approvalPreCheckProcesses;
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
 
     OBContext.setAdminMode(false);
     try {
@@ -99,7 +99,8 @@ public class CheckApproval extends HttpServlet {
             .getOrganizationStructureProvider(client).getNaturalTree(organization));
 
         String hqlQuery = "select p.property from ADPreference as p"
-            + " where property IS NOT NULL " + "   and active = true" //
+            + " where property IS NOT NULL "
+            + "   and active = true" //
             + "   and (case when length(searchKey)<>1 then 'X' else to_char(searchKey) end) = 'Y'" //
             + "   and (userContact.id = :user" //
             + "        or exists (from ADUserRoles r"
@@ -162,8 +163,8 @@ public class CheckApproval extends HttpServlet {
 
   private void executeApprovalCheckHook(String username, String password, String terminal,
       JSONArray approvalType, JSONObject attributes) {
-    for (Iterator<ApprovalCheckHook> processIterator = approvalCheckProcesses
-        .iterator(); processIterator.hasNext();) {
+    for (Iterator<ApprovalCheckHook> processIterator = approvalCheckProcesses.iterator(); processIterator
+        .hasNext();) {
       ApprovalCheckHook process = processIterator.next();
       try {
         process.exec(username, password, terminal, approvalType, attributes);
@@ -175,8 +176,8 @@ public class CheckApproval extends HttpServlet {
 
   private void executeApprovalPreCheckHook(String username, String password, String terminal,
       JSONArray approvalType, JSONObject attributes) {
-    for (Iterator<ApprovalPreCheckHook> processIterator = approvalPreCheckProcesses
-        .iterator(); processIterator.hasNext();) {
+    for (Iterator<ApprovalPreCheckHook> processIterator = approvalPreCheckProcesses.iterator(); processIterator
+        .hasNext();) {
       ApprovalPreCheckHook process = processIterator.next();
       try {
         process.exec(username, password, terminal, approvalType, attributes);
@@ -187,8 +188,8 @@ public class CheckApproval extends HttpServlet {
   }
 
   private Organization getTerminalStore(String posTerminal) {
-    OBCriteria<OBPOSApplications> terminalCriteria = OBDal.getInstance()
-        .createCriteria(OBPOSApplications.class);
+    OBCriteria<OBPOSApplications> terminalCriteria = OBDal.getInstance().createCriteria(
+        OBPOSApplications.class);
     terminalCriteria.setFilterOnReadableClients(false);
     terminalCriteria.setFilterOnReadableOrganization(false);
     terminalCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, posTerminal));
