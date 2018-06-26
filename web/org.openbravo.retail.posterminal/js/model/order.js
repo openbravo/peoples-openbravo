@@ -419,32 +419,33 @@
     },
 
     save: function (callback) {
-      var undoCopy = this.get('undo'),
-          me = this,
-          forceInsert = false;
-
-      if (this.get('isBeingClosed')) {
-        var diffReceipt = OB.UTIL.diffJson(this.serializeToJSON(), this.get('json'));
-        var error = new Error();
-        OB.error('The receipt is being save during the closing: ' + diffReceipt);
-        OB.error('The stack trace is: ' + error.stack);
-      }
-
-      var now = new Date();
-      this.set('timezoneOffset', now.getTimezoneOffset());
-
-      if (!this.get('id') || !this.id) {
-        var uuid = OB.UTIL.get_UUID();
-        this.set('id', uuid);
-        this.id = uuid;
-        forceInsert = true;
-      }
-
-      this.set('json', JSON.stringify(this.serializeToJSON()));
-      if (callback === undefined || !callback instanceof Function) {
-        callback = function () {};
-      }
       if (!OB.MobileApp.model.get('preventOrderSave') && !this.pendingCalculateReceipt) {
+        var undoCopy = this.get('undo'),
+            me = this,
+            forceInsert = false;
+
+        if (this.get('isBeingClosed')) {
+          var diffReceipt = OB.UTIL.diffJson(this.serializeToJSON(), this.get('json'));
+          var error = new Error();
+          OB.error('The receipt is being save during the closing: ' + diffReceipt);
+          OB.error('The stack trace is: ' + error.stack);
+        }
+
+        var now = new Date();
+        this.set('timezoneOffset', now.getTimezoneOffset());
+
+        if (!this.get('id') || !this.id) {
+          var uuid = OB.UTIL.get_UUID();
+          this.set('id', uuid);
+          this.id = uuid;
+          forceInsert = true;
+        }
+
+        this.set('json', JSON.stringify(this.serializeToJSON()));
+        if (callback === undefined || !callback instanceof Function) {
+          callback = function () {};
+        }
+
         OB.Dal.save(this, function () {
           if (callback) {
             callback();
@@ -452,12 +453,13 @@
         }, function () {
           OB.error(arguments);
         }, forceInsert);
+
+        this.setUndo('SaveOrder', undoCopy);
       } else {
         if (callback) {
           callback();
         }
       }
-      this.setUndo('SaveOrder', undoCopy);
     },
 
     calculateTaxes: function (callback) {
