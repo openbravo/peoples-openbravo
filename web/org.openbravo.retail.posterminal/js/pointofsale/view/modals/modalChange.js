@@ -110,7 +110,7 @@ enyo.kind({
       });
 
       changeRounding = OB.DEC.sub(changeRounding, origAmount);
-      if ((!l.payment.paymentMethod.changePaymentType && indexRounding < 0) || i === lines.length - 1) {
+      if ((l.payment.changeRounding || i === lines.length - 1) && indexRounding < 0) {
         // Line used for rounding is selected as the first line that does no have *changePaymentType*
         // or in case of all lines have *changePaymentType* then the last line
         // This guaranties *lineRounding* is assigned in case lines.length > 0
