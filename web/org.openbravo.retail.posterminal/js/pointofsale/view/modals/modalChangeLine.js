@@ -57,13 +57,8 @@ enyo.kind({
     });
   },
   actionShowRemaining: function (inSender, inEvent) {
-
-    var remaining = OB.Payments.Change.getChangeRounded({
-      payment: this.payment,
-      amount: OB.DEC.mul(inEvent.value, this.payment.mulrate, this.payment.obposPosprecision)
-    });
-
-    switch (OB.DEC.compare(remaining)) {
+    var remaining = this.calculateAmount(OB.DEC.mul(inEvent.value, this.payment.mulrate, this.payment.obposPosprecision));
+    switch (OB.DEC.compare(inEvent.value)) {
     case -1:
       this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingOverpaid'));
       this.isComplete = false;
@@ -119,26 +114,6 @@ enyo.kind({
         amount: value
       });
     }
-  },
-  getBestValue: function () {
-    var amount, rounded, precision, roundingto, roundinggap;
-
-    // Gets the best amount that is rounded to the same value.
-    // This is needed to estimate if the sum of all change amounts correspond to the  exact change
-    amount = parseFloat(this.$.textline.getValue());
-    if (!_.isNaN(amount) && this.payment.changeRounding) {
-      rounded = OB.Payments.Change.getChangeRounded({
-        payment: this.payment,
-        amount: amount
-      });
-      precision = this.payment.obposPosprecision;
-      roundingto = this.payment.changeRounding.roundingto;
-      roundinggap = this.payment.changeRounding.roundingdownlimit;
-      amount = OB.DEC.sub(rounded, OB.DEC.sub(roundingto, roundinggap, precision), precision);
-      amount = Math.min(amount, this.maxValue);
-      amount = Math.max(amount, 0);
-    }
-    return amount;
   },
   displayStatus: function () {
     this.$.textline.removeClass('changedialog-properties-validation-ok');

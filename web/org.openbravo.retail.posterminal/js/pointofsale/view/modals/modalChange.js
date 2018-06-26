@@ -63,17 +63,40 @@ enyo.kind({
     this.calculateRemaining();
   },
   calculateRemaining: function () {
-    var i, l, lines, origAmount, changeRounding;
+    var i, l, lines, amount, precision, roundingto, roundinggap, origamountmin, origamountmax, changemin, changemax, change, changeRounding;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
-    changeRounding = this.args.receipt.getPaymentStatus().changeAmt;
+    change = this.args.receipt.getPaymentStatus().changeAmt;
+    changemin = 0;
+    changemax = 0;
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
       if (!l.hasErrors) {
-        origAmount = OB.DEC.mul(l.getBestValue(), l.payment.rate);
-        changeRounding = OB.DEC.sub(changeRounding, origAmount);
+        amount = parseFloat(l.$.textline.getValue());
+        precision = l.payment.obposPosprecision;
+        if (l.payment.changeRounding) {
+          roundingto = l.payment.changeRounding.roundingto;
+          roundinggap = l.payment.changeRounding.roundingdownlimit;
+          origamountmin = OB.DEC.mul(OB.DEC.sub(amount, OB.DEC.sub(roundingto, roundinggap, precision), precision), l.payment.rate);
+          origamountmin = Math.max(origamountmin, 0);
+          origamountmax = OB.DEC.mul(OB.DEC.add(amount, roundinggap, precision), l.payment.rate);
+        } else {
+          origamountmin = OB.DEC.mul(amount, l.payment.rate, precision);
+          origamountmax = OB.DEC.mul(amount, l.payment.rate, precision);
+        }
+        changemin = OB.DEC.add(changemin, origamountmin);
+        changemax = OB.DEC.add(changemax, origamountmax);
       }
     }
+
+    if (change > changemax) {
+      changeRounding = OB.DEC.sub(change, changemax); // Incomplete
+    } else if (change < changemin) {
+      changeRounding = OB.DEC.sub(change, changemin); // Overpaid
+    } else {
+      changeRounding = 0; // In range, then complete.
+    }
+
     this.waterfall('onActionShowRemaining', {
       value: changeRounding
     });
