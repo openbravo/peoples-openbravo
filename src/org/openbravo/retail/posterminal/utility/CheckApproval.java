@@ -65,7 +65,6 @@ public class CheckApproval extends HttpServlet {
       if (request.getParameter("a") != null) {
         attributes = new JSONObject(request.getParameter("a"));
       }
-
       Organization store = getTerminalStore(terminal);
       final String organization = store.getId();
       final String client = store.getClient().getId();
@@ -73,7 +72,6 @@ public class CheckApproval extends HttpServlet {
       if (request.getParameter("approvalType") != null) {
         approvalType = new JSONArray(request.getParameter("approvalType"));
       }
-
       executeApprovalPreCheckHook(username, password, terminal, approvalType, attributes);
       JSONObject result = new JSONObject();
 
@@ -138,7 +136,6 @@ public class CheckApproval extends HttpServlet {
           jsonData.put("preference", jsonPreference);
           result.put("data", jsonData);
         }
-
         executeApprovalCheckHook(username, password, terminal, approvalType, attributes);
         if (attributes.has("msg")) {
           result.put("status", 1);
@@ -146,9 +143,7 @@ public class CheckApproval extends HttpServlet {
           jsonError.put("message", attributes.getString("msg"));
           result.put("error", jsonError);
         }
-
       }
-
       PrintWriter out = response.getWriter();
       response.setContentType("application/json");
       response.setCharacterEncoding("UTF-8");
@@ -193,9 +188,7 @@ public class CheckApproval extends HttpServlet {
     terminalCriteria.setFilterOnReadableClients(false);
     terminalCriteria.setFilterOnReadableOrganization(false);
     terminalCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, posTerminal));
-
     OBPOSApplications terminal = (OBPOSApplications) terminalCriteria.uniqueResult();
-
     return terminal.getOrganization();
   }
 }
