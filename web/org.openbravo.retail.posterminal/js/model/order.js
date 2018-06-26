@@ -2506,7 +2506,47 @@
         execPostAddProductToOrderHook();
       } // End addProductToOrder
 
-      function returnApproval() {
+      function returnApproval(p) {
+        function finalCallback(p) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+            OB.Dal.saveOrUpdate(p, function () {
+              var productcriteria = {
+                columns: ['product'],
+                operator: 'equals',
+                value: p.id,
+                isId: true
+              };
+              var remoteCriteria = [productcriteria];
+              var criteriaFilter = {};
+              criteriaFilter.remoteFilters = remoteCriteria;
+              OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+                function saveCharacteristics(characteristics, i) {
+                  if (i === characteristics.length) {
+                    addProductToOrder();
+                  } else {
+                    OB.Dal.saveOrUpdate(characteristics[i], function () {
+                      saveCharacteristics(characteristics, i + 1);
+                    }, function () {
+                      addProductToOrder();
+                    });
+                  }
+                }
+                if (productcharacteristic.models.length !== 0) {
+                  saveCharacteristics(productcharacteristic.models, 0);
+                } else {
+                  addProductToOrder();
+                }
+
+              }, function () {
+                addProductToOrder();
+              });
+            }, function () {
+              addProductToOrder();
+            });
+          } else {
+            addProductToOrder();
+          }
+        }
         if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
           if (options && options.isVerifiedReturn) {
             OB.UTIL.showLoading(false);
@@ -2517,7 +2557,7 @@
               OB.UTIL.showLoading(true);
             }
             if (approved) {
-              addProductToOrder();
+              finalCallback(p);
             } else {
               if (callback) {
                 callback(true);
@@ -2525,19 +2565,19 @@
             }
           });
         } else {
-          addProductToOrder();
+          finalCallback(p);
         }
       }
       if (productStatus && productStatus.restrictsaleoutofstock && OB.DEC.compare(qty) === 1 && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
         me.getStoreStock(p, qty, options, attrs, function (hasStock) {
           if (hasStock) {
-            returnApproval();
+            returnApproval(p);
           } else if (callback) {
             callback(false, null);
           }
         });
       } else {
-        returnApproval();
+        returnApproval(p);
       }
     },
 
@@ -3262,41 +3302,6 @@
         return newline;
       }
 
-
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        OB.Dal.saveOrUpdate(p, function () {}, function () {
-          OB.error(arguments);
-        });
-
-        var productcriteria = {
-          columns: ['product'],
-          operator: 'equals',
-          value: p.id,
-          isId: true
-        };
-        var remoteCriteria = [productcriteria];
-        var criteriaFilter = {};
-        criteriaFilter.remoteFilters = remoteCriteria;
-        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-          function saveCharacteristics(characteristics, i) {
-            if (i === characteristics.length) {
-              me.calculateReceipt();
-            } else {
-              OB.Dal.saveOrUpdate(characteristics[i], function () {
-                saveCharacteristics(characteristics, i + 1);
-              }, function () {
-                OB.error(arguments);
-              });
-            }
-          }
-          if (productcharacteristic.models.length !== 0) {
-            saveCharacteristics(productcharacteristic.models, 0);
-          }
-
-        }, function () {
-          OB.error(arguments);
-        });
-      }
       return createLineAux(p, units, options, attrs, me);
     },
 
