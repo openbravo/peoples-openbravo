@@ -57,8 +57,11 @@ enyo.kind({
     });
   },
   actionShowRemaining: function (inSender, inEvent) {
-    var value = OB.DEC.mul(inEvent.value, this.payment.mulrate, this.payment.obposPosprecision);
-    var remaining = this.calculateAmount(value);
+
+    var remaining = OB.Payments.Change.getChangeRounded({
+      payment: this.payment,
+      amount: OB.DEC.mul(inEvent.value, this.payment.mulrate, this.payment.obposPosprecision)
+    });
 
     switch (OB.DEC.compare(remaining)) {
     case -1:
