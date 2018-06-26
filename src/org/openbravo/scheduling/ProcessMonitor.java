@@ -183,8 +183,10 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
   }
 
   public void triggerFinalized(Trigger trigger) {
+    final ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
+    String updatedBy = bundle != null ? bundle.getContext().getUser() : "0";
     try {
-      ProcessRequestData.update(getConnection(), COMPLETE, trigger.getName());
+      ProcessRequestData.update(getConnection(), COMPLETE, updatedBy, trigger.getName());
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
@@ -196,8 +198,14 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   public void jobUnscheduled(String triggerName, String triggerGroup) {
     try {
-      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null, null, triggerName);
-
+      /*
+       * This method is never called. See for more details:
+       * https://issues.openbravo.com/view.php?id=38804
+       * 
+       * Once this issue is fixed, consider whether this method should be removed or changed to use
+       * an appropriate updatedBy userID
+       */
+      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null, null, "0", triggerName);
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
     } finally {
@@ -319,13 +327,14 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   private void stopConcurrency(Trigger trigger, JobExecutionContext jec, String processName) {
     try {
+      final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
       if (!trigger.mayFireAgain()) {
+        String updatedBy = bundle != null ? bundle.getContext().getUser() : "0";
         // This is last execution of this trigger, so set it as complete
-        ProcessRequestData.update(getConnection(), COMPLETE, trigger.getName());
+        ProcessRequestData.update(getConnection(), COMPLETE, updatedBy, trigger.getName());
       }
 
       // Create a process run as error
-      final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
       if (bundle != null) {
         final ProcessContext ctx = bundle.getContext();
         final String executionId = SequenceIdData.getUUID();

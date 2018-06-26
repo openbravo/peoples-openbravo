@@ -377,7 +377,7 @@ public class DocInvoice extends AcctServer {
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
         BigDecimal grossamt = new BigDecimal(Amounts[AMTTYPE_Gross]);
         BigDecimal prepayment = new BigDecimal(prepaymentamt);
-        BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
+        BigDecimal difference = grossamt.subtract(prepayment);
         if (!prepaymentamt.equals("0")) {
           if (grossamt.abs().compareTo(prepayment.abs()) != 0) {
             if (IsReturn.equals("Y") || isReversedInvoice) {
@@ -746,7 +746,7 @@ public class DocInvoice extends AcctServer {
           && (m_debt_payments == null || m_debt_payments.length == 0)) {
         BigDecimal grossamt = new BigDecimal(Amounts[AMTTYPE_Gross]);
         BigDecimal prepayment = new BigDecimal(prepaymentamt);
-        BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
+        BigDecimal difference = grossamt.subtract(prepayment);
         if (!prepaymentamt.equals("0")) {
           if (grossamt.abs().compareTo(prepayment.abs()) != 0) {
             if (IsReturn.equals("Y") || isReversedInvoice) {

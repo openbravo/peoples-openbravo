@@ -266,7 +266,7 @@ public class ReservationUtils {
     hql.append(" and coalesce(rs.storageBin, r.storageBin) = :storageBin");
     hql.append(" and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
     hql.append(" and r.uOM = :uom");
-    hql.append(" and rs.quantity > rs.released)");
+    hql.append(" and rs.quantity > rs.released");
 
     Query<ReservationStock> query = OBDal.getInstance().getSession()
         .createQuery(hql.toString(), ReservationStock.class);
