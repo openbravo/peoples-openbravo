@@ -71,94 +71,95 @@ BEGIN
     	OR(COALESCE(:old.c_uom_id, '0') <> COALESCE(:new.c_uom_id, '0'))
     	OR(COALESCE(:old.m_internal_consumptionline_id ,'0') <> COALESCE(:new.m_internal_consumptionline_id ,'0')) THEN
 
-      	IF(COALESCE(v_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
-        	RAISE_APPLICATION_ERROR(-20000, '@20111@') ;
-      	END IF;
-      	IF(v_attributeset_id IS NOT NULL AND (v_AttrSetValueType IS NULL OR v_AttrSetValueType <> 'F') AND v_IsOneAtSetValReq = 'Y' AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0') = '0' ) THEN
+        IF(COALESCE(v_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
+       	  RAISE_APPLICATION_ERROR(-20000, '@20111@') ;
+        END IF;
+        IF(v_attributeset_id IS NOT NULL AND (v_AttrSetValueType IS NULL OR v_AttrSetValueType <> 'F') AND v_IsOneAtSetValReq = 'Y' AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0') = '0' ) THEN
           IF(:NEW.M_INVENTORYLINE_ID IS NOT NULL) THEN
-            SELECT IL.M_LOCATOR_ID, IL.QTYCOUNT INTO v_M_LOCATOR_ID, v_inventoryLineQtyCount
+            SELECT IL.QTYCOUNT INTO v_inventoryLineQtyCount
             FROM M_INVENTORYLINE IL
             WHERE IL.M_INVENTORYLINE_ID = :NEW.M_INVENTORYLINE_ID;
-          
+         
             SELECT COUNT(1) INTO v_stockCount
             FROM DUAL
             WHERE EXISTS (SELECT 1
-              FROM M_STORAGE_DETAIL SD
-              WHERE SD.M_PRODUCT_ID = :NEW.M_PRODUCT_ID
-              AND SD.M_LOCATOR_ID = v_M_LOCATOR_ID
-              AND SD.M_ATTRIBUTESETINSTANCE_ID = '0'
-              AND SD.QTYONHAND <> 0
-              AND SD.C_UOM_ID=:NEW.C_UOM_ID); 
-              
-            IF(NOT (v_stockCount <> 0 AND v_inventoryLineQtyCount = 0)) THEN   
+                          FROM M_STORAGE_DETAIL SD
+                          WHERE SD.M_PRODUCT_ID = :NEW.M_PRODUCT_ID
+                          AND SD.M_LOCATOR_ID = :NEW.M_LOCATOR_ID
+                          AND SD.M_ATTRIBUTESETINSTANCE_ID = '0'
+                          AND SD.C_UOM_ID = :NEW.C_UOM_ID
+                          AND SD.QTYONHAND <> 0
+                          AND SD.PREQTYONHAND <> 0); 
+            
+            IF(v_inventoryLineQtyCount <> 0 OR (v_inventoryLineQtyCount = 0 AND v_stockCount = 0)) THEN   
               RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name) ;
             END IF;
           ELSE
-            RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name) ;       
+            RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name) ;
           END IF; 
-      	END IF;
-      	--Does not allow to change the attribute set value
-      	-- for products which attribute set value type is Fixed
-      	IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
-        	SELECT ATTRSETVALUETYPE 
-          	INTO v_AttrSetValueType
-        	FROM M_PRODUCT 
-        	WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
-        	IF (v_AttrSetValueType='F') THEN
-          	RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
-        	END IF;
-      	END IF;
+        END IF;
+        --Does not allow to change the attribute set value
+        -- for products which attribute set value type is Fixed
+        IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
+         	SELECT ATTRSETVALUETYPE 
+           	INTO v_AttrSetValueType
+       	  FROM M_PRODUCT 
+         	WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
+         	IF (v_AttrSetValueType='F') THEN
+           	RAISE_APPLICATION_ERROR(-20000, '@AttrSetValueFixed@');
+         	END IF;
+        END IF;
       END IF;
     END IF;
     
 		IF INSERTING THEN
 			IF(COALESCE(v_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
         IF (:new.M_InventoryLine_ID IS NOT NULL) THEN
-	  SELECT il.line, CASE WHEN i.inventory_type = 'O' OR i.inventory_type = 'C' THEN 1 ELSE 0 END
-	  INTO v_DocumentLineNo, v_checkuom
-	  FROM M_Inventory i JOIN M_InventoryLine il
-	  ON i.m_inventory_id = il.m_inventory_id
-	  WHERE il.m_inventoryline_id = :new.M_InventoryLine_ID;
-	END IF;
-	IF (:new.M_MovementLine_ID IS NOT NULL) THEN
-	  SELECT line INTO v_DocumentLineNo FROM M_MovementLine WHERE M_MovementLine_ID = :new.M_MovementLine_ID;
-	END IF;
-	IF (:new.M_InOutLine_ID IS NOT NULL) THEN
-	  SELECT line INTO v_DocumentLineNo FROM M_InOutLine WHERE M_InOutLine_ID = :new.M_InOutLine_ID;
-	END IF;
-	IF (:new.M_ProductionLine_ID IS NOT NULL) THEN
-	  SELECT line INTO v_DocumentLineNo FROM M_ProductionLine WHERE M_ProductionLine_ID = :new.M_ProductionLine_ID;
-	END IF;
-	IF (:new.M_Internal_ConsumptionLine_ID IS NOT NULL) THEN
-	  SELECT line INTO v_DocumentLineNo FROM M_Internal_ConsumptionLine WHERE M_Internal_ConsumptionLine_ID = :new.M_Internal_ConsumptionLine_ID;
-	END IF;
+	        SELECT il.line, CASE WHEN i.inventory_type = 'O' OR i.inventory_type = 'C' THEN 1 ELSE 0 END
+	        INTO v_DocumentLineNo, v_checkuom
+	        FROM M_Inventory i JOIN M_InventoryLine il ON i.m_inventory_id = il.m_inventory_id
+	        WHERE il.m_inventoryline_id = :new.M_InventoryLine_ID;
+	      END IF;
+	      IF (:new.M_MovementLine_ID IS NOT NULL) THEN
+	        SELECT line INTO v_DocumentLineNo FROM M_MovementLine WHERE M_MovementLine_ID = :new.M_MovementLine_ID;
+	      END IF;
+	      IF (:new.M_InOutLine_ID IS NOT NULL) THEN
+	        SELECT line INTO v_DocumentLineNo FROM M_InOutLine WHERE M_InOutLine_ID = :new.M_InOutLine_ID;
+	      END IF;
+	      IF (:new.M_ProductionLine_ID IS NOT NULL) THEN
+	        SELECT line INTO v_DocumentLineNo FROM M_ProductionLine WHERE M_ProductionLine_ID = :new.M_ProductionLine_ID;
+	      END IF;
+	      IF (:new.M_Internal_ConsumptionLine_ID IS NOT NULL) THEN
+	        SELECT line INTO v_DocumentLineNo FROM M_Internal_ConsumptionLine WHERE M_Internal_ConsumptionLine_ID = :new.M_Internal_ConsumptionLine_ID;
+	      END IF;
 
-	IF (v_checkuom = 0) THEN
-	  RAISE_APPLICATION_ERROR(-20000, '@DocUOMMismatch@' || ' ' || COALESCE(v_DocumentLineNo, 0));
-	END IF;
+	      IF (v_checkuom = 0) THEN
+	        RAISE_APPLICATION_ERROR(-20000, '@DocUOMMismatch@' || ' ' || COALESCE(v_DocumentLineNo, 0));
+	      END IF;
      	END IF;
       IF(v_attributeset_id IS NOT NULL AND (v_AttrSetValueType IS NULL OR v_AttrSetValueType <> 'F') AND v_IsOneAtSetValReq = 'Y' AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0') = '0') THEN
         IF(:NEW.M_INVENTORYLINE_ID IS NOT NULL) THEN
-          SELECT IL.M_LOCATOR_ID, IL.QTYCOUNT INTO v_M_LOCATOR_ID, v_inventoryLineQtyCount
+          SELECT IL.QTYCOUNT INTO v_inventoryLineQtyCount
           FROM M_INVENTORYLINE IL
           WHERE IL.M_INVENTORYLINE_ID = :NEW.M_INVENTORYLINE_ID;
-          
+         
           SELECT COUNT(1) INTO v_stockCount
-          FROM DUAL
-          WHERE EXISTS (SELECT 1
-            FROM M_STORAGE_DETAIL SD
-            WHERE SD.M_PRODUCT_ID = :NEW.M_PRODUCT_ID
-              AND SD.M_LOCATOR_ID = v_M_LOCATOR_ID
-              AND SD.M_ATTRIBUTESETINSTANCE_ID = '0'
-              AND SD.QTYONHAND <> 0
-              AND SD.C_UOM_ID=:NEW.C_UOM_ID);         
+            FROM DUAL
+            WHERE EXISTS (SELECT 1
+                          FROM M_STORAGE_DETAIL SD
+                          WHERE SD.M_PRODUCT_ID = :NEW.M_PRODUCT_ID
+                          AND SD.M_LOCATOR_ID = :NEW.M_LOCATOR_ID
+                          AND SD.M_ATTRIBUTESETINSTANCE_ID = '0'
+                          AND SD.C_UOM_ID = :NEW.C_UOM_ID
+                          AND SD.QTYONHAND <> 0
+                          AND SD.PREQTYONHAND <> 0);          
 
-          IF ( NOT (v_stockCount <> 0 AND v_inventoryLineQtyCount = 0)) THEN    
-            RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name);
+          IF(v_inventoryLineQtyCount <> 0 OR (v_inventoryLineQtyCount = 0 AND v_stockCount = 0)) THEN   
+            RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name) ;
           END IF;
-         ELSE
-           RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name) ;       
-         END IF;
+        ELSE
+          RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name) ;
+        END IF; 
       END IF;
 
       --Does not allow to change the attribute set value
