@@ -4586,7 +4586,7 @@
         }
         // search for an existing payment only if is not a reverser payment.
         if (!payment.get('reversedPaymentId')) {
-          if (!payment.get('paymentData')) {
+          if (!payment.get('paymentData') || payment.get('paymentData').mergeable) {
             // search for an existing payment only if there is not paymentData info or if there is, when there is any other paymentData with same groupingCriteria.
             // this avoids to merge for example card payments of different cards.
             for (i = 0, max = payments.length; i < max; i++) {
@@ -6977,7 +6977,7 @@
           return;
         }
 
-        if (!payment.get('paymentData')) {
+        if (!payment.get('paymentData') || payment.get('paymentData').mergeable) {
           // search for an existing payment only if there is not paymentData info.
           // this avoids to merge for example card payments of different cards.
           for (i = 0, max = payments.length; i < max; i++) {

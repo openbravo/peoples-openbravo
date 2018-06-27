@@ -19,7 +19,7 @@
     receipt.prepareToSend(function () {
       //Create the negative payment for change
       var clonedCollection = new Backbone.Collection(),
-          paymentKind, i, totalPrePayment = OB.DEC.Zero,
+          mergeable, addPaymentCallback, paymentKind, i, totalPrePayment = OB.DEC.Zero,
           totalNotPrePayment = OB.DEC.Zero;
       var triggerReceiptClose = function (receipt) {
 
@@ -131,9 +131,11 @@
 
       // Manage change payments (if there is change)
       if (receipt.get('changePayments')) {
-        var addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
+        mergeable = !OB.MobileApp.model.get('terminal').multiChange && !OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true);
+        addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
           triggerReceiptClose(receipt);
         });
+
         receipt.get('changePayments').forEach(function (changePayment) {
           var paymentToAdd = OB.MobileApp.model.paymentnames[changePayment.key];
           receipt.addPayment(new OB.Model.PaymentLine({
@@ -152,6 +154,7 @@
             printtwice: paymentToAdd.paymentMethod.printtwice,
             changePayment: true,
             paymentData: {
+              mergeable: mergeable,
               label: changePayment.label
             }
           }), addPaymentCallback);
