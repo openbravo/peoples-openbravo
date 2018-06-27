@@ -124,8 +124,6 @@ enyo.kind({
       }
       amount = parseFloat(l.$.textline.getValue());
       origAmount = OB.DEC.mul(amount, l.payment.rate);
-      origAmount = Math.min(origAmount, paymentstatus.changeAmt);
-      origAmount = Math.max(origAmount, 0);
       paymentchangemap.push({
         payment: l.payment,
         amount: amount,
