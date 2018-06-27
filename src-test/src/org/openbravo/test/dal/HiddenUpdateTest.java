@@ -108,6 +108,7 @@ public class HiddenUpdateTest extends OBBaseTest {
       }
     } finally {
       SessionFactoryController.setInstance(currentSFC);
+      SessionFactoryController.getInstance().reInitialize();
     }
 
   }
