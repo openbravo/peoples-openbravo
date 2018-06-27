@@ -263,6 +263,10 @@ public class DalMappingGenerator implements OBSingleton {
     return "<filter name=\"activeFilter\" condition=\":activeParam = isActive\"/>\n";
   }
 
+  private String getLanguageFilter() {
+    return "<filter name=\"languageFilter\" condition=\":languageParam = ad_language\"/>\n";
+  }
+
   private String generatePrimitiveMapping(Property p) {
     if (p.getHibernateType() == Object.class) {
       return "";
@@ -402,6 +406,9 @@ public class DalMappingGenerator implements OBSingleton {
 
       if (p.getTargetEntity().isActiveEnabled()) {
         sb.append(TAB3 + getActiveFilter());
+      }
+      if (p.getTargetEntity().hasProperty("language")) {
+        sb.append(TAB3 + getLanguageFilter());
       }
       sb.append(TAB2 + "</bag>" + NL);
 

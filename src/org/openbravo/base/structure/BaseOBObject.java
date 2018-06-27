@@ -122,19 +122,15 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       // nothing set in this case anyway
       return null;
     }
-
     if (p.isTranslatable() && OBContext.hasTranslationInstalled()) {
       if (!hasLookedForTrl) {
         hasLookedForTrl = true;
         OBContext.setAdminMode(true);
         try {
+          OBDal.getInstance().enableLanguageFilter(language.getLanguage());
           @SuppressWarnings("unchecked")
-          List<BaseOBObject> trl = OBDal
-              .getInstance()
-              .getSession()
-              .createFilter(this.get(p.getTrlOneToManyProperty().getName()),
-                  "where language = :language").setParameter("language", language).list();
-
+          List<BaseOBObject> trl = (List<BaseOBObject>) this.get(p.getTrlOneToManyProperty()
+              .getName());
           if (!trl.isEmpty()) {
             dataTrl = trl.get(0);
           }
@@ -161,6 +157,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
             log.debug("Error looking for translation of " + p + ". Using base value", t);
           }
         } finally {
+          OBDal.getInstance().disableLanguageFilter();
           OBContext.restorePreviousMode();
         }
       }
