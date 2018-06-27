@@ -159,6 +159,8 @@
             }
           }), addPaymentCallback);
         });
+      } else {
+        triggerReceiptClose(receipt);
       }
     });
   };
