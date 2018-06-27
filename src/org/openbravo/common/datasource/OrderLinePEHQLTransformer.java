@@ -132,8 +132,12 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (isSalesTransaction) {
       groupByClause.append(" , e.invoicedQuantity");
     } else {
+      groupByClause.append(" , ci.id");
       groupByClause
-          .append(" HAVING ((e.explode='Y') OR ((e.orderedQuantity-SUM(COALESCE(m.quantity,0))) <> 0))");
+          .append(" HAVING ((e.explode='Y') OR ((e.orderedQuantity-SUM(COALESCE(m.quantity,0))) <> 0");
+      groupByClause
+          .append(" AND (ci.id is null OR SUM(COALESCE(ci.invoicedQuantity,0))-COALESCE(e.orderedQuantity,0)-SUM(COALESCE(m.quantity,0)) < 0)");
+      groupByClause.append("))");
     }
     return groupByClause.toString();
   }
@@ -159,17 +163,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       whereClause.append(" and o.businessPartner.id = :bp");
       whereClause.append(" and o.documentStatus in ('CO', 'CL')");
       whereClause.append(" and o.invoiceTerms <> 'N'");
-      whereClause.append(" and NOT EXISTS");
-      whereClause.append("(SELECT 1");
-      whereClause.append(" FROM OrderLine co1");
-      whereClause.append("   left join co1.invoiceLineList ci1");
-      whereClause
-          .append("   left join co1.procurementPOInvoiceMatchList mp1 with mp1.invoiceLine.id is not null");
-      whereClause.append(" WHERE co1.id = e.id");
-      whereClause.append("   AND ci1.invoice.id = :invId");
-      whereClause.append(" GROUP BY ci1.salesOrderLine.id,  co1.orderedQuantity");
-      whereClause
-          .append(" HAVING (SUM(COALESCE(ci1.invoicedQuantity, 0))-(COALESCE(co1.orderedQuantity,0)-SUM(COALESCE(mp1.quantity,0)))) >= 0)");
+      whereClause.append(" and (ci.id is null or ci.invoice.id = :invId)");
     }
     return whereClause.toString();
   }
@@ -189,7 +183,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (!isSalesTransaction) {
       fromClause
           .append(" left join e.procurementPOInvoiceMatchList m with m.invoiceLine.id is not null");
-
+      fromClause.append(" left join e.invoiceLineList ci");
     }
     return fromClause.toString();
   }
@@ -225,16 +219,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (isSalesTransaction) {
       orderedQuantityHql.append(" e.orderedQuantity-COALESCE(e.invoicedQuantity,0)");
     } else {
-      orderedQuantityHql.append(" e.orderedQuantity");
-      orderedQuantityHql.append(" - COALESCE((SELECT SUM(COALESCE(mp.quantity, 0))");
       orderedQuantityHql
-          .append("  FROM e.procurementPOInvoiceMatchList mp where mp.invoiceLine.id is not null),0)");
-      orderedQuantityHql.append(" - COALESCE((SELECT SUM(COALESCE(ci.invoicedQuantity, 0))");
-      orderedQuantityHql.append("  FROM OrderLine co");
-      orderedQuantityHql.append("    LEFT JOIN co.invoiceLineList ci");
-      orderedQuantityHql.append("  WHERE ci.invoice.id= :invId");
-      orderedQuantityHql.append("    AND co.id = e.id");
-      orderedQuantityHql.append("  GROUP BY ci.salesOrderLine.id , co.orderedQuantity),0)");
+          .append(" e.orderedQuantity-SUM(COALESCE(m.quantity, 0))-SUM(COALESCE(ci.invoicedQuantity, 0))");
     }
     return orderedQuantityHql.toString();
   }
