@@ -434,16 +434,25 @@ enyo.kind({
       });
     }
 
-    if (OB.MobileApp.model.get('terminal').multiChange) {
-      // Here goes the logic to implement multi currency change 
-      calculateNextChange(firstpayment, firstchange);
-    } else {
-      // No multi currency change logic, add a simple change item and return
-      paymentchange.add({
-        payment: firstpayment,
-        amount: OB.DEC.mul(firstchange, firstpayment.mulrate, firstpayment.obposPosprecision),
-        origAmount: firstchange
+    // Ensure first payment is a cash payment
+    if (!firstpayment.paymentMethod.iscash) {
+      firstpayment = OB.MobileApp.model.get('payments').find(function (item) {
+        return item.paymentMethod.iscash;
       });
+    }
+
+    if (firstpayment) {
+      if (OB.MobileApp.model.get('terminal').multiChange) {
+        // Here goes the logic to implement multi currency change 
+        calculateNextChange(firstpayment, firstchange);
+      } else {
+        // No multi currency change logic, add a simple change item and return
+        paymentchange.add({
+          payment: firstpayment,
+          amount: OB.DEC.mul(firstchange, firstpayment.mulrate, firstpayment.obposPosprecision),
+          origAmount: firstchange
+        });
+      }
     }
 
     // Update receipt and UI with new calculations
