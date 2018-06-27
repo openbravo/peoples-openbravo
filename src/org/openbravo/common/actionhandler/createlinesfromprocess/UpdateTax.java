@@ -29,16 +29,11 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Tax;
-import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.OrderLine;
@@ -100,15 +95,13 @@ class UpdateTax extends CreateLinesFromProcessHook {
       Warehouse warehouse = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
           .getWarehouse();
       Project project = ((ShipmentInOutLine) getCopiedFromLine()).getProject();
-      BusinessPartner businessPartner = ((ShipmentInOutLine) getCopiedFromLine())
-          .getBusinessPartner();
       Organization organization = ((ShipmentInOutLine) getCopiedFromLine()).getOrganization();
       boolean isSalesTransaction = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
           .isSalesTransaction();
       Date scheduledDeliveryDate = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
           .getMovementDate();
 
-      String bpLocationId = getMaxBusinessPartnerLocationId(businessPartner);
+      String bpLocationId = getInvoice().getPartnerAddress().getId();
       String strDatePromised = DateFormatUtils.format(scheduledDeliveryDate, OBPropertiesProvider
           .getInstance().getOpenbravoProperties().getProperty("dateFormat.java"));
 
@@ -125,22 +118,6 @@ class UpdateTax extends CreateLinesFromProcessHook {
       }
     }
     return taxID;
-  }
-
-  /**
-   * Returns the last business partner location ID
-   * 
-   * @param businessPartner
-   *          The business partner where the location will be searched
-   * @return the last business partner location ID
-   */
-  private String getMaxBusinessPartnerLocationId(final BusinessPartner businessPartner) {
-    OBCriteria<Location> obc = OBDal.getInstance().createCriteria(Location.class);
-    obc.add(Restrictions.eq(Location.PROPERTY_BUSINESSPARTNER, businessPartner));
-    obc.add(Restrictions.eq(Location.PROPERTY_ACTIVE, true));
-    obc.setProjection(Projections.max(Location.PROPERTY_ID));
-    obc.setMaxResults(1);
-    return (String) obc.uniqueResult();
   }
 
   private void updateTaxAmount() {
