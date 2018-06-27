@@ -505,7 +505,6 @@ OB.UTIL.checkRefreshMasterDataOnNavigate = function () {
     OB.UTIL.checkRefreshMasterData();
   }
 };
-
 OB.UTIL.refreshMasterData = function () {
   OB.MobileApp.model.set('secondsToRefreshMasterdata', 3);
   var counterIntervalId = null;

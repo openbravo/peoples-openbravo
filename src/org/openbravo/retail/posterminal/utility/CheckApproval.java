@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -43,6 +44,8 @@ public class CheckApproval extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
 
+  private static final Logger log = Logger.getLogger(CheckApproval.class);
+
   @Inject
   @Any
   private Instance<ApprovalCheckHook> approvalCheckProcesses;
@@ -59,11 +62,11 @@ public class CheckApproval extends HttpServlet {
     try {
       JSONObject attributes = new JSONObject();
       JSONArray approvalType = new JSONArray();
-      String terminal = request.getParameter("t");
-      String username = request.getParameter("u");
-      String password = request.getParameter("p");
-      if (request.getParameter("a") != null) {
-        attributes = new JSONObject(request.getParameter("a"));
+      String terminal = request.getParameter("terminal");
+      String username = request.getParameter("user");
+      String password = request.getParameter("password");
+      if (request.getParameter("attributes") != null) {
+        attributes = new JSONObject(request.getParameter("attributes"));
       }
       Organization store = getTerminalStore(terminal);
       final String organization = store.getId();
@@ -82,7 +85,7 @@ public class CheckApproval extends HttpServlet {
       qUser.setFilterOnReadableClients(false);
       List<User> qUserList = qUser.list();
 
-      if (qUserList.size() == 0) {
+      if (qUserList.isEmpty()) {
         result.put("status", 1);
         JSONObject jsonError = new JSONObject();
         jsonError.put("message", OBMessageUtils.getI18NMessage("OBPOS_InvalidUserPassword", null));
@@ -99,13 +102,12 @@ public class CheckApproval extends HttpServlet {
         String hqlQuery = "select p.property from ADPreference as p"
             + " where property IS NOT NULL "
             + "   and active = true" //
-            + "   and (case when length(searchKey)<>1 then 'X' else to_char(searchKey) end) = 'Y'" //
-            + "   and (userContact.id = :user" //
-            + "        or exists (from ADUserRoles r"
+            + "   and (case when length(searchKey)<>1 then 'X' else to_char(searchKey) end) = 'Y'"
+            + "   and (userContact.id = :user" + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
             + "                    and r.userContact.id = :user"
             + "                    and r.active=true))"
-            + "   and (p.visibleAtOrganization.id = :org " //
+            + "   and (p.visibleAtOrganization.id = :org "
             + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null) group by p.property";
         Query preferenceQuery = OBDal.getInstance().getSession().createQuery(hqlQuery);
@@ -113,8 +115,8 @@ public class CheckApproval extends HttpServlet {
         preferenceQuery.setParameter("org", organization);
         preferenceQuery.setParameter("orgList", naturalTreeOrgList);
 
-        // List preferenceList = preferenceQuery.list();
-        if (preferenceQuery.list().size() == 0) {
+        List preferenceList = preferenceQuery.list();
+        if (preferenceList.isEmpty()) {
           result.put("status", 1);
           JSONObject jsonError = new JSONObject();
           jsonError.put("message",
@@ -125,7 +127,7 @@ public class CheckApproval extends HttpServlet {
           JSONObject jsonData = new JSONObject();
           JSONObject jsonPreference = new JSONObject();
           Integer c = 0;
-          for (Object preference : preferenceQuery.list()) {
+          for (Object preference : preferenceList) {
             jsonPreference.put((String) preference, (String) preference);
             if (approvals.contains((String) preference)) {
               c++;
@@ -150,7 +152,7 @@ public class CheckApproval extends HttpServlet {
       out.print(result.toString());
       out.flush();
     } catch (JSONException e) {
-      e.printStackTrace();
+      log.error("Error while POSTing: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -164,7 +166,7 @@ public class CheckApproval extends HttpServlet {
       try {
         process.exec(username, password, terminal, approvalType, attributes);
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error("Error while executing post approval check processes: " + e.getMessage(), e);
       }
     }
   }
@@ -177,7 +179,7 @@ public class CheckApproval extends HttpServlet {
       try {
         process.exec(username, password, terminal, approvalType, attributes);
       } catch (Exception e) {
-        e.printStackTrace();
+        log.error("Error while executing pre approval check processes: " + e.getMessage(), e);
       }
     }
   }
