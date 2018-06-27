@@ -152,7 +152,7 @@ public class CheckApproval extends HttpServlet {
       out.print(result.toString());
       out.flush();
     } catch (JSONException e) {
-      log.error("Error while POSTing: " + e.getMessage(), e);
+      log.error("Error while checking user can approve and executing CheckApproval hooks: " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
