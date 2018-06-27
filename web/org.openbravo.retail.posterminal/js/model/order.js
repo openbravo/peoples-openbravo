@@ -2730,6 +2730,7 @@
 
     //Attrs is an object of attributes that will be set in order
     addProduct: function (p, qty, options, attrs, callback) {
+      var execution = OB.UTIL.ProcessController.start('addProduct');
       OB.debug('_addProduct');
       var me = this;
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
@@ -2765,18 +2766,21 @@
               p.set('listPrice', productPrices.at(0).get('pricelist'));
             }
             me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+              OB.UTIL.ProcessController.finish('addProduct', execution);
               if (callback) {
                 callback(success, orderline);
               }
             });
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+            OB.UTIL.ProcessController.finish('addProduct', execution);
             if (callback) {
               callback(false, null);
             }
           }
         }, function () {
           OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.ProcessController.finish('addProduct', execution);
           if (callback) {
             callback(false, null);
           }
@@ -2785,6 +2789,7 @@
         });
       } else {
         me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+          OB.UTIL.ProcessController.finish('addProduct', execution);
           if (callback) {
             callback(success, orderline);
           }

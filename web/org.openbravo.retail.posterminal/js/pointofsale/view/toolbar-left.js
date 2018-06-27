@@ -55,7 +55,7 @@ enyo.kind({
   handlers: {
     onLeftToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt'],
+  processesToListen: ['calculateReceipt', 'addProduct'],
   disableButton: function () {
     if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
       this.isEnabled = false;
@@ -124,7 +124,7 @@ enyo.kind({
   handlers: {
     onLeftToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt'],
+  processesToListen: ['calculateReceipt', 'addProduct'],
   disableButton: function () {
     this.isEnabled = false;
     this.setDisabled(true);
@@ -236,7 +236,7 @@ enyo.kind({
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton'
   },
-  processesToListen: ['calculateReceipt', 'clearWith'],
+  processesToListen: ['calculateReceipt', 'clearWith', 'addProduct'],
   isEnabled: true,
   disabledButton: function (inSender, inEvent) {
     if (inEvent.exceptionPanel === this.tabPanel) {
