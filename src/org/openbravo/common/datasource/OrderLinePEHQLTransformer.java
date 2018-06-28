@@ -87,7 +87,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       daysCount = Integer.valueOf(value);
     } catch (Exception ignore) {
     }
-    return String.valueOf(daysCount);
+    return (isSalesTransaction ? "ic" : "o") + ".orderDate >= (now()-" + daysCount + ")";
   }
 
   private String changeAdditionalFiltersIfIsSalesTransaction(String transformedHql) {
