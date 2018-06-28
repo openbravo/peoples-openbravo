@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,6 +93,14 @@
         INSERT INTO AD_MONTH_TRL (AD_MONTH_TRL_ID,AD_MONTH_ID, AD_LANGUAGE, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME)
         VALUES (get_uuid(), '100', 'en_US', '0', '0', 'Y', now(), '0', now(), '0', 'a')
       </Sql>
+   </SqlMethod>
+   
+   <SqlMethod name="updateTableDescription" type="preparedStatement" connection="true" return="rowCount">
+      <Sql>
+        UPDATE AD_TABLE SET DESCRIPTION = ? WHERE AD_TABLE_ID = ?
+      </Sql>
+      <Parameter name="description"/>
+      <Parameter name="adTableId"/>
    </SqlMethod>
 
 </SqlClass>
