@@ -144,6 +144,9 @@ public class ErrorTextParserTest extends OBBaseTest {
     if (testCase != 9) {
       // set core to development to avoid the _mod_ trigger restrictions
       ErrorTextParserTestData.setCoreInDevelopment(con, conn);
+    } else {
+      // ensure that the are not any modules in development
+      ErrorTextParserTestData.setNotInDevelopment(con, conn);
     }
 
     String errorMessage = "";
