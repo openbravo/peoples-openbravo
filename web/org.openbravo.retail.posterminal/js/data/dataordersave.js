@@ -35,6 +35,7 @@
         }, this);
         var gross = this.get('gross');
         var accum = totalTaxes;
+        var linesGross = 0;
         var isFieldUndefined = false;
         _.each(this.get('lines').models, function (line) {
           var fieldValue = line.get('discountedNet');
@@ -43,11 +44,17 @@
             return;
           }
           accum = OB.DEC.add(accum, fieldValue);
+          linesGross = OB.DEC.add(linesGross, line.get('lineGrossAmount'));
         });
         var difference = OB.DEC.sub(gross, accum);
+        var grossDifference = OB.DEC.sub(gross, linesGross);
 
         if (!isFieldUndefined && difference !== 0) {
           OB.error(enyo.format("%s: The sum of the net of each line plus taxes does not equal the gross: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
+        }
+        // 3.1 verify that the sum of the gross of each line equals the gross
+        if (grossDifference !== 0 && this.get('priceIncludesTax')) {
+          OB.error(enyo.format("%s: The sum of the gross of each line does not equal the gross: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, grossDifference));
         }
 
         // 4. verify that a cashupId is available
