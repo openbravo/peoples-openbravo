@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,7 +96,7 @@ class UpdateOrderLineInformation implements CopyFromOrdersProcessImplementationI
     newOrderLine.setClient(processingOrder.getClient());
     newOrderLine.setOrderDate(processingOrder.getOrderDate());
     newOrderLine.setScheduledDeliveryDate(processingOrder.getScheduledDeliveryDate());
-    newOrderLine.setDescription(processingOrder.getDescription());
+    newOrderLine.setDescription(orderLine.getDescription());
     // If Warehouse of the Header is null retrieve it from the Context
     newOrderLine.setWarehouse(processingOrder.getWarehouse() != null ? processingOrder
         .getWarehouse() : OBContext.getOBContext().getWarehouse());
