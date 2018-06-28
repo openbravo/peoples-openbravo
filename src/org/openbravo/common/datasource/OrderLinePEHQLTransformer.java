@@ -59,14 +59,53 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@fromClause@", getFromClauseHQL());
     transformedHql = transformedHql.replace("@whereClause@", getWhereClauseHQL());
     transformedHql = transformedHql.replace("@groupByClause@", getGroupByHQL());
+    transformedHql = transformedHql.replace("@orderByClause@", getOrderByHQL());
     transformedHql = transformedHql.replace("@orderedQuantity@", getOrderedQuantityHQL());
     transformedHql = transformedHql.replace("@operativeQuantity@", getOperativeQuantityHQL());
     transformedHql = transformedHql.replace("@orderQuantity@", getOrderQuantityHQL());
     transformedHql = transformedHql.replace("@operativeUOM@", getOperativeUOM());
+    transformedHql = transformedHql.replace("@salesOrderIdentifier@", getSalesOrderIdentifier());
+    transformedHql = transformedHql.replace("@documentNo@", getDocumentNo());
+    transformedHql = transformedHql.replace("@grandTotalAmount@", getGrandTotalAmount());
+    transformedHql = transformedHql.replace("@scheduledDeliveryDate@", getScheduledDeliveryDate());
+    transformedHql = transformedHql.replace("@warehouse@", getWarehouse());
     transformedHql = transformedHql.replace("@filterByDocumentsProcessedSinceNDaysAgo@",
         getSinceHowManyDaysAgoOrdersShouldBeFiltered());
     transformedHql = changeAdditionalFiltersIfIsSalesTransaction(transformedHql);
     return transformedHql;
+  }
+
+  protected String getGrandTotalAmount() {
+    return isSalesTransaction ? " ic.grandTotalAmount" : " o.grandTotalAmount";
+  }
+
+  protected String getDocumentNo() {
+    return isSalesTransaction ? " ic.documentNo" : " o.documentNo";
+  }
+
+  protected String getWarehouse() {
+    if (isSalesTransaction) {
+      return " (select wh.name from Warehouse wh where wh.id = ic.warehouse.id)";
+    } else {
+      return " (select wh.name from Warehouse wh where wh.id = o.warehouse.id)";
+    }
+  }
+
+  protected String getScheduledDeliveryDate() {
+    return isSalesTransaction ? " ic.scheduledDeliveryDate" : " o.scheduledDeliveryDate";
+  }
+
+  protected String getSalesOrderIdentifier() {
+    if (isSalesTransaction) {
+      return " (ic.documentNo || ' - ' || to_char(trunc(ic.orderDate)) || ' - ' || ic.grandTotalAmount) ";
+    } else {
+      return " (o.documentNo || ' - ' || to_char(trunc(o.orderDate)) || ' - ' || o.grandTotalAmount) ";
+    }
+  }
+
+  protected String getOrderByHQL() {
+    return isSalesTransaction ? " ic.documentNo desc, e.lineNo asc"
+        : " o.documentNo desc, e.lineNo asc";
   }
 
   /**
@@ -108,31 +147,38 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
 
   protected String getGroupByHQL() {
     StringBuilder groupByClause = new StringBuilder();
-    groupByClause.append("  o.id,");
-    groupByClause.append("  o.documentNo,");
-    groupByClause.append("  o.orderDate,");
-    groupByClause.append("  o.grandTotalAmount,");
-    groupByClause.append("  o.scheduledDeliveryDate,");
     groupByClause.append("  e.orderedQuantity,");
     groupByClause.append("  e.orderDate,");
     groupByClause.append("  e.lineNo,");
     groupByClause.append("  e.id,");
-    groupByClause.append("  COALESCE(e.asset.id, o.asset.id),");
-    groupByClause.append("  COALESCE(e.project.id, o.project.id),");
-    groupByClause.append("  COALESCE(e.costcenter.id, o.costcenter.id),");
-    groupByClause.append("  COALESCE(e.stDimension.id, o.stDimension.id),");
-    groupByClause.append("  COALESCE(e.ndDimension.id, o.ndDimension.id),");
     groupByClause.append("  e.explode,");
     groupByClause.append("  e.operativeQuantity,");
-    groupByClause.append("  o.documentType.id,");
-    groupByClause.append("  o.businessPartner.id,");
+    groupByClause.append("  e.uOM.id, e.product.id, e.operativeUOM.id,");
     groupByClause.append("  il.id,");
-    groupByClause.append("  e.uOM.id, e.product.id, e.operativeUOM.id, o.warehouse.id,");
-    groupByClause.append("  @orderQuantity@");
+    groupByClause.append(isSalesTransaction ? " ic.id," : " o.id,");
+    groupByClause.append(isSalesTransaction ? " ic.documentNo," : " o.documentNo,");
+    groupByClause.append(isSalesTransaction ? " ic.orderDate," : " o.orderDate,");
+    groupByClause.append(isSalesTransaction ? " ic.grandTotalAmount," : " o.grandTotalAmount,");
+    groupByClause.append(isSalesTransaction ? " ic.scheduledDeliveryDate,"
+        : " o.scheduledDeliveryDate,");
+    groupByClause.append(isSalesTransaction ? " COALESCE(e.asset.id, ic.asset.id),"
+        : " COALESCE(e.asset.id, o.asset.id),");
+    groupByClause.append(isSalesTransaction ? " COALESCE(e.project.id, ic.project.id),"
+        : " COALESCE(e.project.id, o.project.id),");
+    groupByClause.append(isSalesTransaction ? " COALESCE(e.costcenter.id, ic.costcenter.id),"
+        : " COALESCE(e.costcenter.id, o.costcenter.id),");
+    groupByClause.append(isSalesTransaction ? " COALESCE(e.stDimension.id, ic.stDimension.id),"
+        : " COALESCE(e.stDimension.id, o.stDimension.id),");
+    groupByClause.append(isSalesTransaction ? " COALESCE(e.ndDimension.id, ic.ndDimension.id),"
+        : " COALESCE(e.ndDimension.id, o.ndDimension.id),");
+    groupByClause.append(isSalesTransaction ? " ic.documentType.id," : " o.documentType.id,");
+    groupByClause.append(isSalesTransaction ? " ic.businessPartner.id," : " o.businessPartner.id,");
+    groupByClause.append(isSalesTransaction ? " ic.warehouse.id," : " o.warehouse.id,");
+    groupByClause.append("  @orderQuantity@,");
     if (isSalesTransaction) {
-      groupByClause.append(" , e.invoicedQuantity");
+      groupByClause.append("  e.invoicedQuantity");
     } else {
-      groupByClause.append(" , ci.id");
+      groupByClause.append("  ci.id");
       groupByClause
           .append(" HAVING ((e.explode='Y') OR ((e.orderedQuantity-SUM(COALESCE(m.quantity,0))) <> 0");
       groupByClause
@@ -144,22 +190,28 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
 
   protected String getWhereClauseHQL() {
     StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" and o.salesTransaction = :issotrx");
-    whereClause.append(" and o.priceIncludesTax = :plIncTax");
-    whereClause.append(" and o.currency.id = :cur");
+
     if (isSalesTransaction) {
+      whereClause.append(" and ic.salesTransaction = :issotrx");
+      whereClause.append(" and ic.priceIncludesTax = :plIncTax");
+      whereClause.append(" and ic.currency.id = :cur");
       whereClause.append(" and ic.businessPartner.id = :bp");
+      whereClause.append(" and e.salesOrder.id = ic.salesOrder.id");
       whereClause.append(" and (");
       whereClause.append("     ic.term in ('D', 'S') and ic.deliveredQuantity <> 0");
       whereClause.append("  or (ic.term = 'I' AND EXISTS");
       whereClause.append("   (SELECT 1");
       whereClause.append("    FROM OrderLine ol2");
-      whereClause.append("    WHERE ol2.salesOrder = o.id");
+      whereClause.append("    WHERE ol2.salesOrder.id = ic.salesOrder.id");
       whereClause.append("    GROUP BY ol2.id ");
       whereClause.append("    HAVING SUM(ol2.orderedQuantity) - SUM(ol2.invoicedQuantity) <> 0))");
       whereClause.append("  or (ic.term = 'O' and ic.orderedQuantity = ic.deliveredQuantity)");
       whereClause.append(" )");
     } else {
+      whereClause.append(" and o.salesTransaction = :issotrx");
+      whereClause.append(" and o.priceIncludesTax = :plIncTax");
+      whereClause.append(" and o.currency.id = :cur");
+
       whereClause.append(" and o.businessPartner.id = :bp");
       whereClause.append(" and o.documentStatus in ('CO', 'CL')");
       whereClause.append(" and o.invoiceTerms <> 'N'");
@@ -170,9 +222,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
   protected String getFromClauseHQL() {
     StringBuilder fromClause = new StringBuilder();
     if (isSalesTransaction) {
-      fromClause.append(" InvoiceCandidateV ic");
-      fromClause.append(" join ic.order o");
-      fromClause.append(" join o.orderLineList as e");
+      fromClause.append(" InvoiceCandidateV ic, ");
+      fromClause.append(" OrderLine e");
     } else {
       fromClause.append(" OrderLine e");
       fromClause.append(" join e.salesOrder o");
@@ -210,7 +261,9 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     operativeQuantityHql.append(" to_number(M_GET_CONVERTED_AUMQTY(e.product.id, ");
     operativeQuantityHql.append(getOrderedQuantityHQL());
     operativeQuantityHql
-        .append(" , coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id)))))");
+        .append(" , coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, ");
+    operativeQuantityHql.append(isSalesTransaction ? "ic.documentType.id" : "o.documentType.id");
+    operativeQuantityHql.append(")))))");
     return operativeQuantityHql.toString();
   }
 
@@ -230,7 +283,9 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (UOMUtil.isUomManagementEnabled()) {
       operativeUOMHql.append(" (select aum2.name from UOM aum2 where aum2.id = ");
       operativeUOMHql
-          .append(" (coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, o.documentType.id))))) ");
+          .append(" (coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, ");
+      operativeUOMHql.append(isSalesTransaction ? "ic.documentType.id" : "o.documentType.id");
+      operativeUOMHql.append("))))) ");
     } else {
       operativeUOMHql.append("'' ");
     }

@@ -11253,16 +11253,16 @@ GROUP BY
   (select uom.name from UOM uom where uom.id = e.uOM.id) as uOM,
   (select p.name from Product p where p.id = e.product.id) as product,
   e.lineNo,
-  (o.documentNo || ' - ' || to_char(trunc(o.orderDate)) || ' - ' || o.grandTotalAmount) as salesOrder,  
+  @salesOrderIdentifier@ as salesOrder,  
   @operativeQuantity@ as operativeQuantity,
   @operativeUOM@ as operativeUOM,
   @orderQuantity@ as orderQuantity,
   il.id,
   e.orderDate as orderDate,
-  o.scheduledDeliveryDate as scheduledDeliveryDate, 
-  (select wh.name from Warehouse wh where wh.id = o.warehouse.id) as warehouse,  
-  o.documentNo as documentNo,
-  o.grandTotalAmount as grandTotalAmount
+  @scheduledDeliveryDate@ as scheduledDeliveryDate, 
+  @warehouse@ as warehouse,  
+  @documentNo@ as documentNo,
+  @grandTotalAmount@ as grandTotalAmount
   @selectClause@
 MAINFROM
   @fromClause@
