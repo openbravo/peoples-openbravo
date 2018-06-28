@@ -341,34 +341,31 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     contentType: 'application/json;charset=utf-8',
     success: function (inSender, inResponse) {
       var approved = false;
-      if (response.exception) {
-        callback(false, null, null, true, response.exception.message);
+      if (inResponse.error) {
+        callback(false, null, null, true, inResponse.error.message);
       } else {
-        approved = response.canApprove;
-
+        approved = inResponse.data.canApprove;
         if (!approved) {
           callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
         }
-
         // saving supervisor in local so next time it is possible to approve offline
         OB.Dal.find(OB.Model.Supervisor, {
-          'id': response.userId
+          'id': inResponse.data.userId
         }, enyo.bind(this, function (users) {
           var supervisor, date, permissions = [];
           if (users.models.length === 0) {
             // new user
-            if (response.canApprove) {
+            if (inResponse.data.canApprove) {
               // insert in local db only in case it is supervisor for current type
               date = new Date().toString();
               supervisor = new OB.Model.Supervisor();
-
-              supervisor.set('id', response.userId);
+              supervisor.set('id', inResponse.data.userId);
               supervisor.set('name', username);
               supervisor.set('password', OB.MobileApp.model.generate_sha1(password + date));
               supervisor.set('created', date);
               // Set all permissions
-              if (response.preference) {
-                _.each(response.preference, function (perm) {
+              if (inResponse.data.preference) {
+                _.each(inResponse.data.preference, function (perm) {
                   permissions.push(perm);
                 }, this);
                 supervisor.set('permissions', JSON.stringify(permissions));
@@ -380,20 +377,17 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
           } else {
             // update existent user granting or revoking permission
             supervisor = users.models[0];
-
             supervisor.set('password', OB.MobileApp.model.generate_sha1(password + supervisor.get('created')));
             if (supervisor.get('permissions')) {
               permissions = JSON.parse(supervisor.get('permissions'));
             }
-
-            if (response.canApprove) {
+            if (inResponse.data.canApprove) {
               // grant permission if it does not exist
               _.each(approvalType, function (perm) {
                 if (!_.contains(permissions, perm)) {
                   permissions.push(perm);
                 }
               }, this);
-
             } else {
               // revoke permission if it exists
               _.each(approvalType, function (perm) {
@@ -403,10 +397,8 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
               }, this);
             }
             supervisor.set('permissions', JSON.stringify(permissions));
-
             OB.Dal.save(supervisor);
           }
-
           callback(approved, supervisor, approvalType, true, null);
         }));
       }
