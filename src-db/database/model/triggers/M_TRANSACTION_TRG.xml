@@ -25,7 +25,6 @@
   v_DATEINVENTORY DATE;
   v_UOM_ID VARCHAR2(32) ;
   v_ATTRIBUTESET_ID VARCHAR2(32);
-  v_M_LOCATOR_ID VARCHAR2(32);
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   v_Name M_Product.Name%TYPE;
   v_IsOneAtSetValReq M_Attributeset.Isoneattrsetvalrequired%TYPE;
