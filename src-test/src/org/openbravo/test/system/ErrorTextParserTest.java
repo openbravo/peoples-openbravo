@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,6 +90,11 @@ public class ErrorTextParserTest extends OBBaseTest {
   }
 
   @Test
+  public void testTriggerError() throws Exception {
+    doErrorTextParserTest(9);
+  }
+
+  @Test
   public void testPGSpanish() throws Exception {
     // only test on pgsql, as specifically testing against es_ES/pgsql error messsage
     if (getConnectionProvider().getRDBMS().equals("POSTGRE")) {
@@ -136,8 +141,13 @@ public class ErrorTextParserTest extends OBBaseTest {
     VariablesSecureApp vars = new VariablesSecureApp("", "", "");
     Connection con = conn.getTransactionConnection();
 
-    // set core to development to avoid the _mod_ trigger restrictions
-    ErrorTextParserTestData.setCoreInDevelopment(con, conn);
+    if (testCase != 9) {
+      // set core to development to avoid the _mod_ trigger restrictions
+      ErrorTextParserTestData.setCoreInDevelopment(con, conn);
+    } else {
+      // ensure that the are not any modules in development
+      ErrorTextParserTestData.setNotInDevelopment(con, conn);
+    }
 
     String errorMessage = "";
     String expectedErrorMessage = "";
@@ -174,6 +184,10 @@ public class ErrorTextParserTest extends OBBaseTest {
       case 8:
         expectedErrorMessage = "There is a constraint defined that was not satisfied. Please check the data entered";
         ErrorTextParserTestData.insertProcess(con, conn, "value", "name", "test");
+        break;
+      case 9:
+        expectedErrorMessage = "Cannot update an object in a module not in development and without an active template";
+        ErrorTextParserTestData.updateTableDescription(con, conn, "description", "146");
         break;
       }
 

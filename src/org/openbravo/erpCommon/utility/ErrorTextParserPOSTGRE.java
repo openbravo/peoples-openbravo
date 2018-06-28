@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,7 +94,7 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
     }
     // strip leading and trailing " character
     constraintName = constraintName.substring(1, constraintName.length() - 1);
-    log4j.debug("found constraint: " + constraintName);
+    log4j.debug("found constraint: {}", constraintName);
     return constraintName;
   }
 
@@ -132,10 +132,9 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
    * @see org.openbravo.erpCommon.utility.ErrorTextParser#parse()
    */
   public OBError parse() throws Exception {
-    if (getMessage().equals(""))
+    if (getMessage().equals("") || getConnection() == null) {
       return null;
-    else if (getConnection() == null)
-      return null;
+    }
     String myMessage = getMessage();
     if (log4j.isDebugEnabled())
       log4j.debug("Message: " + myMessage);
@@ -147,16 +146,13 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
      */
     // The regular expression . matches any character except a line terminator unless the DOTALL
     // flag is specified.
-    Pattern pattern = Pattern.compile(".*@.+@.*", Pattern.DOTALL);
-    if (pattern.matcher(myMessage).matches()) {
-      // if the message is a directly from postgres generated one, it has an 'ERROR :' prefix
-      // if it is passed via an AD_PINSTACE result, then the 'ERROR: ' has already been stripped
-      if ((myMessage.length() > 7) && (myMessage.startsWith("ERROR: "))) {
-        myMessage = myMessage.substring(7);
-      }
+    Pattern pattern = Pattern.compile("(.*)(@.+@)(.*)", Pattern.DOTALL);
+    Matcher matcher = pattern.matcher(myMessage);
+    if (matcher.matches()) {
+      myMessage = matcher.group(2);
       String translatedMsg = Utility.parseTranslation(getConnection(), getVars(), getLanguage(),
           myMessage);
-      log4j.debug("translated message: " + translatedMsg);
+      log4j.debug("translated message: {}", translatedMsg);
 
       OBError translatedError = new OBError();
       translatedError.setType("Error");

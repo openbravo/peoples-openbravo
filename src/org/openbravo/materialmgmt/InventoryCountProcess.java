@@ -49,10 +49,8 @@ import org.openbravo.materialmgmt.hook.InventoryCountCheckHook;
 import org.openbravo.materialmgmt.hook.InventoryCountProcessHook;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.financialmgmt.calendar.PeriodControl;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
@@ -270,118 +268,165 @@ public class InventoryCountProcess implements Process {
   }
 
   private void runChecks(InventoryCount inventory) throws OBException {
-
     try {
       executeHooks(inventoryCountChecks, inventory);
-    } catch (Exception e) {
-      OBException obException = new OBException(e.getMessage(), e.getCause());
-      throw obException;
+    } catch (Exception genericException) {
+      throw new OBException(genericException.getMessage(), genericException.getCause());
     }
+    checkInventoryAlreadyProcessed(inventory);
+    checkMandatoryAttributesWithoutVavlue(inventory);
+    checkDuplicatedProducts(inventory);
+    Organization org = inventory.getOrganization();
+    checkIfOrganizationIsReady(org);
+    checkOrganizationAllowsTransactions(org);
+    checkDifferentLegalInLinesAndHeader(inventory, org);
+    checkPeriodsNotAvailable(inventory, org);
+  }
 
+  private void checkInventoryAlreadyProcessed(InventoryCount inventory) {
     if (inventory.isProcessed()) {
       throw new OBException(OBMessageUtils.parseTranslation("@AlreadyPosted@"));
     }
-    // Products without attribute set.
-    StringBuffer where = new StringBuffer();
-    where.append(" as icl");
-    where.append("   join icl." + InventoryCountLine.PROPERTY_PRODUCT + " as p");
-    where.append("   join p." + Product.PROPERTY_ATTRIBUTESET + " as aset");
-    where.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory");
-    where.append("   and aset." + AttributeSet.PROPERTY_REQUIREATLEASTONEVALUE + " = true");
-    where.append("   and coalesce(p." + Product.PROPERTY_USEATTRIBUTESETVALUEAS + ", '-') <> 'F'");
-    where.append("   and coalesce(icl." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
-        + ", '0') = '0'");
-    where.append("  order by icl." + InventoryCountLine.PROPERTY_LINENO);
-    OBQuery<InventoryCountLine> iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class,
-        where.toString());
-    iclQry.setNamedParameter("inventory", inventory.getId());
-    iclQry.setMaxResult(1);
-    Object icl = iclQry.uniqueResult();
-    if (icl != null) {
-      throw new OBException(OBMessageUtils.parseTranslation("@Inline@ "
-          + ((InventoryCountLine) icl).getLineNo() + " @productWithoutAttributeSet@"));
-    }
+  }
 
-    // duplicated product
-    where = new StringBuffer();
-    where.append(" as icl");
-    where.append(" where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory");
-    where.append("   and exists (select 1 from " + InventoryCountLine.ENTITY_NAME + " as icl2");
-    where.append("       where icl." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " = icl2."
-        + InventoryCountLine.PROPERTY_PHYSINVENTORY);
-    where.append("         and icl." + InventoryCountLine.PROPERTY_PRODUCT + " = icl2."
-        + InventoryCountLine.PROPERTY_PRODUCT);
-    where.append("         and coalesce(icl." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE
-        + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE + ", '0')");
-    where.append("         and coalesce(icl." + InventoryCountLine.PROPERTY_ORDERUOM
-        + ", '0') = coalesce(icl2." + InventoryCountLine.PROPERTY_ORDERUOM + ", '0')");
-    where.append(" and coalesce(icl." + InventoryCountLine.PROPERTY_UOM + ", '0') = coalesce(icl2."
-        + InventoryCountLine.PROPERTY_UOM + ", '0')");
-    where.append("         and icl." + InventoryCountLine.PROPERTY_STORAGEBIN + " = icl2."
-        + InventoryCountLine.PROPERTY_STORAGEBIN);
-    where.append("         and icl." + InventoryCountLine.PROPERTY_LINENO + " <> icl2."
-        + InventoryCountLine.PROPERTY_LINENO + ")");
-    where.append(" order by icl." + InventoryCountLine.PROPERTY_PRODUCT);
-    where.append(", icl." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE);
-    where.append(", icl." + InventoryCountLine.PROPERTY_STORAGEBIN);
-    where.append(", icl." + InventoryCountLine.PROPERTY_ORDERUOM);
-    where.append(", icl." + InventoryCountLine.PROPERTY_LINENO);
-    iclQry = OBDal.getInstance().createQuery(InventoryCountLine.class, where.toString());
-    iclQry.setNamedParameter("inventory", inventory.getId());
-    List<InventoryCountLine> iclList = iclQry.list();
-    if (!iclList.isEmpty()) {
-      String lines = "";
-      for (InventoryCountLine icl2 : iclList) {
-        lines += icl2.getLineNo().toString() + ", ";
+  private void checkMandatoryAttributesWithoutVavlue(InventoryCount inventory) {
+    InventoryCountLine inventoryLine = getLineWithMandatoryAttributeWithoutValue(inventory);
+    if (inventoryLine != null) {
+      throw new OBException(OBMessageUtils.parseTranslation("@Inline@ " + (inventoryLine).getLineNo()
+          + " @productWithoutAttributeSet@"));
+    }
+  }
+
+  private InventoryCountLine getLineWithMandatoryAttributeWithoutValue(InventoryCount inventory) {
+    StringBuilder where = new StringBuilder();
+    where.append(" as icl ");
+    where.append("   join icl.product as p ");
+    where.append("   join icl.storageBin as sb ");
+    where.append("   join p.attributeSet as aset ");
+    where.append(" where icl.physInventory.id = :inventory ");
+    where.append("   and aset.requireAtLeastOneValue = true ");
+    where.append("   and coalesce(p.useAttributeSetValueAs, '-') <> 'F' ");
+    where.append("   and coalesce(icl.attributeSetValue, '0') = '0' ");
+    // Allow to regularize to 0 any existing Stock without attribute for this Product
+    // (this situation can happen when there is a bug in a different part of the code,
+    // but the user should be able always to zero this stock)
+    where.append("   and (icl.quantityCount <> 0 ");
+    where.append("        or (icl.quantityCount = 0 ");
+    where.append("            and not exists (select 1 from MaterialMgmtStorageDetail sd ");
+    where.append("                                     where sd.storageBin.id = sb.id ");
+    where.append("                                     and sd.product.id = p.id ");
+    where.append("                                     and sd.attributeSetValue = '0' ");
+    where.append("                                     and sd.uOM.id = icl.uOM.id ");
+    where.append("                                     and sd.quantityOnHand <> 0 ");
+    where.append("                                    and sd.quantityInDraftTransactions <> 0 ) ");
+    where.append("                           ) ");
+    where.append("           ) ");
+    where.append("  order by icl.lineNo ");
+    OBQuery<InventoryCountLine> query = OBDal.getInstance().createQuery(InventoryCountLine.class,
+        where.toString());
+    query.setNamedParameter("inventory", inventory.getId());
+    query.setMaxResult(1);
+    return query.uniqueResult();
+  }
+
+  private void checkDuplicatedProducts(InventoryCount inventory) {
+    List<InventoryCountLine> inventoryLineList = getLinesWithDuplicatedProducts(inventory);
+    if (!inventoryLineList.isEmpty()) {
+      StringBuilder errorMessage = new StringBuilder("");
+      for (InventoryCountLine icl2 : inventoryLineList) {
+        errorMessage.append(icl2.getLineNo().toString() + ", ");
       }
-      throw new OBException(OBMessageUtils.parseTranslation("@Thelines@ " + lines
+      throw new OBException(OBMessageUtils.parseTranslation("@Thelines@ " + errorMessage.toString()
           + "@sameInventorylines@"));
     }
+  }
 
-    Organization org = inventory.getOrganization();
+  private List<InventoryCountLine> getLinesWithDuplicatedProducts(InventoryCount inventory) {
+    StringBuilder where = new StringBuilder();
+    where.append(" as icl");
+    where.append(" where icl.physInventory.id = :inventory");
+    where.append("   and exists (select 1 ");
+    where.append("               from MaterialMgmtInventoryCountLine as icl2");
+    where.append("               where icl.physInventory = icl2.physInventory");
+    where.append("               and icl.product = icl2.product");
+    where
+        .append("                and coalesce(icl.attributeSetValue, '0') = coalesce(icl2.attributeSetValue, '0')");
+    where.append("               and coalesce(icl.orderUOM, '0') = coalesce(icl2.orderUOM, '0')");
+    where.append("               and coalesce(icl.uOM, '0') = coalesce(icl2.uOM, '0')");
+    where.append("               and icl.storageBin = icl2.storageBin");
+    where.append("               and icl.lineNo <> icl2.lineNo)");
+    where.append(" order by icl.product");
+    where.append(", icl.attributeSetValue");
+    where.append(", icl.storageBin");
+    where.append(", icl.orderUOM");
+    where.append(", icl.lineNo");
+    OBQuery<InventoryCountLine> query = OBDal.getInstance().createQuery(InventoryCountLine.class,
+        where.toString());
+    query.setNamedParameter("inventory", inventory.getId());
+    return query.list();
+  }
+
+  private void checkIfOrganizationIsReady(Organization org) {
     if (!org.isReady()) {
       throw new OBException(OBMessageUtils.parseTranslation("@OrgHeaderNotReady@"));
     }
+  }
+
+  private void checkOrganizationAllowsTransactions(Organization org) {
     if (!org.getOrganizationType().isTransactionsAllowed()) {
       throw new OBException(OBMessageUtils.parseTranslation("@OrgHeaderNotTransAllowed@"));
     }
+  }
+
+  private void checkDifferentLegalInLinesAndHeader(InventoryCount inventory, Organization org) {
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
         inventory.getClient().getId());
-    Organization headerLEorBU = osp.getLegalEntityOrBusinessUnit(org);
-    iclQry = OBDal.getInstance().createQuery(
-        InventoryCountLine.class,
-        InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory and "
-            + InventoryCountLine.PROPERTY_ORGANIZATION + ".id <> :organization");
-    iclQry.setNamedParameter("inventory", inventory.getId());
-    iclQry.setNamedParameter("organization", org.getId());
-    iclList = iclQry.list();
-    if (!iclList.isEmpty()) {
-      for (InventoryCountLine icl2 : iclList) {
-        if (!headerLEorBU.getId().equals(
-            osp.getLegalEntityOrBusinessUnit(icl2.getOrganization()).getId())) {
+    Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
+    List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(inventory, org);
+    if (!inventoryLineList.isEmpty()) {
+      for (InventoryCountLine inventoryLine : inventoryLineList) {
+        if (!inventoryLegalOrBusinessUnitOrg.getId().equals(
+            osp.getLegalEntityOrBusinessUnit(inventoryLine.getOrganization()).getId())) {
           throw new OBException(OBMessageUtils.parseTranslation("@LinesAndHeaderDifferentLEorBU@"));
         }
       }
     }
-    if (headerLEorBU.getOrganizationType().isLegalEntityWithAccounting()) {
-      where = new StringBuffer();
+  }
+
+  private List<InventoryCountLine> getLinesWithDifferentOrganizationThanHeader(
+      InventoryCount inventory, Organization org) {
+    OBQuery<InventoryCountLine> query = OBDal.getInstance().createQuery(
+        InventoryCountLine.class,
+        InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory and "
+            + InventoryCountLine.PROPERTY_ORGANIZATION + ".id <> :organization");
+    query.setNamedParameter("inventory", inventory.getId());
+    query.setNamedParameter("organization", org.getId());
+    return query.list();
+  }
+
+  private void checkPeriodsNotAvailable(InventoryCount inventory, Organization org) {
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        inventory.getClient().getId());
+    Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
+    if (inventoryLegalOrBusinessUnitOrg.getOrganizationType().isLegalEntityWithAccounting()) {
+      StringBuilder where = new StringBuilder();
       where.append(" as pc ");
-      where.append("   join pc." + PeriodControl.PROPERTY_PERIOD + " as p");
-      where.append(" where p." + Period.PROPERTY_STARTINGDATE + " <= :dateStarting");
-      where.append("   and p." + Period.PROPERTY_ENDINGDATE + " >= :dateEnding");
-      where.append("   and pc." + PeriodControl.PROPERTY_DOCUMENTCATEGORY + " = 'MMI' ");
-      where.append("   and pc." + PeriodControl.PROPERTY_ORGANIZATION + ".id = :org");
-      where.append("   and pc." + PeriodControl.PROPERTY_PERIODSTATUS + " = 'O'");
-      OBQuery<PeriodControl> pQry = OBDal.getInstance().createQuery(PeriodControl.class,
+      where.append("   join pc.period as p");
+      where.append(" where p.startingDate <= :dateStarting");
+      where.append("   and p.endingDate >= :dateEnding");
+      where.append("   and pc.documentCategory = 'MMI' ");
+      where.append("   and pc.organization.id = :org");
+      where.append("   and pc.periodStatus = 'O'");
+      OBQuery<PeriodControl> query = OBDal.getInstance().createQuery(PeriodControl.class,
           where.toString());
-      pQry.setFilterOnReadableClients(false);
-      pQry.setFilterOnReadableOrganization(false);
-      pQry.setNamedParameter("dateStarting", inventory.getMovementDate());
-      pQry.setNamedParameter("dateEnding",
+      query.setFilterOnReadableClients(false);
+      query.setFilterOnReadableOrganization(false);
+      query.setNamedParameter("dateStarting", inventory.getMovementDate());
+      query.setNamedParameter("dateEnding",
           DateUtils.truncate(inventory.getMovementDate(), Calendar.DATE));
-      pQry.setNamedParameter("org", osp.getPeriodControlAllowedOrganization(org).getId());
-      pQry.setMaxResult(1);
-      if (pQry.uniqueResult() == null) {
+      query.setNamedParameter("org", osp.getPeriodControlAllowedOrganization(org).getId());
+      query.setMaxResult(1);
+      if (query.uniqueResult() == null) {
         throw new OBException(OBMessageUtils.parseTranslation("@PeriodNotAvailable@"));
       }
     }
