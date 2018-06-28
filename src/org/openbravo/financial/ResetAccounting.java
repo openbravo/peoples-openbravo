@@ -112,8 +112,8 @@ public class ResetAccounting {
 
             String myQuery1 = "select ad_org_id, ad_org_getperiodcontrolallow(ad_org_id) from ad_org where ad_org_id in (:orgIds)";
 
-            Query<Object[]> query1 = OBDal.getInstance().getSession()
-                .createNativeQuery(myQuery1, Object[].class);
+            @SuppressWarnings("rawtypes")
+            Query query1 = OBDal.getInstance().getSession().createNativeQuery(myQuery1);
             query1.setParameterList("orgIds", orgIds);
             ScrollableResults scroll = query1.scroll(ScrollMode.FORWARD_ONLY);
             int i = 0;
