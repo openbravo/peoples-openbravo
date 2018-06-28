@@ -21,15 +21,13 @@ OB.Model.WindowModel = Backbone.Model.extend({
 
     _.extend(this.models, Backbone.Events);
 
-    OB.MobileApp.model.on('allModelsLoaded', function () {
-      if (this.init) {
-        this.init();
-      }
-
-      this.trigger('ready');
-    }, this);
     if (!OB.MobileApp.model.get('loggedOffline')) {
-      OB.Dal.loadModels(true, this.models, this.data);
+      OB.Dal.loadModels(true, this.models, this.data, undefined, function () {
+        if (me.init) {
+          me.init();
+        }
+        me.trigger('ready');
+      });
     } else {
       if (this.init) {
         this.init();
