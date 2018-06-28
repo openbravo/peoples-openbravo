@@ -163,7 +163,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       whereClause.append(" and o.businessPartner.id = :bp");
       whereClause.append(" and o.documentStatus in ('CO', 'CL')");
       whereClause.append(" and o.invoiceTerms <> 'N'");
-      whereClause.append(" and (ci.id is null or ci.invoice.id = :invId)");
     }
     return whereClause.toString();
   }
@@ -183,7 +182,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (!isSalesTransaction) {
       fromClause
           .append(" left join e.procurementPOInvoiceMatchList m with m.invoiceLine.id is not null");
-      fromClause.append(" left join e.invoiceLineList ci");
+      fromClause
+          .append(" left join e.invoiceLineList ci with (ci.id is null or ci.invoice.id = :invId)");
     }
     return fromClause.toString();
   }
