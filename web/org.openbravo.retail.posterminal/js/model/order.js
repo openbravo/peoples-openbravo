@@ -4669,6 +4669,13 @@
     removePayment: function (payment, cancellationCallback, removeCallback) {
       var payments = this.get('payments'),
           max, i, p;
+      if (this.get('isBeingClosed')) {
+        var error = new Error();
+        OB.error('The receipt is being save, you cannot remove payments.');
+        OB.error('The stack trace is: ' + error.stack);
+        return;
+      }
+
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,
@@ -7055,6 +7062,14 @@
             removeCallback();
           }
           };
+      _.each(this.get('multiOrdersList').models, function (ord) {
+        if (ord.get('isBeingClosed')) {
+          var error = new Error();
+          OB.error('The receipt is being save, you cannot remove payments.');
+          OB.error('The stack trace is: ' + error.stack);
+          return;
+        }
+      });
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePaymentMultiOrder', {
         paymentToRem: payment,
         payments: payments,
