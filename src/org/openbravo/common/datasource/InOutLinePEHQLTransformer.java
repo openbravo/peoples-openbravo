@@ -27,7 +27,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
@@ -45,8 +44,6 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     final String strInvoicePriceListId = requestParameters.get("@Invoice.priceList@");
     final PriceList priceList = OBDal.getInstance().get(PriceList.class, strInvoicePriceListId);
     final String strBusinessPartnerId = requestParameters.get("@Invoice.businessPartner@");
-    final String businessPartnerName = OBDal.getInstance()
-        .getProxy(BusinessPartner.class, strBusinessPartnerId).getName();
     final String strCurrencyId = requestParameters.get("@Invoice.currency@");
 
     queryNamedParameters.put("issotrx", isSalesTransaction);
@@ -55,7 +52,6 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     queryNamedParameters.put("cur", strCurrencyId);
 
     String transformedHql = _hqlQuery.replace("@selectClause@", getSelectClauseHQL());
-    transformedHql = transformedHql.replace("@bpName@", businessPartnerName);
     transformedHql = transformedHql.replace("@fromClause@", getFromClauseHQL());
     transformedHql = transformedHql.replace("@whereClause@", getWhereClauseHQL());
     transformedHql = transformedHql.replace("@groupByClause@", getGroupByHQL());
