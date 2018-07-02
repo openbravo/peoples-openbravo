@@ -70,7 +70,7 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@warehouse@", getWarehouse());
     transformedHql = transformedHql.replace("@filterByDocumentsProcessedSinceNDaysAgo@",
         getSinceHowManyDaysAgoOrdersShouldBeFiltered());
-    transformedHql = changeAdditionalFiltersIfIsSalesTransaction(transformedHql);
+    transformedHql = changeAdditionalFilters(transformedHql);
     return transformedHql;
   }
 
@@ -120,10 +120,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return (isSalesTransaction ? "ic" : "o") + ".orderDate >= (now()-" + daysCount + ")";
   }
 
-  private String changeAdditionalFiltersIfIsSalesTransaction(String transformedHql) {
-    // If Create Lines From SO then change the CLIENT and ORG filters to use InvoiceCandidateV of
-    // Order header
-    // instead of the order line
+  private String changeAdditionalFilters(String transformedHql) {
+    // If Create Lines From SO then change the CLIENT and ORG filters to use InvoiceCandidateV
+    // instead of the order line. If it is executed from PO then takes the org and lient from the
+    // Order header.
     String additionalFilters = transformedHql;
     additionalFilters = additionalFilters.replace("e.client.id in (",
         isSalesTransaction ? "ic.client.id in (" : "o.client.id in (");
