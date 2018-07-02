@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,10 +24,10 @@ import java.util.HashMap;
 
 /**
  * Check the created line has the following information taken from it header and not from the line
- * it is created: Order date, Schedule Delivery Date, Description.
+ * it is created: Order date, Schedule Delivery Date. Description is copied from line.
  * 
  * @author Mark
- *
+ * 
  */
 public class CLFOTestDataSO_02 extends CopyLinesFromOrdersTestData {
 
@@ -67,6 +67,7 @@ public class CLFOTestDataSO_02 extends CopyLinesFromOrdersTestData {
     order1Line1.setTaxId(CLFOTestConstants.VAT3_CHARGE05_TAX_ID);
     order1Line1.setWarehouseId(CLFOTestConstants.SPAIN_EAST_WAREHOUSE);
     order1Line1.setDescription("Description original order line");
+    order1Line1.setDescription(CLFOTestConstants.LINE1_DESCRIPTION);
     setOrderLinesCopiedFrom(new OrderLineData[][] { new OrderLineData[] { order1Line1 } });
 
     // Information of the order that will be processed
@@ -103,7 +104,7 @@ public class CLFOTestDataSO_02 extends CopyLinesFromOrdersTestData {
         CLFOTestConstants.BAG_UOM_NAME, "2.00", "2.00", "0",
         CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
         BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME, "",
-        null, null });
+        null, null, CLFOTestConstants.LINE1_DESCRIPTION });
     setExpectedOrderLines(expectedOrderLines);
   }
 
@@ -118,7 +119,7 @@ public class CLFOTestDataSO_02 extends CopyLinesFromOrdersTestData {
 
   @Override
   public String getTestDescription() {
-    return "Check the created line has the following information taken from it header and not from the line it is created: Order date, Schedule Delivery Date, Description.";
+    return "Check the created line has the following information taken from it header and not from the line it is created: Order date, Schedule Delivery Date. Description is copied from line.";
   }
 
   @Override
