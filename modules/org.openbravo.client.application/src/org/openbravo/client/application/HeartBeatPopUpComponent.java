@@ -92,8 +92,6 @@ public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
         return "OB.Layout.ClassicOBCompatibility.Popup.openInstancePurpose()";
       case HeartBeat:
         return "OB.Layout.ClassicOBCompatibility.Popup.openHeartbeat()";
-      case Registration:
-        return "OB.Layout.ClassicOBCompatibility.Popup.openRegistration()";
       default:
         return "return";
       }
