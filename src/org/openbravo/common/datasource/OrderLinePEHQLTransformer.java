@@ -64,7 +64,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@operativeQuantity@", getOperativeQuantityHQL());
     transformedHql = transformedHql.replace("@orderQuantity@", getOrderQuantityHQL());
     transformedHql = transformedHql.replace("@operativeUOM@", getOperativeUOM());
-    transformedHql = transformedHql.replace("@salesOrderIdentifier@", getSalesOrderIdentifier());
     transformedHql = transformedHql.replace("@documentNo@", getDocumentNo());
     transformedHql = transformedHql.replace("@grandTotalAmount@", getGrandTotalAmount());
     transformedHql = transformedHql.replace("@scheduledDeliveryDate@", getScheduledDeliveryDate());
@@ -95,14 +94,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return isSalesTransaction ? " ic.scheduledDeliveryDate" : " o.scheduledDeliveryDate";
   }
 
-  protected String getSalesOrderIdentifier() {
-    if (isSalesTransaction) {
-      return " (ic.documentNo || ' - ' || to_char(trunc(ic.orderDate)) || ' - ' || ic.grandTotalAmount) ";
-    } else {
-      return " (o.documentNo || ' - ' || to_char(trunc(o.orderDate)) || ' - ' || o.grandTotalAmount) ";
-    }
-  }
-
   protected String getOrderByHQL() {
     return isSalesTransaction ? " ic.documentNo desc, e.lineNo asc"
         : " o.documentNo desc, e.lineNo asc";
@@ -130,14 +121,14 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
   }
 
   private String changeAdditionalFiltersIfIsSalesTransaction(String transformedHql) {
-    // If Create Lines From SO then change the CLIENT and ORG filters to use InvoiceCandidateV
+    // If Create Lines From SO then change the CLIENT and ORG filters to use InvoiceCandidateV of
+    // Order header
     // instead of the order line
     String additionalFilters = transformedHql;
-    if (isSalesTransaction) {
-      additionalFilters = additionalFilters.replace("e.client.id in (", "ic.client.id in (");
-      additionalFilters = additionalFilters.replace("e.organization in (",
-          "ic.organization.id in (");
-    }
+    additionalFilters = additionalFilters.replace("e.client.id in (",
+        isSalesTransaction ? "ic.client.id in (" : "o.client.id in (");
+    additionalFilters = additionalFilters.replace("e.organization in (",
+        isSalesTransaction ? "ic.organization.id" : "o.organization.id in (");
     return additionalFilters;
   }
 
