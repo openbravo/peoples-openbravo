@@ -61,6 +61,7 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@operativeUOM@", getOperativeUOM());
     transformedHql = transformedHql.replace("@filterByDocumentsProcessedSinceNDaysAgo@",
         getSinceHowManyDaysAgoInOutsShouldBeFiltered());
+    transformedHql = changeAdditionalFilters(transformedHql);
     return transformedHql;
   }
 
@@ -88,6 +89,15 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
   protected String getSelectClauseHQL() {
     return EMPTY_STRING;
+  }
+
+  private String changeAdditionalFilters(String transformedHql) {
+    // Change the CLIENT and ORG filters to use the org and client from the InOut header instead of
+    // the lines.
+    String additionalFilters = transformedHql;
+    additionalFilters = additionalFilters.replace("e.client.id in (", "sh.client.id in (");
+    additionalFilters = additionalFilters.replace("e.organization in (", "sh.organization.id in (");
+    return additionalFilters;
   }
 
   protected String getGroupByHQL() {
@@ -196,16 +206,12 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
 
   protected String getMovementQuantityHQL() {
     StringBuilder movementQuantityHql = new StringBuilder();
-    movementQuantityHql.append(" (e.movementQuantity - COALESCE(");
     if (isSalesTransaction) {
       movementQuantityHql
-          .append(" (SELECT SUM(il2.invoicedQuantity) FROM e.invoiceLineList il2 left join il2.invoice i2");
-      movementQuantityHql.append(" WHERE i2.documentStatus = 'CO')");
+          .append(" (e.movementQuantity - sum(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
     } else {
-      movementQuantityHql
-          .append(" (SELECT SUM(mi2.quantity) FROM e.procurementReceiptInvoiceMatchList mi2)");
+      movementQuantityHql.append(" (e.movementQuantity - COALESCE(SUM(mi.quantity), 0))");
     }
-    movementQuantityHql.append(" ,0))");
     return movementQuantityHql.toString();
   }
 
