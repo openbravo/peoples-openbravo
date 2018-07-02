@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,7 @@ import java.util.HashMap;
  * Case A
  * 
  * @author Mark
- *
+ * 
  */
 public class CLFOTestDataPO_16 extends CopyLinesFromOrdersTestData {
 
@@ -70,6 +70,7 @@ public class CLFOTestDataPO_16 extends CopyLinesFromOrdersTestData {
     order1Line1.setPrice(new BigDecimal("1.36"));
     order1Line1.setTaxId(CLFOTestConstants.ADQUISICIONES_IVA_21_TAX_ID);
     order1Line1.setWarehouseId(CLFOTestConstants.ESPANA_NORTE_WAREHOUSE);
+    order1Line1.setDescription(CLFOTestConstants.LINE1_DESCRIPTION);
     setOrderLinesCopiedFrom(new OrderLineData[][] { new OrderLineData[] { order1Line1 } });
 
     // Information of the order that will be processed
@@ -107,7 +108,8 @@ public class CLFOTestDataPO_16 extends CopyLinesFromOrdersTestData {
         CLFOTestConstants.UNIT_UOM_NAME, "1.36", "1.36", "0",
         CLFOTestConstants.ADQUISICIONES_IVA_21_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
         BPartnerDataConstants.BEBIDAS_ALEGRES_LOCATION,
-        CLFOTestConstants.FB_ESPANA_NORTE_ORGANIZATION_NAME, "", null, null });
+        CLFOTestConstants.FB_ESPANA_NORTE_ORGANIZATION_NAME, "", null, null,
+        CLFOTestConstants.LINE1_DESCRIPTION });
     setExpectedOrderLines(expectedOrderLines);
   }
 
