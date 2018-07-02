@@ -20,9 +20,8 @@
 package org.openbravo.base.structure;
 
 import java.io.Serializable;
-import java.util.List;
 
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
@@ -34,7 +33,6 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Language;
 
@@ -122,43 +120,20 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
       // nothing set in this case anyway
       return null;
     }
+
     if (p.isTranslatable() && OBContext.hasTranslationInstalled()) {
       if (!hasLookedForTrl) {
         hasLookedForTrl = true;
-        OBContext.setAdminMode(true);
         try {
-          OBDal.getInstance().enableLanguageFilter(language.getLanguage());
-          @SuppressWarnings("unchecked")
-          List<BaseOBObject> trl = (List<BaseOBObject>) this.get(p.getTrlOneToManyProperty()
-              .getName());
-          if (!trl.isEmpty()) {
-            dataTrl = trl.get(0);
+          if (id != null && p.getTrlParentProperty() != null) {
+            BaseOBObject translation = getTranslation(p.getTrlParentProperty(), language, id);
+            if (translation != null) {
+              dataTrl = translation;
+            }
           }
         } catch (Throwable t) {
-          // Log error but do not fail here
-          log.debug("Error looking for translation of " + p + " in Session. Looking in Object.", t);
-
-          try {
-            if (id != null) {
-              if (p.getTrlParentProperty() != null) {
-                // check whether translation is available in the object and not stored in session
-                OBCriteria<BaseOBObject> trlList = OBDal.getInstance().createCriteria(
-                    p.getEntity().getName() + "Trl");
-                trlList.add(Restrictions.eq(p.getTrlParentProperty().getName(), OBDal.getInstance()
-                    .get(p.getEntity().toString(), id)));
-                trlList.add(Restrictions.eq("language", language));
-                if (trlList.count() > 0) {
-                  dataTrl = trlList.list().get(0);
-                }
-              }
-            }
-          } catch (Throwable t1) {
-            // continue using base language
-            log.debug("Error looking for translation of " + p + ". Using base value", t);
-          }
-        } finally {
-          OBDal.getInstance().disableLanguageFilter();
-          OBContext.restorePreviousMode();
+          // continue using base language
+          log.debug("Error looking for translation of " + p + ". Using base value", t);
         }
       }
 
@@ -168,6 +143,19 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     }
 
     return data[p.getIndexInEntity()];
+  }
+
+  private BaseOBObject getTranslation(Property trlParentProperty, Language language, String id) {
+    StringBuilder hql = new StringBuilder();
+    hql.append("select trl from " + trlParentProperty.getEntity() + " as trl ");
+    hql.append("where trl." + trlParentProperty.getName() + ".id = :id ");
+    hql.append("and trl.language = :language and trl.active = true");
+    Query<BaseOBObject> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), BaseOBObject.class);
+    query.setParameter("id", id);
+    query.setParameter("language", language);
+    query.setMaxResults(1);
+    return query.uniqueResult();
   }
 
   private void setDataValue(String propName, Object value) {

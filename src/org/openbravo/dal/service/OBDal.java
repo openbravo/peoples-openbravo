@@ -163,30 +163,6 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * Enables the language filter. After calling this method the collections whose target entity has
-   * a language property will only return objects with language equal to the one specified as
-   * parameter.
-   * 
-   * @param language
-   *          the language used to filter the collections
-   * 
-   * @see #disableLanguageFilter()
-   */
-  public void enableLanguageFilter(String language) {
-    SessionHandler.getInstance().getSession(poolName).enableFilter("languageFilter")
-        .setParameter("languageParam", language);
-  }
-
-  /**
-   * After calling this method the language filter is disabled.
-   * 
-   * @see #enableLanguageFilter()
-   */
-  public void disableLanguageFilter() {
-    SessionHandler.getInstance().getSession(poolName).disableFilter("languageFilter");
-  }
-
-  /**
    * Returns the connection used by the hibernate session.
    * 
    * Note: flushes the hibernate session before returning the connection.
