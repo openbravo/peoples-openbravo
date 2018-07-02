@@ -74,66 +74,58 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return transformedHql;
   }
 
-  protected String getGrandTotalAmount() {
-    return isSalesTransaction ? " ic.grandTotalAmount" : " o.grandTotalAmount";
-  }
-
-  protected String getDocumentNo() {
-    return isSalesTransaction ? " ic.documentNo" : " o.documentNo";
-  }
-
-  protected String getWarehouse() {
-    if (isSalesTransaction) {
-      return " (select wh.name from Warehouse wh where wh.id = ic.warehouse.id)";
-    } else {
-      return " (select wh.name from Warehouse wh where wh.id = o.warehouse.id)";
-    }
-  }
-
-  protected String getScheduledDeliveryDate() {
-    return isSalesTransaction ? " ic.scheduledDeliveryDate" : " o.scheduledDeliveryDate";
-  }
-
-  protected String getOrderByHQL() {
-    return isSalesTransaction ? " ic.documentNo desc, e.lineNo asc"
-        : " o.documentNo desc, e.lineNo asc";
-  }
-
-  /**
-   * Returns the value of FilterByDocumentsProcessedSinceNDaysAgo preference to be used to define a
-   * starting range date filter to limit the order records to be returned by the query
-   * 
-   * @return The value of the preference if exists for the Create Invoice Lines From Order window,
-   *         or since one year (365 days) if not or exists any conflict in the preference definition
-   */
-  protected String getSinceHowManyDaysAgoOrdersShouldBeFiltered() {
-    int daysCount = 365;
-    try {
-      Window window = OBDal.getInstance().get(Window.class, CREATE_INVOICE_LINES_FORM_ORDER_WINDOW);
-      String value = Preferences.getPreferenceValue("FilterByDocumentsProcessedSinceNDaysAgo",
-          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), window);
-      daysCount = Integer.valueOf(value);
-    } catch (Exception ignore) {
-    }
-    return (isSalesTransaction ? "ic" : "o") + ".orderDate >= (now()-" + daysCount + ")";
-  }
-
-  private String changeAdditionalFilters(String transformedHql) {
-    // If Create Lines From SO then change the CLIENT and ORG filters to use InvoiceCandidateV
-    // instead of the order line. If it is executed from PO then takes the org and lient from the
-    // Order header.
-    String additionalFilters = transformedHql;
-    additionalFilters = additionalFilters.replace("e.client.id in (",
-        isSalesTransaction ? "ic.client.id in (" : "o.client.id in (");
-    additionalFilters = additionalFilters.replace("e.organization in (",
-        isSalesTransaction ? "ic.organization.id in (" : "o.organization.id in (");
-    return additionalFilters;
-  }
-
   protected String getSelectClauseHQL() {
     return EMPTY_STRING;
+  }
+
+  protected String getFromClauseHQL() {
+    StringBuilder fromClause = new StringBuilder();
+    if (isSalesTransaction) {
+      fromClause.append(" InvoiceCandidateV ic, ");
+      fromClause.append(" OrderLine e");
+    } else {
+      fromClause.append(" OrderLine e");
+      fromClause.append(" join e.salesOrder o");
+    }
+    fromClause.append(" left join e.goodsShipmentLine il");
+
+    if (!isSalesTransaction) {
+      fromClause
+          .append(" left join e.procurementPOInvoiceMatchList m with m.invoiceLine.id is not null");
+      fromClause
+          .append(" left join e.invoiceLineList ci with (ci.id is null or ci.invoice.id = :invId)");
+    }
+    return fromClause.toString();
+  }
+
+  protected String getWhereClauseHQL() {
+    StringBuilder whereClause = new StringBuilder();
+    if (isSalesTransaction) {
+      whereClause.append(" and ic.salesTransaction = :issotrx");
+      whereClause.append(" and ic.priceIncludesTax = :plIncTax");
+      whereClause.append(" and ic.currency.id = :cur");
+      whereClause.append(" and ic.businessPartner.id = :bp");
+      whereClause.append(" and e.salesOrder.id = ic.salesOrder.id");
+      whereClause.append(" and (");
+      whereClause.append("     ic.term in ('D', 'S') and ic.deliveredQuantity <> 0");
+      whereClause.append("  or (ic.term = 'I' AND EXISTS");
+      whereClause.append("   (SELECT 1");
+      whereClause.append("    FROM OrderLine ol2");
+      whereClause.append("    WHERE ol2.salesOrder.id = ic.salesOrder.id");
+      whereClause.append("    GROUP BY ol2.id ");
+      whereClause.append("    HAVING SUM(ol2.orderedQuantity) - SUM(ol2.invoicedQuantity) <> 0))");
+      whereClause.append("  or (ic.term = 'O' and ic.orderedQuantity = ic.deliveredQuantity)");
+      whereClause.append(" )");
+    } else {
+      whereClause.append(" and o.salesTransaction = :issotrx");
+      whereClause.append(" and o.priceIncludesTax = :plIncTax");
+      whereClause.append(" and o.currency.id = :cur");
+
+      whereClause.append(" and o.businessPartner.id = :bp");
+      whereClause.append(" and o.documentStatus in ('CO', 'CL')");
+      whereClause.append(" and o.invoiceTerms <> 'N'");
+    }
+    return whereClause.toString();
   }
 
   protected String getGroupByHQL() {
@@ -179,69 +171,20 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return groupByClause.toString();
   }
 
-  protected String getWhereClauseHQL() {
-    StringBuilder whereClause = new StringBuilder();
-
-    if (isSalesTransaction) {
-      whereClause.append(" and ic.salesTransaction = :issotrx");
-      whereClause.append(" and ic.priceIncludesTax = :plIncTax");
-      whereClause.append(" and ic.currency.id = :cur");
-      whereClause.append(" and ic.businessPartner.id = :bp");
-      whereClause.append(" and e.salesOrder.id = ic.salesOrder.id");
-      whereClause.append(" and (");
-      whereClause.append("     ic.term in ('D', 'S') and ic.deliveredQuantity <> 0");
-      whereClause.append("  or (ic.term = 'I' AND EXISTS");
-      whereClause.append("   (SELECT 1");
-      whereClause.append("    FROM OrderLine ol2");
-      whereClause.append("    WHERE ol2.salesOrder.id = ic.salesOrder.id");
-      whereClause.append("    GROUP BY ol2.id ");
-      whereClause.append("    HAVING SUM(ol2.orderedQuantity) - SUM(ol2.invoicedQuantity) <> 0))");
-      whereClause.append("  or (ic.term = 'O' and ic.orderedQuantity = ic.deliveredQuantity)");
-      whereClause.append(" )");
-    } else {
-      whereClause.append(" and o.salesTransaction = :issotrx");
-      whereClause.append(" and o.priceIncludesTax = :plIncTax");
-      whereClause.append(" and o.currency.id = :cur");
-
-      whereClause.append(" and o.businessPartner.id = :bp");
-      whereClause.append(" and o.documentStatus in ('CO', 'CL')");
-      whereClause.append(" and o.invoiceTerms <> 'N'");
-    }
-    return whereClause.toString();
+  protected String getOrderByHQL() {
+    return isSalesTransaction ? " ic.documentNo desc, e.lineNo asc"
+        : " o.documentNo desc, e.lineNo asc";
   }
 
-  protected String getFromClauseHQL() {
-    StringBuilder fromClause = new StringBuilder();
+  protected String getOrderedQuantityHQL() {
+    StringBuilder orderedQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
-      fromClause.append(" InvoiceCandidateV ic, ");
-      fromClause.append(" OrderLine e");
+      orderedQuantityHql.append(" e.orderedQuantity-COALESCE(e.invoicedQuantity,0)");
     } else {
-      fromClause.append(" OrderLine e");
-      fromClause.append(" join e.salesOrder o");
+      orderedQuantityHql
+          .append(" e.orderedQuantity-SUM(COALESCE(m.quantity, 0))-SUM(COALESCE(ci.invoicedQuantity, 0))");
     }
-    fromClause.append(" left join e.goodsShipmentLine il");
-
-    if (!isSalesTransaction) {
-      fromClause
-          .append(" left join e.procurementPOInvoiceMatchList m with m.invoiceLine.id is not null");
-      fromClause
-          .append(" left join e.invoiceLineList ci with (ci.id is null or ci.invoice.id = :invId)");
-    }
-    return fromClause.toString();
-  }
-
-  protected String getOrderQuantityHQL() {
-    StringBuilder orderQuantityHql = new StringBuilder();
-    if (isSalesTransaction) {
-      orderQuantityHql.append(" COALESCE(il.orderQuantity ");
-      orderQuantityHql
-          .append(" , e.orderQuantity * ((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
-    } else {
-      orderQuantityHql.append(" COALESCE(il.orderQuantity ");
-      orderQuantityHql
-          .append(" , e.orderQuantity * ((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
-    }
-    return orderQuantityHql.toString();
+    return orderedQuantityHql.toString();
   }
 
   protected String getOperativeQuantityHQL() {
@@ -258,15 +201,18 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     return operativeQuantityHql.toString();
   }
 
-  protected String getOrderedQuantityHQL() {
-    StringBuilder orderedQuantityHql = new StringBuilder();
+  protected String getOrderQuantityHQL() {
+    StringBuilder orderQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
-      orderedQuantityHql.append(" e.orderedQuantity-COALESCE(e.invoicedQuantity,0)");
+      orderQuantityHql.append(" COALESCE(il.orderQuantity ");
+      orderQuantityHql
+          .append(" , e.orderQuantity * ((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
     } else {
-      orderedQuantityHql
-          .append(" e.orderedQuantity-SUM(COALESCE(m.quantity, 0))-SUM(COALESCE(ci.invoicedQuantity, 0))");
+      orderQuantityHql.append(" COALESCE(il.orderQuantity ");
+      orderQuantityHql
+          .append(" , e.orderQuantity * ((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
     }
-    return orderedQuantityHql.toString();
+    return orderQuantityHql.toString();
   }
 
   protected String getOperativeUOM() {
@@ -281,5 +227,58 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       operativeUOMHql.append("'' ");
     }
     return operativeUOMHql.toString();
+  }
+
+  protected String getDocumentNo() {
+    return isSalesTransaction ? " ic.documentNo" : " o.documentNo";
+  }
+
+  protected String getGrandTotalAmount() {
+    return isSalesTransaction ? " ic.grandTotalAmount" : " o.grandTotalAmount";
+  }
+
+  protected String getScheduledDeliveryDate() {
+    return isSalesTransaction ? " ic.scheduledDeliveryDate" : " o.scheduledDeliveryDate";
+  }
+
+  protected String getWarehouse() {
+    if (isSalesTransaction) {
+      return " (select wh.name from Warehouse wh where wh.id = ic.warehouse.id)";
+    } else {
+      return " (select wh.name from Warehouse wh where wh.id = o.warehouse.id)";
+    }
+  }
+
+  /**
+   * Returns the value of FilterByDocumentsProcessedSinceNDaysAgo preference to be used to define a
+   * starting range date filter to limit the order records to be returned by the query
+   * 
+   * @return The value of the preference if exists for the Create Invoice Lines From Order window,
+   *         or since one year (365 days) if not or exists any conflict in the preference definition
+   */
+  protected String getSinceHowManyDaysAgoOrdersShouldBeFiltered() {
+    int daysCount = 365;
+    try {
+      Window window = OBDal.getInstance().get(Window.class, CREATE_INVOICE_LINES_FORM_ORDER_WINDOW);
+      String value = Preferences.getPreferenceValue("FilterByDocumentsProcessedSinceNDaysAgo",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), window);
+      daysCount = Integer.valueOf(value);
+    } catch (Exception ignore) {
+    }
+    return (isSalesTransaction ? "ic" : "o") + ".orderDate >= (now()-" + daysCount + ")";
+  }
+
+  private String changeAdditionalFilters(String transformedHql) {
+    // If Create Lines From SO then change the CLIENT and ORG filters to use InvoiceCandidateV
+    // instead of the order line. If it is executed from PO then takes the org and lient from the
+    // Order header.
+    String additionalFilters = transformedHql;
+    additionalFilters = additionalFilters.replace("e.client.id in (",
+        isSalesTransaction ? "ic.client.id in (" : "o.client.id in (");
+    additionalFilters = additionalFilters.replace("e.organization in (",
+        isSalesTransaction ? "ic.organization.id in (" : "o.organization.id in (");
+    return additionalFilters;
   }
 }

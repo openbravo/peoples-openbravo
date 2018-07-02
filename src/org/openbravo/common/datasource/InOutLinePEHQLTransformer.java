@@ -65,39 +65,46 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return transformedHql;
   }
 
-  /**
-   * Return the value of FilterByDocumentsProcessedSinceNDaysAgo preference to be used to define a
-   * starting range date filter to limit the shipment/receipts records to be returned by the query
-   * 
-   * @return The value of the preference if exists for the Create Invoice Lines From
-   *         Shipment/Receipt window, or since one year (365 days) if not or exists any conflict in
-   *         the preference definition
-   */
-  protected String getSinceHowManyDaysAgoInOutsShouldBeFiltered() {
-    int daysCount = 365;
-    try {
-      Window window = OBDal.getInstance().get(Window.class, CREATE_INVOICE_LINES_FORM_INOUT_WINDOW);
-      String value = Preferences.getPreferenceValue("FilterByDocumentsProcessedSinceNDaysAgo",
-          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), window);
-      daysCount = Integer.valueOf(value);
-    } catch (Exception ignore) {
-    }
-    return String.valueOf(daysCount);
-  }
-
   protected String getSelectClauseHQL() {
     return EMPTY_STRING;
   }
 
-  private String changeAdditionalFilters(String transformedHql) {
-    // Change the CLIENT and ORG filters to use the org and client from the InOut header instead of
-    // the lines.
-    String additionalFilters = transformedHql;
-    additionalFilters = additionalFilters.replace("e.client.id in (", "sh.client.id in (");
-    additionalFilters = additionalFilters.replace("e.organization in (", "sh.organization.id in (");
-    return additionalFilters;
+  protected String getFromClauseHQL() {
+    StringBuilder fromClause = new StringBuilder();
+    fromClause.append(" MaterialMgmtShipmentInOutLine e");
+    fromClause.append(" join e.shipmentReceipt sh");
+    fromClause.append(" left join e.salesOrderLine ol");
+    fromClause.append(" left join ol.salesOrder o");
+    if (isSalesTransaction) {
+      fromClause.append(" left join e.invoiceLineList il");
+      fromClause.append(" left join il.invoice i");
+    } else {
+      fromClause.append(" left join e.procurementReceiptInvoiceMatchList mi");
+    }
+
+    return fromClause.toString();
+  }
+
+  protected String getWhereClauseHQL() {
+    StringBuilder whereClause = new StringBuilder();
+    whereClause.append(" and sh.salesTransaction = :issotrx");
+    whereClause.append(" and sh.documentStatus in ('CO', 'CL')");
+    whereClause.append(" and sh.processed = 'Y'");
+    whereClause.append(" and sh.logistic <> 'Y'");
+    whereClause.append(" and sh.businessPartner.id = :bp");
+    whereClause.append(" and (ol.id is null or o.priceIncludesTax = :plIncTax)");
+    whereClause.append(" and (o.id is null or o.currency.id = :cur)");
+    if (isSalesTransaction) {
+      whereClause.append(" and sh.completelyInvoiced = 'N'");
+      whereClause.append(" and NOT EXISTS");
+      whereClause.append(" (SELECT 1");
+      whereClause.append(" FROM Order o2");
+      whereClause.append(" WHERE o2.id = o.id");
+      whereClause
+          .append(" AND ((o2.invoiceTerms = 'O' and o2.delivered = 'N') or o2.invoiceTerms = 'N'))");
+    } else {
+    }
+    return whereClause.toString();
   }
 
   protected String getGroupByHQL() {
@@ -140,55 +147,15 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return groupByClause.toString();
   }
 
-  protected String getWhereClauseHQL() {
-    StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" and sh.salesTransaction = :issotrx");
-    whereClause.append(" and sh.documentStatus in ('CO', 'CL')");
-    whereClause.append(" and sh.processed = 'Y'");
-    whereClause.append(" and sh.logistic <> 'Y'");
-    whereClause.append(" and sh.businessPartner.id = :bp");
-    whereClause.append(" and (ol.id is null or o.priceIncludesTax = :plIncTax)");
-    whereClause.append(" and (o.id is null or o.currency.id = :cur)");
+  protected String getMovementQuantityHQL() {
+    StringBuilder movementQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
-      whereClause.append(" and sh.completelyInvoiced = 'N'");
-      whereClause.append(" and NOT EXISTS");
-      whereClause.append(" (SELECT 1");
-      whereClause.append(" FROM Order o2");
-      whereClause.append(" WHERE o2.id = o.id");
-      whereClause
-          .append(" AND ((o2.invoiceTerms = 'O' and o2.delivered = 'N') or o2.invoiceTerms = 'N'))");
+      movementQuantityHql
+          .append(" (e.movementQuantity - sum(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
     } else {
+      movementQuantityHql.append(" (e.movementQuantity - COALESCE(SUM(mi.quantity), 0))");
     }
-    return whereClause.toString();
-  }
-
-  protected String getFromClauseHQL() {
-    StringBuilder fromClause = new StringBuilder();
-    fromClause.append(" MaterialMgmtShipmentInOutLine e");
-    fromClause.append(" join e.shipmentReceipt sh");
-    fromClause.append(" left join e.salesOrderLine ol");
-    fromClause.append(" left join ol.salesOrder o");
-    if (isSalesTransaction) {
-      fromClause.append(" left join e.invoiceLineList il");
-      fromClause.append(" left join il.invoice i");
-    } else {
-      fromClause.append(" left join e.procurementReceiptInvoiceMatchList mi");
-    }
-
-    return fromClause.toString();
-  }
-
-  protected String getOrderQuantityHQL() {
-    StringBuilder orderQuantityHql = new StringBuilder();
-    if (isSalesTransaction) {
-      orderQuantityHql
-          .append(" e.orderQuantity - coalesce((case when i.documentStatus = 'CO' then il.orderQuantity else 0 end),0)");
-
-    } else {
-      orderQuantityHql
-          .append(" e.orderQuantity * ((e.movementQuantity - coalesce(mi.quantity,0)) / (case when e.movementQuantity <> 0 then e.movementQuantity else null end))");
-    }
-    return orderQuantityHql.toString();
+    return movementQuantityHql.toString();
   }
 
   protected String getOperativeQuantityHQL() {
@@ -204,15 +171,17 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     return operativeQuantityHql.toString();
   }
 
-  protected String getMovementQuantityHQL() {
-    StringBuilder movementQuantityHql = new StringBuilder();
+  protected String getOrderQuantityHQL() {
+    StringBuilder orderQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
-      movementQuantityHql
-          .append(" (e.movementQuantity - sum(COALESCE(CASE WHEN i.documentStatus = 'CO' THEN il.invoicedQuantity ELSE 0 END, 0)))");
+      orderQuantityHql
+          .append(" e.orderQuantity - coalesce((case when i.documentStatus = 'CO' then il.orderQuantity else 0 end),0)");
+
     } else {
-      movementQuantityHql.append(" (e.movementQuantity - COALESCE(SUM(mi.quantity), 0))");
+      orderQuantityHql
+          .append(" e.orderQuantity * ((e.movementQuantity - coalesce(mi.quantity,0)) / (case when e.movementQuantity <> 0 then e.movementQuantity else null end))");
     }
-    return movementQuantityHql.toString();
+    return orderQuantityHql.toString();
   }
 
   protected String getOperativeUOM() {
@@ -225,5 +194,36 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
       operativeUOMHql.append("'' ");
     }
     return operativeUOMHql.toString();
+  }
+
+  /**
+   * Return the value of FilterByDocumentsProcessedSinceNDaysAgo preference to be used to define a
+   * starting range date filter to limit the shipment/receipts records to be returned by the query
+   * 
+   * @return The value of the preference if exists for the Create Invoice Lines From
+   *         Shipment/Receipt window, or since one year (365 days) if not or exists any conflict in
+   *         the preference definition
+   */
+  protected String getSinceHowManyDaysAgoInOutsShouldBeFiltered() {
+    int daysCount = 365;
+    try {
+      Window window = OBDal.getInstance().get(Window.class, CREATE_INVOICE_LINES_FORM_INOUT_WINDOW);
+      String value = Preferences.getPreferenceValue("FilterByDocumentsProcessedSinceNDaysAgo",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), window);
+      daysCount = Integer.valueOf(value);
+    } catch (Exception ignore) {
+    }
+    return String.valueOf(daysCount);
+  }
+
+  private String changeAdditionalFilters(String transformedHql) {
+    // Change the CLIENT and ORG filters to use the org and client from the InOut header instead of
+    // the lines.
+    String additionalFilters = transformedHql;
+    additionalFilters = additionalFilters.replace("e.client.id in (", "sh.client.id in (");
+    additionalFilters = additionalFilters.replace("e.organization in (", "sh.organization.id in (");
+    return additionalFilters;
   }
 }
