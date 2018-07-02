@@ -1046,7 +1046,8 @@ public class DocFINReconciliation extends AcctServer {
   }
 
   /**
-   * Transactions lines in reconciliation are always balanced hence it is ZERO
+   * Transactions lines comes from glitem in reconciliation are always balanced hence it is ZERO
+   * When transaction lines comes from a payment, the payment process check that lines are balanced.
    * 
    * @return ZERO
    */
