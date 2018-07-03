@@ -23,8 +23,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletConfig;
@@ -32,7 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -40,10 +37,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
-import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.TreeData;
-import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -51,10 +46,7 @@ import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.order.Order;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
-import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -254,8 +246,6 @@ public class CreateFrom extends HttpSecureAppServlet {
   private String pageType(String strTableId) {
     if (strTableId.equals("392"))
       return "Bank";
-    else if (strTableId.equals("318"))
-      return "Invoice";
     else if (strTableId.equals("319"))
       return "Shipment";
     else if (strTableId.equals("426"))
@@ -276,9 +266,6 @@ public class CreateFrom extends HttpSecureAppServlet {
       if (strTableId.equals("392")) { // C_BankStatement
         printPageBank(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
             strTabName, strStatementDate, strBankAccount);
-      } else if (strTableId.equals("318")) { // C_Invoice
-        printPageInvoice(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
-            strTabName, strDateInvoiced, strBPartnerLocation, strPriceList, strBPartner);
       } else if (strTableId.equals("319")) { // M_InOut
         printPageShipment(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
             strTabName, strBPartner);
@@ -451,170 +438,6 @@ public class CreateFrom extends HttpSecureAppServlet {
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
-    }
-
-    xmlDocument.setData("structure1", data);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  protected void printPageInvoice(HttpServletResponse response, VariablesSecureApp vars,
-      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
-      String strTabName, String strDateInvoiced, String strBPartnerLocation, String strPriceList,
-      String strBPartner) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: Invoice");
-    CreateFromInvoiceData[] data = null;
-    XmlDocument xmlDocument;
-    String strPO = vars.getStringParameter("inpPurchaseOrder");
-    String strShipment = vars.getStringParameter("inpShipmentReciept");
-    Invoice invoice = OBDal.getInstance().get(Invoice.class, strKey);
-    String strIsTaxIncluded = invoice.getPriceList().isPriceIncludesTax() ? "Y" : "N";
-    String invoiceCurrencyId = invoice.getCurrency().getId();
-    final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-    if (vars.commandIn("FIND_PO"))
-      strShipment = "";
-    else if (vars.commandIn("FIND_SHIPMENT"))
-      strPO = "";
-    if (strPO.equals("") && strShipment.equals("")) {
-      final String[] discard = { "sectionDetail" };
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Invoice", discard)
-          .createXmlDocument();
-      data = CreateFromInvoiceData.set();
-    } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Invoice").createXmlDocument();
-      if (strShipment.equals("")) {
-        if (vars.getLanguage().equals("en_US")) {
-          if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromPOSOTrx(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
-          else
-            data = CreateFromInvoiceData.selectFromPO(this, vars.getLanguage(), strKey,
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
-        } else {
-          if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromPOTrlSOTrx(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
-          else
-            data = CreateFromInvoiceData.selectFromPOTrl(this, vars.getLanguage(), strKey,
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
-        }
-      } else {
-        if (vars.getLanguage().equals("en_US")) {
-          if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromShipmentSOTrx(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment,
-                strIsTaxIncluded);
-          else
-            data = CreateFromInvoiceData.selectFromShipment(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment,
-                strIsTaxIncluded);
-        } else {
-          if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromShipmentTrlSOTrx(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment,
-                strIsTaxIncluded);
-          else
-            data = CreateFromInvoiceData.selectFromShipmentTrl(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId),
-                Utility.getContext(this, vars, "#User_Org", strWindowId), strShipment,
-                strIsTaxIncluded);
-        }
-      }
-    }
-
-    if (UOMUtil.isUomManagementEnabled()) {
-      for (int i = 0; i < data.length; i++) {
-        if (data[i].aumqty.isEmpty()) {
-          if (!data[i].cAum.equals(data[i].cUomId)) {
-            data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
-                new BigDecimal(data[i].qty), data[i].cAum).toString();
-          } else {
-            data[i].aumqty = data[i].qty;
-          }
-        }
-        data[i].aumvisible = "table-cell";
-      }
-    }
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("path", strPath);
-    xmlDocument.setParameter("key", strKey);
-    xmlDocument.setParameter("tableId", strTableId);
-    xmlDocument.setParameter("processId", strProcessId);
-    xmlDocument.setParameter("dateInvoiced", strDateInvoiced);
-    xmlDocument.setParameter("bpartnerLocation", strBPartnerLocation);
-    xmlDocument.setParameter("pricelist", strPriceList);
-    xmlDocument.setParameter("cBpartnerId", strBPartner);
-    xmlDocument.setParameter("BPartnerDescription",
-        CreateFromShipmentData.selectBPartner(this, strBPartner));
-    xmlDocument.setParameter("PurchaseOrder", strPO);
-    xmlDocument.setParameter("Shipment", strShipment);
-    xmlDocument.setParameter("pType", (!strShipment.equals("") ? "SHIPMENT"
-        : (!strPO.equals("")) ? "PO" : ""));
-    xmlDocument.setParameter("windowId", strWindowId);
-    xmlDocument.setParameter("tabName", strTabName);
-
-    if (strBPartner.equals("")) {
-      xmlDocument.setData("reportShipmentReciept", "liststructure", new CreateFromInvoiceData[0]);
-      xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromInvoiceData[0]);
-    } else {
-      ArrayList<String> organizationList = new ArrayList<String>(OBContext.getOBContext()
-          .getOrganizationStructureProvider().getNaturalTree(invoice.getOrganization().getId()));
-      String narturalOrgTreeList = StringCollectionUtils.commaSeparated(organizationList);
-      if (isSOTrx.equals("Y")) {
-        xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
-            .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner, strIsTaxIncluded, invoiceCurrencyId));
-        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
-            .selectFromPOSOTrxCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner, strIsTaxIncluded, invoiceCurrencyId));
-      } else {
-        xmlDocument.setData("reportShipmentReciept", "liststructure", CreateFromInvoiceData
-            .selectFromShipmentCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner, strIsTaxIncluded, invoiceCurrencyId));
-        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromInvoiceData
-            .selectFromPOCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner, strIsTaxIncluded, invoiceCurrencyId));
-      }
-    }
-    {
-      final OBError myMessage = vars.getMessage("CreateFrom");
-      vars.removeMessage("CreateFrom");
-      if (myMessage != null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      } else {
-        xmlDocument.setParameter("messageType", "Info");
-        xmlDocument.setParameter("messageTitle",
-            Utility.messageBD(this, "Information", vars.getLanguage()));
-        xmlDocument.setParameter("messageMessage",
-            Utility.messageBD(this, "CreateFromMatchPOQtys", vars.getLanguage()));
-      }
-    }
-
-    if (UOMUtil.isUomManagementEnabled()) {
-      xmlDocument.setParameter("aumVisible", "table-cell");
-    } else {
-      xmlDocument.setParameter("aumVisible", "none");
     }
 
     xmlDocument.setData("structure1", data);
@@ -1481,8 +1304,6 @@ public class CreateFrom extends HttpSecureAppServlet {
     try {
       if (strTableId.equals("392"))
         return saveBank(vars, strKey, strTableId, strProcessId);
-      else if (strTableId.equals("318"))
-        return saveInvoice(vars, strKey, strTableId, strProcessId, strWindowId);
       else if (strTableId.equals("319"))
         return saveShipment(vars, strKey, strTableId, strProcessId, strWindowId);
       else if (strTableId.equals("426"))
@@ -1573,251 +1394,6 @@ public class CreateFrom extends HttpSecureAppServlet {
         }
       }
       releaseCommitConnection(conn);
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-    } catch (final Exception e) {
-      try {
-        releaseRollbackConnection(conn);
-      } catch (final Exception ignored) {
-      }
-      e.printStackTrace();
-      log4j.warn("Rollback in transaction");
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-    }
-    return myMessage;
-  }
-
-  protected OBError saveInvoice(VariablesSecureApp vars, String strKey, String strTableId,
-      String strProcessId, String strWindowId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Save: Invoice");
-    final String strDateInvoiced = vars.getRequiredStringParameter("inpDateInvoiced");
-    final String strBPartnerLocation = vars.getRequiredStringParameter("inpcBpartnerLocationId");
-    final String strBPartner = vars.getRequiredStringParameter("inpcBpartnerId");
-    final String strPriceList = vars.getRequiredStringParameter("inpMPricelist");
-    final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpcOrderId",
-        IsIDFilter.instance));
-    final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-    final String strIsTaxIncluded = OBDal.getInstance().get(PriceList.class, strPriceList)
-        .isPriceIncludesTax() ? "Y" : "N";
-
-    String strPO = "", priceActual = "0", priceLimit = "0", priceList = "0", strPriceListVersion = "", priceStd = "0", priceListGross = "0", priceStdGross = "0";
-    String priceGross = "0";
-    CreateFromInvoiceData[] data = null;
-    CreateFromInvoiceData[] dataAux = null;
-    OBError myMessage = null;
-    Connection conn = null;
-    String[] ids = restrictParameter(strClaves);
-    try {
-      conn = this.getTransactionConnection();
-      for (int k = 0; k < ids.length; k++) {
-        if (strType.equals("SHIPMENT")) {
-          String strShipment = vars.getStringParameter("inpShipmentReciept");
-          if (StringUtils.isNotEmpty(strShipment)) {
-            Order order = OBDal.getInstance().get(ShipmentInOut.class, strShipment).getSalesOrder();
-            if (order != null) {
-              strPO = order.getId();
-            }
-          }
-          if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this,
-                vars.getLanguage(), ids[k]);
-          else
-            data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, vars.getLanguage(),
-                ids[k]);
-          dataAux = CreateFromInvoiceData
-              .selectPriceList(conn, this, strDateInvoiced, strPriceList);
-          if (dataAux == null || dataAux.length == 0) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
-                "PriceListVersionNotFound");
-            releaseRollbackConnection(conn);
-            return myMessage;
-          }
-          strPriceListVersion = dataAux[0].id;
-        } else {
-          strPO = vars.getStringParameter("inpPurchaseOrder");
-          if (isSOTrx.equals("Y"))
-            data = CreateFromInvoiceData.selectFromPOUpdateSOTrx(conn, this, vars.getLanguage(),
-                ids[k]);
-          else
-            data = CreateFromInvoiceData.selectFromPOUpdate(conn, this, vars.getLanguage(), strKey,
-                ids[k]);
-        }
-        if (data != null) {
-          boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
-          for (int i = 0; i < data.length; i++) {
-            final String strSequence = SequenceIdData.getUUID();
-            BigDecimal qty = new BigDecimal(data[i].id);
-            CreateFromInvoiceData[] price = null;
-            String C_Tax_ID = "";
-            if (data[i].cOrderlineId.equals(""))
-              C_Tax_ID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId, vars
-                  .getWarehouse(), strBPartnerLocation, strBPartnerLocation, CreateFromInvoiceData
-                  .selectProject(this, strKey), isSOTrx.equals("Y") ? true : false);
-            else
-              C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
-
-            if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
-                && data[i].aumqty.isEmpty()) {
-              String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId,
-                  data[i].cDoctypeId);
-              data[i].cAum = defaultAum;
-              data[i].mProductUomId = null;
-              if (!defaultAum.equals(data[i].cUomId)) {
-                data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
-                    new BigDecimal(data[i].id), defaultAum).toString();
-              } else {
-                data[i].aumqty = data[i].id;
-              }
-            }
-
-            if (!data[i].cOrderlineId.equals("")) {
-              price = CreateFromInvoiceData.selectPrices(conn, this, data[i].cOrderlineId);
-              if (price != null && price.length > 0) {
-                priceList = price[0].pricelist;
-                priceLimit = price[0].pricelimit;
-                priceStd = price[0].pricestd;
-                priceActual = price[0].priceactual;
-                priceGross = price[0].grossUnitPrice;
-                priceListGross = price[0].grosspricelist;
-                priceStdGross = price[0].grosspricestd;
-              }
-              if (isSOTrx.equals("Y") && price[0].cancelpricead.equals("Y")) {
-                priceActual = priceStd;
-              }
-              price = null;
-            } else {
-              price = CreateFromInvoiceData.selectBOM(conn, this, strDateInvoiced, strBPartner,
-                  data[i].mProductId, strPriceListVersion);
-              if (price != null && price.length > 0) {
-                if ("N".equals(strIsTaxIncluded)) {
-                  priceList = price[0].pricelist;
-                  priceLimit = price[0].pricelimit;
-                  priceStd = price[0].pricestd;
-                  priceActual = CreateFromInvoiceData.getOffersPriceInvoice(this, strDateInvoiced,
-                      strBPartner, data[i].mProductId, priceStd, data[i].quantityorder,
-                      strPriceList, strKey);
-                } else {
-                  priceList = price[0].pricelist;
-                  priceLimit = price[0].pricelimit;
-                  priceGross = price[0].pricestd;
-                  priceListGross = priceList;
-                  priceStdGross = priceGross;
-                  priceActual = BigDecimal.ZERO.toString();
-                }
-              }
-              price = null;
-            }
-
-            final int stdPrecision = Integer.valueOf(
-                StringUtils.equals(strType, "SHIPMENT") ? dataAux[0].curstdprecision
-                    : data[i].curstdprecision).intValue();
-            BigDecimal lineNetAmt = new BigDecimal(priceActual).multiply(qty).setScale(
-                stdPrecision, RoundingMode.HALF_UP);
-            BigDecimal grossAmt = BigDecimal.ZERO;
-            if (StringUtils.equals(strIsTaxIncluded, "Y")) {
-              grossAmt = new BigDecimal(priceGross).multiply(qty);
-              grossAmt = grossAmt.setScale(stdPrecision, RoundingMode.HALF_UP);
-            }
-            if (StringUtils.isNotEmpty(strPO)) {
-              String strInvoiceprepaymentamt = CreateFromInvoiceData.selectInvoicePrepaymentAmt(
-                  this, strKey);
-              BigDecimal invoiceprepaymentamt = (StringUtils.isEmpty(strInvoiceprepaymentamt) ? BigDecimal.ZERO
-                  : new BigDecimal(strInvoiceprepaymentamt));
-              String strprepaymentamt = CreateFromInvoiceData.selectPrepaymentAmt(this, strPO);
-              BigDecimal prepaymentamt = (StringUtils.isEmpty(strprepaymentamt) ? BigDecimal.ZERO
-                  : new BigDecimal(strprepaymentamt));
-
-              BigDecimal totalprepayment = invoiceprepaymentamt.add(prepaymentamt);
-              CreateFromInvoiceData.updatePrepaymentAmt(conn, this, totalprepayment.toString(),
-                  strKey);
-            }
-            String strTaxRate = CreateFromInvoiceData.selectTaxRate(this, C_Tax_ID);
-            BigDecimal taxRate = (StringUtils.isEmpty(strTaxRate) ? BigDecimal.ONE
-                : new BigDecimal(strTaxRate));
-            BigDecimal taxAmt = ((lineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
-                RoundingMode.HALF_EVEN)).setScale(stdPrecision, RoundingMode.HALF_UP);
-            try {
-              // Calculate Acc and Def Plan from Product
-              String isDeferred = "N";
-              HashMap<String, String> accDefPlanData = AccDefUtility
-                  .getDeferredPlanForInvoiceProduct(strKey, data[i].mProductId);
-              String planType = accDefPlanData.get("planType");
-              String periodNumber = accDefPlanData.get("periodNumber");
-              String startingPeriodId = accDefPlanData.get("startingPeriodId");
-              if (!"".equals(planType) && !"".equals(periodNumber) && !"".equals(startingPeriodId)) {
-                isDeferred = "Y";
-              } else {
-                planType = "";
-                periodNumber = "";
-                startingPeriodId = "";
-              }
-
-              // Alternate Tax Base Amount pro-rating
-              BigDecimal taxBaseAmt = lineNetAmt;
-              if (data[i].cOrderlineId != null && !data[i].cOrderlineId.isEmpty()) {
-                try {
-                  OBContext.setAdminMode(true);
-                  OrderLine ol = OBDal.getInstance().get(OrderLine.class, data[i].cOrderlineId);
-                  if (ol != null && ol.getTaxableAmount() != null) {
-                    BigDecimal qtyOrdered = ol.getOrderedQuantity();
-                    taxBaseAmt = ol.getTaxableAmount();
-                    if (qtyOrdered.compareTo(ZERO) != 0) {
-                      taxBaseAmt = (taxBaseAmt.multiply(qty)).divide(qtyOrdered, stdPrecision,
-                          RoundingMode.HALF_UP);
-                    }
-                  }
-                } finally {
-                  OBContext.restorePreviousMode();
-                }
-              }
-
-              CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(),
-                  data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId,
-                  data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList,
-                  priceActual, priceLimit, lineNetAmt.toString(), C_Tax_ID, taxAmt.toPlainString(),
-                  data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
-                  priceStd, taxBaseAmt.toString(), priceGross, grossAmt.toString(), priceListGross
-                      .toString(), priceStdGross.toString(), isDeferred, planType, periodNumber,
-                  startingPeriodId, data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId,
-                  data[i].user1Id, data[i].user2Id, data[i].explode,
-                  data[i].mInoutlineId.equals("") || data[i].mInoutlineId == null ? data[i].isorder
-                      : "N", data[i].cAum, data[i].aumqty);
-
-              if (!data[i].mInoutlineId.isEmpty() && strType.equals("SHIPMENT")) {
-                CreateFromInvoiceData.insertShipmentAcctDimension(conn, this, strSequence,
-                    vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].mInoutlineId);
-              } else if (!data[i].cOrderlineId.isEmpty()) {
-                CreateFromInvoiceData.insertAcctDimension(conn, this, strSequence,
-                    vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].cOrderlineId);
-              }
-            } catch (final ServletException ex) {
-              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-              releaseRollbackConnection(conn);
-              return myMessage;
-            }
-          }
-        }
-
-        if (!strPO.equals("")) {
-          try {
-            final int total = CreateFromInvoiceData.deleteC_Order_ID(conn, this, strKey, strPO);
-            if (total == 0)
-              CreateFromInvoiceData.updateC_Order_ID(conn, this, strPO, strKey);
-          } catch (final ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-            return myMessage;
-          }
-
-        }
-      }
-      releaseCommitConnection(conn);
-      if (log4j.isDebugEnabled())
-        log4j.debug("Save commit");
       myMessage = new OBError();
       myMessage.setType("Success");
       myMessage.setTitle("");
