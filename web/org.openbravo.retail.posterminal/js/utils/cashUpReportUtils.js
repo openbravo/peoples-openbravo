@@ -174,8 +174,8 @@
               return;
             }
             precision = OB.MobileApp.model.paymentnames[auxPay.get('searchKey')].obposPosprecision;
-            amount = payment.get('amountRounded') ? payment.get('amountRounded') : payment.get('amount');
-            if (payment.get('amount') < 0) {
+            amount = _.isNumber(payment.get('amountRounded')) ? payment.get('amountRounded') : payment.get('amount');
+            if (amount < 0) {
               auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), amount, precision));
             } else if (orderType === 3) { // void layaway 
               auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), amount, precision));
