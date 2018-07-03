@@ -419,32 +419,33 @@
     },
 
     save: function (callback) {
-      var undoCopy = this.get('undo'),
-          me = this,
-          forceInsert = false;
-
-      if (this.get('isBeingClosed')) {
-        var diffReceipt = OB.UTIL.diffJson(this.serializeToJSON(), this.get('json'));
-        var error = new Error();
-        OB.error('The receipt is being save during the closing: ' + diffReceipt);
-        OB.error('The stack trace is: ' + error.stack);
-      }
-
-      var now = new Date();
-      this.set('timezoneOffset', now.getTimezoneOffset());
-
-      if (!this.get('id') || !this.id) {
-        var uuid = OB.UTIL.get_UUID();
-        this.set('id', uuid);
-        this.id = uuid;
-        forceInsert = true;
-      }
-
-      this.set('json', JSON.stringify(this.serializeToJSON()));
-      if (callback === undefined || !callback instanceof Function) {
-        callback = function () {};
-      }
       if (!OB.MobileApp.model.get('preventOrderSave') && !this.pendingCalculateReceipt) {
+        var undoCopy = this.get('undo'),
+            me = this,
+            forceInsert = false;
+
+        if (this.get('isBeingClosed')) {
+          var diffReceipt = OB.UTIL.diffJson(this.serializeToJSON(), this.get('json'));
+          var error = new Error();
+          OB.error('The receipt is being save during the closing: ' + diffReceipt);
+          OB.error('The stack trace is: ' + error.stack);
+        }
+
+        var now = new Date();
+        this.set('timezoneOffset', now.getTimezoneOffset());
+
+        if (!this.get('id') || !this.id) {
+          var uuid = OB.UTIL.get_UUID();
+          this.set('id', uuid);
+          this.id = uuid;
+          forceInsert = true;
+        }
+
+        this.set('json', JSON.stringify(this.serializeToJSON()));
+        if (callback === undefined || !callback instanceof Function) {
+          callback = function () {};
+        }
+
         OB.Dal.save(this, function () {
           if (callback) {
             callback();
@@ -452,12 +453,13 @@
         }, function () {
           OB.error(arguments);
         }, forceInsert);
+
+        this.setUndo('SaveOrder', undoCopy);
       } else {
         if (callback) {
           callback();
         }
       }
-      this.setUndo('SaveOrder', undoCopy);
     },
 
     calculateTaxes: function (callback) {
@@ -2504,7 +2506,47 @@
         execPostAddProductToOrderHook();
       } // End addProductToOrder
 
-      function returnApproval() {
+      function returnApproval(p) {
+        function finalCallback(p) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+            OB.Dal.saveOrUpdate(p, function () {
+              var productcriteria = {
+                columns: ['product'],
+                operator: 'equals',
+                value: p.id,
+                isId: true
+              };
+              var remoteCriteria = [productcriteria];
+              var criteriaFilter = {};
+              criteriaFilter.remoteFilters = remoteCriteria;
+              OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+                function saveCharacteristics(characteristics, i) {
+                  if (i === characteristics.length) {
+                    addProductToOrder();
+                  } else {
+                    OB.Dal.saveOrUpdate(characteristics[i], function () {
+                      saveCharacteristics(characteristics, i + 1);
+                    }, function () {
+                      addProductToOrder();
+                    });
+                  }
+                }
+                if (productcharacteristic.models.length !== 0) {
+                  saveCharacteristics(productcharacteristic.models, 0);
+                } else {
+                  addProductToOrder();
+                }
+
+              }, function () {
+                addProductToOrder();
+              });
+            }, function () {
+              addProductToOrder();
+            });
+          } else {
+            addProductToOrder();
+          }
+        }
         if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
           if (options && options.isVerifiedReturn) {
             OB.UTIL.showLoading(false);
@@ -2515,7 +2557,7 @@
               OB.UTIL.showLoading(true);
             }
             if (approved) {
-              addProductToOrder();
+              finalCallback(p);
             } else {
               if (callback) {
                 callback(true);
@@ -2523,19 +2565,19 @@
             }
           });
         } else {
-          addProductToOrder();
+          finalCallback(p);
         }
       }
       if (productStatus && productStatus.restrictsaleoutofstock && OB.DEC.compare(qty) === 1 && (_.isUndefined(attrs) || attrs.kindOriginator !== 'OB.OBPOSPointOfSale.UI.KeyboardOrder' || !attrs.isScanning) && OB.MobileApp.model.hasPermission('OBPOS_CheckStockForNotSaleWithoutStock', true)) {
         me.getStoreStock(p, qty, options, attrs, function (hasStock) {
           if (hasStock) {
-            returnApproval();
+            returnApproval(p);
           } else if (callback) {
             callback(false, null);
           }
         });
       } else {
-        returnApproval();
+        returnApproval(p);
       }
     },
 
@@ -2688,6 +2730,7 @@
 
     //Attrs is an object of attributes that will be set in order
     addProduct: function (p, qty, options, attrs, callback) {
+      var execution = OB.UTIL.ProcessController.start('addProduct');
       OB.debug('_addProduct');
       var me = this;
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
@@ -2723,18 +2766,21 @@
               p.set('listPrice', productPrices.at(0).get('pricelist'));
             }
             me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+              OB.UTIL.ProcessController.finish('addProduct', execution);
               if (callback) {
                 callback(success, orderline);
               }
             });
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+            OB.UTIL.ProcessController.finish('addProduct', execution);
             if (callback) {
               callback(false, null);
             }
           }
         }, function () {
           OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.ProcessController.finish('addProduct', execution);
           if (callback) {
             callback(false, null);
           }
@@ -2749,6 +2795,7 @@
           callback(false, null);
         } else {
           me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+            OB.UTIL.ProcessController.finish('addProduct', execution);
             if (callback) {
               callback(success, orderline);
             }
@@ -3267,41 +3314,6 @@
         return newline;
       }
 
-
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        OB.Dal.saveOrUpdate(p, function () {}, function () {
-          OB.error(arguments);
-        });
-
-        var productcriteria = {
-          columns: ['product'],
-          operator: 'equals',
-          value: p.id,
-          isId: true
-        };
-        var remoteCriteria = [productcriteria];
-        var criteriaFilter = {};
-        criteriaFilter.remoteFilters = remoteCriteria;
-        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-          function saveCharacteristics(characteristics, i) {
-            if (i === characteristics.length) {
-              me.calculateReceipt();
-            } else {
-              OB.Dal.saveOrUpdate(characteristics[i], function () {
-                saveCharacteristics(characteristics, i + 1);
-              }, function () {
-                OB.error(arguments);
-              });
-            }
-          }
-          if (productcharacteristic.models.length !== 0) {
-            saveCharacteristics(productcharacteristic.models, 0);
-          }
-
-        }, function () {
-          OB.error(arguments);
-        });
-      }
       return createLineAux(p, units, options, attrs, me);
     },
 
@@ -4669,6 +4681,13 @@
     removePayment: function (payment, cancellationCallback, removeCallback) {
       var payments = this.get('payments'),
           max, i, p;
+      if (this.get('isBeingClosed')) {
+        var error = new Error();
+        OB.error('The receipt is being save, you cannot remove payments.');
+        OB.error('The stack trace is: ' + error.stack);
+        return;
+      }
+
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,
@@ -7055,6 +7074,14 @@
             removeCallback();
           }
           };
+      _.each(this.get('multiOrdersList').models, function (ord) {
+        if (ord.get('isBeingClosed')) {
+          var error = new Error();
+          OB.error('The receipt is being save, you cannot remove payments.');
+          OB.error('The stack trace is: ' + error.stack);
+          return;
+        }
+      });
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePaymentMultiOrder', {
         paymentToRem: payment,
         payments: payments,
