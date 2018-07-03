@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017 Openbravo S.L.U.
+ * Copyright (C) 2017-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -35,7 +35,7 @@ public class UpdateIsLayaway extends ModuleScript {
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
-        new OpenbravoVersion(1, 8, 3100));
+        new OpenbravoVersion(1, 8, 3302));
   }
 
   @Override
