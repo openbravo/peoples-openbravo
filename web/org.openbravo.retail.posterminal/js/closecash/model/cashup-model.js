@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2017 Openbravo S.L.U.
+ * Copyright (C) 2014-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -765,78 +765,8 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
   initialStep: 6,
   finishButtonLabel: 'OBPOS_LblPrintClose',
   reportTitleLabel: 'OBPOS_LblPartialCashUpTitle',
-  getCountCashSummary: function () {
-    var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, model, value = OB.DEC.Zero,
-        second = OB.DEC.Zero;
-    countCashSummary = {
-      expectedSummary: [],
-      countedSummary: [],
-      differenceSummary: [],
-      qtyToKeepSummary: [],
-      qtyToDepoSummary: [],
-      totalCounted: this.get('totalCounted'),
-      totalExpected: this.get('totalExpected'),
-      totalDifference: this.get('totalDifference'),
-      totalQtyToKeep: OB.DEC.Zero,
-      totalQtyToDepo: OB.DEC.Zero,
-      isPartialCashup: true
-    };
-    //First we fix the qty to keep for non-automated payment methods
-    _.each(this.get('paymentList').models, function (model) {
-      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
-        model.set('qtyToKeep', model.get('counted'));
-      }
-    });
+  isPartialCashup: true,
 
-    enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
-    enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
-    enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];
-    var sortedPays = _.sortBy(this.get('paymentList').models, function (p) {
-      return p.get('name');
-    });
-    for (counter = 0; counter < 5; counter++) {
-      for (i = 0; i < sortedPays.length; i++) {
-        model = sortedPays[i];
-        if (!model.get(enumConcepts[counter])) {
-          countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
-            searchKey: model.get('searchKey'),
-            name: model.get('name'),
-            value: 0,
-            second: 0,
-            isocode: ''
-          }));
-        } else {
-          switch (enumSummarys[counter]) {
-          case 'qtyToKeepSummary':
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined) {
-              value = OB.DEC.Zero;
-              second = OB.DEC.Zero;
-            }
-            break;
-          case 'qtyToDepoSummary':
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined && model.get('rate') !== '1') {
-              second = OB.DEC.Zero;
-            }
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined) {
-              value = OB.DEC.Zero;
-            }
-            break;
-          default:
-            value = model.get(enumConcepts[counter]);
-            second = model.get(enumSecondConcepts[counter]);
-          }
-          countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
-            searchKey: model.get('searchKey'),
-            name: model.get('name'),
-            value: value,
-            second: second,
-            isocode: model.get('isocode')
-          }));
-        }
-      }
-    }
-    return countCashSummary;
-  },
   processAndFinishCashUp: function () {
     if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
       this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary(), false);
@@ -857,4 +787,5 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
       this.set('loadFinished', true);
     }
   }
+
 });

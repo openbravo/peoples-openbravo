@@ -160,13 +160,29 @@ enyo.kind({
     // cashMgmtDepositEvents or cashMgmtDropEvents Collection is shown by OB.UI.Table, when selecting an option 'click' event
     // is triggered, propagating this UI event to model here
     this.model.get('cashMgmtDepositEvents').on('click', function (model) {
-      this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment);
-      delete this.currentPayment;
+      var me = this;
+      this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment, function () {
+        OB.info('[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' + JSON.stringify(me.model.depsdropstosave.models.map(function (item) {
+          return item.getRelevantInformationString();
+        })));
+        delete me.currentPayment;
+      }, function (error) {
+        OB.error('[CashMgmntEvent] Error executing paymentDone ' + error);
+        delete me.currentPayment;
+      });
     }, this);
 
     this.model.get('cashMgmtDropEvents').on('click', function (model) {
-      this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment);
-      delete this.currentPayment;
+      var me = this;
+      this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment, function () {
+        OB.info('[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' + JSON.stringify(me.model.depsdropstosave.models.map(function (item) {
+          return item.getRelevantInformationString();
+        })));
+        delete me.currentPayment;
+      }, function (error) {
+        OB.error('[CashMgmntEvent] Error executing paymentDone ' + error);
+        delete me.currentPayment;
+      });
     }, this);
 
     //finished
