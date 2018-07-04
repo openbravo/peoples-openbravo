@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -103,7 +103,7 @@ public class TaxZone extends ProcessHQLQuery {
           + "and (financialMgmtTaxRate.region.id = :fromRegionId "
           + " or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id =  :fromRegionId )"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null))))";
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null)))";
 
     } else {
       hqlTax = hqlTax + "and financialMgmtTaxRate.region is null ";

@@ -27,7 +27,7 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("bploc.id", "id"));
         add(new HQLProperty("bp.id", "bpartner"));
         add(new HQLProperty(
-            "COALESCE(bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName, bploc.name)",
+            "COALESCE(bplocAddress.addressLine1 || CASE WHEN bplocAddress.addressLine2 IS NOT NULL THEN ' ' END || bplocAddress.addressLine2, bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName, bploc.name)",
             "name"));
         add(new HQLProperty("bplocAddress.postalCode", "postalCode"));
         add(new HQLProperty("bplocAddress.cityName", "cityName"));
@@ -38,7 +38,7 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("COALESCE(bplocRegion.name,'')", "regionName"));
         add(new HQLProperty("COALESCE(bplocRegion.id,'')", "regionId"));
         add(new HQLProperty(
-            "COALESCE(bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName)",
+            "COALESCE(bplocAddress.addressLine1 || CASE WHEN bplocAddress.addressLine2 IS NOT NULL THEN ' ' END || bplocAddress.addressLine2, bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName)",
             "_identifier"));
         add(new HQLProperty(
             "(case when bploc.active = 'Y' and bp.active = 'Y' then true else false end)", "active"));
