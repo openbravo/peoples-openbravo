@@ -245,6 +245,12 @@
 
               // create a clone of the receipt to be used when executing the final callback
               if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
+                if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && eventParams && eventParams.callback) {
+                  eventParams.callback({
+                    frozenReceipt: frozenReceipt,
+                    isCancelled: false
+                  });
+                }
                 // create a clone of the receipt to be used within the hook
                 var receiptForPostSyncReceipt = new OB.Model.Order();
                 OB.UTIL.clone(receipt, receiptForPostSyncReceipt);
@@ -282,7 +288,8 @@
                       }, tx);
                     });
                   } else {
-                    successStep();
+                    serverMessageForQuotation(frozenReceipt);
+                    OB.debug("Ticket closed: runSyncProcess executed");
                   }
                 }, function () {
                   OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
