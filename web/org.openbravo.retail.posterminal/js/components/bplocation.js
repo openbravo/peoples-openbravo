@@ -81,6 +81,7 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
+          presetCustomesLocation: OB.MobileApp.model.receipt.get('bp').attributes.locId,
           target: 'order',
           clean: true,
           navigationPath: []
@@ -706,6 +707,16 @@ enyo.kind({
     this.bpsList.reset();
     return true;
   },
+  loadPresetCustomerLocation: function (bpLocation) {
+    var me = this;
+    OB.Dal.get(OB.Model.BPLocation, bpLocation, function (bplocation) {
+      bplocation.set('bplocationId', bpLocation, {
+        silent: true
+      });
+      me.bpsList.reset([bplocation]);
+      me.$.bpsloclistitemprinter.$.tbody.show();
+    });
+  },
   searchAction: function (inSender, inEvent) {
     var me = this,
         criteria = {},
@@ -871,11 +882,19 @@ enyo.kind({
       this.$.body.$.listBpsLoc.setBPartner(this.bPartner);
       this.$.body.$.listBpsLoc.setTarget(this.args.target);
       this.$.body.$.listBpsLoc.setInitialLoad(true);
-      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+      if (this.args.businessPartner) {
+        this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+      } else {
+        this.$.body.$.listBpsLoc.bpsList.reset([]);
+      }
       this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
+      if (this.args.presetCustomesLocation) {
+        this.$.body.$.listBpsLoc.loadPresetCustomerLocation(this.args.presetCustomesLocation);
+      }
     } else if (this.args.makeSearch) {
       this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     }
+
     return true;
   },
   executeOnHide: function () {
