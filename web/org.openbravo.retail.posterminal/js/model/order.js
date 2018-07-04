@@ -437,6 +437,7 @@
         if (!this.get('id') || !this.id) {
           var uuid = OB.UTIL.get_UUID();
           this.set('id', uuid);
+          OB.info('[NewOrder] New order set with id ' + uuid);
           this.id = uuid;
           forceInsert = true;
         }
@@ -447,6 +448,7 @@
         }
 
         OB.Dal.save(this, function () {
+          OB.info('[NewOrder] Order (' + (forceInsert ? 'insert' : 'update') + ') saved in DB with id ' + me.id);
           if (callback) {
             callback();
           }
@@ -3603,12 +3605,15 @@
                   businessPartner.set('shipRegionId', shipping.get('regionId'));
                   businessPartner.set('shipCountryId', shipping.get('countryId'));
                 }
-
+                OB.info('[saveBP] 1 - set BP for order with id ' + me.id);
                 me.set('bp', businessPartner);
-                me.save();
-                // copy the modelOrder again, as saveOrUpdate is possibly async
-                OB.MobileApp.model.orderList.saveCurrent();
-                finishSaveData(callback);
+                OB.info('[saveBP] 2 - set BP for order with id ' + me.id);
+                me.save(function () {
+                  OB.info('[saveBP] 3 - order with id ' + me.id + ' saved');
+                  // copy the modelOrder again, as saveOrUpdate is possibly async
+                  OB.MobileApp.model.orderList.saveCurrent();
+                  finishSaveData(callback);
+                });
               }, businessPartner.get('id'));
             } else {
               me.set('bp', businessPartner);
