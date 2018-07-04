@@ -113,6 +113,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     var makeDepositsFunction = function (me) {
+        OB.info('[CashMgmntSync][1] Cash management synchronization started. ' + (me.depsdropstosave.size ? me.depsdropstosave.size() : 0) + ' To be synched');
         TestRegistry.CashMgmt = TestRegistry.CashMgmt || {};
         TestRegistry.CashMgmt.isCashDepositPrinted = false;
 
@@ -120,6 +121,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
 
         if (me.depsdropstosave.length === 0) {
           // Nothing to do go to main window
+          OB.info('[CashMgmntSync] Cash managment synchronization exited. Nothing to sync');
           OB.POS.navigate('retail.pointofsale');
           return true;
         }
@@ -130,26 +132,37 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
 
         function runSync() {
           if (OB.MobileApp.model.get('connectedToERP')) {
+            OB.info('[CashMgmntSync][11][RunSync] Started ONLINE');
             OB.MobileApp.model.runSyncProcess(function () {
               OB.UTIL.showLoading(false);
               me.set("finished", true);
               if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
+                OB.info('[CashMgmntSync][12][RunSync] Online -> PRINT');
                 me.printCashMgmt.print(me.depsdropstosave.toJSON());
               }
+              OB.info('[CashMgmntSync][13][RunSync] Finished ONLINE');
             }, function () {
               if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                OB.info('[CashMgmntSync][RunSync] continues ONLINE. OBMOBC_SynchronizedMode is ACTIVE');
                 // fail, remove everything and go away
                 OB.Dal.removeAll(OB.Model.CashManagement, null, function () {
+                  OB.info('[CashMgmntSync][RunSync][removeAll] RemoveAll because OBMOBC_SynchronizedMode is ACTIVE');
                   OB.UTIL.calculateCurrentCash();
                   me.depsdropstosave = new Backbone.Collection();
+                  OB.info('[CashMgmntSync][RunSync] Finished ONLINE with OBMOBC_SynchronizedMode is ACTIVE');
                 });
+                return;
               }
+              OB.error('[CashMgmntSync][RunSync] Failed ONLINE');
             });
           } else {
+            OB.info('[CashMgmntSync][RunSync] Started OFFLINE');
             OB.UTIL.showLoading(false);
             me.set("finished", true);
             if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
+              OB.info('[CashMgmntSync][RunSync] Offline -> PRINT');
               me.printCashMgmt.print(me.depsdropstosave.toJSON());
+              OB.info('[CashMgmntSync][RunSync] Finished OFFLINE');
             }
           }
         }
@@ -203,6 +216,10 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           }
         }, this);
 
+        OB.info('[CashMgmntSync][2] grouped info before sync: ' + JSON.stringify(paymentList.models.map(function (item) {
+          return item;
+        })));
+
         // Sending drops/deposits to backend
         var updateCashupAndAddCashupInfo = null;
         var updateCashupInfo = null;
@@ -210,7 +227,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
 
         setCashupObjectInCashMgmt = function (depdrops, cashUp, index) {
           if (index === depdrops.length) {
+            OB.info('[CashMgmntSync][9][setCashupObjectInCashMgmt] Finished. Execute CalculateCurrentCash');
             OB.UTIL.calculateCurrentCash(function () {
+              OB.info('[CashMgmntSync][10][setCashupObjectInCashMgmt][calculateCurrentCash] Executed. Run Sync');
               runSync();
             });
           } else {
@@ -219,11 +238,14 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             depdrop.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
             depDropJson = JSON.stringify(depdrop.serializeToJSON());
             depdrop.set('json', depDropJson);
+            OB.info('[CashMgmntSync][7][setCashupObjectInCashMgmt][saveCashMgmnt] execute save for deposit/drop in local DB:' + depDropJson);
             OB.Dal.save(depdrop, function () {
+              OB.info('[CashMgmntSync][8][saveCashMgmnt] Successfully saved deposit/drop in local DB:' + depdrop.id);
               setCashupObjectInCashMgmt(depdrops, cashUp, index + 1);
             }, function () {
               OB.UTIL.showLoading(false);
               me.set("finishedWrongly", true);
+              OB.error('[CashMgmntSync][setCashupObjectInCashMgmt][saveCashMgmnt] Error saving deposit/drop in local DB:' + depdrop.id);
               return;
             }, true);
           }
@@ -233,13 +255,19 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           if (index === paymentList.length && callback) {
             callback(cashUpReport);
           } else {
+            OB.info('[CashMgmntSync][3][preSumCashManagementToCashup] for payment: ' + JSON.stringify(paymentList[index]));
             OB.UTIL.sumCashManagementToCashup(paymentList[index], function (cashUp) {
+              OB.info('[CashMgmntSync][4][preUpdateCashupInfo][postSumCashManagementToCashup] for paymentList:' + JSON.stringify(paymentList[index]));
               updateCashupInfo(paymentList, index + 1, cashUp, callback);
             });
           }
         };
 
         updateCashupInfo(paymentList.models, 0, null, function (cashUpReport) {
+          if (cashUpReport && cashUpReport.size && cashUpReport.size() === 1) {
+            OB.info('[CashMgmntSync][5][postUpdateCashupInfo]: ' + cashUpReport.at(0).get('objToSend'));
+          }
+          OB.info('[CashMgmntSync][6][setCashupObjectInCashMgmt]: Call to setCashupObjectInCashMgmt for ' + me.depsdropstosave.size() + ' models');
           setCashupObjectInCashMgmt(me.depsdropstosave.models, cashUpReport, 0);
         });
 

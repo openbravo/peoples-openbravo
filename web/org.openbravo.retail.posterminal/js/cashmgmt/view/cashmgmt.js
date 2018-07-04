@@ -162,8 +162,12 @@ enyo.kind({
     this.model.get('cashMgmtDepositEvents').on('click', function (model) {
       var me = this;
       this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment, function () {
+        OB.info('[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' + JSON.stringify(me.model.depsdropstosave.models.map(function (item) {
+          return item.getRelevantInformationString();
+        })));
         delete me.currentPayment;
-      }, function () {
+      }, function (error) {
+        OB.error('[CashMgmntEvent] Error executing paymentDone ' + error);
         delete me.currentPayment;
       });
     }, this);
@@ -171,8 +175,12 @@ enyo.kind({
     this.model.get('cashMgmtDropEvents').on('click', function (model) {
       var me = this;
       this.model.depsdropstosave.trigger('paymentDone', model, this.currentPayment, function () {
+        OB.info('[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' + JSON.stringify(me.model.depsdropstosave.models.map(function (item) {
+          return item.getRelevantInformationString();
+        })));
         delete me.currentPayment;
-      }, function () {
+      }, function (error) {
+        OB.error('[CashMgmntEvent] Error executing paymentDone ' + error);
         delete me.currentPayment;
       });
     }, this);
