@@ -26,7 +26,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
     var me = this;
 
     this.depsdropstosave = new Backbone.Collection();
-    this.depsdropstosave.on('paymentDone', function (model, p, callback) {
+    this.depsdropstosave.on('paymentDone', function (model, p, callback, errorCallback) {
       // argument checks
       OB.UTIL.Debug.execute(function () {
         if (!me.payments) {
@@ -34,6 +34,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         }
       });
       var isError = false;
+
       me.payments.each(function (pay) {
         if (p.id === pay.get('paymentmethod_id')) {
           isError = (p.type === 'drop' && OB.DEC.sub(pay.get('total'), OB.DEC.mul(p.amount, p.rate)) < 0);
@@ -42,6 +43,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
 
       if (isError) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
+        if (errorCallback) {
+          errorCallback(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
+        }
         return;
       }
 
@@ -99,7 +103,12 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           callback();
         }
       }, function () {
-        OB.error("Could not save payment information");
+        var errorMsg = 'Could not save payment information';
+        if (errorCallback) {
+          errorCallback(errorMsg);
+        } else {
+          OB.error(errorMsg);
+        }
       });
     }, this);
 
@@ -201,12 +210,15 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
 
         setCashupObjectInCashMgmt = function (depdrops, cashUp, index) {
           if (index === depdrops.length) {
-            OB.UTIL.calculateCurrentCash();
-            runSync();
+            OB.UTIL.calculateCurrentCash(function () {
+              runSync();
+            });
           } else {
             var depdrop = depdrops[index];
+            var depDropJson;
             depdrop.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-            depdrop.set('json', JSON.stringify(depdrop.serializeToJSON()));
+            depDropJson = JSON.stringify(depdrop.serializeToJSON());
+            depdrop.set('json', depDropJson);
             OB.Dal.save(depdrop, function () {
               setCashupObjectInCashMgmt(depdrops, cashUp, index + 1);
             }, function () {
