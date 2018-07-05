@@ -358,7 +358,7 @@ public class CancelAndReplaceUtils {
       hql.append("WHERE EXISTS (SELECT 1 ");
       hql.append("FROM MaterialMgmtShipmentInOutLine AS sl ");
       hql.append("WHERE sl.salesOrderLine = ol) ");
-      hql.append("AND ol.salesOrder.id = :orderId)");
+      hql.append("AND ol.salesOrder.id = :orderId");
       final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
       query.setParameter("orderId", oldOrderId);
       query.setMaxResults(1);
