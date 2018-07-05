@@ -814,13 +814,10 @@
               OB.UTIL.startLoadingSteps();
               OB.MobileApp.model.set('isLoggingIn', true);
               OB.UTIL.showLoading(true);
-              OB.MobileApp.model.on('incrementalModelsLoaded', function () {
-                OB.MobileApp.model.off('incrementalModelsLoaded');
+              OB.MobileApp.model.loadModels(null, true, function () {
                 OB.UTIL.showLoading(false);
                 OB.MobileApp.model.set('isLoggingIn', false);
               });
-
-              OB.MobileApp.model.loadModels(null, true);
             }
           }, 1000);
 
