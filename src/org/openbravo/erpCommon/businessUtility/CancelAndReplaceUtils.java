@@ -1030,19 +1030,15 @@ public class CancelAndReplaceUtils {
     final OBCriteria<OrderLine> oldOrderLineCriteria = OBDal.getInstance().createCriteria(
         OrderLine.class);
     oldOrderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, oldOrder));
-    oldOrderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_OBPOSISDELETED, false));
     for (final OrderLine oldOrderLine : oldOrderLineCriteria.list()) {
       final StringBuffer where = new StringBuffer();
-      where.append(" WHERE " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + "."
-          + OrderLine.PROPERTY_ID + " IN :cancellingLines");
-      where.append(" AND (" + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
+      where.append(" WHERE (" + OrderlineServiceRelation.PROPERTY_SALESORDERLINE
           + " = :salesorderline");
       where.append(" OR " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED
           + " = :salesorderline)");
       final OBQuery<OrderlineServiceRelation> serviceRelationQuery = OBDal.getInstance()
           .createQuery(OrderlineServiceRelation.class, where.toString());
       serviceRelationQuery.setNamedParameter("salesorderline", oldOrderLine);
-      serviceRelationQuery.setNamedParameter("cancellingLines", linesRelations.keySet());
       for (final OrderlineServiceRelation serviceRelation : serviceRelationQuery.list()) {
         if (!createdRelations.contains(serviceRelation.getId())) {
           createdRelations.add(serviceRelation.getId());
