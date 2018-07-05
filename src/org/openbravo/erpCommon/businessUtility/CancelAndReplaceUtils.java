@@ -359,7 +359,8 @@ public class CancelAndReplaceUtils {
       hql.append("FROM MaterialMgmtShipmentInOutLine AS sl ");
       hql.append("WHERE sl.salesOrderLine = ol) ");
       hql.append("AND ol.salesOrder.id = :orderId");
-      final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      final Query<Integer> query = OBDal.getInstance().getSession()
+          .createQuery(hql.toString(), Integer.class);
       query.setParameter("orderId", oldOrderId);
       query.setMaxResults(1);
       final boolean hasShipment = query.uniqueResult() != null;
