@@ -439,7 +439,9 @@ enyo.kind({
   changeIsPaidPaidOnCreditIsQuotationDocumentNoPaidPartiallyOnCredit: function (model) {
     if (model.get('isPaid') === true && !model.get('isQuotation')) {
       this.addStyles('width: 50%; color: #f8941d;');
-      if (model.get('paidOnCredit')) {
+      if (model.get('iscancelled')) {
+        this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+      } else if (model.get('paidOnCredit')) {
         if (model.get('paidPartiallyOnCredit')) {
           this.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]));
         } else {
@@ -670,6 +672,9 @@ enyo.kind({
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
+    this.order.on('change:iscancelled', function () {
+      this.order.get('lines').trigger('reset');
+    }, this);
     this.order.on('change:cancelLayaway change:voidLayaway', function (model) {
       if (model.get('cancelLayaway') || model.get('voidLayaway')) {
         this.$.listPaymentLines.hide();
@@ -718,13 +723,13 @@ enyo.kind({
     this.order.on('change:hasbeenpaid', function (model) {
       this.$.divText.changeHasbeenpaid(model);
     }, this);
-    this.order.on('change:isPaid change:paidOnCredit change:isQuotation change:documentNo change:paidPartiallyOnCredit', function (model) {
+    this.order.on('change:isPaid change:paidOnCredit change:isQuotation change:documentNo change:paidPartiallyOnCredit change:iscancelled', function (model) {
       this.$.divText.changeIsPaidPaidOnCreditIsQuotationDocumentNoPaidPartiallyOnCredit(model);
       if (model.get('isPaid') === true && !model.get('isQuotation')) {
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]) || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]) || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder')) || this.$.divText.content === OB.I18N.getLabel('OBPOS_Cancelled')) {
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();
       }
