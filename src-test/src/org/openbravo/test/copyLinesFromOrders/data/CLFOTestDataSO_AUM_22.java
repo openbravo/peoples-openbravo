@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,7 @@ import java.util.HashMap;
  * created without AUM preference enabled, then enable the AUM preference and create from it.
  * 
  * @author Mark
- *
+ * 
  */
 public class CLFOTestDataSO_AUM_22 extends CopyLinesFromOrdersTestData {
 
@@ -69,6 +69,7 @@ public class CLFOTestDataSO_AUM_22 extends CopyLinesFromOrdersTestData {
     order1Line1.setWarehouseId(CLFOTestConstants.SPAIN_EAST_WAREHOUSE);
     order1Line1.setOperativeUOMId(CLFOTestConstants.UNIT_UOM_ID);
     order1Line1.setOperativeQuantity(new BigDecimal("1"));
+    order1Line1.setDescription(CLFOTestConstants.LINE1_DESCRIPTION);
     setOrderLinesCopiedFrom(new OrderLineData[][] { new OrderLineData[] { order1Line1 } });
 
     // Information of the order that will be processed
@@ -105,7 +106,7 @@ public class CLFOTestDataSO_AUM_22 extends CopyLinesFromOrdersTestData {
         CLFOTestConstants.BAG_UOM_NAME, "2.00", "2.00", "0",
         CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
         BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME, "",
-        null, null });
+        null, null, CLFOTestConstants.LINE1_DESCRIPTION });
     setExpectedOrderLines(expectedOrderLines);
   }
 

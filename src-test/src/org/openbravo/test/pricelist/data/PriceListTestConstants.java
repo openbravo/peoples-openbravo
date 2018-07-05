@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,6 +53,8 @@ public class PriceListTestConstants {
   public static final String CUSTOMER_B_PRICE_LIST_VERSION_ID = "4028E6C72959682B01295B03CFDE0249";
   // Final good A Product
   public static final String FINAL_GOOD_A_PRODUCT_ID = "4028E6C72959682B01295ADC1D07022A";
+  // Final good B Product
+  public static final String FINAL_GOOD_B_PRODUCT_ID = "4028E6C72959682B01295ADC1DC2022E";
   public static final String FINAL_GOOD_A_PRODUCT_NAME = "Final good A";
   // Final good B Product Name
   public static final String FINAL_GOOD_B_PRODUCT_NAME = "Final good B";

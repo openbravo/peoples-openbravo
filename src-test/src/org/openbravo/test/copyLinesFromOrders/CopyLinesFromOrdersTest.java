@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -94,7 +94,7 @@ import org.slf4j.LoggerFactory;
  * Tests cases to check Copy Lines From Orders process
  * 
  * @author Mark
- *
+ * 
  */
 public class CopyLinesFromOrdersTest extends WeldBaseTest {
   final static private Logger log = LoggerFactory.getLogger(CopyLinesFromOrdersTest.class);
@@ -162,7 +162,8 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
   public ParameterCdiTestRule<CopyLinesFromOrdersTestData> parameterValuesRule = new ParameterCdiTestRule<CopyLinesFromOrdersTestData>(
       PARAMS);
 
-  private @ParameterCdiTest CopyLinesFromOrdersTestData data;
+  private @ParameterCdiTest
+  CopyLinesFromOrdersTestData data;
 
   private static UOMManagementUtil uomUtil = new UOMManagementUtil();
 
@@ -465,6 +466,7 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
         String expectedAttributeValue = expectedLineData[10];
         String expectedOperativeQty = expectedLineData[11];
         String expectedOperativeUOM = expectedLineData[12];
+        String expectedDescription = expectedLineData[13];
 
         String referenceOrderDocumentNo = orderLineCopied.getSOPOReference().getSalesOrder()
             .getDocumentNo();
@@ -514,12 +516,11 @@ public class CopyLinesFromOrdersTest extends WeldBaseTest {
             + "). Was expected " + headerDeliveryDate, lineDeliveryDate,
             comparesEqualTo(headerDeliveryDate));
 
-        String headerDescription = processingOrder.getDescription();
         String lineDescription = orderLineCopied.getDescription();
-        if (StringUtils.isNotEmpty(headerDescription) || StringUtils.isNotEmpty(lineDescription)) {
+        if (StringUtils.isNotEmpty(expectedDescription) || StringUtils.isNotEmpty(lineDescription)) {
           assertThat(testNumber + ". Wrong Order Line Description = " + lineDescription
-              + "). Was expected " + headerDescription, lineDescription,
-              comparesEqualTo(headerDescription));
+              + "). Was expected " + expectedDescription, lineDescription,
+              comparesEqualTo(expectedDescription));
         }
 
         // Check BP Address
