@@ -337,7 +337,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       location.setCityName(jsonCustomer.getString(cityName));
     }
 
-    location.setCountry(OBDal.getInstance().get(Country.class, jsonCustomer.getString(country)));
+    if (jsonCustomer.has(country)) {
+      location.setCountry(OBDal.getInstance().get(Country.class, jsonCustomer.getString(country)));
+    }
 
     OBDal.getInstance().save(location);
 

@@ -172,6 +172,20 @@ enyo.kind({
       });
     }
 
+    if (this.owner.owner.owner.owner.order.get('iscancelled') && (!this.model.get('deliveredQuantity') || this.model.get('deliveredQuantity') !== this.model.get('qty'))) {
+      this.createComponent({
+        style: 'display: block;',
+        components: [{
+          content: '-- ' + OB.I18N.getLabel('OBPOS_Cancelled'),
+          attributes: {
+            style: 'float: left; width: 100%; clear: left;'
+          }
+        }, {
+          style: 'clear: both;'
+        }]
+      });
+    }
+
     if (this.model.get('promotions')) {
       enyo.forEach(this.model.get('promotions'), function (d) {
         if (d.hidden) {
