@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,7 +45,7 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
  * Product with attributes (not an instance attribute). In this case the attribute isn't copied.
  * 
  * @author Mark
- *
+ * 
  */
 public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
 
@@ -103,6 +103,7 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     order1Line1.setPrice(new BigDecimal("10.00"));
     order1Line1.setTaxId(CLFOTestConstants.EXEMPT3_TAX_ID);
     order1Line1.setWarehouseId(CLFOTestConstants.SPAIN_EAST_WAREHOUSE);
+    order1Line1.setDescription(CLFOTestConstants.LINE1_DESCRIPTION);
 
     OrderLineData order1Line2 = new OrderLineData();
     order1Line2.setLineNo(20L);
@@ -116,6 +117,7 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
     order1Line2.setPrice(new BigDecimal("10.00"));
     order1Line2.setTaxId(CLFOTestConstants.EXEMPT3_TAX_ID);
     order1Line2.setWarehouseId(CLFOTestConstants.SPAIN_EAST_WAREHOUSE);
+    order1Line2.setDescription(CLFOTestConstants.LINE2_DESCRIPTION);
     OrderLineData[][] expectedOrderLins = new OrderLineData[1][2];
     expectedOrderLins[0] = new OrderLineData[] { order1Line1, order1Line2 };
     setOrderLinesCopiedFrom(expectedOrderLins);
@@ -154,12 +156,12 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
         CLFOTestConstants.BAG_UOM_NAME, "10.00", "10.00", "0",
         CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
         BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME,
-        ATTRIBUTE_VALUE_XL, null, null });
+        ATTRIBUTE_VALUE_XL, null, null, CLFOTestConstants.LINE1_DESCRIPTION });
     expectedOrderLines.put("20", new String[] { PENCIL_PRODUCT_NAME, "10",
         CLFOTestConstants.BAG_UOM_NAME, "10.00", "10.00", "0",
         CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
         BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME, "",
-        null, null });
+        null, null, CLFOTestConstants.LINE2_DESCRIPTION });
     setExpectedOrderLines(expectedOrderLines);
   }
 
@@ -172,16 +174,19 @@ public class CLFOTestDataSO_06 extends CopyLinesFromOrdersTestData {
    * <li>Name = Size</li>
    * <li>Instance Attribute = Yes</li>
    * <li>List = Yes</li>
-   * </ul></li>
+   * </ul>
+   * </li>
    * <li>Add an Attribute Value to it
    * <ul>
    * <li>Search key = Name = XL</li>
-   * </ul></li>
+   * </ul>
+   * </li>
    * <li>Create a new Attribute Set
    * <ul>
    * <li>Organization = Spain</li>
    * <li>Name = Size</li>
-   * </ul></li>
+   * </ul>
+   * </li>
    * <li>Add as assigned attribute the previously created Size attribute.</li>
    * <li>Create a new Product and assign the created Size Attribute Set to it</li>
    * <li>Create a new Product and assign the existing Colour Attribute Set to it</li>

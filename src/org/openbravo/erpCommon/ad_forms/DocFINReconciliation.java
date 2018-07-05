@@ -1046,29 +1046,14 @@ public class DocFINReconciliation extends AcctServer {
   }
 
   /**
-   * Get Source Currency Balance - subtracts line amounts from total - no rounding
+   * Transactions lines comes from glitem in reconciliation are always balanced hence it is ZERO
+   * When transaction lines comes from a payment, the payment process check that lines are balanced.
    * 
-   * @return positive amount, if total is bigger than lines
+   * @return ZERO
    */
   @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
-    StringBuffer sb = new StringBuffer(" [");
-    // Total
-    retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
-    sb.append(getAmount(AcctServer.AMTTYPE_Gross));
-    // - Lines
-    for (int i = 0; i < p_lines.length; i++) {
-      BigDecimal lineBalance = new BigDecimal(
-          ((DocLine_FINReconciliation) p_lines[i]).DepositAmount);
-      lineBalance = lineBalance.subtract(new BigDecimal(
-          ((DocLine_FINReconciliation) p_lines[i]).PaymentAmount));
-      retValue = retValue.subtract(lineBalance);
-      sb.append("-").append(lineBalance);
-    }
-    sb.append("]");
-    //
-    docFINReconciliationLog4j.debug(" Balance=" + retValue + sb.toString());
     return retValue;
   } // getBalance
 
