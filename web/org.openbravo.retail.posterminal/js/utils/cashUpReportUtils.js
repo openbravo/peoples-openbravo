@@ -45,7 +45,7 @@
   }
 
   function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
-    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, replacedOrder;
+    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, replacedOrder, amount, precision;
     var netSales = OB.DEC.Zero;
     var grossSales = OB.DEC.Zero;
     var netReturns = OB.DEC.Zero;
@@ -173,12 +173,14 @@
             if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
               return;
             }
-            if (payment.get('amount') < 0) {
-              auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), payment.get('amount')));
+            precision = OB.MobileApp.model.paymentnames[auxPay.get('searchKey')].obposPosprecision;
+            amount = _.isNumber(payment.get('amountRounded')) ? payment.get('amountRounded') : payment.get('amount');
+            if (amount < 0) {
+              auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), amount, precision));
             } else if (orderType === 3) { // void layaway 
-              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), payment.get('amount')));
+              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), amount, precision));
             } else {
-              auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
+              auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), amount, precision));
             }
             //set used in transaction payment methods to true
             auxPay.set('usedInCurrentTrx', true);
@@ -752,7 +754,7 @@
           var cashMgmt = OB.DEC.sub(totalDeps, totalDrops);
           cash = OB.DEC.add(OB.DEC.add(startingCash, OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
           payment.currentCash = OB.UTIL.currency.toDefaultCurrency(payment.paymentMethod.currency, cash);
-          payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, cash);
+          payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, payment.currentCash);
         }, this);
         if (typeof callback === 'function') {
           callback();
