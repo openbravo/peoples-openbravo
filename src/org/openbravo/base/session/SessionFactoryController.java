@@ -158,7 +158,7 @@ public abstract class SessionFactoryController {
       // TODO: move to configuration file
       configuration.getProperties().setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "false");
       configuration.getProperties().setProperty(AvailableSettings.USE_QUERY_CACHE, "false");
-      configuration.getProperties().setProperty(AvailableSettings.BATCH_FETCH_STYLE, "DYNAMIC");
+      configuration.getProperties().setProperty(AvailableSettings.BATCH_FETCH_STYLE, "PADDED");
       configuration.getProperties().setProperty(AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, "50");
       configuration.getProperties().setProperty(AvailableSettings.STATEMENT_BATCH_SIZE, "10");
       configuration.getProperties().setProperty(AvailableSettings.STATEMENT_FETCH_SIZE, "50");
