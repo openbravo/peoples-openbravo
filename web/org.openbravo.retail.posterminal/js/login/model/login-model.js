@@ -195,10 +195,13 @@
                 }], {
                   autoDismiss: false,
                   onHideFunction: function (popup) {
+                    OB.UTIL.showLoading(true);
+                    terminalModel.set('terminalCorrectlyLoadedFromBackend', true);
                     terminalModel.propertiesReady(me.properties);
                   }
                 });
               } else {
+                terminalModel.set('terminalCorrectlyLoadedFromBackend', true);
                 terminalModel.propertiesReady(me.properties);
               }
               OB.UTIL.HookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
