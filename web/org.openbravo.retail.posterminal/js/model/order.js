@@ -709,6 +709,12 @@
               return memo;
             }
           }, OB.DEC.Zero);
+          if (!me.get('isEditable') && !me.get('forceCalculateTaxes') && !OB.UTIL.isNullOrUndefined(me.get('totalamount'))) {
+            if (gross !== me.get('totalamount')) {
+              OB.warn('Calculated gross ' + gross + ' is not equal to totalamount of the receipt ' + me.get('totalamount'));
+            }
+            gross = me.get('totalamount');
+          }
           saveAndTriggerEvents(gross, save);
         });
       }
