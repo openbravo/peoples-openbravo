@@ -1022,7 +1022,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<Column> columns = getADColumnList(tab.getTable().getId());
 
       for (Column column : columns) {
-        setValueOfColumnInRequest(row, column.getDBColumnName());
+        setValueOfColumnInRequest(row, column.getDBColumnName(), tab);
       }
     }
 
@@ -1293,7 +1293,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
+  private void setValueOfColumnInRequest(BaseOBObject obj, String columnName, Tab tab) {
     Entity entity = obj.getEntity();
     Property prop = entity.getPropertyByColumnName(columnName);
     Object currentValue = obj.get(prop.getName());
@@ -1326,7 +1326,12 @@ public class FormInitializationComponent extends BaseActionHandler {
             null);
       }
     } catch (Exception ignore) {
-      log.error("Couldn't get the value for column " + columnName, ignore);
+      String msg = "Could not get value for column: " + columnName + " - tab: " + tab;
+      if (obj != null) {
+        msg += " - row: " + obj.getId();
+      }
+
+      log.error(msg, ignore);
     }
   }
 
@@ -1350,7 +1355,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         // We also set the value of every column in the RequestContext so that it is available for
         // the Auxiliary Input computation
-        setValueOfColumnInRequest(object, col.getDBColumnName());
+        setValueOfColumnInRequest(object, col.getDBColumnName(), tab);
       }
     }
     List<AuxiliaryInput> auxInputs = getAuxiliaryInputList(tab.getId());
