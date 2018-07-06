@@ -1022,7 +1022,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<Column> columns = getADColumnList(tab.getTable().getId());
 
       for (Column column : columns) {
-        setValueOfColumnInRequest(row, null, column.getDBColumnName());
+        setValueOfColumnInRequest(row, column.getDBColumnName());
       }
     }
 
@@ -1293,21 +1293,10 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
-  private void setValueOfColumnInRequest(BaseOBObject obj, Field field, String columnName) {
+  private void setValueOfColumnInRequest(BaseOBObject obj, String columnName) {
     Entity entity = obj.getEntity();
-    final Property prop;
-    Object currentValue;
-    if (field != null) {
-      prop = KernelUtils.getProperty(field);
-      if (field.getProperty() != null) {
-        currentValue = DalUtil.getValueFromPath(obj, field.getProperty());
-      } else {
-        currentValue = obj.get(prop.getName());
-      }
-    } else {
-      prop = entity.getPropertyByColumnName(columnName);
-      currentValue = obj.get(prop.getName());
-    }
+    Property prop = entity.getPropertyByColumnName(columnName);
+    Object currentValue = obj.get(prop.getName());
 
     try {
       if (currentValue != null && !currentValue.toString().equals("null")) {
@@ -1336,8 +1325,8 @@ public class FormInitializationComponent extends BaseActionHandler {
         RequestContext.get().setRequestParameter("inp" + Sqlc.TransformaNombreColumna(columnName),
             null);
       }
-    } catch (Exception e) {
-      log.error("Couldn't get the value for column " + columnName, e);
+    } catch (Exception ignore) {
+      log.error("Couldn't get the value for column " + columnName, ignore);
     }
   }
 
@@ -1361,7 +1350,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         // We also set the value of every column in the RequestContext so that it is available for
         // the Auxiliary Input computation
-        setValueOfColumnInRequest(object, null, col.getDBColumnName());
+        setValueOfColumnInRequest(object, col.getDBColumnName());
       }
     }
     List<AuxiliaryInput> auxInputs = getAuxiliaryInputList(tab.getId());
