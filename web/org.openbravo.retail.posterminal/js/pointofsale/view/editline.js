@@ -961,7 +961,7 @@ enyo.kind({
     this.$.returnreason.setCollection(this.reasons);
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      OB.UTIL.showError(error);
     }
 
     function successCallbackReasons(dataReasons, me) {

@@ -67,7 +67,7 @@ enyo.kind({
         i, j;
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      OB.UTIL.showError(error);
     }
 
     function successCallbackBrands(dataBrands) {

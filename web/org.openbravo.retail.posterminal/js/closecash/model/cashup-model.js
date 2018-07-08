@@ -382,7 +382,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       synch3 = true;
       finish();
     }, function (tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      OB.UTIL.showError(error);
     }, this);
 
     this.printCashUp = new OB.OBPOSCashUp.Print.CashUp();

@@ -161,7 +161,7 @@ enyo.kind({
         OB.Dal.find(OB.Model.BPLocation, criteria, function (locations) {
           successLocations(locations.models);
         }, function (tx, error) {
-          OB.UTIL.showError("OBDAL error: " + error);
+          OB.UTIL.showError(error);
         });
       }
     }
@@ -726,7 +726,7 @@ enyo.kind({
       if (OB.MobileApp.model.get('permissions') && OB.MobileApp.model.get('permissions')["OBPOS_remote.customer"] && !OB.MobileApp.model.get("connectedToERP")) {
         OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable'));
       } else {
-        OB.UTIL.showError("OBDAL error: " + error);
+        OB.UTIL.showError(error);
       }
     }
 
@@ -936,7 +936,7 @@ enyo.kind({
       if (OB.MobileApp.model.get('permissions') && OB.MobileApp.model.get('permissions')["OBPOS_remote.customer"] && !OB.MobileApp.model.get("connectedToERP")) {
         OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable'));
       } else {
-        OB.UTIL.showError("OBDAL error: " + error);
+        OB.UTIL.showError(error);
       }
     }
 

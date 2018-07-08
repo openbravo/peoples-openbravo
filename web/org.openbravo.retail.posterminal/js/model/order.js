@@ -3643,7 +3643,7 @@
         var saveLocModel = function (locModel, lid, callback) {
             if (businessPartner.get(locModel)) {
               OB.Dal.saveOrUpdate(businessPartner.get(locModel), function () {}, function (tx, error) {
-                OB.UTIL.showError("OBDAL error: " + error);
+                OB.UTIL.showError(error);
               });
               if (callback) {
                 callback();
@@ -3651,7 +3651,7 @@
             } else {
               OB.Dal.get(OB.Model.BPLocation, businessPartner.get(lid), function (location) {
                 OB.Dal.saveOrUpdate(location, function () {}, function (tx, error) {
-                  OB.UTIL.showError("OBDAL error: " + error);
+                  OB.UTIL.showError(error);
                 });
                 businessPartner.set(locModel, location);
                 if (callback) {
@@ -6058,7 +6058,7 @@
                             promotion.manual = true;
                           }
                         }, function (tx, error) {
-                          OB.UTIL.showError("OBDAL error: " + error);
+                          OB.UTIL.showError(error);
                         });
                       });
                       if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true)) {
@@ -6287,7 +6287,7 @@
               OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
                 locationForBpartner(bpLoc, bpLoc);
               }, function (tx, error) {
-                OB.UTIL.showError("OBDAL error: " + error);
+                OB.UTIL.showError(error);
               });
             }
           } else {
@@ -6318,7 +6318,7 @@
                 });
                 locationForBpartner(loc, billLoc);
               }, function (tx, error) {
-                OB.UTIL.showError("OBDAL error: " + error);
+                OB.UTIL.showError(error);
               }, bpLoc);
 
             }

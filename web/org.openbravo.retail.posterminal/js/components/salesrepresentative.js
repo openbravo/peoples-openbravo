@@ -177,7 +177,7 @@ enyo.kind({
         filter = inEvent.srName;
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      OB.UTIL.showError(error);
     }
 
     function successCallbackBPs(dataSrs) {
