@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2017 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,7 +11,7 @@ package org.openbravo.retail.posterminal.process;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -49,7 +49,8 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             hql.append("WHERE so.id <> :orderId ");
             hql.append("AND pol.salesOrder.id = :orderId ");
             hql.append("AND so.iscancelled = false");
-            final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+            final Query<Long> query = OBDal.getInstance().getSession()
+                .createQuery(hql.toString(), Long.class);
             query.setParameter("orderId", orderId);
             result.put("deferredLines", query.list());
           }
@@ -68,7 +69,8 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             hql.append("AND so.id <> :orderId ");
             hql.append("AND so.iscancelled = false ");
             hql.append("AND pol.orderedQuantity > pol.deliveredQuantity");
-            final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+            final Query<String> query = OBDal.getInstance().getSession()
+                .createQuery(hql.toString(), String.class);
             query.setParameter("orderId", orderId);
             query.setMaxResults(1);
             result.put("hasDeferredServices", query.uniqueResult() != null);

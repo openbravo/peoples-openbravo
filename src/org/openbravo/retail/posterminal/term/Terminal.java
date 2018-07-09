@@ -24,8 +24,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONTokener;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.DalUtil;
@@ -209,6 +209,7 @@ public class Terminal extends JSONProcessSimple {
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
           .getCurrentOrganization().getId(), null, null, null);
 
+      @SuppressWarnings("rawtypes")
       final Query terminalquery = querybuilder.getDalQuery();
       terminalquery.setParameter("searchKey", pOSTerminal.getSearchKey());
       terminalquery.setParameter("pricelistId", priceList.getId());

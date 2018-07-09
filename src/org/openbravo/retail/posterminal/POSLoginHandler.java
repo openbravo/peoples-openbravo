@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
@@ -232,17 +232,17 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     hqlQueryStr
         .append("ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC");
     final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
-    final Query query = hibernateSession.createQuery(hqlQueryStr.toString());
+    final Query<Object[]> query = hibernateSession.createQuery(hqlQueryStr.toString(),
+        Object[].class);
     query.setParameter("stOrgId", terminal.getOrganization().getId());
     query.setParameter("clientId", terminal.getClient().getId());
     query.setParameter("userId", currentUser.getId());
     query.setParameter("formId", POSUtils.WEB_POS_FORM_ID);
     query.setMaxResults(1);
 
-    @SuppressWarnings("unchecked")
-    List<Object> listResults = query.list();
+    List<Object[]> listResults = query.list();
     if (!listResults.isEmpty()) {
-      Object[] result = (Object[]) listResults.get(0);
+      Object[] result = listResults.get(0);
       String selectedRoleId = (String) result[0];
       Role foundRole = OBDal.getInstance().get(Role.class, selectedRoleId);
       log.debug("A more appropiate role has been found: " + foundRole.getIdentifier()
@@ -266,7 +266,8 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
       hqlQueryStr
           .append("ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC");
       final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
-      final Query query = hibernateSession.createQuery(hqlQueryStr.toString());
+      final Query<BigDecimal> query = hibernateSession.createQuery(hqlQueryStr.toString(),
+          BigDecimal.class);
       query.setParameter("stOrgId", terminal.getOrganization().getId());
       query.setParameter("clientId", terminal.getClient().getId());
       query.setParameter("roleId", currentRole.getId());
@@ -274,7 +275,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
       BigDecimal distance = BigDecimal.ONE;
       distance.negate();
       try {
-        distance = (BigDecimal) query.uniqueResult();
+        distance = query.uniqueResult();
       } catch (Exception ex) {
         distance = BigDecimal.ONE;
         distance.negate();

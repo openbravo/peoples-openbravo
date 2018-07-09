@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,10 +18,10 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -70,7 +70,7 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
           + "order by ms.storageBin.warehouse.name";
 
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hqlQuery);
+      final Query<Object[]> query = session.createQuery(hqlQuery, Object[].class);
       if (requiresWarehouseTypeParam) {
         query.setParameter("warehouseType", POSConstants.CROSS_CHANNEL);
       }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,7 +12,7 @@ package org.openbravo.retail.posterminal.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -90,7 +90,7 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
         .append(" = :prodCat");
     hql.append(" and ").append(OBRETCOProductcategory.PROPERTY_OBRETCOPRODUCTLIST)
         .append(" = :assortment");
-    Query qry = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Object> qry = OBDal.getInstance().getSession().createQuery(hql.toString(), Object.class);
     qry.setParameter("client", client);
     qry.setParameter("assortment", assortment);
     qry.setParameter("prodCat", productCategory);
