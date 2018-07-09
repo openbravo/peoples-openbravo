@@ -115,7 +115,8 @@ public class CheckApproval extends HttpServlet {
         preferenceQuery.setParameter("org", organization);
         preferenceQuery.setParameter("orgList", naturalTreeOrgList);
 
-        List preferenceList = preferenceQuery.list();
+        @SuppressWarnings("unchecked")
+        List<String> preferenceList = preferenceQuery.list();
         if (preferenceList.isEmpty()) {
           result.put("status", 1);
           JSONObject jsonError = new JSONObject();
@@ -152,7 +153,9 @@ public class CheckApproval extends HttpServlet {
       out.print(result.toString());
       out.flush();
     } catch (JSONException e) {
-      log.error("Error while checking user can approve and executing CheckApproval hooks: " + e.getMessage(), e);
+      log.error(
+          "Error while checking user can approve and executing CheckApproval hooks: "
+              + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
