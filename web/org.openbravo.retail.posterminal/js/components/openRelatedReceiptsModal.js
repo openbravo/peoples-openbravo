@@ -140,9 +140,15 @@ enyo.kind({
       return model.id === inEvent.selectedLine;
     });
     if (inEvent.selected) {
-      this.selectedOrders.push(selectedOrder);
+      this.selectedOrders.push(selectedOrder.attributes);
     } else {
-      var index = this.selectedOrders.indexOf(selectedOrder);
+      var index;
+      for (index = 0; index < this.selectedOrders.length; index++) {
+        var order = this.selectedOrders[index];
+        if (order.id === selectedOrder.id) {
+          break;
+        }
+      }
       this.selectedOrders.splice(index, 1);
     }
     this.$.bodyButtons.$.openRelatedReceipts_btnApply.setDisabled(_.reduce(this.$.bodyContent.$.attributes.$, function (count, line) {

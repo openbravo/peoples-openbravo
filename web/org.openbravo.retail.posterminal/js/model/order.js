@@ -709,6 +709,12 @@
               return memo;
             }
           }, OB.DEC.Zero);
+          if (!me.get('isEditable') && !me.get('forceCalculateTaxes') && !OB.UTIL.isNullOrUndefined(me.get('totalamount'))) {
+            if (gross !== me.get('totalamount')) {
+              OB.warn('Calculated gross ' + gross + ' is not equal to totalamount of the receipt ' + me.get('totalamount'));
+            }
+            gross = me.get('totalamount');
+          }
           saveAndTriggerEvents(gross, save);
         });
       }
@@ -2790,12 +2796,22 @@
           modelsAffectedByCache: ['ProductPrice']
         });
       } else {
-        me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+        // With the preference OBPOS_allowProductsNoPriceInMainPricelist
+        // it is possible to add product without price in the terminal's main list
+        if (OB.UTIL.isNullOrUndefined(p.get('listPrice')) && !p.get('ispack')) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_productWithoutPriceInPriceList', [p.get('_identifier')]));
           OB.UTIL.ProcessController.finish('addProduct', execution);
           if (callback) {
-            callback(success, orderline);
+            callback(false, null);
           }
-        });
+        } else {
+          me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+            OB.UTIL.ProcessController.finish('addProduct', execution);
+            if (callback) {
+              callback(success, orderline);
+            }
+          });
+        }
       }
     },
 
@@ -3627,7 +3643,7 @@
         var saveLocModel = function (locModel, lid, callback) {
             if (businessPartner.get(locModel)) {
               OB.Dal.saveOrUpdate(businessPartner.get(locModel), function () {}, function (tx, error) {
-                OB.UTIL.showError("OBDAL error: " + error);
+                OB.UTIL.showError(error);
               });
               if (callback) {
                 callback();
@@ -3635,7 +3651,7 @@
             } else {
               OB.Dal.get(OB.Model.BPLocation, businessPartner.get(lid), function (location) {
                 OB.Dal.saveOrUpdate(location, function () {}, function (tx, error) {
-                  OB.UTIL.showError("OBDAL error: " + error);
+                  OB.UTIL.showError(error);
                 });
                 businessPartner.set(locModel, location);
                 if (callback) {
@@ -3748,6 +3764,11 @@
               addProductsOfLines(receipt, lines, index, callback, promotionLines);
             }
           });
+        }, null, function () {
+          // Product doesn't exists, execute the same code as it was not included in pricelist
+          promotionLines.splice(index, 1);
+          lines.splice(index, 1);
+          addProductsOfLines(receipt, lines, index, callback, promotionLines);
         });
       };
       _.each(this.get('lines').models, function (line) {
@@ -6037,7 +6058,7 @@
                             promotion.manual = true;
                           }
                         }, function (tx, error) {
-                          OB.UTIL.showError("OBDAL error: " + error);
+                          OB.UTIL.showError(error);
                         });
                       });
                       if (OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true)) {
@@ -6266,7 +6287,7 @@
               OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
                 locationForBpartner(bpLoc, bpLoc);
               }, function (tx, error) {
-                OB.UTIL.showError("OBDAL error: " + error);
+                OB.UTIL.showError(error);
               });
             }
           } else {
@@ -6297,7 +6318,7 @@
                 });
                 locationForBpartner(loc, billLoc);
               }, function (tx, error) {
-                OB.UTIL.showError("OBDAL error: " + error);
+                OB.UTIL.showError(error);
               }, bpLoc);
 
             }

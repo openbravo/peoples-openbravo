@@ -68,7 +68,7 @@ enyo.kind({
   tap: function () {
 
     function error(tx) {
-      OB.UTIL.showError("OBDAL error: " + tx);
+      OB.UTIL.showError(tx);
     }
 
     this.owner.owner.actionCancel = false;

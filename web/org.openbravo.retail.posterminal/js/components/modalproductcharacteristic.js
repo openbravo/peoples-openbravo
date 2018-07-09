@@ -241,7 +241,7 @@ enyo.kind({
       OB.Dal.query(OB.Model.CharacteristicValue, sql, params, function (dataValues, me) {
         resetValueList(dataValues);
       }, function (tx, error) {
-        OB.UTIL.showError("OBDAL error: " + error);
+        OB.UTIL.showError(error);
       }, this);
       return true;
 
@@ -331,7 +331,7 @@ enyo.kind({
       OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
         resetValueList(dataValues);
       }, function (tx, error) {
-        OB.UTIL.showError("OBDAL error: " + error);
+        OB.UTIL.showError(error);
       }, this);
       return true;
     }

@@ -548,7 +548,7 @@ enyo.kind({
             me.addKeypad('OB.UI.KeypadCoinsLegacy');
           }
         }, function (tx, error) {
-          OB.UTIL.showError("OBDAL error: " + error);
+          OB.UTIL.showError(error);
         });
       }
     }, this);
@@ -669,7 +669,7 @@ enyo.kind({
   kind: 'OB.UI.AbstractBarcodeActionHandler',
 
   errorCallback: function (tx, error) {
-    OB.UTIL.showError('OBDAL error: ' + error);
+    OB.UTIL.showError(error);
   },
 
   findProductByBarcode: function (code, callback, keyboard, attrs) {

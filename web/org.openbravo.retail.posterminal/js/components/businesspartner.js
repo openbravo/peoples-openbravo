@@ -353,7 +353,7 @@ enyo.kind({
     this.$.renderLoading.show();
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      OB.UTIL.showError(error);
     }
 
     function successCallbackBPs(dataBps) {

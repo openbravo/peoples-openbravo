@@ -255,6 +255,19 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
+    boolean allowNoPriceInMainPriceList = false;
+    try {
+      OBContext.setAdminMode(false);
+      allowNoPriceInMainPriceList = "Y".equals(Preferences.getPreferenceValue(
+          "OBPOS_allowProductsNoPriceInMainPricelist", true, OBContext.getOBContext()
+              .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+              .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error(
+          "Error getting preference OBPOS_allowProductsNoPriceInMainPricelist " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("posPrecision", posPrecision);
     try {
@@ -286,7 +299,8 @@ public class Product extends ProcessHQLQuery {
     // regular products
     String hql = "select" + regularProductsHQLProperties.getHqlSelect();
 
-    hql += getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages);
+    hql += getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
+        allowNoPriceInMainPriceList);
 
     if (lastUpdated != null) {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria))";
@@ -365,22 +379,39 @@ public class Product extends ProcessHQLQuery {
 
   protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
       JSONObject jsonsent, boolean useGetForProductImages) {
+    return getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages, false);
+  }
+
+  protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
+      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
 
     String hql = "FROM OBRETCO_Prol_Product as pli ";
     if (!useGetForProductImages) {
       hql += "left outer join pli.product.image img ";
     }
-    hql += "inner join pli.product as product, PricingProductPrice ppp ";
+    hql += "inner join pli.product as product ";
+    if (isMultipricelist && allowNoPriceInMainPriceList
+        && (!isRemote || jsonsent.has("remoteParams"))) {
+      hql += "left outer join product.pricingProductPriceList ppp with (ppp.priceListVersion.id = :priceListVersionId) ";
+    } else {
+      hql += "inner join product.pricingProductPriceList ppp ";
+    }
+
     if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
       hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
     } else {
       hql += " WHERE 1=1";
     }
 
-    hql += " AND $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist.id = :productListId) "
-        + "AND (ppp.priceListVersion.id= :priceListVersionId ) "
-        + " AND ("
-        + "pli.product.id = ppp.product.id" + ") ";
+    hql += " AND $filtersCriteria AND $hqlCriteria ";
+    if (isMultipricelist && allowNoPriceInMainPriceList
+        && (!isRemote || jsonsent.has("remoteParams"))) {
+      hql += "AND (pli.obretcoProductlist.id = :productListId) ";
+    } else {
+      hql += "AND (pli.obretcoProductlist.id = :productListId) ";
+      hql += "AND (ppp.priceListVersion.id= :priceListVersionId) ";
+
+    }
 
     return hql;
   }

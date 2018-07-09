@@ -63,7 +63,7 @@ enyo.kind({
         filter = inEvent.locName;
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      OB.UTIL.showError(error);
     }
 
     function successCallbackBPsLoc(dataBps) {
