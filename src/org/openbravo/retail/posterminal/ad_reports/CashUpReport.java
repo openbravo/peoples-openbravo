@@ -186,8 +186,7 @@ public class CashUpReport extends HttpSecureAppServlet {
 
           // Withdrawals
           expected = expected.subtract(drop);
-          totalDrops = totalDrops.add(drop.multiply(conversionRate).setScale(2,
-              RoundingMode.HALF_UP));
+          totalDrops = totalDrops.add(drop);
           psData = fillReportRow("WITHDRAWAL", paymentMethodCashup.getPaymentType().getSearchKey(),
               null, label, drop.toString(), paymentMethodCashup.getTotalreturns().toString(),
               "OBPOS_LblWITHDRAWAL", "OBPOS_LblTotalWithdrawals", conversionRate, isoCode);
