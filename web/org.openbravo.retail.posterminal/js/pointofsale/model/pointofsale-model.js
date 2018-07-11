@@ -526,6 +526,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
           var paymentLine = new OB.Model.PaymentLine();
           OB.UTIL.clone(payment, paymentLine);
+          var addPaymentLine = function (amount, orderListIndex, paymentListIndex) {
+              OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
+                paymentLine: paymentLine,
+                origPayment: payment
+              }, function (args) {
+                iter.addPayment(args.paymentLine, function (iter) {
+                  if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
+                    iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amount));
+                  }
+                  amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
+                  OB.info('setPaymentsToReceipts call. orderListIndex: ' + orderListIndex + ', paymentListIndex: ' + paymentListIndex + ', considerPrepaymentAmount: ' + considerPrepaymentAmount + ' ,paymentList: ' + JSON.stringify(paymentList) + ' ,orderList: ' + JSON.stringify(orderList));
+                  setPaymentsToReceipts(orderList, paymentList, orderListIndex, paymentListIndex, considerPrepaymentAmount, callback);
+                });
+              });
+              };
           if (payment.get('origAmount') <= amountToPay) {
             var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
             paymentLine.set('amount', OB.DEC.toNumber(bigDecAmount));
@@ -711,6 +726,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     }]
                   }, function (data) {
                     if (data && data.exception) {
+                      if (data.exception.message) {
+                        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+                        OB.UTIL.SynchronizationHelper.finished(synchId, "finishVoidLayaway");
+                        return;
+                      }
                       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
                     } else {
                       OB.Dal.remove(receipt, null, function (tx, err) {

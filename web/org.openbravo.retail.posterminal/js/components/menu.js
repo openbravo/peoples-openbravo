@@ -284,8 +284,7 @@ enyo.kind({
       }
       return 'DN';
     }
-
-    if (isLayaway && OB.MobileApp.model.hasPermission('OBPOS_receipt.cancelLayaway', true) && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
+    if ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current && (this.model.get('orderList').current.get('payment') > 0 || this.model.get('orderList').current.get('gross') === 0)) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true)) {
       // Show if the current order is a layaway and has both the 'OBPOS_payments.cancelLayaway' property and some payment,
       // or is a layaway and doesn't have the 'OBPOS_payments.cancelLayaway' property
       this.show();
@@ -938,6 +937,8 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.hasPermission(this.permission)) {
+      OB.logUserAction('Menu > Pay Open Tickets');
+      this.model.get('orderList').saveCurrent();
       this.doMultiOrders();
     }
   },

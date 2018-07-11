@@ -278,6 +278,12 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalOpenRelatedReceipts',
       name: 'modalOpenRelatedReceipts'
+    }, {
+      kind: 'OB.UI.ModalAssociateTickets',
+      name: 'modalAssociateTickets'
+    }, {
+      kind: 'OB.UI.ModalRemoveAssociatedTickets',
+      name: 'modalRemoveAssociatedTickets'
     }]
   }, {
     name: 'mainSubWindow',

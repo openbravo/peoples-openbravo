@@ -111,6 +111,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/offlineprinter",
         "model/productbom",
         "model/taxcategorybom",
+        "model/orderassociationsfilter",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
@@ -164,6 +165,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/servicesfilter",
         "components/modalselectopenreceipts",
         "components/modalsplitlines",
+        "components/modalassociatetickets",
+        "components/modalremoveassociatedtickets",
         "components/openRelatedReceiptsModal",
 
         // Old Tickets

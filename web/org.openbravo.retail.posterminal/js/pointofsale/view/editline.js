@@ -412,6 +412,42 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
     name: 'openAttributeButton',
     showing: false
+  }, {
+    kind: 'OB.UI.SmallButton',
+    name: 'addAssociationsButton',
+    i18nContent: 'OBPOS_AddAssociations',
+    events: {
+      onShowPopup: ''
+    },
+    showing: false,
+    classes: 'btnlink-orange',
+    tap: function () {
+      this.owner.owner.doShowPopup({
+        popup: 'modalAssociateTickets',
+        args: {
+          receipt: this.owner.owner.receipt,
+          selectedLines: this.owner.owner.selectedModels
+        }
+      });
+    }
+  }, {
+    kind: 'OB.UI.SmallButton',
+    name: 'removeAssociationsButton',
+    i18nContent: 'OBPOS_RemoveAssociations',
+    events: {
+      onShowPopup: ''
+    },
+    showing: false,
+    classes: 'btnlink-orange',
+    tap: function () {
+      this.owner.owner.doShowPopup({
+        popup: 'modalRemoveAssociatedTickets',
+        args: {
+          receipt: this.owner.owner.receipt,
+          selectedLine: this.owner.owner.selectedModels[0]
+        }
+      });
+    }
   }],
   published: {
     receipt: null
@@ -460,6 +496,8 @@ enyo.kind({
     }
   },
   rearrangeEditButtonBar: function (line) {
+    var selectedServices;
+
     if (this.$.actionButtonsContainer.$.returnLine) {
       if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
         this.$.actionButtonsContainer.$.returnLine.show();
@@ -469,6 +507,16 @@ enyo.kind({
       }
     }
     if (line) {
+      selectedServices = _.filter(this.selectedModels, function (line) {
+        return line.get('product').get('productType') === 'S';
+      });
+      if (selectedServices[0] && selectedServices[0].get('product') && selectedServices[0].get('product').get('productType') === 'S' && selectedServices[0].get('product').get('isLinkedToProduct') && this.model.get('order').get('isEditable')) {
+        this.$.actionButtonsContainer.$.addAssociationsButton.show();
+        this.$.actionButtonsContainer.$.removeAssociationsButton.show();
+      } else {
+        this.$.actionButtonsContainer.$.addAssociationsButton.hide();
+        this.$.actionButtonsContainer.$.removeAssociationsButton.hide();
+      }
       if (line && !this.isLineInSelection(line)) {
         return;
       }

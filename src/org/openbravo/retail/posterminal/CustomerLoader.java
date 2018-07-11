@@ -199,6 +199,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
     // Fixed birth date issue(-1 day) when converted to UTC from client time zone
     if (jsonCustomer.has("birthDay") && jsonCustomer.get("birthDay") != null
+        && jsonCustomer.get("birthDay") != JSONObject.NULL
         && !jsonCustomer.getString("birthDay").isEmpty()) {
       final long timezoneOffset;
       if (jsonCustomer.has("timezoneOffset")) {

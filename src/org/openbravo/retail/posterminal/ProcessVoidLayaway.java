@@ -13,9 +13,12 @@ import java.util.HashMap;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
@@ -43,6 +46,25 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
       if (!(loaded.compareTo(updated) >= 0)) {
         throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
             "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+      }
+      final StringBuffer hql = new StringBuffer();
+      hql.append("SELECT DISTINCT po.id ");
+      hql.append("FROM OrderlineServiceRelation AS olsr ");
+      hql.append("JOIN olsr.orderlineRelated AS pol ");
+      hql.append("JOIN olsr.salesOrderLine AS sol ");
+      hql.append("JOIN pol.salesOrder AS po ");
+      hql.append("JOIN sol.salesOrder AS so ");
+      hql.append("WHERE po.id = :orderId ");
+      hql.append("AND so.id <> :orderId ");
+      hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
+      hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
+      hql.append("AND so.documentStatus <> 'CL' ");
+      final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      query.setParameter("orderId", order.getId());
+      query.setMaxResults(1);
+      if (query.uniqueResult() != null) {
+        throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_CannotCancelLayWithDeferred",
+            null));
       }
     }
 

@@ -66,8 +66,9 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             hql.append("JOIN sol.salesOrder AS so ");
             hql.append("WHERE po.id = :orderId ");
             hql.append("AND so.id <> :orderId ");
-            hql.append("AND so.iscancelled = false ");
-            hql.append("AND pol.orderedQuantity > pol.deliveredQuantity");
+            hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
+            hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
+            hql.append("AND so.documentStatus <> 'CL' ");
             final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
             query.setParameter("orderId", orderId);
             query.setMaxResults(1);
