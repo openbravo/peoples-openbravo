@@ -676,7 +676,7 @@
       }
     }
   };
-  OB.UTIL.sumCashManagementToCashup = function (payment, callback) {
+  OB.UTIL.sumCashManagementToCashup = function (payment, callback, tx) {
     if (!OB.UTIL.isNullOrUndefined(payment)) {
       var cashupId = payment.get('cashup_id'),
           criteria = {
@@ -684,7 +684,7 @@
           'paymentmethod_id': payment.get('paymentMethodId')
           };
 
-      OB.Dal.find(OB.Model.PaymentMethodCashUp, criteria, function (paymentMethods) {
+      OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, criteria, function (paymentMethods) {
 
         var paymentMethod = paymentMethods.at(0),
             totalDeposits = paymentMethod.get('totalDeposits'),
@@ -695,17 +695,16 @@
         paymentMethod.set('totalDrops', totalDrops);
         //set used in transaction payment methods to true
         paymentMethod.set('usedInCurrentTrx', true);
-        OB.Dal.save(paymentMethod, function (success) {
+        OB.Dal.saveInTransaction(tx, paymentMethod, function (success) {
           // Success
-          OB.Dal.find(OB.Model.CashUp, {
+          OB.Dal.findInTransaction(tx, OB.Model.CashUp, {
             'id': cashupId
           }, function (cashUpObj) {
-            OB.UTIL.composeCashupInfo(cashUpObj, null, callback);
+            OB.UTIL.composeCashupInfo(cashUpObj, null, callback, tx);
           });
         }, function (error) {
           // Error
         });
-
       });
     } else {
       if (callback) {

@@ -717,9 +717,11 @@
                       OB.MobileApp.model.orderList.saveCurrent();
                       OB.Dal.remove(OB.MobileApp.model.orderList.current, null, null);
                       OB.MobileApp.model.orderList.deleteCurrent();
+                      callback();
                     });
+                  } else {
+                    callback();
                   }
-                  callback();
                 } else if (data.status === "Initial") {
                   //recursively check process status 
                   setTimeout(function () {

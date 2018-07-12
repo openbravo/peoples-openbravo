@@ -1119,19 +1119,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
 
-    String description;
+    String description = null;
     if (jsonorder.has("Invoice.description")) {
       // in case the description is directly set to Invoice entity, preserve it
       description = jsonorder.getString("Invoice.description");
     } else {
       // other case use generic description if present and add relationship to order
-      if (jsonorder.has("description") && !jsonorder.getString("description").equals("")) {
-        description = jsonorder.getString("description") + "\n";
-      } else {
-        description = "";
-      }
-      description += OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
+      description = OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
           + jsonorder.getString("documentNo");
+      if (jsonorder.has("description") && !StringUtils.isEmpty(jsonorder.getString("description"))) {
+        description = StringUtils.substring(jsonorder.getString("description"), 0,
+            255 - description.length() - 1) + "\n" + description;
+      }
     }
 
     invoice.setDescription(description);
