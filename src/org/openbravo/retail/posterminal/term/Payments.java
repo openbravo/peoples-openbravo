@@ -8,9 +8,6 @@
  */
 package org.openbravo.retail.posterminal.term;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import javax.servlet.ServletException;
 
 import org.apache.commons.codec.binary.Base64;
@@ -20,10 +17,12 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
+import org.openbravo.retail.posterminal.OBPOSCurrencyRounding;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
@@ -44,7 +43,7 @@ public class Payments extends JSONTerminalProperty {
           + "coalesce(c.iSOCode, pmc.iSOCode) as isocode, "
           + "coalesce(c.symbol, pmc.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
           + "coalesce(f.currentBalance, 0) as currentBalance, "
-          + "coalesce(c.obposPosprecision, null) as obposPosprecision, "
+          + "coalesce(p.paymentMethod.currency.obposPosprecision, p.paymentMethod.currency.pricePrecision) as obposPosprecision, "
           + "img.bindaryData as image, img.mimetype as mimetype, "
           + "providerGroup, paymentType "
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
@@ -100,12 +99,7 @@ public class Payments extends JSONTerminalProperty {
           payment.put("paymentMethod", pMethod);
 
           payment.put("rate", objPayment[2]);
-          BigDecimal mulrate = BigDecimal.ZERO;
-          BigDecimal rate = new BigDecimal((String) objPayment[2]);
-          if (rate.compareTo(BigDecimal.ZERO) != 0) {
-            mulrate = BigDecimal.ONE.divide(rate, 12, RoundingMode.HALF_UP);
-          }
-          payment.put("mulrate", mulrate.toPlainString());
+          payment.put("mulrate", objPayment[3]);
 
           payment.put("isocode", objPayment[4]);
           payment.put("symbol", objPayment[5]);
@@ -125,6 +119,29 @@ public class Payments extends JSONTerminalProperty {
                 DataResolvingMode.FULL_TRANSLATABLE));
             payment.put("paymentType",
                 converter.toJsonObject((BaseOBObject) objPayment[12], DataResolvingMode.FULL));
+          }
+
+          // If the Payment Method is cash, load the rounding properties of the currency
+          if (appPayment.getPaymentMethod().isCash()) {
+            Query roundQuery = OBDal
+                .getInstance()
+                .getSession()
+                .createQuery(
+                    "FROM OBPOS_CurrencyRounding cr where cr.currency.id = :currency AND cr.active = true AND AD_ISORGINCLUDED(:storeOrg, cr.organization.id, :storeClient) <> -1 "
+                        + "order by AD_ISORGINCLUDED(:storeOrg, cr.organization.id, :storeClient)");
+            roundQuery.setParameter("storeOrg", OBContext.getOBContext().getCurrentOrganization()
+                .getId());
+            roundQuery.setParameter("storeClient", OBContext.getOBContext().getCurrentClient()
+                .getId());
+            roundQuery
+                .setParameter("currency", appPayment.getPaymentMethod().getCurrency().getId());
+            roundQuery.setMaxResults(1);
+            OBPOSCurrencyRounding obposCurrencyRounding = (OBPOSCurrencyRounding) roundQuery
+                .uniqueResult();
+            if (obposCurrencyRounding != null) {
+              payment.put("changeRounding",
+                  converter.toJsonObject(obposCurrencyRounding, DataResolvingMode.FULL));
+            }
           }
 
           respArray.put(payment);
