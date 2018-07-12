@@ -2629,7 +2629,22 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
           pricePrecision, RoundingMode.HALF_UP);
+      // Round change variables
       BigDecimal origAmount = amount;
+      BigDecimal amountRounded = amount;
+      BigDecimal roundAmount = BigDecimal.ZERO;
+      BigDecimal origAmountRounded = amount;
+      boolean downRounding = false;
+      if (payment.has("origAmountRounded")) {
+        amountRounded = BigDecimal.valueOf(payment.getDouble("origAmountRounded")).setScale(
+            pricePrecision, RoundingMode.HALF_UP);
+        origAmount = amountRounded;
+        origAmountRounded = amountRounded;
+        roundAmount = BigDecimal.valueOf(payment.getDouble("origAmountRounded"))
+            .subtract(BigDecimal.valueOf(payment.getDouble("origAmount")))
+            .setScale(pricePrecision, RoundingMode.HALF_UP);
+        downRounding = roundAmount.compareTo(BigDecimal.ZERO) == 1;
+      }
       BigDecimal mulrate = new BigDecimal(1);
       // FIXME: Coversion should be only in one direction: (USD-->EUR)
       if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
@@ -2637,6 +2652,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (payment.has("amount")) {
           origAmount = BigDecimal.valueOf(payment.getDouble("amount")).setScale(pricePrecision,
               RoundingMode.HALF_UP);
+          origAmountRounded = origAmount;
+          if (payment.has("origAmountRounded")) {
+            origAmountRounded = payment.has("amountRounded") ? BigDecimal.valueOf(
+                payment.getDouble("amountRounded")).setScale(pricePrecision, RoundingMode.HALF_UP)
+                : BigDecimal.valueOf(payment.getDouble("amount")).setScale(pricePrecision,
+                    RoundingMode.HALF_UP);
+          }
+
         } else {
           origAmount = amount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
         }
@@ -2840,9 +2863,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       // insert the payment
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
-          account == null ? paymentType.getFinancialAccount() : account, amount.toString(),
-          calculatedDate, order.getOrganization(), null, detail, paymentAmount, false, false,
-          order.getCurrency(), mulrate, origAmount, true,
+          account == null ? paymentType.getFinancialAccount() : account, (downRounding ? amount
+              : amountRounded).toString(), calculatedDate, order.getOrganization(), null, detail,
+          paymentAmount, false, false, order.getCurrency(), mulrate, origAmountRounded, true,
           payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
@@ -2861,6 +2884,21 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+      }
+
+      // If there is a rounded amount add a new payment detail against "Rounded Difference" GL Item
+      if (roundAmount.compareTo(BigDecimal.ZERO) != 0) {
+        if (paymentType.getPaymentMethod().getGlitemRound() == null) {
+          throw new OBException(String.format(OBMessageUtils
+              .messageBD("OBPOS_MissingRoundingDifference"), paymentType.getPaymentMethod()
+              .getSearchKey()));
+
+        }
+        FIN_AddPayment.saveGLItem(finPayment, roundAmount, paymentType.getPaymentMethod()
+            .getGlitemRound(),
+            payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
+        // Update Payment In amount after adding GLItem
+        finPayment.setAmount(amountRounded.setScale(pricePrecision, RoundingMode.HALF_UP));
       }
 
       if (checkPaidOnCreditChecked) {
