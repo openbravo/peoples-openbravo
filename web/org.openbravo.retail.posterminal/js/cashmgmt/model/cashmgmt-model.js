@@ -225,13 +225,13 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         var updateCashupInfo = null;
         var setCashupObjectInCashMgmt;
 
-        setCashupObjectInCashMgmt = function (depdrops, cashUp, index) {
+        setCashupObjectInCashMgmt = function (depdrops, cashUp, index, tx) {
           if (index === depdrops.length) {
             OB.info('[CashMgmntSync][9][setCashupObjectInCashMgmt] Finished. Execute CalculateCurrentCash');
             OB.UTIL.calculateCurrentCash(function () {
               OB.info('[CashMgmntSync][10][setCashupObjectInCashMgmt][calculateCurrentCash] Executed. Run Sync');
               runSync();
-            });
+            }, tx);
           } else {
             var depdrop = depdrops[index];
             var depDropJson;
@@ -239,9 +239,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             depDropJson = JSON.stringify(depdrop.serializeToJSON());
             depdrop.set('json', depDropJson);
             OB.info('[CashMgmntSync][7][setCashupObjectInCashMgmt][saveCashMgmnt] execute save for deposit/drop in local DB:' + depDropJson);
-            OB.Dal.save(depdrop, function () {
+            OB.Dal.saveInTransaction(tx, depdrop, function () {
               OB.info('[CashMgmntSync][8][saveCashMgmnt] Successfully saved deposit/drop in local DB:' + depdrop.id);
-              setCashupObjectInCashMgmt(depdrops, cashUp, index + 1);
+              setCashupObjectInCashMgmt(depdrops, cashUp, index + 1, tx);
             }, function () {
               OB.UTIL.showLoading(false);
               me.set("finishedWrongly", true);
@@ -251,24 +251,26 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           }
         };
 
-        updateCashupInfo = function (paymentList, index, cashUpReport, callback) {
+        updateCashupInfo = function (paymentList, index, cashUpReport, tx, callback) {
           if (index === paymentList.length && callback) {
             callback(cashUpReport);
           } else {
             OB.info('[CashMgmntSync][3][preSumCashManagementToCashup] for payment: ' + JSON.stringify(paymentList[index]));
             OB.UTIL.sumCashManagementToCashup(paymentList[index], function (cashUp) {
               OB.info('[CashMgmntSync][4][preUpdateCashupInfo][postSumCashManagementToCashup] for paymentList:' + JSON.stringify(paymentList[index]));
-              updateCashupInfo(paymentList, index + 1, cashUp, callback);
-            });
+              updateCashupInfo(paymentList, index + 1, cashUp, tx, callback);
+            }, tx);
           }
         };
 
-        updateCashupInfo(paymentList.models, 0, null, function (cashUpReport) {
-          if (cashUpReport && cashUpReport.size && cashUpReport.size() === 1) {
-            OB.info('[CashMgmntSync][5][postUpdateCashupInfo]: ' + cashUpReport.at(0).get('objToSend'));
-          }
-          OB.info('[CashMgmntSync][6][setCashupObjectInCashMgmt]: Call to setCashupObjectInCashMgmt for ' + me.depsdropstosave.size() + ' models');
-          setCashupObjectInCashMgmt(me.depsdropstosave.models, cashUpReport, 0);
+        OB.Dal.transaction(function (tx) {
+          updateCashupInfo(paymentList.models, 0, null, tx, function (cashUpReport) {
+            if (cashUpReport && cashUpReport.size && cashUpReport.size() === 1) {
+              OB.info('[CashMgmntSync][5][postUpdateCashupInfo]: ' + cashUpReport.at(0).get('objToSend'));
+            }
+            OB.info('[CashMgmntSync][6][setCashupObjectInCashMgmt]: Call to setCashupObjectInCashMgmt for ' + me.depsdropstosave.size() + ' models');
+            setCashupObjectInCashMgmt(me.depsdropstosave.models, cashUpReport, 0, tx);
+          });
         });
 
         for (i = 0; i < paymentList.length; i++) {
