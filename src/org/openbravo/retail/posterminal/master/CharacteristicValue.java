@@ -60,8 +60,8 @@ public class CharacteristicValue extends ProcessHQLQuery {
     List<String> hqlQueries = new ArrayList<String>();
     HQLPropertyList regularProductsChValueHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+        .getString("pos"));
     boolean isRemote = false;
 
     Long lastUpdated = jsonsent.has("lastUpdated")

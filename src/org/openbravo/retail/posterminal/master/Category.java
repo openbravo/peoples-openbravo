@@ -50,7 +50,8 @@ public class Category extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
       String clientId = OBContext.getOBContext().getCurrentClient().getId();
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+          .getString("pos"));
       boolean isRemote = false;
       try {
         OBContext.setAdminMode(false);
@@ -155,10 +156,8 @@ public class Category extends ProcessHQLQuery {
               + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist.id = :productListId ) "
               + "AND (pplv.id= :priceListVersionId) AND (" + "ppp.priceListVersion.id = pplv.id"
               + ") AND (" + "pli.product.id = ppp.product.id" + ") AND ("
-              + "pli.product.active = true)) "
-              + "OR (pCat.summaryLevel = 'Y' "
-              + fullRefreshCondition
-              + "AND pCat.$naturalOrgCriteria AND "
+              + "pli.product.active = true)) " + "OR (pCat.summaryLevel = 'Y' "
+              + fullRefreshCondition + "AND pCat.$naturalOrgCriteria AND "
               + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
               + "order by pCat.name, pCat.id");
     }

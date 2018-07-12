@@ -39,7 +39,7 @@ public class InitialValidations {
     }
 
     // Make sure the store is associated with an Assortment.
-    if (POSUtils.getProductListByOrgId(posTerminal.getOrganization().getId()) == null) {
+    if (POSUtils.getProductListByPosterminalId(posTerminal.getId()) == null) {
       throw new JSONException("OBPOS_errorLoadingProductList");
     }
 

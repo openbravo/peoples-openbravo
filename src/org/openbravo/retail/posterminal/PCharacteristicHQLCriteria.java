@@ -14,7 +14,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONTokener;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 import org.openbravo.retail.config.OBRETCOProductList;
 
@@ -33,14 +32,14 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
           && array_params[2].equals("")) {
         sql = " 1=1 ";
       } else {
-        sql = getAllQuery(array_params[0]);
+        sql = getAllQuery(array_params);
         close_exists = true;
       }
     } else if (array_params[1].equals("OBPOS_bestsellercategory")) {
-      sql = getBestsellers(array_params[0]);
+      sql = getBestsellers(array_params);
       close_exists = true;
     } else {
-      sql = getProdCategoryQuery(array_params[0]);
+      sql = getProdCategoryQuery(array_params);
       close_exists = true;
     }
     if (close_exists) {
@@ -70,33 +69,26 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     }
   }
 
-  public String getAllQuery(String param) {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+  public String getAllQuery(String[] param) {
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + " where ch.id = pchv.characteristic.id "
         + " and pchv.product.id= pli.product.id and pli.obretcoProductlist.id='"
         + productList.getId() + "' ";
-    if (!(param.equals("%") || param.equals("%%"))) {
+    if (!(param[0].equals("%") || param[0].equals("%%"))) {
       sql = sql
           + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
     }
     return sql;
   }
 
-  public String getAllQuery() {
-    String param = "";
-    return getAllQuery(param);
-  }
-
-  public String getProdCategoryQuery(String param) {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+  public String getProdCategoryQuery(String[] param) {
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + " where ch.id = pchv.characteristic.id "
         + " and pchv.product.id= pli.product.id and pli.obretcoProductlist.id='"
         + productList.getId() + "' ";
-    if (!(param.equals("%") || param.equals("%%"))) {
+    if (!(param[0].equals("%") || param[0].equals("%%"))) {
       sql = sql
           + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
     }
@@ -104,28 +96,17 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     return sql;
   }
 
-  public String getProdCategoryQuery() {
-    String param = "";
-    return getProdCategoryQuery(param);
-  }
-
-  public String getBestsellers(String param) {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+  public String getBestsellers(String[] param) {
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv, OBRETCO_Prol_Product pli "
         + " where pchv.product.id=pli.product.id and ch.id = pchv.characteristic.id "
         + " and pli.bestseller = true ";
-    if (!(param.equals("%") || param.equals("%%"))) {
+    if (!(param[0].equals("%") || param[0].equals("%%"))) {
       sql = sql
           + " and (upper(pchv.product.name) like upper('$1') or upper(pchv.product.uPCEAN) like upper('$1'))  ";
     }
     sql = sql + " and pli.obretcoProductlist.id='" + productList.getId() + "' ";
     return sql;
-  }
-
-  public String getBestsellers() {
-    String param = "";
-    return getBestsellers(param);
   }
 
   public String getCharacteristics(String params) {

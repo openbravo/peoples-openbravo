@@ -54,7 +54,7 @@ public class HasServices extends JSONProcessSimple {
 
       final Query query = querybuilder.getDalQuery();
       query.setParameter("obretcoProductlistId",
-          POSUtils.getProductListByOrgId(terminalOrganization.getId()).getId());
+          POSUtils.getProductListByPosterminalId(jsonData.getString("pos")));
       query.setParameter("productCategoryId", productCategoryId);
       if (productId != null && !("null".equals(productId))) {
         query.setParameter("productId", productId);

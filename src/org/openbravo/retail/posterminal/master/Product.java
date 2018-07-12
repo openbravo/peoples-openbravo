@@ -159,7 +159,8 @@ public class Product extends ProcessHQLQuery {
       } finally {
         OBContext.restorePreviousMode();
       }
-      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+          .getString("pos"));
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
       Calendar now = Calendar.getInstance();
@@ -199,7 +200,8 @@ public class Product extends ProcessHQLQuery {
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
 
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+        .getString("pos"));
 
     final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
 

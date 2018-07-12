@@ -43,7 +43,8 @@ public class Discount extends ProcessHQLQuery {
       throws JSONException {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
 
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+        .getString("pos"));
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = priceList.getId();
 

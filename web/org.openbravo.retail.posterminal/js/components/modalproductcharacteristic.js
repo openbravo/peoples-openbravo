@@ -308,7 +308,7 @@ enyo.kind({
         } else {
           productText = '%' + productFilterText + '%';
         }
-        productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category, characteristicParams, brandparams.join(',')];
+        productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category, characteristicParams, brandparams.join(','), OB.MobileApp.model.get('terminal').id];
         remoteCriteria.push(productFilter);
       }
       // external modules filter

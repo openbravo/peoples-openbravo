@@ -129,6 +129,10 @@
         <default><![CDATA[5]]></default>
         <onCreateDefault><![CDATA[5]]></onCreateDefault>
       </column>
+      <column name="OBRETCO_PRODUCTLIST_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
         <reference local="C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -146,6 +150,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_TERTYPE_DOCTYPERET">
         <reference local="C_DOCTYPERET_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBRETCO_PRODUCTLIST" name="OBPOS_TERTYPE_PRODUCTLIST">
+        <reference local="OBRETCO_PRODUCTLIST_ID" foreign="OBRETCO_PRODUCTLIST_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_TERTYPELICATIONS_RECON">
         <reference local="C_DOCTYPERECON_ID" foreign="C_DOCTYPE_ID"/>

@@ -182,6 +182,16 @@ public class POSUtils {
     return null;
   }
 
+  public static String getPosterminalType(String posterminalId) {
+    OBPOSApplications posterminal = getTerminalById(posterminalId);
+    return posterminal.getObposTerminaltype().getId();
+  }
+
+  public static String getTerminalOrganization(String posterminalId) {
+    OBPOSApplications posterminal = getTerminalById(posterminalId);
+    return posterminal.getOrganization().getId();
+  }
+
   public static List<String> getStoreList(String orgId) {
     return OBContext.getOBContext().getOrganizationStructureProvider().getParentList(orgId, true);
   }
@@ -301,16 +311,22 @@ public class POSUtils {
     return POSUtils.getPriceListVersionForPriceList(priceListId, terminalDate);
   }
 
-  public static OBRETCOProductList getProductListByOrgId(String orgId) {
+  public static OBRETCOProductList getProductListByPosterminalId(String posterminalId) {
     try {
       OBContext.setAdminMode(false);
+      final String posterminalTypeId = getPosterminalType(posterminalId);
+      TerminalType terminalType = OBDal.getInstance().get(TerminalType.class, posterminalTypeId);
+      if (terminalType.getObretcoProductlist() != null) {
+        return terminalType.getObretcoProductlist();
+      } else {
+        final String posterminalOrgId = getTerminalOrganization(posterminalId);
+        final List<String> orgList = getStoreList(posterminalOrgId);
 
-      final List<String> orgList = getStoreList(orgId);
-
-      for (String currentOrgId : orgList) {
-        final Organization org = OBDal.getInstance().get(Organization.class, currentOrgId);
-        if (org.getObretcoProductlist() != null) {
-          return org.getObretcoProductlist();
+        for (String currentOrgId : orgList) {
+          final Organization org = OBDal.getInstance().get(Organization.class, currentOrgId);
+          if (org.getObretcoProductlist() != null) {
+            return org.getObretcoProductlist();
+          }
         }
       }
     } catch (Exception e) {

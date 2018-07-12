@@ -48,7 +48,8 @@ public class CategoryTree extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
       Map<String, Object> paramValues = new HashMap<String, Object>();
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+          .getString("pos"));
       boolean isRemote = false;
       try {
         OBContext.setAdminMode(false);
@@ -108,7 +109,8 @@ public class CategoryTree extends ProcessHQLQuery {
     }
 
     String fullRefreshCondition = lastUpdated == null ? "and pc.active = true " : "";
-    String addIncrementalUpdateFilter = lastUpdated == null ? "(tn.$incrementalUpdateCriteria and pc.$incrementalUpdateCriteria) " : "(tn.$incrementalUpdateCriteria or pc.$incrementalUpdateCriteria) ";
+    String addIncrementalUpdateFilter = lastUpdated == null ? "(tn.$incrementalUpdateCriteria and pc.$incrementalUpdateCriteria) "
+        : "(tn.$incrementalUpdateCriteria or pc.$incrementalUpdateCriteria) ";
 
     if (isRemote) {
       hqlQueries
@@ -126,15 +128,13 @@ public class CategoryTree extends ProcessHQLQuery {
               + " and pc.summaryLevel = 'Y'"
               + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id)");
     } else {
-      hqlQueries
-          .add("select"
-              + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
-              + "from ADTreeNode tn, ProductCategory pc "
-              + "where " + addIncrementalUpdateFilter
-              + " and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + fullRefreshCondition
-              + " and pc.$naturalOrgCriteria and pc.$readableSimpleClientCriteria "
-              + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId ");
+      hqlQueries.add("select"
+          + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
+          + "from ADTreeNode tn, ProductCategory pc " + "where " + addIncrementalUpdateFilter
+          + " and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+          + fullRefreshCondition
+          + " and pc.$naturalOrgCriteria and pc.$readableSimpleClientCriteria "
+          + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId ");
     }
 
     String whereClause = "p.client.id = '"
