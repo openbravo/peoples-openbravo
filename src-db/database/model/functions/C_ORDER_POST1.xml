@@ -1340,6 +1340,9 @@
                   IF (cur_orderline.qtyordered < v_reservedqty) OR (v_releasedqty = 0 AND cur_orderline.qtyordered > 0) THEN
                     --Reservation quantity to decrease with more reserved quantity than new quantity, unreserve stock
                     v_pendingtounreserve := v_reservedqty - cur_orderline.qtyordered;
+                    IF(v_pendingtounreserve < 0) THEN
+                      v_pendingtounreserve := 0;
+                    END IF;
                     FOR cur_res_stock IN (
                         SELECT m_reservation_stock_id, quantity - COALESCE(releasedqty, 0) AS reservedqty
                         FROM m_reservation_stock
@@ -1382,7 +1385,7 @@
                       updated = now(),
                       updatedby = v_user
                   WHERE m_reservation_id = v_reservation_id;
-                  IF (v_quantity < cur_orderline.qtyordered AND v_res_status = 'CO' AND v_DocAction <> 'CO') THEN
+                  IF (v_quantity < cur_orderline.qtyordered AND v_res_status = 'CO') THEN
                     --Reservation processed with higher quantity. Try to reserve the new quantity.
                     M_RESERVE_STOCK_AUTO(v_reservation_id, v_user, v_reservedqty);
                   END IF;
