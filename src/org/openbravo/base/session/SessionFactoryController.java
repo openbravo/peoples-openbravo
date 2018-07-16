@@ -178,6 +178,8 @@ public abstract class SessionFactoryController {
       sessionFactory = dalSessionFactory;
 
       log.debug("Session Factory initialized");
+    } catch (final OBException obex) {
+      throw obex;
     } catch (final Throwable t) {
       throw new OBException(t);
     }

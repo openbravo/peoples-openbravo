@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.function.SQLFunction;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.slf4j.Logger;
@@ -70,14 +71,15 @@ public class DalSessionFactoryController extends SessionFactoryController {
       tmpFile = Files.createTempFile("", ".hbm");
       Files.write(tmpFile, mapping.getBytes());
       configuration.addFile(tmpFile.toString());
-    } catch (IOException e) {
-      log.error("Error writing temporary .hbm file for configuration", e);
+    } catch (IOException ioex) {
+      throw new OBException("Error writing temporary .hbm file for configuration", ioex);
     } finally {
       try {
         if (tmpFile != null) {
           Files.delete(tmpFile);
         }
-      } catch (IOException ignore) {
+      } catch (IOException ioex) {
+        log.error("Error deleting temporary .hbm file for configuration", ioex);
       }
     }
   }
