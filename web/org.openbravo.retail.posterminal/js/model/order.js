@@ -283,7 +283,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(this.get('origAmount') || OB.DEC.div(this.get('amount'), this.get('mulrate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
@@ -295,7 +295,7 @@
       var paidReturn = (this.get('isPaid') && (this.get('orderGross') < 0)) || (order && order.get('paidInNegativeStatusAmt') && this.get('cancelAndReplace') === true);
       // if the ticket is a paid return, new payments must be displayed in negative
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate'))), -1) : this.printAmount());
+        return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('origAmount') || OB.DEC.div(this.get('amount'), this.get('mulrate'))), -1) : this.printAmount());
       } else {
         return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('amount')), -1) : this.printAmount());
       }
@@ -4477,7 +4477,7 @@
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
           //Here we are trying to know if the current payment is making the pending to pay 0.
           //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
           //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
@@ -4631,7 +4631,7 @@
                 paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
                 p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.div(p.get('origAmount'), p.get('mulrate'))));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
@@ -4645,7 +4645,7 @@
                 paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
                 p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.div(p.get('origAmount'), p.get('mulrate'))));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
@@ -6908,7 +6908,7 @@
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
           //Here we are trying to know if the current payment is making the pending to pay 0.
           //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
           //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
@@ -7028,7 +7028,7 @@
             if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
               p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
               if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
               }
               payment.set('date', new Date());
               order.adjustPayment();
@@ -7043,7 +7043,7 @@
             if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
               p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
               if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
               }
               payment.set('date', new Date());
               order.adjustPayment();
