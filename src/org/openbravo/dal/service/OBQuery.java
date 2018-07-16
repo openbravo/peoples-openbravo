@@ -218,9 +218,11 @@ public class OBQuery<E extends BaseOBObject> {
    * OBQuery instance. To generate the criteria of the deletion, it makes use of the whereclause and
    * extra filters (for readable organizations etc.).
    * 
-   * @return a new Hibernate Query object
+   * @return a new Hibernate Query object. Note that it does not have an specific type because
+   *         delete queries can not be typed.
    */
-  public Query<E> deleteQuery() {
+  @SuppressWarnings("rawtypes")
+  public Query deleteQuery() {
     final String qryStr = createQueryString();
     String whereClause;
     final int whereIndex = qryStr.toLowerCase().indexOf(WHERE);
@@ -236,8 +238,7 @@ public class OBQuery<E extends BaseOBObject> {
       deleteClause.append("DELETE FROM ");
       deleteClause.append(getEntity().getName() + " ");
       deleteClause.append(whereClause);
-      @SuppressWarnings("unchecked")
-      final Query<E> qry = getSession().createQuery(deleteClause.toString());
+      final Query qry = getSession().createQuery(deleteClause.toString());
       setParameters(qry);
       return qry;
     } catch (final Exception e) {
