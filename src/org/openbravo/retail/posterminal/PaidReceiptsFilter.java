@@ -76,6 +76,9 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     case "ORD":
       orderTypeHql = "and ord.documentType.return = false and ord.documentType.sOSubType <> 'OB' and ord.obposIslayaway = false";
       break;
+    case "verifiedReturns":
+      orderTypeHql = "and exists (select 1 from ord.orderLineList where deliveredQuantity > 0)";
+      break;
     default:
       orderTypeHql = "";
     }

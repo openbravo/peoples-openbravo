@@ -9,6 +9,7 @@
 
 package org.openbravo.retail.posterminal;
 
+@Deprecated
 public interface PaidReceiptsHeaderHook {
   public String exec(String hqlFilter, String filterText) throws Exception;
 }

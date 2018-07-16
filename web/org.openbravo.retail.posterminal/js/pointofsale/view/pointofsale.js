@@ -45,7 +45,7 @@ enyo.kind({
     onChangeBusinessPartner: 'changeBusinessPartner',
     onPrintReceipt: 'printReceipt',
     onBackOffice: 'backOffice',
-    onPaidReceipts: 'paidReceipts',
+    onVerifiedReturns: 'verifiedReturns',
     onChangeSubWindow: 'changeSubWindow',
     onShowLeftSubWindow: 'showLeftSubWindow',
     onCloseLeftSubWindow: 'showOrder',
@@ -162,14 +162,17 @@ enyo.kind({
       kind: 'OB.UI.ModalReceipts',
       name: 'modalreceipts'
     }, {
-      kind: 'OB.UI.ModalPaidReceipts',
-      name: 'modalPaidReceipts'
+      kind: 'OB.UI.ModalVerifiedReturns',
+      name: 'modalVerifiedReturns'
     }, {
       kind: 'OBPOS.UI.ReceiptSelector',
       name: 'modalReceiptSelector'
     }, {
       kind: 'OB.UI.ModalAdvancedFilterReceipts',
       name: 'OB_UI_ModalAdvancedFilterReceipts'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
+      name: 'modalAdvancedFilterVerifiedReturns'
     }, {
       kind: 'OB.UI.ModalMultiOrders',
       name: 'modalMultiOrders'
@@ -404,7 +407,7 @@ enyo.kind({
       OB.MobileApp.model.shiftPressed = false;
     }
   },
-  paidReceipts: function (inSender, inEvent) {
+  verifiedReturns: function (inSender, inEvent) {
     var receipt = this.model.get('order');
     if (inEvent && inEvent.isReturn) {
       if (receipt && receipt.get('bp') && receipt.get('bp').get('id') !== OB.MobileApp.model.get('businessPartner').get('id')) {
@@ -414,22 +417,12 @@ enyo.kind({
         inEvent.defaultBP = true;
       }
     }
-    this.$.modalPaidReceipts.setParams(inEvent);
-    this.$.modalPaidReceipts.waterfall('onClearAction');
+    this.$.modalVerifiedReturns.setParams(inEvent);
+    this.$.modalVerifiedReturns.waterfall('onClearAction');
     this.doShowPopup({
-      popup: 'modalPaidReceipts'
+      popup: 'modalVerifiedReturns'
     });
     return true;
-  },
-
-  quotations: function (inSender, inEvent) {
-    this.$.modalPaidReceipts.setParams({
-      isQuotation: true
-    });
-    this.$.modalPaidReceipts.waterfall('onClearAction');
-    this.doShowPopup({
-      popup: 'modalPaidReceipts'
-    });
   },
 
   backOffice: function (inSender, inEvent) {
@@ -1236,15 +1229,6 @@ enyo.kind({
   clearPaymentSelect: function (inSender, inEvent) {
     // sending the event to the components bellow this one
     this.waterfall('onClearPaymentMethodSelect', inEvent);
-  },
-  layaways: function (inSender, inEvent) {
-    this.$.modalPaidReceipts.setParams({
-      isLayaway: true
-    });
-    this.$.modalPaidReceipts.waterfall('onClearAction');
-    this.doShowPopup({
-      popup: 'modalPaidReceipts'
-    });
   },
   changeSalesRepresentative: function (inSender, inEvent) {
     if (this.model.get('order').get('isEditable') === false) {

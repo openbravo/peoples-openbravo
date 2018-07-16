@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2017 Openbravo S.L.U.
+ * Copyright (C) 2014-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -215,260 +215,30 @@ enyo.kind({
   }
 });
 
-/*items of collection*/
 enyo.kind({
-  name: 'OB.UI.ListPRsLine',
-  kind: 'OB.UI.listItemButton',
-  allowHtml: true,
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function () {
-    this.inherited(arguments);
-    this.doHideThisPopup();
-  },
-  components: [{
-    name: 'line',
-    style: 'line-height: 23px;',
-    components: [{
-      name: 'topLine'
-    }, {
-      style: 'color: #888888',
-      name: 'bottonLine'
-    }, {
-      style: 'clear: both;'
-    }]
-  }],
-  create: function () {
-    var returnLabel = '';
-    this.inherited(arguments);
-    if (this.model.get('documentTypeId') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
-      this.model.set('totalamount', OB.DEC.mul(this.model.get('totalamount'), -1));
-      returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
-    }
-    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + this.model.get('businessPartner') + returnLabel);
-    this.$.bottonLine.setContent(this.model.get('totalamount') + ' (' + this.model.get('orderDate').substring(0, 10) + ') ');
-
-    OB.UTIL.HookManager.executeHooks('OBPOS_RenderPaidReceiptLine', {
-      paidReceiptLine: this
-    });
-
-    this.render();
-  }
-});
-
-/*scrollable table (body of modal)*/
-enyo.kind({
-  name: 'OB.UI.ListPRs',
-  classes: 'row-fluid',
-  handlers: {
-    onSearchAction: 'searchAction',
-    onClearAction: 'clearAction'
-  },
-  events: {
-    onChangePaidReceipt: '',
-    onShowPopup: '',
-    onAddProduct: '',
-    onHideThisPopup: '',
-    onChangeCurrentOrder: ''
-  },
-  components: [{
-    classes: 'span12',
-    components: [{
-      style: 'border-bottom: 1px solid #cccccc;',
-      classes: 'row-fluid',
-      components: [{
-        classes: 'span12',
-        components: [{
-          name: 'prslistitemprinter',
-          kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '350px',
-          renderHeader: 'OB.UI.ModalPRScrollableHeader',
-          renderLine: 'OB.UI.ListPRsLine',
-          renderEmpty: 'OB.UI.RenderEmpty'
-        }, {
-          name: 'renderLoading',
-          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-          showing: false,
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-          }
-        }]
-      }]
-    }]
-  }],
-  clearAction: function () {
-    this.prsList.reset();
-    return true;
-  },
-  searchAction: function (inSender, inEvent) {
-    var me = this,
-        ordersLoaded = [],
-        existingOrders = [],
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader'),
-        i;
-    me.filters = inEvent.filters;
-    this.clearAction();
-    this.$.prslistitemprinter.$.tempty.hide();
-    this.$.prslistitemprinter.$.tbody.hide();
-    this.$.prslistitemprinter.$.tlimit.hide();
-    this.$.renderLoading.show();
-    this.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(true);
-    var limit;
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
-      limit = OB.Model.Order.prototype.dataLimit;
-    } else {
-      limit = OB.Model.Order.prototype.remoteDataLimit ? OB.Model.Order.prototype.remoteDataLimit : OB.Model.Order.prototype.dataLimit;
-    }
-    for (i = 0; i < this.model.get('orderList').length; i++) {
-      // When an canceller order is ready, the cancelled order cannot be opened
-      if (this.model.get('orderList').models[i].get('replacedorder')) {
-        existingOrders.push(this.model.get('orderList').models[i].get('replacedorder'));
-      }
-    }
-    if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
-      limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
-      OB.Model.Order.prototype.tempDataLimit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
-    }
-    process.exec({
-      filters: me.filters,
-      _limit: limit + 1,
-      _dateFormat: OB.Format.date
-    }, function (data) {
-      if (data) {
-        if (data.exception) {
-          me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
-          me.$.renderLoading.hide();
-          me.prsList.reset();
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message ? data.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-          return;
-        }
-        ordersLoaded = [];
-        _.each(data, function (iter) {
-          me.model.get('orderList').newDynamicOrder(iter, function (order) {
-            if (existingOrders.indexOf(order.id) === -1) {
-              // Only push the order if not exists in previous receipts
-              ordersLoaded.push(order);
-            }
-          });
-        });
-        me.prsList.reset(ordersLoaded);
-        me.$.renderLoading.hide();
-        if (data && data.length > 0) {
-          me.$.prslistitemprinter.$.tbody.show();
-        } else {
-          me.$.prslistitemprinter.$.tempty.show();
-        }
-        me.$.prslistitemprinter.getScrollArea().scrollToTop();
-
-      } else {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
-      }
-      me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
-    }, function (error) {
-      me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
-      me.$.renderLoading.hide();
-      me.prsList.reset();
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), (error && error.exception && error.exception.message) ? error.exception.message : OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-      return;
-    }, true, 30000);
-    return true;
-  },
-  prsList: null,
-  init: function (model) {
-    var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
-    this.model = model;
-    this.prsList = new Backbone.Collection();
-    this.$.prslistitemprinter.setCollection(this.prsList);
-    this.prsList.on('click', function (model) {
-      function loadOrder(model) {
-        OB.UTIL.showLoading(true);
-        process.exec({
-          orderid: model.get('id')
-        }, function (data) {
-          if (data && data[0]) {
-            if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-              if (me.model.get('multiorders')) {
-                me.model.get('multiorders').resetValues();
-              }
-              me.model.get('leftColumnViewManager').setOrderMode();
-            }
-            if (data[0].recordInImportEntry) {
-              OB.UTIL.showLoading(false);
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [data[0].documentNo]));
-            } else {
-              OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
-                order: data[0],
-                context: me,
-                params: me.parent.parent.params
-              }, function (args) {
-                if (!args.cancelOperation) {
-                  me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-                    me.doChangePaidReceipt({
-                      newPaidReceipt: order
-                    });
-
-                  });
-                }
-              });
-            }
-          } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
-          }
-        });
-        return true;
-      }
-      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
-      return true;
-    }, this);
-  }
-});
-
-/*Modal definiton*/
-enyo.kind({
-  name: 'OB.UI.ModalPaidReceipts',
-  kind: 'OB.UI.Modal',
-  topPosition: '125px',
+  name: 'OB.UI.ModalVerifiedReturns',
+  kind: 'OB.UI.ModalSelector',
+  topPosition: '70px',
   i18nHeader: 'OBPOS_LblPaidReceipts',
   published: {
     params: null
   },
   body: {
-    kind: 'OB.UI.ListPRs'
+    kind: 'OB.UI.ReceiptsForVerifiedReturnsList'
   },
-  handlers: {
-    onChangePaidReceipt: 'changePaidReceipt'
+  getFilterSelectorTableHeader: function () {
+    return this.$.body.$.receiptsForVerifiedReturnsList.$.openreceiptslistitemprinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.filterSelector;
   },
-  changePaidReceipt: function (inSender, inEvent) {
-    this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
-    if (inEvent.newPaidReceipt.get('isLayaway')) {
-      this.model.attributes.order.calculateReceipt();
-    } else {
-      this.model.attributes.order.calculateGrossAndSave(false);
-    }
-    return true;
+  getAdvancedFilterBtn: function () {
+    return this.$.body.$.receiptsForVerifiedReturnsList.$.openreceiptslistitemprinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.advancedFilterWindowButtonVerifiedReturns;
+  },
+  getAdvancedFilterDialog: function () {
+    return 'modalAdvancedFilterVerifiedReturns';
   },
   executeOnShow: function () {
-    this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterText(false);
-    this.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.clearAction();
-    if (this.params.isQuotation) {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_Quotations'));
-    } else if (this.params.isLayaway) {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblLayaways'));
-    } else {
-      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
-      if (this.params.isReturn && this.params.bpartner) {
-        var me = this;
-        me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.$.filterText.setValue(this.params.bpartner.get('name'));
-        me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.searchAction();
-        enyo.forEach(this.model.get('orderList').current.get('lines').models, function (l) {
-          if (l.get('originalOrderLineId')) {
-            me.$.body.$.listPRs.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterText(true);
-            return;
-          }
-        });
-      }
+    if (!this.initialized) {
+      this.inherited(arguments);
+      this.getFilterSelectorTableHeader().clearFilter();
     }
   },
   init: function (model) {

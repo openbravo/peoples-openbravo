@@ -116,7 +116,11 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ReceiptsList',
+  name: 'OB.UI.GenericReceiptsList',
+  published: {
+    filterModel: null,
+    defaultFilters: null
+  },
   classes: 'row-fluid',
   handlers: {
     onClearFilterSelector: 'clearAction',
@@ -141,7 +145,7 @@ enyo.kind({
           name: 'openreceiptslistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '350px',
-          renderHeader: 'OB.UI.ModalReceiptsScrollableHeader',
+          renderHeader: null,
           renderLine: 'OB.UI.ReceiptSelectorRenderLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }, {
@@ -170,7 +174,7 @@ enyo.kind({
       var i, message, tokens;
 
       function getProperty(property) {
-        return OB.Model.OrderFilter.getProperties().find(function (prop) {
+        return this.filterModel.getProperties().find(function (prop) {
           return prop.name === property || prop.sortName === property;
         });
       }
@@ -250,7 +254,7 @@ enyo.kind({
     criteria.remoteFilters = [];
 
     inEvent.filters.forEach(function (flt) {
-      var fullFlt = _.find(OB.Model.OrderFilter.getProperties(), function (col) {
+      var fullFlt = _.find(me.filterModel.getProperties(), function (col) {
         return col.column === flt.column;
       });
       if (flt.hqlFilter) {
@@ -279,7 +283,13 @@ enyo.kind({
       }
     });
 
-    OB.Dal.find(OB.Model.OrderFilter, criteria, function (data) {
+    if (!OB.UTIL.isNullOrUndefined(this.defaultFilters)) {
+      this.defaultFilters.forEach(function (flt) {
+        criteria.remoteFilters.push(flt);
+      });
+    }
+
+    OB.Dal.find(this.filterModel, criteria, function (data) {
       if (data) {
         successCallback(data);
       } else {
@@ -293,6 +303,83 @@ enyo.kind({
     this.model = model;
     this.receiptList = new Backbone.Collection();
     this.$.openreceiptslistitemprinter.setCollection(this.receiptList);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ReceiptsForVerifiedReturnsList',
+  kind: 'OB.UI.GenericReceiptsList',
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setFilterModel(OB.Model.OrdersForVerifiedReturnsFilter);
+    this.$.openreceiptslistitemprinter.renderHeader = 'OB.UI.ModalVerifiedReturnsScrollableHeader';
+  },
+  init: function (model) {
+    var me = this,
+        process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
+    this.model = model;
+    this.inherited(arguments);
+    this.receiptList.on('click', function (model) {
+      function loadOrder(model) {
+        OB.UTIL.showLoading(true);
+        process.exec({
+          orderid: model.get('id')
+        }, function (data) {
+          if (data && data[0]) {
+            if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+              if (me.model.get('multiorders')) {
+                me.model.get('multiorders').resetValues();
+              }
+              me.model.get('leftColumnViewManager').setOrderMode();
+            }
+            if (data[0].recordInImportEntry) {
+              OB.UTIL.showLoading(false);
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [data[0].documentNo]));
+            } else {
+              OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
+                order: data[0],
+                context: me,
+                params: me.parent.parent.params
+              }, function (args) {
+                if (!args.cancelOperation) {
+                  me.model.get('orderList').newPaidReceipt(data[0], function (order) {
+                    me.doChangePaidReceipt({
+                      newPaidReceipt: order
+                    });
+
+                  });
+                }
+              });
+            }
+          } else {
+            OB.UTIL.showError(OB.I18N.getLabel('OBMOBC_Error'));
+          }
+        });
+        return true;
+      }
+      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
+      return true;
+    }, this);
+
+    this.setDefaultFilters([{
+      value: 'verifiedReturns',
+      columns: ['orderType']
+    }]);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ReceiptsList',
+  kind: 'OB.UI.GenericReceiptsList',
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setFilterModel(OB.Model.OrderFilter);
+    this.$.openreceiptslistitemprinter.renderHeader = 'OB.UI.ModalReceiptsScrollableHeader';
+  },
+  init: function (model) {
+    var me = this;
+    this.model = model;
+    this.inherited(arguments);
     this.receiptList.on('click', function (model) {
       OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, true);
     }, this);
@@ -329,6 +416,35 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.ModalVerifiedReturnsScrollableHeader',
+  kind: 'OB.UI.ScrollableTableHeader',
+  events: {
+    onSearchAction: ''
+  },
+  components: [{
+    style: 'padding: 10px;',
+    kind: 'OB.UI.FilterSelectorTableHeader',
+    name: 'filterSelector',
+    filters: OB.Model.OrdersForVerifiedReturnsFilter.getProperties()
+  }, {
+    style: 'padding: 10px;',
+    components: [{
+      style: 'display: table; width: 100%;',
+      components: [{
+        style: 'display: table-cell; text-align: center; ',
+        components: [{
+          kind: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns'
+        }]
+      }]
+    }]
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+  }
+});
+
+enyo.kind({
   kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OB.UI.ModalAdvancedFilterReceipts',
   model: OB.Model.OrderFilter,
@@ -339,7 +455,23 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ModalAdvancedFilters',
+  name: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
+  model: OB.Model.OrdersForVerifiedReturnsFilter,
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setFilters(OB.Model.OrdersForVerifiedReturnsFilter.getProperties());
+  }
+});
+
+enyo.kind({
   kind: 'OB.UI.ButtonAdvancedFilter',
   name: 'OBPOS.UI.AdvancedFilterWindowButtonReceipts',
   dialog: 'OB_UI_ModalAdvancedFilterReceipts'
+});
+
+enyo.kind({
+  kind: 'OB.UI.ButtonAdvancedFilter',
+  name: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns',
+  dialog: 'modalAdvancedFilterVerifiedReturns'
 });

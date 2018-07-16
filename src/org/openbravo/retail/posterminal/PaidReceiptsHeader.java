@@ -26,6 +26,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 
+@Deprecated
 public class PaidReceiptsHeader extends ProcessHQLQuery {
   public static final Logger log = Logger.getLogger(PaidReceiptsHeader.class);
 
