@@ -292,7 +292,7 @@ public class SessionHandler implements OBNotSingleton {
    * @return a {@code Connection} from the specified pool
    */
   public Connection getNewConnection(String pool) throws SQLException {
-    Connection newConnection = null;
+    Connection newConnection;
     if (externalConnectionPool != null) {
       newConnection = externalConnectionPool.getConnection(pool);
       try {
