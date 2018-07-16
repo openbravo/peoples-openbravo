@@ -23,9 +23,8 @@ import org.hibernate.property.access.spi.PropertyAccess;
 import org.hibernate.property.access.spi.PropertyAccessStrategy;
 
 /**
- * Defines a strategy for accessing property values via a get/set pair. This is the strategy that
- * will be used by the {@link DalMappingGenerator} to set the access of the entity properties when
- * generating the mapping.
+ * This class is used as a factory class by the {@link DalMappingGenerator} to build the
+ * {@link DalPropertyAccess} instances during the mapping generation.
  */
 public class DalPropertyAccessStrategy implements PropertyAccessStrategy {
 

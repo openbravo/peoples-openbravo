@@ -37,7 +37,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A PropertyAccessor for accessing the properties of an entity via get/set pair.
+ * Describes access to a particular DAL entity property in terms of getting and setting its value.
+ * The access is built via a get/set pair. The instances of this class are obtained from the
+ * {@link DalPropertyAccessStrategy} class.
  */
 @SuppressWarnings("rawtypes")
 class DalPropertyAccess implements PropertyAccess {
