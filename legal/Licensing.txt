@@ -171,8 +171,8 @@ All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licen
 # poi-3.10.1.jar
 Under the Apache 2.0 license (included as Apache_poi_license.txt in this folder)
 
-# hibernate-core-5.3.0.CR2.jar
-# hibernate-commons-annotations-5.0.3.Final.jar
+# hibernate-core-5.3.2.Final.jar
+# hibernate-commons-annotations-5.0.4.Final.jar
 All files under the LGPL 2.1 (available at www.gnu.org/licenses/lgpl.html)
 
 # dom4j-1.6.1.jar
@@ -261,9 +261,9 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # guice-2.0.jar
 # tomcat-juli.jar
 # tomcat-jdbc.jar
-# classmate-1.3.0.jar
-# jandex-2.0.3.Final.jar
-# byte-buddy-1.8.0.jar
+# classmate-1.3.4.jar
+# jandex-2.0.5.Final.jar
+# byte-buddy-1.8.12.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jslint4java-1.4.7.jar
@@ -271,7 +271,7 @@ Under the New BSD license (available at http://www.opensource.org/licenses/bsd-l
 
 # javax.annotation-api-1.2.jar
 # javax.xml.soap-api-1.3.7.jar
-# jboss-transaction-api_1.2_spec-1.0.1.Final.jar
+# jboss-transaction-api_1.2_spec-1.1.1.Final.jar
 Under the CDDL license version 1.0 (license available at https://spdx.org/licenses/CDDL-1.0.html 
 or in the file CDDL-1.0.txt in this folder)
 
