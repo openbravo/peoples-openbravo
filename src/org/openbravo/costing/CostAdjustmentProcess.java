@@ -271,6 +271,7 @@ public class CostAdjustmentProcess {
     ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
 
     try {
+      OBContext.setAdminMode(false);
       while (lines.next()) {
         CostAdjustmentLine line = (CostAdjustmentLine) lines.get(0);
         if (!line.getTransactionCostList().isEmpty()) {
@@ -303,6 +304,7 @@ public class CostAdjustmentProcess {
       }
     } finally {
       lines.close();
+      OBContext.restorePreviousMode();
     }
     OBDal.getInstance().flush();
     OBDal.getInstance().getSession().clear();
