@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -35,8 +37,6 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jdk.nashorn.internal.objects.NativeDate;
 
 /**
  * JS - Java binding to use in JavaScript expressions.
@@ -192,7 +192,27 @@ public class OBBindings {
   }
 
   public String formatDate(Object d) {
-    return formatDate(NativeDate.getDate(d));
+    return formatDate(getTimeFromNashornNativeDate(d));
+  }
+
+  private Date getTimeFromNashornNativeDate(Object d) {
+    // Since Java 8, Nashorn is the Javascript engine used by default. When returning Javascript
+    // date objects are represented by jdk.nashorn.internal.objects.NativeDate is used instead.
+    //
+    // Although being a public class, it is in an internal module which is not opened by default in
+    // JDK9+ therefore we still need to use reflection to access to it.
+    //
+    // Note Nashorn is marked as deprecated for deletion in JDK11
+    // -> TODO: look for a valid alternative in future releases.
+    try {
+      Method m = d.getClass().getMethod("callMember", String.class, Object[].class);
+      long localTime = ((Double) m.invoke(d, "getTime", null)).longValue();
+      return new Date(localTime);
+    } catch (Exception ex) {
+      log.error("Error getting javascript date from object {} of class {}", d, d.getClass()
+          .getName());
+      throw new OBException(ex.getMessage(), ex);
+    }
   }
 
   public String formatDateTime(Date d) {
@@ -200,7 +220,7 @@ public class OBBindings {
   }
 
   public String formatDateTime(Object d) {
-    return formatDateTime(NativeDate.getDate(d));
+    return formatDateTime(getTimeFromNashornNativeDate(d));
   }
 
   public Date parseDate(String date) {
@@ -245,7 +265,7 @@ public class OBBindings {
   }
 
   public String formatDate(Object d, String format) {
-    return formatDate(NativeDate.getDate(d), format);
+    return formatDate(getTimeFromNashornNativeDate(d), format);
   }
 
   public Date parseDate(String date, String format) {
