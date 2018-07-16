@@ -359,7 +359,10 @@ export.database: exports database structure and data to xml files.
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
     <fail message="Unsupported Java version ${ant.java.version}. Minimum required is 8 (1.8).">
       <condition>
-        <equals arg1="${ant.java.version}" arg2="1.7"/>
+        <or>
+          <equals arg1="${ant.java.version}" arg2="1.6"/>
+          <equals arg1="${ant.java.version}" arg2="1.7"/>
+        </or>
       </condition>
     </fail>
     <antversion property="min.ant.version" atleast="1.9.2" />
