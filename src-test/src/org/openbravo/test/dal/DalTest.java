@@ -663,6 +663,28 @@ public class DalTest extends OBBaseTest {
     assertEquals(isoCode, EURO);
   }
 
+  /**
+   * Test to check deletion queries using OBQuery
+   */
+  @Test
+  public void canDeleteWithOBQuery() {
+    int deletions = 0;
+    try {
+      User user = getNewUser();
+      // save the new user...
+      OBDal.getInstance().save(user);
+      OBDal.getInstance().flush();
+      // ...and now delete it using an OBQuery instance
+      String hql = "id = :id";
+      OBQuery<User> query = OBDal.getInstance().createQuery(User.class, hql);
+      query.setNamedParameter("id", user.getId());
+      deletions = query.deleteQuery().executeUpdate();
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+    }
+    assertThat("Can delete business objects using OBQuery", deletions, equalTo(1));
+  }
+
   private String getISOCodeFromCurrencyId(String currencyId, boolean includeAlias) {
     String isoCode = null;
     try {

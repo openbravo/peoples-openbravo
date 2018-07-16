@@ -231,15 +231,17 @@ public class OBQuery<E extends BaseOBObject> {
       throw new OBException("Exception when creating delete query " + qryStr);
     }
 
+    StringBuilder deleteClause = new StringBuilder();
     try {
+      deleteClause.append("DELETE FROM ");
+      deleteClause.append(getEntity().getName() + " ");
+      deleteClause.append(whereClause);
       @SuppressWarnings("unchecked")
-      final Query<E> qry = getSession().createQuery(
-          "DELETE FROM " + getEntity().getName() + " " + whereClause);
+      final Query<E> qry = getSession().createQuery(deleteClause.toString());
       setParameters(qry);
       return qry;
     } catch (final Exception e) {
-      throw new OBException("Exception when creating delete query " + "DELETE FROM "
-          + getEntity().getName() + " " + whereClause, e);
+      throw new OBException("Exception when creating delete query " + deleteClause.toString(), e);
     }
   }
 
