@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,6 @@
 
 package org.openbravo.erpCommon.ad_process;
 
-import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,6 +42,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
+import org.openbravo.erpCommon.utility.poc.EmailInfo;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
@@ -241,7 +241,7 @@ public class AlertProcess implements Process {
    * @param conn
    * @throws Exception
    */
-  @SuppressWarnings({ "unchecked", "deprecation" })
+  @SuppressWarnings("deprecation")
   private void processAlert(AlertProcessData alertRule, ConnectionProvider conn) throws Exception {
     logger.log("Processing rule " + alertRule.name + "\n");
 
@@ -312,7 +312,8 @@ public class AlertProcess implements Process {
           // depending on the server), they are sent at the end, once all data is recollected, in
           // order to minimize problems/inconsistencies/NPE if the 'Alerts', 'AlertRecipient',
           // 'User' or 'UserRoles' columns change in the middle of the process.
-          final List<Object[]> emailsToSendList = new ArrayList<Object[]>();
+          final List<EmailInfo> emailsToSendList = new ArrayList<>();
+          EmailServerConfiguration mailConfig = null;
           OBContext.setAdminMode();
           try {
             // Getting the SMTP server parameters
@@ -330,7 +331,6 @@ public class AlertProcess implements Process {
               // first returned one), then for organization '0' (and use the first returned one) and
               // then for any other of the organization tree where current organization belongs to
               // (and use the first returned one).
-              EmailServerConfiguration mailConfig = null;
 
               for (EmailServerConfiguration currentOrgConfig : mailConfigList) {
                 if (adOrgId.equals(currentOrgConfig.getOrganization().getId())) {
@@ -368,7 +368,7 @@ public class AlertProcess implements Process {
                   continue;
                 }
 
-                final List<User> usersList = new ArrayList<User>();
+                final List<User> usersList = new ArrayList<>();
                 // If there is a 'Contact' established, take it, if not, take all users for the
                 // selected 'Role'
                 if (currentAlertRecipient.getUserContact() != null) {
@@ -448,29 +448,14 @@ public class AlertProcess implements Process {
 
                   alreadySentToList.add(targetUserEmail);
 
-                  final String host = mailConfig.getSmtpServer();
-                  final Boolean auth = mailConfig.isSMTPAuthentification();
-                  final String username = mailConfig.getSmtpServerAccount();
-                  final String password = FormatUtilities.encryptDecrypt(
-                      mailConfig.getSmtpServerPassword(), false);
-                  final String connSecurity = mailConfig.getSmtpConnectionSecurity();
-                  final int port = mailConfig.getSmtpPort().intValue();
-                  final String senderAddress = mailConfig.getSmtpServerSenderAddress();
-                  final String recipientTO = targetUserEmail;
-                  final String recipientCC = null;
-                  final String recipientBCC = null;
-                  final String replyTo = null;
-                  final String subject = "[OB Alert] " + alertRule.name;
-                  final String content = Utility.messageBD(conn, "AlertMailHead",
-                      targetUserClientLanguage) + "\n" + finalMessage;
-                  final String contentType = "text/plain; charset=utf-8";
-                  final List<File> attachments = null;
-                  final Date sentDate = new Date();
-                  final List<String> headerExtras = null;
+                  final EmailInfo email = new EmailInfo.Builder()
+                      .setRecipientTO(targetUserEmail)
+                      .setSubject("[OB Alert] " + alertRule.name)
+                      .setContent(
+                          Utility.messageBD(conn, "AlertMailHead", targetUserClientLanguage) + "\n"
+                              + finalMessage).setContentType("text/plain; charset=utf-8")
+                      .setSentDate(new Date()).build();
 
-                  final Object[] email = { host, auth, username, password, connSecurity, port,
-                      senderAddress, recipientTO, recipientCC, recipientBCC, replyTo, subject,
-                      content, contentType, attachments, sentDate, headerExtras };
                   emailsToSendList.add(email);
                 }
               }
@@ -481,16 +466,9 @@ public class AlertProcess implements Process {
             OBContext.restorePreviousMode();
           }
           // Send all the stored emails
-          for (Object[] emailToSend : emailsToSendList) {
+          for (EmailInfo emailToSend : emailsToSendList) {
             try {
-              EmailManager.sendEmail((String) emailToSend[0],
-                  ((Boolean) emailToSend[1]).booleanValue(), (String) emailToSend[2],
-                  (String) emailToSend[3], (String) emailToSend[4],
-                  ((Number) emailToSend[5]).intValue(), (String) emailToSend[6],
-                  (String) emailToSend[7], (String) emailToSend[8], (String) emailToSend[9],
-                  (String) emailToSend[10], (String) emailToSend[11], (String) emailToSend[12],
-                  (String) emailToSend[13], (List<File>) emailToSend[14], (Date) emailToSend[15],
-                  (List<String>) emailToSend[16]);
+              EmailManager.sendEmail(mailConfig, emailToSend);
             } catch (Exception exception) {
               log4j.error(exception);
               final String exceptionClass = exception.getClass().toString().replace("class ", "");

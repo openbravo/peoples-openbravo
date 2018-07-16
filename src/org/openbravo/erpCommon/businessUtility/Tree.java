@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,6 +64,12 @@ public class Tree {
       }
     }
     return strText;
+  }
+
+  public static String getTreeTable(ConnectionProvider conn, String client, String tableId)
+      throws IOException, ServletException {
+    log4jTree.debug("Tree.getTree");
+    return TreeData.getTreeTable(conn, client, tableId);
   }
 
   public static String getTreeAccounts(ConnectionProvider conn, String client) throws IOException,
