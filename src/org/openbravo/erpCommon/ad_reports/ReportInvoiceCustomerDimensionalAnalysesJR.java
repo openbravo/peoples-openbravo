@@ -633,7 +633,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           + ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(readOnlyCP,
               strPartnerGroup);
     }
-
+    String treeTable = Tree.getTreeTable(readOnlyCP, vars.getClient(), "209");
+    String productCategoryGroup = Tree.getMembers(readOnlyCP, treeTable, strProductCategory);
     if (StringUtils.isNotEmpty(strProductCategory)) {
       strTitle = strTitle
           + ", "
@@ -641,6 +642,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           + " "
           + ReportInvoiceCustomerDimensionalAnalysesJRData.selectProductCategory(readOnlyCP,
               strProductCategory);
+      productCategoryGroup = "(" + productCategoryGroup + ")";
     }
     if (StringUtils.isNotEmpty(strcProjectId)) {
       strTitle = strTitle + ", " + Utility.messageBD(readOnlyCP, "Project", vars.getLanguage())
@@ -840,7 +842,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                     TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
                     .getContext(readOnlyCP, vars, "#User_Client",
                         "ReportInvoiceCustomerDimensionalAnalysesJR"), strPartnerGroup,
-                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                    strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
                     strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
                         .equals(strVoid, "Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(
                         readOnlyCP, strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(
@@ -852,7 +854,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                         TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
                         .getContext(readOnlyCP, vars, "#User_Client",
                             "ReportInvoiceCustomerDimensionalAnalysesJR"), strPartnerGroup,
-                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                    strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
                     strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
                         .equals(strVoid, "Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(
                         readOnlyCP, strDateTo, "1")));
@@ -879,7 +881,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                   .getContext(readOnlyCP, vars, "#User_Client",
                       "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                   .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-              strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
+              productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
               strcProjectId, strProducttype, strcDocTypeId, StringUtils.equals(strVoid, "Y") ? ""
                   : "VO");
 
@@ -900,7 +902,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                         .getContext(readOnlyCP, vars, "#User_Client",
                             "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
                     DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
-                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                    strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
                     strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
                         .equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(
                         readOnlyCP, strDateToRef, "1"), localStrDateFromRef2, DateTimeData
@@ -916,7 +918,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                         .getContext(readOnlyCP, vars, "#User_Client",
                             "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
                     DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
-                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                    strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
                     strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
                         .equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(
                         readOnlyCP, strDateToRef, "1"), localStrDateFromRef2, DateTimeData
@@ -932,7 +934,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                       .getContext(readOnlyCP, vars, "#User_Client",
                           "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                       .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-                  strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
+                  productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
                   strcProjectId, strProducttype, strcDocTypeId,
                   StringUtils.equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData
                       .nDaysAfter(readOnlyCP, strDateToRef, "1"), strOrderby);
@@ -951,7 +953,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                     .getContext(readOnlyCP, vars, "#User_Client",
                         "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                     .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-                strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
+                productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
                 strcProjectId, strProducttype, strcDocTypeId, StringUtils.equals(strVoid, "Y") ? ""
                     : "VO", strOrderby);
           } catch (ServletException ex) {
@@ -1022,7 +1024,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
               parameters.put("DateTo", DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
               parameters.put("C_BP_GROUP_ID", strPartnerGroup);
               parameters.put("C_BPARTNER_ID", strcBpartnerId);
-              parameters.put("M_PRODUCT_CATEGORY_ID", strProductCategory);
+              parameters.put("M_PRODUCT_CATEGORY_ID", productCategoryGroup);
               parameters.put("M_PRODUCT_ID", strmProductId);
               parameters.put("SALESREP_ID", strsalesrepId);
               parameters.put("PARTNER_SALESREP_ID", strPartnerSalesrepId);
@@ -1086,7 +1088,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             parameters.put("DateTo", DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
             parameters.put("C_BP_GROUP_ID", strPartnerGroup);
             parameters.put("C_BPARTNER_ID", strcBpartnerId);
-            parameters.put("M_PRODUCT_CATEGORY_ID", strProductCategory);
+            parameters.put("M_PRODUCT_CATEGORY_ID", productCategoryGroup);
             parameters.put("M_PRODUCT_ID", strmProductId);
             parameters.put("SALESREP_ID", strsalesrepId);
             parameters.put("PARTNER_SALESREP_ID", strPartnerSalesrepId);

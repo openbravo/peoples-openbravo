@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,7 +19,6 @@
 
 package org.openbravo.email;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,10 +33,10 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.poc.EmailInfo;
 import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * This singleton class, is in charge of generating events to send emails.
@@ -86,32 +85,23 @@ public class EmailEventManager {
     }
 
     try {
-      final String username = mailConfig.getSmtpServerAccount();
-      final String password = FormatUtilities.encryptDecrypt(mailConfig.getSmtpServerPassword(),
-          false);
-      final String connSecurity = mailConfig.getSmtpConnectionSecurity();
-      final int port = mailConfig.getSmtpPort().intValue();
-      final String senderAddress = mailConfig.getSmtpServerSenderAddress();
-      final String host = mailConfig.getSmtpServer();
-      final boolean auth = mailConfig.isSMTPAuthentification();
-
       boolean sent = false;
       for (EmailEventContentGenerator gen : getEmailGenerators(event, data)) {
         sent = true;
         log.debug("sending email for event " + event + " with generator " + gen);
 
+        final EmailInfo email = new EmailInfo.Builder().setSubject(gen.getSubject(data, event))
+          .setContent(gen.getBody(data, event))
+          .setContentType(gen.getContentType())
+          .setAttachments(gen.getAttachments(data, event))
+          .build();
+
         if (gen.isAsynchronous()) {
-          final String subject = gen.getSubject(data, event);
-          final String body = gen.getBody(data, event);
-          final String type = gen.getContentType();
-          final List<File> attachments = gen.getAttachments(data, event);
           Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
               try {
-                EmailManager.sendEmail(host, auth, username, password, connSecurity, port,
-                    senderAddress, recipient, null, null, null, subject, body, type, attachments,
-                    null, null);
+                EmailManager.sendEmail(mailConfig, email);
               } catch (Exception e) {
                 log.error(e.getMessage(), e);
               }
@@ -119,9 +109,7 @@ public class EmailEventManager {
           });
           thread.start();
         } else {
-          EmailManager.sendEmail(host, auth, username, password, connSecurity, port, senderAddress,
-              recipient, null, null, null, gen.getSubject(data, event), gen.getBody(data, event),
-              gen.getContentType(), gen.getAttachments(data, event), null, null);
+          EmailManager.sendEmail(mailConfig, email);
         }
       }
       if (!sent) {
