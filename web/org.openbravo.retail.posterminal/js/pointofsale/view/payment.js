@@ -418,9 +418,9 @@ enyo.kind({
             paymentchange.add({
               payment: payment,
               amount: changePaymentRounded,
-              origAmount: OB.DEC.mul(changePaymentRounded, payment.rate)
+              origAmount: OB.DEC.div(changePaymentRounded, payment.mulrate)
             });
-            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.mul(changePaymentRounded, payment.rate, precision), precision));
+            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.div(changePaymentRounded, payment.mulrate)));
             return;
           }
         }

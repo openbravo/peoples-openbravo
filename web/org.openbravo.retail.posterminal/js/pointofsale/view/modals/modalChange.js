@@ -77,12 +77,12 @@ enyo.kind({
         if (l.payment.changeRounding) {
           roundingto = l.payment.changeRounding.roundingto;
           roundinggap = l.payment.changeRounding.roundingdownlimit;
-          origamountmin = OB.DEC.mul(OB.DEC.sub(amount, OB.DEC.sub(roundingto, roundinggap, precision), precision), l.payment.rate);
+          origamountmin = OB.DEC.div(OB.DEC.sub(amount, OB.DEC.sub(roundingto, roundinggap, precision), precision), l.payment.mulrate);
           origamountmin = Math.max(origamountmin, 0);
-          origamountmax = OB.DEC.mul(OB.DEC.add(amount, roundinggap, precision), l.payment.rate);
+          origamountmax = OB.DEC.div(OB.DEC.add(amount, roundinggap, precision), l.payment.mulrate);
         } else {
-          origamountmin = OB.DEC.mul(amount, l.payment.rate, precision);
-          origamountmax = OB.DEC.mul(amount, l.payment.rate, precision);
+          origamountmin = OB.DEC.div(amount, l.payment.mulrate, precision);
+          origamountmax = OB.DEC.div(amount, l.payment.mulrate, precision);
         }
         changemin = OB.DEC.add(changemin, origamountmin);
         changemax = OB.DEC.add(changemax, origamountmax);
@@ -123,7 +123,7 @@ enyo.kind({
         return;
       }
       amount = parseFloat(l.$.textline.getValue());
-      origAmount = OB.DEC.mul(amount, l.payment.rate);
+      origAmount = OB.DEC.div(amount, l.payment.mulrate);
       paymentchangemap.push({
         payment: l.payment,
         amount: amount,
@@ -160,7 +160,7 @@ enyo.kind({
 
     if (!inEvent.hasErrors && lines.length === 2) {
       line = lines[inEvent.line === lines[0] ? 1 : 0];
-      originalValue = OB.DEC.mul(inEvent.value, inEvent.line.payment.rate);
+      originalValue = OB.DEC.div(inEvent.value, inEvent.line.payment.mulrate);
       change = OB.DEC.sub(this.args.receipt.getPaymentStatus().changeAmt, originalValue);
       precision = line.payment.obposPosprecision;
       linechange = OB.DEC.mul(change, line.payment.mulrate, precision);
