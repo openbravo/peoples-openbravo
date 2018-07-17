@@ -263,8 +263,11 @@ Under the MIT license (available at http://www.slf4j.org/license.html)
 # tomcat-jdbc.jar
 # classmate-1.3.4.jar
 # jandex-2.0.5.Final.jar
-# byte-buddy-1.8.12.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
+
+# byte-buddy-1.8.12.jar
+Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder),
+note that Byte Buddy depends on the ASM library which is distributed under a BSD license (included as ASM_BSD_license.txt in this folder)
 
 # jslint4java-1.4.7.jar
 Under the New BSD license (available at http://www.opensource.org/licenses/bsd-license.php)
