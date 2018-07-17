@@ -318,6 +318,7 @@ public class CancelAndReplaceUtils {
     ScrollableResults shipmentLines = null;
     Order newOrder = null;
     Order oldOrder = null;
+    Order inverseOrder = null;
     String newOrderId = null;
     String oldOrderId = null;
     String inverseOrderId = null;
@@ -325,7 +326,7 @@ public class CancelAndReplaceUtils {
     try {
 
       boolean triggersDisabled = false;
-      if (jsonorder != null && replaceOrder) {
+      if (jsonorder != null) {
         triggersDisabled = true;
       }
 
@@ -361,12 +362,16 @@ public class CancelAndReplaceUtils {
 
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
-      // Get documentNo for the inverse Order Header coming from jsonorder, if exists
-      String negativeDocNo = jsonorder != null && jsonorder.has("negativeDocNo") ? jsonorder
-          .getString("negativeDocNo") : null;
+      if (replaceOrder) {
+        // Get documentNo for the inverse Order Header coming from jsonorder, if exists
+        String negativeDocNo = jsonorder != null && jsonorder.has("negativeDocNo") ? jsonorder
+            .getString("negativeDocNo") : null;
 
-      // Create inverse Order header
-      Order inverseOrder = createInverseOrder(oldOrder, negativeDocNo, triggersDisabled);
+        // Create inverse Order header
+        inverseOrder = createInverseOrder(oldOrder, negativeDocNo, triggersDisabled);
+      } else {
+        inverseOrder = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+      }
       inverseOrderId = inverseOrder.getId();
 
       // Define netting goods shipment and its lines
@@ -377,45 +382,45 @@ public class CancelAndReplaceUtils {
       boolean createNettingGoodsShipment = getCreateNettingGoodsShipmentPreferenceValue(oldOrder);
       boolean associateShipmentToNewReceipt = getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(oldOrder);
 
-      // Iterate old order lines
-      orderLines = getOrderLineList(oldOrder);
-      long lineNoCounter = 1, i = 0;
-      while (orderLines.next()) {
-        OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
+      if (replaceOrder) {
+        // Iterate old order lines
+        orderLines = getOrderLineList(oldOrder);
+        long lineNoCounter = 1, i = 0;
+        while (orderLines.next()) {
+          OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
 
-        // Create inverse Order line
-        OrderLine inverseOrderLine = createInverseOrderLine(oldOrderLine, inverseOrder,
-            replaceOrder, triggersDisabled);
+          // Create inverse Order line
+          OrderLine inverseOrderLine = createInverseOrderLine(oldOrderLine, inverseOrder,
+              replaceOrder, triggersDisabled);
 
-        // Netting goods shipment is created
-        if (createNettingGoodsShipment && inverseOrderLine != null) {
-          // Create Netting goods shipment Header
-          if (nettingGoodsShipment == null) {
-            nettingGoodsShipment = createNettingGoodShipmentHeader(oldOrder);
-            nettingGoodsShipment.setNettingshipment(true);
-            nettingGoodsShipmentId = nettingGoodsShipment.getId();
-          }
+          // Netting goods shipment is created
+          if (createNettingGoodsShipment && inverseOrderLine != null) {
+            // Create Netting goods shipment Header
+            if (nettingGoodsShipment == null) {
+              nettingGoodsShipment = createNettingGoodShipmentHeader(oldOrder);
+              nettingGoodsShipment.setNettingshipment(true);
+              nettingGoodsShipmentId = nettingGoodsShipment.getId();
+            }
 
-          // Create Netting goods shipment Line for the old order line
-          BigDecimal movementQty = oldOrderLine.getOrderedQuantity().subtract(
-              oldOrderLine.getDeliveredQuantity());
-          BigDecimal oldOrderLineDeliveredQty = oldOrderLine.getDeliveredQuantity();
-          oldOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
-          OBDal.getInstance().save(oldOrderLine);
-          OBDal.getInstance().flush();
-          if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-            createNettingShipmentLine(nettingGoodsShipment, oldOrderLine, lineNoCounter++,
-                movementQty, triggersDisabled);
-          }
-          // Create Netting goods shipment Line for the inverse order line
-          movementQty = inverseOrderLine.getOrderedQuantity().subtract(
-              inverseOrderLine.getDeliveredQuantity());
-          if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-            createNettingShipmentLine(nettingGoodsShipment, inverseOrderLine, lineNoCounter++,
-                movementQty, triggersDisabled);
-          }
+            // Create Netting goods shipment Line for the old order line
+            BigDecimal movementQty = oldOrderLine.getOrderedQuantity().subtract(
+                oldOrderLine.getDeliveredQuantity());
+            BigDecimal oldOrderLineDeliveredQty = oldOrderLine.getDeliveredQuantity();
+            oldOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+            OBDal.getInstance().save(oldOrderLine);
+            OBDal.getInstance().flush();
+            if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
+              createNettingShipmentLine(nettingGoodsShipment, oldOrderLine, lineNoCounter++,
+                  movementQty, triggersDisabled);
+            }
+            // Create Netting goods shipment Line for the inverse order line
+            movementQty = inverseOrderLine.getOrderedQuantity().subtract(
+                inverseOrderLine.getDeliveredQuantity());
+            if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
+              createNettingShipmentLine(nettingGoodsShipment, inverseOrderLine, lineNoCounter++,
+                  movementQty, triggersDisabled);
+            }
 
-          if (replaceOrder) {
             // Get the the new order line that replaces the old order line, should be only one
             OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
             if (newOrderLine != null) {
@@ -450,103 +455,110 @@ public class CancelAndReplaceUtils {
                 }
               }
             }
-          }
-          // Shipment lines of original order lines are reassigned to the new order line
-        } else if (associateShipmentToNewReceipt && replaceOrder) {
-          try {
-            shipmentLines = getShipmentLineListOfOrderLine(oldOrderLine);
-            long k = 0;
-            List<ShipmentInOut> shipments = new ArrayList<ShipmentInOut>();
-            List<ShipmentInOutLine> shipLines = new ArrayList<ShipmentInOutLine>();
-            while (shipmentLines.next()) {
-              ShipmentInOutLine shipLine = (ShipmentInOutLine) shipmentLines.get(0);
-              // The netting shipment is flagged as unprocessed.
-              ShipmentInOut shipment = shipLine.getShipmentReceipt();
-              if (shipment.isProcessed()) {
-                unprocessShipmentHeader(shipment);
-                shipments.add(shipment);
+            // Shipment lines of original order lines are reassigned to the new order line
+          } else if (associateShipmentToNewReceipt && replaceOrder) {
+            try {
+              shipmentLines = getShipmentLineListOfOrderLine(oldOrderLine);
+              long k = 0;
+              List<ShipmentInOut> shipments = new ArrayList<ShipmentInOut>();
+              List<ShipmentInOutLine> shipLines = new ArrayList<ShipmentInOutLine>();
+              while (shipmentLines.next()) {
+                ShipmentInOutLine shipLine = (ShipmentInOutLine) shipmentLines.get(0);
+                // The netting shipment is flagged as unprocessed.
+                ShipmentInOut shipment = shipLine.getShipmentReceipt();
+                if (shipment.isProcessed()) {
+                  unprocessShipmentHeader(shipment);
+                  shipments.add(shipment);
+                }
+                // Get the the new order line that replaces the old order line, should be only one
+                OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
+                if (newOrderLine != null) {
+                  shipLine.setSalesOrderLine(newOrderLine);
+                  if (jsonorder == null) {
+                    newOrderLine.setDeliveredQuantity(newOrderLine.getDeliveredQuantity().add(
+                        shipLine.getMovementQuantity()));
+                    OBDal.getInstance().save(newOrderLine);
+                  }
+                  OBDal.getInstance().save(shipLine);
+                  // The old invoice line cannot have a relation to the shipment line. Later, after
+                  // the shipments are created, the invoice will be created for the new order (if
+                  // required).
+                  final OBCriteria<InvoiceLine> oldInvoiceLineCriteria = OBDal.getInstance()
+                      .createCriteria(InvoiceLine.class);
+                  oldInvoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE,
+                      oldOrderLine));
+                  oldInvoiceLineCriteria.add(Restrictions.eq(
+                      InvoiceLine.PROPERTY_GOODSSHIPMENTLINE, shipLine));
+                  oldInvoiceLineCriteria.setMaxResults(1);
+                  final InvoiceLine oldInvoiceLine = (InvoiceLine) oldInvoiceLineCriteria
+                      .uniqueResult();
+                  if (oldInvoiceLine != null) {
+                    oldInvoiceLine.setGoodsShipmentLine(null);
+                    OBDal.getInstance().save(oldInvoiceLine);
+                  }
+                }
+                shipLines.add(shipLine);
+                if ((++k % 100) == 0) {
+                  OBDal.getInstance().flush();
+                  for (ShipmentInOutLine shipLineToRemove : shipLines) {
+                    OBDal.getInstance().getSession().evict(shipLineToRemove);
+                  }
+                  shipLines.clear();
+                }
               }
-              // Get the the new order line that replaces the old order line, should be only one
-              OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
-              if (newOrderLine != null) {
-                shipLine.setSalesOrderLine(newOrderLine);
-                if (jsonorder == null) {
-                  newOrderLine.setDeliveredQuantity(newOrderLine.getDeliveredQuantity().add(
-                      shipLine.getMovementQuantity()));
-                  OBDal.getInstance().save(newOrderLine);
-                }
-                OBDal.getInstance().save(shipLine);
-                // The old invoice line cannot have a relation to the shipment line. Later, after
-                // the shipments are created, the invoice will be created for the new order (if
-                // required).
-                final OBCriteria<InvoiceLine> oldInvoiceLineCriteria = OBDal.getInstance()
-                    .createCriteria(InvoiceLine.class);
-                oldInvoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE,
-                    oldOrderLine));
-                oldInvoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE,
-                    shipLine));
-                oldInvoiceLineCriteria.setMaxResults(1);
-                final InvoiceLine oldInvoiceLine = (InvoiceLine) oldInvoiceLineCriteria
-                    .uniqueResult();
-                if (oldInvoiceLine != null) {
-                  oldInvoiceLine.setGoodsShipmentLine(null);
-                  OBDal.getInstance().save(oldInvoiceLine);
-                }
+              OBDal.getInstance().flush();
+              // The netting shipment is flagged as processed.
+              for (ShipmentInOut ship : shipments) {
+                OBDal.getInstance().refresh(ship);
+                processShipmentHeader(ship);
               }
-              shipLines.add(shipLine);
-              if ((++k % 100) == 0) {
-                OBDal.getInstance().flush();
-                for (ShipmentInOutLine shipLineToRemove : shipLines) {
-                  OBDal.getInstance().getSession().evict(shipLineToRemove);
-                }
-                shipLines.clear();
+            } finally {
+              if (shipmentLines != null) {
+                shipmentLines.close();
               }
             }
+            // Netting shipment is not created and original shipment lines are not associated to the
+            // new order line. Set delivered quantity of the new order line to same as original
+            // order
+            // line. Do this only in backend workflow, as everything is always delivered in Web POS
+          } else if (jsonorder == null) {
+            // Get the the new order line that replaces the old order line, should be only one
+            OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
+            if (newOrderLine != null) {
+              newOrderLine.setDeliveredQuantity(oldOrderLine.getDeliveredQuantity());
+            }
+          }
+
+          // Set old order delivered quantity to the ordered quantity
+          oldOrderLine.setDeliveredQuantity(oldOrderLine.getOrderedQuantity());
+          OBDal.getInstance().save(oldOrderLine);
+
+          // Set inverse order delivered quantity to ordered quantity
+          if (inverseOrderLine != null) {
+            inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
+            OBDal.getInstance().save(inverseOrderLine);
+          }
+          if ((++i % 100) == 0) {
             OBDal.getInstance().flush();
-            // The netting shipment is flagged as processed.
-            for (ShipmentInOut ship : shipments) {
-              OBDal.getInstance().refresh(ship);
-              processShipmentHeader(ship);
+            OBDal.getInstance().getSession().clear();
+
+            // Refresh documents
+            if (nettingGoodsShipmentId != null) {
+              nettingGoodsShipment = OBDal.getInstance().get(ShipmentInOut.class,
+                  nettingGoodsShipmentId);
             }
-          } finally {
-            if (shipmentLines != null) {
-              shipmentLines.close();
+            if (replaceOrder) {
+              newOrder = OBDal.getInstance().get(Order.class, newOrderId);
             }
-          }
-          // Netting shipment is not created and original shipment lines are not associated to the
-          // new order line. Set delivered quantity of the new order line to same as original order
-          // line. Do this only in backend workflow, as everything is always delivered in Web POS
-        } else if (jsonorder == null) {
-          // Get the the new order line that replaces the old order line, should be only one
-          OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
-          if (newOrderLine != null) {
-            newOrderLine.setDeliveredQuantity(oldOrderLine.getDeliveredQuantity());
+            oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
+            inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
           }
         }
-
-        // Set old order delivered quantity to the ordered quantity
-        oldOrderLine.setDeliveredQuantity(oldOrderLine.getOrderedQuantity());
-        OBDal.getInstance().save(oldOrderLine);
-
-        // Set inverse order delivered quantity to ordered quantity
-        if (inverseOrderLine != null) {
-          inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
-          OBDal.getInstance().save(inverseOrderLine);
-        }
-        if ((++i % 100) == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
-
-          // Refresh documents
-          if (nettingGoodsShipmentId != null) {
-            nettingGoodsShipment = OBDal.getInstance().get(ShipmentInOut.class,
-                nettingGoodsShipmentId);
-          }
-          if (replaceOrder) {
-            newOrder = OBDal.getInstance().get(Order.class, newOrderId);
-          }
-          oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
-          inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
+      } else {
+        final JSONArray newLines = jsonorder.getJSONArray("lines");
+        for (int i = 0; i < newLines.length(); i++) {
+          linesRelations.put(newLines.getJSONObject(i).getString("canceledLine"), newLines
+              .getJSONObject(i).getString("id"));
         }
       }
       // Create or update the needed services relations
@@ -1297,7 +1309,7 @@ public class CancelAndReplaceUtils {
         if (nettingPayment != null) {
           if (jsonorder != null && jsonorder.has("canceledorder")) {
             final JSONObject canceledOrder = jsonorder.getJSONObject("canceledorder");
-            if (canceledOrder.has("paidOnCredit") && canceledOrder.getBoolean("paidOnCredit")) {
+            if (canceledOrder.optBoolean("paidOnCredit", false)) {
               final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class,
                   canceledOrder.getJSONObject("bp").getString("id"));
               bp.setCreditUsed(bp.getCreditUsed().subtract(
