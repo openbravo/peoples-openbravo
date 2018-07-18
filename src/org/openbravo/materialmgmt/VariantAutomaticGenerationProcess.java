@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -82,22 +82,18 @@ public class VariantAutomaticGenerationProcess implements Process {
       prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, product));
       prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_VARIANT, true));
       prChCrit.addOrderBy(ProductCharacteristic.PROPERTY_SEQUENCENUMBER, true);
+      List<ProductCharacteristic> prChCritList = prChCrit.list();
       List<String> prChs = new ArrayList<String>();
-      for (ProductCharacteristic pc : prChCrit.list()) {
+      for (ProductCharacteristic pc : prChCritList) {
         prChs.add(pc.getId());
       }
       int chNumber = prChs.size();
       String[] currentValues = new String[chNumber];
 
       int i = 0;
-      for (ProductCharacteristic prCh : prChCrit.list()) {
-        OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance().createCriteria(
-            ProductCharacteristicConf.class);
-        prChConfCrit.add(Restrictions.eq(
-            ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-
+      for (ProductCharacteristic prCh : prChCritList) {
         List<String> prChConfs = new ArrayList<String>();
-        for (ProductCharacteristicConf pcc : prChConfCrit.list()) {
+        for (ProductCharacteristicConf pcc : prCh.getProductCharacteristicConfList()) {
           prChConfs.add(pcc.getId());
         }
         long valuesCount = prChConfs.size();
@@ -120,21 +116,24 @@ public class VariantAutomaticGenerationProcess implements Process {
         if (useCode) {
           totalMaxLength += maxLength;
         }
-        ProductCharacteristicAux prChAux = new ProductCharacteristicAux(useCode, prChConfs);
-        currentValues[i] = prChAux.getNextValue();
-        prChUseCode.put(prCh.getId(), prChAux);
-        i++;
+
+        if (!prChConfs.isEmpty()) {
+          ProductCharacteristicAux prChAux = new ProductCharacteristicAux(useCode, prChConfs);
+          currentValues[i] = prChAux.getNextValue();
+          prChUseCode.put(prCh.getId(), prChAux);
+          i++;
+        }
       }
       totalMaxLength += Long.toString(variantNumber).length();
       boolean useCodes = totalMaxLength <= searchKeyLength;
 
-      boolean hasNext = true;
+      boolean hasNext = variantNumber > 0;
       int productNo = 0;
       int k = 0;
       Long start = System.currentTimeMillis();
       boolean multilingualDocs = OBDal.getInstance()
           .get(Client.class, bundle.getContext().getClient()).isMultilingualDocuments();
-      do {
+      while (hasNext) {
         k = k + 1;
         // Create variant product
         product = OBDal.getInstance().get(Product.class, recordID);
@@ -224,8 +223,7 @@ public class VariantAutomaticGenerationProcess implements Process {
           k = 0;
           start = System.currentTimeMillis();
         }
-
-      } while (hasNext);
+      }
 
       OBDal.getInstance().flush();
       OBDal.getInstance().getSession().clear();
