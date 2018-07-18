@@ -526,16 +526,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    *         there is no query column with an alias equal to the provided field name.
    */
   private int getFieldSortIndex(String fieldName, Selector sel) {
-    Query<Tuple> query = OBDal.getInstance().getSession()
-        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1"), Tuple.class);
-    query.setMaxResults(1);
-    Tuple tuple = query.uniqueResult();
-    int i = 1;
-    for (TupleElement<?> tupleElement : tuple.getElements()) {
-      if (tupleElement.getAlias().equals(fieldName)) {
-        return i;
+    @SuppressWarnings("deprecation")
+    final String[] queryAliases = OBDal.getInstance().getSession()
+        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1")).getReturnAliases();
+
+    for (int i = 0; i < queryAliases.length; i++) {
+      if (queryAliases[i].equals(fieldName)) {
+        return i + 1;
       }
-      i++;
     }
     return 0;
   }
