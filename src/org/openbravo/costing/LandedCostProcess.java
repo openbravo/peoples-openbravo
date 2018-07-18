@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2017 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -114,6 +114,7 @@ public class LandedCostProcess {
       landedCost.setDocumentStatus("CO");
       landedCost.setProcessed(Boolean.TRUE);
       OBDal.getInstance().save(landedCost);
+      OBDal.getInstance().flush();
     } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
