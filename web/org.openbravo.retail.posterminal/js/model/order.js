@@ -4631,7 +4631,7 @@
                 paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
                 p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.div(p.get('origAmount'), p.get('mulrate'))));
+                  p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
@@ -4645,7 +4645,7 @@
                 paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
                 p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.div(p.get('origAmount'), p.get('mulrate'))));
+                  p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
