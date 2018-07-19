@@ -18,10 +18,10 @@ enyo.kind({
     kind: 'OB.UI.ReceiptsList'
   },
   getFilterSelectorTableHeader: function () {
-    return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector;
+    return this.$.body.$.receiptsList.$.openReceiptsListItemPrinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector;
   },
   getAdvancedFilterBtn: function () {
-    return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.advancedFilterWindowButtonReceipts;
+    return this.$.body.$.receiptsList.$.openReceiptsListItemPrinter.$.theader.$.modalReceiptsScrollableHeader.$.advancedFilterWindowButtonReceipts;
   },
   getAdvancedFilterDialog: function () {
     return 'OB_UI_ModalAdvancedFilterReceipts';
@@ -119,7 +119,8 @@ enyo.kind({
   name: 'OB.UI.GenericReceiptsList',
   published: {
     filterModel: null,
-    defaultFilters: null
+    defaultFilters: null,
+    nameOfReceiptsListItemPrinter: null
   },
   classes: 'row-fluid',
   handlers: {
@@ -140,15 +141,9 @@ enyo.kind({
       style: 'border-bottom: 1px solid #cccccc;',
       classes: 'row-fluid',
       components: [{
+        name: 'containerOfReceiptsListItemPrinter',
         classes: 'span12',
         components: [{
-          name: 'openreceiptslistitemprinter',
-          kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '350px',
-          renderHeader: null,
-          renderLine: 'OB.UI.ReceiptSelectorRenderLine',
-          renderEmpty: 'OB.UI.RenderEmpty'
-        }, {
           name: 'renderLoading',
           style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
           showing: false,
@@ -169,7 +164,7 @@ enyo.kind({
     function errorCallback(tx, error) {
       me.$.renderLoading.hide();
       me.receiptList.reset();
-      me.$.openreceiptslistitemprinter.$.tempty.show();
+      me.$[this.getNameOfReceiptsListItemPrinter()].$.tempty.show();
       me.doHideSelector();
       var i, message, tokens;
 
@@ -223,15 +218,15 @@ enyo.kind({
       me.$.renderLoading.hide();
       if (data && data.length > 0) {
         me.receiptList.reset(data.models);
-        me.$.openreceiptslistitemprinter.$.tbody.show();
+        me.$[me.getNameOfReceiptsListItemPrinter()].$.tbody.show();
       } else {
         me.receiptList.reset();
-        me.$.openreceiptslistitemprinter.$.tempty.show();
+        me.$[me.getNameOfReceiptsListItemPrinter()].$.tempty.show();
       }
     }
-    this.$.openreceiptslistitemprinter.$.tempty.hide();
-    this.$.openreceiptslistitemprinter.$.tbody.hide();
-    this.$.openreceiptslistitemprinter.$.tlimit.hide();
+    this.$[this.getNameOfReceiptsListItemPrinter()].$.tempty.hide();
+    this.$[this.getNameOfReceiptsListItemPrinter()].$.tbody.hide();
+    this.$[this.getNameOfReceiptsListItemPrinter()].$.tlimit.hide();
     this.$.renderLoading.show();
 
     var criteria = {};
@@ -302,7 +297,7 @@ enyo.kind({
     var me = this;
     this.model = model;
     this.receiptList = new Backbone.Collection();
-    this.$.openreceiptslistitemprinter.setCollection(this.receiptList);
+    this.$[this.getNameOfReceiptsListItemPrinter()].setCollection(this.receiptList);
   }
 });
 
@@ -312,7 +307,20 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.setFilterModel(OB.Model.OrdersForVerifiedReturnsFilter);
-    this.$.openreceiptslistitemprinter.renderHeader = 'OB.UI.ModalVerifiedReturnsScrollableHeader';
+    this.setNameOfReceiptsListItemPrinter('verifiedReturnsReceiptsListItemPrinter');
+    this.$.containerOfReceiptsListItemPrinter.createComponent({
+      name: 'verifiedReturnsReceiptsListItemPrinter',
+      kind: 'OB.UI.ScrollableTable',
+      scrollAreaMaxHeight: '350px',
+      renderHeader: null,
+      renderLine: 'OB.UI.ReceiptSelectorRenderLine',
+      renderEmpty: 'OB.UI.RenderEmpty'
+    }, {
+      // needed to fix the owner so it is not containerOfReceiptsListItemPrinter but ReceiptsForVerifiedReturnsList
+      // so can be accessed navigating from the parent through the components
+      owner: this
+    });
+    this.$[this.getNameOfReceiptsListItemPrinter()].renderHeader = 'OB.UI.ModalVerifiedReturnsScrollableHeader';
   },
   init: function (model) {
     var me = this,
@@ -374,7 +382,20 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.setFilterModel(OB.Model.OrderFilter);
-    this.$.openreceiptslistitemprinter.renderHeader = 'OB.UI.ModalReceiptsScrollableHeader';
+    this.setNameOfReceiptsListItemPrinter('openReceiptsListItemPrinter');
+    this.$.containerOfReceiptsListItemPrinter.createComponent({
+      name: 'openReceiptsListItemPrinter',
+      kind: 'OB.UI.ScrollableTable',
+      scrollAreaMaxHeight: '350px',
+      renderHeader: null,
+      renderLine: 'OB.UI.ReceiptSelectorRenderLine',
+      renderEmpty: 'OB.UI.RenderEmpty'
+    }, {
+      // needed to fix the owner so it is not containerOfReceiptsListItemPrinter but ReceiptsList
+      // so can be accessed navigating from the parent through the components
+      owner: this
+    });
+    this.$[this.getNameOfReceiptsListItemPrinter()].renderHeader = 'OB.UI.ModalReceiptsScrollableHeader';
   },
   init: function (model) {
     var me = this;

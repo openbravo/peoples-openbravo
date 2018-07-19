@@ -227,10 +227,10 @@ enyo.kind({
     kind: 'OB.UI.ReceiptsForVerifiedReturnsList'
   },
   getFilterSelectorTableHeader: function () {
-    return this.$.body.$.receiptsForVerifiedReturnsList.$.openreceiptslistitemprinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.filterSelector;
+    return this.$.body.$.receiptsForVerifiedReturnsList.$.verifiedReturnsReceiptsListItemPrinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.filterSelector;
   },
   getAdvancedFilterBtn: function () {
-    return this.$.body.$.receiptsForVerifiedReturnsList.$.openreceiptslistitemprinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.advancedFilterWindowButtonVerifiedReturns;
+    return this.$.body.$.receiptsForVerifiedReturnsList.$.verifiedReturnsReceiptsListItemPrinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.advancedFilterWindowButtonVerifiedReturns;
   },
   getAdvancedFilterDialog: function () {
     return 'modalAdvancedFilterVerifiedReturns';
