@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,6 +26,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -246,7 +248,7 @@ public class TestUtility extends OBBaseTest {
       // force dal commit to throw exception
       OBDal.getInstance().save(accountPay);
       OBDal.getInstance().flush();
-    } catch (org.hibernate.exception.GenericJDBCException e) {
+    } catch (PersistenceException e) {
       log.error(e);
       exception = true;
       OBDal.getInstance().rollbackAndClose();
