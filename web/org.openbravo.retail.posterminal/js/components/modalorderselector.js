@@ -18,10 +18,10 @@ enyo.kind({
     kind: 'OB.UI.ReceiptsList'
   },
   getFilterSelectorTableHeader: function () {
-    return this.$.body.$.receiptsList.$.openReceiptsListItemPrinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector;
+    return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector;
   },
   getAdvancedFilterBtn: function () {
-    return this.$.body.$.receiptsList.$.openReceiptsListItemPrinter.$.theader.$.modalReceiptsScrollableHeader.$.advancedFilterWindowButtonReceipts;
+    return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.advancedFilterWindowButtonReceipts;
   },
   getAdvancedFilterDialog: function () {
     return 'OB_UI_ModalAdvancedFilterReceipts';
@@ -382,9 +382,9 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.setFilterModel(OB.Model.OrderFilter);
-    this.setNameOfReceiptsListItemPrinter('openReceiptsListItemPrinter');
+    this.setNameOfReceiptsListItemPrinter('openreceiptslistitemprinter');
     this.$.containerOfReceiptsListItemPrinter.createComponent({
-      name: 'openReceiptsListItemPrinter',
+      name: 'openreceiptslistitemprinter',
       kind: 'OB.UI.ScrollableTable',
       scrollAreaMaxHeight: '350px',
       renderHeader: null,
