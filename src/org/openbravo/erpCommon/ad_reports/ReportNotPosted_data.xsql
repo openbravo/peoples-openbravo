@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@
         select documentno, dateacct, substr(ad_column_identifier(tablename, id, ?) ||(CASE WHEN description IS NULL THEN '' ELSE ' (' || DESCRIPTION || ')' END),0,90) as description, 
         GRANDTOTAL as amount, document as doctype, id as id, tab_id, docbasetype, record_id
         from
-        (select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'C_Bpartner' as tablename, C_bpartner_id as id, GRANDTOTAL,
+        (select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'C_Bpartner' as tablename, C_bpartner_id as id, GRANDTOTAL,
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -41,7 +41,7 @@
         and docstatus <> 'VO'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='318' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'M_InOut' as tablename, m_inout_id as id, 0 as GRANDTOTAL, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'M_InOut' as tablename, m_inout_id as id, 0 as GRANDTOTAL, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -55,7 +55,7 @@
         and issotrx = 'Y'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='319' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'M_InOut' as tablename, m_inout_id as id, 0 as GRANDTOTAL, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'M_InOut' as tablename, m_inout_id as id, 0 as GRANDTOTAL, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -69,7 +69,7 @@
         and issotrx = 'N'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='319' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'C_Bpartner' as tablename, C_bpartner_id as id, GRANDTOTAL, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'C_Bpartner' as tablename, C_bpartner_id as id, GRANDTOTAL, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -84,7 +84,7 @@
         and docstatus <> 'VO'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='318' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(name) AS DOCUMENTNO, dateacct, 'C_Cash' as tablename, C_Cash_id as id, c_cash.STATEMENTDIFFERENCE, 
+        select ad_client_id, ad_org_id, TO_CHAR(name) AS DOCUMENTNO, dateacct, 'C_Cash' as tablename, C_Cash_id as id, c_cash.STATEMENTDIFFERENCE, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -100,7 +100,7 @@
         and posted not in ('Y', 'D', 'T')
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='407' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(name) AS DOCUMENTNO, statementdate, 'C_Bankstatement' as tablename, C_bankstatement_id as id, STATEMENTDIFFERENCE, 
+        select ad_client_id, ad_org_id, TO_CHAR(name) AS DOCUMENTNO, statementdate, 'C_Bankstatement' as tablename, C_bankstatement_id as id, STATEMENTDIFFERENCE, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -116,7 +116,7 @@
         and posted not in ('Y', 'D', 'T')
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='392' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'C_Settlement' as tablename, C_Settlement_id as id, generatedamt, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'C_Settlement' as tablename, C_Settlement_id as id, generatedamt, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -134,7 +134,7 @@
                     where p.c_settlement_generate_id = s.c_settlement_id
                     and p.isdirectposting='Y')
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'C_Settlement' as tablename, C_Settlement_id as id, generatedamt, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'C_Settlement' as tablename, C_Settlement_id as id, generatedamt, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -148,7 +148,7 @@
         and settlementtype <> 'I'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='800019' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'GL_Journal' as tablename, GL_Journal_id as id, totaldr, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct, 'GL_Journal' as tablename, GL_Journal_id as id, totaldr, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -161,7 +161,7 @@
         and posted not in ('Y', 'D', 'T')
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='224' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(name) AS DOCUMENTNO, movementdate , 'M_INVENTORY' as tablename, m_inventory_id as id, 0 as GRANDTOTAL, 
+        select ad_client_id, ad_org_id, TO_CHAR(name) AS DOCUMENTNO, movementdate , 'M_INVENTORY' as tablename, m_inventory_id as id, 0 as GRANDTOTAL, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -177,7 +177,7 @@
         and posted not in ('Y', 'D', 'T')
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='321' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, paymentdate , 'C_Bpartner' as tablename, c_bpartner_id as id, amount as GRANDTOTAL, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, paymentdate , 'C_Bpartner' as tablename, c_bpartner_id as id, amount as GRANDTOTAL, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -195,7 +195,7 @@
         and status <> 'RPVOID'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='D1A97202E832470285C9B1EB026D54E2' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, paymentdate , 'C_Bpartner', c_bpartner_id as id, amount as GRANDTOTAL, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, paymentdate , 'C_Bpartner', c_bpartner_id as id, amount as GRANDTOTAL, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -212,7 +212,7 @@
         and status <> 'RPVOID'
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='D1A97202E832470285C9B1EB026D54E2' and ad_client_id=?)
         union all
-        select ad_client_id, 'Line: ' || to_char(line) AS DOCUMENTNO, 
+        select ad_client_id, ad_org_id, 'Line: ' || to_char(line) AS DOCUMENTNO, 
         dateacct, 'FIN_FINANCIAL_ACCOUNT' as tablename, fin_financial_account_id as id, depositamt-paymentamt as GRANDTOTAL, 
         to_char(description) as description,  
         coalesce(to_char((select printname 
@@ -229,7 +229,7 @@
         and posted not in ('Y', 'D', 'T')
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='4D8C3B3C31D1410DA046140C9F024D17' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, statementdate, 'FIN_FINANCIAL_ACCOUNT' as talename, fin_financial_account_id as id, endingbalance - startingbalance as GRANDTOTAL, 
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, statementdate, 'FIN_FINANCIAL_ACCOUNT' as talename, fin_financial_account_id as id, endingbalance - startingbalance as GRANDTOTAL, 
         ''  as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -245,7 +245,7 @@
         and posted not in ('Y', 'D', 'T')
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='B1B7075C46934F0A9FD4C4D0F1457B42' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(name) AS DOCUMENTNO, movementdate , 'M_MOVEMENT' as tablename, m_movement_id as id, 0 as GRANDTOTAL,
+        select ad_client_id, ad_org_id, TO_CHAR(name) AS DOCUMENTNO, movementdate , 'M_MOVEMENT' as tablename, m_movement_id as id, 0 as GRANDTOTAL,
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -261,7 +261,7 @@
         and posted not in ('Y', 'D', 'T')
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='323' and ad_client_id=?)
         union all
-        select ad_client_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct , 'C_DP_MANAGEMENT' as tablename, c_dp_management_id as id, 0 as GRANDTOTAL,
+        select ad_client_id, ad_org_id, TO_CHAR(documentno) AS DOCUMENTNO, dateacct , 'C_DP_MANAGEMENT' as tablename, c_dp_management_id as id, 0 as GRANDTOTAL,
         to_char(description) as description,  
         coalesce(to_char((select printname 
         from c_doctype_trl 
@@ -278,6 +278,7 @@
         and 'Y'=(select max(isactive) from c_acctschema_table where ad_table_id='800176' and ad_client_id=?)
         ) AAA
         where ad_client_id = ?
+        and ad_org_id in ('1')
         and 1=1
         order by  document, dateacct, description
       ]]></Sql>
@@ -340,6 +341,7 @@
     <Parameter name="client"></Parameter>
     <Parameter name="client"></Parameter>
     <Parameter name="client"></Parameter>
+    <Parameter name="parOrgs" type="replace" optional="true" after="ad_org_id in (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="and 1=1"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="and 1=1"><![CDATA[AND DATEACCT <= TO_DATE(?) ]]></Parameter>
   </SqlMethod>
