@@ -197,11 +197,13 @@ public class OBBindings {
 
   private Date getTimeFromNashornNativeDate(Object d) {
     // Since Java 8, Nashorn is the Javascript engine used by default. When returning Javascript
-    // Date objects to Java the java.util.Date class is no longer used but
-    // jdk.nashorn.internal.objects.NativeDate is used instead.
-    // We need to use reflection to access to the time information contained in such class. Thus, we
-    // avoid the usage of unsupported classes in Java 7.
-    // TODO: Once Java 7 is desupported, change this implementation to not use reflection
+    // date objects are represented by jdk.nashorn.internal.objects.NativeDate is used instead.
+    //
+    // Although being a public class, it is in an internal module which is not opened by default in
+    // JDK9+ therefore we still need to use reflection to access to it.
+    //
+    // Note Nashorn is marked as deprecated for deletion in JDK11
+    // -> TODO: look for a valid alternative in future releases.
     try {
       Method m = d.getClass().getMethod("callMember", String.class, Object[].class);
       long localTime = ((Double) m.invoke(d, "getTime", null)).longValue();
