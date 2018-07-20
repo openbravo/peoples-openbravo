@@ -83,24 +83,26 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
 
     OBPOSAppCashup cashUp = UpdateCashup.getAndUpdateCashUp(cashUpId, jsonCashup, cashUpDate);
 
-    if (jsonCashup.has("approvals")) {
-      JSONObject jsonApprovals = jsonCashup.getJSONObject("approvals");
-      OBPOSCashupApproval cashupApproval = OBProvider.getInstance().get(OBPOSCashupApproval.class);
-      cashupApproval.setId(cashUp.getId());
-      cashupApproval.setNewOBObject(true);
-      cashupApproval.setCashUp(cashUp);
-      cashupApproval.setActive(true);
-      cashupApproval.setApprovalType("OBPOS_CashupCountDiff");
-      cashupApproval.setApprovalMessage(jsonApprovals.getString("message"));
-      if (jsonApprovals.has("approvalReason")) {
-        cashupApproval.setApprovalReason(OBDal.getInstance().get(OBPOSApprovalReason.class,
-            jsonApprovals.getString("approvalReason")));
-      }
-      cashupApproval.setSupervisor(OBDal.getInstance().get(User.class,
-          jsonApprovals.getString("supervisor")));
-      OBDal.getInstance().save(cashupApproval);
-    }
     if (cashUp.isProcessed() && !cashUp.isProcessedbo()) {
+      if (jsonCashup.has("approvals")) {
+        JSONObject jsonApprovals = jsonCashup.getJSONObject("approvals");
+        OBPOSCashupApproval cashupApproval = OBProvider.getInstance()
+            .get(OBPOSCashupApproval.class);
+        cashupApproval.setId(cashUp.getId());
+        cashupApproval.setNewOBObject(true);
+        cashupApproval.setCashUp(cashUp);
+        cashupApproval.setActive(true);
+        cashupApproval.setApprovalType("OBPOS_CashupCountDiff");
+        cashupApproval.setApprovalMessage(jsonApprovals.getString("message"));
+        if (jsonApprovals.has("approvalReason")) {
+          cashupApproval.setApprovalReason(OBDal.getInstance().get(OBPOSApprovalReason.class,
+              jsonApprovals.getString("approvalReason")));
+        }
+        cashupApproval.setSupervisor(OBDal.getInstance().get(User.class,
+            jsonApprovals.getString("supervisor")));
+        OBDal.getInstance().save(cashupApproval);
+      }
+
       cashUp.setJsoncashup(jsonCashup.toString());
       if (posTerminal.getMasterterminal() != null) {
         // On slave only mark as processed BO

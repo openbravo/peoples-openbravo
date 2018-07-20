@@ -67,7 +67,7 @@
         shouldExecuteBenchmark: true
       });
 
-      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication', me.get('appName')) === 'Y' ? OB.UTIL.localStorage.getItem('terminalName', me.get('appName')) : OB.UTIL.getParameterByName("terminal"));
 
       OB.UTIL.HookManager.registerHook('OBMOBC_InitActions', function (args, c) {
         me.initActions(function () {
@@ -717,9 +717,11 @@
                       OB.MobileApp.model.orderList.saveCurrent();
                       OB.Dal.remove(OB.MobileApp.model.orderList.current, null, null);
                       OB.MobileApp.model.orderList.deleteCurrent();
+                      callback();
                     });
+                  } else {
+                    callback();
                   }
-                  callback();
                 } else if (data.status === "Initial") {
                   //recursively check process status 
                   setTimeout(function () {
