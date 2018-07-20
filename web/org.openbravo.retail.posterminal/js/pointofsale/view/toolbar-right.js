@@ -188,17 +188,13 @@ enyo.kind({
     }, this);
 
     //some button will draw the total
-    if (this.receipt.get('orderType') !== 3) { //Do not change voiding layaway
+    this.bubble('onChangeTotal', {
+      newTotal: this.receipt.getTotal()
+    });
+    this.receipt.on('change:gross', function (model) {
       this.bubble('onChangeTotal', {
         newTotal: this.receipt.getTotal()
       });
-    }
-    this.receipt.on('change:gross', function (model) {
-      if (this.receipt.get('orderType') !== 3) { //Do not change voiding layaway
-        this.bubble('onChangeTotal', {
-          newTotal: this.receipt.getTotal()
-        });
-      }
     }, this);
   }
 });

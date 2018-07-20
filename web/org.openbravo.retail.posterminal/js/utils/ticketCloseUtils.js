@@ -157,7 +157,7 @@
         if (!payment.paymentMethod.iscash) {
           payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
         }
-        if (receipt.get('payment') >= receipt.get('gross') || (!_.isUndefined(receipt.get('paidInNegativeStatusAmt')) && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
+        if (receipt.get('payment') >= receipt.get('gross') || (OB.DEC.compare(receipt.getGross()) !== -1 && receipt.isNegative() && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
           receipt.addPayment(new OB.Model.PaymentLine({
             'kind': payment.payment.searchKey,
             'name': payment.payment.commercialName,
@@ -234,7 +234,7 @@
           } else {
             if (_.isUndefined(_.find(receipt.get('lines').models, function (line) {
               var qty = line.get('qty') ? line.get('qty') : 0,
-                  deliveredQuantity = line.get('deliveredQuantity') ? line.get('deliveredQuantity') : 0;
+                  deliveredQuantity = line.getDeliveredQuantity();
               return (qty > 0 && qty > deliveredQuantity) || (qty < 0 && qty < deliveredQuantity);
             }))) {
               receipt.set('generateShipment', false);
@@ -255,7 +255,7 @@
           triggerPaymentAccepted(false);
         }
       });
-    } else if (OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross()) && _.isUndefined(receipt.get('paidInNegativeStatusAmt')) && !receipt.isLayaway() && !receipt.get('paidOnCredit') && OB.DEC.abs(receipt.get('obposPrepaymentamt')) === OB.DEC.abs(receipt.getGross()) && !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+    } else if (receipt.getPayment() !== OB.DEC.abs(receipt.getGross()) && !receipt.isLayaway() && !receipt.get('paidOnCredit') && OB.DEC.abs(receipt.get('obposPrepaymentamt')) === OB.DEC.abs(receipt.getGross()) && !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       callbackPaymentAmountDistinctThanReceipt(function (result) {
         if (result === true) {
           triggerPaymentAccepted(false);

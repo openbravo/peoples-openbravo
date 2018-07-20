@@ -434,12 +434,14 @@ enyo.kind({
   }
 });
 
-
 enyo.kind({
   kind: 'OB.UI.SelectButton',
   name: 'OB.UI.RenderPaymentLine',
   classes: 'btnselect-orderline',
   style: 'border-bottom: 0px',
+  handlers: {
+    onRenderPaymentLine: 'renderPaymentLine'
+  },
   tap: function () {
     return this;
   },
@@ -469,9 +471,8 @@ enyo.kind({
   selected: function () {
     return this;
   },
-  initComponents: function () {
+  renderPaymentLine: function (inSender, inEvent) {
     var paymentDate;
-    this.inherited(arguments);
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
       this.$.amount.setContent(this.model.printAmount());
@@ -503,6 +504,10 @@ enyo.kind({
     } else {
       this.$.foreignAmount.setContent('');
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.renderPaymentLine();
   }
 });
 enyo.kind({

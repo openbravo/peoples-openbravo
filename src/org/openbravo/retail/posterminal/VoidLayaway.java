@@ -17,7 +17,6 @@ import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
@@ -46,6 +45,7 @@ public class VoidLayaway {
     OBContext.setAdminMode(true);
     try {
       order.setDocumentStatus("CL");
+      order.setCancelled(true);
       order.setGrandTotalAmount(BigDecimal.ZERO);
       order.setSummedLineAmount(BigDecimal.ZERO);
       for (int i = 0; i < order.getOrderLineList().size(); i++) {
@@ -64,12 +64,6 @@ public class VoidLayaway {
         OrderLineTax orderLineTax = (order.getOrderLineTaxList().get(i));
         orderLineTax.setTaxableAmount(BigDecimal.ZERO);
         orderLineTax.setTaxAmount(BigDecimal.ZERO);
-      }
-
-      if (jsonorder != null) {
-        OrderLoader orderLoader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
-        orderLoader.initializeVariables(jsonorder);
-        orderLoader.handlePayments(jsonorder, order);
       }
 
       for (int i = 0; i < order.getOrderTaxList().size(); i++) {

@@ -259,9 +259,9 @@ public class PaidReceipts extends JSONProcessSimple {
             lineAmount = (new BigDecimal(paidReceiptLine.optString("quantity"))
                 .multiply(new BigDecimal(paidReceiptLine.optString("unitPrice"))));
           } else {
-            lineAmount = new BigDecimal(paidReceiptLine.optString("linegrossamount"));
+            lineAmount = new BigDecimal(paidReceiptLine.optString("lineGrossAmount"));
           }
-          paidReceiptLine.put("linegrossamount", lineAmount);
+          paidReceiptLine.put("lineGrossAmount", lineAmount);
 
           paidReceiptLine.put("promotions", promotions);
 

@@ -168,7 +168,7 @@ enyo.kind({
       var provider, receiptToPay = this.getReceiptToPay(),
           me = this;
 
-      if (!receiptToPay.getPaymentStatus().isNegative) {
+      if (!receiptToPay.isNegative()) {
         provider = paymentMethod.paymentProvider;
       } else {
         provider = paymentMethod.refundProvider;
@@ -190,15 +190,15 @@ enyo.kind({
           }
         });
       } else {
-        // Calculate total amount to pay with selected PaymentMethod  
-        var amountToPay = _.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) ? amount : -amount;
+        // Calculate total amount to pay with selected PaymentMethod
+        var amountToPay = receiptToPay.isNegative() ? -amount : amount;
         if (receiptToPay.get("payments").length > 0) {
           receiptToPay.get("payments").each(function (item) {
             if (item.get("kind") === key) {
-              if (_.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) || (!_.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) && item.get('isPrePayment'))) {
-                amountToPay += item.get("amount");
+              if (!receiptToPay.isNegative() || item.get('isPrePayment')) {
+                amountToPay = OB.DEC.add(amountToPay, item.get("amount"));
               } else {
-                amountToPay -= item.get("amount");
+                amountToPay = OB.DEC.sub(amountToPay, item.get("amount"));
               }
             }
           });

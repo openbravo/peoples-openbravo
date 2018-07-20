@@ -16,7 +16,8 @@ enyo.kind({
   },
   events: {
     onShowPopup: '',
-    onPaymentActionPay: ''
+    onPaymentActionPay: '',
+    onRenderPaymentLine: ''
   },
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged',
@@ -373,9 +374,9 @@ enyo.kind({
         prepaymentAmount = this.receipt.get('obposPrepaymentamt'),
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
         pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentstatus.pendingAmt), paymentstatus.totalAmt);
-    if ((this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) && !this.receipt.getPaymentStatus().done && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
+    if ((this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) && !paymentstatus.done && !paymentstatus.isNegative) {
       this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-      if (!disable && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
+      if (!disable && this.receipt.get('isLayaway')) {
         if (!_.find(this.receipt.get('payments').models, function (payment) {
           return !payment.get('isPrePayment');
         })) {
@@ -388,13 +389,9 @@ enyo.kind({
       } else {
         this.$.layawayaction.show();
       }
-    } else if (this.receipt.get('orderType') === 3 && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
+    } else if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
       this.$.layawayaction.setLocalDisabled(false);
       this.$.layawayaction.hide();
-    } else if (!_.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
-      this.$.layawayaction.setLocalDisabled(false);
-      this.$.layawayaction.hide();
-      this.$.exactbutton.show();
     }
   },
 
@@ -403,9 +400,9 @@ enyo.kind({
     // The terminal allows to pay on credit
     var visible = OB.MobileApp.model.get('terminal').allowpayoncredit;
     // And is a loaded layaway or a regular order (no new layaway and no voided layaway)
-    // this.receipt.get('orderType') === 2 --> New layaway 
-    // this.receipt.get('orderType') === 3 --> Voided layaway 
-    // this.receipt.get('isLayaway') --> Loaded layaway    
+    // this.receipt.get('orderType') === 2 --> New layaway
+    // this.receipt.get('orderType') === 3 --> Canceled layaway
+    // this.receipt.get('isLayaway') --> Loaded layaway
     visible = visible && ((this.receipt.get('isLayaway') || this.receipt.get('orderType') !== 2) && this.receipt.get('orderType') !== 3);
     // And receipt has not been paid
     visible = visible && !this.receipt.getPaymentStatus().done;
@@ -488,7 +485,7 @@ enyo.kind({
       this.$.change.hide();
       this.$.changelbl.hide();
     }
-    if (this.receipt.getPending() <= 0 && paymentstatus.overpayment) {
+    if (paymentstatus.pendingAmt <= 0 && paymentstatus.overpayment) {
       this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentstatus.overpayment, symbol, symbolAtRight));
       this.$.overpayment.show();
       this.$.overpaymentlbl.show();
@@ -497,7 +494,7 @@ enyo.kind({
       this.$.overpaymentlbl.hide();
     }
 
-    if (this.receipt.getPending() <= 0 && paymentstatus.done) {
+    if (paymentstatus.pendingAmt <= 0 && paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames) || this.receipt.get('orderType') === 3) {
@@ -506,7 +503,7 @@ enyo.kind({
       this.updateCreditSalesAction();
       this.$.layawayaction.hide();
     } else {
-      this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
+      this.setTotalPending(paymentstatus.pendingAmt, rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       if (paymentstatus.isNegative) {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_ReturnRemaining'));
@@ -531,7 +528,7 @@ enyo.kind({
       }
     }
 
-    if (this.receipt.getPending() <= 0 && (paymentstatus.done || this.receipt.getGross() === 0)) {
+    if (paymentstatus.pendingAmt <= 0 && (paymentstatus.done || this.receipt.getGross() === 0)) {
       this.$.exactbutton.hide();
       this.$.prepaymentsbuttons.hide();
       this.$.layawayaction.hide();
@@ -543,13 +540,12 @@ enyo.kind({
       }
       this.updateLayawayAction();
     }
-    if (this.receipt.getPending() === 0 && paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
+    if (paymentstatus.pendingAmt === 0 && paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
       if (this.receipt.getGross() === 0) {
         this.$.exactlbl.hide();
         this.$.donezerolbl.show();
       } else {
         this.$.donezerolbl.hide();
-        //        if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
         if (paymentstatus.isNegative) {
           this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_ReturnExact'));
         } else {
@@ -894,7 +890,7 @@ enyo.kind({
       return;
     }
     // Hide all error labels. Error labels are shown by check... functions
-    if (_.isNull(paymentstatus.overpayment)) {
+    if (!paymentstatus.overpayment) {
       this.$.changeexceedlimit.hide();
       this.$.overpaymentnotavailable.hide();
       this.$.overpaymentexceedlimit.hide();
@@ -1113,7 +1109,7 @@ enyo.kind({
       // If there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
       // the button 'Done' will be disabled (except for the case of doing a cancel and replace).
       // If the ticket is synchronized and the gross is zero, is also disabled.
-      if (statusOK && ((this.model.get('leftColumnViewManager').isOrder() && (this.receipt.get('isPaid') || this.receipt.get('isLayaway')) && !this.receipt.isNewReversed() && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(this.receipt.getTotal()) && !this.receipt.get('doCancelAndReplace') && this.receipt.get('orderType') !== 3) || (this.receipt.get('isPaid') && this.receipt.getGross() === 0))) {
+      if (statusOK && this.model.get('leftColumnViewManager').isOrder() && (this.receipt.get('isPaid') || this.receipt.get('isLayaway')) && !this.receipt.isNewReversed() && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(this.receipt.getTotal())) {
         statusOK = false;
       }
       if (resultOK) {
@@ -1251,15 +1247,14 @@ enyo.kind({
         return;
       }
     }, this);
-    //    this.model.get('multiOrders').on('change:isMultiOrders', function () {
-    //      if (!this.model.get('multiOrders').get('isMultiOrders')) {
-    //        this.$.multiPayments.hide();
-    //        this.$.payments.show();
-    //      } else {
-    //        this.$.payments.hide();
-    //        this.$.multiPayments.show();
-    //      }
-    //    }, this);
+
+    this.model.get('order').on('change:gross', function (model) {
+      if (this.model.get('order').get('doCancelAndReplace')) {
+        // Render the payments because it's possible that the amount must be shown with another
+        // sign (depends on the gross and the isNegative properties)
+        this.waterfall('onRenderPaymentLine');
+      }
+    }, this);
   }
 });
 
@@ -1482,10 +1477,7 @@ enyo.kind({
           if (!isMultiOrder) {
             if (me.drawerpreference && me.allowOpenDrawer) {
               if (me.drawerOpened) {
-                if (me.owner.receipt.get('orderType') === 3 && !me.owner.receipt.get('cancelLayaway')) {
-                  //Void Layaway
-                  me.owner.receipt.trigger('voidLayaway');
-                } else if (me.owner.receipt.get('orderType') === 3) {
+                if (me.owner.receipt.get('orderType') === 3) {
                   //Cancel Layaway
                   me.owner.receipt.trigger('cancelLayaway');
                 } else {
@@ -1505,10 +1497,7 @@ enyo.kind({
                 enyo.$.scrim.hide();
               }
             } else {
-              if (me.owner.receipt.get('orderType') === 3 && !me.owner.receipt.get('cancelLayaway')) {
-                //Void Layaway
-                me.owner.receipt.trigger('voidLayaway');
-              } else if (me.owner.receipt.get('orderType') === 3) {
+              if (me.owner.receipt.get('orderType') === 3) {
                 //Cancel Layaway
                 me.owner.receipt.trigger('cancelLayaway');
               } else {
@@ -1682,6 +1671,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine',
   classes: 'btnselect',
+  handlers: {
+    onRenderPaymentLine: 'renderPaymentLine'
+  },
   components: [{
     style: 'color:white;',
     components: [{
@@ -1725,8 +1717,7 @@ enyo.kind({
       style: 'clear: both;'
     }]
   }],
-  initComponents: function () {
-    this.inherited(arguments);
+  renderPaymentLine: function (inSender, inEvent) {
     this.addStyles('min-height: 29px;');
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
@@ -1765,7 +1756,7 @@ enyo.kind({
     if (this.$.foreignAmount.content || this.$.info.content) {
       this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
     }
-    if (this.model.get('isReversed') || (this.model.get('isPrePayment') && (this.model.get('reversedPaymentId') || !this.model.get('paymentAmount') || OB.MobileApp.model.receipt.get('doCancelAndReplace')))) {
+    if (this.model.get('isReversed') || (this.model.get('isPrePayment') && (this.model.get('reversedPaymentId') || !this.model.get('paymentAmount') || this.owner.owner.owner.owner.model.get('order').get('doCancelAndReplace')))) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
     } else if (this.model.get('isPrePayment') && OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)) {
@@ -1778,6 +1769,10 @@ enyo.kind({
       this.$.removePayment.show();
       this.$.reversePayment.hide();
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.renderPaymentLine();
   }
 });
 
@@ -1856,8 +1851,6 @@ enyo.kind({
     }, {
       label: OB.I18N.getLabel('OBMOBC_LblCancel')
     }]);
-
-
   }
 });
 
@@ -1924,7 +1917,7 @@ enyo.kind({
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
       process.exec({
         businessPartnerId: this.model.get('order').get('bp').get('id'),
-        totalPending: this.model.get('order').getPending()
+        totalPending: paymentstatus.pendingAmt
       }, function (data) {
         if (data) {
           if (data.enoughCredit) {
@@ -1974,7 +1967,7 @@ enyo.kind({
       var actualCredit;
       var creditLimit = this.model.get('order').get('bp').get('creditLimit');
       var creditUsed = this.model.get('order').get('bp').get('creditUsed');
-      var totalPending = this.model.get('order').getPending();
+      var totalPending = paymentstatus.pendingAmt;
       this.doShowPopup({
         popup: 'modalEnoughCredit',
         args: {

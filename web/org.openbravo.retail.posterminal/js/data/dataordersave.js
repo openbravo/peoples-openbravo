@@ -234,19 +234,16 @@
 
           frozenReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
           // convert returns
-          if (frozenReceipt.getGross() < 0 || !_.isUndefined(frozenReceipt.get('paidInNegativeStatusAmt'))) {
-            var paymentTotalAmt = OB.DEC.Zero;
+          if (receipt.isNegative()) {
             _.forEach(frozenReceipt.get('payments').models, function (item) {
               if (!item.get('isPrePayment') && !item.get('reversedPaymentId') && !frozenReceipt.get('isPaid')) {
                 item.set('amount', -item.get('amount'));
                 item.set('origAmount', -item.get('origAmount'));
                 item.set('paid', -item.get('paid'));
+              } else {
+                item.set('paid', item.get('amount'));
               }
-              paymentTotalAmt = OB.DEC.add(paymentTotalAmt, item.get('origAmount'));
             });
-            if (!_.isUndefined(frozenReceipt.get('paidInNegativeStatusAmt'))) {
-              frozenReceipt.set('payment', paymentTotalAmt);
-            }
           }
 
           var successCallback = function () {

@@ -116,10 +116,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean doCancelLayaway = false;
   private boolean paidReceipt = false;
   private boolean deliver = false;
-
   private boolean hasPrepayment = false;
   private boolean donePressed = false;
   private boolean paidOnCredit = false;
+  private boolean isNegative = false;
 
   @Inject
   @Any
@@ -174,7 +174,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
-    boolean fullyPaid = jsonorder.getDouble("payment") >= Math.abs(jsonorder.getDouble("gross"));
+    isNegative = jsonorder.optBoolean("isNegative", false);
+
+    boolean fullyPaid = isNegative ? jsonorder.getDouble("payment") <= Math.abs(jsonorder
+        .getDouble("gross")) : jsonorder.getDouble("payment") >= Math.abs(jsonorder
+        .getDouble("gross"));
     boolean isLayaway = jsonorder.optBoolean("isLayaway", false)
         || jsonorder.optLong("orderType") == 2;
 
@@ -301,7 +305,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               ol.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
             }
           }
-        } else if ((!newLayaway && notpaidLayaway)) {
+        } else if (!newLayaway && notpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           if (orderlines.length() > 0) {
@@ -1140,7 +1144,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       order.setDelivered(deliver);
     }
 
-    if (!doCancelAndReplace) {
+    if (!doCancelAndReplace && !doCancelLayaway) {
       if (order.getDocumentNo().indexOf("/") > -1) {
         long documentno = Long.parseLong(order.getDocumentNo().substring(
             order.getDocumentNo().lastIndexOf("/") + 1));
@@ -1283,12 +1287,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   @Deprecated
-  public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+  protected JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
     return handlePayments(jsonorder, order);
   }
 
-  public JSONObject handlePayments(JSONObject jsonorder, Order order) throws Exception {
+  protected JSONObject handlePayments(JSONObject jsonorder, Order order) throws Exception {
     final JSONObject jsonResponse = new JSONObject();
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
@@ -1302,8 +1306,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     JSONArray payments = jsonorder.getJSONArray("payments");
 
     // Create a unique payment schedule for all payments
-    BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross")), paymentAmt = BigDecimal
-        .valueOf(jsonorder.getDouble("payment"));
+    BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
+    for (int i = 0; i < payments.length(); i++) {
+      paymentAmt = paymentAmt
+          .add(BigDecimal.valueOf(payments.getJSONObject(i).getDouble("amount")));
+    }
+    final BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
 
     if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -1344,7 +1352,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OBDal.getInstance().save(order);
     }
 
-    BigDecimal writeoffAmt = paymentAmt.subtract(gross.abs());
+    BigDecimal writeoffAmt = paymentAmt.subtract(gross);
+    // If there's not a real over payment, the writeoff is set to zero
+    if (!(writeoffAmt.signum() == 1 && !isNegative) && !(writeoffAmt.signum() == -1 && isNegative)) {
+      writeoffAmt = BigDecimal.ZERO;
+    }
 
     // When a replaced ticket or a new one is synchronized without any payment, a new payment
     // schedule detail must be created with the remaining amount
@@ -1400,11 +1412,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           continue;
         }
         BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
-            pricePrecision, RoundingMode.HALF_UP), tempWriteoffAmt = BigDecimal.ZERO;
-        if (!isReversalPayment) {
-          tempWriteoffAmt = new BigDecimal(writeoffAmt.toString());
-        }
-        if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0 && writeoffAmt.compareTo(amount.abs()) == 1) {
+            pricePrecision, RoundingMode.HALF_UP);
+        BigDecimal tempWriteoffAmt = writeoffAmt;
+        if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0
+            && writeoffAmt.abs().compareTo(amount.abs()) == 1) {
           // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
           // because the payment cannot be 0 (It wouldn't be created)
           tempWriteoffAmt = amount.abs().subtract(BigDecimal.ONE);
@@ -1463,7 +1474,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
     OBContext.setAdminMode(false);
     try {
-      boolean totalIsNegative = jsonorder.getDouble("gross") < 0;
       int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
           .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
@@ -1485,35 +1495,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (amount.signum() == 0) {
         return;
       }
-      if (writeoffAmt.signum() == 1) {
+      if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0) {
         // there was an overpayment, we need to take into account the writeoffamt
-        if (totalIsNegative) {
-          amount = amount.subtract(writeoffAmt.negate()).setScale(pricePrecision,
-              RoundingMode.HALF_UP);
-        } else {
-          amount = amount.subtract(writeoffAmt.abs())
-              .setScale(pricePrecision, RoundingMode.HALF_UP);
-        }
-      } else if (writeoffAmt.signum() == -1
-          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !paidOnCredit
-              && !hasPrepayment && !doCancelLayaway) || jsonorder.has("paidInNegativeStatusAmt"))) {
-        // If the overpayment is negative and the order is not a fully or not paid layaway, a
-        // quotation nor an order paid on credit, or the overpayment is negative and having a
-        // positive tickets in which the created payments are negative (this may occur in C&R flow)
-        // the negative writeoffAmt must be take into account
-        if (totalIsNegative) {
-          amount = amount.add(writeoffAmt).setScale(pricePrecision, RoundingMode.HALF_UP);
-        } else {
-          amount = amount.add(writeoffAmt.abs()).setScale(pricePrecision, RoundingMode.HALF_UP);
-        }
-        if (!doCancelAndReplace) {
-          origAmount = amount;
-          if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
-            mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-            origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate")))
-                .setScale(pricePrecision, RoundingMode.HALF_UP);
-          }
-        }
+        amount = amount.subtract(writeoffAmt).setScale(pricePrecision, RoundingMode.HALF_UP);
       }
 
       final List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = new ArrayList<FIN_PaymentScheduleDetail>();
@@ -1584,7 +1568,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         }
       } else {
-        BigDecimal remainingAmount = new BigDecimal(amount.toString());
+        BigDecimal remainingAmount = amount;
         boolean isNegativePayment = amount.compareTo(BigDecimal.ZERO) == -1 ? true : false;
         // Get the remaining PSD and sort it by the ones that are related to an invoice
         final List<FIN_PaymentScheduleDetail> remainingPSDList = new ArrayList<>();
@@ -1728,19 +1712,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
-      // overpayment for positive writeoffAmt and for negative overpayments generated in a positive
-      // order (specific in C&R flow)
-      if (writeoffAmt.signum() == 1
-          || (writeoffAmt.signum() == -1 && jsonorder.has("paidInNegativeStatusAmt"))) {
-        if (totalIsNegative) {
-          FIN_AddPayment.saveGLItem(finPayment, writeoffAmt.negate(), paymentType
-              .getPaymentMethod().getGlitemWriteoff(),
-              payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
-        } else {
-          FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
-              .getGlitemWriteoff(),
-              payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
-        }
+      // overpayment
+      if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0) {
+        FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
+            .getGlitemWriteoff(),
+            payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
       }

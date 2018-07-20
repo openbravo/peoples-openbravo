@@ -201,7 +201,8 @@ enyo.kind({
           openDrawer = false,
           isCash = false,
           allowOpenDrawer = false,
-          printtwice = false;
+          printtwice = false,
+          paymentStatus = receipt.getPaymentStatus();
       for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
         p = OB.MobileApp.model.get('payments')[i];
         if (p.payment.searchKey === me.paymenttype) {
@@ -220,13 +221,13 @@ enyo.kind({
           break;
         }
       }
-      // Calculate total amount to pay with selected PaymentMethod  
-      var amountToPay = _.isUndefined(receipt.get('paidInNegativeStatusAmt')) ? me.amount : -me.amount;
+      // Calculate total amount to pay with selected PaymentMethod
+      var amountToPay = paymentStatus.isNegative ? -me.amount : me.amount;
       var receiptToPay = myWindowModel.isValidMultiOrderState() ? multiOrders : receipt;
       if (receiptToPay.get("payments").length > 0) {
         receiptToPay.get("payments").each(function (item) {
           if (item.get("kind") === me.paymenttype) {
-            if (_.isUndefined(receipt.get('paidInNegativeStatusAmt')) || (!_.isUndefined(receipt.get('paidInNegativeStatusAmt')) && item.get('isPrePayment'))) {
+            if (!paymentStatus.isNegative || item.get('isPrePayment')) {
               amountToPay += item.get("amount");
             } else {
               amountToPay -= item.get("amount");

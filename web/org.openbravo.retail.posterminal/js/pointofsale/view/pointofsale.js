@@ -756,15 +756,11 @@ enyo.kind({
     return true;
   },
   showDivText: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('cancelLayaway')) {
+    if (!this.model.get('order').get('isEditable')) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
-    }
-    //Void Layaway must block keyboard actions
-    if (inEvent.orderType === 3) {
-      this.$.multiColumn.$.rightPanel.$.keyboard.setStatus('');
     }
     this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType, {
       applyPromotions: false

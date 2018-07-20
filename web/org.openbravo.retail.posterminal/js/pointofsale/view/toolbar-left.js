@@ -420,7 +420,7 @@ enyo.kind({
       }
       return;
     }
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid')) {
+    if (!this.model.get('order').get('isEditable') && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid') && this.model.get('order').get('orderType') !== 3) {
       return true;
     }
     receipt.trigger('updatePending');
@@ -556,9 +556,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable change:isLayaway', function (newValue) {
+    this.model.get('order').on('change:isEditable change:isLayaway change:orderType', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false && !newValue.get('isLayaway') && !newValue.get('isPaid')) {
+        if (!newValue.get('isEditable') && !newValue.get('isLayaway') && !newValue.get('isPaid') && newValue.get('orderType') !== 3) {
           this.tabPanel = null;
           this.disabledChanged(true);
           return;
