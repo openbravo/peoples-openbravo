@@ -160,7 +160,7 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
   private String getFilterSQL(String filterClause, VariablesSecureApp vars) {
     String whereClause;
     try {
-      whereClause = new UsedByLink().getWhereClause(vars, "", filterClause);
+      whereClause = new UsedByLink().getWhereClause(vars, "", Objects.toString(filterClause, ""));
     } catch (ServletException ignore) {
       log4j.error("Could not convert filter clause into SQL: " + filterClause, ignore);
       whereClause = " AND 1=2"; // do not count if where clause is broken
