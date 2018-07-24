@@ -31,6 +31,7 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.database.ExternalConnectionPool;
 
 /**
  * This class is responsible for initializing the DAL layer. It ensures that the model is read in
@@ -131,7 +132,16 @@ public class DalLayerInitializer implements OBSingleton {
   private boolean isUsingExternalConnectionPool() {
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
-    return poolClassName != null && !"".equals(poolClassName);
+    if (poolClassName == null || "".equals(poolClassName)) {
+      return false;
+    }
+    try {
+      // check whether the external connection pool is present in the classpath
+      ExternalConnectionPool.getInstance(poolClassName);
+      return true;
+    } catch (ReflectiveOperationException | NoClassDefFoundError e) {
+      return false;
+    }
   }
 
   public boolean isInitialized() {
