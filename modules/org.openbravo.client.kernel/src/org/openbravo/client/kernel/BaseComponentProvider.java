@@ -185,16 +185,14 @@ public abstract class BaseComponentProvider implements ComponentProvider {
   }
 
   protected ComponentResource createDynamicResource(String path) {
-    final ComponentResource componentResource = createComponentResource(
-        ComponentResourceType.Dynamic, path, ComponentResource.APP_OB3);
-    return componentResource;
+    return createComponentResource(ComponentResourceType.Dynamic, path, ComponentResource.APP_OB3);
   }
 
   /**
    * Implemented here for backward compatibility, calls the {@link #getGlobalResources()}
    */
   public List<ComponentResource> getGlobalComponentResources() {
-    final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
+    final List<ComponentResource> globalResources = new ArrayList<>();
     for (String globalResource : getGlobalResources()) {
       globalResources.add(createStaticResource(globalResource, true));
     }
@@ -228,7 +226,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     @Deprecated
     private boolean includeInNewUIMode = true;
 
-    private List<String> validForAppList = new ArrayList<String>();
+    private List<String> validForAppList = new ArrayList<>();
 
     public ComponentResourceType getType() {
       return type;
