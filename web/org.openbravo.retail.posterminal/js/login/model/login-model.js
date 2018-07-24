@@ -742,7 +742,7 @@
                     label: OB.I18N.getLabel('OBMOBC_LblOk'),
                     action: function () {
                       if (OB && OB.POS) {
-                        OB.POS.navigate('retail.pointofsale');
+                        window.location.reload();
                         return true;
                       }
                     }
