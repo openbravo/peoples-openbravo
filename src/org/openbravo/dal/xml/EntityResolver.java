@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -412,7 +412,6 @@ public class EntityResolver implements OBNotSingleton {
 
   protected BaseOBObject doSearch(String id, Entity entity, String clientId, boolean filterOrgs,
       String orgId) {
-    final String[] searchOrgIds = getOrgIds(orgId);
     final OBCriteria<?> obc = OBDal.getInstance().createCriteria(entity.getName());
     obc.setFilterOnActive(false);
     obc.setFilterOnReadableClients(false);
@@ -424,7 +423,8 @@ public class EntityResolver implements OBNotSingleton {
       // Note the query is for other types than client but the client
       // property names
       // are good standard ones to use
-      obc.add(Restrictions.in(PROPERTY_ORGANIZATION + "." + Client.PROPERTY_ID, searchOrgIds));
+      obc.add(Restrictions.in(PROPERTY_ORGANIZATION + "." + Client.PROPERTY_ID,
+          (Object[]) getOrgIds(orgId)));
     }
     // same for here
     obc.add(Restrictions.eq(Organization.PROPERTY_ID, id));
@@ -527,16 +527,13 @@ public class EntityResolver implements OBNotSingleton {
         rdlCriteria.add(Restrictions.eq(ReferenceDataStore.PROPERTY_CLIENT + "."
             + Client.PROPERTY_ID, client.getId()));
       } else {
-        String[] clients = new String[2];
-        clients[0] = client.getId();
-        clients[1] = "0";
+        Object[] clients = { client.getId(), "0" };
         rdlCriteria.add(Restrictions.in(ReferenceDataStore.PROPERTY_CLIENT + "."
             + Client.PROPERTY_ID, clients));
       }
       if (orgId != null) {
-        final String[] searchOrgIds = getOrgIds(orgId);
         rdlCriteria.add(Restrictions.in(ReferenceDataStore.PROPERTY_ORGANIZATION + "."
-            + Organization.PROPERTY_ID, searchOrgIds));
+            + Organization.PROPERTY_ID, (Object[]) getOrgIds(orgId)));
       }
       rdlCriteria.add(Restrictions.eq(ReferenceDataStore.PROPERTY_TABLE + "." + Table.PROPERTY_ID,
           entity.getTableId()));

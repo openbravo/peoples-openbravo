@@ -32,11 +32,11 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -199,7 +199,8 @@ public class CancelAndReplaceUtils {
     hql.append(" where rol.orderlineServiceRelationList is not empty");
     hql.append(" and ol.salesOrder.id = :orderId");
 
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<OrderLine> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), OrderLine.class);
     query.setParameter("orderId", order.getId());
     return query.scroll(ScrollMode.FORWARD_ONLY);
   }
@@ -358,7 +359,8 @@ public class CancelAndReplaceUtils {
       hql.append("FROM MaterialMgmtShipmentInOutLine AS sl ");
       hql.append("WHERE sl.salesOrderLine = ol) ");
       hql.append("AND ol.salesOrder.id = :orderId");
-      final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      final Query<Integer> query = OBDal.getInstance().getSession()
+          .createQuery(hql.toString(), Integer.class);
       query.setParameter("orderId", oldOrderId);
       query.setMaxResults(1);
       final boolean hasShipment = query.uniqueResult() != null;
@@ -1254,10 +1256,11 @@ public class CancelAndReplaceUtils {
             + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE
             + ".id =:paymentScheduleId and psd."
             + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " is null";
-        final Query qry = OBDal.getInstance().getSession().createQuery(countHql);
+        final Query<BigDecimal> qry = OBDal.getInstance().getSession()
+            .createQuery(countHql, BigDecimal.class);
         qry.setParameter("paymentScheduleId", paymentSchedule.getId());
         qry.setMaxResults(1);
-        BigDecimal outstandingAmount = (BigDecimal) qry.uniqueResult();
+        BigDecimal outstandingAmount = qry.uniqueResult();
         BigDecimal paidAmount = paymentSchedule.getAmount().subtract(outstandingAmount);
         BigDecimal negativeAmount = BigDecimal.ZERO;
 
@@ -1637,11 +1640,11 @@ public class CancelAndReplaceUtils {
     StringBuilder where = new StringBuilder("select c from " + Order.ENTITY_NAME
         + " c where id = :id");
     final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(where.toString());
+    final Query<Order> query = session.createQuery(where.toString(), Order.class);
     query.setParameter("id", order.getId());
     query.setMaxResults(1);
     query.setLockOptions(LockOptions.UPGRADE);
-    return (Order) query.uniqueResult();
+    return query.uniqueResult();
   }
 
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,6 +87,7 @@ public class DalInitializingTask extends Task {
    */
   @Override
   public void execute() {
+
     // initAntConsoleLogging();
     OBProvider.getInstance().register(OBClassLoader.class, OBClassLoader.ClassOBClassLoader.class,
         false);
@@ -99,6 +100,7 @@ public class DalInitializingTask extends Task {
     }
 
     if (!DalLayerInitializer.getInstance().isInitialized()) {
+
       log.debug("initializating dal layer, getting properties from " + getPropertiesFile());
       OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
 
@@ -106,7 +108,18 @@ public class DalInitializingTask extends Task {
         OBConfigFileProvider.getInstance().setFileLocation(getProviderConfigDirectory());
       }
 
-      DalLayerInitializer.getInstance().initialize(rereadConfigs);
+      // Set the current class class loader as the context class loader to initialize the DAL layer.
+      // Otherwise, when executing this kind of tasks in JDK11 using ant, the selected context class
+      // loader is not able to find the required JAXBContext instance implementation required to
+      // build the Hibernate mapping.
+      ClassLoader ctxClassLoader = Thread.currentThread().getContextClassLoader();
+      ClassLoader classClassLoader = getClass().getClassLoader();
+      Thread.currentThread().setContextClassLoader(classClassLoader);
+      try {
+        DalLayerInitializer.getInstance().initialize(rereadConfigs);
+      } finally {
+        Thread.currentThread().setContextClassLoader(ctxClassLoader);
+      }
     } else {
       log.debug("Dal Layer already initialized");
     }

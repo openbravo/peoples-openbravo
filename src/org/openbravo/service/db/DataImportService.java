@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -270,8 +270,10 @@ public class DataImportService implements OBSingleton {
           // do a special thing to update the clientlist and orglist columns
           // in the ad_role table with the newly created id's
           // this is done through a stored procedure
-          SessionHandler.getInstance().getSession()
-              .createSQLQuery("UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'")
+          SessionHandler
+              .getInstance()
+              .getSession()
+              .createNativeQuery("UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'")
               .executeUpdate();
         }
       }
@@ -310,8 +312,7 @@ public class DataImportService implements OBSingleton {
         Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
             tn.getTree().getTypeArea());
         if (entity == null && tn.getTree().getTable() != null) {
-          entity = ModelProvider.getInstance().getEntityByTableId(
-              tn.getTree().getTable().getId());
+          entity = ModelProvider.getInstance().getEntityByTableId(tn.getTree().getTable().getId());
         }
         if (entity == null) {
           String msg = "Imported tree nodes belong to a tree  " + tn.getTree()
@@ -484,8 +485,10 @@ public class DataImportService implements OBSingleton {
           }
         }
         if (containsAdRoleOrOrgAccess)
-          SessionHandler.getInstance().getSession()
-              .createSQLQuery("UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'")
+          SessionHandler
+              .getInstance()
+              .getSession()
+              .createNativeQuery("UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'")
               .executeUpdate();
       }
     }

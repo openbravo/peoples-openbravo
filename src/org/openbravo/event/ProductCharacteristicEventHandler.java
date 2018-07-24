@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,10 +23,10 @@ import java.util.List;
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -208,9 +208,9 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
         hql.append(" join pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE + " as cv");
         hql.append(" where pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT
             + " = :pc");
-        Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+        Query<String> query = OBDal.getInstance().getSession()
+            .createQuery(hql.toString(), String.class);
         query.setParameter("pc", prCh);
-        @SuppressWarnings("unchecked")
         final List<String> existingValues = query.list();
 
         ScrollableResults scroll = getValuesToAdd(prCh);
@@ -276,7 +276,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       hql.append(" from " + CharacteristicSubsetValue.ENTITY_NAME + " as csv");
       hql.append(" join csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICVALUE + " as cv");
       hql.append(" where csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICSUBSET + " = :cs");
-      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      Query<Object[]> query = OBDal.getInstance().getSession()
+          .createQuery(hql.toString(), Object[].class);
       query.setParameter("cs", prCh.getCharacteristicSubset());
       return query.scroll(ScrollMode.FORWARD_ONLY);
     }
@@ -290,7 +291,8 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       hql.append(" from " + CharacteristicValue.ENTITY_NAME + " as cv");
       hql.append(" where cv." + CharacteristicValue.PROPERTY_CHARACTERISTIC + " = :c");
       hql.append(" and cv." + CharacteristicValue.PROPERTY_SUMMARYLEVEL + " = false");
-      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      Query<Object[]> query = OBDal.getInstance().getSession()
+          .createQuery(hql.toString(), Object[].class);
       query.setParameter("c", prCh.getCharacteristic());
       return query.scroll(ScrollMode.FORWARD_ONLY);
     }

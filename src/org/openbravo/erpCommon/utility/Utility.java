@@ -61,7 +61,7 @@ import javax.servlet.ServletException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
@@ -1851,7 +1851,7 @@ public class Utility {
         + "      ADListTrl rlt" + " where rl.reference = r" + "  and rlt.listReference = rl"
         + "  and rlt.language.language = '" + lang + "'" + "  and r.name =  '" + ListName + "'"
         + "  and rl.searchKey = '" + value + "'";
-    Query q = OBDal.getInstance().getSession().createQuery(hql);
+    Query<String> q = OBDal.getInstance().getSession().createQuery(hql, String.class);
     q.setMaxResults(1);
     String name = (String) q.uniqueResult();
     if (name != null) {
@@ -1862,7 +1862,7 @@ public class Utility {
     hql = "  select rl.name " + " from ADReference r, " + "      ADList rl"
         + " where rl.reference = r" + "  and r.name =  '" + ListName + "'"
         + "  and rl.searchKey = '" + value + "'";
-    q = OBDal.getInstance().getSession().createQuery(hql);
+    q = OBDal.getInstance().getSession().createQuery(hql, String.class);
     q.setMaxResults(1);
     name = (String) q.uniqueResult();
     if (name != null) {
@@ -2464,7 +2464,8 @@ public class Utility {
     hql.append("       f.name\n");
     hql.append("  from ADField f\n");
     hql.append(" where f.id =:fieldId\n");
-    Query qName = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Object[]> qName = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Object[].class);
     qName.setParameter("lang", language);
     qName.setParameter("fieldId", fieldId);
 
@@ -2473,7 +2474,7 @@ public class Utility {
       return "";
     }
 
-    Object[] names = (Object[]) qName.list().get(0);
+    Object[] names = qName.list().get(0);
     return names[0] != null ? (String) names[0] : (String) names[1];
   }
 

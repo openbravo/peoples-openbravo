@@ -23,16 +23,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -90,7 +93,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     // Returns the datasource properties, based on the columns of the table that is going to use the
     // datasource
     // This is needed to support client side filtering
-    List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+    List<DataSourceProperty> dataSourceProperties = new ArrayList<>();
     String tableId = (String) parameters.get("tableId");
     if (tableId != null) {
       Table table = OBDal.getInstance().get(Table.class, tableId);
@@ -149,7 +152,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   protected int getCount(Map<String, String> parameters) {
     Table table = getTableFromParameters(parameters);
     boolean justCount = true;
-    Query countQuery = getQuery(table, parameters, justCount);
+    Query<Tuple> countQuery = getQuery(table, parameters, justCount);
     String hqlQuery = countQuery.getQueryString();
     int nRows = -1;
     if (hqlQuery.toUpperCase().contains(GROUPBY)) {
@@ -157,12 +160,12 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       countQuery = getQuery(table, parameters, justCount);
       return getGroupedCount(countQuery);
     } else {
-      nRows = ((Number) countQuery.uniqueResult()).intValue();
+      nRows = ((Number) countQuery.uniqueResult().get(0)).intValue();
     }
     return nRows;
   }
 
-  protected int getGroupedCount(Query countQuery) {
+  protected int getGroupedCount(Query<Tuple> countQuery) {
     int nRows = -1;
     ScrollableResults scrollableResults = countQuery.scroll();
     if (scrollableResults.last()) {
@@ -180,7 +183,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     OBContext.setAdminMode(true);
     boolean justCount = false;
-    Query query = getQuery(table, parameters, justCount);
+    Query<Tuple> query = getQuery(table, parameters, justCount);
 
     if (startRow > 0) {
       query.setFirstResult(startRow);
@@ -191,44 +194,45 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
 
     String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
     List<Column> columns = table.getADColumnList();
-    List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
-    String[] returnAliases = query.getReturnAliases();
-    boolean checkIsNotNull = false;
-    for (Object row : query.list()) {
-      Map<String, Object> record = new HashMap<String, Object>();
+    List<Map<String, Object>> data = new ArrayList<>();
+    for (Tuple tuple : query.list()) {
+      Map<String, Object> record = new HashMap<>();
       if (distinct != null) {
-        Object[] result = (Object[]) row;
         // the whole referenced BaseOBObject is stored in the first position of the result
-        BaseOBObject bob = (BaseOBObject) result[0];
+        BaseOBObject bob = (BaseOBObject) tuple.get(0);
         if (bob == null) {
           break;
         }
         record.put(JsonConstants.ID, bob.getId());
         record.put(JsonConstants.IDENTIFIER, IdentifierProvider.getInstance().getIdentifier(bob));
       } else {
-        Object[] properties = (Object[]) row;
-        for (int i = 0; i < returnAliases.length; i++) {
-          String aliasName = returnAliases[i];
-          String propertyName;
-          if (aliasName.contains(PROPERTY_FIELD_SEPARATOR)) {
-            propertyName = aliasName.replace(PROPERTY_FIELD_SEPARATOR,
-                JsonConstants.FIELD_SEPARATOR);
-          } else {
-            Property property = entity.getPropertyByColumnName(aliasName.toLowerCase(),
-                checkIsNotNull);
-            if (property == null) {
-              property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName()
-                  .toLowerCase());
-            }
-            propertyName = property.getName();
-          }
-          record.put(propertyName, properties[i]);
+        int i = 0;
+        for (TupleElement<?> tupleElement : tuple.getElements()) {
+          String alias = tupleElement.getAlias();
+          String propertyName = getPropertyName(entity, alias, columns.get(i).getDBColumnName());
+          record.put(propertyName, alias != null ? tuple.get(alias) : tuple.get(i));
+          i++;
         }
       }
       data.add(record);
     }
     OBContext.restorePreviousMode();
     return data;
+  }
+
+  private String getPropertyName(Entity entity, String alias, String columnName) {
+    if (alias == null) {
+      return entity.getPropertyByColumnName(columnName.toLowerCase()).getName();
+    }
+    if (alias.contains(PROPERTY_FIELD_SEPARATOR)) {
+      return alias.replace(PROPERTY_FIELD_SEPARATOR, JsonConstants.FIELD_SEPARATOR);
+    }
+    boolean checkIsNotNull = false;
+    Property property = entity.getPropertyByColumnName(alias.toLowerCase(), checkIsNotNull);
+    if (property == null) {
+      property = entity.getPropertyByColumnName(columnName.toLowerCase());
+    }
+    return property.getName();
   }
 
   /**
@@ -263,7 +267,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
    * the query will just return the number of records that fulfill the criteria. If justCount is
    * false, the query will return all the actual records that fulfill the criteria
    */
-  private Query getQuery(Table table, Map<String, String> parameters, boolean justCount) {
+  private Query<Tuple> getQuery(Table table, Map<String, String> parameters, boolean justCount) {
     OBContext.setAdminMode(true);
     String hqlQuery = table.getHqlQuery();
     // obtains the where clause from the criteria, using the AdvancedQueryBuilder
@@ -351,9 +355,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     }
 
     log.debug("HQL query: {}", hqlQuery);
-    Query query = OBDal.getInstance().getSession().createQuery(hqlQuery);
+    Query<Tuple> query = OBDal.getInstance().getSession().createQuery(hqlQuery, Tuple.class);
 
-    StringBuffer paramsLog = new StringBuffer();
+    StringBuilder paramsLog = new StringBuilder();
 
     // sets the parameters of the query
     for (String key : queryNamedParameters.keySet()) {
@@ -527,7 +531,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       // look for the property name, replace it with the column alias
       Property property = entity.getPropertyByColumnName(column.getDBColumnName());
       // Map used to replace the property name used in the criteria with its alias
-      Map<String, String> replacementMap = new HashMap<String, String>();
+      Map<String, String> replacementMap = new HashMap<>();
       String propertyNameBefore = null;
       String propertyNameAfter = null;
       if (property.isPrimitive()) {
@@ -550,9 +554,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
             table.getEntityAlias());
       }
-      for (String toBeReplaced : replacementMap.keySet()) {
-        updatedWhereClause = updatedWhereClause.replaceAll(toBeReplaced,
-            replacementMap.get(toBeReplaced));
+      for (Entry<String, String> replacement : replacementMap.entrySet()) {
+        updatedWhereClause = updatedWhereClause.replaceAll(replacement.getKey(),
+            replacement.getValue());
       }
     }
     return updatedWhereClause;
@@ -591,7 +595,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private String addAdditionalFilters(Table table, String hqlQuery, String filterWhereClause,
       Map<String, String> parameters) {
     OBContext.setAdminMode(true);
-    StringBuffer additionalFilter = new StringBuffer();
+    StringBuilder additionalFilter = new StringBuilder();
     final String entityAlias = table.getEntityAlias();
 
     // replace the carriage returns and the tabulations with blanks
@@ -637,7 +641,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     return hqlQueryWithFilters;
   }
 
-  private void addFilterWhereClause(StringBuffer additionalFilter, String filterWhereClause) {
+  private void addFilterWhereClause(StringBuilder additionalFilter, String filterWhereClause) {
     if (!filterWhereClause.trim().isEmpty()) {
       additionalFilter.append(AND + removeLeadingWhere(filterWhereClause));
     }

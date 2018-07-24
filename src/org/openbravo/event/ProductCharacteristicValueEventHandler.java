@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -91,7 +92,8 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
       Set<String> productList = prodchvalueUpdated.get();
       prodchvalueUpdated.set(null);
       prodchvalueUpdated.remove();
-      if (productList == null || productList.isEmpty() || event.getTransaction().wasRolledBack()) {
+      if (productList == null || productList.isEmpty()
+          || event.getTransaction().getStatus() == TransactionStatus.ROLLED_BACK) {
         return;
       }
       ArrayList<String> products = new ArrayList<String>(productList);

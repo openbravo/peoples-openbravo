@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -907,7 +907,7 @@ public class AddPaymentFromTransaction extends HttpSecureAppServlet {
       obCriteria.add(Restrictions.eq(Preference.PROPERTY_ATTRIBUTE, "Doubtful_Debt_Visibility"));
       obCriteria.add(Restrictions.eq(Preference.PROPERTY_CLIENT, OBContext.getOBContext()
           .getCurrentClient()));
-      obCriteria.add(Restrictions.in(Preference.PROPERTY_ORGANIZATION + ".id", OBContext
+      obCriteria.add(Restrictions.in(Preference.PROPERTY_ORGANIZATION + ".id", (Object[]) OBContext
           .getOBContext().getReadableOrganizations()));
       Preference preference = (Preference) obCriteria.uniqueResult();
       if (preference != null) {

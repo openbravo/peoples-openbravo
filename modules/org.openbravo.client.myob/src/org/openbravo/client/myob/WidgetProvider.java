@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -410,17 +410,17 @@ public abstract class WidgetProvider {
   public static Map<String, String> createValueMap(Set<String> allowedValues, String referenceId) {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
 
-    final Map<String, String> translatedValues = new LinkedHashMap<String, String>();
+    final Map<String, String> translatedValues = new LinkedHashMap<>();
 
     for (String allowedValue : allowedValues) {
       translatedValues.put(allowedValue, allowedValue);
     }
 
     final String readReferenceHql = "select searchKey, name from ADList where reference.id=:referenceId";
-    final Query readReferenceQry = OBDal.getInstance().getSession().createQuery(readReferenceHql);
+    final Query<Object[]> readReferenceQry = OBDal.getInstance().getSession()
+        .createQuery(readReferenceHql, Object[].class);
     readReferenceQry.setParameter("referenceId", referenceId);
-    for (Object o : readReferenceQry.list()) {
-      final Object[] row = (Object[]) o;
+    for (Object[] row : readReferenceQry.list()) {
       final String value = (String) row[0];
       final String name = (String) row[1];
       if (allowedValues.contains(value)) {
@@ -432,11 +432,10 @@ public abstract class WidgetProvider {
     final String hql = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
         + " al.reference.id=:referenceId and trl.listReference=al and trl.language.id=:languageId"
         + " and al.active=true and trl.active=true";
-    final Query qry = OBDal.getInstance().getSession().createQuery(hql);
+    final Query<Object[]> qry = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
     qry.setParameter("referenceId", referenceId);
     qry.setParameter("languageId", userLanguageId);
-    for (Object o : qry.list()) {
-      final Object[] row = (Object[]) o;
+    for (Object[] row : qry.list()) {
       translatedValues.put((String) row[0], (String) row[1]);
     }
     return translatedValues;

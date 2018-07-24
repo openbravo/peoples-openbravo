@@ -37,12 +37,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.LockOptions;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+import org.hibernate.sql.JoinType;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -260,7 +261,7 @@ public class PaymentReportDao {
     Currency transCurrency;
     BigDecimal transAmount = null;
     ConversionRate convRate = null;
-    ArrayList<FieldProvider> totalData = new ArrayList<FieldProvider>();
+    ArrayList<FieldProvider> totalData = new ArrayList<>();
     int numberOfElements = 0;
     int lastElement = 0;
     ScrollableResults scroller = null;
@@ -591,18 +592,12 @@ public class PaymentReportDao {
       if (StringUtils.equals(strOutput, "HTML")) {
         int maxRecords = 1000;
         final Session sessionCount = OBDal.getReadOnlyInstance().getSession();
-        final Query queryCount = sessionCount
-            .createQuery("select count(*)" + hsqlScript.toString());
+        final Query<Long> queryCount = sessionCount.createQuery(
+            "select count(*)" + hsqlScript.toString(), Long.class);
         for (Entry<String, Object> entry : parameters.entrySet()) {
-          String paramName = entry.getKey();
-          Object param = entry.getValue();
-          if (param instanceof BaseOBObject) {
-            queryCount.setEntity(paramName, param);
-          } else {
-            queryCount.setParameter(paramName, param);
-          }
+          queryCount.setParameter(entry.getKey(), entry.getValue());
         }
-        final Long hqlRecordsCount = (Long) queryCount.list().get(0);
+        final Long hqlRecordsCount = queryCount.list().get(0);
         if ((int) (long) hqlRecordsCount > maxRecords) {
           String message = "FINPR_TooManyRecords";
           throw new OBException(message);
@@ -710,16 +705,10 @@ public class PaymentReportDao {
       hsqlScript.append(".");
       hsqlScript.append(FIN_PaymentSchedule.PROPERTY_ID);
       final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query query = session.createQuery(hsqlScript.toString());
+      final Query<Object[]> query = session.createQuery(hsqlScript.toString(), Object[].class);
 
       for (Entry<String, Object> entry : parameters.entrySet()) {
-        String paramName = entry.getKey();
-        Object param = entry.getValue();
-        if (param instanceof BaseOBObject) {
-          query.setEntity(paramName, param);
-        } else {
-          query.setParameter(paramName, param);
-        }
+        query.setParameter(entry.getKey(), entry.getValue());
       }
 
       scroller = query.scroll(ScrollMode.FORWARD_ONLY);
@@ -1693,13 +1682,13 @@ public class PaymentReportDao {
    * elsewise it returns false
    */
   private boolean isBeforeStatus(String firstValue, String secondValue) {
-    String[] strStatus = { firstValue, secondValue };
+    Object[] strStatus = { firstValue, secondValue };
     boolean isBefore = false;
 
     OBContext.setAdminMode(true);
     try {
       OBCriteria<List> obCriteria = OBDal.getReadOnlyInstance().createCriteria(List.class);
-      obCriteria.createAlias(List.PROPERTY_REFERENCE, "r", OBCriteria.LEFT_JOIN);
+      obCriteria.createAlias(List.PROPERTY_REFERENCE, "r", JoinType.LEFT_OUTER_JOIN);
       obCriteria.add(Restrictions.ilike("r."
           + org.openbravo.model.ad.domain.Reference.PROPERTY_NAME, "FIN_Payment status"));
       obCriteria.add(Restrictions.in(List.PROPERTY_SEARCHKEY, strStatus));
@@ -1746,19 +1735,19 @@ public class PaymentReportDao {
       OBCriteria<FIN_FinaccTransaction> obCriteriaTrans = OBDal.getReadOnlyInstance()
           .createCriteria(FIN_FinaccTransaction.class);
       obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_BUSINESSPARTNER, "bp",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.createAlias("bp." + BusinessPartner.PROPERTY_BUSINESSPARTNERCATEGORY, "bpc",
-          OBCriteria.LEFT_JOIN);
-      obCriteriaTrans
-          .createAlias(FIN_FinaccTransaction.PROPERTY_PROJECT, "p", OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
+      obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_PROJECT, "p",
+          JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_CURRENCY, "c",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.createAlias(FIN_FinaccTransaction.PROPERTY_ACCOUNT, "acc",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obCriteriaTrans.add(Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_FINPAYMENT));
       obCriteriaTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_PROCESSED, true));
       obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ORGANIZATION,
-          organizations));
+          (Object[]) organizations));
 
       // Empty Business Partner included
       if (StringUtils.equals(strcNoBusinessPartner, "include")) {
@@ -1860,7 +1849,7 @@ public class PaymentReportDao {
         localStrfinPaymSt = localStrfinPaymSt.replace(")", "");
         localStrfinPaymSt = localStrfinPaymSt.replace("'", "");
         localStrfinPaymSt = localStrfinPaymSt.replace(" ", "");
-        String[] status = localStrfinPaymSt.split(",");
+        Object[] status = localStrfinPaymSt.split(",");
         obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_STATUS, status));
       }
 
@@ -1872,10 +1861,10 @@ public class PaymentReportDao {
 
       // payment type
       if (StringUtils.equalsIgnoreCase(strPaymType, "FINPR_Receivables")) {
-        String[] status = { "PWNC", "RPPC" };
+        Object[] status = { "PWNC", "RPPC" };
         obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_STATUS, status));
       } else if (StringUtils.equalsIgnoreCase(strPaymType, "FINPR_Payables")) {
-        String[] status = { "RDNC", "RPPC" };
+        Object[] status = { "RDNC", "RPPC" };
         obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_STATUS, status));
       }
 
@@ -2162,9 +2151,9 @@ public class PaymentReportDao {
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query query = session.createQuery(sql.toString());
+      final Query<String> query = session.createQuery(sql.toString(), String.class);
       query.setParameter("paymentId", payment.getId());
-      for (final Object o : query.list()) {
+      for (final String o : query.list()) {
         result.add(OBDal.getReadOnlyInstance().get(Invoice.class, o));
       }
 
@@ -2186,10 +2175,9 @@ public class PaymentReportDao {
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query query = session.createQuery(sql.toString());
-      @SuppressWarnings("unchecked")
-      java.util.List<FIN_PaymentSchedule> psList = query.list();
-      return psList;
+      final Query<FIN_PaymentSchedule> query = session.createQuery(sql.toString(),
+          FIN_PaymentSchedule.class);
+      return query.list();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -2208,8 +2196,9 @@ public class PaymentReportDao {
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query query = session.createQuery(sql.toString());
-      return (FIN_PaymentSchedule) query.uniqueResult();
+      final Query<FIN_PaymentSchedule> query = session.createQuery(sql.toString(),
+          FIN_PaymentSchedule.class);
+      return query.uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -220,9 +220,10 @@ public class DefaultJsonDataService implements JsonDataService {
           final JSONObject singleResult = new JSONObject();
           if (queryService.getSummaryFields().size() == 1) {
             singleResult.put(queryService.getSummaryFields().get(0), queryService.buildOBQuery()
-                .createQuery().uniqueResult());
+                .uniqueResultObject());
           } else {
-            final Object[] os = (Object[]) queryService.buildOBQuery().createQuery().uniqueResult();
+            final Object[] os = queryService.buildOBQuery().createQuery(Object[].class)
+                .uniqueResult();
             int i = 0;
             if (os != null && os.length > 0) {
               for (String key : queryService.getSummaryFields()) {

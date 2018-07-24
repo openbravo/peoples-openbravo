@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -138,7 +138,7 @@ public class Login extends HttpBaseServlet {
     ActivationKey ak = ActivationKey.getInstance(true);
     if (ak.isActive()) {
       String hql = "from ADPreference pref where searchKey like :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
-      Query q = OBDal.getInstance().getSession().createQuery(hql);
+      Query<Object> q = OBDal.getInstance().getSession().createQuery(hql, Object.class);
       q.setParameter("value", "N");
       q.setParameter("prop", GOOGLE_PREFERENCE_PROPERTY);
 

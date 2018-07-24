@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,7 +120,6 @@ public class Property {
   private String displayProperty;
 
   private Property trlParentProperty;
-  private Property trlOneToManyProperty;
 
   private Integer seqno;
   private boolean usedSequence;
@@ -1291,7 +1290,6 @@ public class Property {
       if (pk.equals(trlParent.getReferencedProperty())) {
         this.trlParentProperty = trlParent;
         this.translationProperty = translationProperty;
-        this.trlOneToManyProperty = trlPropertyListInBase;
         translatable = true;
         return;
       }
@@ -1306,10 +1304,6 @@ public class Property {
 
   public Property getTrlParentProperty() {
     return trlParentProperty;
-  }
-
-  public Property getTrlOneToManyProperty() {
-    return trlOneToManyProperty;
   }
 
   public boolean isStoredInSession() {
@@ -1335,7 +1329,6 @@ public class Property {
   public void setUsedSequence(boolean usedSequence) {
     this.usedSequence = "documentno".equalsIgnoreCase(columnName)
         || (usedSequence && "Value".equals(columnName));
-    ;
   }
 
   public String getSqlLogic() {

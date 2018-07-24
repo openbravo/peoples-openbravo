@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,9 +22,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
-import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -159,7 +159,8 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
       qry.append(" , sum(tc." + TransactionCost.PROPERTY_COST + ")");
     }
 
-    Query qryReceiptCosts = OBDal.getInstance().getSession().createQuery(qry.toString());
+    Query<Object[]> qryReceiptCosts = OBDal.getInstance().getSession()
+        .createQuery(qry.toString(), Object[].class);
     qryReceiptCosts.setParameter("landedCost", landedCost.getId());
 
     return qryReceiptCosts.scroll();

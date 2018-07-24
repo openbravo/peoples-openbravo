@@ -27,10 +27,10 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -274,7 +274,8 @@ public class CostAdjustmentUtils {
     where.append(" , trxtype." + propADListPriority + " desc");
     where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " asc");
     where.append(" , trx." + MaterialTransaction.PROPERTY_ID + " desc");
-    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> trxQry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), String.class);
     trxQry.setParameter("refId", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setParameter("productId", trx.getProduct().getId());
     trxQry.setParameterList("orgIds", orgs);
@@ -282,7 +283,7 @@ public class CostAdjustmentUtils {
       trxQry.setParameter("warehouseId", trx.getStorageBin().getWarehouse().getId());
     }
     trxQry.setMaxResults(1);
-    String transactionId = (String) trxQry.uniqueResult();
+    String transactionId = trxQry.uniqueResult();
 
     TransactionLast lastTransaction = null;
     if (transactionId != null) {
@@ -309,11 +310,11 @@ public class CostAdjustmentUtils {
     where.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
     where.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT
         + ".id = :costAdjustment");
-    Query calQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<Long> calQry = OBDal.getInstance().getSession().createQuery(where.toString(), Long.class);
     calQry.setParameter("costAdjustment", cadj.getId());
     calQry.setMaxResults(1);
 
-    Long lineNo = (Long) calQry.uniqueResult();
+    Long lineNo = calQry.uniqueResult();
     if (lineNo != null) {
       return lineNo + 10L;
     }
@@ -341,7 +342,8 @@ public class CostAdjustmentUtils {
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
     select.append(" , tc." + TransactionCost.PROPERTY_COSTDATE);
 
-    Query qry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Object[]> qry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Object[].class);
     qry.setParameter("trxId", trx.getId());
     ScrollableResults scroll = qry.scroll(ScrollMode.FORWARD_ONLY);
 
@@ -398,14 +400,15 @@ public class CostAdjustmentUtils {
     }
     subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
-    Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
+    Query<Date> trxsubQry = OBDal.getInstance().getSession()
+        .createQuery(subSelect.toString(), Date.class);
     trxsubQry.setParameter("date", date);
     trxsubQry.setParameter("product", product.getId());
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxsubQry.setParameterList("orgs", orgs);
-    Object trxprocessDate = trxsubQry.uniqueResult();
+    Date trxprocessDate = trxsubQry.uniqueResult();
 
     StringBuffer select = new StringBuffer();
     select
@@ -422,8 +425,8 @@ public class CostAdjustmentUtils {
     }
 
     if (trxprocessDate != null
-        && (!backdatedTransactionsFixed || ((Date) trxprocessDate).before(backdatedTrxFrom))) {
-      date = (Date) trxprocessDate;
+        && (!backdatedTransactionsFixed || trxprocessDate.before(backdatedTrxFrom))) {
+      date = trxprocessDate;
       select.append(" left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE
           + " as il");
       select.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
@@ -441,18 +444,16 @@ public class CostAdjustmentUtils {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<BigDecimal> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), BigDecimal.class);
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("date", date);
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxQry.setParameterList("orgs", orgs);
-    Object stock = trxQry.uniqueResult();
-    if (stock != null) {
-      return (BigDecimal) stock;
-    }
-    return BigDecimal.ZERO;
+    BigDecimal stock = trxQry.uniqueResult();
+    return (stock != null) ? stock : BigDecimal.ZERO;
   }
 
   /**
@@ -619,7 +620,8 @@ public class CostAdjustmentUtils {
 
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<BigDecimal> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), BigDecimal.class);
     trxQry.setParameter("refid", MovementTypeRefID);
     trxQry.setParameter("product", trx.getProduct());
     trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
@@ -647,7 +649,7 @@ public class CostAdjustmentUtils {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
 
-    BigDecimal stock = (BigDecimal) trxQry.uniqueResult();
+    BigDecimal stock = trxQry.uniqueResult();
     if (stock == null) {
       stock = BigDecimal.ZERO;
     }
@@ -710,14 +712,15 @@ public class CostAdjustmentUtils {
     }
     subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
-    Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
+    Query<Date> trxsubQry = OBDal.getInstance().getSession()
+        .createQuery(subSelect.toString(), Date.class);
     trxsubQry.setParameter("date", date);
     trxsubQry.setParameter("product", product.getId());
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxsubQry.setParameterList("orgs", orgs);
-    Object trxprocessDate = trxsubQry.uniqueResult();
+    Date trxprocessDate = trxsubQry.uniqueResult();
 
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");
@@ -741,8 +744,8 @@ public class CostAdjustmentUtils {
     }
 
     if (trxprocessDate != null
-        && (!backdatedTransactionsFixed || ((Date) trxprocessDate).before(backdatedTrxFrom))) {
-      date = (Date) trxprocessDate;
+        && (!backdatedTransactionsFixed || trxprocessDate.before(backdatedTrxFrom))) {
+      date = trxprocessDate;
       select.append(" left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE
           + " as il");
       select.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
@@ -771,7 +774,8 @@ public class CostAdjustmentUtils {
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
     select.append("   , tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Object[]> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Object[].class);
     trxQry.setParameter("product", product);
     trxQry.setParameter("date", date);
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -986,7 +990,8 @@ public class CostAdjustmentUtils {
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
     select.append("   , tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Object[]> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Object[].class);
     trxQry.setParameter("refid", MovementTypeRefID);
     trxQry.setParameter("product", trx.getProduct());
     trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
@@ -1069,21 +1074,21 @@ public class CostAdjustmentUtils {
     if (wh != null) {
       select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
     }
-    Query qryMinDate = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Date> qryMinDate = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Date.class);
     qryMinDate.setParameterList("orgs", orgs);
     qryMinDate.setParameter("product", product);
     qryMinDate.setParameter("mvntdate", refDate);
     if (wh != null) {
       qryMinDate.setParameter("warehouse", wh);
     }
-    Object objMinDate = qryMinDate.uniqueResult();
-    if (objMinDate == null) {
+    Date minNextDate = qryMinDate.uniqueResult();
+    if (minNextDate == null) {
       return null;
     }
 
     // Get the last transaction process date of transactions with movement date equal or before the
     // given date and a transaction process date before the previously calculated min date.
-    Date minNextDate = (Date) objMinDate;
     select = new StringBuffer();
     select.append(" select max(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
         + ") as date");
@@ -1100,7 +1105,8 @@ public class CostAdjustmentUtils {
     if (wh != null) {
       select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
     }
-    Query qryMaxDate = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Date> qryMaxDate = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Date.class);
     qryMaxDate.setParameterList("orgs", orgs);
     qryMaxDate.setParameter("product", product);
     qryMaxDate.setParameter("mvntdate", refDate);
@@ -1109,12 +1115,7 @@ public class CostAdjustmentUtils {
       qryMaxDate.setParameter("warehouse", wh);
     }
 
-    Object objMaxDate = qryMaxDate.uniqueResult();
-    if (objMaxDate == null) {
-      return null;
-    }
-
-    return (Date) objMaxDate;
+    return qryMaxDate.uniqueResult();
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,7 +25,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -199,6 +199,7 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
     hqlTransactions.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
         + ".id in (:orgs)");
+    @SuppressWarnings("rawtypes")
     Query updateTransactions = OBDal.getInstance().getSession()
         .createQuery(hqlTransactions.toString());
     updateTransactions.setParameterList("orgs", orgsWithRule);
@@ -207,7 +208,6 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     OBDal.getInstance().flush();
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getTransactionsBatch(List<String> orgsWithRule) {
     StringBuffer where = new StringBuffer();
     where.append(" select trx." + MaterialTransaction.PROPERTY_ID + " as id ");
@@ -227,7 +227,8 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     where.append(" , trxtype." + CostAdjustmentUtils.propADListPriority);
     where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " desc");
     where.append(" , trx." + MaterialTransaction.PROPERTY_ID);
-    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> trxQry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), String.class);
 
     trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setParameter("now", new Date());
@@ -251,13 +252,13 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<Long> trxQry = OBDal.getInstance().getSession().createQuery(where.toString(), Long.class);
 
     trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setParameter("now", new Date());
     trxQry.setParameterList("orgs", orgsWithRule);
     trxQry.setMaxResults(1);
-    return ((Long) trxQry.uniqueResult()).intValue();
+    return (trxQry.uniqueResult()).intValue();
   }
 
   private void initializeMtransCostDateAcct() throws Exception {

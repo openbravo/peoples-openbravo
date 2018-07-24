@@ -37,18 +37,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Tuple;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -66,6 +68,7 @@ import org.openbravo.dal.core.DalThreadHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -196,10 +199,9 @@ public class IssuesTest extends OBBaseTest {
     final Session session = OBDal.getInstance().getSession();
     final String qryStr = "select bc.id, ad_column_identifier_std('C_BP_Group', bc.id) from "
         + Category.ENTITY_NAME + " bc";
-    final Query qry = session.createQuery(qryStr);
-    for (Object o : qry.list()) {
-      final Object[] os = (Object[]) o;
-      assertTrue(os[1] instanceof String && os[1].toString().length() > 0);
+    final Query<Tuple> qry = session.createQuery(qryStr, Tuple.class);
+    for (Tuple tuple : qry.list()) {
+      assertTrue(tuple.get(1) instanceof String && tuple.get(1).toString().length() > 0);
     }
   }
 
@@ -660,7 +662,9 @@ public class IssuesTest extends OBBaseTest {
 
       @Override
       protected void doAction() throws Exception {
-        OBDal.getInstance().getSession().beginTransaction();
+        if (!SessionHandler.getInstance().isCurrentTransactionActive()) {
+          OBDal.getInstance().getSession().beginTransaction();
+        }
         OBDal.getInstance().getSession().getTransaction().commit();
       }
     };
@@ -712,8 +716,9 @@ public class IssuesTest extends OBBaseTest {
     setSystemAdministratorContext();
 
     final Session session = OBDal.getInstance().getSession();
-    SQLQuery query = session
-        .createSQLQuery("SELECT AD_REF_LIST.VALUE AS VALUE, AD_REF_LIST.NAME AS LISTNAME, TRL.NAME AS TRLNAME "
+    @SuppressWarnings("rawtypes")
+    NativeQuery query = session
+        .createNativeQuery("SELECT AD_REF_LIST.VALUE AS VALUE, AD_REF_LIST.NAME AS LISTNAME, TRL.NAME AS TRLNAME "
             + "FROM AD_REF_LIST LEFT OUTER JOIN "
             + "(SELECT AD_REF_LIST_ID, NAME FROM AD_REF_LIST_TRL WHERE AD_REF_LIST_TRL.AD_LANGUAGE = :language) TRL "
             + "ON AD_REF_LIST.AD_REF_LIST_ID = TRL.AD_REF_LIST_ID "

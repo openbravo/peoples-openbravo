@@ -398,9 +398,11 @@ public class OBBaseTest {
     if (sqlFunctions == null || sqlFunctions.isEmpty()) {
       return true;
     }
-    @SuppressWarnings("unchecked")
     Map<String, SQLFunction> registeredFunctions = SessionFactoryController.getInstance()
         .getConfiguration().getSqlFunctions();
+    if (registeredFunctions == null) {
+      return false;
+    }
     for (String sqlFunction : sqlFunctions.keySet()) {
       if (!registeredFunctions.containsKey(sqlFunction)) {
         return false;
@@ -506,7 +508,7 @@ public class OBBaseTest {
 
       String[] excludedUserIds = { "100", TEST_USER_ID };
       OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
-      obc.add(Restrictions.not(Restrictions.in(User.PROPERTY_ID, excludedUserIds)));
+      obc.add(Restrictions.not(Restrictions.in(User.PROPERTY_ID, (Object[]) excludedUserIds)));
       obc.add(Restrictions.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));
 
       if (obc.count() == 0) {

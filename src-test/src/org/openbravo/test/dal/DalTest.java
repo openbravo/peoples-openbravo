@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -24,6 +24,7 @@ package org.openbravo.test.dal;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -35,10 +36,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
@@ -58,6 +61,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
@@ -85,7 +89,7 @@ public class DalTest extends OBBaseTest {
   public ExpectedException thrown = ExpectedException.none();
 
   /**
-   * Test to assert save false in a null char(1) column - Part I
+   * Test to assert save false in a null char(1) column - Part I.
    */
   @Test
   public void testASaveBooleanValue1() {
@@ -99,7 +103,7 @@ public class DalTest extends OBBaseTest {
   }
 
   /**
-   * Test to assert save false in a null char(1) column - Part II
+   * Test to assert save false in a null char(1) column - Part II.
    */
   @Test
   public void testBSaveBooleanValue2() {
@@ -659,6 +663,28 @@ public class DalTest extends OBBaseTest {
     assertEquals(isoCode, EURO);
   }
 
+  /**
+   * Test to check deletion queries using OBQuery
+   */
+  @Test
+  public void canDeleteWithOBQuery() {
+    int deletions = 0;
+    try {
+      User user = getNewUser();
+      // save the new user...
+      OBDal.getInstance().save(user);
+      OBDal.getInstance().flush();
+      // ...and now delete it using an OBQuery instance
+      String hql = "id = :id";
+      OBQuery<User> query = OBDal.getInstance().createQuery(User.class, hql);
+      query.setNamedParameter("id", user.getId());
+      deletions = query.deleteQuery().executeUpdate();
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+    }
+    assertThat("Can delete business objects using OBQuery", deletions, equalTo(1));
+  }
+
   private String getISOCodeFromCurrencyId(String currencyId, boolean includeAlias) {
     String isoCode = null;
     try {
@@ -677,5 +703,127 @@ public class DalTest extends OBBaseTest {
     } catch (Exception ignored) {
     }
     return isoCode;
+  }
+
+  /**
+   * Test to check that an OBQuery using legacy-style query parameters ('?') can be executed
+   * properly.
+   */
+  @Test
+  @SuppressWarnings("deprecation")
+  public void testOBQueryWithLegacyStyleParameters() {
+    setTestUserContext();
+    String hql = "as c where c.iSOCode = ? and c.symbol = ?";
+    OBQuery<Currency> query = OBDal.getInstance().createQuery(Currency.class, hql);
+    List<Object> parameters = new ArrayList<>(2);
+    parameters.add(EURO);
+    parameters.add("€");
+    query.setParameters(parameters);
+    assertNotNull(query.uniqueResult());
+  }
+
+  /**
+   * Test to check that proxies are not initialized when retrieving their identifier.
+   */
+  @Test
+  public void proxyShouldNotBeInitialized() {
+    Currency euro = OBDal.getInstance().getProxy(Currency.class, EURO_ID);
+    euro.getId();
+    assertThat("Proxy is not initialized", Hibernate.isInitialized(euro), equalTo(false));
+  }
+
+  /**
+   * Test to check that proxies are initialized when retrieving a property different from the
+   * identifier.
+   */
+  @Test
+  public void proxyShouldBeInitialized() {
+    Currency euro = OBDal.getInstance().getProxy(Currency.class, EURO_ID);
+    euro.getISOCode();
+    assertThat("Proxy is not initialized", Hibernate.isInitialized(euro), equalTo(true));
+  }
+
+  /**
+   * Test to check that it is possible to retrieve the identifier of a proxy that references a
+   * non-existent record.
+   */
+  @Test
+  public void canRetrieveIdOfNonExistentProxy() {
+    final String nonExistingId = "_0";
+    Currency unknown = OBDal.getInstance().getProxy(Currency.class, nonExistingId);
+    assertThat("Can retrieve ID of non-existent Proxy", unknown.getId(), equalTo(nonExistingId));
+  }
+
+  /**
+   * Test to check that it is possible to use OBContext cached objects as the value for OBQuery
+   * parameters even if they have not been previously loaded into the session.
+   */
+  @Test
+  public void canUseOBContextParamNotPresentInSession() {
+    OBDal.getInstance().getSession().clear();
+    OBQuery<BusinessPartner> q = OBDal.getInstance().createQuery(BusinessPartner.class,
+        "as bp where bp.client = :client");
+    q.setNamedParameter("client", OBContext.getOBContext().getCurrentClient());
+    assertThat("Can use OBContext object as OBQuery parameter value", q.list(), notNullValue());
+  }
+
+  /**
+   * Test to verify that Hibernate's property nullability check is disabled when creating entities
+   * through DAL.
+   */
+  @Test
+  public void nullabilityCheckIsDisabled() {
+    User newUser = getNewUser();
+    OBContext.setAdminMode(true);
+    String userId = null;
+    try {
+      // We should be able to create the User without explicitly setting its not nullable
+      // properties like the "lastPasswordUpdate" property.
+      OBDal.getInstance().save(newUser);
+      OBDal.getInstance().flush();
+      userId = newUser.getId();
+    } catch (Exception ex) {
+      log.error("Could not create new user", ex);
+    } finally {
+      OBDal.getInstance().rollbackAndClose(); // do not need to persist the new User in DB
+      OBContext.restorePreviousMode();
+    }
+    assertThat("Created User without setting its not-nullable properties", userId, notNullValue());
+  }
+
+  private User getNewUser() {
+    final User newUser = OBProvider.getInstance().get(User.class);
+    newUser.setClient(OBContext.getOBContext().getCurrentClient());
+    newUser.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+    newUser.setName("Name");
+    newUser.setDescription("Description");
+    newUser.setUsername("UserName");
+    newUser.setPassword("Password");
+    newUser.setDefaultLanguage(OBContext.getOBContext().getLanguage());
+    return newUser;
+  }
+
+  /**
+   * Test to verify that evict() does not fail when invoking it with an already evicted
+   * BaseOBObject.
+   */
+  @Test
+  public void evictAnEvictedObjectShouldNotFail() {
+    User user = getNewUser();
+    OBContext.setAdminMode(true);
+    boolean fail = false;
+    try {
+      OBDal.getInstance().save(user);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().evict(user);
+      // This second evict has no effect but it should not fail
+      OBDal.getInstance().getSession().evict(user);
+    } catch (IllegalArgumentException iaex) {
+      fail = true;
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+      OBContext.restorePreviousMode();
+    }
+    assertThat("Can evict same BaseOBObject twice", fail, equalTo(false));
   }
 }

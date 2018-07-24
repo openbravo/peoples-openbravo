@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,7 @@ import java.util.HashMap;
 import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -197,11 +197,12 @@ public class ServicePriceUtils {
       strQuery.append(" join ol.salesOrder as o");
       strQuery.append(" join o.priceList as pl");
       strQuery.append(" where e.salesOrderLine.id = :orderLineId");
-      Query query = OBDal.getInstance().getSession().createQuery(strQuery.toString());
+      Query<Object[]> query = OBDal.getInstance().getSession()
+          .createQuery(strQuery.toString(), Object[].class);
       query.setParameter("orderLineId", orderLine.getId());
       query.setMaxResults(1);
       HashMap<String, BigDecimal> result = new HashMap<String, BigDecimal>();
-      Object[] values = (Object[]) query.uniqueResult();
+      Object[] values = query.uniqueResult();
       result.put("amount", (BigDecimal) values[0]);
       result.put("quantity", (BigDecimal) values[1]);
       result.put("price", (BigDecimal) values[2]);
@@ -239,7 +240,8 @@ public class ServicePriceUtils {
       where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
           + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
-      Query ppQry = OBDal.getInstance().getSession().createQuery(where.toString());
+      Query<BigDecimal> ppQry = OBDal.getInstance().getSession()
+          .createQuery(where.toString(), BigDecimal.class);
       ppQry.setParameter("productId", product.getId());
       ppQry.setParameter("date", date);
       ppQry.setParameter("pricelistId", priceList.getId());
@@ -273,11 +275,12 @@ public class ServicePriceUtils {
       where.append("   and sprv." + ServicePriceRuleVersion.PROPERTY_ACTIVE + " = true");
       where.append(" order by sprv." + ServicePriceRuleVersion.PROPERTY_VALIDFROMDATE
           + " desc, sprv." + ServicePriceRuleVersion.PROPERTY_CREATIONDATE + " desc");
-      Query sprvQry = OBDal.getInstance().getSession().createQuery(where.toString());
+      Query<ServicePriceRule> sprvQry = OBDal.getInstance().getSession()
+          .createQuery(where.toString(), ServicePriceRule.class);
       sprvQry.setParameter("serviceProductId", serviceProduct.getId());
       sprvQry.setParameter("orderDate", orderDate);
       sprvQry.setMaxResults(1);
-      return (ServicePriceRule) sprvQry.uniqueResult();
+      return sprvQry.uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }

@@ -31,11 +31,11 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.base.exception.OBException;
@@ -221,14 +221,16 @@ public class CostingMigrationProcess implements Process {
     StringBuffer delete = new StringBuffer();
     delete.append("delete from " + Alert.ENTITY_NAME);
     delete.append(" where " + Alert.PROPERTY_ALERTRULE + " = :alertRule ");
+    @SuppressWarnings("rawtypes")
     Query queryDelete = OBDal.getInstance().getSession().createQuery(delete.toString());
-    queryDelete.setEntity("alertRule", legacyCostAvailableAlert);
+    queryDelete.setParameter("alertRule", legacyCostAvailableAlert);
     queryDelete.executeUpdate();
 
     if (legacyCostAvailableAlert.isActive()) {
 
-      SQLQuery alertQry = OBDal.getInstance().getSession()
-          .createSQLQuery(legacyCostAvailableAlert.getSql());
+      @SuppressWarnings("rawtypes")
+      NativeQuery alertQry = OBDal.getInstance().getSession()
+          .createNativeQuery(legacyCostAvailableAlert.getSql());
       alertQry.addScalar("REFERENCEKEY_ID", StringType.INSTANCE);
       alertQry.addScalar("AD_ROLE_ID", StringType.INSTANCE);
       alertQry.addScalar("AD_USER_ID", StringType.INSTANCE);
@@ -372,7 +374,8 @@ public class CostingMigrationProcess implements Process {
         + "), 0) <> coalesce(max(sd." + StorageDetail.PROPERTY_QUANTITYONHAND + "), 0)");
     tsdhqlWhere.append(" or coalesce(sum(t." + MaterialTransaction.PROPERTY_ORDERQUANTITY
         + "), 0) <> coalesce(max(sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + "), 0))");
-    final Query tsdhql = OBDal.getInstance().getSession().createQuery(tsdhqlWhere.toString());
+    final Query<Object> tsdhql = OBDal.getInstance().getSession()
+        .createQuery(tsdhqlWhere.toString(), Object.class);
     tsdhql.setMaxResults(1);
     Object transactionStorageDetail = tsdhql.uniqueResult();
     if (transactionStorageDetail != null) {
@@ -471,6 +474,7 @@ public class CostingMigrationProcess implements Process {
     TriggerHandler.getInstance().disable();
     try {
       // Reset costs in m_transaction_cost
+      @SuppressWarnings("rawtypes")
       Query queryDelete = OBDal.getInstance().getSession()
           .createQuery("delete from " + TransactionCost.ENTITY_NAME);
       queryDelete.executeUpdate();
@@ -484,6 +488,7 @@ public class CostingMigrationProcess implements Process {
       update.append(" " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = null");
       update.append(" where " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " <> 0");
       update.append(" or " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+      @SuppressWarnings("rawtypes")
       Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
       updateQry.executeUpdate();
       OBDal.getInstance().flush();
@@ -510,10 +515,11 @@ public class CostingMigrationProcess implements Process {
         update.append(" set " + Costing.PROPERTY_CURRENCY + " = :currency");
         update.append(" where " + Costing.PROPERTY_CLIENT + ".id = :clientId");
         update.append(" and " + Costing.PROPERTY_CURRENCY + ".id <> :currencyId");
+        @SuppressWarnings("rawtypes")
         Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
         updateQry.setParameter("currency", client.getCurrency());
-        updateQry.setString("clientId", client.getId());
-        updateQry.setString("currencyId", client.getCurrency().getId());
+        updateQry.setParameter("clientId", client.getId());
+        updateQry.setParameter("currencyId", client.getCurrency().getId());
         updateQry.executeUpdate();
       }
       OBDal.getInstance().flush();
@@ -532,6 +538,7 @@ public class CostingMigrationProcess implements Process {
     log4j.debug("Starting createRules() at: " + new Date());
 
     // Delete manually created rules.
+    @SuppressWarnings("rawtypes")
     Query delQry = OBDal.getInstance().getSession()
         .createQuery("delete from " + CostingRule.ENTITY_NAME);
     delQry.executeUpdate();
@@ -692,7 +699,8 @@ public class CostingMigrationProcess implements Process {
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
     select.append("   tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Object[]> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Object[].class);
     trxQry.setParameter("product", productId);
     trxQry.setParameterList("orgs", orgs);
 
@@ -808,11 +816,12 @@ public class CostingMigrationProcess implements Process {
     where.append("     )");
     where.append("   and " + Costing.PROPERTY_COST + " is not null");
 
-    Query costingQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<Long> costingQry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), Long.class);
     costingQry.setParameter("client", clientId);
     costingQry.setParameterList("orgs", naturalTree);
     costingQry.setMaxResults(1);
-    return ((Long) costingQry.uniqueResult()).intValue();
+    return (costingQry.uniqueResult()).intValue();
   }
 
   private void updateTrxLegacyCosts(Costing _cost, int standardPrecision, Set<String> naturalTree) {
@@ -940,6 +949,7 @@ public class CostingMigrationProcess implements Process {
           insert.append(" left join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
           insert.append(" where " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
           insert.append(" and t." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+          @SuppressWarnings("rawtypes")
           Query insertQry = OBDal.getInstance().getSession().createQuery(insert.toString());
           insertQry.setParameterList("orgs", childOrgs);
           n1 += insertQry.executeUpdate();
@@ -954,6 +964,7 @@ public class CostingMigrationProcess implements Process {
           update.append(", " + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
           update.append(" where " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
           update.append(" and " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+          @SuppressWarnings("rawtypes")
           Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
           updateQry.setParameter("currency", org.getClient().getCurrency());
           updateQry.setParameterList("orgs", childOrgs);
@@ -1005,8 +1016,9 @@ public class CostingMigrationProcess implements Process {
     insert.append("    and u.id = '0'");
     insert.append("    and ar.id = :ar");
 
+    @SuppressWarnings("rawtypes")
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
-    queryInsert.setString("ar", alertRule.getId());
+    queryInsert.setParameter("ar", alertRule.getId());
     int inserted = queryInsert.executeUpdate();
     log4j.debug("** inserted alert recipients: " + inserted);
   }
@@ -1075,12 +1087,13 @@ public class CostingMigrationProcess implements Process {
       insert.append("   or ad_isorgincluded(org." + Organization.PROPERTY_ID + ".id, p."
           + Product.PROPERTY_ORGANIZATION + ", p." + Product.PROPERTY_CLIENT + ".id) <> -1)");
 
+      @SuppressWarnings("rawtypes")
       Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
       final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
       String startingDate = dateFormatter.format(new Date());
-      queryInsert.setString("startingDate", startingDate);
-      queryInsert.setString("limitDate", startingDate);
-      queryInsert.setString("limitDate2", startingDate);
+      queryInsert.setParameter("startingDate", startingDate);
+      queryInsert.setParameter("limitDate", startingDate);
+      queryInsert.setParameter("limitDate2", startingDate);
       n = queryInsert.executeUpdate();
 
       OBDal.getInstance().flush();

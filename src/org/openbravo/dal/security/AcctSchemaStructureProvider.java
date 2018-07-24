@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,11 @@
 
 package org.openbravo.dal.security;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -58,8 +57,7 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
     acctSchemaByOrg.put(orgId, getAcctSchemasFromDB(orgId, clientID));
   }
 
-  @SuppressWarnings("unchecked")
-  private ArrayList<String> getAcctSchemasFromDB(String orgId, String clientID) {
+  private List<String> getAcctSchemasFromDB(String orgId, String clientID) {
     try {
       OBContext.setAdminMode(true);
       String where = " select a.id"
@@ -69,10 +67,10 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
           + " and (ad_isorgincluded(:orgId, oas.organization.id, oas.client.id) <> -1 or :orgId = '0')"
           + " and a.active = true" + " and oas.active = true" + " group by a.id";
 
-      final Query qry = OBDal.getInstance().getSession().createQuery(where);
+      final Query<String> qry = OBDal.getInstance().getSession().createQuery(where, String.class);
       qry.setParameter("clientId", clientID);
       qry.setParameter("orgId", orgId);
-      return (ArrayList<String>) qry.list();
+      return qry.list();
     } finally {
       OBContext.restorePreviousMode();
     }

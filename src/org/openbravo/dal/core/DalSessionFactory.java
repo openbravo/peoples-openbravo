@@ -19,28 +19,37 @@
 
 package org.openbravo.dal.core;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceUnitUtil;
+import javax.persistence.Query;
+import javax.persistence.SynchronizationType;
+import javax.persistence.criteria.CriteriaBuilder;
 
 import org.hibernate.Cache;
 import org.hibernate.HibernateException;
-import org.hibernate.Interceptor;
+import org.hibernate.Metamodel;
+import org.hibernate.Session;
+import org.hibernate.SessionBuilder;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
+import org.hibernate.StatelessSessionBuilder;
 import org.hibernate.TypeHelper;
-import org.hibernate.classic.Session;
-import org.hibernate.connection.ConnectionProvider;
-import org.hibernate.engine.FilterDefinition;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.jdbc.BorrowedConnectionProxy;
+import org.hibernate.boot.spi.SessionFactoryOptions;
+import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
+import org.hibernate.engine.spi.FilterDefinition;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.SessionFactoryImpl;
+import org.hibernate.internal.StatelessSessionImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
@@ -62,6 +71,7 @@ public class DalSessionFactory implements SessionFactory {
   private static final long serialVersionUID = 1L;
 
   private SessionFactory delegateSessionFactory;
+  private JdbcConnectionAccess jdbcConnectionAccess;
 
   /**
    * NOTE: Openbravo requires normal application code to use the DalSessionFactory and not the real
@@ -79,38 +89,6 @@ public class DalSessionFactory implements SessionFactory {
 
   public void close() throws HibernateException {
     delegateSessionFactory.close();
-  }
-
-  public void evict(Class persistentClass, Serializable id) throws HibernateException {
-    delegateSessionFactory.evict(persistentClass, id);
-  }
-
-  public void evict(Class persistentClass) throws HibernateException {
-    delegateSessionFactory.evict(persistentClass);
-  }
-
-  public void evictCollection(String roleName, Serializable id) throws HibernateException {
-    delegateSessionFactory.evictCollection(roleName, id);
-  }
-
-  public void evictCollection(String roleName) throws HibernateException {
-    delegateSessionFactory.evictCollection(roleName);
-  }
-
-  public void evictEntity(String entityName, Serializable id) throws HibernateException {
-    delegateSessionFactory.evictEntity(entityName, id);
-  }
-
-  public void evictEntity(String entityName) throws HibernateException {
-    delegateSessionFactory.evictEntity(entityName);
-  }
-
-  public void evictQueries() throws HibernateException {
-    delegateSessionFactory.evictQueries();
-  }
-
-  public void evictQueries(String cacheRegion) throws HibernateException {
-    delegateSessionFactory.evictQueries(cacheRegion);
   }
 
   public Map getAllClassMetadata() throws HibernateException {
@@ -162,17 +140,9 @@ public class DalSessionFactory implements SessionFactory {
    */
   @Override
   public Session openSession() throws HibernateException {
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final Session session = delegateSessionFactory.openSession();
-    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      Connection conn = ((SessionImplementor) session).connection();
-      initConnection(conn);
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentLoader);
-    }
+    Connection conn = ((SessionImplementor) session).connection();
+    initConnection(conn);
     return session;
   }
 
@@ -191,40 +161,9 @@ public class DalSessionFactory implements SessionFactory {
    * Note method sets user session information in the database and opens a connection for this.
    */
   @Override
-  public Session openSession(Connection connection, Interceptor interceptor) {
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
-    final Session session = delegateSessionFactory.openSession(connection, interceptor);
-    initializeDBSessionInfo((SessionImplementor) session);
-    return session;
-  }
-
-  /**
-   * Note method sets user session information in the database and opens a connection for this.
-   */
-  @Override
-  public Session openSession(Connection connection) {
-    // no need to initialize audit info for current connection: it's already done
-    return delegateSessionFactory.openSession(connection);
-  }
-
-  /**
-   * Note method sets user session information in the database and opens a connection for this.
-   */
-  @Override
-  public Session openSession(Interceptor interceptor) throws HibernateException {
-    final Session session = delegateSessionFactory.openSession(interceptor);
-    initializeDBSessionInfo((SessionImplementor) session);
-    return session;
-  }
-
-  /**
-   * Note method sets user session information in the database and opens a connection for this.
-   */
-  @Override
   public StatelessSession openStatelessSession() {
     final StatelessSession session = delegateSessionFactory.openStatelessSession();
-    initializeDBSessionInfo((SessionImplementor) session);
+    initializeDBSessionInfo((StatelessSessionImpl) session);
     return session;
   }
 
@@ -234,22 +173,14 @@ public class DalSessionFactory implements SessionFactory {
   @Override
   public StatelessSession openStatelessSession(Connection connection) {
     final StatelessSession session = delegateSessionFactory.openStatelessSession(connection);
-    initializeDBSessionInfo((SessionImplementor) session);
+    initializeDBSessionInfo((StatelessSessionImpl) session);
     return session;
   }
 
-  private void initializeDBSessionInfo(SessionImplementor session) {
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
+  private void initializeDBSessionInfo(StatelessSessionImpl session) {
     Connection conn = session.connection();
-    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("bbdd.rdbms"));
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentLoader);
-    }
+    SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("bbdd.rdbms"));
   }
 
   public Cache getCache() {
@@ -264,7 +195,92 @@ public class DalSessionFactory implements SessionFactory {
     return delegateSessionFactory.getTypeHelper();
   }
 
-  public ConnectionProvider getConnectionProvider() {
-    return ((SessionFactoryImplementor) delegateSessionFactory).getConnectionProvider();
+  JdbcConnectionAccess getJdbcConnectionAccess() {
+    if (jdbcConnectionAccess == null) {
+      jdbcConnectionAccess = ((SessionFactoryImpl) delegateSessionFactory).getJdbcServices()
+          .getBootstrapJdbcConnectionAccess();
+    }
+    return jdbcConnectionAccess;
   }
+
+  @Override
+  public <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph) {
+    delegateSessionFactory.addNamedEntityGraph(graphName, entityGraph);
+  }
+
+  @Override
+  public void addNamedQuery(String name, Query query) {
+    delegateSessionFactory.addNamedQuery(name, query);
+  }
+
+  @Override
+  public EntityManager createEntityManager() {
+    return delegateSessionFactory.createEntityManager();
+  }
+
+  @Override
+  public EntityManager createEntityManager(Map map) {
+    return delegateSessionFactory.createEntityManager(map);
+  }
+
+  @Override
+  public EntityManager createEntityManager(SynchronizationType synchronizationType) {
+    return delegateSessionFactory.createEntityManager(synchronizationType);
+  }
+
+  @Override
+  public EntityManager createEntityManager(SynchronizationType synchronizationType, Map map) {
+    return delegateSessionFactory.createEntityManager(synchronizationType, map);
+  }
+
+  @Override
+  public CriteriaBuilder getCriteriaBuilder() {
+    return delegateSessionFactory.getCriteriaBuilder();
+  }
+
+  @Override
+  public PersistenceUnitUtil getPersistenceUnitUtil() {
+    return delegateSessionFactory.getPersistenceUnitUtil();
+  }
+
+  @Override
+  public Map<String, Object> getProperties() {
+    return delegateSessionFactory.getProperties();
+  }
+
+  @Override
+  public boolean isOpen() {
+    return delegateSessionFactory.isOpen();
+  }
+
+  @Override
+  public <T> T unwrap(Class<T> clazz) {
+    return delegateSessionFactory.unwrap(clazz);
+  }
+
+  @Override
+  public <T> List<EntityGraph<? super T>> findEntityGraphsByType(Class<T> entityClass) {
+    return delegateSessionFactory.findEntityGraphsByType(entityClass);
+  }
+
+  @Override
+  public Metamodel getMetamodel() {
+    return delegateSessionFactory.getMetamodel();
+  }
+
+  @Override
+  public SessionFactoryOptions getSessionFactoryOptions() {
+    return delegateSessionFactory.getSessionFactoryOptions();
+  }
+
+  @Override
+  public SessionBuilder withOptions() {
+    return delegateSessionFactory.withOptions();
+  }
+
+  @Override
+  public StatelessSessionBuilder withStatelessOptions() {
+    return delegateSessionFactory.withStatelessOptions();
+  }
+
 }

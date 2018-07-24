@@ -62,9 +62,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -1701,7 +1701,8 @@ public class ActivationKey {
     hql.append("having count(*) > :maxWsPerDay\n");
     hql.append(" order by 1\n");
 
-    Query qExceededDays = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Date> qExceededDays = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Date.class);
     qExceededDays.setParameter("firstDay", new Date(getDayAt0(new Date()).getTime()
         - WS_MS_EXCEEDING_ALLOWED_PERIOD));
     qExceededDays.setParameter("maxWsPerDay", maxWsCalls);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,8 +29,8 @@ import java.util.Map.Entry;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SQLQuery;
 import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.query.NativeQuery;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -106,7 +106,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
         + "  AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
         + "  AND isactive='Y'";
 
-    final SQLQuery alertRules = OBDal.getInstance().getSession().createSQLQuery(sql);
+    @SuppressWarnings("rawtypes")
+    final NativeQuery alertRules = OBDal.getInstance().getSession().createNativeQuery(sql);
     alertRules.setParameter("userId", OBContext.getOBContext().getUser().getId());
     alertRules.setParameter("roleId", OBContext.getOBContext().getRole().getId());
     return getAlertIdsFromAlertRules(getAlertRulesGroupedByFilterClause(alertRules), alertStatus);
@@ -116,7 +117,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
    * The method groups the AlertRule IDS by taking into account when they have the same filter
    * clause.
    */
-  private Map<String, List<String>> getAlertRulesGroupedByFilterClause(SQLQuery alertRules) {
+  @SuppressWarnings("rawtypes")
+  private Map<String, List<String>> getAlertRulesGroupedByFilterClause(NativeQuery alertRules) {
     Map<String, List<String>> alertRulesIdGroupByFilterClauses = new HashMap<>();
     try {
       for (Object resultObject : alertRules.list()) {
@@ -154,7 +156,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
           + " AND ad_org_id " + OBDal.getInstance().getReadableOrganizationsInClause()
           + " AND ad_alertrule_id IN (" + commaSeparated(alertRuleList.getValue()) + ")"
           + filterClause + " AND coalesce(to_char(status), 'NEW') = :status";
-      final SQLQuery sqlQuery = OBDal.getInstance().getSession().createSQLQuery(sql);
+      @SuppressWarnings("rawtypes")
+      final NativeQuery sqlQuery = OBDal.getInstance().getSession().createNativeQuery(sql);
       sqlQuery.setParameter("status", alertStatus);
       try {
         @SuppressWarnings("unchecked")

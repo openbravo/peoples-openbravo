@@ -23,11 +23,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -238,7 +238,7 @@ public class ReferencedInventoryUtil {
         "      case when res.attributeSetValue.id is not null then 1 else 0 end, " + //
         "      sr.quantity - sr.released asc  ";
     final Session session = OBDal.getInstance().getSession();
-    final Query sdQuery = session.createQuery(olHql);
+    final Query<Object[]> sdQuery = session.createQuery(olHql, Object[].class);
     sdQuery.setParameter("sdBinId", storageDetail.getStorageBin().getId());
     sdQuery.setParameter("toBindId", newStorageBin != null ? newStorageBin.getId()
         : "noStorageBinToIDShouldMatch");

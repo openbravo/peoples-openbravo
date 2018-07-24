@@ -28,12 +28,13 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+import org.hibernate.sql.JoinType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
@@ -507,7 +508,7 @@ public class MatchTransactionDao {
           FIN_BankStatementLine.class);
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION, "tr",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obcBsl.add(Restrictions.or(
           Restrictions.isNull(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION),
           Restrictions.eq("tr." + FIN_FinaccTransaction.PROPERTY_RECONCILIATION, reconciliation)));
@@ -553,7 +554,7 @@ public class MatchTransactionDao {
           FIN_BankStatementLine.class);
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION, "tr",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
 
       List<FIN_Reconciliation> afterReconciliations = getReconciliationListAfterDate(lastReconciliation);
       if (afterReconciliations.size() > 0) {
@@ -638,10 +639,10 @@ public class MatchTransactionDao {
           .append(" and not exists (select 1 from FIN_BankStatementLine as bsl where bsl.financialAccountTransaction = e)");
       hqlString.append(" and e.transactionDate <= :date");
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hqlString.toString());
+      final Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
       query.setParameter("account", reconciliation.getAccount().getId());
       query.setParameter("date", reconciliation.getEndingDate());
-      total = (BigDecimal) query.uniqueResult();
+      total = query.uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -656,7 +657,7 @@ public class MatchTransactionDao {
           FIN_BankStatementLine.class);
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION, "tr",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_ACCOUNT,
           reconciliation.getAccount()));
       obcBsl.add(Restrictions.eq("bs." + FIN_BankStatement.PROPERTY_PROCESSED, true));

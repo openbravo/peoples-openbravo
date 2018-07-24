@@ -26,7 +26,7 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.weld.WeldUtils;
@@ -182,6 +182,7 @@ public class ActiveInstanceProcess implements Process {
     }
   }
 
+  @SuppressWarnings("rawtypes")
   public static void updateShowProductionFields(String value) {
     String hql = "update ADPreference set searchKey = :value where property = 'showMRPandProductionFields' and module.id is null";
     Query q = OBDal.getInstance().getSession().createQuery(hql);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -67,7 +67,8 @@ public class SL_ProductPrice_PriceListVersion extends SimpleCallout {
       hqlString.append(" from " + RoleOrganization.ENTITY_NAME);
       hqlString.append(" where " + RoleOrganization.PROPERTY_ROLE + ".id = :roleId");
       hqlString.append(" and " + RoleOrganization.PROPERTY_ORGANIZATION + ".id = :orgId");
-      Query query = OBDal.getInstance().getSession().createQuery(hqlString.toString());
+      Query<String> query = OBDal.getInstance().getSession()
+          .createQuery(hqlString.toString(), String.class);
       query.setParameter("roleId", roleId);
       query.setParameter("orgId", orgId);
       query.setMaxResults(1);
