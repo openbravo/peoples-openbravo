@@ -98,6 +98,9 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
     if (dbSessionId != null) {
       ConnectionProvider conn = new DalConnectionProvider(false);
       AlertActionHandlerData.setLastPing(conn, dbSessionId);
+
+      // release locks on ad_session table
+      OBDal.getInstance().commitAndClose();
     }
     return true;
   }
