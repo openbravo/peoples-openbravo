@@ -18,10 +18,16 @@
  */
 package org.openbravo.client.application;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static org.openbravo.erpCommon.utility.StringCollectionUtils.commaSeparated;
+
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.ServletException;
@@ -41,7 +47,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.UsedByLink;
-import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -72,10 +77,7 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
     OBContext.setAdminMode();
     try {
       boolean updated = updateSessionPing();
-      long activeAlerts = 0L;
-      if (updated) {
-        activeAlerts = countActiveAlerts();
-      }
+      long activeAlerts = updated ? countActiveAlerts() : 0L;
       writeResponse(activeAlerts);
     } catch (Exception e) {
       throw new IllegalStateException(e);
@@ -102,14 +104,13 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
 
   private long countActiveAlerts() throws ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
-    // Do not execute the alerts if the system if being rebuilt
-    long total = 0L;
-    if (!"Y".equals(vars.getSessionValue("ApplyModules|BuildRunning"))) {
+
+    if ("Y".equals(vars.getSessionValue("ApplyModules|BuildRunning"))) {
       return 0L;
     }
-    // select the alert rules
-    final String hql = "select distinct(e.alertRule) from  "
-        + AlertRecipient.ENTITY_NAME
+
+    final String hql = "select distinct(e.alertRule)"
+        + " from ADAlertRecipient"
         + " e where e.alertRule.active = true and (e.userContact.id= :userId "
         + " or (e.userContact.id = null and e.role.id = :roleId))"
 
@@ -118,51 +119,50 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
         + " and e.alertRule.organization.id "
         + OBDal.getInstance().getReadableOrganizationsInClause();
 
-    final Query<AlertRule> qry = OBDal.getInstance().getSession().createQuery(hql, AlertRule.class);
-    qry.setParameter("userId", OBContext.getOBContext().getUser().getId());
-    qry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
+    final Query<AlertRule> qry = OBDal.getInstance().getSession().createQuery(hql, AlertRule.class)
+        .setParameter("userId", OBContext.getOBContext().getUser().getId())
+        .setParameter("roleId", OBContext.getOBContext().getRole().getId());
 
-    for (Object o : qry.list()) {
-      final AlertRule alertRule = (AlertRule) o;
-      final String whereClause = new UsedByLink().getWhereClause(vars, "",
-          alertRule.getFilterClause() == null ? "" : alertRule.getFilterClause());
-      final String sql = "select count(*) from AD_ALERT where COALESCE(to_char(STATUS), 'NEW')='NEW'"
-          + " AND AD_CLIENT_ID "
-          + OBDal.getInstance().getReadableClientsInClause()
-          + " AND AD_ORG_ID "
-          + OBDal.getInstance().getReadableOrganizationsInClause()
-          + " AND AD_ALERTRULE_ID = ? " + (whereClause == null ? "" : whereClause);
+    long total = qry.stream() //
+        .collect( //
+            groupingBy(rule -> Objects.toString(rule.getFilterClause(), ""))) // null can't be key
+        .values().stream() //
+        .mapToLong(rulesByFilterClause -> countActiveAlertsForRules(rulesByFilterClause, vars)) //
+        .sum();
 
-      PreparedStatement sqlQuery = null;
-      ResultSet rs = null;
-      try {
-        sqlQuery = new DalConnectionProvider(false).getPreparedStatement(sql);
-        sqlQuery.setString(1, alertRule.getId());
-        sqlQuery.execute();
-        rs = sqlQuery.getResultSet();
-        if (rs.next()) {
-          long rows = rs.getLong(1);
-          total += rows;
-          log4j.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'" + sql
-              + "' - Rows: " + rows);
-        }
-      } catch (Exception e) {
-        log4j.error("An error has ocurred when trying to process the alerts: " + e.getMessage(), e);
-      } finally {
-        try {
-          if (sqlQuery != null) {
-            sqlQuery.close();
-          }
-          if (rs != null) {
-            rs.close();
-          }
-        } catch (Exception e) {
-          log4j.error("An error has ocurred when trying to close the statement: " + e.getMessage(),
-              e);
-        }
-      }
-    }
     return total;
+  }
+
+  private long countActiveAlertsForRules(List<AlertRule> rules, VariablesSecureApp vars) {
+    String commonFilterClause = rules.get(0).getFilterClause();
+    List<String> ruleIds = rules.stream().map(AlertRule::getId).collect(toList());
+    final String sql = "select count(*) from AD_ALERT where COALESCE(STATUS, 'NEW')='NEW'"
+        + " AND AD_CLIENT_ID " + OBDal.getInstance().getReadableClientsInClause()
+        + " AND AD_ORG_ID " + OBDal.getInstance().getReadableOrganizationsInClause()
+        + " AND AD_ALERTRULE_ID IN   (" + commaSeparated(ruleIds) + ")" //
+        + getFilterSQL(commonFilterClause, vars);
+
+    try (PreparedStatement sqlQuery = new DalConnectionProvider(false).getPreparedStatement(sql)) {
+      sqlQuery.execute();
+      try (ResultSet rs = sqlQuery.getResultSet()) {
+        rs.next();
+        return rs.getLong(1);
+      }
+    } catch (Exception e) {
+      log4j.error("An error has ocurred when trying to process the alerts: " + e.getMessage(), e);
+      return 0L;
+    }
+  }
+
+  private String getFilterSQL(String filterClause, VariablesSecureApp vars) {
+    String whereClause;
+    try {
+      whereClause = new UsedByLink().getWhereClause(vars, "", filterClause);
+    } catch (ServletException ignore) {
+      log4j.error("Could not convert filter clause into SQL: " + filterClause, ignore);
+      whereClause = " AND 1=2"; // do not count if where clause is broken
+    }
+    return whereClause;
   }
 
   private void writeResponse(long activeAlerts) throws JSONException, IOException {
