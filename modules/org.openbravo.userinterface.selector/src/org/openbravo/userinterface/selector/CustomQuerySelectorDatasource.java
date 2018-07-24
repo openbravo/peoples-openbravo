@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,14 +32,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -81,10 +84,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     // creation of formats is done here because they are not thread safe
     final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
     final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
-    final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    final List<Object> typedParameters = new ArrayList<Object>();
+    final List<Map<String, Object>> result = new ArrayList<>();
+    final List<Object> typedParameters = new ArrayList<>();
     // Defaulted to endRow + 2 to check for more records while scrolling.
-    int totalRows = endRow + 2, rowCount = 0;
+    int totalRows = endRow + 2;
+    int rowCount = 0;
 
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
 
@@ -109,11 +113,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       String sortBy = parameters.get("_sortBy");
       HQL += getSortClause(sortBy, sel);
 
-      Query selQuery = OBDal.getInstance().getSession().createQuery(HQL);
+      Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(HQL, Tuple.class);
+
       for (int i = 0; i < typedParameters.size(); i++) {
         selQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
       }
-      String[] queryAliases = selQuery.getReturnAliases();
 
       if (startRow > 0) {
         selQuery.setFirstResult(startRow);
@@ -122,21 +126,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         selQuery.setMaxResults(endRow - startRow + 1);
       }
 
-      for (Object objResult : selQuery.list()) {
+      for (Tuple tuple : selQuery.list()) {
         rowCount++;
-        final Map<String, Object> data = new LinkedHashMap<String, Object>();
-        Object[] resultList = new Object[1];
-        if (objResult instanceof Object[]) {
-          resultList = (Object[]) objResult;
-        } else {
-          resultList[0] = objResult;
-        }
-
+        final Map<String, Object> data = new LinkedHashMap<>();
         for (SelectorField field : fields) {
           // TODO: throw an exception if the display expression doesn't match any returned alias.
-          for (int i = 0; i < queryAliases.length; i++) {
-            if (queryAliases[i].equals(field.getDisplayColumnAlias())) {
-              Object value = resultList[i];
+          for (TupleElement<?> tupleElement : tuple.getElements()) {
+            String alias = tupleElement.getAlias();
+            if (alias != null && alias.equals(field.getDisplayColumnAlias())) {
+              Object value = tuple.get(alias);
               if (value instanceof Date) {
                 value = xmlDateFormat.format(value);
               }
@@ -144,19 +142,17 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
                 value = xmlDateTimeFormat.format(value);
                 value = JsonUtils.convertToCorrectXSDFormat((String) value);
               }
-              data.put(queryAliases[i], value);
+              data.put(alias, value);
             }
           }
         }
         result.add(data);
       }
-      if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER))) {
-        if (startRow < endRow) {
-          if (rowCount < endRow) {
-            totalRows = rowCount;
-          }
-          parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(totalRows));
+      if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER)) && startRow < endRow) {
+        if (rowCount < endRow) {
+          totalRows = rowCount;
         }
+        parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(totalRows));
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -526,11 +522,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    *          order by.
    * @param sel
    *          The Selector that it is being used.
-   * @return The index of the query column related to the field.
+   * @return The index of the query column related to the field. Note that 0 will be returned if
+   *         there is no query column with an alias equal to the provided field name.
    */
   private int getFieldSortIndex(String fieldName, Selector sel) {
+    @SuppressWarnings("deprecation")
     final String[] queryAliases = OBDal.getInstance().getSession()
         .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1")).getReturnAliases();
+
     for (int i = 0; i < queryAliases.length; i++) {
       if (queryAliases[i].equals(fieldName)) {
         return i + 1;

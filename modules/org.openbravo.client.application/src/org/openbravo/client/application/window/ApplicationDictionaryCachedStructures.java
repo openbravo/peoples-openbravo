@@ -29,7 +29,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.hibernate.Hibernate;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.service.OBDal;
@@ -107,10 +107,10 @@ public class ApplicationDictionaryCachedStructures {
     log.info("ADCS initialized, use cache: {}", useCache);
   }
 
-  @SuppressWarnings("unchecked")
   private Set<String> getModulesInDevelopment() {
     final String query = "select m.id from ADModule m where m.inDevelopment=true";
-    final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
+    final Query<String> indevelMods = OBDal.getInstance().getSession()
+        .createQuery(query, String.class);
     return new HashSet<>(indevelMods.list());
   }
 

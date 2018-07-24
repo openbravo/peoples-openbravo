@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -91,10 +91,11 @@ public class FundsTransferGLItemDefaultValueExpression implements FilterExpressi
     hql.append(" and p.aPRMGlitem is not null ");
     hql.append(" order by t.levelno asc ");
 
-    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<GLItem> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), GLItem.class);
     query.setParameter("organizationId", organization.getId());
     query.setMaxResults(1);
-    final GLItem glItem = (GLItem) query.uniqueResult();
+    final GLItem glItem = query.uniqueResult();
     return glItem != null ? glItem.getId() : null;
   }
 

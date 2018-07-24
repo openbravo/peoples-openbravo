@@ -25,18 +25,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
-import org.hibernate.connection.ConnectionProvider;
-import org.hibernate.connection.DriverManagerConnectionProvider;
-import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.dialect.PostgreSQL82Dialect;
 import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.impl.SessionFactoryImpl;
+import org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Initializes and provides the session factory to the rest of the application. There are subclasses
@@ -46,7 +46,7 @@ import org.openbravo.dal.core.DalSessionFactory;
  */
 
 public abstract class SessionFactoryController {
-  private static final Logger log = Logger.getLogger(SessionFactoryController.class);
+  private static final Logger log = LoggerFactory.getLogger(SessionFactoryController.class);
 
   // note the order by is really important otherwise the build of
   // uniqueconstraints (ModelProvider) can fail with strange errors.
@@ -89,8 +89,7 @@ public abstract class SessionFactoryController {
 
   public static synchronized void setInstance(SessionFactoryController sfc) {
     if (sfc != null) {
-      log.debug("Setting instance of " + sfc.getClass().getName()
-          + " as session factory controller");
+      log.debug("Setting instance of {} as session factory controller", sfc.getClass().getName());
     } else {
       log.debug("Nullifying session factory controller");
     }
@@ -146,33 +145,25 @@ public abstract class SessionFactoryController {
     // which are actually used
     // NOTE: reads the hibernate.properties in the root of the classpath
     try {
-      configuration = new Configuration();
+      configuration = buildConfiguration();
       mapModel(configuration);
       setInterceptor(configuration);
 
       final Properties properties = getOpenbravoProperties();
-      bbddUser = properties.getProperty(Environment.USER);
+      bbddUser = properties.getProperty(AvailableSettings.USER);
       configuration.addProperties(properties);
 
       // second-level caching is disabled for now because not all data
       // access and updates go through hibernate.
       // TODO: move to configuration file
-      configuration.getProperties().setProperty(Environment.USE_SECOND_LEVEL_CACHE, "false");
-      configuration.getProperties().setProperty(Environment.USE_QUERY_CACHE, "false");
-      configuration.getProperties().setProperty(Environment.DEFAULT_BATCH_FETCH_SIZE, "50");
-      configuration.getProperties().setProperty(Environment.STATEMENT_BATCH_SIZE, "10");
-      configuration.getProperties().setProperty(Environment.STATEMENT_FETCH_SIZE, "50");
-      if (properties.containsKey(Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES)) {
-        configuration.getProperties().setProperty(
-            Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES,
-            properties.getProperty(Environment.QUERY_PLAN_CACHE_MAX_STRONG_REFERENCES));
-      }
-      if (properties.containsKey(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES)) {
-        configuration.getProperties().setProperty(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES,
-            properties.getProperty(Environment.QUERY_PLAN_CACHE_MAX_SOFT_REFERENCES));
-      }
-
-      configuration.getProperties().setProperty("javax.persistence.validation.mode", "NONE");
+      configuration.getProperties().setProperty(AvailableSettings.USE_SECOND_LEVEL_CACHE, "false");
+      configuration.getProperties().setProperty(AvailableSettings.USE_QUERY_CACHE, "false");
+      configuration.getProperties().setProperty(AvailableSettings.BATCH_FETCH_STYLE, "LEGACY");
+      configuration.getProperties().setProperty(AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, "50");
+      configuration.getProperties().setProperty(AvailableSettings.STATEMENT_BATCH_SIZE, "10");
+      configuration.getProperties().setProperty(AvailableSettings.STATEMENT_FETCH_SIZE, "50");
+      configuration.getProperties().setProperty(AvailableSettings.JPA_VALIDATION_MODE, "NONE");
+      configuration.getProperties().setProperty(AvailableSettings.CHECK_NULLABILITY, "false");
       // TODO: consider setting isolation level explicitly
       // configuration.getProperties().setProperty(Environment.ISOLATION,
       // "" + Connection.TRANSACTION_READ_COMMITTED);
@@ -184,21 +175,25 @@ public abstract class SessionFactoryController {
       SessionFactory delegateSessionFactory = configuration.buildSessionFactory();
       dalSessionFactory.setDelegateSessionFactory(delegateSessionFactory);
 
-      // when session factory is created, a basic Hibernate pool is also created, let's reset it to
-      // prevent leaked connections
-      if (delegateSessionFactory instanceof SessionFactoryImpl) {
-        ConnectionProvider hibernatePool = ((SessionFactoryImpl) delegateSessionFactory)
-            .getSettings().getConnectionProvider();
-        if (hibernatePool instanceof DriverManagerConnectionProvider) {
-          hibernatePool.close();
-        }
-      }
       sessionFactory = dalSessionFactory;
 
       log.debug("Session Factory initialized");
+    } catch (final OBException obex) {
+      throw obex;
     } catch (final Throwable t) {
       throw new OBException(t);
     }
+  }
+
+  /**
+   * Creates the Configuration instance used to build the SessionFactory. It can be extended by the
+   * subclasses for example if they need to register a Service Provider Interface to customize the
+   * Hibernate internals.
+   * 
+   * @return a {@code Configuration} instance used to build the {@code SessionFactory}
+   */
+  protected Configuration buildConfiguration() {
+    return new Configuration();
   }
 
   private void registerSqlFunctions() {
@@ -207,12 +202,21 @@ public abstract class SessionFactoryController {
       return;
     }
     for (Entry<String, SQLFunction> entry : sqlFunctions.entrySet()) {
+      log.debug("Registering SQL function: {}", entry.getKey());
       configuration.addSqlFunction(entry.getKey(), entry.getValue());
     }
   }
 
   protected Map<String, SQLFunction> getSQLFunctions() {
     return Collections.emptyMap();
+  }
+
+  public void closeHibernatePool() {
+    ConnectionProvider hibernatePool = sessionFactory.getSessionFactoryOptions()
+        .getServiceRegistry().getService(ConnectionProvider.class);
+    if (hibernatePool != null && hibernatePool instanceof DriverManagerConnectionProviderImpl) {
+      ((DriverManagerConnectionProviderImpl) hibernatePool).stop();
+    }
   }
 
   protected abstract void mapModel(Configuration theConfiguration);
@@ -252,16 +256,16 @@ public abstract class SessionFactoryController {
   private Properties getPostgresHbProps(Properties obProps) {
     isPostgresDatabase = true;
     final Properties props = new Properties();
-    props.setProperty(Environment.DIALECT, PostgreSQLDialect.class.getName());
+    props.setProperty(AvailableSettings.DIALECT, PostgreSQL82Dialect.class.getName());
     if (isJNDIModeOn(obProps)) {
       setJNDI(obProps, props);
     } else {
-      props.setProperty(Environment.DRIVER, "org.postgresql.Driver");
-      props.setProperty(Environment.URL,
+      props.setProperty(AvailableSettings.DRIVER, "org.postgresql.Driver");
+      props.setProperty(AvailableSettings.URL,
           obProps.getProperty("bbdd.url") + "/" + obProps.getProperty("bbdd.sid"));
 
-      props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
-      props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
+      props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
+      props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
     }
     return props;
   }
@@ -269,14 +273,14 @@ public abstract class SessionFactoryController {
   private Properties getOracleHbProps(Properties obProps) {
     isPostgresDatabase = false;
     final Properties props = new Properties();
-    props.setProperty(Environment.DIALECT, OBOracle10gDialect.class.getName());
+    props.setProperty(AvailableSettings.DIALECT, OBOracle10gDialect.class.getName());
     if (isJNDIModeOn(obProps)) {
       setJNDI(obProps, props);
     } else {
-      props.setProperty(Environment.DRIVER, "oracle.jdbc.driver.OracleDriver");
-      props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
-      props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
-      props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
+      props.setProperty(AvailableSettings.DRIVER, "oracle.jdbc.driver.OracleDriver");
+      props.setProperty(AvailableSettings.URL, obProps.getProperty("bbdd.url"));
+      props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
+      props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
     }
     return props;
   }
@@ -284,21 +288,21 @@ public abstract class SessionFactoryController {
   private Properties getDB2HbProps(Properties obProps) {
     isPostgresDatabase = false;
     final Properties props = new Properties();
-    props.setProperty(Environment.DIALECT, OBDB2v97Dialect.class.getName());
+    props.setProperty(AvailableSettings.DIALECT, OBDB2v97Dialect.class.getName());
     if (isJNDIModeOn(obProps)) {
       setJNDI(obProps, props);
     } else {
-      props.setProperty(Environment.DRIVER, "com.ibm.db2.jcc.DB2Driver");
-      props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
-      props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
-      props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
+      props.setProperty(AvailableSettings.DRIVER, "com.ibm.db2.jcc.DB2Driver");
+      props.setProperty(AvailableSettings.URL, obProps.getProperty("bbdd.url"));
+      props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
+      props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
     }
     return props;
   }
 
   private void setJNDI(Properties obProps, Properties hbProps) {
-    log.info("Using JNDI with resource name-> " + obProps.getProperty("JNDI.resourceName"));
-    hbProps.setProperty(Environment.DATASOURCE,
+    log.info("Using JNDI with resource name-> {}", obProps.getProperty("JNDI.resourceName"));
+    hbProps.setProperty(AvailableSettings.DATASOURCE,
         "java:/comp/env/" + obProps.getProperty("JNDI.resourceName"));
   }
 

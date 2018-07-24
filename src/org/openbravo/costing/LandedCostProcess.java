@@ -31,11 +31,11 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
@@ -239,7 +239,8 @@ public class LandedCostProcess {
     hql.append(" , gsl." + ShipmentInOutLine.PROPERTY_LINENO);
     hql.append(" , amt");
 
-    Query qryLCRLA = OBDal.getInstance().getSession().createQuery(hql.toString());
+    Query<Object[]> qryLCRLA = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Object[].class);
     qryLCRLA.setParameter("lc", landedCost);
 
     ScrollableResults receiptamts = qryLCRLA.scroll(ScrollMode.FORWARD_ONLY);

@@ -28,8 +28,10 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.database.ExternalConnectionPool;
 
 /**
  * This class is responsible for initializing the DAL layer. It ensures that the model is read in
@@ -82,6 +84,12 @@ public class DalLayerInitializer implements OBSingleton {
     SessionFactoryController.setInstance(getDalSessionFactoryController());
     SessionFactoryController.getInstance().initialize();
 
+    if (isUsingExternalConnectionPool()) {
+      // when the session factory is created by the SessionFactoryController, a basic Hibernate pool
+      // is also created, let's close it to prevent leaked connections
+      SessionFactoryController.getInstance().closeHibernatePool();
+    }
+
     // reset the session
     SessionHandler.deleteSessionHandler();
 
@@ -119,6 +127,21 @@ public class DalLayerInitializer implements OBSingleton {
    */
   public void setSQLFunctions(Map<String, SQLFunction> sqlFunctions) {
     this.sqlFunctions = sqlFunctions;
+  }
+
+  private boolean isUsingExternalConnectionPool() {
+    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("db.externalPoolClassName");
+    if (poolClassName == null || "".equals(poolClassName)) {
+      return false;
+    }
+    try {
+      // check whether the external connection pool is present in the classpath
+      ExternalConnectionPool.getInstance(poolClassName);
+      return true;
+    } catch (ReflectiveOperationException | NoClassDefFoundError e) {
+      return false;
+    }
   }
 
   public boolean isInitialized() {

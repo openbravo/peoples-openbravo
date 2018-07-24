@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
@@ -89,7 +89,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
         + "   and t.ad_table_id = '155'"
         + "   and t.ad_client_id = :clientId";
 
-    SQLQuery qry = OBDal.getInstance().getSession().createSQLQuery(sql);
+    @SuppressWarnings("rawtypes")
+    NativeQuery qry = OBDal.getInstance().getSession().createNativeQuery(sql);
     qry.setParameter("clientId", getClientId());
 
     @SuppressWarnings("unchecked")

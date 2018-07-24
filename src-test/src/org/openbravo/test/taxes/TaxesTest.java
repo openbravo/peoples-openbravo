@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,8 +32,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -706,6 +706,7 @@ public class TaxesTest extends OBBaseTest {
       update.append(" update " + TaxRate.ENTITY_NAME);
       update.append(" set " + TaxRate.PROPERTY_DOCTAXAMOUNT + " = :docTax");
       update.append(" where " + TaxRate.PROPERTY_CLIENT + ".id = :clientId");
+      @SuppressWarnings("rawtypes")
       Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
       updateQry.setParameter("docTax", isStart ? "L" : "D");
       updateQry.setParameter("clientId", CLIENT_ID);

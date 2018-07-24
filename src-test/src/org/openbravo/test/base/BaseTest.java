@@ -26,9 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
@@ -47,6 +44,9 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.model.ad.access.User;
+
+import junit.framework.TestCase;
+import junit.framework.TestResult;
 
 /**
  * BaseTest class is deprecated. All test case that works with old notation, will be working
@@ -280,7 +280,7 @@ public class BaseTest extends TestCase {
     if (userIds == null) {
       setTestUserContext();
 
-      String[] excludedUserIds = { "100", TEST_USER_ID };
+      Object[] excludedUserIds = { "100", TEST_USER_ID };
       OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
       obc.add(Restrictions.not(Restrictions.in(User.PROPERTY_ID, excludedUserIds)));
       obc.add(Restrictions.isNotEmpty(User.PROPERTY_ADUSERROLESLIST));

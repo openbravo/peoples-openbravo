@@ -47,9 +47,9 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.SQLGrammarException;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -508,23 +508,23 @@ public class DataSourceServlet extends BaseKernelServlet {
               continue;
             }
             String referenceId = col.getReferenceSearchKey().getId();
-            Map<String, String> reflists = new HashMap<String, String>();
+            Map<String, String> reflists = new HashMap<>();
             final String hql = "select al.searchKey, al.name from ADList al where "
                 + " al.reference.id=:referenceId and al.active=true";
-            final Query qry = OBDal.getInstance().getSession().createQuery(hql);
+            final Query<Object[]> qry = OBDal.getInstance().getSession()
+                .createQuery(hql, Object[].class);
             qry.setParameter("referenceId", referenceId);
-            for (Object o : qry.list()) {
-              final Object[] row = (Object[]) o;
+            for (Object[] row : qry.list()) {
               reflists.put(row[0].toString(), row[1].toString());
             }
             final String hqltrl = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
                 + " al.reference.id=:referenceId and trl.listReference=al and trl.language.id=:languageId"
                 + " and al.active=true and trl.active=true";
-            final Query qrytrl = OBDal.getInstance().getSession().createQuery(hqltrl);
+            final Query<Object[]> qrytrl = OBDal.getInstance().getSession()
+                .createQuery(hqltrl, Object[].class);
             qrytrl.setParameter("referenceId", referenceId);
             qrytrl.setParameter("languageId", userLanguageId);
-            for (Object o : qrytrl.list()) {
-              final Object[] row = (Object[]) o;
+            for (Object[] row : qrytrl.list()) {
               reflists.put(row[0].toString(), row[1].toString());
             }
             refListCols.add(propKey);

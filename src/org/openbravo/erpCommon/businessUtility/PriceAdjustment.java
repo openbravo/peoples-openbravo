@@ -34,6 +34,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
@@ -146,7 +147,7 @@ public class PriceAdjustment {
     String hql = "as p ";
     hql += "where active = true ";
     hql += "and client = :client ";
-    hql += "and ad_isorgincluded(:org, p.organization.id, p.client.id) <> -1 ";
+    hql += "and ad_isorgincluded(:orgId, p.organization.id, p.client.id) <> -1 ";
     hql += "and (endingDate is null or trunc(endingDate) + 1 > :date) ";
     hql += "and trunc(startingDate)<=:date ";
     hql += "and p.discountType.id = '5D4BAF6BB86D4D2C9ED3D5A6FC051579' ";
@@ -240,13 +241,13 @@ public class PriceAdjustment {
     hql += "         from PricingAdjustmentOrganization o";
     hql += "        where active = true";
     hql += "          and o.priceAdjustment = p";
-    hql += "          and o.organization.id = :org)) ";
+    hql += "          and o.organization.id = :orgId)) ";
     hql += "   or (includedOrganizations='N' ";
     hql += "  and  exists (select 1 ";
     hql += "         from PricingAdjustmentOrganization o";
     hql += "        where active = true";
     hql += "          and o.priceAdjustment = p";
-    hql += "          and o.organization.id = :org )) ";
+    hql += "          and o.organization.id = :orgId )) ";
     hql += "    ) ";
 
     // product characteristic
@@ -286,7 +287,8 @@ public class PriceAdjustment {
     OBQuery<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> q = OBDal.getInstance()
         .createQuery(org.openbravo.model.pricing.priceadjustment.PriceAdjustment.class, hql);
     q.setNamedParameter("client", orderOrInvoice.get(Invoice.PROPERTY_CLIENT));
-    q.setNamedParameter("org", orderOrInvoice.get(Invoice.PROPERTY_ORGANIZATION));
+    q.setNamedParameter("orgId",
+        ((Organization) orderOrInvoice.get(Invoice.PROPERTY_ORGANIZATION)).getId());
     q.setNamedParameter("priceList", orderOrInvoice.get(Invoice.PROPERTY_PRICELIST));
     q.setNamedParameter("bp", orderOrInvoice.get(Invoice.PROPERTY_BUSINESSPARTNER));
 

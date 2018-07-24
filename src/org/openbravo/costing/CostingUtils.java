@@ -31,10 +31,10 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -437,7 +437,8 @@ public class CostingUtils {
     } else {
       select.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     }
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<BigDecimal> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), BigDecimal.class);
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("dateTo", dateTo);
     if (existsCumulatedStock) {
@@ -460,7 +461,7 @@ public class CostingUtils {
     } else {
       trxQry.setParameterList("orgs", orgs);
     }
-    BigDecimal stock = (BigDecimal) trxQry.uniqueResult();
+    BigDecimal stock = trxQry.uniqueResult();
     if (stock == null) {
       stock = BigDecimal.ZERO;
     }
@@ -571,7 +572,8 @@ public class CostingUtils {
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
     select.append(" tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Object[]> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Object[].class);
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("dateTo", dateTo);
     if (existsCumulatedValuation) {
@@ -712,11 +714,12 @@ public class CostingUtils {
     select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Date> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Date.class);
     trxQry.setParameterList("orgs", orgs);
-    Object maxDate = trxQry.uniqueResult();
+    Date maxDate = trxQry.uniqueResult();
     if (maxDate != null) {
-      return (Date) maxDate;
+      return maxDate;
     }
     return null;
   }
@@ -849,7 +852,8 @@ public class CostingUtils {
     where.append(" order by w." + Warehouse.PROPERTY_NAME + " desc");
     where.append(" , il." + InventoryCountLine.PROPERTY_LINENO + " desc");
 
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<String> qry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), String.class);
     OBDal.getInstance().refresh(trx.getPhysicalInventoryLine().getPhysInventory());
     qry.setParameter("iaul", trx.getPhysicalInventoryLine().getPhysInventory()
         .getInventoryAmountUpdateLineInventoriesInitInventoryList().get(0).getCaInventoryamtline());
@@ -857,7 +861,7 @@ public class CostingUtils {
       qry.setParameter("warehouse", trx.getStorageBin().getWarehouse());
     }
     qry.setMaxResults(1);
-    return StringUtils.equals(trx.getId(), (String) qry.uniqueResult());
+    return StringUtils.equals(trx.getId(), qry.uniqueResult());
   }
 
   @Deprecated
@@ -881,7 +885,8 @@ public class CostingUtils {
     where.append("               and l." + Locator.PROPERTY_CLIENT + " = c)");
     where.append(" and c = :client");
 
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<Client> qry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), Client.class);
     qry.setParameter("client", client);
     qry.setMaxResults(1);
     return !qry.list().isEmpty();
@@ -900,7 +905,8 @@ public class CostingUtils {
     where.append("               where invs." + InventoryStatus.PROPERTY_OVERISSUE + " = true");
     where.append("               and io." + ShipmentInOut.PROPERTY_ID + " = :shipmentInOutID)");
 
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    Query<Client> qry = OBDal.getInstance().getSession()
+        .createQuery(where.toString(), Client.class);
     qry.setParameter("shipmentInOutID", shipmentInOutId);
     qry.setMaxResults(1);
     return !qry.list().isEmpty();

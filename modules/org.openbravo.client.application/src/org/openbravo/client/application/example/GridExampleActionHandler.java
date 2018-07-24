@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -89,11 +89,10 @@ public class GridExampleActionHandler extends BaseActionHandler {
     try {
       final String hql = "select module.id, module.name, count(window) from ADModule module, ADWindow window "
           + " where window.module=module group by module.id, module.name";
-      Query qry = OBDal.getInstance().getSession().createQuery(hql);
+      Query<Object[]> qry = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
 
       final List<JSONObject> dataList = new ArrayList<JSONObject>();
-      for (Object o : qry.list()) {
-        final Object[] os = (Object[]) o;
+      for (Object[] os : qry.list()) {
         final JSONObject data = new JSONObject();
         data.put(ID, os[0]);
         data.put(NAME, os[1]);

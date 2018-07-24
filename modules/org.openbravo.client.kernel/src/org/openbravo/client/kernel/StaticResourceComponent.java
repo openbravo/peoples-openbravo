@@ -19,6 +19,7 @@
 package org.openbravo.client.kernel;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -174,6 +175,15 @@ public class StaticResourceComponent extends BaseComponent {
         return staticResourceFileName;
       }
 
+      if (log.isDebugEnabled()) {
+        log.debug("Processing static resources for app " + appName);
+        List<String> providers = new ArrayList<>();
+        for (ComponentProvider provider : componentProviders) {
+          providers.add(provider.getClass().toString());
+        }
+        log.debug("  Injected providers: " + providers);
+      }
+
       final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
       final ServletContext context = (ServletContext) getParameters().get(
           KernelConstants.SERVLET_CONTEXT);
@@ -187,8 +197,8 @@ public class StaticResourceComponent extends BaseComponent {
       }
 
       int cntDynamicScripts = 0;
-
       for (Module module : modules) {
+        log.debug("  * " + module);
         for (ComponentProvider provider : componentProviders) {
           final List<ComponentResource> resources = provider.getGlobalComponentResources();
           if (resources == null || resources.size() == 0) {
@@ -202,8 +212,8 @@ public class StaticResourceComponent extends BaseComponent {
                 continue;
               }
 
-              log.debug("Processing resource: " + resource);
               String resourcePath = resource.getPath();
+              int size = -1;
               if (resource.getType() == ComponentResourceType.Stylesheet) {
                 // do these differently...
               } else if (resource.getType() == ComponentResourceType.Static) {
@@ -211,7 +221,9 @@ public class StaticResourceComponent extends BaseComponent {
                   final String[] pathParts = WebServiceUtil.getInstance().getSegments(
                       resourcePath.substring(KernelConstants.KERNEL_JAVA_PACKAGE.length()));
                   final Component component = provider.getComponent(pathParts[1], getParameters());
-                  sb.append(ComponentGenerator.getInstance().generate(component)).append("\n");
+                  String c = ComponentGenerator.getInstance().generate(component);
+                  size = c.length();
+                  sb.append(c).append("\n");
                 } else {
 
                   // Skin version handling
@@ -232,6 +244,7 @@ public class StaticResourceComponent extends BaseComponent {
                       continue;
                     }
                     String resourceContents = FileUtils.readFileToString(file, "UTF-8");
+                    size = resourceContents.length();
                     sb.append(resourceContents).append("\n");
                   } catch (Exception e) {
                     log.error("Error reading file: " + resource, e);
@@ -250,6 +263,8 @@ public class StaticResourceComponent extends BaseComponent {
               } else {
                 log.error("Resource " + resource + " not supported");
               }
+
+              log.debug("      resource: " + resource + " - size: " + size);
             }
           }
         }
@@ -310,6 +325,7 @@ public class StaticResourceComponent extends BaseComponent {
       } else {
         output = sb.toString();
       }
+
       final String md5 = DigestUtils.md5Hex(output);
       final String getTargetLocation = context.getRealPath(GEN_TARGET_LOCATION);
       final File dir = new File(getTargetLocation);
@@ -320,11 +336,13 @@ public class StaticResourceComponent extends BaseComponent {
 
       if (!outFile.exists()) {
         try {
-          log.debug("Writing file: " + outFile.getAbsolutePath());
+          log.debug("Writing file: " + " - size " + output.length() + " - size " + output.length());
           FileUtils.writeStringToFile(outFile, output, "UTF-8");
         } catch (Exception e) {
           log.error("Error writing file: " + e.getMessage(), e);
         }
+      } else {
+        log.debug("Resource " + outFile + " already existed, keeping it. Size - " + output.length());
       }
 
       if (!isInDevelopment()) {

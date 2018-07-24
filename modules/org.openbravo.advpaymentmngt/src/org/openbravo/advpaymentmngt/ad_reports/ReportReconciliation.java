@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -251,7 +252,7 @@ public class ReportReconciliation extends HttpSecureAppServlet {
           FIN_BankStatementLine.class);
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT, "bs");
       obcBsl.createAlias(FIN_BankStatementLine.PROPERTY_FINANCIALACCOUNTTRANSACTION, "tr",
-          OBCriteria.LEFT_JOIN);
+          JoinType.LEFT_OUTER_JOIN);
       obcBsl.add(Restrictions.le(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE,
           recon.getEndingDate()));
       List<FIN_Reconciliation> afterReconciliations = MatchTransactionDao

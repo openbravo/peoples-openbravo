@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,7 +22,7 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -43,8 +43,7 @@ public class InvoiceEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -60,6 +59,7 @@ public class InvoiceEventHandler extends EntityPersistenceEventObserver {
       StringBuilder deleteHql = new StringBuilder();
       deleteHql.append(" delete from " + InvoiceDiscount.ENTITY_NAME);
       deleteHql.append(" where " + InvoiceDiscount.PROPERTY_INVOICE + ".id = :invoiceId");
+      @SuppressWarnings("rawtypes")
       Query deleteQry = OBDal.getInstance().getSession().createQuery(deleteHql.toString());
       deleteQry.setParameter("invoiceId", invoiceId);
       deleteQry.executeUpdate();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.utility.Tree;
@@ -35,8 +35,8 @@ import org.openbravo.model.ad.utility.TreeNode;
 public class TreeUtility {
   private static final Logger log4j = Logger.getLogger(TreeUtility.class);
 
-  private Map<String, Set<String>> childTrees = new HashMap<String, Set<String>>();
-  private Map<String, Set<String>> naturalTrees = new HashMap<String, Set<String>>();
+  private Map<String, Set<String>> childTrees = new HashMap<>();
+  private Map<String, Set<String>> naturalTrees = new HashMap<>();
 
   /**
    * Gets Natural tree for the given node
@@ -45,10 +45,10 @@ public class TreeUtility {
     initialize(treeType);
     Set<String> result;
     if (naturalTrees.get(nodeId) == null) {
-      result = new HashSet<String>();
+      result = new HashSet<>();
       result.add(nodeId);
     } else {
-      result = new HashSet<String>(naturalTrees.get(nodeId));
+      result = new HashSet<>(naturalTrees.get(nodeId));
     }
     log4j.debug("Natural Tree(" + treeType + ") for the node" + nodeId + ":" + result.toString());
     return result;
@@ -60,7 +60,7 @@ public class TreeUtility {
   public Set<String> getChildTree(String nodeId, String treeType, boolean includeNode) {
     initialize(treeType);
     Set<String> childNode = this.getChildNode(nodeId, treeType);
-    Set<String> result = new HashSet<String>();
+    Set<String> result = new HashSet<>();
 
     if (includeNode)
       result.add(nodeId);
@@ -81,9 +81,9 @@ public class TreeUtility {
   public Set<String> getChildNode(String nodeId, String treeType) {
     initialize(treeType);
     if (childTrees.get(nodeId) == null) {
-      return new HashSet<String>();
+      return new HashSet<>();
     } else {
-      return new HashSet<String>(childTrees.get(nodeId));
+      return new HashSet<>(childTrees.get(nodeId));
     }
   }
 
@@ -92,21 +92,20 @@ public class TreeUtility {
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
     final String qryStr = "select t from " + Tree.class.getName() + " t where treetype='"
         + treeType + "' and client.id='" + clientId + "'";
-    final Query qry = SessionHandler.getInstance().createQuery(qryStr);
-
-    @SuppressWarnings("unchecked")
+    final Query<Tree> qry = SessionHandler.getInstance().createQuery(qryStr, Tree.class);
     final List<Tree> ts = qry.list();
-    final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+
+    final List<TreeNode> treeNodes = new ArrayList<>();
     for (final Tree t : ts) {
       final String nodeQryStr = "select tn from " + TreeNode.class.getName()
           + " tn where tn.tree.id='" + t.getId() + "'";
-      final Query nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr);
-      @SuppressWarnings("unchecked")
+      final Query<TreeNode> nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr,
+          TreeNode.class);
       final List<TreeNode> tns = nodeQry.list();
       treeNodes.addAll(tns);
     }
 
-    final List<Node> nodes = new ArrayList<Node>(treeNodes.size());
+    final List<Node> nodes = new ArrayList<>(treeNodes.size());
     for (final TreeNode tn : treeNodes) {
       final Node on = new Node();
       on.setTreeNode(tn);
@@ -120,7 +119,7 @@ public class TreeUtility {
     for (final Node on : nodes) {
       naturalTrees.put(on.getTreeNode().getNode(), on.getNaturalTree());
       if (on.getChildren() != null) {
-        Set<String> os = new HashSet<String>();
+        Set<String> os = new HashSet<>();
         for (Node o : on.getChildren())
           os.add(o.getTreeNode().getNode());
         childTrees.put(on.getTreeNode().getNode(), os);
@@ -133,7 +132,7 @@ class Node {
 
   private TreeNode treeNode;
   private Node parent;
-  private List<Node> children = new ArrayList<Node>();
+  private List<Node> children = new ArrayList<>();
 
   private Set<String> naturalTreeParent = null;
   private Set<String> naturalTreeChildren = null;
@@ -158,7 +157,7 @@ class Node {
 
   public Set<String> getNaturalTree() {
     if (naturalTree == null) {
-      naturalTree = new HashSet<String>();
+      naturalTree = new HashSet<>();
       naturalTree.add(getTreeNode().getNode());
       if (getParent() != null) {
         getParent().getParentPath(naturalTree);
@@ -172,7 +171,7 @@ class Node {
 
   public void getParentPath(Set<String> theNaturalTree) {
     if (naturalTreeParent == null) {
-      naturalTreeParent = new HashSet<String>();
+      naturalTreeParent = new HashSet<>();
       naturalTreeParent.add(getTreeNode().getNode());
       if (getParent() != null) {
         getParent().getParentPath(naturalTreeParent);
@@ -183,7 +182,7 @@ class Node {
 
   public void getChildPath(Set<String> theNaturalTree) {
     if (naturalTreeChildren == null) {
-      naturalTreeChildren = new HashSet<String>();
+      naturalTreeChildren = new HashSet<>();
       naturalTreeChildren.add(getTreeNode().getNode());
       for (final Node child : getChildren()) {
         child.getChildPath(naturalTreeChildren);

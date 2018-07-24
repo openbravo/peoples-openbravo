@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2017 Openbravo SLU
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,9 +32,9 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -145,6 +145,7 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       delete.append(" where " + ValuedStockAggregated.PROPERTY_STARTINGDATE + " >= :dateFrom");
       delete.append(" and " + ValuedStockAggregated.PROPERTY_ORGANIZATION + ".id in :orgs");
 
+      @SuppressWarnings("rawtypes")
       Query queryDelete = OBDal.getInstance().getSession().createQuery(delete.toString());
       queryDelete.setParameter("dateFrom", dateFrom);
       queryDelete.setParameterList("orgs", orgs);
@@ -337,15 +338,15 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
     select.append("       )");
     select.append(" and p.organization in (:org)");
 
-    Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
+    Query<Date> trxQry = OBDal.getInstance().getSession()
+        .createQuery(select.toString(), Date.class);
     trxQry.setParameter("org", legalEntity);
     trxQry.setMaxResults(1);
 
     try {
-      @SuppressWarnings("unchecked")
-      List<Object> objetctList = trxQry.list();
+      List<Date> objetctList = trxQry.list();
       if (objetctList.size() > 0) {
-        startingDate = (Date) objetctList.get(0);
+        startingDate = objetctList.get(0);
       } else {
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         startingDate = (Date) formatter.parse("01-01-9999");

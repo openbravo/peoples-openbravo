@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -149,9 +149,9 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
       final String hql = "select sum(quantity) from ProcurementPOInvoiceMatch "
           + "where goodsShipmentLine is not null and salesOrderLine=:orderLine";
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hql);
+      final Query<BigDecimal> query = session.createQuery(hql, BigDecimal.class);
       query.setParameter("orderLine", ol);
-      final BigDecimal sum = (BigDecimal) query.uniqueResult();
+      final BigDecimal sum = query.uniqueResult();
       log.debug(sum);
     }
   }
@@ -221,11 +221,10 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
     // final Session session = OBDal.getInstance().getSession();
     // session.createQuery(hql.toString());
-    final Query query = OBDal.getInstance().getSession().createQuery(hql);
+    final Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
     query.setParameter("bpId", "1000017");
 
-    for (Object o : query.list()) {
-      final Object[] os = (Object[]) o;
+    for (Object[] os : query.list()) {
       for (Object result : os) {
         log.debug(result);
       }

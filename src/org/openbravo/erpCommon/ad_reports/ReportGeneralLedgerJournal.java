@@ -37,7 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -1145,11 +1145,12 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       where.append(" and d." + DocumentType.PROPERTY_CLIENT + ".id = :client");
       where.append(" group by d." + DocumentType.PROPERTY_DOCUMENTCATEGORY);
       where.append(" , t." + Table.PROPERTY_DBTABLENAME);
-      Query qry = OBDal.getReadOnlyInstance().getSession().createQuery(where.toString());
+      Query<String> qry = OBDal.getReadOnlyInstance().getSession()
+          .createQuery(where.toString(), String.class);
       qry.setMaxResults(1);
       qry.setParameter("document", strDocument);
       qry.setParameter("client", strClient);
-      String tablename = (String) qry.uniqueResult();
+      String tablename = qry.uniqueResult();
 
       if (StringUtils.isBlank(tablename)) {
         return null;

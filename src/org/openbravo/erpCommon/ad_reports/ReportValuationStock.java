@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -604,7 +604,6 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private List<String> getWarehouses(String clientId, String orgId) {
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId);
@@ -613,10 +612,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     hqlString.append(" from Warehouse as e");
     hqlString.append(" where e.organization.id in (:orgList)");
     hqlString.append(" and e.client.id = :clientId");
-    Query qry = OBDal.getReadOnlyInstance().getSession().createQuery(hqlString.toString());
+    Query<String> qry = OBDal.getReadOnlyInstance().getSession()
+        .createQuery(hqlString.toString(), String.class);
     qry.setParameterList("orgList", osp.getNaturalTree(orgId));
     qry.setParameter("clientId", clientId);
-    return (List<String>) qry.list();
+    return qry.list();
   }
 
   public String getServletInfo() {

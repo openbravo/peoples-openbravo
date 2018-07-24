@@ -312,7 +312,8 @@ public class AttachImplementationManager {
       final ZipOutputStream dest = new ZipOutputStream(os);
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-          Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
+          Restrictions.eq("table.id", tableId),
+          Restrictions.in("record", (Object[]) recordIds.split(",")));
       attachmentFiles.setFilterOnReadableOrganization(false);
       for (Attachment attachmentFile : attachmentFiles.list()) {
         checkReadableAccess(attachmentFile);

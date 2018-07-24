@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,7 @@ package org.openbravo.erpCommon.ad_actionButton;
 import java.math.BigDecimal;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -191,9 +191,9 @@ public class SequenceProductCreate implements Process {
   private static Long getLineNum(String SequenceId) throws Exception {
     String hql = "  SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue FROM ManufacturingOperationProduct l WHERE l.mASequence.id= '"
         + SequenceId + "'";
-    Query q = OBDal.getInstance().getSession().createQuery(hql);
+    Query<Long> q = OBDal.getInstance().getSession().createQuery(hql, Long.class);
     try {
-      Long result = (Long) q.uniqueResult();
+      Long result = q.uniqueResult();
       return result == null ? 0L : result;
     } catch (Exception e) {
       // Unique result throws exception if more than one line is returned.

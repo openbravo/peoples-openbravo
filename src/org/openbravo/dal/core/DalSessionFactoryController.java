@@ -19,6 +19,9 @@
 
 package org.openbravo.dal.core;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,11 +29,13 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.function.SQLFunction;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Initializes and provides the session factory for the runtime dal layer. This
@@ -42,7 +47,7 @@ import org.openbravo.base.session.SessionFactoryController;
  */
 
 public class DalSessionFactoryController extends SessionFactoryController {
-  private static final Logger log = Logger.getLogger(DalSessionFactoryController.class);
+  private static final Logger log = LoggerFactory.getLogger(DalSessionFactoryController.class);
 
   @Inject
   @Any
@@ -52,10 +57,31 @@ public class DalSessionFactoryController extends SessionFactoryController {
 
   @Override
   protected void mapModel(Configuration configuration) {
-    final String mapping = DalMappingGenerator.getInstance().generateMapping();
-    log.debug("Generated mapping: ");
-    log.debug(mapping);
-    configuration.addXML(mapping);
+    DalMappingGenerator mappingGenerator = DalMappingGenerator.getInstance();
+    final String mapping = mappingGenerator.generateMapping();
+    log.debug("Generated mapping: \n{}", mapping);
+
+    if (mappingGenerator.getHibernateFileLocation() != null) {
+      configuration.addFile(mappingGenerator.getHibernateFileLocation());
+      return;
+    }
+
+    Path tmpFile = null;
+    try {
+      tmpFile = Files.createTempFile("", ".hbm");
+      Files.write(tmpFile, mapping.getBytes());
+      configuration.addFile(tmpFile.toString());
+    } catch (IOException ioex) {
+      throw new OBException("Error writing temporary .hbm file for configuration", ioex);
+    } finally {
+      try {
+        if (tmpFile != null) {
+          Files.delete(tmpFile);
+        }
+      } catch (IOException ioex) {
+        log.error("Error deleting temporary .hbm file for configuration", ioex);
+      }
+    }
   }
 
   @Override

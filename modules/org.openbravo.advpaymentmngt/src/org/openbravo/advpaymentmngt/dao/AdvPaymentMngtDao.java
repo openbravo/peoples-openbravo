@@ -30,13 +30,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.advpaymentmngt.utility.Value;
@@ -272,7 +272,7 @@ public class AdvPaymentMngtDao {
       obc.add(Restrictions.isNotNull(FIN_PaymentPropDetail.PROPERTY_FINPAYMENTSCHEDULEDETAIL));
       List<FIN_PaymentPropDetail> paymentPropDetailList = obc.list();
       if (paymentPropDetailList != null && !paymentPropDetailList.isEmpty()) {
-        List<FIN_PaymentScheduleDetail> aux = new ArrayList<FIN_PaymentScheduleDetail>();
+        List<FIN_PaymentScheduleDetail> aux = new ArrayList<>();
         for (FIN_PaymentPropDetail ppd : paymentPropDetailList) {
           aux.add(ppd.getFINPaymentScheduledetail());
         }
@@ -1487,7 +1487,7 @@ public class AdvPaymentMngtDao {
         .getOrganizationStructureProvider().getNaturalTree(strOrgId)));
     obc.setFilterOnReadableOrganization(false);
 
-    List<String> payMethods = new ArrayList<String>();
+    List<String> payMethods = new ArrayList<>();
     if (strFinancialAccountId != null && !strFinancialAccountId.isEmpty()) {
       for (FinAccPaymentMethod finAccPayMethod : getObject(FIN_FinancialAccount.class,
           strFinancialAccountId).getFinancialMgmtFinAccPaymentMethodList()) {
@@ -1671,7 +1671,7 @@ public class AdvPaymentMngtDao {
     private int MAX = 999;
 
     private Criterion compoundexp = null;
-    List<String> finAccs = new ArrayList<String>();
+    List<String> finAccs = new ArrayList<>();
 
     public void addFinAccPaymentMethod(FinAccPaymentMethod finAccPayMethod) {
       finAccs.add(finAccPayMethod.getAccount().getId());
@@ -1694,7 +1694,7 @@ public class AdvPaymentMngtDao {
       } else {
         compoundexp = Restrictions.or(compoundexp, Restrictions.in("id", finAccs));
       }
-      finAccs = new ArrayList<String>();
+      finAccs = new ArrayList<>();
     }
   }
 
@@ -1777,7 +1777,7 @@ public class AdvPaymentMngtDao {
   }
 
   public List<FIN_Payment> getPaymentProposalPayments(FIN_PaymentProposal paymentProposal) {
-    List<FIN_Payment> paymentsInProposal = new ArrayList<FIN_Payment>();
+    List<FIN_Payment> paymentsInProposal = new ArrayList<>();
     for (FIN_PaymentPropDetail proposalDetail : paymentProposal.getFINPaymentPropDetailList())
       if ("RPAE".equals(proposalDetail.getFINPaymentScheduledetail().getPaymentDetails()
           .getFinPayment().getStatus()))
@@ -1817,7 +1817,7 @@ public class AdvPaymentMngtDao {
       String financialAccountId, Date dateFrom, Date dateTo, int offset, int pageSize,
       String strOrderByProperty, String strAscDesc, boolean isReceipt) {
 
-    List<FIN_Payment> emptyList = new ArrayList<FIN_Payment>();
+    List<FIN_Payment> emptyList = new ArrayList<>();
     if (organizationId == null || organizationId.isEmpty()) {
       return emptyList;
     }
@@ -1858,7 +1858,7 @@ public class AdvPaymentMngtDao {
   }
 
   public List<FIN_Payment> getPendingExecutionPayments(String strInvoiceId) {
-    List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
+    List<FIN_Payment> payments = new ArrayList<>();
     List<FIN_PaymentSchedule> paySchedList = new AdvPaymentMngtDao().getObject(Invoice.class,
         strInvoiceId).getFINPaymentScheduleList();
     OBCriteria<FIN_PaymentScheduleDetail> psdCriteria = OBDal.getInstance().createCriteria(
@@ -2011,12 +2011,11 @@ public class AdvPaymentMngtDao {
       params.put("orgIds", orgIds);
 
       final Session session = OBDal.getInstance().getSession();
-      final Query query = session.createQuery(hql.toString());
+      final Query<FIN_Payment> query = session.createQuery(hql.toString(), FIN_Payment.class);
       query.setProperties(params);
 
-      @SuppressWarnings("unchecked")
       final List<FIN_Payment> queryList = query.list();
-      final List<FIN_Payment> paymentList = new ArrayList<FIN_Payment>();
+      final List<FIN_Payment> paymentList = new ArrayList<>();
       for (FIN_Payment fp : queryList) {
         if ((FIN_Utility.seqnumberpaymentstatus(fp.getStatus())) >= (FIN_Utility
             .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(fp)))) {
@@ -2142,7 +2141,7 @@ public class AdvPaymentMngtDao {
    * 
    */
   public boolean isPaymentMadeStatus(String paymentStatus) {
-    ArrayList<String> paidStatusList = new ArrayList<String>();
+    ArrayList<String> paidStatusList = new ArrayList<>();
     paidStatusList.add(PAYMENT_STATUS_PAYMENT_CLEARED);
     paidStatusList.add(PAYMENT_STATUS_DEPOSIT_NOT_CLEARED);
     paidStatusList.add(PAYMENT_STATUS_PAYMENT_MADE);
