@@ -531,7 +531,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1")).getReturnAliases();
 
     for (int i = 0; i < queryAliases.length; i++) {
-      if (queryAliases[i].equals(fieldName)) {
+      if (queryAliases[i] != null && queryAliases[i].equals(fieldName)) {
         return i + 1;
       }
     }
