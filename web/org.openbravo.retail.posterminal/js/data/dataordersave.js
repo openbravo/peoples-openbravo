@@ -513,12 +513,12 @@
               });
 
               //this logic executed when all orders are ready to be sent
-              me.context.get('leftColumnViewManager').setOrderMode();
               if (syncCallback instanceof Function) {
                 syncCallback();
               }
 
               model.get('multiOrders').resetValues();
+              me.context.get('leftColumnViewManager').setOrderMode();
               OB.UTIL.showLoading(false);
               enyo.$.scrim.hide();
 
