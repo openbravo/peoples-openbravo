@@ -27,8 +27,8 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.Currency;
@@ -225,16 +225,16 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     obq.append(" order by plv.validFromDate desc");
 
     final Session session = OBDal.getInstance().getSession();
-    final Query obQuery = session.createQuery(obq.toString());
-    obQuery.setString("productID", product.getId());
-    obQuery.setString("priceListID", priceList.getId());
-    obQuery.setDate("validFromDate", new Date());
-    obQuery.setDate("dateInvoiced", getInvoice().getInvoiceDate());
-    obQuery.setString("bpId", getInvoice().getBusinessPartner().getId());
-    obQuery.setBigDecimal("qtyOrdered", qtyOrdered);
-    obQuery.setLong("pricePrecision", getInvoice().getCurrency().getPricePrecision());
+    final Query<Object[]> obQuery = session.createQuery(obq.toString());
+    obQuery.setParameter("productID", product.getId());
+    obQuery.setParameter("priceListID", priceList.getId());
+    obQuery.setParameter("validFromDate", new Date());
+    obQuery.setParameter("dateInvoiced", getInvoice().getInvoiceDate());
+    obQuery.setParameter("bpId", getInvoice().getBusinessPartner().getId());
+    obQuery.setParameter("qtyOrdered", qtyOrdered);
+    obQuery.setParameter("pricePrecision", getInvoice().getCurrency().getPricePrecision());
     obQuery.setMaxResults(1);
-    List<Object[]> prices = (List<Object[]>) obQuery.list();
+    List<Object[]> prices = (List<Object[]>) obQuery.getResultList();
     if (prices.isEmpty()) {
       return ArrayUtils.EMPTY_OBJECT_ARRAY;
     } else {

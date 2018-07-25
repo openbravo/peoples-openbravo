@@ -26,8 +26,8 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
@@ -201,9 +201,9 @@ class CreateLinesFromUtil {
     }
 
     final Session session = OBDal.getInstance().getSession();
-    final Query query = session.createQuery(shipmentHQLQuery.toString());
-    query.setString("orderLineId", orderLine.getId());
-    return getInOutLinesInformation((List<Object[]>) query.list());
+    final Query<Object[]> query = session.createQuery(shipmentHQLQuery.toString());
+    query.setParameter("orderLineId", orderLine.getId());
+    return getInOutLinesInformation(query.getResultList());
   }
 
   private static List<InOutLineData> getInOutLinesInformation(List<Object[]> inOutLinesData) {
