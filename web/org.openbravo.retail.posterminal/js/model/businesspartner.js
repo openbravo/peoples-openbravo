@@ -20,10 +20,17 @@
     remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     remote: 'OBPOS_remote.customer',
     saveCustomer: function (callback) {
-      var nameLength, newSk;
+      var nameLength, newSk, finalCallback;
+
+      finalCallback = function (result) {
+        if (callback) {
+          callback(result);
+        }
+      };
 
       if (!this.get('name')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNameRequired'));
+        finalCallback(false);
         return false;
       }
 
@@ -32,6 +39,7 @@
           //Create 1 address for shipping and invoicing
           if (!this.get('locName')) {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            finalCallback(false);
             return false;
           }
           this.set('locId', OB.UTIL.get_UUID());
@@ -45,6 +53,7 @@
           //Create 1 address for shipping and 1 for invoicing
           if (!this.get('locName') || !this.get('shipLocName')) {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            finalCallback(false);
             return false;
           }
           this.set('locId', OB.UTIL.get_UUID());
@@ -71,6 +80,7 @@
 
       if (this.get('birthDay') && !OB.UTIL.isInThePast(OB.I18N.formatDate(this.get('birthDay')))) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerBirthDayIncorrect'));
+        finalCallback(false);
         return false;
       }
 
