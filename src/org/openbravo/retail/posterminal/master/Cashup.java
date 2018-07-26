@@ -54,7 +54,11 @@ public class Cashup extends JSONProcessSimple {
       String posId = jsonsent.getString("pos");
 
       if (POSUtils.cashupErrorsExistInTerminal(posId)) {
-        result.put(JsonConstants.RESPONSE_ERRORMESSAGE, "There are cashup errors in this terminal");
+        String errorMsg = "There are cashup errors in this terminal";
+        JSONObject jsonError = new JSONObject();
+        jsonError.put("message", errorMsg);
+        result.put(JsonConstants.RESPONSE_ERROR, jsonError);
+        result.put(JsonConstants.RESPONSE_ERRORMESSAGE, errorMsg);
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
         return result;
       }
@@ -124,7 +128,13 @@ public class Cashup extends JSONProcessSimple {
       return result;
 
     } catch (Exception e) {
-      log.error("Error during exec", e);
+      log.error("Error during Cashup exec", e);
+      JSONObject jsonError = new JSONObject();
+      String errorMsg = "Unknown error happened while retrieving cashup: " + e.getMessage();
+      jsonError.put("message", errorMsg);
+      result.put(JsonConstants.RESPONSE_ERROR, jsonError);
+      result.put(JsonConstants.RESPONSE_ERRORMESSAGE, errorMsg);
+      result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
       return result;
     } finally {
       OBContext.restorePreviousMode();
@@ -159,7 +169,7 @@ public class Cashup extends JSONProcessSimple {
       paymentMethodJSON.put("startingCash", paymentMethodJSON.get("startingcash"));
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
-      paymentMethodJSON.put("lineNo", paymentAppMethod.get("line"));
+      paymentMethodJSON.put("lineNo", paymentAppMethod != null ? paymentAppMethod.get("line") : 1L);
       respArray.put(paymentMethodJSON);
     }
 
