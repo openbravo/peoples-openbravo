@@ -741,8 +741,8 @@
                     isConfirmButton: true,
                     label: OB.I18N.getLabel('OBMOBC_LblOk'),
                     action: function () {
-                      if (OB && OB.POS) {
-                        window.location.reload();
+                      if (OB.MobileApp.view.currentWindow !== 'retail.pointofsale') {
+                        OB.POS.navigate('retail.pointofsale');
                         return true;
                       }
                     }
