@@ -1331,16 +1331,16 @@ enyo.kind({
         paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
       });
     }, this);
-    this.order.on('change:gross', function (model) {
+    this.order.on('calculatedReceipt', function () {
       var removedServices = [],
           servicesToBeDeleted = [];
-      _.each(model.attributes.lines.models, function (line) {
+      _.each(this.attributes.lines.models, function (line) {
         var totalAmountSelected = 0,
             minimumSelected = Infinity,
             maximumSelected = 0;
         if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
           _.each(line.get('relatedLines'), function (relatedLine) {
-            _.each(model.attributes.lines.models, function (line2) {
+            _.each(this.attributes.lines.models, function (line2) {
               if ((line2.id === relatedLine.orderlineId) && line2.get('qty') > 0) {
                 var discountAmount = _.reduce(line2.get('promotions'), function (memo, promo) {
                   return memo + promo.amt;
@@ -1369,7 +1369,7 @@ enyo.kind({
       if (removedServices.length > 1) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ServiceRemovedHeader'), removedServices);
       }
-    });
+    }, this.order);
   }
 });
 enyo.kind({
