@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -63,7 +63,6 @@ public class CashUpReport extends HttpSecureAppServlet {
   public static final Logger log = Logger.getLogger(CashUpReport.class);
 
   @Override
-  @SuppressWarnings("unchecked")
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     FieldProvider[] data;
@@ -291,8 +290,9 @@ public class CashUpReport extends HttpSecureAppServlet {
       final String hqlCashup = "SELECT netsales, grosssales, netreturns, grossreturns, totalretailtransactions " //
           + " FROM OBPOS_App_Cashup " //
           + " WHERE id = '" + cashupId + "' "; //
-      final Query cashupQuery = OBDal.getReadOnlyInstance().getSession().createQuery(hqlCashup);
-      final Object[] arrayOfCashupResults = (Object[]) cashupQuery.list().get(0);
+      final Query<Object[]> cashupQuery = OBDal.getReadOnlyInstance().getSession()
+          .createQuery(hqlCashup, Object[].class);
+      final Object[] arrayOfCashupResults = cashupQuery.list().get(0);
       final BigDecimal totalNetSalesAmount = (BigDecimal) arrayOfCashupResults[0];
       final BigDecimal totalGrossSalesAmount = (BigDecimal) arrayOfCashupResults[1];
       final BigDecimal totalNetReturnsAmount = (BigDecimal) arrayOfCashupResults[2];
@@ -304,7 +304,8 @@ public class CashUpReport extends HttpSecureAppServlet {
           + " FROM OBPOS_Taxcashup " //
           + " WHERE obpos_app_cashup_id='%s' AND ordertype='0' " //
           + " ORDER BY name ", cashupId);
-      final Query salesTaxesQuery = OBDal.getReadOnlyInstance().getSession().createQuery(hqlTaxes);
+      final Query<Object[]> salesTaxesQuery = OBDal.getReadOnlyInstance().getSession()
+          .createQuery(hqlTaxes, Object[].class);
       final JRDataSource salesTaxesDataSource = new ListOfArrayDataSource(salesTaxesQuery.list(),
           new String[] { "LABEL", "VALUE" });
 
@@ -313,8 +314,8 @@ public class CashUpReport extends HttpSecureAppServlet {
           + " FROM OBPOS_Taxcashup " //
           + " WHERE obpos_app_cashup_id='%s' AND ordertype='1'  " //
           + " ORDER BY name ", cashupId);
-      final Query returnsTaxesQuery = OBDal.getReadOnlyInstance().getSession()
-          .createQuery(hqlReturnTaxes);
+      final Query<Object[]> returnsTaxesQuery = OBDal.getReadOnlyInstance().getSession()
+          .createQuery(hqlReturnTaxes, Object[].class);
       final JRDataSource returnTaxesDatasource = new ListOfArrayDataSource(
           returnsTaxesQuery.list(), new String[] { "LABEL", "VALUE" });
 

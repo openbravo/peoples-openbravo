@@ -32,10 +32,10 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -1086,8 +1086,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     involvedInvoicedHqlQueryWhereStr.append("WHERE i.documentStatus = 'CO' ");
     involvedInvoicedHqlQueryWhereStr.append("AND il.salesOrderLine.salesOrder.id = :orderid ");
     involvedInvoicedHqlQueryWhereStr.append("ORDER BY i.creationDate ASC");
-    Query qryRelatedInvoices = OBDal.getInstance().getSession()
-        .createQuery(involvedInvoicedHqlQueryWhereStr.toString());
+    Query<Object[]> qryRelatedInvoices = OBDal.getInstance().getSession()
+        .createQuery(involvedInvoicedHqlQueryWhereStr.toString(), Object[].class);
     qryRelatedInvoices.setParameter("orderid", orderId);
 
     ScrollableResults relatedInvoices = qryRelatedInvoices.scroll(ScrollMode.FORWARD_ONLY);
@@ -1615,6 +1615,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         // updating order - delete old taxes to create again
         String deleteStr = "delete " + OrderLineTax.ENTITY_NAME //
             + " where " + OrderLineTax.PROPERTY_SALESORDERLINE + ".id = :id";
+        @SuppressWarnings("rawtypes")
         Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
         deleteQuery.setParameter("id", orderline.getId());
         deleteQuery.executeUpdate();
@@ -1654,6 +1655,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           // updating order - delete old promotions to create again
           String deleteStr = "delete " + OrderLineOffer.ENTITY_NAME //
               + " where " + OrderLineOffer.PROPERTY_SALESORDERLINE + ".id = :id";
+          @SuppressWarnings("rawtypes")
           Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
           deleteQuery.setParameter("id", orderline.getId());
           deleteQuery.executeUpdate();
@@ -1711,6 +1713,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + " as ol join ol." //
         + OrderLine.PROPERTY_SALESORDER + " as order where order." //
         + Order.PROPERTY_ID + " = :id)";
+    @SuppressWarnings("rawtypes")
     Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
     deleteQuery.setParameter("id", order.getId());
     deleteQuery.executeUpdate();
@@ -1989,6 +1992,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       // updating order - delete old taxes to create again
       String deleteStr = "delete " + OrderTax.ENTITY_NAME //
           + " where " + OrderTax.PROPERTY_SALESORDER + ".id = :id";
+      @SuppressWarnings("rawtypes")
       Query deleteQuery = OBDal.getInstance().getSession().createQuery(deleteStr);
       deleteQuery.setParameter("id", order.getId());
       deleteQuery.executeUpdate();
@@ -2933,9 +2937,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + "."
         + FIN_PaymentSchedule.PROPERTY_ORDER + "=:order" + " and "
         + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " is not null ";
-    final Query qry = OBDal.getInstance().getSession().createQuery(countHql);
-    qry.setEntity("order", order);
-    return ((Number) qry.uniqueResult()).intValue();
+    final Query<Number> qry = OBDal.getInstance().getSession().createQuery(countHql, Number.class);
+    qry.setParameter("order", order);
+    return qry.uniqueResult().intValue();
   }
 
   private void verifyCashupStatus(JSONObject jsonorder) throws JSONException, OBException {

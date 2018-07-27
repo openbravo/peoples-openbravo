@@ -28,9 +28,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
@@ -255,7 +255,7 @@ public class POSUtils {
     try {
       OBContext.setAdminMode(true);
       SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-      Query priceListVersionQuery = OBDal
+      Query<PriceListVersion> priceListVersionQuery = OBDal
           .getInstance()
           .getSession()
           .createQuery(
@@ -265,9 +265,9 @@ public class POSUtils {
                   + "' and plv.active=true and plv.validFromDate = (select max(pplv.validFromDate) "
                   + "from PricingPriceListVersion as pplv where pplv.active=true and pplv.priceList.id = '"
                   + priceListId + "' and to_char(pplv.validFromDate,'yyyy-mm-dd') <= '"
-                  + format.format(terminalDate) + "' )");
-      for (Object plv : priceListVersionQuery.list()) {
-        return (PriceListVersion) plv;
+                  + format.format(terminalDate) + "' )", PriceListVersion.class);
+      for (PriceListVersion plv : priceListVersionQuery.list()) {
+        return plv;
       }
 
     } catch (Exception e) {
@@ -360,7 +360,8 @@ public class POSUtils {
         log.error("Error getting max documentNo because the DBMS is unknown.");
         return 0;
       }
-      SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
+      @SuppressWarnings("rawtypes")
+      NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
       query.setParameter("appValue", searchKey);
 
       Object result = query.uniqueResult();
@@ -448,7 +449,8 @@ public class POSUtils {
         log.error("Error getting max documentNo because the DBMS is unknown.");
         return 0;
       }
-      SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
+      @SuppressWarnings("rawtypes")
+      NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
       query.setParameter("appValue", searchKey);
 
       Object result = query.uniqueResult();
@@ -535,7 +537,8 @@ public class POSUtils {
         log.error("Error getting max documentNo because the DBMS is unknown.");
         return 0;
       }
-      SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
+      @SuppressWarnings("rawtypes")
+      NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
       query.setParameter("appValue", searchKey);
       Object result = query.uniqueResult();
       if (result == null) {
@@ -716,6 +719,7 @@ public class POSUtils {
   public static Boolean hasCurrencyRate(String posTerminalId) {
     try {
       OBContext.setAdminMode(true);
+      @SuppressWarnings("rawtypes")
       Query currencyRateQuery = OBDal
           .getInstance()
           .getSession()
@@ -787,15 +791,15 @@ public class POSUtils {
   public static long getNumberOfCharacteristicsToFilterInWebPos() {
     long result = -1;
     try {
-      Query queryNumberOfChToFilterInWebPos = OBDal.getInstance().getSession()
+      Query<Long> queryNumberOfChToFilterInWebPos = OBDal.getInstance().getSession()
           .createQuery("select count(ch.id) " //
               + "from Characteristic as ch " //
-              + "where ch.obposFilteronwebpos ='Y' and ch.client.id = :client ");
+              + "where ch.obposFilteronwebpos ='Y' and ch.client.id = :client ", Long.class);
 
       queryNumberOfChToFilterInWebPos.setParameter("client", OBContext.getOBContext()
           .getCurrentClient().getId());
 
-      result = (long) queryNumberOfChToFilterInWebPos.uniqueResult();
+      result = queryNumberOfChToFilterInWebPos.uniqueResult();
     } catch (Exception e) {
       String errorMsg = "Error getting the number of characteristic which are used to filter in Web POS: "
           + e.getMessage();

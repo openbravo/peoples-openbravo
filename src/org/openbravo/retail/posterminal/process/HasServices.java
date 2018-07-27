@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2017 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,7 +16,7 @@ import javax.servlet.ServletException;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
@@ -52,6 +52,7 @@ public class HasServices extends JSONProcessSimple {
           productCategoryId, terminalOrganization, priceListVersion), OBContext.getOBContext()
           .getCurrentClient().getId(), terminalOrganization.getId(), null, null, null);
 
+      @SuppressWarnings("rawtypes")
       final Query query = querybuilder.getDalQuery();
       query.setParameter("obretcoProductlistId",
           POSUtils.getProductListByOrgId(terminalOrganization.getId()).getId());

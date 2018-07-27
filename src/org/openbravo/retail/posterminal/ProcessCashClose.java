@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,9 +18,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
@@ -175,11 +175,11 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
           + "where cashUp.id in :cashUpIds and paymentType.paymentMethod.isshared = 'Y'"
           + "group by searchkey";
       final Session session = OBDal.getInstance().getSession();
-      final Query paymentQuery = session.createQuery(query);
+      final Query<Object[]> paymentQuery = session.createQuery(query, Object[].class);
       paymentQuery.setParameterList("cashUpIds", cashUpIds);
-      List<?> paymentList = paymentQuery.list();
+      List<Object[]> paymentList = paymentQuery.list();
       for (int i = 0; i < paymentList.size(); i++) {
-        Object[] item = (Object[]) paymentList.get(i);
+        Object[] item = paymentList.get(i);
         // Get master payment method cashup
         OBPOSPaymentMethodCashup masterCashup = getPaymentMethodCashup(cashUpId, (String) item[0]);
         if (masterCashup != null) {
@@ -209,6 +209,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       }
       if (!paymentMethodCashupIds.isEmpty()) {
         String delete = "delete from OBPOS_Paymentmethodcashup where id in :paymentMethodCashupIds";
+        @SuppressWarnings("rawtypes")
         final Query paymentDelete = session.createQuery(delete);
         paymentDelete.setParameterList("paymentMethodCashupIds", paymentMethodCashupIds);
         paymentDelete.executeUpdate();

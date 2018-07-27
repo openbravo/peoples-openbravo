@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014 Openbravo S.L.U.
+ * Copyright (C) 2014-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,7 +15,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -164,15 +164,15 @@ public class POSOrderCashupPerformanceTest extends OBBaseRetailTest {
   }
 
   private long countOrders() {
-    Query qry = OBDal.getInstance().getSession()
-        .createQuery("select count(*) from " + Order.ENTITY_NAME);
-    return (Long) qry.uniqueResult();
+    Query<Long> qry = OBDal.getInstance().getSession()
+        .createQuery("select count(*) from " + Order.ENTITY_NAME, Long.class);
+    return qry.uniqueResult();
   }
 
   private long countCashups() {
-    Query qry = OBDal.getInstance().getSession()
-        .createQuery("select count(*) from " + OBPOSAppCashup.ENTITY_NAME);
-    return (Long) qry.uniqueResult();
+    Query<Long> qry = OBDal.getInstance().getSession()
+        .createQuery("select count(*) from " + OBPOSAppCashup.ENTITY_NAME, Long.class);
+    return qry.uniqueResult();
   }
 
   private String getUUID() {
