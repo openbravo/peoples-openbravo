@@ -14,7 +14,7 @@ String toServiceWorker="";
 String toAppCache="";
 boolean useServiceWorkers = false; 
 String browserType = request.getHeader("User-Agent");
-if(browserType.contains("Safari") && browserType.contains("Version")){
+if((browserType.contains("Safari") && browserType.contains("Version")) || (browserType.contains("Mac"))){
   useServiceWorkers=false;
 }else{
   try{

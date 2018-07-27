@@ -19,8 +19,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -57,8 +57,8 @@ public class UpdateCashup {
     Date cashUpReportDate = null;
     Date lastCashUpReportDate = null;
     OBPOSAppCashup cashUp = null;
-    Query cashUpQuery = OBDal.getInstance().getSession()
-        .createQuery("from OBPOS_App_Cashup where id=:cashUpId");
+    Query<OBPOSAppCashup> cashUpQuery = OBDal.getInstance().getSession()
+        .createQuery("from OBPOS_App_Cashup where id=:cashUpId", OBPOSAppCashup.class);
     cashUpQuery.setParameter("cashUpId", cashUpId);
     // The record will be locked to this process until it ends. Other requests to process this cash
     // up will be locked until this one finishes
@@ -108,10 +108,10 @@ public class UpdateCashup {
       } catch (JSONException e) {
         throw new OBException("Cashup JSON seems to be corrupted: ", e);
       } catch (Exception e) {
-        Query maybeCashupWasCreatedInParallel = OBDal.getInstance().getSession()
-            .createQuery("from OBPOS_App_Cashup where id=:cashUpId");
+        Query<OBPOSAppCashup> maybeCashupWasCreatedInParallel = OBDal.getInstance().getSession()
+            .createQuery("from OBPOS_App_Cashup where id=:cashUpId", OBPOSAppCashup.class);
         maybeCashupWasCreatedInParallel.setParameter("cashUpId", cashUpId);
-        cashUp = (OBPOSAppCashup) maybeCashupWasCreatedInParallel.uniqueResult();
+        cashUp = maybeCashupWasCreatedInParallel.uniqueResult();
         // If cashup exists, then other process (such as OpenTill) created it in parallel, and
         // everything is fine. Otherwise, the process should fail.
         if (cashUp == null) {
@@ -394,12 +394,12 @@ public class UpdateCashup {
 
   private static Long countAppCashup(String query, String posterminal, String parentCashUp) {
     final Session session = OBDal.getInstance().getSession();
-    final Query count = session.createQuery(query);
+    final Query<Long> count = session.createQuery(query, Long.class);
     count.setParameter("terminalId", posterminal);
     if (parentCashUp != null) {
       count.setParameter("parentCashup", parentCashUp);
     }
-    Long value = (Long) count.uniqueResult();
+    Long value = count.uniqueResult();
     return value != null ? value.longValue() : 0;
   }
 }

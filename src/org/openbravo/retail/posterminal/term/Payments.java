@@ -17,7 +17,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -58,6 +58,7 @@ public class Payments extends JSONTerminalProperty {
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
           .getCurrentOrganization().getId(), null, null, null);
 
+      @SuppressWarnings("rawtypes")
       final Query paymentsquery = querybuilder.getDalQuery();
 
       paymentsquery.setParameter("posID", posId);

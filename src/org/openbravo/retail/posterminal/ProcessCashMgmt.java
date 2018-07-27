@@ -23,14 +23,19 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.ConversionRateDoc;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -70,6 +75,9 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     }
     BigDecimal amount = BigDecimal.valueOf(jsonsent.getDouble("amount"));
     BigDecimal origAmount = BigDecimal.valueOf(jsonsent.getDouble("origAmount"));
+    String isoCode = jsonsent.getString("isocode");
+    Currency orgCurrency = paymentMethod.getObposApplications().getOrganization().getCurrency();
+
     String type = jsonsent.getString("type");
     String cashManagementReasonId = jsonsent.getString("reasonId");
     String cashupId = jsonsent.getString("cashup_id");
@@ -97,7 +105,7 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     paymentcashupEvent.setName(description);
     paymentcashupEvent.setAmount(amount);
     paymentcashupEvent.setType(type);
-    paymentcashupEvent.setCurrency(jsonsent.getString("isocode"));
+    paymentcashupEvent.setCurrency(isoCode);
     paymentcashupEvent.setRate(origAmount.divide(amount, 2, RoundingMode.HALF_UP));
     OBDal.getInstance().save(paymentcashupEvent);
 
@@ -168,6 +176,10 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
         transaction.setTransactionType("BPD");
         transaction.setStatus("RDNC");
       }
+      if (!StringUtils.equals(isoCode, orgCurrency.getISOCode())) {
+        transaction.setForeignCurrency(orgCurrency);
+        transaction.setForeignAmount(origAmount);
+      }
       transaction.setProcessed(true);
       transaction.setDescription(description);
       transaction.setDateAcct(cashMgmtTrxDate);
@@ -176,6 +188,27 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
       OBDal.getInstance().save(transaction);
       paymentcashupEvent.setFINFinaccTransaction(transaction);
       OBDal.getInstance().save(paymentcashupEvent);
+
+      if (!StringUtils.equals(isoCode, orgCurrency.getISOCode())) {
+        ConversionRateDoc newConversionRateDoc = null;
+        newConversionRateDoc = FIN_Utility.getConversionRateDoc(transaction.getCurrency(),
+            transaction.getForeignCurrency(), transaction.getId(), transaction.getEntity());
+        if (newConversionRateDoc == null) {
+          ConversionRate convRate = FinancialUtils.getConversionRate(transaction.getCreationDate(),
+              transaction.getCurrency(), transaction.getForeignCurrency(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getCurrentClient());
+          newConversionRateDoc = OBProvider.getInstance().get(ConversionRateDoc.class);
+          newConversionRateDoc.setClient(OBContext.getOBContext().getCurrentClient());
+          newConversionRateDoc.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+          newConversionRateDoc.setCurrency(transaction.getCurrency());
+          newConversionRateDoc.setToCurrency(transaction.getForeignCurrency());
+          newConversionRateDoc.setRate(convRate.getDivideRateBy());
+          newConversionRateDoc.setForeignAmount(transaction.getForeignAmount());
+          newConversionRateDoc.setPayment(transaction.getFinPayment());
+          newConversionRateDoc.setFINFinancialAccountTransaction(transaction);
+          OBDal.getInstance().save(newConversionRateDoc);
+        }
+      }
 
       CashManagementEvents event = OBDal.getInstance().get(CashManagementEvents.class,
           cashManagementReasonId);

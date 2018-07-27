@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,9 +16,9 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -149,11 +149,11 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
         + " where cashUp.id in (:cashUpIds) and paymentType.paymentMethod.isshared = 'Y'"
         + " group by " + OBPOSPaymentMethodCashup.PROPERTY_SEARCHKEY;
     final Session session = OBDal.getInstance().getSession();
-    final Query paymentQuery = session.createQuery(query);
+    final Query<Object[]> paymentQuery = session.createQuery(query, Object[].class);
     paymentQuery.setParameterList("cashUpIds", cashUpIds);
-    List<?> paymentList = paymentQuery.list();
+    List<Object[]> paymentList = paymentQuery.list();
     for (int i = 0; i < paymentList.size(); i++) {
-      Object[] item = (Object[]) paymentList.get(i);
+      Object[] item = paymentList.get(i);
       JSONObject paymentCashup = new JSONObject();
       paymentCashup.put("searchKey", item[0]);
       paymentCashup.put("startingCash", item[1]);

@@ -26,8 +26,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -110,7 +110,8 @@ public class CheckApproval extends HttpServlet {
             + "   and (p.visibleAtOrganization.id = :org "
             + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null) group by p.property";
-        Query preferenceQuery = OBDal.getInstance().getSession().createQuery(hqlQuery);
+        Query<String> preferenceQuery = OBDal.getInstance().getSession()
+            .createQuery(hqlQuery, String.class);
         preferenceQuery.setParameter("user", qUserList.get(0).getId());
         preferenceQuery.setParameter("org", organization);
         preferenceQuery.setParameter("orgList", naturalTreeOrgList);
@@ -128,9 +129,9 @@ public class CheckApproval extends HttpServlet {
           JSONObject jsonData = new JSONObject();
           JSONObject jsonPreference = new JSONObject();
           Integer c = 0;
-          for (Object preference : preferenceList) {
-            jsonPreference.put((String) preference, (String) preference);
-            if (approvals.contains((String) preference)) {
+          for (String preference : preferenceList) {
+            jsonPreference.put(preference, preference);
+            if (approvals.contains(preference)) {
               c++;
             }
           }

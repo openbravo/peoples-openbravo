@@ -300,7 +300,7 @@ enyo.kind({
         args.context.$.applyCheckSelectAll.show();
         args.context.order.get('lines').trigger('showAllCheckBtn');
 
-        if (args.context.checkedLines.length > 0 && !OB.UTIL.isNullOrUndefined(args.context.discounts) && args.context.discounts.length !== 0) {
+        if (args.context.checkedLines.length > 0 && ((!OB.UTIL.isNullOrUndefined(args.context.discounts) && args.context.discounts.length !== 0) || (!OB.UTIL.isNullOrUndefined(args.discountsContainer) && !OB.UTIL.isNullOrUndefined(args.discountsContainer.model)))) {
           args.context.$.btnApply.setDisabled(false);
           args.context.$.btnApply.addStyles('color: orange;');
         } else {
