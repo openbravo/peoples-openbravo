@@ -5884,7 +5884,7 @@
     },
     isAnonymousBlindReturn: function () {
       var me = this;
-      if (me.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').returns_anonymouscustomer && !me.get('obposIsDeleted')) {
+      if (me.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !me.get('obposIsDeleted')) {
         // Checking blind returned lines
         var isBlindReturn = false;
         var i, lines = me.get('lines');
