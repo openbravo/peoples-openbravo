@@ -566,7 +566,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 deliveredLines = false;
                 break;
               }
-              if (line.getGoodsShipmentLine() != null) {
+              if (!hasShipment && line.getMaterialMgmtShipmentInOutLineList().size() > 0) {
                 hasShipment = true;
               }
             }
