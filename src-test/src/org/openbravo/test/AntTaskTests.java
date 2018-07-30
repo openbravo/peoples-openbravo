@@ -54,6 +54,7 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
+import org.openbravo.test.security.CSRFAttackTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.OBContextCollectionsTest;
 import org.openbravo.test.security.PasswordStrengthCheckerTest;
@@ -127,7 +128,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     EntityAccessTest.class, //
     WritableReadableOrganizationClientTest.class, //
     OBContextCollectionsTest.class, //
-    PasswordStrengthCheckerTest.class,
+    PasswordStrengthCheckerTest.class, //
+    CSRFAttackTest.class, //
 
     // system
     SystemServiceTest.class, //

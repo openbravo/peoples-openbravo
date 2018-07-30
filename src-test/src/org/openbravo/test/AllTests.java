@@ -48,6 +48,7 @@ import org.openbravo.test.model.RuntimeModelTest;
 import org.openbravo.test.model.TrlColumnsOraTypeTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
+import org.openbravo.test.security.CSRFAttackTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.OBContextCollectionsTest;
 import org.openbravo.test.security.PasswordStrengthCheckerTest;
@@ -69,7 +70,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     AllowedOrganizationsTest.class, //
     WritableReadableOrganizationClientTest.class, //
     OBContextCollectionsTest.class, //
-    PasswordStrengthCheckerTest.class,
+    PasswordStrengthCheckerTest.class, //
+    CSRFAttackTest.class, //
 
     // dal
     HiddenUpdateTest.class, //
