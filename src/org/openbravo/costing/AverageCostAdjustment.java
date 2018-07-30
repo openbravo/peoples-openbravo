@@ -178,7 +178,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             cost.toPlainString());
       }
       if (basetrx.getMaterialMgmtCostingList().isEmpty()) {
-        Date newDate = new Date();
+        Date newDate = basetrx.getTransactionProcessDate();
         Date dateTo = costing.getEndingDate();
         costing.setEndingDate(newDate);
         Costing newCosting = OBProvider.getInstance().get(Costing.class);
