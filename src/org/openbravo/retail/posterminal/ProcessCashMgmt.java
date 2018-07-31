@@ -190,23 +190,24 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
       OBDal.getInstance().save(paymentcashupEvent);
 
       if (!StringUtils.equals(isoCode, orgCurrency.getISOCode())) {
-        ConversionRateDoc newConversionRateDoc = null;
-        newConversionRateDoc = FIN_Utility.getConversionRateDoc(transaction.getCurrency(),
+        ConversionRateDoc newConversionRateDocSec = null;
+        newConversionRateDocSec = FIN_Utility.getConversionRateDoc(transaction.getCurrency(),
             transaction.getForeignCurrency(), transaction.getId(), transaction.getEntity());
-        if (newConversionRateDoc == null) {
+        if (newConversionRateDocSec == null) {
           ConversionRate convRate = FinancialUtils.getConversionRate(transaction.getCreationDate(),
               transaction.getCurrency(), transaction.getForeignCurrency(), OBContext.getOBContext()
                   .getCurrentOrganization(), OBContext.getOBContext().getCurrentClient());
-          newConversionRateDoc = OBProvider.getInstance().get(ConversionRateDoc.class);
-          newConversionRateDoc.setClient(OBContext.getOBContext().getCurrentClient());
-          newConversionRateDoc.setOrganization(OBContext.getOBContext().getCurrentOrganization());
-          newConversionRateDoc.setCurrency(transaction.getCurrency());
-          newConversionRateDoc.setToCurrency(transaction.getForeignCurrency());
-          newConversionRateDoc.setRate(convRate.getDivideRateBy());
-          newConversionRateDoc.setForeignAmount(transaction.getForeignAmount());
-          newConversionRateDoc.setPayment(transaction.getFinPayment());
-          newConversionRateDoc.setFINFinancialAccountTransaction(transaction);
-          OBDal.getInstance().save(newConversionRateDoc);
+          newConversionRateDocSec = OBProvider.getInstance().get(ConversionRateDoc.class);
+          newConversionRateDocSec.setClient(OBContext.getOBContext().getCurrentClient());
+          newConversionRateDocSec
+              .setOrganization(OBContext.getOBContext().getCurrentOrganization());
+          newConversionRateDocSec.setCurrency(transaction.getCurrency());
+          newConversionRateDocSec.setToCurrency(transaction.getForeignCurrency());
+          newConversionRateDocSec.setRate(convRate.getDivideRateBy());
+          newConversionRateDocSec.setForeignAmount(transaction.getForeignAmount());
+          newConversionRateDocSec.setPayment(transaction.getFinPayment());
+          newConversionRateDocSec.setFINFinancialAccountTransaction(transaction);
+          OBDal.getInstance().save(newConversionRateDocSec);
         }
       }
 
@@ -227,15 +228,19 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
         // The second transaction describes the opposite movement of the first transaction.
         // If the first is a deposit, the second is a drop
         if (type.equals("deposit")) {
-          secondTransaction.setPaymentAmount(origAmount);
-          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(origAmount));
+          secondTransaction.setPaymentAmount(amount);
+          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(amount));
           secondTransaction.setTransactionType("BPW");
           secondTransaction.setStatus("PWNC");
         } else {
-          secondTransaction.setDepositAmount(origAmount);
-          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(origAmount));
+          secondTransaction.setDepositAmount(amount);
+          secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(amount));
           secondTransaction.setTransactionType("BPD");
           secondTransaction.setStatus("RDNC");
+        }
+        if (!StringUtils.equals(isoCode, orgCurrency.getISOCode())) {
+          secondTransaction.setForeignCurrency(orgCurrency);
+          secondTransaction.setForeignAmount(origAmount);
         }
         secondTransaction.setProcessed(true);
         secondTransaction.setDescription(description);
@@ -244,6 +249,30 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
         OBDal.getInstance().save(secondTransaction);
         paymentcashupEvent.setRelatedTransaction(secondTransaction);
         OBDal.getInstance().save(paymentcashupEvent);
+
+        if (!StringUtils.equals(isoCode, orgCurrency.getISOCode())) {
+          ConversionRateDoc newConversionRateDocSec = null;
+          newConversionRateDocSec = FIN_Utility.getConversionRateDoc(
+              secondTransaction.getCurrency(), secondTransaction.getForeignCurrency(),
+              secondTransaction.getId(), secondTransaction.getEntity());
+          if (newConversionRateDocSec == null) {
+            ConversionRate convRate = FinancialUtils.getConversionRate(secondTransaction
+                .getCreationDate(), secondTransaction.getCurrency(), secondTransaction
+                .getForeignCurrency(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+                .getOBContext().getCurrentClient());
+            newConversionRateDocSec = OBProvider.getInstance().get(ConversionRateDoc.class);
+            newConversionRateDocSec.setClient(OBContext.getOBContext().getCurrentClient());
+            newConversionRateDocSec.setOrganization(OBContext.getOBContext()
+                .getCurrentOrganization());
+            newConversionRateDocSec.setCurrency(secondTransaction.getCurrency());
+            newConversionRateDocSec.setToCurrency(secondTransaction.getForeignCurrency());
+            newConversionRateDocSec.setRate(convRate.getDivideRateBy());
+            newConversionRateDocSec.setForeignAmount(secondTransaction.getForeignAmount());
+            newConversionRateDocSec.setPayment(secondTransaction.getFinPayment());
+            newConversionRateDocSec.setFINFinancialAccountTransaction(secondTransaction);
+            OBDal.getInstance().save(newConversionRateDocSec);
+          }
+        }
       }
     }
     // Call all OrderProcess injected.
