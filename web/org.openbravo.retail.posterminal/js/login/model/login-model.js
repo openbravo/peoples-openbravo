@@ -1284,6 +1284,7 @@
           }
         }
         OB.UTIL.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
+        OB.UTIL.localStorage.setItem('maxTimeInOffline', inResponse.maxTimeInOffline);
         if (!(OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32)) {
           OB.info('cacheSessionId is not defined and we will set the id generated in the backend: ' + inResponse.cacheSessionId);
           OB.UTIL.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);

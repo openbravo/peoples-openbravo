@@ -381,22 +381,35 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     }
     properties.put("templateVersion", OBPOSPrintTemplateReader.getInstance()
         .getPrintTemplatesIdentifier());
-    String value;
-    try {
 
-      Map<QueryFilter, Boolean> queryFilters = new HashMap<>();
-      queryFilters.put(QueryFilter.ACTIVE, true);
-      queryFilters.put(QueryFilter.CLIENT, false);
-      queryFilters.put(QueryFilter.ORGANIZATION, false);
-      value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
-          null, null, (String) null, queryFilters);
+    String terminalAuthenticationValue;
+    String maxAllowedTimeInOfflineValue;
+    String currentPropertyToLaunchError = "";
+    try {
+      // Get terminal terminalAuthentication
+      currentPropertyToLaunchError = "errorReadingTerminalAuthentication";
+      Map<QueryFilter, Boolean> terminalAuthenticationQueryFilters = new HashMap<>();
+      terminalAuthenticationQueryFilters.put(QueryFilter.ACTIVE, true);
+      terminalAuthenticationQueryFilters.put(QueryFilter.CLIENT, false);
+      terminalAuthenticationQueryFilters.put(QueryFilter.ORGANIZATION, false);
+      terminalAuthenticationValue = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication",
+          true, null, null, null, null, (String) null, terminalAuthenticationQueryFilters);
+      // Get maxTimeInOffline preference
+      currentPropertyToLaunchError = "errorReadingMaxAllowedTimeInOffline";
+      Map<QueryFilter, Boolean> maxAllowedTimeInOfflineQueryFilters = new HashMap<>();
+      maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.ACTIVE, true);
+      maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.CLIENT, false);
+      maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.ORGANIZATION, false);
+      maxAllowedTimeInOfflineValue = Preferences.getPreferenceValue("OBPOS_MaxTimeInOffline", true,
+          null, null, null, null, (String) null, maxAllowedTimeInOfflineQueryFilters);
     } catch (PropertyException e) {
       result.put("terminalAuthentication", "Y");
-      result.put("errorReadingTerminalAuthentication",
-          OBMessageUtils.messageBD("OBPOS_errorWhileReadingTerminalAuthenticationPreference"));
+      result.put(currentPropertyToLaunchError,
+          OBMessageUtils.messageBD("OBPOS_errorWhileReadingPreference"));
       return result;
     }
-    result.put("terminalAuthentication", value);
+    result.put("terminalAuthentication", terminalAuthenticationValue);
+    result.put("maxTimeInOffline", maxAllowedTimeInOfflineValue);
     return result;
   }
 
