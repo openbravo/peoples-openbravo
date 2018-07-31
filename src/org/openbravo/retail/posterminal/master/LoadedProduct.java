@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -63,6 +64,7 @@ public class LoadedProduct extends ProcessHQLQuery {
     Map<String, Object> paramValues = new HashMap<String, Object>();
     paramValues.put("productId", jsonsent.getJSONObject("parameters").getJSONObject("productId")
         .getString("value"));
+    paramValues.put("orgId", OBContext.getOBContext().getCurrentOrganization().getId());
     return paramValues;
   }
 }

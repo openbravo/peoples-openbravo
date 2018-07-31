@@ -33,7 +33,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -287,18 +287,24 @@ public class ExternalOrderLoader extends OrderLoader {
   protected boolean messageAlreadyReceived(String id) {
     // check if it is not there already or already archived
     {
-      final Query qry = SessionHandler.getInstance().getSession()
-          .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id");
+      final Query<Number> qry = SessionHandler
+          .getInstance()
+          .getSession()
+          .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id",
+              Number.class);
       qry.setParameter("id", id);
-      if (((Number) qry.uniqueResult()).intValue() > 0) {
+      if (qry.uniqueResult().intValue() > 0) {
         return true;
       }
     }
     {
-      final Query qry = SessionHandler.getInstance().getSession()
-          .createQuery("select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id");
+      final Query<Number> qry = SessionHandler
+          .getInstance()
+          .getSession()
+          .createQuery("select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id",
+              Number.class);
       qry.setParameter("id", id);
-      if (((Number) qry.uniqueResult()).intValue() > 0) {
+      if (qry.uniqueResult().intValue() > 0) {
         return true;
       }
     }
@@ -310,29 +316,27 @@ public class ExternalOrderLoader extends OrderLoader {
       OBContext.setAdminMode();
       // check if it is not there already or already archived
       {
-        final Query qry = SessionHandler
+        final Query<String> qry = SessionHandler
             .getInstance()
             .getSession()
             .createQuery(
                 "select " + ImportEntry.PROPERTY_IMPORTSTATUS + " from " + ImportEntry.ENTITY_NAME
-                    + " where id=:id");
+                    + " where id=:id", String.class);
         qry.setParameter("id", id);
-        @SuppressWarnings("unchecked")
-        final List<?> result = new ArrayList<Object>(qry.list());
+        final List<String> result = qry.list();
         if (!result.isEmpty()) {
-          return (String) result.get(0);
+          return result.get(0);
         }
       }
       {
-        final Query qry = SessionHandler
+        final Query<String> qry = SessionHandler
             .getInstance()
             .getSession()
             .createQuery(
                 "select " + ImportEntry.PROPERTY_IMPORTSTATUS + " from "
-                    + ImportEntryArchive.ENTITY_NAME + " where id=:id");
+                    + ImportEntryArchive.ENTITY_NAME + " where id=:id", String.class);
         qry.setParameter("id", id);
-        @SuppressWarnings("unchecked")
-        final List<?> result = new ArrayList<Object>(qry.list());
+        final List<String> result = qry.list();
         if (!result.isEmpty()) {
           return (String) result.get(0);
         }
@@ -346,31 +350,29 @@ public class ExternalOrderLoader extends OrderLoader {
   protected String getCurrentResponse(String id) {
     // check if it is not there already or already archived
     {
-      final Query qry = SessionHandler
+      final Query<String> qry = SessionHandler
           .getInstance()
           .getSession()
           .createQuery(
               "select " + ImportEntry.PROPERTY_RESPONSEINFO + " from " + ImportEntry.ENTITY_NAME
-                  + " where id=:id");
+                  + " where id=:id", String.class);
       qry.setParameter("id", id);
-      @SuppressWarnings("unchecked")
-      final List<?> result = new ArrayList<Object>(qry.list());
+      final List<String> result = qry.list();
       if (!result.isEmpty()) {
-        return (String) result.get(0);
+        return result.get(0);
       }
     }
     {
-      final Query qry = SessionHandler
+      final Query<String> qry = SessionHandler
           .getInstance()
           .getSession()
           .createQuery(
               "select " + ImportEntry.PROPERTY_RESPONSEINFO + " from "
-                  + ImportEntryArchive.ENTITY_NAME + " where id=:id");
+                  + ImportEntryArchive.ENTITY_NAME + " where id=:id", String.class);
       qry.setParameter("id", id);
-      @SuppressWarnings("unchecked")
-      final List<?> result = new ArrayList<Object>(qry.list());
+      final List<String> result = qry.list();
       if (!result.isEmpty()) {
-        return (String) result.get(0);
+        return result.get(0);
       }
     }
     return null;
@@ -511,7 +513,7 @@ public class ExternalOrderLoader extends OrderLoader {
     setDefaults(orderJson);
 
     setClientOrg(orderJson);
-    
+
     disableConcurrencyCheck(orderJson);
 
     final OBPOSApplications posTerminal = getPOSTerminal(orderJson);
@@ -561,13 +563,12 @@ public class ExternalOrderLoader extends OrderLoader {
     transformPayments(orderJson);
   }
 
-  private void disableConcurrencyCheck(JSONObject orderJson) throws JSONException{
+  private void disableConcurrencyCheck(JSONObject orderJson) throws JSONException {
 
     if (orderJson.has("id")) {
       final Order order = OBDal.getInstance().get(Order.class, orderJson.get("id"));
-      if(order!=null) {
-        orderJson.put("loaded", OBMOBCUtils
-            .convertToUTCDateComingFromServer(order.getUpdated()));
+      if (order != null) {
+        orderJson.put("loaded", OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated()));
       }
     }
   }
@@ -1025,11 +1026,11 @@ public class ExternalOrderLoader extends OrderLoader {
       if (posTerminal != null) {
         Long currentNo = (long) 0;
         // The record will be locked to this process until it ends.
-        Query terminalQuery = OBDal.getInstance().getSession()
-            .createQuery("from OBPOS_Applications where id=:terminalId");
+        Query<OBPOSApplications> terminalQuery = OBDal.getInstance().getSession()
+            .createQuery("from OBPOS_Applications where id=:terminalId", OBPOSApplications.class);
         terminalQuery.setParameter("terminalId", posTerminal.getId());
         terminalQuery.setLockOptions(LockOptions.UPGRADE);
-        OBPOSApplications lockedTerminal = (OBPOSApplications) terminalQuery.uniqueResult();
+        OBPOSApplications lockedTerminal = terminalQuery.uniqueResult();
         OBDal.getInstance().getSession().evict(lockedTerminal);
         lockedTerminal = OBDal.getInstance().get(OBPOSApplications.class, lockedTerminal.getId());
         if (lockedTerminal.getLastassignednum() != null) {
@@ -1306,13 +1307,14 @@ public class ExternalOrderLoader extends OrderLoader {
         String qryStr = "select id from " + entityName + " where " + property + "=:value"
             + " and organization.id " + OBDal.getInstance().getReadableOrganizationsInClause();
 
-        final Query qry = OBDal.getInstance().getSession().createQuery(qryStr);
+        final Query<String> qry = OBDal.getInstance().getSession()
+            .createQuery(qryStr, String.class);
         qry.setParameter("value", value);
-        final java.util.List<?> values = qry.list();
+        final List<String> values = qry.list();
         if (values.isEmpty() || values.size() > 1) {
           return null;
         }
-        final String result = (String) values.get(0);
+        final String result = values.get(0);
         return result;
       } catch (Throwable t) {
         final Throwable cause = DbUtility.getUnderlyingSQLException(t);

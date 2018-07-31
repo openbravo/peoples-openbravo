@@ -5881,6 +5881,23 @@
       }
       this.unset('skipApplyPromotions');
       this.save(callback);
+    },
+    isAnonymousBlindReturn: function () {
+      var me = this;
+      if (me.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !me.get('obposIsDeleted')) {
+        // Checking blind returned lines
+        var isBlindReturn = false;
+        var i, lines = me.get('lines');
+        for (i = 0; i < lines.length; i++) {
+          if (lines.models[i].get('qty') < 0 && !lines.models[i].get('originalDocumentNo')) {
+            isBlindReturn = true;
+            break;
+          }
+        }
+        return isBlindReturn;
+      } else {
+        return false;
+      }
     }
   });
 

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,8 +16,8 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -29,7 +29,6 @@ import org.openbravo.utils.FormatUtilities;
 
 public class CheckApproval extends JSONProcessSimple {
 
-  @SuppressWarnings("rawtypes")
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     OBContext.setAdminMode(false);
@@ -75,12 +74,13 @@ public class CheckApproval extends JSONProcessSimple {
             + "   and (p.visibleAtOrganization.id = :org " //
             + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null) group by p.property";
-        Query preferenceQuery = OBDal.getInstance().getSession().createQuery(hqlQuery);
+        Query<String> preferenceQuery = OBDal.getInstance().getSession()
+            .createQuery(hqlQuery, String.class);
         preferenceQuery.setParameter("user", qUserList.get(0).getId());
         preferenceQuery.setParameter("org", organization);
         preferenceQuery.setParameter("orgList", naturalTreeOrgList);
 
-        List preferenceList = preferenceQuery.list();
+        List<String> preferenceList = preferenceQuery.list();
         if (preferenceList.size() == 0) {
           result.put("status", 1);
           JSONObject jsonError = new JSONObject();
@@ -92,9 +92,9 @@ public class CheckApproval extends JSONProcessSimple {
           JSONObject jsonData = new JSONObject();
           JSONObject jsonPreference = new JSONObject();
           Integer c = 0;
-          for (Object preference : preferenceList) {
-            jsonPreference.put((String) preference, (String) preference);
-            if (approvals.contains((String) preference)) {
+          for (String preference : preferenceList) {
+            jsonPreference.put(preference, preference);
+            if (approvals.contains(preference)) {
               c++;
             }
           }

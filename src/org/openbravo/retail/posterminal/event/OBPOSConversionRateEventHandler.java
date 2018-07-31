@@ -22,7 +22,7 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -91,7 +91,8 @@ public class OBPOSConversionRateEventHandler extends EntityPersistenceEventObser
     hql.append(" OR (:validFrom < t." + OBPOSConversionRate.PROPERTY_VALIDFROMDATE
         + " AND :validTo > t." + OBPOSConversionRate.PROPERTY_VALIDTODATE + "))");
 
-    final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    final Query<Object> query = OBDal.getInstance().getSession()
+        .createQuery(hql.toString(), Object.class);
     query.setParameter("id", id);
     query.setParameter("client", client);
     query.setParameter("organization", organization);

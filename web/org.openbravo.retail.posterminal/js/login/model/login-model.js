@@ -67,7 +67,7 @@
         shouldExecuteBenchmark: true
       });
 
-      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication', me.get('appName')) === 'Y' ? OB.UTIL.localStorage.getItem('terminalName', me.get('appName')) : OB.UTIL.getParameterByName("terminal"));
 
       OB.UTIL.HookManager.registerHook('OBMOBC_InitActions', function (args, c) {
         me.initActions(function () {
@@ -741,7 +741,7 @@
                     isConfirmButton: true,
                     label: OB.I18N.getLabel('OBMOBC_LblOk'),
                     action: function () {
-                      if (OB && OB.POS) {
+                      if (OB.MobileApp.view.currentWindow !== 'retail.pointofsale') {
                         OB.POS.navigate('retail.pointofsale');
                         return true;
                       }

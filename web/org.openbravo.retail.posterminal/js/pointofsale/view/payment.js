@@ -1214,6 +1214,24 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
+    if (!OB.MobileApp.model.get('terminal').returns_anonymouscustomer) {
+      if (isMultiOrder) {
+        var orderList = myModel.get('multiOrders').get('multiOrdersList');
+        orderList.forEach(function (receipt) {
+          if (receipt.isAnonymousBlindReturn()) {
+            avoidPayment = true;
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_returnServicesWithAnonimousCust'));
+            return;
+          }
+        });
+      } else {
+        if (this.owner.receipt.isAnonymousBlindReturn()) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_returnServicesWithAnonimousCust'));
+          return;
+        }
+      }
+    }
+
     enyo.$.scrim.show();
 
     if (isMultiOrder) {
@@ -1574,6 +1592,23 @@ enyo.kind({
         label: OB.I18N.getLabel('OBPOS_LblOk')
       }]);
       return true;
+    }
+    // Checking blind returned lines
+    if (!OB.MobileApp.model.get('terminal').returns_anonymouscustomer) {
+      if (this.model.get('leftColumnViewManager').isOrder()) {
+        if (this.owner.receipt.isAnonymousBlindReturn()) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_returnServicesWithAnonimousCust'));
+          return;
+        }
+      } else {
+        var orderList = this.model.get('multiOrders').get('multiOrdersList');
+        orderList.forEach(function (receipt) {
+          if (receipt.isAnonymousBlindReturn()) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_returnServicesWithAnonimousCust'));
+            return;
+          }
+        });
+      }
     }
     this.putDisabled(true);
     var me = this,

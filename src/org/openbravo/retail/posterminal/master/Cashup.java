@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2017 Openbravo S.L.U.
+ * Copyright (C) 2014-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -20,8 +20,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -54,7 +54,11 @@ public class Cashup extends JSONProcessSimple {
       String posId = jsonsent.getString("pos");
 
       if (POSUtils.cashupErrorsExistInTerminal(posId)) {
-        result.put(JsonConstants.RESPONSE_ERRORMESSAGE, "There are cashup errors in this terminal");
+        String errorMsg = "There are cashup errors in this terminal";
+        JSONObject jsonError = new JSONObject();
+        jsonError.put("message", errorMsg);
+        result.put(JsonConstants.RESPONSE_ERROR, jsonError);
+        result.put(JsonConstants.RESPONSE_ERRORMESSAGE, errorMsg);
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
         return result;
       }
@@ -74,6 +78,7 @@ public class Cashup extends JSONProcessSimple {
           .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
           null, null, null);
 
+      @SuppressWarnings("rawtypes")
       final Query cashupquery = querybuilder.getDalQuery();
       cashupquery.setParameter("isprocessed", isprocessed.equalsIgnoreCase("Y"));
       if (jsonsent.has("isprocessedbo")) {
@@ -123,7 +128,13 @@ public class Cashup extends JSONProcessSimple {
       return result;
 
     } catch (Exception e) {
-      log.error("Error during exec", e);
+      log.error("Error during Cashup exec", e);
+      JSONObject jsonError = new JSONObject();
+      String errorMsg = "Unknown error happened while retrieving cashup: " + e.getMessage();
+      jsonError.put("message", errorMsg);
+      result.put(JsonConstants.RESPONSE_ERROR, jsonError);
+      result.put(JsonConstants.RESPONSE_ERRORMESSAGE, errorMsg);
+      result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
       return result;
     } finally {
       OBContext.restorePreviousMode();
@@ -158,7 +169,7 @@ public class Cashup extends JSONProcessSimple {
       paymentMethodJSON.put("startingCash", paymentMethodJSON.get("startingcash"));
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
-      paymentMethodJSON.put("lineNo", paymentAppMethod.get("line"));
+      paymentMethodJSON.put("lineNo", paymentAppMethod != null ? paymentAppMethod.get("line") : 1L);
       respArray.put(paymentMethodJSON);
     }
 
@@ -205,6 +216,7 @@ public class Cashup extends JSONProcessSimple {
           .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
           null, null, null);
 
+      @SuppressWarnings("rawtypes")
       final Query glitemquery = querybuilder.getDalQuery();
       glitemquery.setParameter("terminal", posId);
 
@@ -220,6 +232,7 @@ public class Cashup extends JSONProcessSimple {
     SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlFinanAcct, OBContext.getOBContext()
         .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
         null, null, null);
+    @SuppressWarnings("rawtypes")
     final Query finacctquery = querybuilder.getDalQuery();
     finacctquery.setParameter("terminal", posId);
     @SuppressWarnings("unchecked")
@@ -249,6 +262,7 @@ public class Cashup extends JSONProcessSimple {
         SimpleQueryBuilder paymentMethodbuilder = new SimpleQueryBuilder(hqlPaymentMethod,
             OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
                 .getCurrentOrganization().getId(), null, null, null);
+        @SuppressWarnings("rawtypes")
         final Query paymentfinacctquery = paymentMethodbuilder.getDalQuery();
         paymentfinacctquery.setParameter("terminal", posId);
         paymentfinacctquery.setParameter("financialacct", financialacct);
