@@ -58,7 +58,7 @@ OB.ProductCharacteristics = {
     var nRecordsReceived = grid.getData().getLength(),
         messageBar = grid.view.messageBar;
     if (nRecordsReceived == 0) {
-      messageBar.setMessage('info', OB.I18N.getLabel('HighRecords'));
+      messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, OB.I18N.getLabel('NoVariants'));
     }
   },
 };
