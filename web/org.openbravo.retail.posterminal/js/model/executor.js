@@ -307,24 +307,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
   preAction: function (evt) {
     var line = evt.get('line'),
+        manualPromotions = line.get('manualPromotions') || [],
         order = evt.get('receipt'),
-        manualPromotions = [],
-        appliedPromotions, appliedPack;
-
-    // Keep discretionary discounts at the beginning, recalculate them based on
-    // new info in line
-    appliedPromotions = line.get('promotions');
-    if (appliedPromotions) {
-      if (line.lastAppliedPromotion() && !line.lastAppliedPromotion().applyNext) {
-        manualPromotions.push(line.lastAppliedPromotion());
-      } else {
-        _.forEach(appliedPromotions, function (promotion) {
-          if (promotion.manual) {
-            manualPromotions.push(promotion);
-          }
-        });
-      }
-    }
+        appliedPromotions = line.get('promotions') || [],
+        beforeManualPromo = [],
+        appliedPack;
 
     appliedPack = line.isAffectedByPack();
     if (appliedPack) {
@@ -353,7 +340,12 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       });
     }
 
-    _.forEach(manualPromotions, function (promo) {
+    // Apply regular manual promotions
+    beforeManualPromo = _.filter(manualPromotions, function (promo) {
+      return !promo.obdiscApplyafter;
+    });
+
+    _.forEach(beforeManualPromo, function (promo) {
       var promotion = {
         rule: new Backbone.Model(promo),
 
@@ -373,6 +365,29 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     if (this.get('eventQueue').filter(function (p) {
       return p.get('receipt') === evt.get('receipt');
     }).length === 0) {
+      var line = evt.get('line'),
+          order = evt.get('receipt'),
+          manualPromotions = [],
+          afterManualPromo = [],
+          appliedPack;
+      _.each(order.get('lines').models, function (line) {
+        manualPromotions = line.get('manualPromotions') || [];
+        afterManualPromo = _.filter(manualPromotions, function (promo) {
+          return promo.obdiscApplyafter;
+        });
+        _.forEach(afterManualPromo, function (promo) {
+          var promotion = {
+            rule: new Backbone.Model(promo),
+            definition: {
+              userAmt: promo.userAmt,
+              applyNext: promo.applyNext,
+              lastApplied: promo.lastApplied
+            },
+            alreadyCalculated: true
+          };
+          OB.Model.Discounts.addManualPromotion(order, [line], promotion);
+        });
+      });
       evt.get('receipt').trigger('discountsApplied');
     }
     // Forcing local db save. Rule implementations could (should!) do modifications
