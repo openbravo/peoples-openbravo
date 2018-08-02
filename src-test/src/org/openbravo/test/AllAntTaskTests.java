@@ -106,6 +106,7 @@ import org.openbravo.test.services.ServicesTest;
 import org.openbravo.test.services.ServicesTest2;
 import org.openbravo.test.services.ServicesTest3;
 import org.openbravo.test.system.CryptoUtilities;
+import org.openbravo.test.system.ErrorTextParserIntegrationTest;
 import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
@@ -197,6 +198,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SystemServiceTest.class, //
     SystemValidatorTest.class, //
     ErrorTextParserTest.class, //
+    ErrorTextParserIntegrationTest.class, //
     TestInfrastructure.class, //
     Issue29934Test.class, //
     ImportEntrySizeTest.class, //
