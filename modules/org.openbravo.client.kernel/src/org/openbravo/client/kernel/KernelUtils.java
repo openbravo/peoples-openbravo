@@ -34,6 +34,8 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -64,11 +66,17 @@ public class KernelUtils {
       "org.openbravo.userinterface.smartclient", "org.openbravo.service.datasource",
       "org.openbravo.client.application", "org.openbravo.userinterface.selector" };
 
+  private ApplicationDictionaryCachedStructures adcs;
+
   public static synchronized KernelUtils getInstance() {
     if (instance == null) {
       instance = new KernelUtils();
     }
     return instance;
+  }
+
+  public KernelUtils() {
+    adcs = WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
   }
 
   public static synchronized void setInstance(KernelUtils instance) {
@@ -397,7 +405,7 @@ public class KernelUtils {
       tabId = KernelUtilsData.getParentTab(connection, tab.getWindow().getId(), tab.getTabLevel()
           .toString(), tab.getSequenceNumber().toString());
       if (tabId != null) {
-        targetTab = OBDal.getInstance().get(Tab.class, tabId);
+        targetTab = adcs != null ? adcs.getTab(tabId) : OBDal.getInstance().get(Tab.class, tabId);
       }
     } catch (ServletException e) {
       log.error(e.getMessage(), e);

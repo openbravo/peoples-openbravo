@@ -474,7 +474,7 @@ public class SelectorComponent extends BaseTemplateComponent {
    * fields
    */
   private List<Field> getOutFieldListForSelectorField(String tabId, String selectorFieldId) {
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Tab tab = adcs.getTab(tabId);
     List<Field> tabFields = tab.getADFieldList();
     List<Field> result = new ArrayList<Field>();
     for (Field f : tabFields) {
