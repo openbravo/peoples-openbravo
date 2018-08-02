@@ -270,7 +270,8 @@ public class OBViewParameterHandler {
         return null;
       }
 
-      Tab tab = window.getADTabList().get(0);
+      // parameters are not cached in ADCS
+      Tab tab = paramWindow.getADCS().getTab(window.getADTabList().get(0).getId());
 
       final OBViewTab tabComponent = paramWindow.createComponent(OBViewTab.class);
       tabComponent.setTab(tab);

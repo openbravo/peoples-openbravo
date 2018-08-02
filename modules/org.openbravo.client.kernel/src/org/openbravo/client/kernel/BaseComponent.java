@@ -299,4 +299,8 @@ public abstract class BaseComponent implements Component {
   public boolean bypassAuthentication() {
     return false;
   }
+
+  public ApplicationDictionaryCachedStructures getADCS() {
+    return adcs;
+  }
 }
