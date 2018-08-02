@@ -644,6 +644,9 @@
         });
         validateMultiOrder = function () {
           _.each(closedReceipts, function (receipt) {
+            if (OB.UTIL.isNullOrUndefined(receipt.get('amountToLayaway'))) {
+              receipt.set('donePressed', true);
+            }
             OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
               context: me,
               model: model,
