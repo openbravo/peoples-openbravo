@@ -88,7 +88,7 @@ public class ViewComponent extends BaseComponent {
     try {
       OBContext.setAdminMode();
 
-      final Window window = OBDal.getInstance().get(Window.class, correctViewId(viewId));
+      final Window window = adcs.getWindow(correctViewId(viewId));
 
       if (window != null) {
         FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess("MW",
@@ -159,7 +159,7 @@ public class ViewComponent extends BaseComponent {
   protected String generateAttachment(String viewId) {
     String[] keys = viewId.split(KernelConstants.ID_PREFIX);
     String tabId = keys[1];
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Tab tab = adcs.getTab(tabId);
     if (tab == null) {
       throw new IllegalArgumentException("Not found process definition with ID " + tabId);
     }
@@ -198,7 +198,7 @@ public class ViewComponent extends BaseComponent {
   @Override
   public Module getModule() {
     final String id = getParameter("viewId");
-    final Window window = OBDal.getInstance().get(Window.class, correctViewId(id));
+    final Window window = adcs.getWindow(correctViewId(id));
     if (window != null) {
       return window.getModule();
     } else if (id.startsWith("processDefinition_")) {
@@ -211,7 +211,7 @@ public class ViewComponent extends BaseComponent {
     } else if (id.startsWith("attachment_")) {
       String[] keys = id.split(KernelConstants.ID_PREFIX);
       String tabId = keys[1];
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      Tab tab = adcs.getTab(tabId);
       if (tab == null) {
         throw new IllegalArgumentException("Not found tab with ID " + tabId);
       }
@@ -295,7 +295,7 @@ public class ViewComponent extends BaseComponent {
     final String viewId = getParameter("viewId");
     OBContext.setAdminMode();
     try {
-      Window window = OBDal.getInstance().get(Window.class, correctViewId(viewId));
+      Window window = adcs.getWindow(correctViewId(viewId));
       if (window == null) {
         return "";
       }

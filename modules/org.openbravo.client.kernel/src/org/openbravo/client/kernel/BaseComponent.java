@@ -73,7 +73,7 @@ public abstract class BaseComponent implements Component {
   private Instance<Component> components;
 
   @Inject
-  private ApplicationDictionaryCachedStructures adcs;
+  protected ApplicationDictionaryCachedStructures adcs;
 
   // TODO: add the concept of child components which are generated/rendered before the root
   // component.
