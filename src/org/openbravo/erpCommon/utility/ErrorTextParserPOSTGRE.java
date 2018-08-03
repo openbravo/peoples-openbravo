@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2017 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -146,10 +146,9 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
      */
     // The regular expression . matches any character except a line terminator unless the DOTALL
     // flag is specified.
-    Pattern pattern = Pattern.compile("(.*)(@.+@)(.*)", Pattern.DOTALL);
-    Matcher matcher = pattern.matcher(myMessage);
-    if (matcher.matches()) {
-      myMessage = matcher.group(2);
+    Pattern pattern = Pattern.compile(".*@.+@.*", Pattern.DOTALL);
+    if (pattern.matcher(myMessage).matches()) {
+      myMessage = stripExtraInformation(myMessage);
       String translatedMsg = Utility.parseTranslation(getConnection(), getVars(), getLanguage(),
           myMessage);
       log4j.debug("translated message: {}", translatedMsg);
@@ -197,5 +196,22 @@ class ErrorTextParserPOSTGRE extends ErrorTextParser {
     originalError.setType("Error");
     originalError.setMessage(getMessage());
     return originalError;
+  }
+
+  private String stripExtraInformation(String message) {
+    String cleanedMessage;
+    // if the message is a directly from postgres generated one, it has an 'ERROR :' prefix
+    // if it is passed via an AD_PINSTACE result, then the 'ERROR: ' has already been stripped
+    if ((message.length() > 7) && (message.startsWith("ERROR: "))) {
+      cleanedMessage = message.substring(7);
+    } else {
+      cleanedMessage = message;
+    }
+    // remove technical information added by the PostgreSQL JDBC driver
+    int pos = cleanedMessage.indexOf("\n  Where: ");
+    if (pos != -1) {
+      cleanedMessage = cleanedMessage.substring(0, pos);
+    }
+    return cleanedMessage;
   }
 }

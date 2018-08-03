@@ -42,6 +42,7 @@ import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.OBContextCollectionsTest;
 import org.openbravo.test.security.PasswordStrengthCheckerTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
+import org.openbravo.test.system.ErrorTextParserIntegrationTest;
 import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
@@ -100,6 +101,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SystemServiceTest.class, //
     SystemValidatorTest.class, //
     ErrorTextParserTest.class, //
+    ErrorTextParserIntegrationTest.class, //
     TestInfrastructure.class, //
     Issue29934Test.class, //
     ImportEntrySizeTest.class, //

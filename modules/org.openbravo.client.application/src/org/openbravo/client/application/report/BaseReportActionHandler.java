@@ -69,6 +69,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.service.db.DbUtility;
 import org.openbravo.userinterface.selector.reference.FKMultiSelectorUIDefinition;
 import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
@@ -130,11 +131,12 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       return result;
     } catch (Exception e) {
       log.error("Error generating report id: {}", parameters.get("reportId"), e);
+      Throwable uiException = DbUtility.getUnderlyingSQLException(e);
       return getResponseBuilder()
           .retryExecution()
           .showResultsInProcessView()
           .showMsgInProcessView(MessageType.ERROR,
-              OBMessageUtils.translateError(e.getMessage()).getMessage()).build();
+              OBMessageUtils.translateError(uiException.getMessage()).getMessage()).build();
     }
   }
 

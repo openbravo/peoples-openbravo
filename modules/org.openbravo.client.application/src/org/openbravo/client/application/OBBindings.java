@@ -197,7 +197,7 @@ public class OBBindings {
 
   private Date getTimeFromNashornNativeDate(Object d) {
     // Since Java 8, Nashorn is the Javascript engine used by default. When returning Javascript
-    // date objects are represented by jdk.nashorn.internal.objects.NativeDate is used instead.
+    // date objects they are represented by jdk.nashorn.internal.objects.NativeDate.
     //
     // Although being a public class, it is in an internal module which is not opened by default in
     // JDK9+ therefore we still need to use reflection to access to it.
