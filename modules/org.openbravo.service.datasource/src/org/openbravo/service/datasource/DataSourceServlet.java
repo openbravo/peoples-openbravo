@@ -846,6 +846,9 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
+      if(!hasValidCsrfToken(request, parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER))) {
+        throw new OBUserException("InvalidCSRFToken");
+      }
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
@@ -871,6 +874,10 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
       if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
+      }
+      if(!hasValidCsrfToken(request, parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER))) {
+        //TODO: Redirect to a 403?
+        throw new OBUserException("InvalidCSRFToken");
       }
 
       final String id = parameters.get(JsonConstants.ID);
@@ -911,6 +918,11 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new OBUserException("AccessTableNoView");
       }
 
+      if(!hasValidCsrfToken(request, parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER))) {
+        //TODO: Redirect to a 403?
+        throw new OBUserException("InvalidCSRFToken");
+      }
+
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
         getDataSource(request).checkEditDatasourceAccess(parameters);
@@ -921,6 +933,11 @@ public class DataSourceServlet extends BaseKernelServlet {
     } catch (Exception e) {
       handleException(e, response);
     }
+  }
+
+  private boolean hasValidCsrfToken(HttpServletRequest request, String csrfToken) {
+    String sessionToken = OBContext.getOBContext().getCsrfToken();
+    return StringUtils.isNotEmpty(csrfToken) && csrfToken.equals(sessionToken);
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,

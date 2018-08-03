@@ -51,7 +51,8 @@ OB.User = {
         writableOrganizations: [
         <#list data.writableOrganizations as property>
             '${property?js_string}'<#if property_has_next>,</#if>
-        </#list>]
+        </#list>],
+        csrfToken: '${data.csrfToken?js_string}'
 };
 
 OB.AccessibleEntities = {

@@ -133,6 +133,12 @@ isc.OBViewDataSource.addProperties({
       sendOriginalIDBack: true,
       _extraProperties: this.getAdditionalProps()
     };
+
+    // add CSRF token for all modifying operations
+    if (operationType === 'add' || operationType === 'update' || operationType === 'remove') {
+      additionalPara.csrfToken = OB.User.csrfToken;
+    }
+
     isc.addProperties(newRequestProperties.params, additionalPara);
     if (!newRequestProperties.dataSource) {
       newRequestProperties.dataSource = this;

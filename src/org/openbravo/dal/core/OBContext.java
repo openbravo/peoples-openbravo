@@ -82,6 +82,7 @@ public class OBContext implements OBNotSingleton {
   private static final String ROLE = "#AD_Role_ID";
   private static final String CLIENT = "#AD_Client_ID";
   private static final String ORG = "#AD_Org_ID";
+  private static final String CSRF_TOKEN = "#CSRF_Token";
 
   // set this to a higher value to enable admin mode tracing
   private static int ADMIN_TRACE_SIZE = 0;
@@ -515,9 +516,22 @@ public class OBContext implements OBNotSingleton {
   }
 
   /**
+   * Returns the OBContext currently set in the thread. Will return null if no context was set.
+   *
+   * @return the context in the thread, null if none present
+   */
+  public static OBContext getOBContext() {
+    final OBContext localContext = instance.get();
+    if (localContext != null && localContext.isSerialized()) {
+      localContext.initializeFromSerializedState();
+    }
+    return localContext;
+  }
+
+  /**
    * Set the context in the thread, this context will then be used by the Data Access Layer
    * internals.
-   * 
+   *
    * @param obContext
    *          the context to set in the thread
    */
@@ -528,19 +542,6 @@ public class OBContext implements OBNotSingleton {
 
     // nullify the admin context
     adminModeSet.set(null);
-  }
-
-  /**
-   * Returns the OBContext currently set in the thread. Will return null if no context was set.
-   * 
-   * @return the context in the thread, null if none present
-   */
-  public static OBContext getOBContext() {
-    final OBContext localContext = instance.get();
-    if (localContext != null && localContext.isSerialized()) {
-      localContext.initializeFromSerializedState();
-    }
-    return localContext;
   }
 
   private Client currentClient;
@@ -560,6 +561,7 @@ public class OBContext implements OBNotSingleton {
   private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
   private Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
   private EntityAccessChecker entityAccessChecker;
+  private String csrfToken;
 
   // the "0" user is the administrator
   private boolean isAdministrator;
@@ -590,57 +592,8 @@ public class OBContext implements OBNotSingleton {
     this.userLevel = userLevel.trim();
   }
 
-  /**
-   * Computes the clients allowed for read access using the user level and the client of the role.
-   * 
-   * @param role
-   *          the role used to initialize the readable clients
-   */
-  public void setReadableClients(Role role) {
-    if (getUserLevel().equals("S")) {
-      readableClients = new String[] { "0" };
-    } else if (role.getClient().getId().equals("0")) {
-      readableClients = new String[] { "0" };
-    } else {
-      readableClients = new String[] { role.getClient().getId(), "0" };
-    }
-  }
-
-  // writable organization is determined as follows
-  // 1) if the user has level S or C then they can only write in organization
-  // 0
-  // 2) in other cases read the organizations from the role
-  // only: if user has userlevel O then he/she can not read organization 0
-  // Utility.getContext and LoginUtils for current working
-  private void setWritableOrganizations(Role role) {
-    writableOrganizations = new HashSet<String>();
-    final String localUserLevel = getUserLevel();
-    if (localUserLevel.contains("S") || localUserLevel.contains("C")) {
-      // Force org * in case of System, Client or Client/Organization
-      writableOrganizations.add("0");
-    }
-
-    final List<String> os = getActiveOrganizationList(role);
-    for (final String o : os) {
-      writableOrganizations.add(o);
-    }
-
-    if (localUserLevel.equals("O")) { // remove *
-      writableOrganizations.remove("0");
-    }
-    writableOrganizations.addAll(additionalWritableOrganizations);
-  }
-
   private List<String> getActiveOrganizationList(Role thisRole) {
     return getOrganizationList(thisRole, organizationList, additionalWritableOrganizations, true);
-  }
-
-  private void setDeactivatedOrganizations(Role role) {
-    deactivatedOrganizations = new HashSet<String>();
-    final List<String> os = getDeactivatedOrganizationList(role);
-    for (final String o : os) {
-      deactivatedOrganizations.add(o);
-    }
   }
 
   private List<String> getDeactivatedOrganizationList(Role thisRole) {
@@ -686,37 +639,12 @@ public class OBContext implements OBNotSingleton {
     return organizationList;
   }
 
-  private void setReadableOrganizations(Role role) {
-    long t = System.currentTimeMillis();
-    final Set<String> os = new HashSet<>(getActiveOrganizationList(role));
-    final Set<String> readableOrgs = new HashSet<String>();
-    if (os.contains("0")) {
-      // if zero is an organization then add them all!
-      readableOrgs.addAll(getOrganizations(getCurrentClient()));
-    } else {
-      for (final String o : os) {
-        readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
-      }
-    }
-    readableOrgs.add("0");
-    readableOrganizations = new String[readableOrgs.size()];
-    int i = 0;
-    for (final String s : readableOrgs) {
-      readableOrganizations[i++] = s;
-    }
-    log.debug("setReadableOrganizations " + (System.currentTimeMillis() - t));
-  }
-
   public Client getCurrentClient() {
     return currentClient;
   }
 
   public void setCurrentClient(Client currentClient) {
     this.currentClient = currentClient;
-  }
-
-  public void setCurrentOrganization(Organization currentOrganization) {
-    this.currentOrganization = currentOrganization;
   }
 
   public Language getLanguage() {
@@ -732,6 +660,10 @@ public class OBContext implements OBNotSingleton {
     return currentOrganization;
   }
 
+  public void setCurrentOrganization(Organization currentOrganization) {
+    this.currentOrganization = currentOrganization;
+  }
+
   public void removeWritableOrganization(String orgId) {
     additionalWritableOrganizations.remove(orgId);
   }
@@ -742,7 +674,7 @@ public class OBContext implements OBNotSingleton {
 
   /**
    * Adds a new organization for which write access is allowed.
-   * 
+   *
    * @param orgId
    *          the id of the additional writable organization
    */
@@ -758,7 +690,7 @@ public class OBContext implements OBNotSingleton {
 
   /**
    * Sets the OBContext using the information stored in the HttpSession
-   * 
+   *
    * @param request
    *          the http request used to set the OBContext
    * @return false if no user was specified in the session, true otherwise
@@ -784,7 +716,7 @@ public class OBContext implements OBNotSingleton {
     }
     try {
       return initialize(userId, getSessionValue(request, ROLE), getSessionValue(request, CLIENT),
-          getSessionValue(request, ORG));
+          getSessionValue(request, ORG), null, null, getSessionValue(request, CSRF_TOKEN));
     } catch (final OBSecurityException e) {
       // remove the authenticated user
       session.setAttribute(AUTHENTICATED_USER, null);
@@ -846,9 +778,14 @@ public class OBContext implements OBNotSingleton {
     return initialize(userId, roleId, clientId, orgId, languageCode, null);
   }
 
-  // sets the context by reading all user information
   private boolean initialize(String userId, String roleId, String clientId, String orgId,
       String languageCode, String warehouseId) {
+    return initialize(userId, roleId, clientId, orgId, languageCode, warehouseId, null);
+  }
+
+  // sets the context by reading all user information
+  private boolean initialize(String userId, String roleId, String clientId, String orgId,
+      String languageCode, String warehouseId, String csrf) {
 
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
@@ -856,6 +793,9 @@ public class OBContext implements OBNotSingleton {
       return false;
     }
     setInitialized(false);
+
+    log.warn("[CSRF] Setting token to " + csrf);
+    csrfToken = csrf;
 
     // can't use enableAsAdminContext here otherwise there is a danger of
     // recursive/infinite calls.
@@ -1128,11 +1068,57 @@ public class OBContext implements OBNotSingleton {
     return readableOrganizations.clone();
   }
 
+  private void setReadableOrganizations(Role role) {
+    long t = System.currentTimeMillis();
+    final Set<String> os = new HashSet<>(getActiveOrganizationList(role));
+    final Set<String> readableOrgs = new HashSet<String>();
+    if (os.contains("0")) {
+      // if zero is an organization then add them all!
+      readableOrgs.addAll(getOrganizations(getCurrentClient()));
+    } else {
+      for (final String o : os) {
+        readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
+      }
+    }
+    readableOrgs.add("0");
+    readableOrganizations = new String[readableOrgs.size()];
+    int i = 0;
+    for (final String s : readableOrgs) {
+      readableOrganizations[i++] = s;
+    }
+    log.debug("setReadableOrganizations " + (System.currentTimeMillis() - t));
+  }
+
   public Set<String> getWritableOrganizations() {
     if (writableOrganizations == null) {
       setWritableOrganizations(getRole());
     }
     return new HashSet<String>(writableOrganizations);
+  }
+
+  // writable organization is determined as follows
+  // 1) if the user has level S or C then they can only write in organization
+  // 0
+  // 2) in other cases read the organizations from the role
+  // only: if user has userlevel O then he/she can not read organization 0
+  // Utility.getContext and LoginUtils for current working
+  private void setWritableOrganizations(Role role) {
+    writableOrganizations = new HashSet<String>();
+    final String localUserLevel = getUserLevel();
+    if (localUserLevel.contains("S") || localUserLevel.contains("C")) {
+      // Force org * in case of System, Client or Client/Organization
+      writableOrganizations.add("0");
+    }
+
+    final List<String> os = getActiveOrganizationList(role);
+    for (final String o : os) {
+      writableOrganizations.add(o);
+    }
+
+    if (localUserLevel.equals("O")) { // remove *
+      writableOrganizations.remove("0");
+    }
+    writableOrganizations.addAll(additionalWritableOrganizations);
   }
 
   public Set<String> getDeactivatedOrganizations() {
@@ -1142,11 +1128,35 @@ public class OBContext implements OBNotSingleton {
     return new HashSet<String>(deactivatedOrganizations);
   }
 
+  private void setDeactivatedOrganizations(Role role) {
+    deactivatedOrganizations = new HashSet<String>();
+    final List<String> os = getDeactivatedOrganizationList(role);
+    for (final String o : os) {
+      deactivatedOrganizations.add(o);
+    }
+  }
+
   public String[] getReadableClients() {
     if (readableClients == null) {
       setReadableClients(getRole());
     }
     return readableClients.clone();
+  }
+
+  /**
+   * Computes the clients allowed for read access using the user level and the client of the role.
+   *
+   * @param role
+   *          the role used to initialize the readable clients
+   */
+  public void setReadableClients(Role role) {
+    if (getUserLevel().equals("S")) {
+      readableClients = new String[] { "0" };
+    } else if (role.getClient().getId().equals("0")) {
+      readableClients = new String[] { "0" };
+    } else {
+      readableClients = new String[] { role.getClient().getId(), "0" };
+    }
   }
 
   public EntityAccessChecker getEntityAccessChecker() {
@@ -1159,6 +1169,10 @@ public class OBContext implements OBNotSingleton {
       entityAccessChecker.initialize();
     }
     return entityAccessChecker;
+  }
+
+  public String getCsrfToken() {
+    return csrfToken;
   }
 
   public boolean isInAdministratorMode() {
@@ -1234,7 +1248,21 @@ public class OBContext implements OBNotSingleton {
     if (unequal(request, ORG, getCurrentOrganization())) {
       return false;
     }
+    if (unequalString(request, CSRF_TOKEN, getCsrfToken())) {
+      return false;
+    }
     return true;
+  }
+
+  private boolean unequalString(HttpServletRequest request, String param, String csrfToken) {
+    if (csrfToken == null) {
+      return true;
+    }
+    final String sessionValue = getSessionValue(request, param);
+    if (sessionValue == null) {
+      return false;
+    }
+    return !csrfToken.equals(sessionValue);
   }
 
   private boolean unequal(HttpServletRequest request, String param, BaseOBObject bob) {
@@ -1282,20 +1310,20 @@ public class OBContext implements OBNotSingleton {
     private boolean doOrgClientAccessCheck;
     private boolean crossOrgAdminMode = false;
 
-    public void setAdminMode(boolean adminMode) {
-      this.adminMode = adminMode;
-    }
-
-    public void setCrossOrgAdminMode(boolean crossOrgAdminMode) {
-      this.crossOrgAdminMode = crossOrgAdminMode;
-    }
-
     public boolean isAdminMode() {
       return adminMode;
     }
 
+    public void setAdminMode(boolean adminMode) {
+      this.adminMode = adminMode;
+    }
+
     public boolean isCrossOrgAdminMode() {
       return crossOrgAdminMode;
+    }
+
+    public void setCrossOrgAdminMode(boolean crossOrgAdminMode) {
+      this.crossOrgAdminMode = crossOrgAdminMode;
     }
 
     public void setOrgClientAccessCheck(boolean doOrgClientAccessCheck) {
@@ -1311,16 +1339,16 @@ public class OBContext implements OBNotSingleton {
     return isRTL;
   }
 
+  public void setRTL(boolean isRTL) {
+    this.isRTL = isRTL;
+  }
+
   public boolean isPortalRole() {
     return isPortalRole;
   }
 
   public boolean isWebServiceEnabled() {
     return isWebServiceEnabled;
-  }
-
-  public void setRTL(boolean isRTL) {
-    this.isRTL = isRTL;
   }
 
   public boolean isTranslationInstalled() {

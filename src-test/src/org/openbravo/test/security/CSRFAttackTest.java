@@ -41,7 +41,7 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
   private static final String FAKE_PRODUCT_SEARCHKEY = "FAKE_PRODUCT";
 
   @Test
-  public void testAttackCanBePerformed() {
+  public void testRequestAreProtectedAgainstCSRFAttack() {
     assertFalse("Fake product were created. No CSRF check has been done", createFakeProduct());
   }
 

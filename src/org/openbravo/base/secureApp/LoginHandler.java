@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.UUID;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -142,6 +143,9 @@ public class LoginHandler extends HttpBaseServlet {
           if (StringUtils.isEmpty(strUserAuth)) {
             throw new AuthenticationException("Message");// FIXME
           }
+
+          vars.setSessionValue("#CSRF_Token", UUID.randomUUID().toString());
+
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
         } catch (AuthenticationExpirationPasswordException | ChangePasswordException exception) {

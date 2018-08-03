@@ -170,4 +170,8 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
     strVersion += OBVersion.getInstance().getMP();
     return strVersion;
   }
+
+  public String getCsrfToken() {
+    return OBContext.getOBContext().getCsrfToken();
+  }
 }
