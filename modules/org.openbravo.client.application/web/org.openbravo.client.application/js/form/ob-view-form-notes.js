@@ -213,6 +213,8 @@ isc.OBNoteLayout.addProperties({
       'note': note
     }, addNoteCallback);
 
+    noteDS.requestProperties.params.csrfToken = OB.User.csrfToken;
+
     // clean text area
     this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
     this.saveNoteButton.setDisabled(true);

@@ -876,7 +876,6 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new OBUserException("AccessTableNoView");
       }
       if(!hasValidCsrfToken(request, parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER))) {
-        //TODO: Redirect to a 403?
         throw new OBUserException("InvalidCSRFToken");
       }
 
@@ -919,7 +918,6 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
 
       if(!hasValidCsrfToken(request, parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER))) {
-        //TODO: Redirect to a 403?
         throw new OBUserException("InvalidCSRFToken");
       }
 

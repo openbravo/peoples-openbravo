@@ -794,7 +794,6 @@ public class OBContext implements OBNotSingleton {
     }
     setInitialized(false);
 
-    log.warn("[CSRF] Setting token to " + csrf);
     csrfToken = csrf;
 
     // can't use enableAsAdminContext here otherwise there is a danger of
@@ -1254,15 +1253,15 @@ public class OBContext implements OBNotSingleton {
     return true;
   }
 
-  private boolean unequalString(HttpServletRequest request, String param, String csrfToken) {
-    if (csrfToken == null) {
+  private boolean unequalString(HttpServletRequest request, String param, String value) {
+    if (value == null) {
       return true;
     }
     final String sessionValue = getSessionValue(request, param);
     if (sessionValue == null) {
       return false;
     }
-    return !csrfToken.equals(sessionValue);
+    return !value.equals(sessionValue);
   }
 
   private boolean unequal(HttpServletRequest request, String param, BaseOBObject bob) {
