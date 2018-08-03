@@ -217,7 +217,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     return processViews;
   }
 
-  static Optional<GCSystem> getSystemGridConfig() {
+  public static Optional<GCSystem> getSystemGridConfig() {
     OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
     gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
     gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
@@ -225,7 +225,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     return Optional.ofNullable((GCSystem) gcSystemCriteria.uniqueResult());
   }
 
-  static Map<String, Optional<GCTab>> getTabsGridConfig(Window window) {
+  public static Map<String, Optional<GCTab>> getTabsGridConfig(Window window) {
     // window comes from ADCS, we need to retrieve GC from DB as it might have changed
     OBQuery<GCTab> qGCTab = OBDal.getInstance().createQuery(GCTab.class,
         "as g where g.tab.window = :window");

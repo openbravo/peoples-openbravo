@@ -235,8 +235,9 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
           gctab.getOBUIAPPGCFieldList().add(gcfield);
           OBDal.getInstance().save(gcfield);
         }
-        fieldConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(Field.class,
-            BUSINESS_PARTNER_CATEGORY_FIELD_ID));
+        field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID);
+        fieldConfig = OBViewUtil.getGridConfigurationSettings(field, getSystemGridConfig(),
+            getTabGridConfig(field.getTab()));
         return fieldConfig.toString();
       } finally {
         OBDal.getInstance().rollbackAndClose();

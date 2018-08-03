@@ -95,8 +95,9 @@ public class GCSequenceNumberTests extends GridConfigurationTest {
       firstTab.getOBUIAPPGCTabList().add(gctabSecondRecord);
       OBDal.getInstance().save(gctabSecondRecord);
 
-      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(
-          Tab.class, BUSINESS_PARTNER_TAB_ID));
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(tab, getSystemGridConfig(),
+          getTabGridConfig(tab));
 
       assertThat("Grid configuration in business partner tab with filtering enabled:",
           tabConfig.toString(), containsString(CAN_FILTER_TRUE));
@@ -139,10 +140,13 @@ public class GCSequenceNumberTests extends GridConfigurationTest {
       secondTab.getOBUIAPPGCTabList().add(gctabSecondRecord);
       OBDal.getInstance().save(gctabSecondRecord);
 
-      JSONObject bpTabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(
-          Tab.class, BUSINESS_PARTNER_TAB_ID));
-      JSONObject productTabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance()
-          .get(Tab.class, PRODUCT_TAB_ID));
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      JSONObject bpTabConfig = OBViewUtil.getGridConfigurationSettings(tab, getSystemGridConfig(),
+          getTabGridConfig(tab));
+
+      tab = OBDal.getInstance().get(Tab.class, PRODUCT_TAB_ID);
+      JSONObject productTabConfig = OBViewUtil.getGridConfigurationSettings(tab,
+          getSystemGridConfig(), getTabGridConfig(tab));
 
       assertThat("Grid configuration in business partner tab with filtering enabled:",
           bpTabConfig.toString(), containsString(CAN_FILTER_TRUE));
@@ -187,10 +191,13 @@ public class GCSequenceNumberTests extends GridConfigurationTest {
       secondTab.getOBUIAPPGCTabList().add(gctabSecondRecord);
       OBDal.getInstance().save(gctabSecondRecord);
 
-      JSONObject bpTabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(
-          Tab.class, BUSINESS_PARTNER_TAB_ID));
-      JSONObject productTabConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance()
-          .get(Tab.class, PRODUCT_TAB_ID));
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      JSONObject bpTabConfig = OBViewUtil.getGridConfigurationSettings(tab, getSystemGridConfig(),
+          getTabGridConfig(tab));
+
+      tab = OBDal.getInstance().get(Tab.class, PRODUCT_TAB_ID);
+      JSONObject productTabConfig = OBViewUtil.getGridConfigurationSettings(tab,
+          getSystemGridConfig(), getTabGridConfig(tab));
 
       assertThat("Grid configuration in business partner tab with filtering enabled:",
           bpTabConfig.toString(), containsString(CAN_FILTER_TRUE));
