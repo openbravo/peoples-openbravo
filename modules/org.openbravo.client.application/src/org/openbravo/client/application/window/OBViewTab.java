@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -39,6 +40,8 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -217,6 +220,11 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     return buttonFields;
+  }
+
+  public void setGCSettings(Optional<GCSystem> systemGridConfig,
+      Map<String, Optional<GCTab>> tabsGridConfig) {
+    fieldHandler.setGCSettings(systemGridConfig, tabsGridConfig);
   }
 
   public List<ButtonField> getAllButtonFields() {
@@ -793,6 +801,7 @@ public class OBViewTab extends BaseTemplateComponent {
         org.openbravo.client.application.Process newProcess = column.getOBUIAPPProcess();
         processId = newProcess.getId();
         url = "/";
+        // TODO: check if initialized?
         command = newProcess.getJavaClassName();
         newDefinition = true;
         uiPattern = newProcess.getUIPattern();
@@ -1149,4 +1158,5 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
   }
+
 }

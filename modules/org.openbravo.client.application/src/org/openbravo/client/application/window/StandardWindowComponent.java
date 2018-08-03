@@ -18,14 +18,26 @@
  */
 package org.openbravo.client.application.window;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
+
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Order;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.ui.Field;
@@ -129,6 +141,9 @@ public class StandardWindowComponent extends BaseTemplateComponent {
       return rootTabComponent;
     }
 
+    Optional<GCSystem> systemGridConfig = getSystemGridConfig();
+    Map<String, Optional<GCTab>> tabsGridConfig = getTabsGridConfig(window);
+
     final List<OBViewTab> tempTabs = new ArrayList<OBViewTab>();
     for (Tab tab : getWindow().getADTabList()) {
       // NOTE: grid sequence and field sequence tabs do not have any fields defined!
@@ -140,6 +155,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
       final OBViewTab tabComponent = createComponent(OBViewTab.class);
       tabComponent.setTab(tab);
       tabComponent.setUniqueString(uniqueString);
+      tabComponent.setGCSettings(systemGridConfig, tabsGridConfig);
       tempTabs.add(tabComponent);
       final String processView = tabComponent.getProcessViews();
       if (!"".equals(processView)) {
@@ -199,5 +215,43 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   public List<String> getProcessViews() {
     return processViews;
+  }
+
+  static Optional<GCSystem> getSystemGridConfig() {
+    OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
+    gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
+    gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
+    gcSystemCriteria.setMaxResults(1);
+    return Optional.ofNullable((GCSystem) gcSystemCriteria.uniqueResult());
+  }
+
+  static Map<String, Optional<GCTab>> getTabsGridConfig(Window window) {
+    // window comes from ADCS, we need to retrieve GC from DB as it might have changed
+    OBQuery<GCTab> qGCTab = OBDal.getInstance().createQuery(GCTab.class,
+        "as g where g.tab.window = :window");
+    qGCTab.setNamedParameter("window", window);
+    Map<String, List<GCTab>> gcsByTab = qGCTab.stream() //
+        .collect(groupingBy(gcTab -> gcTab.getTab().getId()));
+
+    return window.getADTabList().stream() //
+        .map(tb -> {
+          Optional<GCTab> selectedGC;
+          if (!gcsByTab.containsKey(tb.getId())) {
+            selectedGC = Optional.empty();
+          } else {
+            List<GCTab> candidates = gcsByTab.get(tb.getId());
+            Collections.sort(candidates, (o1, o2) -> {
+              if (o1.getSeqno().compareTo(o2.getSeqno()) != 0) {
+                return o1.getSeqno().compareTo(o2.getSeqno());
+              } else {
+                return o1.getId().compareTo(o2.getId());
+              }
+            });
+            selectedGC = Optional.of(candidates.get(candidates.size() - 1));
+          }
+
+          return new SimpleEntry<>(tb.getId(), selectedGC);
+        }) //
+        .collect(toMap(SimpleEntry::getKey, SimpleEntry::getValue));
   }
 }

@@ -18,10 +18,6 @@
  */
 package org.openbravo.client.application.window;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
-
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,7 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Order;
 import org.openbravo.base.expression.OBScriptEngine;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -55,15 +50,12 @@ import org.openbravo.client.kernel.reference.StringUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldGroup;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.Window;
 
 /**
  * The backing bean for generating the fields in the tab.
@@ -804,8 +796,8 @@ public class OBViewFieldHandler {
     @Override
     public String getFieldProperties() {
       if (tab != null) {
-        gridConfiguration = OBViewUtil.getGridConfigurationSettings(auditTab,
-            getSystemGridConfig(), getTabGridConfig());
+        gridConfiguration = OBViewUtil.getGridConfigurationSettings(auditTab, systemGridConfig,
+            getTabGridConfig());
       }
       return "";
     }
@@ -1193,52 +1185,8 @@ public class OBViewFieldHandler {
     }
   }
 
-  private Optional<GCSystem> getSystemGridConfig() {
-    if (systemGridConfig == null) {
-      OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
-      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
-      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
-      gcSystemCriteria.setMaxResults(1);
-      systemGridConfig = Optional.ofNullable((GCSystem) gcSystemCriteria.uniqueResult());
-    }
-    return systemGridConfig;
-  }
-
-  private Map<String, Optional<GCTab>> getTabsGridConfig(Window window) {
-    if (tabsGridConfig == null) {
-      // window comes from ADCS, we need to retrieve GC from DB as it might have changed
-      OBQuery<GCTab> qGCTab = OBDal.getInstance().createQuery(GCTab.class,
-          "as g where g.tab.window = :window");
-      qGCTab.setNamedParameter("window", window);
-      Map<String, List<GCTab>> gcsByTab = qGCTab.stream() //
-          .collect(groupingBy(gcTab -> gcTab.getTab().getId()));
-
-      tabsGridConfig = window.getADTabList().stream() //
-          .map(tb -> {
-            Optional<GCTab> selectedGC;
-            if (!gcsByTab.containsKey(tb.getId())) {
-              selectedGC = Optional.empty();
-            } else {
-              List<GCTab> candidates = gcsByTab.get(tb.getId());
-              Collections.sort(candidates, (o1, o2) -> {
-                if (o1.getSeqno().compareTo(o2.getSeqno()) != 0) {
-                  return o1.getSeqno().compareTo(o2.getSeqno());
-                } else {
-                  return o1.getId().compareTo(o2.getId());
-                }
-              });
-              selectedGC = Optional.of(candidates.get(candidates.size() - 1));
-            }
-
-            return new SimpleEntry<>(tb.getId(), selectedGC);
-          }) //
-          .collect(toMap(SimpleEntry::getKey, SimpleEntry::getValue));
-    }
-    return tabsGridConfig;
-  }
-
   private Optional<GCTab> getTabGridConfig() {
-    return getTabsGridConfig(tab.getWindow()).get(tab.getId());
+    return tabsGridConfig.get(tab.getId());
   }
 
   public class OBViewField implements OBViewFieldDefinition {
@@ -1405,7 +1353,7 @@ public class OBViewFieldHandler {
 
     public String getFieldProperties() {
       // First obtain the gridConfigurationSettings which will be used in other places
-      getUIDefinition().establishGridConfigurationSettings(field, getSystemGridConfig(),
+      getUIDefinition().establishGridConfigurationSettings(field, systemGridConfig,
           getTabGridConfig());
 
       if (getClientClass().length() > 0) {
@@ -2394,6 +2342,12 @@ public class OBViewFieldHandler {
     final Entity entity = ModelProvider.getInstance().getEntityByTableId(
         getTab().getTable().getId());
     return (entity == null) ? false : entity.hasProperty("processed");
+  }
+
+  public void setGCSettings(Optional<GCSystem> systemGridConfig,
+      Map<String, Optional<GCTab>> tabsGridConfig) {
+    this.systemGridConfig = systemGridConfig;
+    this.tabsGridConfig = tabsGridConfig;
   }
 
 }

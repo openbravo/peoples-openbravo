@@ -275,6 +275,8 @@ public class OBViewParameterHandler {
 
       final OBViewTab tabComponent = paramWindow.createComponent(OBViewTab.class);
       tabComponent.setTab(tab);
+      tabComponent.setGCSettings(StandardWindowComponent.getSystemGridConfig(),
+          StandardWindowComponent.getTabsGridConfig(tab.getWindow()));
       return tabComponent.generate();
     }
 
