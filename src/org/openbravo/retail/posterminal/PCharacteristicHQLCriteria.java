@@ -69,7 +69,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     }
   }
 
-  public String getAllQuery(String[] param) {
+  protected String getAllQuery(String[] param) {
     final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + " where ch.id = pchv.characteristic.id "
@@ -82,7 +82,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     return sql;
   }
 
-  public String getProdCategoryQuery(String[] param) {
+  protected String getProdCategoryQuery(String[] param) {
     final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + " where ch.id = pchv.characteristic.id "
@@ -96,7 +96,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     return sql;
   }
 
-  public String getBestsellers(String[] param) {
+  protected String getBestsellers(String[] param) {
     final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(param[4]);
     String sql = " exists (select 1 from ProductCharacteristicValue as pchv, OBRETCO_Prol_Product pli "
         + " where pchv.product.id=pli.product.id and ch.id = pchv.characteristic.id "
