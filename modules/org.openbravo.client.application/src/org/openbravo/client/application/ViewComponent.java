@@ -110,6 +110,9 @@ public class ViewComponent extends BaseComponent {
         return generateView(viewId);
       }
     } finally {
+      // view generation is read only, remove from session whatever DAL loaded to make faster flush
+      OBDal.getInstance().getSession().clear();
+
       OBContext.restorePreviousMode();
       log.debug("View {} generated in {} ms", viewId, System.currentTimeMillis() - t);
     }
