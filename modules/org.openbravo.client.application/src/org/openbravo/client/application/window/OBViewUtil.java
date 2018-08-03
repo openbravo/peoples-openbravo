@@ -18,21 +18,18 @@
  */
 package org.openbravo.client.application.window;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
-import org.hibernate.criterion.Order;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.GCField;
 import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
@@ -173,8 +170,9 @@ public class OBViewUtil {
    *          tab whose grid configuration is to be obtained.
    * @return the grid configuration
    */
-  public static JSONObject getGridConfigurationSettings(Tab tab) {
-    return getGridConfigurationSettings(null, tab);
+  public static JSONObject getGridConfigurationSettings(Tab tab, Optional<GCSystem> sysConf,
+      Optional<GCTab> tabConf) {
+    return getGridConfigurationSettings(null, tab, sysConf, tabConf);
   }
 
   /**
@@ -184,8 +182,9 @@ public class OBViewUtil {
    *          field whose grid configuration is to be obtained
    * @return the grid configuration
    */
-  public static JSONObject getGridConfigurationSettings(Field field) {
-    return getGridConfigurationSettings(field, field.getTab());
+  public static JSONObject getGridConfigurationSettings(Field field, Optional<GCSystem> sysConf,
+      Optional<GCTab> tabConf) {
+    return getGridConfigurationSettings(field, field.getTab(), sysConf, tabConf);
   }
 
   /**
@@ -198,68 +197,34 @@ public class OBViewUtil {
    *          parameter will be the tab of the field
    * @return the grid configuration
    */
-  private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
+  private static JSONObject getGridConfigurationSettings(Field field, Tab tab,
+      Optional<GCSystem> sysConf, Optional<GCTab> tabConf) {
     GridConfigSettings settings = new GridConfigSettings(field);
-    int gcTabIndex = 0;
-    GCTab tabConf = null;
-    if (tab.getOBUIAPPGCTabList().size() > 1) {
-      Collections.sort(tab.getOBUIAPPGCTabList(), new GCTabComparator());
-      gcTabIndex = tab.getOBUIAPPGCTabList().size() - 1;
-      tabConf = tab.getOBUIAPPGCTabList().get(gcTabIndex);
-    } else {
-      for (GCTab t : tab.getOBUIAPPGCTabList()) {
-        tabConf = t;
-        break;
-      }
-    }
 
-    if (tabConf != null && field != null && field.getId() != null) {
-      GCField fieldConf = null;
-      for (GCField fc : tabConf.getOBUIAPPGCFieldList()) {
+    if (tabConf.isPresent()) {
+      if (field != null && field.getId() != null) {
         // field list is cached in memory, so can be reused for all fields without the need of reach
         // DB again
-        if (fc.getField().getId().equals(field.getId())) {
-          fieldConf = fc;
-          break;
+        Optional<GCField> fieldConf = tabConf.get().getOBUIAPPGCFieldList() //
+            .stream() //
+            .filter(fieldGC -> fieldGC.getField().getId().equals(field.getId())) //
+            .findFirst();
+        if (fieldConf.isPresent()) {
+          settings.processConfig(fieldConf.get());
         }
       }
 
-      // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
-      if (fieldConf != null) {
-        settings.processConfig(fieldConf);
+      if (settings.shouldContinueProcessing()) {
+        // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
+        settings.processConfig(tabConf.get());
       }
     }
 
-    if (tabConf != null && settings.shouldContinueProcessing()) {
-      // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-      settings.processConfig(tabConf);
-    }
-
-    if (settings.shouldContinueProcessing()) {
-      // Trying to get parameters from "Grid Configuration (System)" window
-      OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
-      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
-      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
-      gcSystemCriteria.setMaxResults(1);
-      List<GCSystem> sysConfs = gcSystemCriteria.list();
-
-      if (!sysConfs.isEmpty()) {
-        settings.processConfig(sysConfs.get(0));
-      }
+    if (settings.shouldContinueProcessing() && sysConf.isPresent()) {
+      settings.processConfig(sysConf.get());
     }
 
     return settings.processJSONResult();
-  }
-
-  private static class GCTabComparator implements Comparator<GCTab> {
-    @Override
-    public int compare(GCTab o1, GCTab o2) {
-      if (o1.getSeqno().compareTo(o2.getSeqno()) != 0) {
-        return o1.getSeqno().compareTo(o2.getSeqno());
-      } else {
-        return o1.getId().compareTo(o2.getId());
-      }
-    }
   }
 
   private static class GridConfigSettings {
