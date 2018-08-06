@@ -107,14 +107,16 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
     GCTab gctab = null;
     OBContext.setAdminMode(false);
     try {
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       gctab = OBProvider.getInstance().get(GCTab.class);
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctab.setFilterable("N");
       gctab.setSeqno(SEQUENCE);
-      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      gctab.setTab(tab);
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);
+      OBDal.getInstance().flush();
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(tab, getSystemGridConfig(),
@@ -151,13 +153,16 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       OBDal.getInstance().save(gcsystem);
       OBDal.getInstance().flush();
 
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctab.setFilterable("N");
       gctab.setSeqno(SEQUENCE);
-      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      gctab.setTab(tab);
+
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);
+      OBDal.getInstance().flush();
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
 
@@ -243,11 +248,12 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       OBDal.getInstance().save(gcsystem);
       OBDal.getInstance().flush();
 
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       gctab = OBProvider.getInstance().get(GCTab.class);
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctab.setSeqno(SEQUENCE);
-      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      gctab.setTab(tab);
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);
 
@@ -256,8 +262,10 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       gcfield.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gcfield.setField(OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID));
       gcfield.setSortable("N");
+      gcfield.setObuiappGcTab(gctab);
       gctab.getOBUIAPPGCFieldList().add(gcfield);
       OBDal.getInstance().save(gcfield);
+      OBDal.getInstance().flush();
 
       Field field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID);
       JSONObject fieldConfig = OBViewUtil.getGridConfigurationSettings(field,
@@ -292,12 +300,13 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
     GCField gcfield = null;
     OBContext.setAdminMode(false);
     try {
+      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       gctab = OBProvider.getInstance().get(GCTab.class);
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctab.setFilterable("N");
       gctab.setSeqno(SEQUENCE);
-      Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
+      gctab.setTab(tab);
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);
 
@@ -306,8 +315,10 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       gcfield.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gcfield.setField(OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID));
       gcfield.setSortable("Y");
+      gcfield.setObuiappGcTab(gctab);
       gctab.getOBUIAPPGCFieldList().add(gcfield);
       OBDal.getInstance().save(gcfield);
+      OBDal.getInstance().flush();
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(tab, getSystemGridConfig(),
