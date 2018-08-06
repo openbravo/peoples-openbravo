@@ -775,6 +775,13 @@ isc.RPCManager.addClassProperties({
       target.view.toolBar.updateButtonState();
     }
 
+    if (response.status === -4 && target && target.showMessage) {
+      var errorMessage = this.parseErrorMessage(response);
+      if (errorMessage) {
+        target.showMessage(isc.OBMessageBar.TYPE_ERROR, errorMessage);
+      }
+    }
+
     // in case of response timeout, show the error in the view if possible
     if (this.isServerTimeoutResponse(response) && this.canShowErrorMessage(target)) {
       target.view.setErrorMessageFromResponse(response, response.data, request);
@@ -783,6 +790,17 @@ isc.RPCManager.addClassProperties({
     if (!request.willHandleError) {
       this._originalhandleError(response, request);
     }
+  },
+
+  parseErrorMessage: function(response) {
+    if (response.httpResponseText) {
+      var jsonResponse = JSON.parse(response.httpResponseText);
+      if (jsonResponse.response && jsonResponse.response.error && jsonResponse.response.error.message) {
+        return jsonResponse.response.error.message;
+      }
+    }
+
+    return null;
   },
 
   isServerTimeoutResponse: function (response) {

@@ -659,6 +659,10 @@ isc.OBPickAndExecuteGrid.addProperties({
     return this.data.localData[0] !== undefined;
   },
 
+  showMessage: function (type, messageKey) {
+    this.view.messageBar.setMessage(type, OB.I18N.getLabel(messageKey));
+  },
+
   dataArrived: function (startRow, endRow) {
     var record, i, rows, selectedLen = this.selectedIds.length,
         len, savedRecord, index, j, fields, allRequiredSet;
