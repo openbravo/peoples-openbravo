@@ -33,6 +33,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
@@ -76,7 +77,11 @@ public class KernelUtils {
   }
 
   public KernelUtils() {
-    adcs = WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+    if (SessionFactoryController.isRunningInWebContainer()) {
+      // allow running outside Web container for tests
+      adcs = WeldUtils
+          .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
+    }
   }
 
   public static synchronized void setInstance(KernelUtils instance) {
