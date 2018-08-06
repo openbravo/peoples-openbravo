@@ -243,17 +243,16 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
           gcsystem.setSortable(sysLevel.sort);
           gcsystem.setSeqno(10L);
           OBDal.getInstance().save(gcsystem);
-          OBDal.getInstance().flush();
         }
         if (tabLevel != TabLevel.NULL) {
+          Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
           gctab = OBProvider.getInstance().get(GCTab.class);
           gctab.setClient(OBDal.getInstance().get(Client.class, "0"));
           gctab.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
           gctab.setFilterable(tabLevel.filter);
           gctab.setSortable(tabLevel.sort);
           gctab.setSeqno(10L);
-          Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
-          tab.getOBUIAPPGCTabList().add(gctab);
+          gctab.setTab(tab);
           OBDal.getInstance().save(gctab);
         }
         if (fieldLevel != FieldLevel.NULL) {
@@ -264,9 +263,11 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
           gcfield.setField(field);
           gcfield.setFilterable(fieldLevel.filter);
           gcfield.setSortable(fieldLevel.sort);
+          gcfield.setObuiappGcTab(gctab);
           gctab.getOBUIAPPGCFieldList().add(gcfield);
           OBDal.getInstance().save(gcfield);
         }
+        OBDal.getInstance().flush();
         field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID);
         fieldConfig = OBViewUtil.getGridConfigurationSettings(field, getSystemGridConfig(),
             getTabGridConfig(field.getTab()));
