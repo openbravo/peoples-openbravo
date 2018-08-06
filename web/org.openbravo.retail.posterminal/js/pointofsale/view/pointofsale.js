@@ -670,6 +670,10 @@ enyo.kind({
         isInvoicingChange = component.model.get('order').get('bp').get('locId') !== inEvent.businessPartner.get('locId'),
         bp = this.model.get('order').get('bp'),
         eventBP = inEvent.businessPartner;
+    if (inEvent.businessPartner.get('customerBlocking') && inEvent.businessPartner.get('salesOrderBlocking')) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerOnHold', [inEvent.businessPartner.get('_identifier')]));
+      return;
+    }
     OB.UTIL.HookManager.executeHooks('OBPOS_preChangeBusinessPartner', {
       bp: inEvent.businessPartner,
       isBPChange: isBPChange,

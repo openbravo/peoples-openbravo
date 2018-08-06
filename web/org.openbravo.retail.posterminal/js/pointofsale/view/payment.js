@@ -463,21 +463,21 @@ enyo.kind({
     OB.UTIL.ProcessController.finish('updatePending', execution);
   },
   updatePendingMultiOrders: function () {
-    var execution = OB.UTIL.ProcessController.start('updatePendingMultiOrders');
-    var paymentstatus = this.model.get('multiOrders');
-    var symbol = '',
+    var execution = OB.UTIL.ProcessController.start('updatePendingMultiOrders'),
+        multiOrders = this.model.get('multiOrders'),
+        symbol = '',
         symbolAtRight = true,
         rate = OB.DEC.One,
         isCashType = true,
-        selectedPayment;
+        selectedPayment, paymentStatus = multiOrders.getPaymentStatus();
     this.updateExtraInfo('');
     this.$.layawayaction.hide();
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
       symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
     }
-    if (paymentstatus.get('selectedPayment')) {
-      selectedPayment = OB.MobileApp.model.paymentnames[paymentstatus.get('selectedPayment')];
+    if (multiOrders.get('selectedPayment')) {
+      selectedPayment = OB.MobileApp.model.paymentnames[multiOrders.get('selectedPayment')];
     } else {
       selectedPayment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
     }
@@ -487,10 +487,10 @@ enyo.kind({
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
-    this.checkValidPayments(paymentstatus.getPaymentStatus(), selectedPayment);
-    if (paymentstatus.get('change')) {
-      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
-      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(paymentstatus.get('change'), rate), symbol, symbolAtRight));
+    this.checkValidPayments(paymentStatus, selectedPayment);
+    if (multiOrders.get('change')) {
+      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(multiOrders.get('change'), rate), symbol, symbolAtRight));
+      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(multiOrders.get('change'), rate), symbol, symbolAtRight));
       this.$.change.show();
       this.$.changelbl.show();
     } else {
@@ -498,8 +498,8 @@ enyo.kind({
       this.$.changelbl.hide();
     }
     //overpayment
-    if (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) > 0) {
-      this.$.overpayment.setContent(OB.I18N.formatCurrency(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))));
+    if (paymentStatus.overpayment) {
+      this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentStatus.overpayment, symbol, symbolAtRight));
       this.$.overpayment.show();
       this.$.overpaymentlbl.show();
     } else {
@@ -507,7 +507,7 @@ enyo.kind({
       this.$.overpaymentlbl.hide();
     }
 
-    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0) {
+    if (multiOrders.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrders.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) >= 0) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
@@ -515,7 +515,7 @@ enyo.kind({
       }
       this.updateCreditSalesAction();
     } else {
-      this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
+      this.setTotalPending(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       this.$.donebutton.hide();
@@ -527,15 +527,15 @@ enyo.kind({
 
     this.updateCreditSalesAction();
     this.$.layawayaction.hide();
-    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 || paymentstatus.get('total') === 0)) {
+    if (multiOrders.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrders.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) >= 0 || multiOrders.get('total') === 0)) {
       this.$.exactbutton.hide();
     } else {
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.exactbutton.show();
       }
     }
-    if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 && !paymentstatus.get('change') && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) <= 0) {
-      if (paymentstatus.get('total') === 0) {
+    if (multiOrders.get('multiOrdersList').length > 0 && OB.DEC.compare(multiOrders.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) >= 0 && !multiOrders.get('change') && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) <= 0) {
+      if (multiOrders.get('total') === 0) {
         this.$.exactlbl.hide();
         this.$.donezerolbl.show();
       } else {
