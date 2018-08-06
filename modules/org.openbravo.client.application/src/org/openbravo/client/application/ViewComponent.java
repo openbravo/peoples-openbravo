@@ -298,7 +298,11 @@ public class ViewComponent extends BaseComponent {
     final String viewId = getParameter("viewId");
     OBContext.setAdminMode();
     try {
-      Window window = adcs.getWindow(correctViewId(viewId));
+      String fixedViewId = correctViewId(viewId);
+      Window window = null;
+      if (!"processDefinition".equals(fixedViewId)) {
+        window = adcs.getWindow(correctViewId(viewId));
+      }
       if (window == null) {
         return "";
       }

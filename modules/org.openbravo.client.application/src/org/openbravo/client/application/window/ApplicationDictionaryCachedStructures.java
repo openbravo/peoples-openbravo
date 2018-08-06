@@ -204,10 +204,11 @@ public class ApplicationDictionaryCachedStructures {
       }
 
       Window window = OBDal.getInstance().get(Window.class, windowId);
-      if (window != null) {
-        for (Tab tab : window.getADTabList()) {
-          initializeTab(tab);
-        }
+      if (window == null) {
+        return;
+      }
+      for (Tab tab : window.getADTabList()) {
+        initializeTab(tab);
       }
 
       synchronized (initializedWindows) {
