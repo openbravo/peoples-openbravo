@@ -11,15 +11,15 @@
 
 (function () {
 
-  OB.Model.OrdersForVerifiedReturnsFilter = OB.Data.ExtensibleModel.extend({
+  OB.Model.VReturnsFilter = OB.Data.ExtensibleModel.extend({
     source: 'org.openbravo.retail.posterminal.PaidReceiptsFilter',
     dataLimit: OB.Dal.DATALIMIT,
     remote: 'OBPOS_remote.order',
-    _modelName: 'OrdersForVerifiedReturnsFilter',
+    _modelName: 'VReturnsFilter',
     forceRemoteEntity: true
   });
 
-  OB.Model.OrdersForVerifiedReturnsFilter.addProperties([{
+  OB.Model.VReturnsFilter.addProperties([{
     name: 'id',
     column: 'id',
     primaryKey: true,

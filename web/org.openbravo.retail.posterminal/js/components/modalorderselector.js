@@ -306,7 +306,7 @@ enyo.kind({
   kind: 'OB.UI.GenericReceiptsList',
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilterModel(OB.Model.OrdersForVerifiedReturnsFilter);
+    this.setFilterModel(OB.Model.VReturnsFilter);
     this.setNameOfReceiptsListItemPrinter('verifiedReturnsReceiptsListItemPrinter');
     this.$.containerOfReceiptsListItemPrinter.createComponent({
       name: 'verifiedReturnsReceiptsListItemPrinter',
@@ -446,7 +446,7 @@ enyo.kind({
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
     name: 'filterSelector',
-    filters: OB.Model.OrdersForVerifiedReturnsFilter.getProperties()
+    filters: OB.Model.VReturnsFilter.getProperties()
   }, {
     style: 'padding: 10px;',
     components: [{
@@ -478,10 +478,10 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
-  model: OB.Model.OrdersForVerifiedReturnsFilter,
+  model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
-    this.setFilters(OB.Model.OrdersForVerifiedReturnsFilter.getProperties());
+    this.setFilters(OB.Model.VReturnsFilter.getProperties());
   }
 });
 
