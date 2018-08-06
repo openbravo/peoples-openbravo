@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,7 @@ import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -54,6 +56,8 @@ import org.openbravo.model.common.enterprise.Organization;
 @RunWith(Parameterized.class)
 public class SortingFilteringGridConfiguration extends GridConfigurationTest {
 
+  private static Boolean coreWasInDevelopment;
+
   /**
    * Execute these test cases only if there is no custom grid config as it could make unstable
    * results
@@ -61,6 +65,34 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
   @BeforeClass
   public static void shouldExecuteOnlyIfThereIsNoGridConfig() {
     assumeThat("Number of custom grid configs", getNumberOfGridConfigurations(), is(0));
+
+    OBContext.setAdminMode(true);
+    try {
+      Module core = OBDal.getInstance().get(Module.class, "0");
+      coreWasInDevelopment = core.isInDevelopment();
+      if (!coreWasInDevelopment) {
+        core.setInDevelopment(true);
+        OBDal.getInstance().commitAndClose();
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @AfterClass
+  public static void cleanUp() {
+    if (coreWasInDevelopment) {
+      return;
+    }
+    OBContext.setAdminMode(true);
+    try {
+      Module core = OBDal.getInstance().get(Module.class, "0");
+      core.setInDevelopment(coreWasInDevelopment);
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
   }
 
   private enum ColumnLevel {
