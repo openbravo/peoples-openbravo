@@ -382,8 +382,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     properties.put("templateVersion", OBPOSPrintTemplateReader.getInstance()
         .getPrintTemplatesIdentifier());
 
-    String terminalAuthenticationValue;
-    String maxAllowedTimeInOfflineValue;
+    String terminalAuthenticationValue = "";
+    String maxAllowedTimeInOfflineValue = "";
+    String offlineSessionTimeExpirationValue = "";
     String currentPropertyToLaunchError = "";
     try {
       // Get terminal terminalAuthentication
@@ -402,14 +403,28 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.ORGANIZATION, false);
       maxAllowedTimeInOfflineValue = Preferences.getPreferenceValue("OBPOS_MaxTimeInOffline", true,
           null, null, null, null, (String) null, maxAllowedTimeInOfflineQueryFilters);
+      // Get offlineSessionTimeExpiration preference
+      currentPropertyToLaunchError = "errorReadingOfflineSessionTimeExpiration";
+      Map<QueryFilter, Boolean> offlineSessionTimeExpirationQueryFilters = new HashMap<>();
+      offlineSessionTimeExpirationQueryFilters.put(QueryFilter.ACTIVE, true);
+      offlineSessionTimeExpirationQueryFilters.put(QueryFilter.CLIENT, false);
+      offlineSessionTimeExpirationQueryFilters.put(QueryFilter.ORGANIZATION, false);
+      offlineSessionTimeExpirationValue = Preferences.getPreferenceValue(
+          "OBPOS_offlineSessionTimeExpiration", true, null, null, null, null, (String) null,
+          offlineSessionTimeExpirationQueryFilters);
     } catch (PropertyException e) {
-      result.put("terminalAuthentication", "Y");
+      if (currentPropertyToLaunchError.equals("errorReadingTerminalAuthentication")) {
+        result.put("terminalAuthentication", "Y");
+      } else {
+        result.put("terminalAuthentication", terminalAuthenticationValue);
+      }
       result.put(currentPropertyToLaunchError,
           OBMessageUtils.messageBD("OBPOS_errorWhileReadingPreference"));
       return result;
     }
     result.put("terminalAuthentication", terminalAuthenticationValue);
     result.put("maxTimeInOffline", maxAllowedTimeInOfflineValue);
+    result.put("offlineSessionTimeExpiration", offlineSessionTimeExpirationValue);
     return result;
   }
 
