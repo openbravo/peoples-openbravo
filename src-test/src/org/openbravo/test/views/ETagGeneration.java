@@ -32,9 +32,11 @@ import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.test.base.TestConstants.Tables;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
 import org.openbravo.test.datasource.DatasourceTestUtil;
 
@@ -79,6 +81,33 @@ public class ETagGeneration extends BaseDataSourceTestDal {
       if (newPref != null) {
         OBDal.getInstance().remove(newPref);
       }
+    }
+  }
+
+  @Test
+  public void auditTableShouldChangeETag() throws Exception {
+    assumeThat("Has modules in development", hasModulesInDevelopment(), is(false));
+    setSystemAdministratorContext();
+    boolean wasAudited = false;
+
+    try {
+      String oldEtag = getEtag(SALES_ORDER_WINDOW);
+
+      Table orderTable = OBDal.getInstance().get(Table.class, Tables.C_ORDER);
+      wasAudited = orderTable.isFullyAudited();
+      orderTable.setFullyAudited(!wasAudited);
+      OBDal.getInstance().commitAndClose();
+
+      String newEtag = getEtag(SALES_ORDER_WINDOW);
+      assertThat("ETag should change", newEtag, is(not(oldEtag)));
+
+      assertResponseCode("Response after adding server dl config", SALES_ORDER_WINDOW, oldEtag,
+          HttpServletResponse.SC_OK);
+      assertResponseCode("Response on 2nd request after change audit config", SALES_ORDER_WINDOW,
+          newEtag, HttpServletResponse.SC_NOT_MODIFIED);
+    } finally {
+      Table orderTable = OBDal.getInstance().get(Table.class, Tables.C_ORDER);
+      orderTable.setFullyAudited(wasAudited);
     }
   }
 

@@ -39,6 +39,10 @@ public class TestConstants {
     public static final String ESP_ADMIN = "F3196A30B53A42778727B2852FF90C24";
   }
 
+  public static class Tables {
+    public static final String C_ORDER = "259";
+  }
+
   private TestConstants() {
   }
 }
