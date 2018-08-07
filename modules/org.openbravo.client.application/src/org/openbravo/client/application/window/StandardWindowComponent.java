@@ -233,25 +233,25 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     Map<String, List<GCTab>> gcsByTab = qGCTab.stream() //
         .collect(groupingBy(gcTab -> gcTab.getTab().getId()));
 
-    return window
-        .getADTabList()
-        .stream()
-        .map(
-            tb -> {
-              Stream<GCTab> candidates = gcsByTab.containsKey(tb.getId()) ? gcsByTab
-                  .get(tb.getId()).stream() : Stream.empty();
-
-              Optional<GCTab> selectedGC = candidates //
-                  .sorted((o1, o2) -> {
-                    if (o2.getSeqno().compareTo(o1.getSeqno()) != 0) {
-                      return o2.getSeqno().compareTo(o1.getSeqno());
-                    } else {
-                      return o2.getId().compareTo(o1.getId());
-                    }
-                  }) //
-                  .findFirst();
-              return new SimpleEntry<>(tb.getId(), selectedGC);
-            }) //
+    return window.getADTabList().stream() //
+        .map(tab -> getTabConfig(tab, gcsByTab)) //
         .collect(toMap(SimpleEntry::getKey, SimpleEntry::getValue));
+  }
+
+  private static SimpleEntry<String, Optional<GCTab>> getTabConfig(Tab tab,
+      Map<String, List<GCTab>> gcsByTab) {
+    Stream<GCTab> candidates = gcsByTab.containsKey(tab.getId()) ? gcsByTab.get(tab.getId())
+        .stream() : Stream.empty();
+
+    Optional<GCTab> selectedGC = candidates //
+        .sorted((o1, o2) -> {
+          if (o2.getSeqno().compareTo(o1.getSeqno()) != 0) {
+            return o2.getSeqno().compareTo(o1.getSeqno());
+          } else {
+            return o2.getId().compareTo(o1.getId());
+          }
+        }) //
+        .findFirst();
+    return new SimpleEntry<>(tab.getId(), selectedGC);
   }
 }
