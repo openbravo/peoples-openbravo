@@ -43,6 +43,10 @@ public class TestConstants {
     public static final String C_ORDER = "259";
   }
 
+  public static class Windows {
+    public static final String SALES_ORDER = "143";
+  }
+
   private TestConstants() {
   }
 }
