@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
@@ -42,7 +43,6 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
@@ -73,6 +73,8 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   private Entity entity;
 
   private OBViewTab viewTab;
+  private Optional<GCSystem> systemGridConfig;
+  private Map<String, Optional<GCTab>> tabsGridConfig;
 
   protected Template getComponentTemplate() {
     final String windowType = tab.getWindow().getWindowType();
@@ -423,37 +425,20 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   private boolean isConfigurationPropertyEnabled(String propertyNameAtTabLevel,
       String propertyNameAtSystemLevel, boolean defaultReturnValue) {
-    Boolean propertyEnabled = null;
-
-    // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-    List<GCTab> tabConfs = getGridConfigurationForTab();
-    if (!tabConfs.isEmpty()) {
-      if ("Y".equals(tabConfs.get(0).get(propertyNameAtTabLevel))) {
-        propertyEnabled = true;
-      } else if ("N".equals(tabConfs.get(0).get(propertyNameAtTabLevel))) {
-        propertyEnabled = false;
+    Optional<GCTab> tabConf = tabsGridConfig.get(tab.getId());
+    if (tabConf.isPresent()) {
+      if ("Y".equals(tabConf.get().get(propertyNameAtTabLevel))) {
+        return true;
+      } else if ("N".equals(tabConf.get().get(propertyNameAtTabLevel))) {
+        return false;
       }
     }
-    if (propertyEnabled == null) {
-      // Trying to get parameters from "Grid Configuration (System)" window
-      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
-      if (!sysConfs.isEmpty()) {
-        propertyEnabled = (Boolean) sysConfs.get(0).get(propertyNameAtSystemLevel);
-      }
-    }
-    if (propertyEnabled != null) {
-      return propertyEnabled;
-    } else {
-      return defaultReturnValue;
-    }
-  }
 
-  private List<GCTab> getGridConfigurationForTab() {
-    String tabConfsHql = " as p where p.tab.id = :tabId";
-    // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-    OBQuery<GCTab> query = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql);
-    query.setNamedParameter("tabId", tab.getId());
-    return query.list();
+    if (systemGridConfig.isPresent()) {
+      return (boolean) systemGridConfig.get().get(propertyNameAtSystemLevel);
+    }
+
+    return defaultReturnValue;
   }
 
   public boolean getAlwaysFilterFksByIdentifier() {
@@ -475,5 +460,11 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   private boolean isDatasourceBasedTable(Table table) {
     return ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType());
+  }
+
+  public void setGCSettings(Optional<GCSystem> systemGridConfig,
+      Map<String, Optional<GCTab>> tabsGridConfig) {
+    this.systemGridConfig = systemGridConfig;
+    this.tabsGridConfig = tabsGridConfig;
   }
 }

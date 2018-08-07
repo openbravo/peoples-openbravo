@@ -109,6 +109,8 @@ public class OBViewTab extends BaseTemplateComponent {
   @Inject
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
   private ComponentProvider dsComponentProvider;
+  private Map<String, Optional<GCTab>> tabsGridConfig;
+  private Optional<GCSystem> systemGridConfig;
 
   public String getDataSourceJavaScript() {
     final String dsId = getDataSourceId();
@@ -225,6 +227,8 @@ public class OBViewTab extends BaseTemplateComponent {
   public void setGCSettings(Optional<GCSystem> systemGridConfig,
       Map<String, Optional<GCTab>> tabsGridConfig) {
     fieldHandler.setGCSettings(systemGridConfig, tabsGridConfig);
+    this.systemGridConfig = systemGridConfig;
+    this.tabsGridConfig = tabsGridConfig;
   }
 
   public List<ButtonField> getAllButtonFields() {
@@ -371,6 +375,7 @@ public class OBViewTab extends BaseTemplateComponent {
     viewGridComponent.setViewTab(this);
     viewGridComponent.setApplyTransactionalFilter(isRootTab()
         && this.tab.getWindow().getWindowType().equals("T"));
+    viewGridComponent.setGCSettings(systemGridConfig, tabsGridConfig);
     return viewGridComponent.generate();
   }
 
