@@ -23,10 +23,10 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Order;
@@ -233,25 +233,25 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     Map<String, List<GCTab>> gcsByTab = qGCTab.stream() //
         .collect(groupingBy(gcTab -> gcTab.getTab().getId()));
 
-    return window.getADTabList().stream() //
-        .map(tb -> {
-          Optional<GCTab> selectedGC;
-          if (!gcsByTab.containsKey(tb.getId())) {
-            selectedGC = Optional.empty();
-          } else {
-            List<GCTab> candidates = gcsByTab.get(tb.getId());
-            Collections.sort(candidates, (o1, o2) -> {
-              if (o1.getSeqno().compareTo(o2.getSeqno()) != 0) {
-                return o1.getSeqno().compareTo(o2.getSeqno());
-              } else {
-                return o1.getId().compareTo(o2.getId());
-              }
-            });
-            selectedGC = Optional.of(candidates.get(candidates.size() - 1));
-          }
+    return window
+        .getADTabList()
+        .stream()
+        .map(
+            tb -> {
+              Stream<GCTab> candidates = gcsByTab.containsKey(tb.getId()) ? gcsByTab
+                  .get(tb.getId()).stream() : Stream.empty();
 
-          return new SimpleEntry<>(tb.getId(), selectedGC);
-        }) //
+              Optional<GCTab> selectedGC = candidates //
+                  .sorted((o1, o2) -> {
+                    if (o2.getSeqno().compareTo(o1.getSeqno()) != 0) {
+                      return o2.getSeqno().compareTo(o1.getSeqno());
+                    } else {
+                      return o2.getId().compareTo(o1.getId());
+                    }
+                  }) //
+                  .findFirst();
+              return new SimpleEntry<>(tb.getId(), selectedGC);
+            }) //
         .collect(toMap(SimpleEntry::getKey, SimpleEntry::getValue));
   }
 }
