@@ -183,6 +183,8 @@ isc.OBRestDataSource.addClassProperties({
 });
 
 isc.OBRestDataSource.addProperties({
+  csrfToken: '',
+
   sendDSRequest: function (dsRequest) {
     //TODO: Report an issue to SmartClient - This part is a work around
     var extraProperties = {};
@@ -204,6 +206,28 @@ isc.OBRestDataSource.addProperties({
       }
     }
     this.Super('sendDSRequest', arguments);
+  },
+
+  setCsrfToken: function (token) {
+    this.csrfToken = token;
+  },
+
+  transformRequest: function (dsRequest) {
+    var operationType = dsRequest.operationType;
+
+    if (this.csrfToken && this.csrfToken !== '' && operationType === 'remove') {
+      dsRequest.params.csrfToken = this.csrfToken;
+    }
+
+    var encodedParams = this.Super('transformRequest', arguments);
+
+    if (this.csrfToken && this.csrfToken !== '' && (operationType === 'add' || operationType === 'update')) {
+      var decodedParams = isc.JSON.decode(encodedParams);
+      decodedParams.csrfToken = this.csrfToken;
+      encodedParams = isc.JSON.encode(decodedParams);
+    }
+
+    return encodedParams;
   },
 
   // always let the dummy criterion be true

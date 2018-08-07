@@ -205,6 +205,8 @@ isc.OBNoteLayout.addProperties({
       organizationOfTheNote = this.notesForm.values.organization;
     }
 
+    noteDS.setCsrfToken(OB.User.csrfToken);
+
     noteDS.addData({
       'client': OB.User.clientId,
       'organization': organizationOfTheNote,
@@ -212,8 +214,6 @@ isc.OBNoteLayout.addProperties({
       'record': this.notesForm.view.viewGrid.getSelectedRecord().id,
       'note': note
     }, addNoteCallback);
-
-    noteDS.requestProperties.params.csrfToken = OB.User.csrfToken;
 
     // clean text area
     this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
@@ -237,6 +237,7 @@ isc.OBNoteLayout.addProperties({
     }
 
     var noteDS = this.getNoteDataSource();
+    noteDS.setCsrfToken(OB.User.csrfToken);
     var noteSection = this.parentElement.noteSection;
     isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveNote'), function (clickedOK) {
       if (clickedOK) {
