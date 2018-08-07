@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -308,11 +309,9 @@ public class ViewComponent extends BaseComponent {
       }
 
       StringBuilder viewVersions = new StringBuilder();
-      for (Tab t : window.getADTabList()) {
-        viewVersions.append(t.getTable().isFullyAudited()).append("|");
-      }
-      viewVersions.append(getLastGridConfigurationChange(window)).append("|");
-      viewVersions.append(getLastSystemPreferenceChange(window)).append("|");
+      viewVersions.append(getAuditStatus(window)) //
+          .append(getLastGridConfigurationChange(window)).append("|") //
+          .append(getLastSystemPreferenceChange(window));
       return DigestUtils.md5Hex(viewVersions.toString());
     } finally {
       OBContext.restorePreviousMode();
@@ -367,5 +366,16 @@ public class ViewComponent extends BaseComponent {
     Date lastUpdated = query.uniqueResult();
 
     return lastUpdated;
+  }
+
+  private String getAuditStatus(Window window) {
+    String where = "select t.table.isFullyAudited " //
+        + "  from ADTab t " //
+        + " where t.window = :window " //
+        + " order by t.sequenceNumber, t.id"; //
+    Query<Boolean> q = OBDal.getInstance().getSession().createQuery(where, Boolean.class);
+    q.setParameter("window", window);
+
+    return Arrays.asList(q.list()).toString();
   }
 }
