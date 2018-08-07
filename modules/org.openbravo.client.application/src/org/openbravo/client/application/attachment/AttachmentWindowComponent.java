@@ -29,7 +29,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.OBViewParameterHandler;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
@@ -56,9 +55,6 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
 
   @Inject
   private OBViewParameterHandler paramHandler;
-
-  @Inject
-  private ApplicationDictionaryCachedStructures adcs;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
