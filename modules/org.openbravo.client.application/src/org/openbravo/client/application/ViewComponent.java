@@ -334,34 +334,32 @@ public class ViewComponent extends BaseComponent {
   }
 
   private List<String> getFieldsWithDisplayLogicAtServerLevel(String windowID) {
-    StringBuilder where = new StringBuilder();
-    where.append(" select displayLogicEvaluatedInTheServer");
-    where.append(" from ADField as f");
-    where.append(" where f.displayLogicEvaluatedInTheServer is not null");
-    where.append(" and f.tab.id in (select t.id");
-    where.append("                  from ADTab t");
-    where.append("                  where t.window.id = :windowId)");
+    String where = " select displayLogicEvaluatedInTheServer" //
+        + " from ADField as f" //
+        + " where f.displayLogicEvaluatedInTheServer is not null" //
+        + " and f.tab.id in (select t.id" //
+        + "                  from ADTab t" //
+        + "                  where t.window.id = :windowId)";
 
     Session session = OBDal.getInstance().getSession();
-    Query<String> query = session.createQuery(where.toString(), String.class);
+    Query<String> query = session.createQuery(where, String.class);
     query.setParameter("windowId", windowID);
 
     return query.list();
   }
 
   private Date getLastUpdated(Set<String> preferenceSet) {
-    StringBuilder where = new StringBuilder();
-    where.append(" select max(p.updated)");
-    where.append(" from ADPreference p");
-    where.append(" where p.propertyList = true");
-    where.append(" and p.property in :properties");
-    where.append(" and p.client.id = '0'");
-    where.append(" and p.organization = '0'");
-    where.append(" and coalesce(p.visibleAtClient, '0') = '0'");
-    where.append(" and coalesce(p.visibleAtOrganization, '0') = '0'");
+    String where = " select max(p.updated)" //
+        + " from ADPreference p" //
+        + " where p.propertyList = true" //
+        + " and p.property in :properties" //
+        + " and p.client.id = '0'" //
+        + " and p.organization = '0'" //
+        + " and coalesce(p.visibleAtClient, '0') = '0'" //
+        + " and coalesce(p.visibleAtOrganization, '0') = '0'";
 
     Session session = OBDal.getInstance().getSession();
-    Query<Date> query = session.createQuery(where.toString(), Date.class);
+    Query<Date> query = session.createQuery(where, Date.class);
     query.setParameterList("properties", preferenceSet);
     Date lastUpdated = query.uniqueResult();
 
