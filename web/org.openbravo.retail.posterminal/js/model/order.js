@@ -5916,9 +5916,13 @@
         receiptProperties = OB.MobileApp.view.$.containerWindow.getRoot().$.receiptPropertiesDialog.newAttributes;
         for (i = 0; i < receiptProperties.length; i++) {
           if (receiptProperties[i].modelProperty) {
-            propertiesToReset.push({
+            var properties = {
               'propertyName': receiptProperties[i].modelProperty
-            });
+            };
+            if (!OB.UTIL.isNullOrUndefined(receiptProperties[i].defaultValue)) {
+              properties.defaultValue = receiptProperties[i].defaultValue;
+            }
+            propertiesToReset.push(properties);
           }
           if (receiptProperties[i].extraProperties) {
             for (p = 0; p < receiptProperties[i].extraProperties.length; p++) {
@@ -6761,7 +6765,12 @@
 
       if (propertiesToReset && _.isArray(propertiesToReset)) {
         for (i = 0; i < propertiesToReset.length; i++) {
-          order.set(propertiesToReset[i].propertyName, '');
+          if (!OB.UTIL.isNullOrUndefined(propertiesToReset[i].defaultValue)) {
+            order.set(propertiesToReset[i].propertyName, propertiesToReset[i].defaultValue);
+          } else {
+            order.set(propertiesToReset[i].propertyName, '');
+          }
+
         }
       }
 
