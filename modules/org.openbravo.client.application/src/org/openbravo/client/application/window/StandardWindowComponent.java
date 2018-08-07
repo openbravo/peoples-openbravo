@@ -40,7 +40,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 
@@ -55,7 +54,6 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   private Window window;
   private OBViewTab rootTabComponent = null;
-  private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
   private List<String> processViews = new ArrayList<String>();
 
@@ -78,33 +76,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   }
 
   public boolean isIndevelopment() {
-    if (inDevelopment != null) {
-      return inDevelopment;
-    }
-
-    // check window, tabs and fields
-    inDevelopment = Boolean.FALSE;
-    if (window.getModule().isInDevelopment() && window.getModule().isEnabled()) {
-      inDevelopment = Boolean.TRUE;
-    } else {
-      for (Tab tab : window.getADTabList()) {
-        if (tab.isActive() && tab.getModule().isInDevelopment() && tab.getModule().isEnabled()) {
-          inDevelopment = Boolean.TRUE;
-          break;
-        }
-        for (Field field : tab.getADFieldList()) {
-          if (field.isActive() && field.getModule().isInDevelopment()
-              && field.getModule().isEnabled()) {
-            inDevelopment = Boolean.TRUE;
-            break;
-          }
-        }
-        if (inDevelopment) {
-          break;
-        }
-      }
-    }
-    return inDevelopment;
+    return adcs.isInDevelopment();
   }
 
   public String generate() {
