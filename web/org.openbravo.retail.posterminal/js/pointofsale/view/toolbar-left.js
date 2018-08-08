@@ -308,7 +308,7 @@ enyo.kind({
       }
       requirements.receiptBpId = receipt.get('bp').get('id');
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
-      requirements.isReceiptLinesLengthGreaterThanZero = (model.get('orderList').current.get('lines').length > 0) ? model.get('orderList').current.get('lines').length > 0 : receipt.get('lines').length > 0;
+      requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
       hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
       requirements.isLocallyGeneratedPayments = !OB.UTIL.isNullOrUndefined(receipt.get('payments').find(function (payment) {
