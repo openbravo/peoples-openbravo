@@ -407,9 +407,11 @@ enyo.kind({
               return;
             }
             me.doSelectMultiOrders({
-              value: selectedMultiOrders
+              value: selectedMultiOrders,
+              callback: function () {
+                me.showPaymentView();
+              }
             });
-            me.showPaymentView();
           });
         }
       });

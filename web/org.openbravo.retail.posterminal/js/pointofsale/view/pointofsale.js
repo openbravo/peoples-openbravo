@@ -1301,6 +1301,19 @@ enyo.kind({
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
     this.model.get('leftColumnViewManager').setMultiOrderMode();
+    OB.UTIL.HookManager.executeHooks('OBPOS_hookPostMultiOrder', {
+      context: me,
+      multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
+    }, function (args) {
+      if (args.cancellation) {
+        args.context.model.get('leftColumnViewManager').set('currentView', {
+          name: 'order'
+        });
+      }
+      if (inEvent.callback()) {
+        inEvent.callback();
+      }
+    });
     return true;
   },
   removeOrderAndExitMultiOrder: function (model) {
