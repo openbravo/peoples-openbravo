@@ -52,13 +52,11 @@ public class Discount extends ProcessHQLQuery {
       throw new JSONException("Product list not found");
     }
 
-    Long lastUpdated;
+    Long lastUpdated = null;
 
     if (jsonsent != null) {
       lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
           && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-    } else {
-      lastUpdated = null;
     }
 
     String hql = "from PricingAdjustment p ";
