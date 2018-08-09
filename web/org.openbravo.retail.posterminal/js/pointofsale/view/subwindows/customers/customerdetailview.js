@@ -39,10 +39,12 @@ enyo.kind({
     editCustomerHeader.$.managebpaddress.customer = this.args.businessPartner;
     editCustomerHeader.$.managebpaddress.navigationPath = this.args.navigationPath;
     editCustomerHeader.$.managebpaddress.target = this.args.target;
+    editCustomerHeader.$.managebpaddress.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerLocationButton', true));
 
     editCustomerHeader.$.editbp.setCustomer(this.args.businessPartner);
     editCustomerHeader.$.editbp.navigationPath = this.args.navigationPath;
     editCustomerHeader.$.editbp.target = this.args.target;
+    editCustomerHeader.$.editbp.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true));
 
     // Hide components depending on its displayLogic function
     _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
@@ -140,6 +142,17 @@ enyo.kind({
       });
     });
   },
+  putDisabled: function (status) {
+    if (status === false) {
+      this.setDisabled(false);
+      this.removeClass('disabled');
+      this.disabled = false;
+      return;
+    }
+    this.setDisabled(true);
+    this.addClass('disabled');
+    this.disabled = true;
+  },
   init: function (model) {
     this.model = model;
   },
@@ -181,6 +194,17 @@ enyo.kind({
         }
       });
     }
+  },
+  putDisabled: function (status) {
+    if (status === false) {
+      this.setDisabled(false);
+      this.removeClass('disabled');
+      this.disabled = false;
+      return;
+    }
+    this.setDisabled(true);
+    this.addClass('disabled');
+    this.disabled = true;
   },
   init: function (model) {
     this.model = model;

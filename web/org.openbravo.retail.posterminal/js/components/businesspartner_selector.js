@@ -329,13 +329,19 @@ enyo.kind({
     menuOptions.push({
       kind: 'OB.UI.BPDetailsContextMenuItem',
       permission: 'OBPOS_receipt.customers'
-    }, {
-      kind: 'OB.UI.BPEditContextMenuItem',
-      permission: 'OBPOS_retail.editCustomerButton'
-    }, {
-      kind: 'OB.UI.BPAddressContextMenuItem',
-      permission: 'OBPOS_retail.assignToReceiptAddress'
     });
+    if (OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true)) {
+      menuOptions.push({
+        kind: 'OB.UI.BPEditContextMenuItem',
+        permission: 'OBPOS_retail.editCustomerButton'
+      });
+    }
+    if (OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerLocationButton', true)) {
+      menuOptions.push({
+        kind: 'OB.UI.BPAddressContextMenuItem',
+        permission: 'OBPOS_retail.assignToReceiptAddress'
+      });
+    }
 
     menuOptions = menuOptions.concat(extraOptions);
     this.$.menu.setItems(menuOptions);
