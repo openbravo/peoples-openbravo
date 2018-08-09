@@ -47,6 +47,7 @@ import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
@@ -144,7 +145,9 @@ public class LoginHandler extends HttpBaseServlet {
             throw new AuthenticationException("Message");// FIXME
           }
 
-          vars.setSessionValue("#CSRF_Token", UUID.randomUUID().toString());
+          String csrfToken = SequenceIdData.getUUID();
+          vars.setSessionValue("#CSRF_Token", csrfToken);
+          saveTokenInDBSession(sessionId, csrfToken);
 
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
@@ -466,6 +469,20 @@ public class LoginHandler extends HttpBaseServlet {
     String restrictErpAccessInStoreServer = cachedPreference
         .getPreferenceValue(CachedPreference.RESTRICT_ERP_ACCESS_IN_STORE_SERVER);
     return Preferences.YES.equals(restrictErpAccessInStoreServer);
+  }
+
+  private void saveTokenInDBSession(String sessionId, String token) {
+    try {
+      OBContext.setAdminMode();
+      Session session = OBDal.getInstance().get(Session.class, sessionId);
+      session.setCsrfToken(token);
+      OBDal.getInstance().flush();
+    }
+    catch (Exception e) {
+      log4j.error("Error updating session in DB", e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private void updateDBSession(String sessionId, boolean sessionActive, String status) {

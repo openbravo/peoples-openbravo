@@ -24,6 +24,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.query.Query;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.Session;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
@@ -38,10 +41,13 @@ import org.openbravo.test.base.OBBaseTest;
  */
 public class BaseDataSourceTestDal extends OBBaseTest {
   private static String OB_URL = null;
+  private static final String COOKIE_SESSIONID_VAR = "JSESSIONID=";
   protected static final String LOGIN = "Openbravo";
   protected static final String PWD = "openbravo";
   private static boolean authenticated = false;
   private static String cookie;
+  private static String sessionCsrfToken;
+
 
   protected static final String POST_METHOD = "POST";
 
@@ -86,8 +92,33 @@ public class BaseDataSourceTestDal extends OBBaseTest {
     if (!authenticated) {
       cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
       authenticated = true;
+      sessionCsrfToken = fetchCsrfTokenFromDB(cookie);
     }
     return cookie;
+  }
+
+  protected String getSessionCsrfToken() {
+    return sessionCsrfToken;
+  }
+
+  private String fetchCsrfTokenFromDB(String cookie) {
+    String queryStr = "select s." + Session.PROPERTY_CSRFTOKEN + " from " + Session.ENTITY_NAME
+        + " s where s." + Session.PROPERTY_WEBSESSION + " = :sessionId";
+    Query<String> sessionQuery = OBDal.getInstance().getSession().createQuery(queryStr, String.class);
+    sessionQuery.setParameter("sessionId", extractSessionIdFromCookie(cookie));
+    sessionQuery.setMaxResults(1);
+    return sessionQuery.uniqueResult();
+  }
+
+  private String extractSessionIdFromCookie(String cookie) {
+    String[] cookieVariables = cookie.split(";");
+    for (String variable : cookieVariables) {
+      if (variable.startsWith(COOKIE_SESSIONID_VAR)){
+        return variable.substring(COOKIE_SESSIONID_VAR.length());
+      }
+    }
+
+    return "";
   }
 
   /**
@@ -130,6 +161,7 @@ public class BaseDataSourceTestDal extends OBBaseTest {
     if (!authenticated) {
       cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
       authenticated = true;
+      sessionCsrfToken = fetchCsrfTokenFromDB(cookie);
     }
 
     DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, roleId, langId, orgId, warehouseId);
@@ -142,5 +174,6 @@ public class BaseDataSourceTestDal extends OBBaseTest {
     doRequest("/org.openbravo.client.kernel", params, HttpServletResponse.SC_OK, POST_METHOD);
     authenticated = false;
     cookie = null;
+    sessionCsrfToken = null;
   }
 }

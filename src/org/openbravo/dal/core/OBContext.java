@@ -35,6 +35,7 @@ import java.util.Stack;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.query.Query;
@@ -478,8 +479,8 @@ public class OBContext implements OBNotSingleton {
   }
 
   /**
-   * Creates the context using the userId, roleId, clientId, orgId and sets it in the thread (as
-   * ThreadLocal).
+   * Creates the context using the userId, roleId, clientId, orgId, languageCode, warehouse and sets
+   * it in the thread (as ThreadLocal).
    * 
    * @param userId
    *          the id of the user
@@ -748,6 +749,7 @@ public class OBContext implements OBNotSingleton {
     organizationStructureProviderByClient = null;
     acctSchemaStructureProviderByClient = null;
     entityAccessChecker = null;
+    csrfToken = null;
 
     isAdministrator = false;
     isInitialized = false;
@@ -794,7 +796,9 @@ public class OBContext implements OBNotSingleton {
     }
     setInitialized(false);
 
-    csrfToken = csrf;
+    if (StringUtils.isNotEmpty(csrf)) {
+      csrfToken = csrf;
+    }
 
     // can't use enableAsAdminContext here otherwise there is a danger of
     // recursive/infinite calls.
@@ -1250,18 +1254,8 @@ public class OBContext implements OBNotSingleton {
     if (unequalString(request, CSRF_TOKEN, getCsrfToken())) {
       return false;
     }
-    return true;
-  }
 
-  private boolean unequalString(HttpServletRequest request, String param, String value) {
-    if (value == null) {
-      return true;
-    }
-    final String sessionValue = getSessionValue(request, param);
-    if (sessionValue == null) {
-      return false;
-    }
-    return !value.equals(sessionValue);
+    return true;
   }
 
   private boolean unequal(HttpServletRequest request, String param, BaseOBObject bob) {
@@ -1273,6 +1267,17 @@ public class OBContext implements OBNotSingleton {
       return false;
     }
     return !bob.getId().equals(sessionValue);
+  }
+
+  private boolean unequalString(HttpServletRequest request, String param, String value) {
+    if (value == null) {
+      return true;
+    }
+    final String sessionValue = getSessionValue(request, param);
+    if (sessionValue == null) {
+      return false;
+    }
+    return !value.equals(sessionValue);
   }
 
   private String getSessionValue(HttpServletRequest request, String param) {

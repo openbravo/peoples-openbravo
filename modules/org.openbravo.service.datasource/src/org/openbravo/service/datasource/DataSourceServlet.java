@@ -849,7 +849,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       String content = getRequestContent(request);
 
-      if (!hasValidCsrfToken(getCsrfTokenFromRequestContent(content), OBContext.getOBContext())) {
+      if (!hasValidCsrfToken(getCsrfTokenFromRequestContent(content), getSessionCsrfToken(request))) {
         throw new OBUserException("InvalidCSRFToken");
       }
 
@@ -878,7 +878,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new OBUserException("AccessTableNoView");
       }
       if (!hasValidCsrfToken(parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER),
-          OBContext.getOBContext())) {
+          getSessionCsrfToken(request))) {
         throw new OBUserException("InvalidCSRFToken");
       }
 
@@ -923,7 +923,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       String requestContent = getRequestContent(request);
 
       if (!hasValidCsrfToken(getCsrfTokenFromRequestContent(requestContent),
-          OBContext.getOBContext())) {
+          getSessionCsrfToken(request))) {
         throw new OBUserException("InvalidCSRFToken");
       }
 
@@ -939,8 +939,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     }
   }
 
-  private boolean hasValidCsrfToken(String requestToken, OBContext context) {
-    String sessionToken = context.getCsrfToken();
+  private boolean hasValidCsrfToken(String requestToken, String sessionToken) {
     return StringUtils.isNotEmpty(requestToken) && requestToken.equals(sessionToken);
   }
 
@@ -952,6 +951,10 @@ public class DataSourceServlet extends BaseKernelServlet {
       log.debug("Could not convert request content to JSON Object", e);
       return "";
     }
+  }
+
+  private String getSessionCsrfToken(HttpServletRequest request) {
+    return new VariablesSecureApp(request).getCsrfToken();
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,

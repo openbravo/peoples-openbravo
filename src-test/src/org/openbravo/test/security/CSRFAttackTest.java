@@ -18,12 +18,14 @@
  */
 package org.openbravo.test.security;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.query.Query;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
@@ -40,14 +42,44 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
   private static final int STATUS_OK = 0;
   private static final String FAKE_PRODUCT_SEARCHKEY = "FAKE_PRODUCT";
 
-  @Test
-  public void testRequestAreProtectedAgainstCSRFAttack() {
-    assertFalse("Fake product were created. No CSRF check has been done", createFakeProduct());
+  /**
+   * We need to authenticate before each test in order to have the session CSRF token available
+   * @throws Exception
+   */
+  @Before
+  public void authenticateBeforeEachTest() throws Exception {
+    authenticate();
   }
 
-  private boolean createFakeProduct() {
-    String params = this.generateFakeProductParams();
+  @Test
+  public void testRequestAreProtectedAgainstCSRFAttack() {
+    assertFalse("Fake product were created. No CSRF check has been done", createFakeProductWithNoCSRFToken());
+  }
 
+  @Test
+  public void testRequestVerifiesSessionCSRFToken() {
+    assertTrue("Product should be created", createProduct());
+  }
+
+  private boolean createFakeProductWithNoCSRFToken() {
+    JSONObject params = this.generateFakeProductParams();
+
+    return requestCreateProduct(params.toString());
+  }
+
+  private boolean createProduct() {
+    try {
+      JSONObject params = this.generateFakeProductParams();
+      params.put("csrfToken", getSessionCsrfToken());
+
+      return requestCreateProduct(params.toString());
+    }
+    catch (JSONException e) {
+      return false;
+    }
+  }
+
+  private boolean requestCreateProduct(String params) {
     try {
       JSONObject response = new JSONObject(
           this.doRequest(
@@ -61,7 +93,7 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
 
   }
 
-  private String generateFakeProductParams() {
+  private JSONObject generateFakeProductParams() {
     try {
       JSONObject params = new JSONObject();
       params.put("operationType", "add");
@@ -86,9 +118,9 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
 
       params.put("data", data);
 
-      return params.toString();
+      return params;
     } catch (JSONException e) {
-      return "{}";
+      return new JSONObject();
     }
 
   }

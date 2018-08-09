@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2017 Openbravo SLU
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -489,10 +489,32 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   }
 
   private JSONObject updateDataSource() throws Exception {
+    authenticate();
+    String parameters = addCsrfTokenToParameters(dataSource.urlAndJson.content);
     String responseUpdate = doRequest("/org.openbravo.service.datasource/" + dataSource.ds
-        + dataSource.urlAndJson.url, dataSource.urlAndJson.content, 200, "PUT", "application/json");
+        + dataSource.urlAndJson.url, parameters, 200, "PUT", "application/json");
 
     return new JSONObject(responseUpdate).getJSONObject("response");
+  }
+
+  private String addCsrfTokenToParameters(String content) {
+    JSONObject params = initializeJSONObject(content);
+    try {
+      params.put("csrfToken", getSessionCsrfToken());
+    }
+    catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return params.toString();
+  }
+
+  private JSONObject initializeJSONObject(String content) {
+    try {
+      return new JSONObject(content);
+    }
+    catch(JSONException e) {
+      return new JSONObject();
+    }
   }
 
   private JSONObject fetchDataSource() throws Exception {
