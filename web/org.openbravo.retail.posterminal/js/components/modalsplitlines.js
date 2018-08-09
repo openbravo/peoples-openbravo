@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -411,7 +411,8 @@ enyo.kind({
           },
           options: {
             at: addline.collection.indexOf(addline) + 1,
-            blockAddProduct: true
+            blockAddProduct: true,
+            isSplitLinesAction: true
           },
           context: this,
           callback: function (success, addline) {
@@ -471,7 +472,8 @@ enyo.kind({
     this.doAddProduct({
       options: {
         line: this.orderline,
-        blockAddProduct: true
+        blockAddProduct: true,
+        isSplitLinesAction: true
       },
       product: this.orderline.get('product'),
       qty: this.qtysToAdd[0] - this.orderline.get('qty'),
