@@ -32,6 +32,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -146,7 +147,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       }
 
       if (variantNumber > 1000) {
-        return result;
+        throw new OBException("HighRecords");
       }
       totalMaxLength += Long.toString(variantNumber).length();
       boolean useCodes = totalMaxLength <= searchKeyLength;

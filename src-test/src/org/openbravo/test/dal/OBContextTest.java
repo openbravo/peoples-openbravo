@@ -22,8 +22,12 @@ package org.openbravo.test.dal;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.hibernate.LazyInitializationException;
 import org.junit.Test;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
@@ -173,6 +177,50 @@ public class OBContextTest extends OBBaseTest {
     OBContext.restorePreviousMode();
     OBContext.restorePreviousMode();
     OBContext.restorePreviousMode();
+  }
+
+  /**
+   * Test that checks the first level properties of all the properties stored in the OBContext
+   * (user, organization, language, role, warehouse) are not proxies See issue
+   * https://issues.openbravo.com/view.php?id=38903
+   */
+  @Test
+  public void testBaseObjectsInContextAreNotProxies() {
+    setTestUserContext();
+    OBDal.getInstance().commitAndClose();
+    assertTrue("User should be initialized", firstLevelPropertiesAreInitialized(OBContext
+        .getOBContext().getUser()));
+    assertTrue("Organization should be initialized", firstLevelPropertiesAreInitialized(OBContext
+        .getOBContext().getCurrentOrganization()));
+    assertTrue("Language should be initialized", firstLevelPropertiesAreInitialized(OBContext
+        .getOBContext().getLanguage()));
+    assertTrue("Role should be initialized", firstLevelPropertiesAreInitialized(OBContext
+        .getOBContext().getRole()));
+    assertTrue("Warehouse should be initialized", firstLevelPropertiesAreInitialized(OBContext
+        .getOBContext().getWarehouse()));
+  }
+
+  private boolean firstLevelPropertiesAreInitialized(BaseOBObject bob) {
+    if (bob == null) {
+      return true;
+    }
+    try {
+      OBContext.setAdminMode(true);
+      Entity entity = bob.getEntity();
+      // invoke the getIdentifier method on all first level properties that return BaseOBObjects
+      // if they are proxies, a LazyInitializationException will be thrown
+      entity.getProperties().stream() //
+          .filter(property -> !property.isOneToMany()) //
+          .map(property -> bob.get(property.getName())) //
+          .filter(BaseOBObject.class::isInstance) //
+          .map(BaseOBObject.class::cast) //
+          .forEach(referencedBob -> referencedBob.getIdentifier());
+    } catch (LazyInitializationException e) {
+      return false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return true;
   }
 
   // the scenario:
