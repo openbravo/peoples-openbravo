@@ -83,7 +83,6 @@ public class OBContext implements OBNotSingleton {
   private static final String ROLE = "#AD_Role_ID";
   private static final String CLIENT = "#AD_Client_ID";
   private static final String ORG = "#AD_Org_ID";
-  private static final String CSRF_TOKEN = "#CSRF_Token";
 
   // set this to a higher value to enable admin mode tracing
   private static int ADMIN_TRACE_SIZE = 0;
@@ -562,7 +561,6 @@ public class OBContext implements OBNotSingleton {
   private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
   private Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
   private EntityAccessChecker entityAccessChecker;
-  private String csrfToken;
 
   // the "0" user is the administrator
   private boolean isAdministrator;
@@ -717,7 +715,7 @@ public class OBContext implements OBNotSingleton {
     }
     try {
       return initialize(userId, getSessionValue(request, ROLE), getSessionValue(request, CLIENT),
-          getSessionValue(request, ORG), null, null, getSessionValue(request, CSRF_TOKEN));
+          getSessionValue(request, ORG), null, null);
     } catch (final OBSecurityException e) {
       // remove the authenticated user
       session.setAttribute(AUTHENTICATED_USER, null);
@@ -749,7 +747,6 @@ public class OBContext implements OBNotSingleton {
     organizationStructureProviderByClient = null;
     acctSchemaStructureProviderByClient = null;
     entityAccessChecker = null;
-    csrfToken = null;
 
     isAdministrator = false;
     isInitialized = false;
@@ -780,14 +777,9 @@ public class OBContext implements OBNotSingleton {
     return initialize(userId, roleId, clientId, orgId, languageCode, null);
   }
 
-  private boolean initialize(String userId, String roleId, String clientId, String orgId,
-      String languageCode, String warehouseId) {
-    return initialize(userId, roleId, clientId, orgId, languageCode, warehouseId, null);
-  }
-
   // sets the context by reading all user information
   private boolean initialize(String userId, String roleId, String clientId, String orgId,
-      String languageCode, String warehouseId, String csrf) {
+      String languageCode, String warehouseId) {
 
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
@@ -795,10 +787,6 @@ public class OBContext implements OBNotSingleton {
       return false;
     }
     setInitialized(false);
-
-    if (StringUtils.isNotEmpty(csrf)) {
-      csrfToken = csrf;
-    }
 
     // can't use enableAsAdminContext here otherwise there is a danger of
     // recursive/infinite calls.
@@ -1174,10 +1162,6 @@ public class OBContext implements OBNotSingleton {
     return entityAccessChecker;
   }
 
-  public String getCsrfToken() {
-    return csrfToken;
-  }
-
   public boolean isInAdministratorMode() {
     if (getAdminModeStack(AdminType.ADMIN_MODE).size() > 0
         && getAdminModeStack(AdminType.ADMIN_MODE).peek().isAdminMode()) {
@@ -1251,9 +1235,6 @@ public class OBContext implements OBNotSingleton {
     if (unequal(request, ORG, getCurrentOrganization())) {
       return false;
     }
-    if (unequalString(request, CSRF_TOKEN, getCsrfToken())) {
-      return false;
-    }
 
     return true;
   }
@@ -1267,17 +1248,6 @@ public class OBContext implements OBNotSingleton {
       return false;
     }
     return !bob.getId().equals(sessionValue);
-  }
-
-  private boolean unequalString(HttpServletRequest request, String param, String value) {
-    if (value == null) {
-      return true;
-    }
-    final String sessionValue = getSessionValue(request, param);
-    if (sessionValue == null) {
-      return false;
-    }
-    return !value.equals(sessionValue);
   }
 
   private String getSessionValue(HttpServletRequest request, String param) {

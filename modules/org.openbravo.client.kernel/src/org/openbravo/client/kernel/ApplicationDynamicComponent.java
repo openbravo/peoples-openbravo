@@ -172,6 +172,6 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
   }
 
   public String getCsrfToken() {
-    return OBContext.getOBContext().getCsrfToken();
+    return RequestContext.get().getVariablesSecureApp().getCsrfToken();
   }
 }
