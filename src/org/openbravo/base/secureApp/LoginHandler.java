@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.UUID;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -147,7 +146,6 @@ public class LoginHandler extends HttpBaseServlet {
 
           String csrfToken = SequenceIdData.getUUID();
           vars.setSessionValue("#CSRF_Token", csrfToken);
-          saveTokenInDBSession(sessionId, csrfToken);
 
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
@@ -410,7 +408,7 @@ public class LoginHandler extends HttpBaseServlet {
           vars.getSessionValue("target"), vars.getSessionValue("targetQueryString"));
       vars.removeSessionValue("target");
 
-      goToTarget(res, target);
+      goToTarget(res, target, vars);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -471,20 +469,6 @@ public class LoginHandler extends HttpBaseServlet {
     return Preferences.YES.equals(restrictErpAccessInStoreServer);
   }
 
-  private void saveTokenInDBSession(String sessionId, String token) {
-    try {
-      OBContext.setAdminMode();
-      Session session = OBDal.getInstance().get(Session.class, sessionId);
-      session.setCsrfToken(token);
-      OBDal.getInstance().flush();
-    }
-    catch (Exception e) {
-      log4j.error("Error updating session in DB", e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
   private void updateDBSession(String sessionId, boolean sessionActive, String status) {
     try {
       OBContext.setAdminMode();
@@ -500,7 +484,8 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, String target) throws IOException,
+  private void goToTarget(HttpServletResponse response, String target,
+      VariablesSecureApp vars) throws IOException,
       ServletException {
 
     // Return a JSON object with the target to redirect to
@@ -508,6 +493,7 @@ public class LoginHandler extends HttpBaseServlet {
       JSONObject jsonResult = new JSONObject();
       jsonResult.put("showMessage", false);
       jsonResult.put("target", target);
+      jsonResult.put("csrfToken", vars.getSessionValue("#CSRF_Token"));
 
       response.setContentType("application/json;charset=UTF-8");
       final PrintWriter out = response.getWriter();

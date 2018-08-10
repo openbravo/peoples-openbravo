@@ -36,6 +36,7 @@ import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
+import org.openbravo.test.datasource.DatasourceTestAuthData;
 import org.openbravo.test.datasource.DatasourceTestUtil;
 
 /** Test cases covering ETag management for generated views */
@@ -105,9 +106,10 @@ public class ETagGeneration extends BaseDataSourceTestDal {
   }
 
   private HttpURLConnection getConnection(String windowId) throws Exception {
-    String cookie = authenticate();
+    DatasourceTestAuthData authData = authenticate();
     HttpURLConnection conn = DatasourceTestUtil.createConnection(getOpenbravoURL(),
-        "/org.openbravo.client.kernel/OBUIAPP_MainLayout/View?viewId=_" + windowId, "GET", cookie);
+        "/org.openbravo.client.kernel/OBUIAPP_MainLayout/View?viewId=_" + windowId, "GET",
+        authData.getCookie());
     return conn;
   }
 }
