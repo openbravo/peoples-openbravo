@@ -65,6 +65,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
 
     String orderTypeFilter = getOrderTypeFilter(jsonsent);
     String orderTypeHql;
+    boolean isVerifiedReturns = false;
 
     switch (orderTypeFilter) {
     case "RET":
@@ -75,6 +76,10 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       break;
     case "ORD":
       orderTypeHql = "and ord.documentType.return = false and ord.documentType.sOSubType <> 'OB' and ord.obposIslayaway = false";
+      break;
+    case "verifiedReturns":
+      orderTypeHql = "and ord.delivered = true";
+      isVerifiedReturns = true;
       break;
     default:
       orderTypeHql = "";
@@ -89,8 +94,11 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     hqlPaidReceipts.append(" and ord.client.id =  $clientId and ord.$orgId");
     hqlPaidReceipts
         .append(" and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
-    hqlPaidReceipts
-        .append(" and ord.documentStatus <> 'CA' and (ord.documentStatus <> 'CL' or ord.delivered = true)");
+    hqlPaidReceipts.append(" and ord.documentStatus <> 'CA' ");
+    if (!isVerifiedReturns) {
+      // verified returns is already filtering by delivered = true
+      hqlPaidReceipts.append(" and (ord.documentStatus <> 'CL' or ord.delivered = true) ");
+    }
     if ((jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL)
         || (jsonsent.has("orderByProperties") && jsonsent.get("orderByProperties") != JSONObject.NULL)) {
       hqlPaidReceipts.append(" $orderByCriteria");
