@@ -59,7 +59,7 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             // Find if there's any line in the ticket which is not delivered and has deferred
             // services
             final StringBuffer hql = new StringBuffer();
-            hql.append("SELECT DISTINCT po.id ");
+            hql.append("SELECT DISTINCT so.documentNo ");
             hql.append("FROM OrderlineServiceRelation AS olsr ");
             hql.append("JOIN olsr.orderlineRelated AS pol ");
             hql.append("JOIN olsr.salesOrderLine AS sol ");
@@ -73,8 +73,7 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             final Query<String> query = OBDal.getInstance().getSession()
                 .createQuery(hql.toString(), String.class);
             query.setParameter("orderId", orderId);
-            query.setMaxResults(1);
-            result.put("hasDeferredServices", query.uniqueResult() != null);
+            result.put("notDeliveredDeferredServices", query.list());
           }
         }
       } else {

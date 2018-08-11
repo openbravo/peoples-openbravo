@@ -10,6 +10,7 @@ package org.openbravo.retail.posterminal;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
@@ -48,7 +49,7 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
             "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
       }
       final StringBuffer hql = new StringBuffer();
-      hql.append("SELECT DISTINCT po.id ");
+      hql.append("SELECT DISTINCT so.documentNo ");
       hql.append("FROM OrderlineServiceRelation AS olsr ");
       hql.append("JOIN olsr.orderlineRelated AS pol ");
       hql.append("JOIN olsr.salesOrderLine AS sol ");
@@ -61,10 +62,18 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
       hql.append("AND so.documentStatus <> 'CL' ");
       final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
       query.setParameter("orderId", order.getId());
-      query.setMaxResults(1);
-      if (query.uniqueResult() != null) {
-        throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_CannotCancelLayWithDeferred",
-            null));
+      @SuppressWarnings("unchecked")
+      List<String> documentNoList = query.list();
+      if (documentNoList.size() > 0) {
+        String errorMsg = OBMessageUtils.messageBD("OBPOS_CannotCancelLayWithDeferred") + " "
+            + OBMessageUtils.messageBD("OBPOS_RelatedOrders") + " ";
+        for (int i = 0; i < documentNoList.size(); i++) {
+          errorMsg = errorMsg + documentNoList.get(i);
+          if (i < documentNoList.size() - 1) {
+            errorMsg = errorMsg + ", ";
+          }
+        }
+        throw new OBException(errorMsg);
       }
     }
 

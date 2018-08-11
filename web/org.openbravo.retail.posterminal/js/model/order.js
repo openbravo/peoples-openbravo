@@ -4152,8 +4152,23 @@
           } else if (data && data.orderCancelled) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderCanceledError'));
             return;
-          } else if (data && data.hasDeferredServices) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'));
+          } else if (data && data.notDeliveredDeferredServices && data.notDeliveredDeferredServices.length) {
+            var components = [];
+            components.push({
+              content: OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'),
+              style: 'text-align: left; padding-left: 10px; padding-right: 10px;'
+            });
+            components.push({
+              content: OB.I18N.getLabel('OBPOS_RelatedOrders'),
+              style: 'text-align: left; padding-left: 30px; padding-right: 10px;'
+            });
+            _.each(data.notDeliveredDeferredServices, function (documentNo) {
+              components.push({
+                content: OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + documentNo,
+                style: 'text-align: left; padding-left: 60px; padding-right: 10px;'
+              });
+            });
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), components);
             return;
           } else {
             OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
