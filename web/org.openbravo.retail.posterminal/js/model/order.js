@@ -2125,6 +2125,7 @@
         if (allLinesQty > warehouse.warehouseqty) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
             allowToAdd: true,
+            order: me,
             line: line,
             product: p
           }, function (args) {
