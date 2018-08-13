@@ -1,15 +1,10 @@
 
-<%@ page import="java.util.Properties" %>
-<%@ page import="org.openbravo.base.HttpBaseServlet" %>
 <%@ page import="org.openbravo.dal.core.OBContext"%>
-<%@ page import="org.openbravo.base.util.OBClassLoader" %>
 <%@ page import="org.openbravo.base.weld.WeldUtils"%>
 <%@ page import="org.openbravo.authentication.AuthenticationManager" %>
 <%@ page import="org.openbravo.client.kernel.KernelUtils" %>
 <%@ page import="org.openbravo.client.kernel.KernelConstants" %>
 <%@ page import="org.openbravo.client.kernel.StaticResourceProvider" %>
-<%@ page import="org.openbravo.dal.core.OBContext" %>
-<%@ page import="org.openbravo.model.ad.module.Module" %>
 <%@ page import="org.apache.log4j.Logger" %>
 <%@ page import="org.openbravo.model.ad.access.Role" %>
 <%@ page import="org.openbravo.model.ad.access.User" %>
@@ -17,10 +12,8 @@
 <%@ page import="org.openbravo.base.secureApp.VariablesSecureApp" %>
 <%@ page import="org.openbravo.erpCommon.obps.ActivationKey" %>
 <%@ page import="org.openbravo.base.secureApp.LoginHandler" %>
-<%@ page import="org.openbravo.base.HttpBaseUtils" %>
 <%@ page import="org.openbravo.erpCommon.utility.OBMessageUtils" %>
 <%@ page import="org.openbravo.erpCommon.utility.OBError" %>
-<%@ page import="java.util.Date" %>
 <%@ page import="org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction" %>
 <%@ page import="org.openbravo.client.application.window.ApplicationDictionaryCachedStructures"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
