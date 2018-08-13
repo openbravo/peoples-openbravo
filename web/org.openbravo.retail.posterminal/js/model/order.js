@@ -2125,6 +2125,7 @@
         if (allLinesQty > warehouse.warehouseqty) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
             allowToAdd: true,
+            order: me,
             line: line,
             product: p
           }, function (args) {
@@ -4665,7 +4666,6 @@
         }
         payment.set('date', new Date());
         payment.set('id', OB.UTIL.get_UUID());
-        payment.set('obposAppCashup', OB.POS.modelterminal.get('terminal').cashUpId);
         payment.set('oBPOSPOSTerminal', OB.MobileApp.model.get('terminal').id);
         payment.set('orderGross', order.getGross());
         payment.set('isPaid', order.get('isPaid'));
@@ -4771,7 +4771,6 @@
           reversalPayment.set('reverseCallback', reverseCallback);
           reversalPayment.set('isReversePayment', true);
           reversalPayment.set('paymentData', payment.get('paymentData') ? payment.get('paymentData') : null);
-          reversalPayment.set('obposAppCashup', payment.get('obposAppCashup') ? payment.get('obposAppCashup') : null);
           reversalPayment.set('oBPOSPOSTerminal', payment.get('oBPOSPOSTerminal') ? payment.get('oBPOSPOSTerminal') : null);
 
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddReversalPayment', {
