@@ -172,6 +172,7 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
   }
 
   public String getCsrfToken() {
-    return RequestContext.get().getVariablesSecureApp().getCsrfToken();
+    String token = (String) RequestContext.get().getSessionAttribute("#CSRF_TOKEN");
+    return token != null ? token : "";
   }
 }

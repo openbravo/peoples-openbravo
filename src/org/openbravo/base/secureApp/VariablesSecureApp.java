@@ -50,7 +50,6 @@ public class VariablesSecureApp extends VariablesBase {
   private String jsDateFormat;
   private String sqlDateFormat;
   private String accessLevel;
-  private String csrfToken;
 
   /**
    * Constructor used to make an empty/manual instance of this class.
@@ -80,7 +79,6 @@ public class VariablesSecureApp extends VariablesBase {
     this.jsDateFormat = "";
     this.sqlDateFormat = "";
     this.accessLevel = "";
-    this.csrfToken = "";
   }
 
   /**
@@ -139,7 +137,6 @@ public class VariablesSecureApp extends VariablesBase {
     this.jsDateFormat = "";
     this.sqlDateFormat = "";
     this.accessLevel = "";
-    this.csrfToken = "";
   }
 
   /**
@@ -186,7 +183,6 @@ public class VariablesSecureApp extends VariablesBase {
     this.jsDateFormat = getSessionValue("#AD_JsDateFormat");
     this.sqlDateFormat = getSessionValue("#AD_SqlDateFormat");
     this.accessLevel = getSessionValue("#CurrentAccessLevel");
-    this.csrfToken = getSessionValue("#CSRF_Token");
   }
 
   /**
@@ -300,15 +296,6 @@ public class VariablesSecureApp extends VariablesBase {
    */
   public String getWarehouse() {
     return warehouse;
-  }
-
-  /**
-   * Returns the generated CSRF token generated for the current session in authentication.
-   *
-   * @return String with the CSRF Token
-   */
-  public String getCsrfToken() {
-    return csrfToken;
   }
 
   /**

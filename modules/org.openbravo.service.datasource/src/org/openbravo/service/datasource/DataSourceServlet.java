@@ -940,7 +940,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   private boolean hasValidCsrfToken(String requestToken, String sessionToken) {
-    return StringUtils.isNotEmpty(requestToken) && requestToken.equals(sessionToken);
+    return StringUtils.isNotEmpty(requestToken) && StringUtils.isNotEmpty(requestToken)
+        && requestToken.equals(sessionToken);
   }
 
   private String getCsrfTokenFromRequestContent(String requestContent) {
@@ -954,7 +955,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   private String getSessionCsrfToken(HttpServletRequest request) {
-    return new VariablesSecureApp(request).getCsrfToken();
+    String token = (String) request.getSession(false).getAttribute("#CSRF_TOKEN");
+    return token != null ? token : "";
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,

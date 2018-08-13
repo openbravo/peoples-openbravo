@@ -145,7 +145,7 @@ public class LoginHandler extends HttpBaseServlet {
           }
 
           String csrfToken = SequenceIdData.getUUID();
-          vars.setSessionValue("#CSRF_Token", csrfToken);
+          vars.setSessionValue("#CSRF_TOKEN", csrfToken);
 
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
