@@ -547,7 +547,7 @@ enyo.kind({
       }
       if (this.$.actionButtonsContainer.$.removeDiscountButton) {
         var promotions = false;
-        if (this.selectedModels) {
+        if (this.model.get('order').get('isEditable') && this.selectedModels) {
           _.each(this.selectedModels, function (lineModel) {
             if (lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
               var filtered;
