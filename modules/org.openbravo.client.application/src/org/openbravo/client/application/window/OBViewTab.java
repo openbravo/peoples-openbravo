@@ -199,7 +199,7 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getMapping250() {
-    return Utility.getTabURL(tab.getId(), "none", false);
+    return Utility.getTabURL(tab, "none", false);
   }
 
   public List<ButtonField> getButtonFields() {
@@ -834,7 +834,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
         if (manualProcessMapping == null) {
           // Standard UI process
-          url = Utility.getTabURL(fld.getTab().getId(), "E", false);
+          url = Utility.getTabURL(fld.getTab(), "E", false);
           command = "BUTTON" + FormatUtilities.replace(column.getDBColumnName())
               + column.getProcess().getId();
         } else {
@@ -849,7 +849,7 @@ public class OBViewTab extends BaseTemplateComponent {
         String colName = column.getDBColumnName();
         if ("Posted".equalsIgnoreCase(colName) || "CreateFrom".equalsIgnoreCase(colName)) {
           command = "BUTTON" + colName;
-          url = Utility.getTabURL(fld.getTab().getId(), "E", false);
+          url = Utility.getTabURL(fld.getTab(), "E", false);
         }
       }
 

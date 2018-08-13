@@ -1690,15 +1690,9 @@ public class Utility {
    *          URL relative to base context
    * @return the URL for a tab.
    */
-  public static String getTabURL(String tabId, String type, boolean completeURL) {
+  public static String getTabURL(Tab tab, String type, boolean completeURL) {
     OBContext.setAdminMode();
     try {
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      if (tab == null) {
-        log4j.error("Error trying to obtain URL for unknown tab:" + tabId);
-        return "";
-      }
-
       String url = (completeURL ? HttpBaseServlet.strDireccion : "") + "/";
       if (!"0".equals(tab.getWindow().getModule().getId())) {
         url += tab.getWindow().getModule().getJavaPackage();
@@ -1723,6 +1717,21 @@ public class Utility {
     } catch (Exception e) {
       log4j.error(e.getMessage());
       return "";
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  public static String getTabURL(String tabId, String type, boolean completeURL) {
+    OBContext.setAdminMode();
+    try {
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      if (tab == null) {
+        log4j.error("Error trying to obtain URL for unknown tab:" + tabId);
+        return "";
+      }
+
+      return getTabURL(tab, type, completeURL);
     } finally {
       OBContext.restorePreviousMode();
     }
