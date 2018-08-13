@@ -63,7 +63,6 @@ import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.service.datasource.DataSourceComponent;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -476,18 +475,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public String getTabTitle() {
     if (tabTitle == null) {
-      if (OBContext.hasTranslationInstalled()) {
-        final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-        for (TabTrl tabTrl : tab.getADTabTrlList()) {
-          final String trlLanguageId = tabTrl.getLanguage().getId();
-          if (trlLanguageId.equals(userLanguageId)) {
-            tabTitle = tabTrl.getName();
-          }
-        }
-      }
-      if (tabTitle == null) {
-        tabTitle = tab.getName();
-      }
+      tabTitle = OBViewUtil.getLabel(tab, tab.getADTabTrlList(), Tab.PROPERTY_NAME);
     }
     return tabTitle;
   }
