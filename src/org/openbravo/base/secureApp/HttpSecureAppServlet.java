@@ -1039,7 +1039,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PopUp Download");
-    String href = strDireccion + "/utility/DownloadReport.html?report=" + fileName;
+    String href = getServletContext().getContextPath() + "/utility/DownloadReport.html?report="
+        + fileName;
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/PopUp_Download").createXmlDocument();
     xmlDocument.setParameter("href", href);
@@ -1051,7 +1052,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: PopUp Download");
-    String href = strDireccion + "/utility/DownloadReport.html?report=" + fileName;
+    String href = getServletContext().getContextPath() + "/utility/DownloadReport.html?report="
+        + fileName;
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/base/secureApp/PopUp_DownloadAndRefresh").createXmlDocument();
     xmlDocument.setParameter("href", href);

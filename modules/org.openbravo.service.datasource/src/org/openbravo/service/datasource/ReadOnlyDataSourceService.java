@@ -70,12 +70,12 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     }
     boolean preventCountOperation = "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
 
-    List<JSONObject> jsonObjects = fetchJSONObject(parameters);
-    if (parameters.get(NEW_END_ROW) != null) {
-      newEndRow = Integer.parseInt(parameters.get(NEW_END_ROW));
-    }
-    // now jsonfy the data
     try {
+      List<JSONObject> jsonObjects = fetchJSONObject(parameters);
+      if (parameters.get(NEW_END_ROW) != null) {
+        newEndRow = Integer.parseInt(parameters.get(NEW_END_ROW));
+      }
+      // now jsonfy the data
       final JSONObject jsonResult = new JSONObject();
       final JSONObject jsonResponse = new JSONObject();
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);

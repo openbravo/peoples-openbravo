@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,20 +53,25 @@
           M_REQUISITIONLINE.M_PRODUCT_ID,
           C_AUM,
           C_UOM.C_UOM_ID,
-          AD_COLUMN_IDENTIFIER(to_char('C_Uom'), to_char(C_UOM1.C_UOM_ID), ?) AS SECUOMNAME,
-          AD_COLUMN_IDENTIFIER(to_char('C_Uom'), to_char(C_UOM.C_UOM_ID), ?) AS UOMNAME,
-          AD_COLUMN_IDENTIFIER(to_char('C_Uom'), to_char(M_REQUISITIONLINE.C_AUM), ?) AS AUMNAME,
+          COALESCE(TO_CHAR(C_UOM1.NAME), '**') AS SECUOMNAME,
+          C_UOM.NAME AS UOMNAME,
+          COALESCE(TO_CHAR(C_UOM2.NAME), '**') AS AUMNAME,
           CASE WHEN pl.istaxincluded = 'Y' THEN M_REQUISITIONLINE.GROSS_UNIT_PRICE ELSE M_REQUISITIONLINE.PRICEACTUAL END AS PRICE,
-          AD_COLUMN_IDENTIFIER(to_char('C_BPartner'), to_char(COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID)), ?) AS VENDOR,
-          AD_COLUMN_IDENTIFIER(to_char('M_PriceList'), to_char(COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID)), ?) AS PRICELISTID,
-          AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char(M_REQUISITIONLINE.M_PRODUCT_ID), ?) AS PRODUCT,
-          AD_COLUMN_IDENTIFIER(to_char('M_AttributeSetInstance'), to_char(M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID), ?) AS ATTRIBUTE,
-          AD_COLUMN_IDENTIFIER(to_char('AD_User'), to_char(M_REQUISITION.AD_USER_ID), ?) AS REQUESTER
+          COALESCE(TO_CHAR(C_BPARTNER.NAME), '**') AS VENDOR,
+          COALESCE(TO_CHAR(pl.name), '**') AS PRICELISTID,
+          M_PRODUCT.NAME AS PRODUCT,
+          COALESCE(TO_CHAR(M_ATTRIBUTESETINSTANCE.DESCRIPTION), '**') AS ATTRIBUTE,
+          AD_USER.NAME AS REQUESTER
         FROM M_REQUISITION inner join M_REQUISITIONLINE on M_REQUISITION.M_REQUISITION_ID = M_REQUISITIONLINE.M_REQUISITION_ID 
+                               INNER JOIN M_PRODUCT ON M_REQUISITIONLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
+                               INNER JOIN AD_USER ON M_REQUISITION.AD_USER_ID = AD_USER.AD_USER_ID
+                               LEFT JOIN C_BPARTNER ON COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID) = C_BPARTNER.C_BPARTNER_ID
+                               LEFT JOIN M_ATTRIBUTESETINSTANCE ON M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID = M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID
                                LEFT JOIN C_UOM ON C_UOM.C_UOM_ID = M_REQUISITIONLINE.C_UOM_ID
                                LEFT JOIN M_PRODUCT_UOM ON M_PRODUCT_UOM.M_PRODUCT_UOM_ID = M_REQUISITIONLINE.M_PRODUCT_UOM_ID
                                LEFT JOIN C_UOM C_UOM1 ON M_PRODUCT_UOM.C_UOM_ID = C_UOM1.C_UOM_ID
-                               LEFT JOIN m_pricelist pl on COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID) = pl.m_pricelist_id
+                               LEFT JOIN C_UOM C_UOM2 ON M_REQUISITIONLINE.C_AUM = C_UOM2.C_UOM_ID
+                               LEFT JOIN M_PRICELIST pl on COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID) = pl.M_PRICELIST_ID
         WHERE M_REQUISITION.ISACTIVE = 'Y'
           AND M_REQUISITIONLINE.ISACTIVE = 'Y'
           AND M_REQUISITION.DOCSTATUS = 'CO'
@@ -76,20 +81,13 @@
           AND M_REQUISITIONLINE.AD_ORG_ID IN ('1')
           AND 1=1
         GROUP BY M_REQUISITIONLINE.M_REQUISITIONLINE_ID, M_REQUISITIONLINE.NEEDBYDATE, M_REQUISITIONLINE.QTY, M_REQUISITIONLINE.ORDEREDQTY,
-        QUANTITYORDER, AUMQTY, C_AUM, C_UOM1.C_UOM_ID, C_UOM.C_UOM_ID, pl.istaxincluded, M_REQUISITIONLINE.GROSS_UNIT_PRICE, M_REQUISITIONLINE.PRICEACTUAL,
+        QUANTITYORDER, AUMQTY, C_AUM, C_UOM.C_UOM_ID, C_UOM1.NAME, C_UOM.NAME, C_UOM2.NAME, pl.istaxincluded, pl.name, M_PRODUCT.NAME, M_ATTRIBUTESETINSTANCE.DESCRIPTION,
+         AD_USER.NAME, C_BPARTNER.NAME, M_REQUISITIONLINE.GROSS_UNIT_PRICE, M_REQUISITIONLINE.PRICEACTUAL,
         M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID, M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID,
         M_REQUISITIONLINE.M_PRODUCT_ID, M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID, M_REQUISITION.AD_USER_ID
         ORDER BY MIN(M_REQUISITIONLINE.LINE), M_REQUISITIONLINE.NEEDBYDATE, M_REQUISITIONLINE.M_PRODUCT_ID, M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
       ]]></Sql>
-    <Field name="rownum" value="count"/>
-    <Parameter name="language"/>
-    <Parameter name="language"/>
-    <Parameter name="language"/>
-    <Parameter name="language"/>
-    <Parameter name="language"/>
-    <Parameter name="language"/>
-    <Parameter name="language"/>
-    <Parameter name="language"/>
+    <Field name="rownum" value="count"/>        
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_REQUISITION.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND M_REQUISITIONLINE.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND M_REQUISITIONLINE.NEEDBYDATE >= TO_DATE(?)]]></Parameter>

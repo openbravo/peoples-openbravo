@@ -386,6 +386,7 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       if (showMessage) {
         orderInvoice.contentView.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div class="' + OB.Styles.MessageBar.leftMsgContainerStyle + '">' + OB.I18N.getLabel('APRM_NoDistributeMsg') + '</div><div class="' + OB.Styles.MessageBar.rightMsgContainerStyle + '"><a href="#" class="' + OB.Styles.MessageBar.rightMsgTextStyle + '" onclick="' + 'window[\'' + orderInvoice.contentView.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'APRM_ShowNoDistributeMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
       }
+      OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
       return;
     } else {
       // hide the message bar if it is still showing the APRM_NoDistributeMsg message and the distribution is about to be done
@@ -470,8 +471,8 @@ OB.APRM.AddPayment.distributeAmount = function (view, form, onActualPaymentChang
       }
     }
     OB.APRM.AddPayment.updateActualExpected(form);
-    OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
   }
+  OB.APRM.AddPayment.updateInvOrderTotal(form, orderInvoice);
 };
 
 OB.APRM.AddPayment.updateTotal = function (form) {
