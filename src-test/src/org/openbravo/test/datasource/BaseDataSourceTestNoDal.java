@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,7 @@ public class BaseDataSourceTestNoDal {
   protected static final String LOGIN = "Openbravo";
   protected static final String PWD = "openbravo";
   private static boolean authenticated = false;
-  private static DatasourceTestAuthData authData;
+  private static String cookie;
 
   /**
    * Performs a request to Openbravo returning its response and asserting the response code matches
@@ -64,12 +64,12 @@ public class BaseDataSourceTestNoDal {
   protected String doRequest(String wsPart, String content, int expectedResponse, String method,
       String contentType) throws Exception {
     if (!authenticated) {
-      authData = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
+      cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
       authenticated = true;
     }
 
-    return DatasourceTestUtil.request(getOpenbravoURL(), wsPart, method, content,
-        authData.getCookie(), 200, contentType);
+    return DatasourceTestUtil.request(getOpenbravoURL(), wsPart, method, content, cookie, 200,
+        contentType);
   }
 
   /**
@@ -108,11 +108,10 @@ public class BaseDataSourceTestNoDal {
   protected void changeProfile(String roleId, String langId, String orgId, String warehouseId)
       throws Exception {
     if (!authenticated) {
-      authData = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
+      cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
       authenticated = true;
     }
 
-    DatasourceTestUtil.changeProfile(getOpenbravoURL(), authData.getCookie(), roleId, langId,
-        orgId, warehouseId);
+    DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, roleId, langId, orgId, warehouseId);
   }
 }

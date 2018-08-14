@@ -72,7 +72,7 @@ public class DatasourceTestUtil {
     return hc;
   }
 
-  static DatasourceTestAuthData authenticate(String openbravoURL, String user, String password)
+  static String authenticate(String openbravoURL, String user, String password)
       throws Exception {
     final HttpURLConnection hc = DatasourceTestUtil.createConnection(openbravoURL,
         "/secureApp/LoginHandler.html", "POST", null);
@@ -83,8 +83,7 @@ public class DatasourceTestUtil {
     os.close();
     hc.connect();
 
-    return new DatasourceTestAuthData(hc.getHeaderField("Set-Cookie"),
-        getCsrfTokenFromResponse(hc.getInputStream()));
+    return hc.getHeaderField("Set-Cookie");
   }
 
   private static String getCsrfTokenFromResponse(InputStream inputStream) {

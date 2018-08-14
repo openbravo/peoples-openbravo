@@ -27,7 +27,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
-import org.openbravo.test.datasource.DatasourceTestAuthData;
 import org.openbravo.test.datasource.DatasourceTestUtil;
 
 /** Test cases covering selector default filters computation */
@@ -48,10 +47,10 @@ public class TestSelectorDefaultFilterActionHandler extends BaseDataSourceTestDa
   }
 
   private String doSelectorDefaultFilterActionHandlerRequest() throws Exception {
-    DatasourceTestAuthData authData = authenticate();
+    String cookie = authenticate();
     String urlPart = "/org.openbravo.client.kernel?_action=org.openbravo.userinterface.selector.SelectorDefaultFilterActionHandler";
     String resp = DatasourceTestUtil.request(getOpenbravoURL(), urlPart, "POST",
-        getRequestContent(), authData.getCookie(), 200, "application/json");
+        getRequestContent(), cookie, 200, "application/json");
     return resp;
   }
 

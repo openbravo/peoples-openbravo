@@ -32,8 +32,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
 
 /**
- * Tries to create a new Product object using a pre-made POST request.
- * If succeeded, that means that no CSRF control has been implemented.
+ * Tries to create a new Product object using a pre-made POST request. If succeeded, that means that
+ * no CSRF control has been implemented.
  *
  * @author jarmendariz
  */
@@ -44,6 +44,7 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
 
   /**
    * We need to authenticate before each test in order to have the session CSRF token available
+   * 
    * @throws Exception
    */
   @Before
@@ -53,7 +54,8 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
 
   @Test
   public void testRequestAreProtectedAgainstCSRFAttack() {
-    assertFalse("Fake product were created. No CSRF check has been done", createFakeProductWithNoCSRFToken());
+    assertFalse("Fake product were created. No CSRF check has been done",
+        createFakeProductWithNoCSRFToken());
   }
 
   @Test
@@ -73,8 +75,7 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
       params.put("csrfToken", getSessionCsrfToken());
 
       return requestCreateProduct(params.toString());
-    }
-    catch (JSONException e) {
+    } catch (JSONException e) {
       return false;
     }
   }

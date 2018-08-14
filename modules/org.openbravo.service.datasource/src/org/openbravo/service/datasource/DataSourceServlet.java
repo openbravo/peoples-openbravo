@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -113,6 +115,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   private static final long serialVersionUID = 1L;
 
   private static String servletPathPart = "org.openbravo.service.datasource";
+  private static Pattern csrfTokenPattern;
 
   public static String getServletPathPart() {
     return servletPathPart;
@@ -849,9 +852,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       String content = getRequestContent(request);
 
-      if (!hasValidCsrfToken(getCsrfTokenFromRequestContent(content), getSessionCsrfToken(request))) {
-        throw new OBUserException("InvalidCSRFToken");
-      }
+      checkCsrfToken(getCsrfTokenFromRequestContent(content), request);
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
@@ -862,6 +863,19 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
     } catch (Exception e) {
       handleException(e, response);
+    }
+  }
+
+  private void checkCsrfToken(String requestToken, HttpServletRequest request) {
+    String sessionToken = getSessionCsrfToken(request);
+    if (!hasValidCsrfToken(requestToken, sessionToken)) {
+      log.error("CSRF token check failed");
+      log.error("Request: " + request.getRequestURI());
+      log.error("Session ID: " + request.getSession(false).getId());
+      log.error("Session token: " + sessionToken);
+      log.error("Request token:" + requestToken);
+
+      throw new OBUserException("InvalidCSRFToken");
     }
   }
 
@@ -877,10 +891,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
-      if (!hasValidCsrfToken(parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER),
-          getSessionCsrfToken(request))) {
-        throw new OBUserException("InvalidCSRFToken");
-      }
+
+      checkCsrfToken(parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER), request);
 
       final String id = parameters.get(JsonConstants.ID);
       if (id == null) {
@@ -922,10 +934,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       String requestContent = getRequestContent(request);
 
-      if (!hasValidCsrfToken(getCsrfTokenFromRequestContent(requestContent),
-          getSessionCsrfToken(request))) {
-        throw new OBUserException("InvalidCSRFToken");
-      }
+      checkCsrfToken(getCsrfTokenFromRequestContent(requestContent), request);
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
@@ -940,18 +949,26 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   private boolean hasValidCsrfToken(String requestToken, String sessionToken) {
-    return StringUtils.isNotEmpty(requestToken) && StringUtils.isNotEmpty(requestToken)
+    return StringUtils.isNotEmpty(requestToken) && StringUtils.isNotEmpty(sessionToken)
         && requestToken.equals(sessionToken);
   }
 
   private String getCsrfTokenFromRequestContent(String requestContent) {
-    try {
-      JSONObject content = new JSONObject(requestContent);
-      return content.getString("csrfToken");
-    } catch (JSONException e) {
-      log.debug("Could not convert request content to JSON Object", e);
-      return "";
+    Matcher matcher = getCsrfTokenPattern().matcher(requestContent);
+    if (matcher.find()) {
+      return matcher.group(0).split(":")[1].replace("\"", "");
     }
+
+    return "";
+  }
+
+  private static Pattern getCsrfTokenPattern() {
+    if (csrfTokenPattern == null) {
+      csrfTokenPattern = Pattern.compile("\\\"" + JsonConstants.CSRF_TOKEN_PARAMETER
+          + "\\\":\\\"[A-Z0-9]+\\\"");
+    }
+
+    return csrfTokenPattern;
   }
 
   private String getSessionCsrfToken(HttpServletRequest request) {

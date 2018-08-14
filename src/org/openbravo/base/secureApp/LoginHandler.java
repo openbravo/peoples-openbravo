@@ -484,16 +484,14 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, String target,
-      VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void goToTarget(HttpServletResponse response, String target, VariablesSecureApp vars)
+      throws IOException, ServletException {
 
     // Return a JSON object with the target to redirect to
     try {
       JSONObject jsonResult = new JSONObject();
       jsonResult.put("showMessage", false);
       jsonResult.put("target", target);
-      jsonResult.put("csrfToken", vars.getSessionValue("#CSRF_Token"));
 
       response.setContentType("application/json;charset=UTF-8");
       final PrintWriter out = response.getWriter();

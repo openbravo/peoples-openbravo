@@ -501,8 +501,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     JSONObject params = initializeJSONObject(content);
     try {
       params.put("csrfToken", getSessionCsrfToken());
-    }
-    catch (JSONException e) {
+    } catch (JSONException e) {
       e.printStackTrace();
     }
     return params.toString();
@@ -511,8 +510,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private JSONObject initializeJSONObject(String content) {
     try {
       return new JSONObject(content);
-    }
-    catch(JSONException e) {
+    } catch (JSONException e) {
       return new JSONObject();
     }
   }
