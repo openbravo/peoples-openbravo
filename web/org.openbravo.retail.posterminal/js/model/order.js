@@ -4440,7 +4440,7 @@
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       //Returns the difference (abs) between total to pay and payments.
       //if paymentToIignore parameter is provided the result will exclude that payment.
-      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), OB.DEC.sub(this.getSumOfOrigAmounts(paymentToIgnore), this.getChange())));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
       //Returns the difference (abs) between total to pay and payments without take into account currentPayment
@@ -6911,7 +6911,7 @@
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       //Returns the difference (abs) between total to pay and payments.
       //if paymentToIignore parameter is provided the result will exclude that payment.
-      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), OB.DEC.sub(this.getSumOfOrigAmounts(paymentToIgnore), this.getChange())));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
       //Returns the difference (abs) between total to pay and payments without take into account currentPayment
