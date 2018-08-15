@@ -19,10 +19,6 @@
 
 package org.openbravo.test.datasource;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -30,16 +26,15 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import junit.framework.TestCase;
 
 /**
  * Utility methods to deal with datasource calls.
@@ -72,8 +67,7 @@ public class DatasourceTestUtil {
     return hc;
   }
 
-  static String authenticate(String openbravoURL, String user, String password)
-      throws Exception {
+  static String authenticate(String openbravoURL, String user, String password) throws Exception {
     final HttpURLConnection hc = DatasourceTestUtil.createConnection(openbravoURL,
         "/secureApp/LoginHandler.html", "POST", null);
     final OutputStream os = hc.getOutputStream();
@@ -84,30 +78,6 @@ public class DatasourceTestUtil {
     hc.connect();
 
     return hc.getHeaderField("Set-Cookie");
-  }
-
-  private static String getCsrfTokenFromResponse(InputStream inputStream) {
-    String responseString = getResponseString(inputStream);
-    try {
-      return new JSONObject(responseString).getString("csrfToken");
-    } catch (JSONException exception) {
-      return "";
-    }
-  }
-
-  private static String getResponseString(InputStream inputStream) {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-    String output;
-    StringBuilder responseBuilder = new StringBuilder();
-    try {
-      while ((output = reader.readLine()) != null) {
-        responseBuilder.append(output);
-      }
-    } catch (IOException exception) {
-      log.error("Error reading authentication response", exception);
-    }
-
-    return responseBuilder.toString();
   }
 
   static String request(String openbravoURL, String wsPart, String method, String content,
