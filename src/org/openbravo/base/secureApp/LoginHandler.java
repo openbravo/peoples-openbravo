@@ -46,7 +46,6 @@ import org.openbravo.erpCommon.security.Login;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.access.User;
@@ -143,9 +142,6 @@ public class LoginHandler extends HttpBaseServlet {
           if (StringUtils.isEmpty(strUserAuth)) {
             throw new AuthenticationException("Message");// FIXME
           }
-
-          String csrfToken = SequenceIdData.getUUID();
-          vars.setSessionValue("#CSRF_TOKEN", csrfToken);
 
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 

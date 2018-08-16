@@ -51,6 +51,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.service.json.JsonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test cases to ensure that mechanism of security DataSource access is working properly.
@@ -60,6 +62,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 @RunWith(Parameterized.class)
 public class DataSourceSecurity extends BaseDataSourceTestDal {
+  private static final Logger log = LoggerFactory.getLogger(DataSourceSecurity.class);
   private static final String ASTERISK_ORG_ID = "0";
   private static final String CONTEXT_USER = "100";
   private static final String LANGUAGE_ID = "192";
@@ -500,9 +503,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private String addCsrfTokenToParameters(String content) {
     JSONObject params = initializeJSONObject(content);
     try {
-      params.put("csrfToken", getSessionCsrfToken());
+      params.put(JsonConstants.CSRF_TOKEN_PARAMETER, getSessionCsrfToken());
     } catch (JSONException e) {
-      e.printStackTrace();
+      log.error("Cannot add the CSRF Token to request params", e);
     }
     return params.toString();
   }

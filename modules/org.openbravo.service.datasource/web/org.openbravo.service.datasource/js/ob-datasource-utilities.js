@@ -215,7 +215,7 @@ isc.OBRestDataSource.addProperties({
   transformRequest: function (dsRequest) {
     var operationType = dsRequest.operationType;
 
-    if (this.csrfToken && this.csrfToken !== '' && operationType === 'remove') {
+    if (this.csrfToken && operationType === 'remove') {
       dsRequest.params.csrfToken = this.csrfToken;
     }
 

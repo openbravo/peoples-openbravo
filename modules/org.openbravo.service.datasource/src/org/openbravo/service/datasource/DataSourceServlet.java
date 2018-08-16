@@ -115,7 +115,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   private static final long serialVersionUID = 1L;
 
   private static String servletPathPart = "org.openbravo.service.datasource";
-  private static Pattern csrfTokenPattern;
+  private static Pattern csrfTokenPattern = Pattern.compile("\\\"csrfToken\\\":\\\"[A-Z0-9]+\\\"");
 
   public static String getServletPathPart() {
     return servletPathPart;
@@ -866,19 +866,6 @@ public class DataSourceServlet extends BaseKernelServlet {
     }
   }
 
-  private void checkCsrfToken(String requestToken, HttpServletRequest request) {
-    String sessionToken = getSessionCsrfToken(request);
-    if (!hasValidCsrfToken(requestToken, sessionToken)) {
-      log.error("CSRF token check failed");
-      log.error("Request: " + request.getRequestURI());
-      log.error("Session ID: " + request.getSession(false).getId());
-      log.error("Session token: " + sessionToken);
-      log.error("Request token:" + requestToken);
-
-      throw new OBUserException("InvalidCSRFToken");
-    }
-  }
-
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
@@ -948,27 +935,28 @@ public class DataSourceServlet extends BaseKernelServlet {
     }
   }
 
+  private void checkCsrfToken(String requestToken, HttpServletRequest request) {
+    String sessionToken = getSessionCsrfToken(request);
+    if (!hasValidCsrfToken(requestToken, sessionToken)) {
+      log.error("CSRF token check failed. Request=" + request.getRequestURI() + ", SessionID="
+          + request.getSession(false).getId() + ", SessionToken=" + sessionToken
+          + ", RequestToken=" + requestToken);
+      throw new OBUserException("InvalidCSRFToken");
+    }
+  }
+
   private boolean hasValidCsrfToken(String requestToken, String sessionToken) {
     return StringUtils.isNotEmpty(requestToken) && StringUtils.isNotEmpty(sessionToken)
         && requestToken.equals(sessionToken);
   }
 
   private String getCsrfTokenFromRequestContent(String requestContent) {
-    Matcher matcher = getCsrfTokenPattern().matcher(requestContent);
+    Matcher matcher = csrfTokenPattern.matcher(requestContent);
     if (matcher.find()) {
       return matcher.group(0).split(":")[1].replace("\"", "");
     }
 
     return "";
-  }
-
-  private static Pattern getCsrfTokenPattern() {
-    if (csrfTokenPattern == null) {
-      csrfTokenPattern = Pattern.compile("\\\"" + JsonConstants.CSRF_TOKEN_PARAMETER
-          + "\\\":\\\"[A-Z0-9]+\\\"");
-    }
-
-    return csrfTokenPattern;
   }
 
   private String getSessionCsrfToken(HttpServletRequest request) {

@@ -228,7 +228,6 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     private static final String TEXT_DIRECTION = "#TextDirection";
     private static final String SESSION_ID = "#AD_Session_ID";
     private static final String AUTHENTICATED_USER = "#Authenticated_user";
-    private static final String CSRF_TOKEN = "#CSRF_Token";
 
     private void resetSession(HttpServletRequest request, boolean isDefault, String userId,
         String roleId, String clientId, String organizationId, String languageId,
@@ -265,11 +264,9 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       // Clear session variables maintaining session and user
       String sessionID = vars.getSessionValue(SESSION_ID);
       String sessionUser = (String) request.getSession(true).getAttribute(AUTHENTICATED_USER);
-      String csrfToken = (String) vars.getSessionValue(CSRF_TOKEN);
       vars.clearSession(false);
       vars.setSessionValue(SESSION_ID, sessionID);
       request.getSession(true).setAttribute(AUTHENTICATED_USER, sessionUser);
-      vars.setSessionValue(CSRF_TOKEN, csrfToken);
 
       OBDal.getInstance().flush();
       boolean result = LoginUtils
