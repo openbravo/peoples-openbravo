@@ -92,14 +92,12 @@ class UpdateTax extends CreateLinesFromProcessHook {
         taxID = ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine().getTax().getId();
       }
     } else {
-      Warehouse warehouse = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
-          .getWarehouse();
-      Project project = ((ShipmentInOutLine) getCopiedFromLine()).getProject();
-      Organization organization = ((ShipmentInOutLine) getCopiedFromLine()).getOrganization();
-      boolean isSalesTransaction = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
-          .isSalesTransaction();
-      Date scheduledDeliveryDate = ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
-          .getMovementDate();
+      ShipmentInOutLine copiedFromIOLine = (ShipmentInOutLine) getCopiedFromLine();
+      Warehouse warehouse = copiedFromIOLine.getShipmentReceipt().getWarehouse();
+      Project project = copiedFromIOLine.getProject();
+      Organization organization = copiedFromIOLine.getOrganization();
+      boolean isSalesTransaction = copiedFromIOLine.getShipmentReceipt().isSalesTransaction();
+      Date scheduledDeliveryDate = copiedFromIOLine.getShipmentReceipt().getMovementDate();
 
       String bpLocationId = getInvoice().getPartnerAddress().getId();
       String strDatePromised = DateFormatUtils.format(scheduledDeliveryDate, OBPropertiesProvider

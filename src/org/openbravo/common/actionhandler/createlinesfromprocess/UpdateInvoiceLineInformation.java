@@ -67,12 +67,12 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   private void linksInvoiceLineToOrderAndInOutLine() {
     if (isCopiedFromOrderLine()) {
       getInvoiceLine().setSalesOrderLine((OrderLine) getCopiedFromLine());
-      getInvoiceLine().setGoodsShipmentLine(
-          CreateLinesFromUtil.getShipmentInOutLine(getPickExecJSONObject()));
+      getInvoiceLine()
+          .setGoodsShipmentLine(CreateLinesFromUtil.getShipmentInOutLine(getPickExecJSONObject()));
     } else {
-      getInvoiceLine().setGoodsShipmentLine((ShipmentInOutLine) getCopiedFromLine());
-      getInvoiceLine().setSalesOrderLine(
-          ((ShipmentInOutLine) getCopiedFromLine()).getSalesOrderLine());
+      ShipmentInOutLine shipInOutLine = (ShipmentInOutLine) getCopiedFromLine();
+      getInvoiceLine().setGoodsShipmentLine(shipInOutLine);
+      getInvoiceLine().setSalesOrderLine(shipInOutLine.getSalesOrderLine());
     }
   }
 
@@ -94,10 +94,10 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     getInvoiceLine()
         .setCostcenter((Costcenter) getPropertyFromCopiedFromLineOrHeader("costcenter"));
     getInvoiceLine().setAsset((Asset) getPropertyFromCopiedFromLineOrHeader("asset"));
-    getInvoiceLine().setStDimension(
-        (UserDimension1) getPropertyFromCopiedFromLineOrHeader("stDimension"));
-    getInvoiceLine().setNdDimension(
-        (UserDimension2) getPropertyFromCopiedFromLineOrHeader("ndDimension"));
+    getInvoiceLine()
+        .setStDimension((UserDimension1) getPropertyFromCopiedFromLineOrHeader("stDimension"));
+    getInvoiceLine()
+        .setNdDimension((UserDimension2) getPropertyFromCopiedFromLineOrHeader("ndDimension"));
   }
 
   private Organization getOrganizationForNewLine() {
@@ -108,10 +108,10 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     final BaseOBObject copiedFromProperty = (BaseOBObject) getCopiedFromLine().get(propertyName);
     if (copiedFromProperty == null) {
       // Parent property
-      return isCopiedFromOrderLine() ? (BaseOBObject) ((OrderLine) getCopiedFromLine())
-          .getSalesOrder().get(propertyName)
-          : (BaseOBObject) ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt().get(
-              propertyName);
+      return isCopiedFromOrderLine()
+          ? (BaseOBObject) ((OrderLine) getCopiedFromLine()).getSalesOrder().get(propertyName)
+          : (BaseOBObject) ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt()
+              .get(propertyName);
     }
     return copiedFromProperty;
   }
@@ -140,8 +140,8 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   }
 
   private void updateInvoicePrepaymentAmount() {
-    if ((isCopiedFromOrderLine() || CreateLinesFromUtil
-        .hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine()))
+    if ((isCopiedFromOrderLine()
+        || CreateLinesFromUtil.hasRelatedOrderLine((ShipmentInOutLine) getCopiedFromLine()))
         && !thereAreInvoiceLinesLinkedToTheOrderCopiedFromLine()) {
       BigDecimal invoicePrepaymentAmt = getInvoice().getPrepaymentamt();
       getInvoice().setPrepaymentamt(invoicePrepaymentAmt.add(getOrderPrepaymentAmt()));
@@ -168,10 +168,10 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
 
   private BigDecimal getOrderPrepaymentAmt() {
     try {
-      final OBCriteria<FIN_PaymentSchedule> obc = OBDal.getInstance().createCriteria(
-          FIN_PaymentSchedule.class);
-      obc.add(Restrictions
-          .eq(FIN_PaymentSchedule.PROPERTY_ORDER + ".id", getRelatedOrder().getId()));
+      final OBCriteria<FIN_PaymentSchedule> obc = OBDal.getInstance()
+          .createCriteria(FIN_PaymentSchedule.class);
+      obc.add(
+          Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER + ".id", getRelatedOrder().getId()));
       obc.setMaxResults(1);
       return obc.list().get(0).getPaidAmount();
     } catch (Exception noOrderFoundOrNoPaymentScheduleFound) {
