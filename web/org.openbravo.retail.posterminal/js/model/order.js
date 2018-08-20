@@ -5675,6 +5675,24 @@
         }
       }
 
+      function removeReceiptFromDatabase(receipt, callback) {
+        var orderList = OB.MobileApp.model.orderList;
+        if (receipt.get('id')) {
+          if (receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+            orderList.deleteCurrent();
+          } else if (receipt.get('id')) {
+            OB.Dal.remove(receipt);
+          }
+        } else {
+          orderList.deleteCurrent();
+        }
+        if (callback && callback instanceof Function) {
+          callback();
+        }
+      }
+
       function markOrderAsDeleted(model, orderList, callback) {
         var me = this,
             creationDate;
@@ -5750,16 +5768,7 @@
                 });
               });
             } else {
-              if (orderList) {
-                orderList.saveCurrent();
-                OB.Dal.remove(orderList.current, null, null);
-                orderList.deleteCurrent();
-              } else {
-                OB.Dal.remove(receipt);
-              }
-              if (callback && callback instanceof Function) {
-                callback();
-              }
+              removeReceiptFromDatabase(receipt, callback);
             }
           } else if (receipt.has('deletedLines') && !receipt.get('isQuotation')) {
             if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
@@ -5771,22 +5780,10 @@
               receipt.setIsCalculateGrossLockState(false);
               markOrderAsDeleted(receipt, orderList, callback);
             } else {
-              orderList.saveCurrent();
-              OB.Dal.remove(orderList.current, null, null);
-              orderList.deleteCurrent();
-              if (callback && callback instanceof Function) {
-                callback();
-              }
+              removeReceiptFromDatabase(receipt, callback);
             }
           } else {
-            if (receipt.get('id')) {
-              orderList.saveCurrent();
-              OB.Dal.remove(orderList.current, null, null);
-            }
-            orderList.deleteCurrent();
-            if (callback && callback instanceof Function) {
-              callback();
-            }
+            removeReceiptFromDatabase(receipt, callback);
           }
         }
 
