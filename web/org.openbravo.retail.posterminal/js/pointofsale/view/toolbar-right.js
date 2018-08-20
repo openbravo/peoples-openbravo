@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -491,9 +491,9 @@ enyo.kind({
       }
       OB.MobileApp.model.unset('serviceSearchMode');
     } else {
+      var lines = this.model.get('order').get('lines');
       if (!options.isManual) {
         // The tap was not manual. So consider the last line added
-        var lines = this.model.get('order').get('lines');
         var lastLine;
         if (lines && lines.length > 0) {
           lastLine = lines.models[lines.length - 1];
@@ -504,7 +504,9 @@ enyo.kind({
           lastLine.trigger('selected', lastLine);
         }
       }
-      if (!this.disabled) {
+      if (!this.disabled && lines.length > 0) {
+        //If the button is not disabled and we have, at least, one line,
+        //the view is changed to edit view
         this.doTabChange({
           tabPanel: this.tabPanel,
           keyboard: 'toolbarscan',
