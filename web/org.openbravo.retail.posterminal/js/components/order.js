@@ -454,7 +454,7 @@ enyo.kind({
       }
       this.show();
       //We have to ensure that there is not another handler showing this div
-    } else if (this.content === OB.I18N.getLabel('OBPOS_paid') || this.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]) || (this.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
+    } else if (this.content === OB.I18N.getLabel('OBPOS_paid') || this.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]) || (this.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder')) || this.content === OB.I18N.getLabel('OBPOS_Cancelled')) {
       this.hide();
     }
   },
