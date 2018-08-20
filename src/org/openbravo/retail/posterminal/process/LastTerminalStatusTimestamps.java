@@ -17,6 +17,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.json.JsonConstants;
@@ -33,6 +34,9 @@ public class LastTerminalStatusTimestamps extends JSONProcessSimple {
       Date lastIncRefresh = null;
       Date lastCacheGeneration = null;
       Date lastJSGeneration = null;
+      Long lastBenchmarkScore = null;
+      Date lastLogInDate = null;
+      String lastLogInUserId = null;
 
       if (jsonsent.has("lastFullRefresh") && !jsonsent.isNull("lastFullRefresh")) {
         Long lastFullRefreshUnix = jsonsent.getLong("lastFullRefresh");
@@ -49,6 +53,16 @@ public class LastTerminalStatusTimestamps extends JSONProcessSimple {
       if (jsonsent.has("lastJSGeneration") && !jsonsent.isNull("lastJSGeneration")) {
         Long lastJSGenerationUnix = jsonsent.getLong("lastJSGeneration");
         lastJSGeneration = new Date(lastJSGenerationUnix);
+      }
+      if (jsonsent.has("lastBenchmarkScore") && !jsonsent.isNull("lastBenchmarkScore")) {
+        lastBenchmarkScore = jsonsent.getLong("lastBenchmarkScore");
+      }
+      if (jsonsent.has("lastLogInDate") && !jsonsent.isNull("lastLogInDate")) {
+        Long lastLogInDateUnix = jsonsent.getLong("lastLogInDate");
+        lastLogInDate = new Date(lastLogInDateUnix);
+      }
+      if (jsonsent.has("lastLogInUserId") && !jsonsent.isNull("lastLogInUserId")) {
+        lastLogInUserId = jsonsent.getString("lastLogInUserId");
       }
       OBPOSApplications posterminal = OBDal.getInstance().get(OBPOSApplications.class,
           posterminalID);
@@ -86,6 +100,30 @@ public class LastTerminalStatusTimestamps extends JSONProcessSimple {
         posterminal.setTerminalLastjsgeneration(lastJSGeneration);
       }
 
+      // Set last benchmark score
+      if (posterminal.getTerminalLastbenchmark() == null && lastBenchmarkScore != null) {
+        posterminal.setTerminalLastbenchmark(lastBenchmarkScore);
+      } else if (lastBenchmarkScore != null && posterminal.getTerminalLastbenchmark() != null
+          && lastBenchmarkScore > posterminal.getTerminalLastbenchmark()) {
+        posterminal.setTerminalLastbenchmark(lastBenchmarkScore);
+      }
+
+      // Set last log in date and last log in user
+      if (posterminal.getTerminalLastlogindate() == null && lastLogInDate != null) {
+        posterminal.setTerminalLastlogindate(lastLogInDate);
+        if (lastLogInUserId != null) {
+          User userLogged = OBDal.getInstance().get(User.class, lastLogInUserId);
+          posterminal.setTerminalLastloginuser(userLogged);
+        }
+      } else if (lastLogInDate != null && posterminal.getTerminalLastlogindate() != null
+          && lastLogInDate.getTime() > posterminal.getTerminalLastlogindate().getTime()) {
+        posterminal.setTerminalLastlogindate(lastLogInDate);
+        if (lastLogInUserId != null) {
+          User userLogged = OBDal.getInstance().get(User.class, lastLogInUserId);
+          posterminal.setTerminalLastloginuser(userLogged);
+        }
+      }
+
       OBDal.getInstance().flush();
       result.put("status", JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -96,5 +134,4 @@ public class LastTerminalStatusTimestamps extends JSONProcessSimple {
 
     return result;
   }
-
 }

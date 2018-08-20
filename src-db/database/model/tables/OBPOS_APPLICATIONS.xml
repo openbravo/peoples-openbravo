@@ -137,11 +137,38 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="TERMINAL_LASTLOGINDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TERMINAL_LASTLOGINUSER" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TERMINAL_LASTBENCHMARK" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TERMINAL_LASTORDERSYNCHRONIZED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TERMINAL_LASTCASHUPCOMPLETED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="TERMINAL_LASTTICKETLOADED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_APP_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="OBPOS_APP_LASTLOGINUSER">
+        <reference local="TERMINAL_LASTLOGINUSER" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBPOS_TERMINALTYPE" name="OBPOS_APP_TERTYPE">
         <reference local="OBPOS_TERMINALTYPE_ID" foreign="OBPOS_TERMINALTYPE_ID"/>

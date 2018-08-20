@@ -247,6 +247,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
       Invoice invoice = null;
+      OBPOSApplications posTerminal = null;
       boolean createInvoice = false;
       boolean wasPaidOnCredit = false;
       boolean moveShipmentLinesInCanelAndReplace = false;
@@ -257,6 +258,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           && validateOrder(jsonorder)
           && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId")) && !paidReceipt) {
         return successMessage(jsonorder);
+      }
+
+      if (jsonorder.getString("posTerminal") != null) {
+        posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            jsonorder.getString("posTerminal"));
       }
 
       order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
@@ -604,6 +610,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (log.isDebugEnabled()) {
         t6 = System.currentTimeMillis();
       }
+
+      // Save the last order synchronized in obposApplication object
+      if (posTerminal != null) {
+        posTerminal.setTerminalLastordersinchronized(order.getUpdated());
+      }
+
       OBDal.getInstance().flush();
 
       if (log.isDebugEnabled()) {

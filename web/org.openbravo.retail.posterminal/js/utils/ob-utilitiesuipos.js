@@ -19,7 +19,10 @@ OB.UTIL.sendLastTerminalStatusValues = function (callback) {
     lastFullRefresh: OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
     lastIncRefresh: OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
     lastCacheGeneration: OB.UTIL.localStorage.getItem("LastCacheGeneration"),
-    lastJSGeneration: OB.UTIL.localStorage.getItem("LastJSGeneration_" + OB.MobileApp.model.get('appName'))
+    lastJSGeneration: OB.UTIL.localStorage.getItem("LastJSGeneration_" + OB.MobileApp.model.get('appName')),
+    lastBenchmarkScore: OB.UTIL.localStorage.getItem("benchmarkScore"),
+    lastLogInDate: OB.UTIL.localStorage.getItem("lastLogInDate"),
+    lastLogInUserId: OB.UTIL.localStorage.getItem("lastUserIdLogin")
   }, function (data, message) {
     if (callback instanceof Function) {
       callback();
