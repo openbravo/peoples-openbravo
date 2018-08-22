@@ -323,7 +323,7 @@ enyo.kind({
   },
 
   updateLayawayAction: function (forceDisable) {
-    var disable = forceDisable || false;
+    var disable = forceDisable || !(this.model.get('leftColumnViewManager').isMultiOrder() ? true : this.receipt.isReversedPaid());
     if ((this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) && !this.receipt.getPaymentStatus().done && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
       this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
       if (!disable && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
@@ -785,7 +785,12 @@ enyo.kind({
           });
         }
       } else if (!this.getAddPaymentAction()) {
-        this.$.donebutton.setLocalDisabled(false);
+        // Disable the 'Done' button if the synchronized paid amount is higher than the amount to pay and
+        // there's no reverse payment, the total amount is not zero (or is zero and is a synchronized ticket)
+        // and is not a C&R flow
+        var total = OB.DEC.sub(this.model.get('order').getGross(), this.model.get('order').getCredit()),
+            disableDoneButton = (!total && !this.model.get('order').get('isPaid')) || paymentstatus.isReversal || this.model.get('order').get('doCancelAndReplace') ? false : this.model.get('order').getPrePaymentQty() >= total;
+        this.$.donebutton.setLocalDisabled(disableDoneButton);
         this.$.exactbutton.setLocalDisabled(false);
         this.$.creditsalesaction.setLocalDisabled(false);
         this.updateLayawayAction();
@@ -939,9 +944,18 @@ enyo.kind({
     return msgToReturn;
   },
   setStatusButtons: function (resultOK, button) {
+    // If there's a reverse payment and the reversed amount is not paid disable also the buttons
+    var statusOK = this.model.get('leftColumnViewManager').isMultiOrder() ? true : this.receipt.isReversedPaid();
     if (button === 'Done') {
+      // If there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
+      // the button 'Done' will be disabled (except for the case of doing a cancel and replace).
+      // If the ticket is synchronized and the gross is zero, is also disabled.
+      if (statusOK && ((this.model.get('leftColumnViewManager').isOrder() && (this.receipt.get('isPaid') || this.receipt.get('isLayaway')) && !this.receipt.isNewReversed() && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(OB.DEC.sub(this.receipt.getTotal(), this.receipt.getCredit())) && !this.receipt.get('doCancelAndReplace') && this.receipt.get('orderType') !== 3) || (this.receipt.get('isPaid') && this.receipt.getGross() === 0))) {
+        statusOK = false;
+      }
       if (resultOK) {
-        this.$.donebutton.setLocalDisabled(false);
+        var disableButton = !statusOK;
+        this.$.donebutton.setLocalDisabled(disableButton);
         this.$.exactbutton.setLocalDisabled(false);
       } else {
         if (this.$.changeexceedlimit.showing || this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
@@ -955,14 +969,13 @@ enyo.kind({
     } else if (button === 'Layaway') {
       this.updateLayawayAction(resultOK ? false : true);
     } else if (button === 'Credit') {
-      if (resultOK) {
+      if (resultOK && statusOK) {
         this.$.creditsalesaction.setLocalDisabled(false);
       } else {
-        // If there is not enought cash to return and the user is doing a reverse payment (the negative cash payment has
-        // been introduced), the "Use Credit" button must also be disabled
-        // In a return or a positive ticket with negative payments, the "Use Credit" button can be enabled, because the cash
-        // payment has not been added yet
-        if (this.receipt.getPaymentStatus().isReversal) {
+        // If the ticket is a negative ticket, even when there's not enough cash, it must be possible to click on the 'Use Credit' button
+        if (this.receipt.getPaymentStatus().isNegative) {
+          this.$.creditsalesaction.setLocalDisabled(false);
+        } else {
           this.$.creditsalesaction.setLocalDisabled(true);
         }
       }
@@ -1134,17 +1147,6 @@ enyo.kind({
     // force disabled is there are pending synchronizations
     if (this.isLocked) {
       value = true;
-    }
-    // if there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
-    // the button 'Done' will be desabled (except for the case of doing a cancel and replace)
-    if (!value && this.model && this.model.get('leftColumnViewManager').isOrder()) {
-      if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0) {
-        if (!this.owner.receipt.get('doCancelAndReplace') && (this.owner.receipt.get('isLayaway') ? (OB.DEC.number(this.owner.receipt.getPayment()) < OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit())) : (this.owner.receipt.getPrePaymentQty() === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()))) && !this.owner.receipt.isNewReversed()) {
-          value = true;
-        }
-      } else if (this.owner.receipt && this.owner.receipt.get('isPaid') && this.owner.receipt.getGross() === 0) {
-        value = true;
-      }
     }
     this.disabled = value; // for getDisabled() to return the correct value
     this.setAttribute('disabled', value); // to effectively turn the button enabled or disabled    

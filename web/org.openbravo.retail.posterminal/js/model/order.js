@@ -971,9 +971,14 @@
 
     // returns true if there is any reversal payment that is not synchronized
     isNewReversed: function () {
-      return _.filter(this.get('payments').models, function (payment) {
+      return !_.isUndefined(_.find(this.get('payments').models, function (payment) {
         return !payment.get('isPrePayment') && payment.get('isReversePayment');
-      }).length > 0;
+      }));
+    },
+
+    // returns true if the reversed quantity has been paid
+    isReversedPaid: function () {
+      return !this.isNewReversed() || OB.DEC.abs(this.getPrePaymentQty()) <= OB.DEC.abs(this.getPayment());
     },
 
     // returns true if the order is a Layaway, otherwise false
