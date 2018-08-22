@@ -582,7 +582,7 @@ public class CancelAndReplaceUtils {
       OBDal.getInstance().save(oldOrder);
 
       // Complete new order and generate good shipment and sales invoice
-      if (!triggersDisabled && replaceOrder) {
+      if (!triggersDisabled) {
         newOrder.setDocumentStatus("DR");
         OBDal.getInstance().save(newOrder);
         callCOrderPost(newOrder);
@@ -612,10 +612,15 @@ public class CancelAndReplaceUtils {
             useOrderDocumentNoForRelatedDocs, replaceOrder, triggersDisabled);
       }
 
+      if (triggersDisabled) {
+        TriggerHandler.getInstance().enable();
+      }
       // Calling Cancelandreplaceorderhook
       WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
           .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
-
+      if (triggersDisabled) {
+        TriggerHandler.getInstance().disable();
+      }
     } catch (Exception e1) {
       Throwable e2 = DbUtility.getUnderlyingSQLException(e1);
       log4j.error("Error executing Cancel and Replace", e1);
@@ -1286,7 +1291,7 @@ public class CancelAndReplaceUtils {
         }
 
         // Call to processPayment in order to process it
-        if (triggersDisabled && replaceOrder) {
+        if (triggersDisabled) {
           TriggerHandler.getInstance().enable();
         }
         if (nettingPayment != null) {
@@ -1302,7 +1307,7 @@ public class CancelAndReplaceUtils {
           }
           FIN_PaymentProcess.doProcessPayment(nettingPayment, "P", null, null);
         }
-        if (triggersDisabled && replaceOrder) {
+        if (triggersDisabled) {
           TriggerHandler.getInstance().disable();
         }
 
