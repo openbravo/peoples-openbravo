@@ -10,6 +10,7 @@
 package org.openbravo.retail.posterminal.utility;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -19,6 +20,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.retail.posterminal.PrintTemplate;
+import org.openbravo.retail.posterminal.PrintTemplateSubrep;
 
 /**
  * Get an identifier for template files to check changes in them
@@ -35,22 +37,18 @@ public class OBPOSPrintTemplateReader {
   }
 
   public String getPrintTemplatesIdentifier() {
-    if(printTemplateIdentifier == null) {
+    if (printTemplateIdentifier == null) {
       final StringBuffer sb = new StringBuffer();
       OBCriteria<PrintTemplate> criteria = OBDal.getInstance().createCriteria(PrintTemplate.class);
       criteria.addOrderBy(PrintTemplate.PROPERTY_ID, true);
       for (PrintTemplate template : criteria.list()) {
         try {
-          ConfigParameters confParam = ConfigParameters
-              .retrieveFrom(RequestContext.getServletContext());
-          final File file = new File(confParam.prefix
-              + "web/org.openbravo.retail.posterminal/"+template.getTemplatePath());
-          if (!file.exists() || !file.canRead()) {
-            log.error(template.getTemplatePath() + " cannot be read");
-            continue;
+          sb.append(readTemplateFile(template.getTemplatePath()));
+          if (template.isPdf()) {
+            for (PrintTemplateSubrep subreport : template.getOBPOSPrintTemplateSubrepList()) {
+              sb.append(readTemplateFile(subreport.getTemplatePath()));
+            }
           }
-          String resourceContents = FileUtils.readFileToString(file, "UTF-8");
-          sb.append(resourceContents);
         } catch (Exception e) {
           log.error("Error reading file: " + template.getTemplatePath(), e);
         }
@@ -58,6 +56,17 @@ public class OBPOSPrintTemplateReader {
       printTemplateIdentifier = DigestUtils.md5Hex(sb.toString());
     }
     return printTemplateIdentifier;
+  }
+
+  private String readTemplateFile(String templatePath) throws IOException {
+    ConfigParameters confParam = ConfigParameters.retrieveFrom(RequestContext.getServletContext());
+    final File file = new File(confParam.prefix + "web/org.openbravo.retail.posterminal/"
+        + templatePath);
+    if (!file.exists() || !file.canRead()) {
+      log.error(templatePath + " cannot be read");
+      return "";
+    }
+    return FileUtils.readFileToString(file, "UTF-8");
   }
 
 }
