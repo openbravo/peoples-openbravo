@@ -28,7 +28,7 @@
     currentLinePrepaymentAmount: function (line, percentage, units) {
       var price, discount;
       if (units) {
-        price = line.get('grossListPrice');
+        price = line.get('grossListPrice') || line.get('priceList');
         if (line.get('promotions') && line.get('promotions').length > 0) {
           discount = line.get('promotions').reduce(function (total, model) {
             return total + model.amt;
