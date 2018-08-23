@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -54,9 +54,7 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty(
             "(case when ord.documentType.sOSubType = 'OB' then true else false end)", "isQuotation"));
         add(new HQLProperty("ord.summedLineAmount", "totalNetAmount"));
-        add(new HQLProperty(
-            "(case when (select sum(abs(deliveredQuantity)) from ord.orderLineList)=0 and ord.documentType.sOSubType<>'OB' then true else false end)",
-            "isLayaway")); // TODO: computed column, it should be refactored
+        add(new HQLProperty("ord.obposIslayaway", "isLayaway"));
         add(new HQLProperty("ord.priceList.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("replacedOrder.documentNo", "replacedorder_documentNo"));
         add(new HQLProperty("replacedOrder.id", "replacedorder"));

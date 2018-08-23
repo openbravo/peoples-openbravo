@@ -59,8 +59,8 @@ public class ProductPrice extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
       OBPOSApplications POSTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
-      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+          .getString("pos"));
       Date terminalDate = OBMOBCUtils
           .calculateServerDate(
               jsonsent.getJSONObject("parameters").getString("terminalTime"),
@@ -78,9 +78,9 @@ public class ProductPrice extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     boolean multiPrices = false;
-    OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+        .getString("pos"));
 
     if (productList == null) {
       throw new JSONException("Product list not found");

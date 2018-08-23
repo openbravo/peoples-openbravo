@@ -72,8 +72,8 @@ public class Brand extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+          .getString("pos"));
       boolean forceRemote = false;
       boolean isRemote = false;
       try {

@@ -971,9 +971,14 @@
 
     // returns true if there is any reversal payment that is not synchronized
     isNewReversed: function () {
-      return _.filter(this.get('payments').models, function (payment) {
+      return !_.isUndefined(_.find(this.get('payments').models, function (payment) {
         return !payment.get('isPrePayment') && payment.get('isReversePayment');
-      }).length > 0;
+      }));
+    },
+
+    // returns true if the reversed quantity has been paid
+    isReversedPaid: function () {
+      return !this.isNewReversed() || OB.DEC.abs(this.getPrePaymentQty()) <= OB.DEC.abs(this.getPayment());
     },
 
     // returns true if the order is a Layaway, otherwise false
@@ -2125,6 +2130,7 @@
         if (allLinesQty > warehouse.warehouseqty) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductWithoutStock', {
             allowToAdd: true,
+            order: me,
             line: line,
             product: p
           }, function (args) {
@@ -4441,7 +4447,7 @@
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       //Returns the difference (abs) between total to pay and payments.
       //if paymentToIignore parameter is provided the result will exclude that payment.
-      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), OB.DEC.sub(this.getSumOfOrigAmounts(paymentToIgnore), this.getChange())));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
       //Returns the difference (abs) between total to pay and payments without take into account currentPayment
@@ -4667,7 +4673,6 @@
         }
         payment.set('date', new Date());
         payment.set('id', OB.UTIL.get_UUID());
-        payment.set('obposAppCashup', OB.POS.modelterminal.get('terminal').cashUpId);
         payment.set('oBPOSPOSTerminal', OB.MobileApp.model.get('terminal').id);
         payment.set('orderGross', order.getGross());
         payment.set('isPaid', order.get('isPaid'));
@@ -4773,7 +4778,6 @@
           reversalPayment.set('reverseCallback', reverseCallback);
           reversalPayment.set('isReversePayment', true);
           reversalPayment.set('paymentData', payment.get('paymentData') ? payment.get('paymentData') : null);
-          reversalPayment.set('obposAppCashup', payment.get('obposAppCashup') ? payment.get('obposAppCashup') : null);
           reversalPayment.set('oBPOSPOSTerminal', payment.get('oBPOSPOSTerminal') ? payment.get('oBPOSPOSTerminal') : null);
 
           OB.UTIL.HookManager.executeHooks('OBPOS_PreAddReversalPayment', {
@@ -5678,6 +5682,24 @@
         }
       }
 
+      function removeReceiptFromDatabase(receipt, callback) {
+        var orderList = OB.MobileApp.model.orderList;
+        if (receipt.get('id')) {
+          if (receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+            orderList.deleteCurrent();
+          } else if (receipt.get('id')) {
+            OB.Dal.remove(receipt);
+          }
+        } else {
+          orderList.deleteCurrent();
+        }
+        if (callback && callback instanceof Function) {
+          callback();
+        }
+      }
+
       function markOrderAsDeleted(model, orderList, callback) {
         var me = this,
             creationDate;
@@ -5753,16 +5775,7 @@
                 });
               });
             } else {
-              if (orderList) {
-                orderList.saveCurrent();
-                OB.Dal.remove(orderList.current, null, null);
-                orderList.deleteCurrent();
-              } else {
-                OB.Dal.remove(receipt);
-              }
-              if (callback && callback instanceof Function) {
-                callback();
-              }
+              removeReceiptFromDatabase(receipt, callback);
             }
           } else if (receipt.has('deletedLines') && !receipt.get('isQuotation')) {
             if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
@@ -5774,22 +5787,10 @@
               receipt.setIsCalculateGrossLockState(false);
               markOrderAsDeleted(receipt, orderList, callback);
             } else {
-              orderList.saveCurrent();
-              OB.Dal.remove(orderList.current, null, null);
-              orderList.deleteCurrent();
-              if (callback && callback instanceof Function) {
-                callback();
-              }
+              removeReceiptFromDatabase(receipt, callback);
             }
           } else {
-            if (receipt.get('id')) {
-              orderList.saveCurrent();
-              OB.Dal.remove(orderList.current, null, null);
-            }
-            orderList.deleteCurrent();
-            if (callback && callback instanceof Function) {
-              callback();
-            }
+            removeReceiptFromDatabase(receipt, callback);
           }
         }
 
@@ -6914,7 +6915,7 @@
     getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
       //Returns the difference (abs) between total to pay and payments.
       //if paymentToIignore parameter is provided the result will exclude that payment.
-      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), OB.DEC.sub(this.getSumOfOrigAmounts(paymentToIgnore), this.getChange())));
     },
     getDifferenceRemovingSpecificPayment: function (currentPayment) {
       //Returns the difference (abs) between total to pay and payments without take into account currentPayment

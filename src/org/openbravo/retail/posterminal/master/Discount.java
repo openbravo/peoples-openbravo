@@ -43,7 +43,8 @@ public class Discount extends ProcessHQLQuery {
       throws JSONException {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
 
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+        .getString("pos"));
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = priceList.getId();
 
@@ -51,13 +52,11 @@ public class Discount extends ProcessHQLQuery {
       throw new JSONException("Product list not found");
     }
 
-    Long lastUpdated;
+    Long lastUpdated = null;
 
     if (jsonsent != null) {
       lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
           && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-    } else {
-      lastUpdated = null;
     }
 
     String hql = "from PricingAdjustment p ";

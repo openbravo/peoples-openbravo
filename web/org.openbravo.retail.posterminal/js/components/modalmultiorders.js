@@ -397,7 +397,22 @@ enyo.kind({
       return true;
     }
 
+    function newReversalOrder() {
+      var i;
+      for (i = 0; i < selectedMultiOrders.length; i++) {
+        if (selectedMultiOrders[i].isNewReversed()) {
+          return selectedMultiOrders[i].get('documentNo');
+        }
+      }
+      return false;
+    }
+
     addOrdersToOrderList = _.after(checkedMultiOrders.length, function () {
+      var reversalOrder = newReversalOrder();
+      if (reversalOrder) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReversePaymentPending', [reversalOrder]));
+        return;
+      }
       OB.UTIL.StockUtils.checkOrderLinesStock(selectedMultiOrders, function (hasStock) {
         if (hasStock) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {

@@ -162,6 +162,11 @@ enyo.kind({
     var me = this;
 
     function errorCallback(tx, error) {
+      if (!OB.MobileApp.model.get("connectedToERP")) {
+        OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable'));
+        me.$.renderLoading.hide();
+        return;
+      }
       me.$.renderLoading.hide();
       me.receiptList.reset();
       me.$[this.getNameOfReceiptsListItemPrinter()].$.tempty.show();

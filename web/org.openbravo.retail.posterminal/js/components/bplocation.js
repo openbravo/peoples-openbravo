@@ -81,7 +81,7 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
-          presetCustomesLocation: OB.MobileApp.model.receipt.get('bp').attributes.locId,
+          presetCustomesLocation: OB.MobileApp.model.receipt.get('bp').get('locId'),
           target: 'order',
           clean: true,
           navigationPath: []
