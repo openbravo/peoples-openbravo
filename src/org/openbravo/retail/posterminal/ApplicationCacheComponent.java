@@ -71,6 +71,9 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources
         .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentCharacteristic&modelName=DiscountFilterCharacteristic&source=org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic");
 
+    // Sounds
+    resources.add("../../web/org.openbravo.retail.posterminal/sounds/drawerAlert.mp3");
+
     // App Icon
     resources.add("../../web/images/favicon.ico");
 
