@@ -116,7 +116,7 @@
             'tax': tax.taxId,
             'taxLines': lineObj,
             'taxAmount': OB.DEC.add(line.get('taxAmount') || 0, tax.taxAmount),
-            'net': (receipt.get('priceIncludesTax') ? OB.DEC.sub(line.get('gross') || 0, tax.taxAmount) : line.get('net')),
+            'net': (receipt.get('priceIncludesTax') ? line.get('linenetamount') : line.get('net')),
             'linerate': OB.DEC.toNumber(linerate.add(getTaxRateNumber(tax.taxRate)))
           }, {
             silent: true
@@ -127,8 +127,8 @@
         }, 0);
         if (receipt.get('priceIncludesTax')) {
           line.set({
-            'net': OB.DEC.sub(line.get('net'), discAmt),
-            'discountedNet': OB.DEC.sub(line.get('net'), discAmt),
+            'net': OB.DEC.sub(OB.DEC.sub(line.get('gross') || 0, line.get('taxAmount')), discAmt),
+            'discountedNet': OB.DEC.sub(OB.DEC.sub(line.get('gross') || 0, line.get('taxAmount')), discAmt),
             'discountedLinePrice': OB.DEC.add(line.get('net'), line.get('taxAmount'))
           }, {
             silent: true

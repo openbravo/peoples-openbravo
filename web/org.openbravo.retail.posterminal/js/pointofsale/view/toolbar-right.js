@@ -446,7 +446,12 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.model.get('order').get('lines').on('selected', function (lineSelected) {
-      this.currentLine = lineSelected;
+      if (this.model.get('order').get('lines').length > 0) {
+        this.currentLine = lineSelected;
+        this.setDisabled(false);
+      } else {
+        this.setDisabled(true);
+      }
     }, this);
     //    var me = this;
     //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
