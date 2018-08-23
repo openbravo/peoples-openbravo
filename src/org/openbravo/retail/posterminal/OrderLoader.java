@@ -204,8 +204,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
     notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-        && jsonorder.getDouble("payment") < Math.abs(jsonorder.getDouble("gross"))
-        && !jsonorder.optBoolean("paidOnCredit") && !jsonorder.has("paidInNegativeStatusAmt");
+        && (jsonorder.getDouble("payment") < Math.abs(jsonorder.getDouble("gross")) || jsonorder
+            .getJSONArray("lines").length() == 0) && !jsonorder.optBoolean("paidOnCredit")
+        && !jsonorder.has("paidInNegativeStatusAmt");
     creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
         && jsonorder.optBoolean("paidOnCredit");
@@ -218,8 +219,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
 
-    createShipment = !isQuotation && !notpaidLayaway && !paidReceipt && !isDeleted
-        && jsonorder.getJSONArray("lines").length() != 0;
+    createShipment = !isQuotation && !notpaidLayaway && !paidReceipt && !isDeleted;
 
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
