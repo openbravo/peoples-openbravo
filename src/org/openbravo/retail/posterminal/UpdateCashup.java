@@ -10,6 +10,8 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -26,8 +28,10 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
 import org.openbravo.service.json.JsonToDataConverter;
 
@@ -140,8 +144,10 @@ public class UpdateCashup {
         updateOrCreateCashupInfo(cashUpId, jsonCashup, cashUpDate, cashUpReportDate,
             lastCashUpReportDate);
       }
+      // Create or update Terminal Status History Record
+      updateOrCreateTerminalStatusHistory(jsonCashup, cashUp, posTerminal);
     } else {
-      log.debug("Don't need to update cashUp");
+      log.debug("Don't need to update cashUp neither terminal status history");
     }
 
     // Associate master/slave cashup
@@ -401,5 +407,101 @@ public class UpdateCashup {
     }
     Long value = count.uniqueResult();
     return value != null ? value.longValue() : 0;
+  }
+
+  private static void updateOrCreateTerminalStatusHistory(JSONObject jsonCashup,
+      OBPOSAppCashup cashUp, OBPOSApplications posTerminal) throws JSONException {
+    OBPOSAppTermStatHist terminalStatusHistory = null;
+    Long transitionsToOnline;
+    Long numberOfLogClientErrors;
+    Long numberOfErrorsWhileImporting;
+    // Terminal Status History record
+    Query<OBPOSAppTermStatHist> termStatHistQuery = OBDal
+        .getInstance()
+        .getSession()
+        .createQuery(
+            "from OBPOS_APP_TERMSTAT_HIST where cashUp.id=:cashUpId and pOSTerminal.id=:posTerminalId",
+            OBPOSAppTermStatHist.class);
+    termStatHistQuery.setParameter("cashUpId", cashUp.getId());
+    termStatHistQuery.setParameter("posTerminalId", posTerminal.getId());
+    // The record will be locked to this process until it ends. Other requests to process this cash
+    // up will be locked until this one finishes
+    termStatHistQuery.setLockOptions(LockOptions.UPGRADE);
+    terminalStatusHistory = (OBPOSAppTermStatHist) termStatHistQuery.uniqueResult();
+
+    if (terminalStatusHistory == null) {
+      try {
+        // If terminal Status history doesn't exists, create a new record for that cashup and
+        // posterminal
+        terminalStatusHistory = OBProvider.getInstance().get(OBPOSAppTermStatHist.class);
+        terminalStatusHistory.setId(SequenceIdData.getUUID());
+        terminalStatusHistory.setOrganization(posTerminal.getOrganization());
+        terminalStatusHistory.setCashUp(cashUp);
+        terminalStatusHistory.setCreationDate(cashUp.getCreationDate());
+        terminalStatusHistory.setPOSTerminal(posTerminal);
+        terminalStatusHistory.setTransitiontoonline(0L);
+        terminalStatusHistory.setErrorswhileimporting(0L);
+        terminalStatusHistory.setLogclienterrors(0L);
+        terminalStatusHistory.setNewOBObject(true);
+        OBDal.getInstance().save(terminalStatusHistory);
+      } catch (Exception e) {
+        throw new OBException(e);
+      }
+    }
+
+    // Get number of transitions from offline to online from json
+    if (jsonCashup.has("transitionsToOnline")) {
+      transitionsToOnline = jsonCashup.getLong("transitionsToOnline");
+      terminalStatusHistory.setTransitiontoonline(transitionsToOnline);
+    }
+
+    // Get number of Error While Importing POS Data from this cashup
+    final String sqlErrorsWhileImporting = String
+        .format(
+            "select count(*) from obpos_errors where obpos_applications_id = '%s' and created >= '%s' and created <= '%s'",
+            posTerminal.getId(), cashUp.getCreationDate(), cashUp.getLastcashupreportdate());
+
+    try (PreparedStatement sqlErrorsWhileImportingQuery = new DalConnectionProvider(false)
+        .getPreparedStatement(sqlErrorsWhileImporting)) {
+      sqlErrorsWhileImportingQuery.execute();
+      try (ResultSet rs = sqlErrorsWhileImportingQuery.getResultSet()) {
+        rs.next();
+        numberOfErrorsWhileImporting = rs.getLong(1);
+      }
+    } catch (Exception e) {
+      log.error(
+          "An error has ocurred when trying to get the number of errors while importing POS Data: "
+              + e.getMessage(), e);
+      numberOfErrorsWhileImporting = 0L;
+    }
+
+    if (numberOfErrorsWhileImporting != null) {
+      terminalStatusHistory.setErrorswhileimporting(numberOfErrorsWhileImporting);
+    }
+
+    // Get number of Log Client errors from this cashup
+    final String sqlLogClientErrors = String
+        .format(
+            "select count(*) from obmobc_logclient where deviceid = '%s' and loglevel = 'Error' and created >= '%s' and created <= '%s'",
+            posTerminal.getSearchKey(), cashUp.getCreationDate(), cashUp.getLastcashupreportdate());
+
+    try (PreparedStatement sqlLogClientErrorsQuery = new DalConnectionProvider(false)
+        .getPreparedStatement(sqlLogClientErrors)) {
+      sqlLogClientErrorsQuery.execute();
+      try (ResultSet rs = sqlLogClientErrorsQuery.getResultSet()) {
+        rs.next();
+        numberOfLogClientErrors = rs.getLong(1);
+      }
+    } catch (Exception e) {
+      log.error(
+          "An error has ocurred when trying to get the number of Log client errors: "
+              + e.getMessage(), e);
+      numberOfLogClientErrors = 0L;
+    }
+
+    if (numberOfLogClientErrors != null) {
+      terminalStatusHistory.setLogclienterrors(numberOfLogClientErrors);
+    }
+
   }
 }

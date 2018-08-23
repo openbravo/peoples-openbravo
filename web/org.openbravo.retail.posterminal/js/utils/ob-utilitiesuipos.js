@@ -22,7 +22,9 @@ OB.UTIL.sendLastTerminalStatusValues = function (callback) {
     lastJSGeneration: OB.UTIL.localStorage.getItem("LastJSGeneration_" + OB.MobileApp.model.get('appName')),
     lastBenchmarkScore: OB.UTIL.localStorage.getItem("benchmarkScore"),
     lastLogInDate: OB.UTIL.localStorage.getItem("lastLogInDate"),
-    lastLogInUserId: OB.UTIL.localStorage.getItem("lastUserIdLogin")
+    lastLogInUserId: OB.UTIL.localStorage.getItem("lastUserIdLogin"),
+    lastTransitionToOffline: OB.UTIL.localStorage.getItem("lastTransitionToOffline"),
+    lastTransitionToOnline: OB.UTIL.localStorage.getItem("lastTransitionToOnline")
   }, function (data, message) {
     if (callback instanceof Function) {
       callback();

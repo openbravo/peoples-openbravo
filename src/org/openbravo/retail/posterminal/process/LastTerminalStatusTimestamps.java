@@ -37,6 +37,8 @@ public class LastTerminalStatusTimestamps extends JSONProcessSimple {
       Long lastBenchmarkScore = null;
       Date lastLogInDate = null;
       String lastLogInUserId = null;
+      Date lastTransitionToOffline = null;
+      Date lastTransitionToOnline = null;
 
       if (jsonsent.has("lastFullRefresh") && !jsonsent.isNull("lastFullRefresh")) {
         Long lastFullRefreshUnix = jsonsent.getLong("lastFullRefresh");
@@ -64,6 +66,15 @@ public class LastTerminalStatusTimestamps extends JSONProcessSimple {
       if (jsonsent.has("lastLogInUserId") && !jsonsent.isNull("lastLogInUserId")) {
         lastLogInUserId = jsonsent.getString("lastLogInUserId");
       }
+      if (jsonsent.has("lastTransitionToOffline") && !jsonsent.isNull("lastTransitionToOffline")) {
+        Long lastTransitionToOfflineUnix = jsonsent.getLong("lastTransitionToOffline");
+        lastTransitionToOffline = new Date(lastTransitionToOfflineUnix);
+      }
+      if (jsonsent.has("lastTransitionToOnline") && !jsonsent.isNull("lastTransitionToOnline")) {
+        Long lastTransitionToOnlineUnix = jsonsent.getLong("lastTransitionToOnline");
+        lastTransitionToOnline = new Date(lastTransitionToOnlineUnix);
+      }
+
       OBPOSApplications posterminal = OBDal.getInstance().get(OBPOSApplications.class,
           posterminalID);
 
@@ -122,6 +133,25 @@ public class LastTerminalStatusTimestamps extends JSONProcessSimple {
           User userLogged = OBDal.getInstance().get(User.class, lastLogInUserId);
           posterminal.setTerminalLastloginuser(userLogged);
         }
+      }
+
+      // Set last transition to offline
+      if (posterminal.getTerminalLasttimeinoffline() == null && lastTransitionToOffline != null) {
+        posterminal.setTerminalLasttimeinoffline(lastTransitionToOffline);
+      } else if (lastTransitionToOffline != null
+          && posterminal.getTerminalLasttimeinoffline() != null
+          && lastTransitionToOffline.getTime() > posterminal.getTerminalLasttimeinoffline()
+              .getTime()) {
+        posterminal.setTerminalLasttimeinoffline(lastTransitionToOffline);
+      }
+
+      // Set last transition to online
+      if (posterminal.getTerminalLasttimeinonline() == null && lastTransitionToOnline != null) {
+        posterminal.setTerminalLasttimeinonline(lastTransitionToOnline);
+      } else if (lastTransitionToOnline != null
+          && posterminal.getTerminalLasttimeinonline() != null
+          && lastTransitionToOnline.getTime() > posterminal.getTerminalLasttimeinonline().getTime()) {
+        posterminal.setTerminalLasttimeinonline(lastTransitionToOnline);
       }
 
       OBDal.getInstance().flush();
