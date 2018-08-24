@@ -99,16 +99,6 @@ public class UpdateCashup {
         cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);
 
-        // If synchronize mode is active, there is no way to process two cashups with the same id at
-        // the same time.
-        // If synchronize mode is not active, we have to persist the header of the cashup. Doing
-        // this, we avoid possible conflicts trying to save two cashups with the same id at the same
-        // time.
-        if (!POSUtils.isSynchronizedModeEnabled()) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getConnection(false).commit();
-        }
-
       } catch (JSONException e) {
         throw new OBException("Cashup JSON seems to be corrupted: ", e);
       } catch (Exception e) {
@@ -156,8 +146,12 @@ public class UpdateCashup {
         || (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null)) {
       associateMasterSlave(cashUp, posTerminal);
     }
-
+    // If synchronize mode is active, there is no way to process two cashups with the same id at
+    // the same time.
     OBDal.getInstance().flush();
+    if (!POSUtils.isSynchronizedModeEnabled()) {
+      OBDal.getInstance().getConnection(false).commit();
+    }
     return cashUp;
   }
 
