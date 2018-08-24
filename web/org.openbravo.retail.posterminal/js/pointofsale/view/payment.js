@@ -943,8 +943,7 @@ enyo.kind({
         // Disable the 'Done' button if the synchronized paid amount is higher than the amount to pay and
         // there's no reverse payment, the total amount is not zero (or is zero and is a synchronized ticket)
         // and is not a C&R flow
-        var total = OB.DEC.sub(this.model.get('order').getGross(), this.model.get('order').getCredit()),
-            disableDoneButton = (!total && !this.model.get('order').get('isPaid')) || paymentstatus.isReversal || this.model.get('order').get('doCancelAndReplace') ? false : this.model.get('order').getPrePaymentQty() >= total;
+        var disableDoneButton = (!this.model.get('order').getGross() && !this.model.get('order').get('isPaid')) || paymentstatus.isReversal || this.model.get('order').get('doCancelAndReplace') ? false : this.model.get('order').getPrePaymentQty() >= this.model.get('order').getGross();
         this.$.donebutton.setLocalDisabled(disableDoneButton);
         this.$.exactbutton.setLocalDisabled(false);
         if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {

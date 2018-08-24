@@ -25,6 +25,12 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
   public void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder, Order newOrder,
       Order inverseOrder, JSONObject jsonorder) throws Exception {
     if (jsonorder != null) {
+      if (newOrder != null) {
+        if (oldOrder.isObposIslayaway()) {
+          oldOrder.setObposIslayaway(false);
+          inverseOrder.setObposIslayaway(false);
+        }
+      }
       inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
       if (newOrder != null) {
         OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
