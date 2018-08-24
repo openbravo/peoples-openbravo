@@ -116,7 +116,6 @@ public class CheckApproval extends HttpServlet {
         preferenceQuery.setParameter("org", organization);
         preferenceQuery.setParameter("orgList", naturalTreeOrgList);
 
-        @SuppressWarnings("unchecked")
         List<String> preferenceList = preferenceQuery.list();
         if (preferenceList.isEmpty()) {
           result.put("status", 1);
