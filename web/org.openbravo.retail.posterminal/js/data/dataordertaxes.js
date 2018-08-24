@@ -116,7 +116,6 @@
             'tax': tax.taxId,
             'taxLines': lineObj,
             'taxAmount': OB.DEC.add(line.get('taxAmount') || 0, tax.taxAmount),
-            'net': (receipt.get('priceIncludesTax') ? OB.DEC.sub(line.get('gross') || 0, tax.taxAmount) : line.get('net')),
             'linerate': OB.DEC.toNumber(linerate.add(getTaxRateNumber(tax.taxRate)))
           }, {
             silent: true
@@ -125,10 +124,14 @@
         discAmt = line.get('promotions').reduce(function (memo, disc) {
           return OB.DEC.add(memo, (disc.actualAmt || disc.amt || 0));
         }, 0);
+        line.set({
+          'net': (receipt.get('priceIncludesTax') ? line.get('linenetamount') : line.get('net'))
+        }, {
+          silent: true
+        });
         if (receipt.get('priceIncludesTax')) {
           line.set({
-            'net': OB.DEC.sub(line.get('net'), discAmt),
-            'discountedNet': OB.DEC.sub(line.get('net'), discAmt),
+            'discountedNet': line.get('net'),
             'discountedLinePrice': OB.DEC.add(line.get('net'), line.get('taxAmount'))
           }, {
             silent: true

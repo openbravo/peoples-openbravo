@@ -301,16 +301,22 @@ public class POSUtils {
     return POSUtils.getPriceListVersionForPriceList(priceListId, terminalDate);
   }
 
-  public static OBRETCOProductList getProductListByOrgId(String orgId) {
+  public static OBRETCOProductList getProductListByPosterminalId(String posterminalId) {
     try {
       OBContext.setAdminMode(false);
+      OBPOSApplications posterminal = getTerminalById(posterminalId);
+      TerminalType terminalType = OBDal.getInstance().get(TerminalType.class,
+          posterminal.getObposTerminaltype().getId());
+      if (terminalType.getObretcoProductlist() != null) {
+        return terminalType.getObretcoProductlist();
+      } else {
+        final List<String> orgList = getStoreList(posterminal.getOrganization().getId());
 
-      final List<String> orgList = getStoreList(orgId);
-
-      for (String currentOrgId : orgList) {
-        final Organization org = OBDal.getInstance().get(Organization.class, currentOrgId);
-        if (org.getObretcoProductlist() != null) {
-          return org.getObretcoProductlist();
+        for (String currentOrgId : orgList) {
+          final Organization org = OBDal.getInstance().get(Organization.class, currentOrgId);
+          if (org.getObretcoProductlist() != null) {
+            return org.getObretcoProductlist();
+          }
         }
       }
     } catch (Exception e) {

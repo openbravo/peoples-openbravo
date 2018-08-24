@@ -374,12 +374,16 @@ enyo.kind({
     classes: 'btnlink-orange',
     permission: 'OBPOS_ActionButtonRemoveDiscount',
     tap: function () {
-      var linesWithPromotionsLength = 0,
-          manualPromotions = OB.Model.Discounts.getManualPromotions(),
-          i, lineModel, selectedLines = this.owner.owner.selectedModels;
-      var checkFilter = function (prom) {
-          return (manualPromotions.indexOf(prom.discountType) !== -1);
-          };
+      var i, lineModel, selectedLines, checkFilter, linesWithPromotionsLength = 0,
+          manualPromotions = OB.Model.Discounts.getManualPromotions();
+
+      checkFilter = function (prom) {
+        return (manualPromotions.indexOf(prom.discountType) !== -1);
+      };
+
+      selectedLines = _.filter(this.owner.owner.selectedModels, function (line) {
+        return this.owner.owner.receipt.get('isEditable') && line.get('isEditable');
+      }, this);
 
       for (i = 0; i < selectedLines.length; i++) {
         lineModel = selectedLines[i];
@@ -546,20 +550,25 @@ enyo.kind({
         }
       }
       if (this.$.actionButtonsContainer.$.removeDiscountButton) {
-        var promotions = false;
+        var promotions = false,
+            hasEditableLines = true;
         if (this.selectedModels) {
           _.each(this.selectedModels, function (lineModel) {
-            if (lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
-              var filtered;
-              filtered = _.filter(lineModel.get('promotions'), function (prom) {
+            if (!hasEditableLines) {
+              promotions = false;
+              return false;
+            }
+            hasEditableLines = this.model.get('order').get('isEditable') && lineModel.get('isEditable');
+            if (hasEditableLines && lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
+              // lines with just discretionary discounts can be removed.
+              var filtered = _.filter(lineModel.get('promotions'), function (prom) {
                 return OB.Model.Discounts.discountRules[prom.discountType].isManual;
               }, this);
               if (filtered.length > 0) {
-                //lines with just discrectionary discounts can be removed.
                 promotions = true;
               }
             }
-          });
+          }, this);
         }
         if (promotions) {
           this.$.actionButtonsContainer.$.removeDiscountButton.show();

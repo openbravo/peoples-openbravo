@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -34,8 +33,8 @@ public class DiscountFilterProduct extends Discount {
 
   @Override
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
-    final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+        .getString("pos"));
     HQLPropertyList regularDiscFilProductPropertyExtensionHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
     String hql = "select" + regularDiscFilProductPropertyExtensionHQLProperties.getHqlSelect();

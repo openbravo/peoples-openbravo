@@ -262,9 +262,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
       if (order != null) {
-        final String loaded = jsonorder.getString("loaded"), updated = OBMOBCUtils
+        final String loaded = jsonorder.has("loaded") ? jsonorder.getString("loaded") : null, updated = OBMOBCUtils
             .convertToUTCDateComingFromServer(order.getUpdated());
-        if (loaded.compareTo(updated) != 0) {
+        if (loaded == null || loaded.compareTo(updated) != 0) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -566,7 +566,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 deliveredLines = false;
                 break;
               }
-              if (line.getGoodsShipmentLine() != null) {
+              if (!hasShipment && line.getMaterialMgmtShipmentInOutLineList().size() > 0) {
                 hasShipment = true;
               }
             }
@@ -2895,8 +2895,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         reversedPayment.setReversedPayment(finPayment);
         OBDal.getInstance().save(reversedPayment);
       }
-      finPayment.setObposAppCashup(payment.has("obposAppCashup") ? OBDal.getInstance().get(
-          OBPOSAppCashup.class, payment.getString("obposAppCashup")) : null);
+      finPayment.setObposAppCashup(jsonorder.has("obposAppCashup") ? OBDal.getInstance().get(
+          OBPOSAppCashup.class, jsonorder.getString("obposAppCashup")) : null);
       finPayment.setOBPOSPOSTerminal(payment.has("oBPOSPOSTerminal") ? OBDal.getInstance().get(
           OBPOSApplications.class, payment.getString("oBPOSPOSTerminal")) : null);
 

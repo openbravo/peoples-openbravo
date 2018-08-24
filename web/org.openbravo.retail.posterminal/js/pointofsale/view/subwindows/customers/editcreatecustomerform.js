@@ -64,6 +64,21 @@ enyo.kind({
       this.waterfall('onDisableButton', {
         disabled: false
       });
+      if (this.args.focusError) {
+        _.each(this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$, function (attribute) {
+          _.each(this.args.focusError, function (field, indx) {
+            if (attribute.name === 'line_' + field) {
+              var attr = attribute.$.newAttribute.$[field];
+              attr.addClass('error');
+              if (indx === 0) {
+                window.setTimeout(function () {
+                  attr.focus();
+                }, 100);
+              }
+            }
+          });
+        }, this);
+      }
       //show
       return true;
     } else {
@@ -75,16 +90,30 @@ enyo.kind({
     }
   },
   executeOnHide: function () {
+    if (this.args.focusError) {
+      _.each(this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$, function (attribute) {
+        _.each(this.args.focusError, function (field) {
+          if (attribute.name === 'line_' + field) {
+            var attr = attribute.$.newAttribute.$[field];
+            attr.removeClass('error');
+            attribute.$.labelLine.setStyle('color:black;');
+          }
+        });
+      }, this);
+    }
+
     var navigationPath = this.customer || !this.args.cancelNavigationPath ? this.args.navigationPath : this.args.cancelNavigationPath;
-    this.doShowPopup({
-      popup: navigationPath[navigationPath.length - 1],
-      args: {
-        businessPartner: this.customer ? this.customer : this.args.businessPartner,
-        target: this.args.target,
-        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(navigationPath),
-        makeSearch: this.customer !== undefined
-      }
-    });
+    if (navigationPath) {
+      this.doShowPopup({
+        popup: navigationPath[navigationPath.length - 1],
+        args: {
+          businessPartner: this.customer ? this.customer : this.args.businessPartner,
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(navigationPath),
+          makeSearch: this.customer !== undefined
+        }
+      });
+    }
   },
   showingChanged: function () {
     this.inherited(arguments);

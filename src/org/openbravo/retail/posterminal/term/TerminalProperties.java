@@ -80,6 +80,7 @@ public class TerminalProperties extends ModelExtension {
         "CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END", "isslave"));
     list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
         "language_string"));
+    list.add(new HQLProperty("pos.organization.obposReturnAnonymousbp", "returns_anonymouscustomer"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);

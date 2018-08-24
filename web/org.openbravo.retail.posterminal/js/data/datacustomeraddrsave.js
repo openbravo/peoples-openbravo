@@ -61,7 +61,11 @@
         customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         var now = new Date();
         customerAddr.set('timezoneOffset', now.getTimezoneOffset());
-        customerAddr.set('loaded', OB.I18N.normalizeDate(new Date(customerAddr.get('loaded'))));
+        if (OB.UTIL.isNullOrUndefined(customerAddr.get('loaded'))) {
+          customerAddr.set('loaded', OB.I18N.normalizeDate(new Date()));
+        } else {
+          customerAddr.set('loaded', OB.I18N.normalizeDate(new Date(customerAddr.get('loaded'))));
+        }
         bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
         bpLocToSave.set('c_bpartner_location_id', customerAddr.get('id'));
       } else {

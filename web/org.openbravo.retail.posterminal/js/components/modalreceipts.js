@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2017 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -60,10 +60,12 @@ enyo.kind({
   },
   tap: function () {
     this.inherited(arguments);
+    this.doHideThisPopup();
+    enyo.$.scrim.show();
     this.doChangeCurrentOrder({
       newCurrentOrder: this.model
     });
-    this.doHideThisPopup();
+    enyo.$.scrim.hide();
   },
   components: [{
     name: 'line',
