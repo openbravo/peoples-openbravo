@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -713,12 +712,10 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setCurrentClient(Client currentClient) {
-    initializeFirstLevelProperties(currentClient);
     this.currentClient = currentClient;
   }
 
   public void setCurrentOrganization(Organization currentOrganization) {
-    initializeFirstLevelProperties(currentOrganization);
     this.currentOrganization = currentOrganization;
   }
 
@@ -727,7 +724,6 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setLanguage(Language language) {
-    initializeFirstLevelProperties(language);
     this.language = language;
     setRTL(language.isRTLLanguage());
   }
@@ -870,6 +866,16 @@ public class OBContext implements OBNotSingleton {
     getAdminModeStack(AdminType.ADMIN_MODE).push(am);
     try {
       setUser(u);
+      Hibernate.initialize(getUser().getClient());
+      Hibernate.initialize(getUser().getOrganization());
+      Hibernate.initialize(getUser().getDefaultOrganization());
+      Hibernate.initialize(getUser().getDefaultWarehouse());
+      Hibernate.initialize(getUser().getDefaultClient());
+      Hibernate.initialize(getUser().getDefaultRole());
+      Hibernate.initialize(getUser().getDefaultLanguage());
+      if (getUser().getBusinessPartner() != null) {
+        Hibernate.initialize(getUser().getBusinessPartner());
+      }
 
       organizationStructureProviderByClient = new HashMap<String, OrganizationStructureProvider>();
       acctSchemaStructureProviderByClient = new HashMap<String, AcctSchemaStructureProvider>();
@@ -1062,7 +1068,6 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setUser(User user) {
-    initializeFirstLevelProperties(user);
     this.user = user;
   }
 
@@ -1071,7 +1076,6 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setRole(Role role) {
-    initializeFirstLevelProperties(role);
     isAdministrator = (role.getId()).equals("0");
     isPortalRole = role.isForPortalUsers();
     isWebServiceEnabled = role.isWebServiceEnabled();
@@ -1261,7 +1265,6 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setWarehouse(Warehouse warehouse) {
-    initializeFirstLevelProperties(warehouse);
     this.warehouse = warehouse;
   }
 
@@ -1326,20 +1329,6 @@ public class OBContext implements OBNotSingleton {
 
   private void setTranslationInstalled(boolean translationInstalled) {
     this.translationInstalled = translationInstalled;
-  }
-
-  private void initializeFirstLevelProperties(BaseOBObject bob) {
-    if (bob == null) {
-      return;
-    }
-    Entity entity = bob.getEntity();
-    entity.getProperties().stream() //
-        .filter(property -> !property.isOneToMany()) //
-        .map(property -> bob.get(property.getName())) //
-        .filter(propertyValue -> !Hibernate.isInitialized(propertyValue)) //
-        .filter(BaseOBObject.class::isInstance) //
-        .map(BaseOBObject.class::cast) //
-        .forEach(Hibernate::initialize);
   }
 
 }
