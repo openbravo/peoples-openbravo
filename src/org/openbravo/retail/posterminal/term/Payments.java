@@ -8,16 +8,13 @@
  */
 package org.openbravo.retail.posterminal.term;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import javax.servlet.ServletException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -58,6 +55,7 @@ public class Payments extends JSONTerminalProperty {
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
           .getCurrentOrganization().getId(), null, null, null);
 
+      @SuppressWarnings("rawtypes")
       final Query paymentsquery = querybuilder.getDalQuery();
 
       paymentsquery.setParameter("posID", posId);
@@ -100,12 +98,7 @@ public class Payments extends JSONTerminalProperty {
           payment.put("paymentMethod", pMethod);
 
           payment.put("rate", objPayment[2]);
-          BigDecimal mulrate = BigDecimal.ZERO;
-          BigDecimal rate = new BigDecimal((String) objPayment[2]);
-          if (rate.compareTo(BigDecimal.ZERO) != 0) {
-            mulrate = BigDecimal.ONE.divide(rate, 12, RoundingMode.HALF_UP);
-          }
-          payment.put("mulrate", mulrate.toPlainString());
+          payment.put("mulrate", objPayment[3]);
 
           payment.put("isocode", objPayment[4]);
           payment.put("symbol", objPayment[5]);

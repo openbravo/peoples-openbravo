@@ -72,8 +72,8 @@ public class Characteristic extends ProcessHQLQuery {
     }
 
     String assortmentFilter = "";
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+        .getString("pos"));
     if (!isRemote) {
       assortmentFilter = "exists (select 1 from  ProductCharacteristicValue pcv, OBRETCO_Prol_Product assort "
           + " where pcv.characteristic.id=ch.id "

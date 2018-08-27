@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,8 +24,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -59,7 +59,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   private String[] getClientOrgIds(String terminalName) {
     final String hqlOrg = "select terminal.organization.client.id, terminal.organization.id "
         + "from OBPOS_Applications terminal " + "where terminal.searchKey = :theTerminalSearchKey";
-    Query qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg);
+    Query<Object[]> qryOrg = OBDal.getInstance().getSession().createQuery(hqlOrg, Object[].class);
     qryOrg.setParameter("theTerminalSearchKey", terminalName);
     qryOrg.setMaxResults(1);
 
@@ -67,7 +67,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     String strOrg = "none";
 
     if (qryOrg.uniqueResult() != null) {
-      final Object[] orgResult = (Object[]) qryOrg.uniqueResult();
+      final Object[] orgResult = qryOrg.uniqueResult();
       strClient = orgResult[0].toString();
       strOrg = orgResult[1].toString();
     }
@@ -98,7 +98,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     return result;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   protected JSONObject getUserImages(HttpServletRequest request) throws JSONException {
     JSONObject result = new JSONObject();
@@ -138,7 +137,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           + "user.username is not null and "
           + "user.password is not null and "
           + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
-          + "(" + extraFilter + "exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
+          + "("
+          + extraFilter
+          + "exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
           + "terminal.searchKey = :theTerminalSearchKey and "
           + "user.id = userRoles.userContact.id and userRoles.role.id = role.id and "
           + "userRoles.role.id = formAccess.role.id and "
@@ -163,16 +164,14 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       }
 
       hqlUser += "order by user.name";
-      Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
+      Query<Object[]> qryUser = OBDal.getInstance().getSession()
+          .createQuery(hqlUser, Object[].class);
       qryUser.setParameter("theTerminalSearchKey", terminalName);
       qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
       qryUser.setParameterList("orgList", naturalTreeOrgList);
       qryUser.setProperties(iterParameter);
 
-      List<Object> queryUserList = qryUser.list();
-      for (Object qryUserObject : queryUserList) {
-        final Object[] qryUserObjectItem = (Object[]) qryUserObject;
-
+      for (Object[] qryUserObjectItem : qryUser.list()) {
         JSONObject item = new JSONObject();
         item.put("name", qryUserObjectItem[0]);
         item.put("userName", qryUserObjectItem[1]);
@@ -182,13 +181,12 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         String hqlImage = "select image.mimetype, image.bindaryData "
             + "from ADImage image, ADUser user "
             + "where user.image = image.id and user.id = :theUserId";
-        Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
+        Query<Object[]> qryImage = OBDal.getInstance().getSession()
+            .createQuery(hqlImage, Object[].class);
         qryImage.setParameter("theUserId", qryUserObjectItem[2].toString());
         String imageData = "none";
 
-        List<Object> qryImageList = qryImage.list();
-        for (Object qryImageObject : qryImageList) {
-          final Object[] qryImageObjectItem = (Object[]) qryImageObject;
+        for (Object[] qryImageObjectItem : qryImage.list()) {
           imageData = "data:"
               + qryImageObjectItem[0].toString()
               + ";base64,"
@@ -381,23 +379,52 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         properties.put("servers", getServers(terminal));
       }
     }
-    properties.put("templateVersion", OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
-    String value;
-    try {
+    properties.put("templateVersion", OBPOSPrintTemplateReader.getInstance()
+        .getPrintTemplatesIdentifier());
 
-      Map<QueryFilter, Boolean> queryFilters = new HashMap<>();
-      queryFilters.put(QueryFilter.ACTIVE, true);
-      queryFilters.put(QueryFilter.CLIENT, false);
-      queryFilters.put(QueryFilter.ORGANIZATION, false);
-      value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
-          null, null, (String) null, queryFilters);
+    String terminalAuthenticationValue = "";
+    String maxAllowedTimeInOfflineValue = "";
+    String offlineSessionTimeExpirationValue = "";
+    String currentPropertyToLaunchError = "";
+    try {
+      // Get terminal terminalAuthentication
+      currentPropertyToLaunchError = "errorReadingTerminalAuthentication";
+      Map<QueryFilter, Boolean> terminalAuthenticationQueryFilters = new HashMap<>();
+      terminalAuthenticationQueryFilters.put(QueryFilter.ACTIVE, true);
+      terminalAuthenticationQueryFilters.put(QueryFilter.CLIENT, false);
+      terminalAuthenticationQueryFilters.put(QueryFilter.ORGANIZATION, false);
+      terminalAuthenticationValue = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication",
+          true, null, null, null, null, (String) null, terminalAuthenticationQueryFilters);
+      // Get maxTimeInOffline preference
+      currentPropertyToLaunchError = "errorReadingMaxAllowedTimeInOffline";
+      Map<QueryFilter, Boolean> maxAllowedTimeInOfflineQueryFilters = new HashMap<>();
+      maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.ACTIVE, true);
+      maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.CLIENT, false);
+      maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.ORGANIZATION, false);
+      maxAllowedTimeInOfflineValue = Preferences.getPreferenceValue("OBPOS_MaxTimeInOffline", true,
+          null, null, null, null, (String) null, maxAllowedTimeInOfflineQueryFilters);
+      // Get offlineSessionTimeExpiration preference
+      currentPropertyToLaunchError = "errorReadingOfflineSessionTimeExpiration";
+      Map<QueryFilter, Boolean> offlineSessionTimeExpirationQueryFilters = new HashMap<>();
+      offlineSessionTimeExpirationQueryFilters.put(QueryFilter.ACTIVE, true);
+      offlineSessionTimeExpirationQueryFilters.put(QueryFilter.CLIENT, false);
+      offlineSessionTimeExpirationQueryFilters.put(QueryFilter.ORGANIZATION, false);
+      offlineSessionTimeExpirationValue = Preferences.getPreferenceValue(
+          "OBPOS_offlineSessionTimeExpiration", true, null, null, null, null, (String) null,
+          offlineSessionTimeExpirationQueryFilters);
     } catch (PropertyException e) {
-      result.put("terminalAuthentication", "Y");
-      result.put("errorReadingTerminalAuthentication",
-          OBMessageUtils.messageBD("OBPOS_errorWhileReadingTerminalAuthenticationPreference"));
+      if (currentPropertyToLaunchError.equals("errorReadingTerminalAuthentication")) {
+        result.put("terminalAuthentication", "Y");
+      } else {
+        result.put("terminalAuthentication", terminalAuthenticationValue);
+      }
+      result.put(currentPropertyToLaunchError,
+          OBMessageUtils.messageBD("OBPOS_errorWhileReadingPreference"));
       return result;
     }
-    result.put("terminalAuthentication", value);
+    result.put("terminalAuthentication", terminalAuthenticationValue);
+    result.put("maxTimeInOffline", maxAllowedTimeInOfflineValue);
+    result.put("offlineSessionTimeExpiration", offlineSessionTimeExpirationValue);
     return result;
   }
 
@@ -420,15 +447,18 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       if (server.isAllorgs()) {
         respArray.put(createServerJSON(server));
       } else {
-        Query filterQuery = OBDal
-            .getInstance()
-            .getSession()
-            .createFilter(server.getOBMOBCSERVERORGSList(),
-                "where this." + MobileServerOrganization.PROPERTY_SERVERORG + "=:org");
-        filterQuery.setParameter("org", terminal.getOrganization());
-        if (filterQuery.list().size() > 0) {
-          final JSONObject serverJson = createServerJSON(server);
-          respArray.put(serverJson);
+        StringBuilder hql = new StringBuilder();
+        hql.append("select mso from " + MobileServerOrganization.ENTITY_NAME + " as mso ");
+        hql.append("where mso." + MobileServerOrganization.PROPERTY_OBMOBCSERVERDEFINITION
+            + " = :serverDefinition ");
+        hql.append("and mso." + MobileServerOrganization.PROPERTY_SERVERORG + " = :org");
+        Query<Object> query = OBDal.getInstance().getSession()
+            .createQuery(hql.toString(), Object.class);
+
+        query.setParameter("serverDefinition", server);
+        query.setParameter("org", terminal.getOrganization());
+        if (!query.list().isEmpty()) {
+          respArray.put(createServerJSON(server));
         }
       }
     }

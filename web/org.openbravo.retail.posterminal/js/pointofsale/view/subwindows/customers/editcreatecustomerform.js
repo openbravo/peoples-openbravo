@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -50,6 +50,7 @@ enyo.kind({
 
       //hide address fields while editing customers
       if (this.args.businessPartner) {
+        this.customer = this.args.businessPartner;
         this.$.body.$.edit_createcustomers_impl.setCustomer(this.args.businessPartner);
         this.$.body.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
         this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
@@ -63,6 +64,21 @@ enyo.kind({
       this.waterfall('onDisableButton', {
         disabled: false
       });
+      if (this.args.focusError) {
+        _.each(this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$, function (attribute) {
+          _.each(this.args.focusError, function (field, indx) {
+            if (attribute.name === 'line_' + field) {
+              var attr = attribute.$.newAttribute.$[field];
+              attr.addClass('error');
+              if (indx === 0) {
+                window.setTimeout(function () {
+                  attr.focus();
+                }, 100);
+              }
+            }
+          });
+        }, this);
+      }
       //show
       return true;
     } else {
@@ -74,16 +90,30 @@ enyo.kind({
     }
   },
   executeOnHide: function () {
+    if (this.args.focusError) {
+      _.each(this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$, function (attribute) {
+        _.each(this.args.focusError, function (field) {
+          if (attribute.name === 'line_' + field) {
+            var attr = attribute.$.newAttribute.$[field];
+            attr.removeClass('error');
+            attribute.$.labelLine.setStyle('color:black;');
+          }
+        });
+      }, this);
+    }
+
     var navigationPath = this.customer || !this.args.cancelNavigationPath ? this.args.navigationPath : this.args.cancelNavigationPath;
-    this.doShowPopup({
-      popup: navigationPath[navigationPath.length - 1],
-      args: {
-        businessPartner: this.customer ? this.customer : this.args.businessPartner,
-        target: this.args.target,
-        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(navigationPath),
-        makeSearch: this.customer !== undefined
-      }
-    });
+    if (navigationPath) {
+      this.doShowPopup({
+        popup: navigationPath[navigationPath.length - 1],
+        args: {
+          businessPartner: this.customer ? this.customer : this.args.businessPartner,
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(navigationPath),
+          makeSearch: this.customer !== undefined
+        }
+      });
+    }
   },
   showingChanged: function () {
     this.inherited(arguments);

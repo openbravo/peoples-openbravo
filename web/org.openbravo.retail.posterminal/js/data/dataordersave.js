@@ -513,26 +513,36 @@
               });
 
               //this logic executed when all orders are ready to be sent
-              me.context.get('leftColumnViewManager').setOrderMode();
               if (syncCallback instanceof Function) {
                 syncCallback();
               }
 
-              model.get('multiOrders').resetValues();
-              OB.UTIL.showLoading(false);
-              enyo.$.scrim.hide();
+              OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncMultiReceipt', {
+                receipts: model.get('multiOrders').get('multiOrdersList').models,
+                syncSuccess: true
+              }, function (args) {
+                model.get('multiOrders').resetValues();
+                me.context.get('leftColumnViewManager').setOrderMode();
+                OB.UTIL.showLoading(false);
+                enyo.$.scrim.hide();
 
-              if (me.hasInvLayaways) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                me.hasInvLayaways = false;
-              }
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-              model.get('multiOrders').trigger('checkOpenDrawer');
+                if (me.hasInvLayaways) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                  me.hasInvLayaways = false;
+                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+                model.get('multiOrders').trigger('checkOpenDrawer');
+              });
             }, function () {
               if (syncCallback instanceof Function) {
                 syncCallback();
               }
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+              OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncMultiReceipt', {
+                receipts: model.get('multiOrders').get('multiOrdersList').models,
+                syncSuccess: false
+              }, function (args) {
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+              });
             });
           }
         };

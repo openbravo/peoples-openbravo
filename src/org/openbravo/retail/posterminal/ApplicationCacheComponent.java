@@ -71,6 +71,9 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources
         .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentCharacteristic&modelName=DiscountFilterCharacteristic&source=org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic");
 
+    // Sounds
+    resources.add("../../web/org.openbravo.retail.posterminal/sounds/drawerAlert.mp3");
+
     // App Icon
     resources.add("../../web/images/favicon.ico");
 
@@ -79,7 +82,15 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
       OBCriteria<PrintTemplate> criteria = OBDal.getInstance().createCriteria(PrintTemplate.class);
       criteria.addOrderBy(PrintTemplate.PROPERTY_ID, true);
       for (PrintTemplate template : criteria.list()) {
-        resources.add("../../web/org.openbravo.retail.posterminal/" + template.getTemplatePath() +"?hash="+OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
+        resources.add("../../web/org.openbravo.retail.posterminal/" + template.getTemplatePath()
+            + "?hash=" + OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
+        if (template.isPdf()) {
+          for (PrintTemplateSubrep subreport : template.getOBPOSPrintTemplateSubrepList()) {
+            resources.add("../../web/org.openbravo.retail.posterminal/"
+                + subreport.getTemplatePath() + "?hash="
+                + OBPOSPrintTemplateReader.getInstance().getPrintTemplatesIdentifier());
+          }
+        }
       }
     } finally {
       OBContext.restorePreviousMode();

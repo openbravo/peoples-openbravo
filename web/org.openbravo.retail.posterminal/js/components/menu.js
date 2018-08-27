@@ -1196,6 +1196,8 @@ enyo.kind({
         this.hide();
       } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelAndReplaceOrdersWithDeliveries', true) && (deliveredresult === 'TD' || deliveredresult === 'DN')) {
         this.hide();
+      } else if (OB.MobileApp.model.hasPermission('OBPOS_payments.hideCancelAndReplace', true) && !haspayments) {
+        this.hide();
       } else {
         this.show();
       }

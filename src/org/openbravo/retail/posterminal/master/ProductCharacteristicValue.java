@@ -56,7 +56,8 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
     try {
       OBContext.setAdminMode(true);
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
+          .getString("pos"));
 
       final Date terminalDate = OBMOBCUtils
           .calculateServerDate(
