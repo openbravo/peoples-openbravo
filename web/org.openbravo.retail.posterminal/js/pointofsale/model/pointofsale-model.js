@@ -110,28 +110,33 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         ordersNotPaid: ordersNotPaid,
         model: model
       }, function (args) {
-        OB.MobileApp.model.trigger('window:ready');
-        if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
-          // If there are no pending orders,
-          //  add an initial empty order
-          orderlist.addFirstOrder();
-        } else {
-          // The order object is stored in the json property of the row fetched from the database
-          orderlist.reset(args.ordersNotPaid.models);
-          // At this point it is sure that there exists at least one order
-          // Function to continue of there is some error
-          currentOrder = args.ordersNotPaid.models[0];
-          orderlist.load(currentOrder);
-          loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
-          OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
-        }
+        OB.MobileApp.model.on('window:ready', function () {
+          OB.MobileApp.model.off('window:ready', null, model);
+          if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
+            // If there are no pending orders,
+            //  add an initial empty order
+            orderlist.addFirstOrder();
+          } else {
+            // The order object is stored in the json property of the row fetched from the database
+            orderlist.reset(args.ordersNotPaid.models);
+            // At this point it is sure that there exists at least one order
+            // Function to continue of there is some error
+            currentOrder = args.ordersNotPaid.models[0];
+            orderlist.load(currentOrder);
+            loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
+            OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
+          }
+        }, model);
         loadUnpaidOrdersCallback();
       });
     }, function () { //OB.Dal.find error
-      // If there is an error fetching the pending orders,
-      // add an initial empty order
-      OB.MobileApp.model.trigger('window:ready');
-      orderlist.addFirstOrder();
+      OB.MobileApp.model.on('window:ready', function () {
+        OB.MobileApp.model.off('window:ready', null, model);
+        // If there is an error fetching the pending orders,
+        // add an initial empty order
+        orderlist.addFirstOrder();
+      }, model);
+      loadUnpaidOrdersCallback();
     });
   },
 
