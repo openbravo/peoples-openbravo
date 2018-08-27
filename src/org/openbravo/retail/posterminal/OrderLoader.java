@@ -353,7 +353,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          order.setDelivered(true);
+          order.setDelivered(createShipment);
           if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
             order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
@@ -557,20 +557,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             if (createInvoice && moveShipmentLinesInCanelAndReplace) {
               createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
             }
-            // Set the delivered status depending if there's any shipment related to any line and
-            // all lines are delivered
-            boolean deliveredLines = true, hasShipment = false;
-            for (final OrderLine line : order.getOrderLineList()) {
-              if (line.getDeliveredQuantity() != null
-                  && line.getDeliveredQuantity().compareTo(line.getOrderedQuantity()) != 0) {
-                deliveredLines = false;
-                break;
-              }
-              if (!hasShipment && line.getMaterialMgmtShipmentInOutLineList().size() > 0) {
-                hasShipment = true;
-              }
-            }
-            order.setDelivered(deliveredLines && hasShipment);
           } catch (Exception ex) {
             OBDal.getInstance().rollbackAndClose();
             throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
@@ -1902,9 +1888,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessed(true);
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
-    if (!newLayaway && !isQuotation && !isDeleted) {
-      order.setDelivered(true);
-    }
+    order.setDelivered(createShipment);
 
     if (!doCancelAndReplace) {
       if (order.getDocumentNo().indexOf("/") > -1) {
