@@ -404,7 +404,7 @@ public class LoginHandler extends HttpBaseServlet {
           vars.getSessionValue("target"), vars.getSessionValue("targetQueryString"));
       vars.removeSessionValue("target");
 
-      goToTarget(res, target, vars);
+      goToTarget(res, target);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -480,7 +480,7 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, String target, VariablesSecureApp vars)
+  private void goToTarget(HttpServletResponse response, String target)
       throws IOException, ServletException {
 
     // Return a JSON object with the target to redirect to
