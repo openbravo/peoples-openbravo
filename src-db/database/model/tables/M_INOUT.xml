@@ -337,6 +337,10 @@
       <foreign-key foreignTable="USER2" name="M_INOUT_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="M_INOUT_BP_MOVEMENTDATE" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+        <index-column name="MOVEMENTDATE"/>
+      </index>
       <index name="M_INOUT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>

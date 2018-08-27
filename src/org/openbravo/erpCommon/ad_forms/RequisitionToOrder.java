@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -170,11 +170,11 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
 
     String strTreeOrg = RequisitionToOrderData.treeOrg(this, vars.getClient());
-    RequisitionToOrderData[] datalines = RequisitionToOrderData.selectLines(this, vars
-        .getLanguage(), Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), Tree
-        .getMembers(this, strTreeOrg, strOrgId), strDateFrom, DateTimeData.nDaysAfter(this,
-        strDateTo, "1"), strProductId, strRequesterId, (strIncludeVendor.equals("Y") ? strVendorId
-        : null), (strIncludeVendor.equals("Y") ? null : strVendorId));
+    RequisitionToOrderData[] datalines = RequisitionToOrderData.selectLines(this, Utility
+        .getContext(this, vars, "#User_Client", "RequisitionToOrder"), Tree.getMembers(this,
+        strTreeOrg, strOrgId), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+        strProductId, strRequesterId, (strIncludeVendor.equals("Y") ? strVendorId : null),
+        (strIncludeVendor.equals("Y") ? null : strVendorId));
 
     RequisitionToOrderData[] dataselected = RequisitionToOrderData.selectSelected(this,
         vars.getLanguage(), vars.getUser(),

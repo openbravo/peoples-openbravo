@@ -559,7 +559,7 @@ export.database: exports database structure and data to xml files.
           <include name="*/lib/test/*.jar" />
         </fileset>
       </classpath>
-      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
+      <link href="https://docs.oracle.com/javase/8/docs/api/"/>
     </javadoc>
   </target>
 

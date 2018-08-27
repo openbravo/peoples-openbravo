@@ -464,8 +464,9 @@
       <foreign-key foreignTable="FIN_PAYMENT_PRIORITY" name="FIN_ORDER_PAYMENT_PRIORITY">
         <reference local="FIN_PAYMENT_PRIORITY_ID" foreign="FIN_PAYMENT_PRIORITY_ID"/>
       </foreign-key>
-      <index name="C_ORDER_BPARTNER" unique="false">
+      <index name="C_ORDER_BPARTNER_DATEORDERED" unique="false">
         <index-column name="C_BPARTNER_ID"/>
+        <index-column name="DATEORDERED"/>
       </index>
       <index name="C_ORDER_C_RETURN_REASON" unique="false">
         <index-column name="C_RETURN_REASON_ID"/>
