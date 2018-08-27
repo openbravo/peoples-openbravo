@@ -16,15 +16,15 @@ OB.UTIL.sendLastTerminalStatusValues = function (callback) {
   var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.LastTerminalStatusTimestamps');
   process.exec({
     posterminalId: OB.MobileApp.model.get('terminal').id,
-    lastFullRefresh: OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
-    lastIncRefresh: OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
-    lastCacheGeneration: OB.UTIL.localStorage.getItem("LastCacheGeneration"),
-    lastJSGeneration: OB.UTIL.localStorage.getItem("LastJSGeneration_" + OB.MobileApp.model.get('appName')),
-    lastBenchmarkScore: OB.UTIL.localStorage.getItem("benchmarkScore"),
-    lastLogInDate: OB.UTIL.localStorage.getItem("lastLogInDate"),
-    lastLogInUserId: OB.UTIL.localStorage.getItem("lastUserIdLogin"),
-    lastTransitionToOffline: OB.UTIL.localStorage.getItem("lastTransitionToOffline"),
-    lastTransitionToOnline: OB.UTIL.localStorage.getItem("lastTransitionToOnline")
+    terminalLastfullrefresh: OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
+    terminalLastincrefresh: OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
+    terminalLastcachegeneration: OB.UTIL.localStorage.getItem("LastCacheGeneration"),
+    terminalLastjsgeneration: OB.UTIL.localStorage.getItem("LastJSGeneration_" + OB.MobileApp.model.get('appName')),
+    terminalLastbenchmark: OB.UTIL.localStorage.getItem("benchmarkScore"),
+    terminalLastlogindate: OB.UTIL.localStorage.getItem("lastLogInDate"),
+    terminalLastloginuser: OB.UTIL.localStorage.getItem("lastUserIdLogin"),
+    terminalLasttimeinoffline: OB.UTIL.localStorage.getItem("lastTransitionToOffline"),
+    terminalLasttimeinonline: OB.UTIL.localStorage.getItem("lastTransitionToOnline")
   }, function (data, message) {
     if (callback instanceof Function) {
       callback();

@@ -58,6 +58,7 @@
     var maxtaxReturns = OB.DEC.Zero;
 
     cashUp.at(0).set('transitionsToOnline', OB.UTIL.localStorage.getItem('transitionsToOnline'));
+    cashUp.at(0).set('logclientErrors', OB.UTIL.localStorage.getItem('logclientErrors'));
 
     if (j < receipt.length && !receipt[j].has('obposIsDeleted')) {
       order = receipt[j];
@@ -252,6 +253,7 @@
   };
   OB.UTIL.createNewCashupFromServer = function (cashup, callback, oldCashupPaymentMethods) {
     OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
+    OB.UTIL.resetNumberOfLogClientErrors();
     var promises = [];
     OB.Dal.save(cashup, function () {
       OB.MobileApp.model.get('terminal').cashUpId = cashup.get('id');
@@ -339,6 +341,7 @@
   OB.UTIL.createNewCashup = function (callback, lastCashupModel) {
     // Create the cashup empty
     OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
+    OB.UTIL.resetNumberOfLogClientErrors();
     var uuid = OB.UTIL.get_UUID();
     OB.Dal.save(new OB.Model.CashUp({
       id: uuid,
@@ -870,6 +873,7 @@
   OB.UTIL.composeCashupInfo = function (cashUp, me, callback, tx) {
     cashUp.at(0).set('lastcashupeportdate', OB.I18N.normalizeDate(new Date()));
     cashUp.at(0).set('transitionsToOnline', OB.UTIL.localStorage.getItem('transitionsToOnline'));
+    cashUp.at(0).set('logclientErrors', OB.UTIL.localStorage.getItem('logclientErrors'));
     var objToSend = new Backbone.Model({
       posterminal: OB.MobileApp.model.get('terminal').id,
       posTerminal: OB.MobileApp.model.get('terminal').id,
@@ -887,7 +891,8 @@
       cashUpDate: "",
       creationDate: (new Date(cashUp.at(0).get('creationDate'))).toISOString(),
       lastcashupeportdate: cashUp.at(0).get('lastcashupeportdate'),
-      transitionsToOnline: cashUp.at(0).get('transitionsToOnline')
+      transitionsToOnline: cashUp.at(0).get('transitionsToOnline'),
+      logclientErrors: cashUp.at(0).get('logclientErrors')
     });
 
     //process the payment method cash ups

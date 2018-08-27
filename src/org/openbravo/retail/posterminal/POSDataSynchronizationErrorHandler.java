@@ -16,9 +16,11 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationErrorHandler;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
@@ -33,6 +35,8 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
   @Override
   public void handleError(Throwable t, Entity entity, JSONObject result, JSONObject jsonRecord) {
 
+    OBPOSAppTermStatHist terminalStatusHistory = null;
+
     // Creation of the order failed. We will now store the order in the import errors table
     String posTerminalId = null;
     try {
@@ -44,6 +48,51 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
         // won't happen
       }
     }
+    String cashupId = null;
+    try {
+      if (entity.getName().equals("OBPOS_App_Cashup")) {
+        if (jsonRecord.has("id")) {
+          cashupId = jsonRecord.getString("id");
+        }
+      } else {
+        if (jsonRecord.has("cashUpReportInformation")) {
+          JSONObject cashUpReportInformation = jsonRecord.getJSONObject("cashUpReportInformation");
+          if (cashUpReportInformation.has("id")) {
+            cashupId = cashUpReportInformation.getString("obposAppCashup");
+          }
+        }
+      }
+    } catch (JSONException e1) {
+      // TODO: won't happen
+    }
+
+    if (cashupId != null) {
+      OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
+          OBPOSAppTermStatHist.class);
+      termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_CASHUP, OBDal
+          .getInstance().get(OBPOSAppCashup.class, cashupId)));
+      terminalStatusHistory = (OBPOSAppTermStatHist) termStatHistCriteria.uniqueResult();
+    } else {
+      if (posTerminalId != null) {
+        OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
+            OBPOSAppTermStatHist.class);
+        termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_POSTERMINAL, OBDal
+            .getInstance().get(OBPOSApplications.class, posTerminalId)));
+        termStatHistCriteria.addOrderBy(OBPOSAppTermStatHist.PROPERTY_CREATIONDATE, false);
+        termStatHistCriteria.setMaxResults(1);
+        terminalStatusHistory = (OBPOSAppTermStatHist) termStatHistCriteria.uniqueResult();
+      } else {
+        log.debug("Unable to get posterminal id or cashup id to update terminal status history");
+      }
+    }
+
+    if (terminalStatusHistory != null) {
+      terminalStatusHistory
+          .setErrorswhileimporting(terminalStatusHistory.getErrorswhileimporting() + 1L);
+    } else {
+      log.debug("There is no record for Terminal Status History.");
+    }
+
     log.error("An error happened when processing a record: ", t);
     OBPOSErrors errorEntry = null;
     if (jsonRecord.has("posErrorId")) {
