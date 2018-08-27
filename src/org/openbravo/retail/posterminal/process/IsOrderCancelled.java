@@ -70,6 +70,7 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
             hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
             hql.append("AND so.documentStatus <> 'CL' ");
+            final Query<String> query = OBDal.getInstance().getSession()
                 .createQuery(hql.toString(), String.class);
             query.setParameter("orderId", orderId);
             query.setMaxResults(1);
