@@ -2018,14 +2018,14 @@ public class Utility {
    * 
    * @param id
    *          The id of the image to display
-   * @param doCommit
-   *          A flag to force the commit of the DAL connection after retrieve the image
+   * @param doCommitAndClose
+   *          A flag to force the commit and close of the DAL connection after retrieving the image
    * @return The image requested
    */
-  private static byte[] getImage(String id, boolean doCommit) {
+  private static byte[] getImage(String id, boolean doCommitAndClose) {
     byte[] imageByte;
     try {
-      Image img = getImageObject(id, doCommit);
+      Image img = getImageObject(id, doCommitAndClose);
       if (img == null) {
         imageByte = getBlankImage();
       } else {
@@ -2063,11 +2063,11 @@ public class Utility {
    * 
    * @param id
    *          The id of the image to display
-   * @param doCommit
-   *          A flag to force the commit of the DAL connection after retrieve the image
+   * @param doCommitAndClose
+   *          A flag to force the commit and close of the DAL connection after retrieving the image
    * @return The image requested
    */
-  private static Image getImageObject(String id, boolean doCommit) {
+  private static Image getImageObject(String id, boolean doCommitAndClose) {
     Image img = null;
     OBContext.setAdminMode();
     try {
@@ -2076,7 +2076,7 @@ public class Utility {
       log4j.error("Could not load image from database: " + id, e);
     } finally {
       OBContext.restorePreviousMode();
-      if (doCommit) {
+      if (doCommitAndClose) {
         OBDal.getInstance().commitAndClose();
       }
     }
