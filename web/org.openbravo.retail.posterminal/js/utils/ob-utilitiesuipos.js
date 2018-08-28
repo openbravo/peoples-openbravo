@@ -317,7 +317,7 @@ OB.UTIL.getPriceListName = function (priceListId, callback) {
  * It can work online in case that user has done at least once the same approvalType
  * in this same browser. Data regarding privileged users is stored in supervisor table
  */
-OB.UTIL.checkApproval = function (approvalType, username, password, callback, windowModel) {
+OB.UTIL.checkApproval = function (approvalType, username, password, callback, windowModel, attrs) {
   enyo.$.scrim.show();
   OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
   var approvalList = [];
@@ -325,147 +325,155 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     approvalList.push(typeof (approvalType) === 'object' ? approvalType.approval : approvalType);
   });
 
-  new OB.DS.Process('org.openbravo.retail.posterminal.utility.CheckApproval').exec({
-    u: username,
-    p: password,
-    approvalType: JSON.stringify(approvalList)
-  }, enyo.bind(this, function (response, message) {
-    var approved = false;
-    if (response.exception) {
-      callback(false, null, null, true, response.exception.message);
-    } else {
-      approved = response.canApprove;
-
-      if (!approved) {
-        callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
-      }
-
-      // saving supervisor in local so next time it is possible to approve offline
-      OB.Dal.find(OB.Model.Supervisor, {
-        'id': response.userId
-      }, enyo.bind(this, function (users) {
-        var supervisor, date, permissions = [];
-        if (users.models.length === 0) {
-          // new user
-          if (response.canApprove) {
-            // insert in local db only in case it is supervisor for current type
-            date = new Date().toString();
-            supervisor = new OB.Model.Supervisor();
-
-            supervisor.set('id', response.userId);
-            supervisor.set('name', username);
-            supervisor.set('password', OB.MobileApp.model.generate_sha1(password + date));
-            supervisor.set('created', date);
-            // Set all permissions
-            if (response.preference) {
-              _.each(response.preference, function (perm) {
-                permissions.push(perm);
-              }, this);
-              supervisor.set('permissions', JSON.stringify(permissions));
-            } else {
-              supervisor.set('permissions', JSON.stringify(approvalType));
-            }
-            OB.Dal.save(supervisor, null, null, true);
-          }
-        } else {
-          // update existent user granting or revoking permission
-          supervisor = users.models[0];
-
-          supervisor.set('password', OB.MobileApp.model.generate_sha1(password + supervisor.get('created')));
-          if (supervisor.get('permissions')) {
-            permissions = JSON.parse(supervisor.get('permissions'));
-          }
-
-          if (response.canApprove) {
-            // grant permission if it does not exist
-            _.each(approvalType, function (perm) {
-              if (!_.contains(permissions, perm)) {
-                permissions.push(perm);
-              }
-            }, this);
-
-          } else {
-            // revoke permission if it exists
-            _.each(approvalType, function (perm) {
-              if (_.contains(permissions, perm)) {
-                permissions = _.without(permissions, perm);
-              }
-            }, this);
-          }
-          supervisor.set('permissions', JSON.stringify(permissions));
-
-          OB.Dal.save(supervisor);
-        }
-
-        callback(approved, supervisor, approvalType, true, null);
-      }));
-    }
-  }), enyo.bind(this, function () {
-    // offline
-    OB.Dal.find(OB.Model.Supervisor, {
-      'name': username
-    }, enyo.bind(this, function (users) {
-      var supervisor, countApprovals = 0,
-          approved = false;
-      if (users.models.length === 0) {
-        countApprovals = 0;
-        OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
-          _.each(users.models, function (user) {
-            if (username === user.get('name') && user.get('password') === OB.MobileApp.model.generate_sha1(password + user.get('created'))) {
-              _.each(approvalType, function (perm) {
-                if (JSON.parse(user.get('terminalinfo')).permissions[perm]) {
-                  countApprovals += 1;
-                  supervisor = user;
-                }
-              }, this);
-            }
-          });
-          if (countApprovals === approvalType.length) {
-            approved = true;
-            callback(approved, supervisor, approvalType, true, null);
-          } else {
-            callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
-          }
-        }), function () {});
+  var rr, checkApprovalRequest = new enyo.Ajax({
+    url: '../../org.openbravo.retail.posterminal.utility.CheckApproval',
+    cacheBust: false,
+    method: 'GET',
+    handleAs: 'json',
+    timeout: 20000,
+    data: {
+      terminal: OB.MobileApp.model.get('terminalName'),
+      user: username,
+      password: password,
+      approvalType: JSON.stringify(approvalList),
+      attributes: JSON.stringify(attrs)
+    },
+    contentType: 'application/json;charset=utf-8',
+    success: function (inSender, inResponse) {
+      var approved = false;
+      if (inResponse.error) {
+        callback(false, null, null, true, inResponse.error.message);
       } else {
-        supervisor = users.models[0];
-        if (supervisor.get('password') === OB.MobileApp.model.generate_sha1(password + supervisor.get('created'))) {
-          _.each(approvalType, function (perm) {
-            if (_.contains(JSON.parse(supervisor.get('permissions')), perm)) {
-              countApprovals += 1;
-            }
-          }, this);
-          if (countApprovals === approvalType.length) {
-            approved = true;
-            callback(approved, supervisor, approvalType, true, null);
-          } else {
-            countApprovals = 0;
-            OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
-              _.each(users.models, function (user) {
-                if (username === user.get('name') && user.get('password') === OB.MobileApp.model.generate_sha1(password + user.get('created'))) {
-                  _.each(approvalType, function (perm) {
-                    if (JSON.parse(user.get('terminalinfo')).permissions[perm]) {
-                      countApprovals += 1;
-                      supervisor = user;
-                    }
-                  }, this);
-                }
-              });
-              if (countApprovals === approvalType.length) {
-                approved = true;
-                callback(approved, supervisor, approvalType, true, null);
-              } else {
-                callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
-              }
-            }), function () {});
-          }
-        } else {
-          callback(false, null, null, false, OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
+        approved = inResponse.data.canApprove;
+        if (!approved) {
+          callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
         }
+        // saving supervisor in local so next time it is possible to approve offline
+        OB.Dal.find(OB.Model.Supervisor, {
+          'id': inResponse.data.userId
+        }, enyo.bind(this, function (users) {
+          var supervisor, date, permissions = [];
+          if (users.models.length === 0) {
+            // new user
+            if (inResponse.data.canApprove) {
+              // insert in local db only in case it is supervisor for current type
+              date = new Date().toString();
+              supervisor = new OB.Model.Supervisor();
+              supervisor.set('id', inResponse.data.userId);
+              supervisor.set('name', username);
+              supervisor.set('password', OB.MobileApp.model.generate_sha1(password + date));
+              supervisor.set('created', date);
+              // Set all permissions
+              if (inResponse.data.preference) {
+                _.each(inResponse.data.preference, function (perm) {
+                  permissions.push(perm);
+                }, this);
+                supervisor.set('permissions', JSON.stringify(permissions));
+              } else {
+                supervisor.set('permissions', JSON.stringify(approvalType));
+              }
+              OB.Dal.save(supervisor, null, null, true);
+            }
+          } else {
+            // update existent user granting or revoking permission
+            supervisor = users.models[0];
+            supervisor.set('password', OB.MobileApp.model.generate_sha1(password + supervisor.get('created')));
+            if (supervisor.get('permissions')) {
+              permissions = JSON.parse(supervisor.get('permissions'));
+            }
+            if (inResponse.data.canApprove) {
+              // grant permission if it does not exist
+              _.each(approvalType, function (perm) {
+                if (!_.contains(permissions, perm)) {
+                  permissions.push(perm);
+                }
+              }, this);
+            } else {
+              // revoke permission if it exists
+              _.each(approvalType, function (perm) {
+                if (_.contains(permissions, perm)) {
+                  permissions = _.without(permissions, perm);
+                }
+              }, this);
+            }
+            supervisor.set('permissions', JSON.stringify(permissions));
+            OB.Dal.save(supervisor);
+          }
+          callback(approved, supervisor, approvalType, true, null);
+        }));
       }
-    }), function () {});
-  }));
+    },
+    fail: function (inSender, inResponse) {
+      // offline
+      OB.Dal.find(OB.Model.Supervisor, {
+        'name': username
+      }, enyo.bind(this, function (users) {
+        var supervisor, countApprovals = 0,
+            approved = false;
+        if (users.models.length === 0) {
+          countApprovals = 0;
+          OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
+            _.each(users.models, function (user) {
+              if (username === user.get('name') && user.get('password') === OB.MobileApp.model.generate_sha1(password + user.get('created'))) {
+                _.each(approvalType, function (perm) {
+                  if (JSON.parse(user.get('terminalinfo')).permissions[perm]) {
+                    countApprovals += 1;
+                    supervisor = user;
+                  }
+                }, this);
+              }
+            });
+            if (countApprovals === approvalType.length) {
+              approved = true;
+              callback(approved, supervisor, approvalType, true, null);
+            } else {
+              callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
+            }
+          }), function () {});
+        } else {
+          supervisor = users.models[0];
+          if (supervisor.get('password') === OB.MobileApp.model.generate_sha1(password + supervisor.get('created'))) {
+            _.each(approvalType, function (perm) {
+              if (_.contains(JSON.parse(supervisor.get('permissions')), perm)) {
+                countApprovals += 1;
+              }
+            }, this);
+            if (countApprovals === approvalType.length) {
+              approved = true;
+              callback(approved, supervisor, approvalType, true, null);
+            } else {
+              countApprovals = 0;
+              OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
+                _.each(users.models, function (user) {
+                  if (username === user.get('name') && user.get('password') === OB.MobileApp.model.generate_sha1(password + user.get('created'))) {
+                    _.each(approvalType, function (perm) {
+                      if (JSON.parse(user.get('terminalinfo')).permissions[perm]) {
+                        countApprovals += 1;
+                        supervisor = user;
+                      }
+                    }, this);
+                  }
+                });
+                if (countApprovals === approvalType.length) {
+                  approved = true;
+                  callback(approved, supervisor, approvalType, true, null);
+                } else {
+                  callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
+                }
+              }), function () {});
+            }
+          } else {
+            callback(false, null, null, false, OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
+          }
+        }
+      }), function () {});
+    }
+  });
 
+  rr = new OB.RR.Request({
+    ajaxRequest: checkApprovalRequest
+  });
+  rr.exec(checkApprovalRequest.url);
 };
 
 OB.UTIL.setScanningFocus = function (focus) {
@@ -489,7 +497,6 @@ OB.UTIL.checkRefreshMasterDataOnNavigate = function () {
     OB.UTIL.checkRefreshMasterData();
   }
 };
-
 OB.UTIL.refreshMasterData = function () {
   OB.MobileApp.model.set('secondsToRefreshMasterdata', 3);
   var counterIntervalId = null;
