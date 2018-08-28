@@ -36,6 +36,7 @@ import org.openbravo.dal.service.DataPoolChecker;
 
 /**
  * Refreshes DataPoolChecker report-pool mapping when DataPoolSelection changes.
+ * Note that in a cluster environment, it is required to restart Tomcat to synchronize all changes.
  */
 public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserver {
 
