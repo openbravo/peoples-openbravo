@@ -537,6 +537,7 @@ public class PaidReceipts extends JSONProcessSimple {
         // Save the last ticket loaded in obposApplication object
         if (posTerminal != null) {
           posTerminal.setTerminalLastticketloaded(new Date());
+          OBDal.getInstance().flush();
         }
 
         paidReceipt.put("recordInImportEntry", checkOrderInErrorEntry(orderIds));
