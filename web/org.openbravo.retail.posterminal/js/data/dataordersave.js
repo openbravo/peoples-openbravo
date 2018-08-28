@@ -258,45 +258,54 @@
                 //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
                 OB.trace('Execution Sync process.');
 
-                OB.MobileApp.model.runSyncProcess(function () {
-                  var successStep = function () {
-                      OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                        receipt: receiptForPostSyncReceipt,
-                        syncSuccess: true
-                      }, function () {
-                        serverMessageForQuotation(receipt);
-                        if (eventParams && eventParams.callback) {
-                          eventParams.callback({
-                            frozenReceipt: frozenReceipt,
-                            isCancelled: false
-                          });
-                        }
-                      });
-                      };
-
-                  // in synchronized mode do the doc sequence update in the success
-                  if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.UTIL.calculateCurrentCash();
-                    OB.Dal.transaction(function (tx) {
-                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
-                        OB.trace('Saving receipt.');
-                        OB.Dal.saveInTransaction(tx, receipt, function () {
-                          // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                          receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                          successStep();
+                if (eventParams && !eventParams.ignoreSyncProcess) {
+                  OB.MobileApp.model.runSyncProcess(function () {
+                    var successStep = function () {
+                        OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
+                          receipt: receiptForPostSyncReceipt,
+                          syncSuccess: true
+                        }, function () {
+                          serverMessageForQuotation(receipt);
+                          if (eventParams && eventParams.callback) {
+                            eventParams.callback({
+                              frozenReceipt: frozenReceipt,
+                              isCancelled: false
+                            });
+                          }
                         });
-                      }, tx);
+                        };
+
+                    // in synchronized mode do the doc sequence update in the success
+                    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                      OB.UTIL.calculateCurrentCash();
+                      OB.Dal.transaction(function (tx) {
+                        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
+                          OB.trace('Saving receipt.');
+                          OB.Dal.saveInTransaction(tx, receipt, function () {
+                            // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                            receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+                            successStep();
+                          });
+                        }, tx);
+                      });
+                    } else {
+                      successStep();
+                    }
+                  }, function () {
+                    OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
+                      receipt: receiptForPostSyncReceipt,
+                      syncSuccess: false
+                    }, synErrorCallback);
+                  });
+                } else {
+                  serverMessageForQuotation(receipt);
+                  if (eventParams && eventParams.callback) {
+                    eventParams.callback({
+                      frozenReceipt: frozenReceipt,
+                      isCancelled: false
                     });
-                  } else {
-                    serverMessageForQuotation(frozenReceipt);
-                    OB.debug("Ticket closed: runSyncProcess executed");
                   }
-                }, function () {
-                  OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
-                    receipt: receiptForPostSyncReceipt,
-                    syncSuccess: false
-                  }, synErrorCallback);
-                });
+                }
               } else {
                 OB.trace('Execution Sync process.');
                 //If there are no elements in the hook, we can execute the callback asynchronusly with the synchronization process
@@ -307,30 +316,34 @@
                     isCancelled: false
                   });
                 }
-                OB.MobileApp.model.runSyncProcess(function () {
-                  // in synchronized mode do the doc sequence update in the success and navigate back
-                  if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.UTIL.calculateCurrentCash();
-                    OB.Dal.transaction(function (tx) {
-                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
-                        OB.trace('Saving receipt.');
-                        OB.Dal.saveInTransaction(tx, receipt, function () {
-                          // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                          receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                          if (eventParams && eventParams.callback) {
-                            eventParams.callback({
-                              frozenReceipt: frozenReceipt,
-                              isCancelled: false
-                            });
-                          }
-                        });
-                      }, tx);
-                    });
-                  }
+                if (eventParams && !eventParams.ignoreSyncProcess) {
+                  OB.MobileApp.model.runSyncProcess(function () {
+                    // in synchronized mode do the doc sequence update in the success and navigate back
+                    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                      OB.UTIL.calculateCurrentCash();
+                      OB.Dal.transaction(function (tx) {
+                        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
+                          OB.trace('Saving receipt.');
+                          OB.Dal.saveInTransaction(tx, receipt, function () {
+                            // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                            receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+                            if (eventParams && eventParams.callback) {
+                              eventParams.callback({
+                                frozenReceipt: frozenReceipt,
+                                isCancelled: false
+                              });
+                            }
+                          });
+                        }, tx);
+                      });
+                    }
 
+                    serverMessageForQuotation(frozenReceipt);
+                    OB.debug("Ticket closed: runSyncProcess executed");
+                  }, synErrorCallback);
+                } else {
                   serverMessageForQuotation(frozenReceipt);
-                  OB.debug("Ticket closed: runSyncProcess executed");
-                }, synErrorCallback);
+                }
               }
               };
 
