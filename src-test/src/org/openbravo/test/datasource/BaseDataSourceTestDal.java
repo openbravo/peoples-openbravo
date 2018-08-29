@@ -168,6 +168,7 @@ public class BaseDataSourceTestDal extends OBBaseTest {
     }
 
     DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, roleId, langId, orgId, warehouseId);
+    csrfToken = getTokenFromSessionDynamic();
   }
 
   /** Logs out current session */

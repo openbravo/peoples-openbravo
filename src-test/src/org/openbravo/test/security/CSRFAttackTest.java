@@ -42,16 +42,6 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
   private static final int STATUS_OK = 0;
   private static final String FAKE_PRODUCT_SEARCHKEY = "FAKE_PRODUCT";
 
-  /**
-   * We need to authenticate before each test in order to have the session CSRF token available
-   * 
-   * @throws Exception
-   */
-  @Before
-  public void authenticateBeforeEachTest() throws Exception {
-    authenticate();
-  }
-
   @Test
   public void testRequestAreProtectedAgainstCSRFAttack() {
     assertFalse("Fake product were created. No CSRF check has been done",

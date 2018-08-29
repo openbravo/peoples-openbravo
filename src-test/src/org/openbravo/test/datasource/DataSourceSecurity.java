@@ -492,7 +492,6 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   }
 
   private JSONObject updateDataSource() throws Exception {
-    authenticate();
     String parameters = addCsrfTokenToParameters(dataSource.urlAndJson.content);
     String responseUpdate = doRequest("/org.openbravo.service.datasource/" + dataSource.ds
         + dataSource.urlAndJson.url, parameters, 200, "PUT", "application/json");

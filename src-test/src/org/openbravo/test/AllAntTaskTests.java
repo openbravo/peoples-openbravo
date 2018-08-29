@@ -96,7 +96,6 @@ import org.openbravo.test.scheduling.ProcessSchedulingTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.BypassAccessLevelCheck;
-import org.openbravo.test.security.CSRFAttackTest;
 import org.openbravo.test.security.CrossOrganizationUI;
 import org.openbravo.test.security.CrossOrganizationUICDI;
 import org.openbravo.test.security.EntityAccessTest;
@@ -195,7 +194,6 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     CrossOrganizationUICDI.class, //
     OBContextCollectionsTest.class, //
     PasswordStrengthCheckerTest.class, //
-    CSRFAttackTest.class, //
 
     // system
     SystemServiceTest.class, //
