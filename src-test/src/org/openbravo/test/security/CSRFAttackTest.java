@@ -25,7 +25,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.query.Query;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
