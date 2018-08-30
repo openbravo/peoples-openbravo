@@ -437,13 +437,13 @@ public class UpdateCashup {
     }
 
     // Get number of transitions from offline to online from json
-    if (jsonCashup.has("transitionsToOnline")) {
+    if (jsonCashup.has("transitionsToOnline") && !jsonCashup.isNull("transitionsToOnline")) {
       transitionsToOnline = jsonCashup.getLong("transitionsToOnline");
       terminalStatusHistory.setTransitiontoonline(transitionsToOnline);
     }
 
     // Update number of Log Client errors from this cashup
-    if (jsonCashup.has("logclientErrors")) {
+    if (jsonCashup.has("logclientErrors") && !jsonCashup.isNull("logclientErrors")) {
       numberOfLogClientErrors = jsonCashup.getLong("logclientErrors");
       terminalStatusHistory.setLogclienterrors(numberOfLogClientErrors);
     }
