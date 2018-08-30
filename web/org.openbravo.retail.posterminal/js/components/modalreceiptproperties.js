@@ -146,13 +146,19 @@ enyo.kind({
     }
   },
   executeOnShow: function () {
-    var bp = this.model.get('bp');
+    var bp = this.model.get('bp'),
+        p;
     if (bp && bp.get('locId') === bp.get('shipLocId')) {
       this.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
       this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));
     } else {
       this.$.bodyContent.$.attributes.$.line_addressshipbutton.show();
       this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
+    }
+    for (p in this.newAttributes) {
+      if (this.newAttributes.hasOwnProperty(p)) {
+        this.loadValue(this.newAttributes[p].modelProperty);
+      }
     }
   },
   init: function (model) {
