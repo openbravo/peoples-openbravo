@@ -178,15 +178,7 @@ public class ProductProperties extends ModelExtension {
       log.error("Error getting preference: " + e.getMessage(), e);
     }
 
-    // If preference for Product Tax Category exists, taxCategory will be fetched from
-    // ProductProperties extension, otherwise we will just read the tax category from the product
-    try {
-      Preferences.getPreferenceValue("GETPRODUCTTAXCATEGORY", true, OBContext.getOBContext()
-          .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-          .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
-    } catch (PropertyException e) {
-      list.add(new HQLProperty("product.taxCategory.id", "taxCategory"));
-    }
+    list.add(new HQLProperty("product.taxCategory.id", "taxCategory", 0));
 
     return list;
   }
