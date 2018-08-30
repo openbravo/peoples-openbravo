@@ -44,7 +44,7 @@ enyo.kind({
     editCustomerHeader.$.editbp.setCustomer(this.args.businessPartner);
     editCustomerHeader.$.editbp.navigationPath = this.args.navigationPath;
     editCustomerHeader.$.editbp.target = this.args.target;
-    editCustomerHeader.$.editbp.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true));
+    editCustomerHeader.$.editbp.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true));
 
     // Hide components depending on its displayLogic function
     _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
