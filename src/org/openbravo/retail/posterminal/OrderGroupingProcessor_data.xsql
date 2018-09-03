@@ -167,6 +167,7 @@
         and o.em_obpos_notinvoiceoncashup = 'N'
         and i.documentno = ?
         and i.c_bpartner_id = o.c_bpartner_id and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
+        and coalesce(i.ad_user_id, '1') = coalesce(o.ad_user_id, '1')
         group by i.ad_client_id, i.ad_org_id, i.createdby, i.updatedby,
         i.c_invoice_id, ol.c_orderline_id, ol.description, ol.m_product_id,
         ol.qtyordered, ol.pricelist, ol.priceactual, ol.pricelimit, ol.linenetamt,
@@ -174,7 +175,7 @@
         ol.linenetamt , ol.line_gross_amount, ol.gross_unit_price,
         ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
         ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id, pl.istaxincluded,
-        o.documentno, ol.line, o.c_order_id
+        o.documentno, ol.line, o.c_order_id, o.ad_user_id
         order by o.documentno, ol.line
       ]]>
     </Sql>
@@ -224,7 +225,7 @@
         ol.linenetamt , ol.line_gross_amount, ol.gross_unit_price,
         ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
         ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id, pl.istaxincluded,
-        o.documentno, ol.line, o.c_order_id
+        o.documentno, ol.line, o.c_order_id, o.ad_user_id
         order by o.documentno, ol.line
       ]]>
     </Sql>
@@ -246,7 +247,8 @@
           and il.c_invoice_id = i.c_invoice_id
           and i.documentno = ?
           and i.c_bpartner_id = o.c_bpartner_id
-          and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id))
+          and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
+          and coalesce(i.ad_user_id, '1') = coalesce(o.ad_user_id, '1'))
       ]]>
     </Sql>
     <Parameter name="executionId"/>
@@ -287,6 +289,7 @@
         and i.documentno = ?
         and i.c_bpartner_id = o.c_bpartner_id
         and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
+        and coalesce(i.ad_user_id, '1') = coalesce(o.ad_user_id, '1')
       ]]>
     </Sql>
     <Parameter name="executionId"/>
@@ -331,6 +334,7 @@
         and i.documentno = ?
         and i.c_bpartner_id = o.c_bpartner_id
         and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
+        and coalesce(i.ad_user_id, '1') = coalesce(o.ad_user_id, '1')
       ]]>
     </Sql>
     <Parameter name="executionId"/>
@@ -376,6 +380,7 @@
            inner join c_invoice i on i.c_invoice_id=il.c_invoice_id
            where i.documentno = ?
            and i.c_bpartner_id = o.c_bpartner_id and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
+           and coalesce(i.ad_user_id, '1') = coalesce(o.ad_user_id, '1')
            group by ot.c_ordertax_id, ot.c_tax_id , i.c_invoice_id, i.ad_client_id, i.ad_org_id,now(), i.createdby, now(), i.updatedby,        ot.taxbaseamt, ot.taxamt
         ) d
         group by c_tax_id, c_invoice_id,ad_client_id, ad_org_id, createdby, updatedby
