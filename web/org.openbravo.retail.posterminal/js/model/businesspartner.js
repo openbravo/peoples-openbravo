@@ -150,6 +150,8 @@
         this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
         this.set('creditLimit', OB.DEC.Zero);
         this.set('creditUsed', OB.DEC.Zero);
+        this.set('customerBlocking', false);
+        this.set('salesOrderBlocking', false);
       } else {
         OB.UTIL.clone(cusToLoad, this);
       }
