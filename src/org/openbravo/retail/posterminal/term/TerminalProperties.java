@@ -97,6 +97,8 @@ public class TerminalProperties extends ModelExtension {
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCRPTTEMPLATE, "printCanceledReceiptTemplate",
         list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSCANCLAYAWAYTMPLT,
+        "printCanceledLayawayTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSWELCOMETEMPLATE, "printWelcomeTemplate", list);
 
     // Legal Organization Tax ID
