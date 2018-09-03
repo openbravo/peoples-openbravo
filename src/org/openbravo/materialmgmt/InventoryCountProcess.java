@@ -265,6 +265,8 @@ public class InventoryCountProcess implements Process {
     }
 
     inventory.setProcessed(true);
+    OBDal.getInstance().flush();
+
     return msg;
   }
 
