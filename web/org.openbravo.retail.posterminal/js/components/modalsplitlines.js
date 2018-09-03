@@ -459,8 +459,15 @@ enyo.kind({
           this.orderline.get('promotions').splice(index, 1, adjustedPromotion);
         }
       }, this);
-      this.receipt.set('skipCalculateReceipt', false);
-      this.receipt.calculateReceipt();
+      var me = this;
+      OB.UTIL.HookManager.executeHooks('OBPOS_PostSplitLine', {
+        receipt: this.receipt,
+        line: this.orderline,
+        splittedLines: this.splittedLines
+      }, function (args) {
+        me.receipt.set('skipCalculateReceipt', false);
+        me.receipt.calculateReceipt();
+      });
     }
   },
 
