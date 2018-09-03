@@ -442,7 +442,9 @@ enyo.kind({
     receipt.deleteOrder(this, function () {
       inEvent.status = false;
       me.leftToolbarDisabled(inSender, inEvent);
-      OB.MobileApp.model.runSyncProcess();
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        OB.MobileApp.model.runSyncProcess();
+      }
     });
   },
   addProductToOrder: function (inSender, inEvent) {
