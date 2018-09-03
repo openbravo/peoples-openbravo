@@ -584,11 +584,13 @@ public class ExternalOrderLoader extends OrderLoader {
       orderJson.put("payment", -1);
       orderJson.put("generateInvoice", false);
       orderJson.put("generateShipment", false);
+      orderJson.put("deliver", false);
       orderJson.put("isLayaway", false);
     } else if ("pay".equals(step)) {
       orderJson.put("payment", -1);
       orderJson.put("generateInvoice", false);
       orderJson.put("generateShipment", false);
+      orderJson.put("deliver", false);
       orderJson.put("isLayaway", true);
     } else if ("ship".equals(step)) {
       orderJson.put("payment", orderJson.getDouble("grossAmount"));
