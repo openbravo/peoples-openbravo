@@ -561,13 +561,8 @@ public class CancelAndReplaceUtils {
       }
 
       // Set the delivered status for the old and inverse orders
-      if (replaceOrder && associateShipmentToNewReceipt && oldOrder.isDelivered()) {
-        if (!newOrder.isDelivered()) {
-          newOrder.setDelivered(true);
-        }
-        oldOrder.setDelivered(false);
-      }
-      inverseOrder.setDelivered(false);
+      oldOrder.setDelivered(true);
+      inverseOrder.setDelivered(true);
 
       // Close inverse order
       inverseOrder.setDocumentStatus("CL");
