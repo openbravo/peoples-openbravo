@@ -4261,8 +4261,14 @@
                             relationsToRemove.push(relatedLine);
                           }
                         });
+                        // Remove the lines that have been deleted from the inverse ticket
                         if (relationsToRemove.length) {
-                          line.get('relatedLines').remove(relationsToRemove);
+                          _.each(relationsToRemove, function (relationToRemove) {
+                            var idx = line.get('relatedLines').map(function (l) {
+                              return l.id;
+                            }).indexOf(relationToRemove.id);
+                            line.get('relatedLines').splice(idx, 1);
+                          });
                         }
                       }
                     });
