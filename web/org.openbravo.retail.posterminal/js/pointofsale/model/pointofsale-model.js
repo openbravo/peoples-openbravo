@@ -386,11 +386,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       OB.UTIL.TicketCloseUtils.paymentAccepted(receipt, orderList, function () {
         if (OB.MobileApp.view.openedPopup === null) {
           enyo.$.scrim.hide();
+          if (OB.MobileApp.restoreUseBarcodeProperty) {
+            OB.MobileApp.model.attributes.useBarcode = true;
+          }
         }
       });
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
+      if (OB.MobileApp.model.get('useBarcode')) {
+        OB.MobileApp.model.set('useBarcode', false);
+        OB.MobileApp.restoreUseBarcodeProperty = true;
+      }
       receipt.trigger('disableDoneButton');
       if (receipt.get('paymentDone')) {
         return true;
