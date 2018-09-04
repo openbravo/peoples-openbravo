@@ -1363,7 +1363,7 @@ enyo.kind({
       }, this);
       removedServices.push(OB.I18N.getLabel('OBPOS_ServiceRemoved'));
       _.each(servicesToBeDeleted, function (line) {
-        this.deleteLine(line);
+        this.deleteLinesFromOrder([line]);
         removedServices.push(line.get('product').get('_identifier'));
       }, this);
       if (removedServices.length > 1) {
