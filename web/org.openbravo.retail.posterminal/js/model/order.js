@@ -4278,6 +4278,7 @@
                     me.set('nettingPayment', OB.DEC.sub(me.getPayment(), me.getGross()));
                     me.set('payment', OB.DEC.abs(me.getNettingPayment()));
                     me.get('payments').reset();
+                    me.set('forceCalculateTaxes', true);
                     me.unset('id');
                     me.getPrepaymentAmount(function () {
                       me.adjustPayment();
