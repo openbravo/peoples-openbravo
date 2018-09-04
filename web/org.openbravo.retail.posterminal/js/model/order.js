@@ -4257,7 +4257,7 @@
                         _.each(line.get('relatedLines'), function (relatedLine) {
                           if (idMap[relatedLine.orderlineId]) {
                             relatedLine.orderlineId = idMap[relatedLine.orderlineId];
-                          } else {
+                          } else if (!relatedLine.deferred) {
                             relationsToRemove.push(relatedLine);
                           }
                         });
