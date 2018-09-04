@@ -72,6 +72,10 @@ public class CancelLayawayLoader extends OrderLoader {
 
       // Create the lines
       createOrderLines(inverseOrder, json, orderlines, lineReferences);
+      // Create the services relations
+      if (orderLineServiceList.size() > 0) {
+        createLinesForServiceProduct();
+      }
 
       for (final OrderLine orderLine : inverseOrder.getOrderLineList()) {
         orderLine.setObposIspaid(true);

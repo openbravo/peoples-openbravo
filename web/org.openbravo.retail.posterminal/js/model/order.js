@@ -4211,6 +4211,7 @@
                   var clonedReceipt = new OB.Model.Order();
                   OB.UTIL.clone(me, clonedReceipt);
                   OB.Dal.remove(me, function () {
+                    var idMap = {};
                     me.set('skipCalculateReceipt', true);
                     OB.MobileApp.model.set('preventOrderSave', true);
                     me.set('preventServicesUpdate', true);
@@ -4237,7 +4238,9 @@
                           promotion.displayedTotalAmount = OB.DEC.mul(OB.DEC.mul(promotion.displayedTotalAmount, (OB.DEC.abs(canceledQty) / line.getQty())), -1);
                         });
                         line.set('canceledLine', line.get('id'));
-                        line.set('id', OB.UTIL.get_UUID());
+                        var newId = OB.UTIL.get_UUID();
+                        idMap[line.get('id')] = newId;
+                        line.set('id', newId);
                         line.set('qty', canceledQty);
                         line.unset('deliveredQuantity');
                       } else {
@@ -4247,6 +4250,22 @@
                     if (linesToDelete.length) {
                       me.get('lines').remove(linesToDelete);
                     }
+                    // Remove or update the related lines id
+                    _.each(me.get('lines').models, function (line) {
+                      if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct')) {
+                        var relationsToRemove = [];
+                        _.each(line.get('relatedLines'), function (relatedLine) {
+                          if (idMap[relatedLine.orderlineId]) {
+                            relatedLine.orderlineId = idMap[relatedLine.orderlineId];
+                          } else {
+                            relationsToRemove.push(relatedLine);
+                          }
+                        });
+                        if (relationsToRemove.length) {
+                          line.get('relatedLines').remove(relationsToRemove);
+                        }
+                      }
+                    });
                     if (me.get('paidOnCredit')) {
                       me.set('paidOnCredit', false);
                       me.set('paidPartiallyOnCredit', false);
@@ -4255,6 +4274,7 @@
                     me.set('canceledorder', clonedReceipt);
                     me.set('documentNo', me.get('documentNo') + '*R*');
                     me.unset('generateInvoice');
+                    me.set('orderDate', new Date());
                     me.set('nettingPayment', OB.DEC.sub(me.getPayment(), me.getGross()));
                     me.set('payment', OB.DEC.abs(me.getNettingPayment()));
                     me.get('payments').reset();
