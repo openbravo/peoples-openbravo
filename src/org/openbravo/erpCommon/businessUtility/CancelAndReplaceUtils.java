@@ -554,15 +554,11 @@ public class CancelAndReplaceUtils {
             inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
           }
         }
-      } else {
-        final JSONArray newLines = jsonorder.getJSONArray("lines");
-        for (int i = 0; i < newLines.length(); i++) {
-          linesRelations.put(newLines.getJSONObject(i).getString("canceledLine"), newLines
-              .getJSONObject(i).getString("id"));
-        }
       }
       // Create or update the needed services relations
-      updateServicesRelations(jsonorder, oldOrder, inverseOrder, newOrder, replaceOrder);
+      if (replaceOrder) {
+        updateServicesRelations(jsonorder, oldOrder, inverseOrder, newOrder, replaceOrder);
+      }
       // The netting shipment is flagged as processed.
       if (nettingGoodsShipment != null) {
         processShipmentHeader(nettingGoodsShipment);
