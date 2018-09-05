@@ -1103,14 +1103,6 @@ public class ImportModule {
 
       // use this for information that is not contained in standard fields
       HashMap<String, Object> additionalInfo = new HashMap<String, Object>();
-      if (isCommercial) {
-        String tier = (String) dynModule.get("COMMERCIAL_TIER");
-        if (tier == null || tier.isEmpty()) {
-          // If tier is not set in the obx, assume tier 2 to show a more restrictive error message
-          tier = "2";
-        }
-        additionalInfo.put("tier", tier);
-      }
       additionalInfo.put("enforcements", enforcements);
       rt[i].setAdditionalInfo(additionalInfo);
       i++;
