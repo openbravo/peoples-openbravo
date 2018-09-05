@@ -779,6 +779,8 @@ public class ExternalOrderLoader extends OrderLoader {
       if (fullyPaid) {
         orderJson.put("donePressed", true);
       }
+    } else {
+      orderJson.put("donePressed", true);
     }
   }
 

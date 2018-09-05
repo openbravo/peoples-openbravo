@@ -193,7 +193,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     paidOnCredit = !paidReceipt && jsonorder.optBoolean("paidOnCredit", false);
 
     newLayaway = jsonorder.getLong("orderType") == 2;
-    notpaidLayaway = isLayaway && !paidOnCredit && !donePressed;
+    notpaidLayaway = isLayaway && !paidOnCredit && !donePressed && !fullyPaid;
     creditpaidLayaway = isLayaway && (paidOnCredit || (donePressed && !fullyPaid));
     partialpaidLayaway = jsonorder.optBoolean("isLayaway", false) && !fullyPaid;
     fullypaidLayaway = isLayaway && fullyPaid;
@@ -405,8 +405,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             OrderLine ol = order.getOrderLineList().get(i);
             if (!ol.isObposIsDeleted()) {
               JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-              BigDecimal pendingLineQty = jsonOrderLine.has("obposQtytodeliver") ? new BigDecimal(
-                  jsonOrderLine.getDouble("obposQtytodeliver")) : ol.getOrderedQuantity();
+              BigDecimal pendingLineQty = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
+                  .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : ol.getOrderedQuantity();
               ol.setDeliveredQuantity(pendingLineQty);
               OBDal.getInstance().save(ol);
               if (pendingLineQty != null) {
