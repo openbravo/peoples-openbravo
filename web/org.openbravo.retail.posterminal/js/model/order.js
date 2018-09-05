@@ -4197,6 +4197,21 @@
       }
     },
 
+    createQuotationFromOrder: function () {
+      var documentNo = this.get('documentNo');
+      this.set('isQuotation', true);
+      this.set('generateInvoice', false);
+      this.set('orderType', 0);
+      this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
+      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
+      this.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
+      this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
+      this.set('documentNo', nextQuotationno.documentNo);
+      this.trigger('scan');
+      //      OB.logUserAction('Create New Quotation from Order ' + documentNo + ': ' + nextQuotationno.documentNo);
+      this.save();
+    },
+
     createOrderFromQuotation: function (updatePrices, callback) {
       var idMap = {},
           oldIdMap = {},
