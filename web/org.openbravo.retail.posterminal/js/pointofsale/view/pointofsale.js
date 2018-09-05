@@ -1372,43 +1372,43 @@ enyo.kind({
     this.waterfall('onSetAdvancedSearchMode', inEvent);
   },
   receiptLineSelected: function (inSender, inEvent) {
-    var enableButton = true,
+    var product, i, enableButton = true,
+        enableQtyButton = true,
         selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
         selectedLinesSameQty = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModelsSameQty,
-        selectedLinesLength = selectedLines ? this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length : 0,
-        product, i;
-    if (selectedLinesLength > 1) {
+        selectedLinesLength = selectedLines ? this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length : 0;
+
+    if (selectedLinesLength > 0) {
       for (i = 0; i < selectedLinesLength; i++) {
         product = selectedLines[i].get('product');
         if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[i].get('isEditable') || product.get('isSerialNo')) {
           enableButton = false;
+          enableQtyButton = false;
           break;
         }
       }
-      if (enableButton && !selectedLinesSameQty) {
+      if (enableButton && selectedLinesLength > 1 && !selectedLinesSameQty) {
         enableButton = false;
-      }
-    } else if (selectedLinesLength === 1) {
-      product = selectedLines[0].get('product');
-      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[0].get('isEditable') || product.get('isSerialNo')) {
-        enableButton = false;
+        enableQtyButton = true;
       }
     } else {
       enableButton = false;
+      enableQtyButton = false;
     }
-    this.enableKeyboardButton(enableButton);
+    this.enableKeyboardButton(enableButton, enableQtyButton);
     OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
       line: inEvent.line,
       selectedLines: selectedLines,
       context: this
     }, function (args) {});
   },
-  enableKeyboardButton: function (enableButton) {
+  enableKeyboardButton: function (enableButton, enableQtyButton) {
     if (enableButton && !this.model.get('order').get('isEditable')) {
       enableButton = false;
+      enableQtyButton = false;
     }
     this.waterfall('onEnableQtyButton', {
-      enable: enableButton
+      enable: enableQtyButton || enableButton
     });
     this.waterfall('onEnablePlusButton', {
       enable: enableButton

@@ -85,6 +85,8 @@ public class PaidReceipts extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+    OBPOSApplications posTerminal = null;
+
     if (MobileServerController.getInstance().getCentralServer() != null) {
       final String ORIGIN_CENTRAL = MobileServerController.getInstance().getCentralServer()
           .getName();
@@ -107,6 +109,10 @@ public class PaidReceipts extends JSONProcessSimple {
           .getID()));
 
       String orderid = jsonsent.getString("orderid");
+      if (jsonsent.has("pos") && jsonsent.getString("pos") != null) {
+        String posId = jsonsent.getString("pos");
+        posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posId);
+      }
 
       // get the orderId
       HQLPropertyList hqlPropertiesReceipts = ModelExtensionUtils.getPropertyExtensions(extensions);
@@ -528,6 +534,12 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceipt.put("approvedList", jsonListApproval);
         }
 
+        // Save the last ticket loaded in obposApplication object
+        if (posTerminal != null) {
+          posTerminal.setTerminalLastticketloaded(new Date());
+          OBDal.getInstance().flush();
+        }
+
         paidReceipt.put("recordInImportEntry", checkOrderInErrorEntry(orderIds));
 
         respArray.put(paidReceipt);
@@ -535,6 +547,7 @@ public class PaidReceipts extends JSONProcessSimple {
         result.put(JsonConstants.RESPONSE_DATA, respArray);
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       }
+
     } catch (Exception e) {
       throw new OBException("Error in PaidReceips: ", e);
     } finally {

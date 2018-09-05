@@ -103,6 +103,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         OBDal.getInstance().save(cashupApproval);
       }
 
+      // Save the last cashup processed in obposApplication object
+      posTerminal.setTerminalLastcashupcompleted(cashUp.getUpdated());
+
       cashUp.setJsoncashup(jsonCashup.toString());
       if (posTerminal.getMasterterminal() != null) {
         // On slave only mark as processed BO
@@ -145,6 +148,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData, true,
             new ArrayList<String>());
       }
+
     } else if (cashUp.isProcessed() && cashUp.isProcessedbo()) {
       // This record should go to error
       throw new OBException(

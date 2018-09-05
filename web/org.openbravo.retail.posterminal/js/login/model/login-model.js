@@ -564,13 +564,17 @@
         OB.MobileApp.model.on('change:isLoggingIn', function () {
           if (!OB.MobileApp.model.get('isLoggingIn')) {
             OB.MobileApp.model.off('change:isLoggingIn', null, this);
-            this.runSyncProcess();
+            this.runSyncProcess(function () {
+              OB.UTIL.sendLastTerminalStatusValues();
+            });
           }
         }, this);
       } else {
         //The session is fine, we don't need to warn the user
         //but we will attempt to send all pending orders automatically
-        this.runSyncProcess();
+        this.runSyncProcess(function () {
+          OB.UTIL.sendLastTerminalStatusValues();
+        });
       }
     },
 
@@ -1012,13 +1016,13 @@
             // There can only be one documentSequence model in the list (posSearchKey is unique)
             docSeq = documentSequenceList.models[0];
             // verify if the new values are higher and if it is not undefined or 0
-            if (docSeq.get('documentSequence') > me.documentnoThreshold && documentnoSuffix !== 0) {
+            if (docSeq.get('documentSequence') > me.documentnoThreshold) {
               me.documentnoThreshold = docSeq.get('documentSequence');
             }
-            if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold && quotationnoSuffix !== 0) {
+            if (docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold) {
               me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
             }
-            if (docSeq.get('returnDocumentSequence') > me.returnnoThreshold && returnnoSuffix !== 0) {
+            if (docSeq.get('returnDocumentSequence') > me.returnnoThreshold) {
               me.returnnoThreshold = docSeq.get('returnDocumentSequence');
             }
           } else {

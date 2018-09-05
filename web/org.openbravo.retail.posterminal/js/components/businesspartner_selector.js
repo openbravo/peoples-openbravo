@@ -330,7 +330,7 @@ enyo.kind({
       kind: 'OB.UI.BPDetailsContextMenuItem',
       permission: 'OBPOS_receipt.customers'
     });
-    if (OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true)) {
       menuOptions.push({
         kind: 'OB.UI.BPEditContextMenuItem',
         permission: 'OBPOS_retail.editCustomerButton'
