@@ -427,7 +427,7 @@ enyo.kind({
     classes: 'btnlink-orange',
     tap: function () {
       this.owner.owner.doShowPopup({
-        popup: 'modalAssociateTickets',
+        popup: 'OBPOS_modalAssociateTickets',
         args: {
           receipt: this.owner.owner.receipt,
           selectedLines: this.owner.owner.selectedModels
@@ -445,7 +445,7 @@ enyo.kind({
     classes: 'btnlink-orange',
     tap: function () {
       this.owner.owner.doShowPopup({
-        popup: 'modalRemoveAssociatedTickets',
+        popup: 'OBPOS_modalRemoveAssociatedTickets',
         args: {
           receipt: this.owner.owner.receipt,
           selectedLine: this.owner.owner.selectedModels[0]
@@ -514,7 +514,7 @@ enyo.kind({
       selectedServices = _.filter(this.selectedModels, function (line) {
         return line.get('product').get('productType') === 'S';
       });
-      if (selectedServices[0] && selectedServices[0].get('product') && selectedServices[0].get('product').get('productType') === 'S' && selectedServices[0].get('product').get('isLinkedToProduct') && this.model.get('order').get('isEditable')) {
+      if (selectedServices[0] && selectedServices.length === 1 && selectedServices[0].get('product') && selectedServices[0].get('product').get('productType') === 'S' && selectedServices[0].get('product').get('isLinkedToProduct') && line.get('isEditable')) {
         this.$.actionButtonsContainer.$.addAssociationsButton.show();
         this.$.actionButtonsContainer.$.removeAssociationsButton.show();
       } else {

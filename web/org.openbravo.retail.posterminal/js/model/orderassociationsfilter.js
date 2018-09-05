@@ -10,7 +10,14 @@
 /*global Backbone, _ */
 
 (function () {
-  OB.Model.OrderAssociationsFilter = OB.Data.ExtensibleModel.extend({});
+  OB.Model.OrderAssociationsFilter = OB.Data.ExtensibleModel.extend({
+    source: 'org.openbravo.retail.posterminal.AssociateOrderLines',
+    dataLimit: OB.Dal.DATALIMIT,
+    remoteDataLimit: OB.Dal.DATALIMIT,
+    remote: 'OBPOS_remote.order',
+    _modelName: 'OrderAssociationsFilter',
+    forceRemoteEntity: true
+  });
 
   OB.Model.OrderAssociationsFilter.addProperties([{
     name: 'orderId',
@@ -35,14 +42,53 @@
     operator: OB.Dal.EQ,
     isDate: true
   }, {
+    name: 'businessPartnerName',
+    filter: false,
+    type: 'TEXT'
+  }, {
     name: 'businessPartner',
     column: 'businessPartner',
+    sortName: 'businessPartnerName',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblCustomer',
-    operator: OB.Dal.EQ,
+    isSelector: true,
     selectorPopup: 'modalcustomer',
-    isSelector: true
+    operator: OB.Dal.EQ,
+    preset: {
+      id: '',
+      name: ''
+    }
+  }, {
+    name: 'lineNo',
+    column: 'lineNo',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'description',
+    column: 'description',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'productName',
+    column: 'productName',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'qtyOrdered',
+    column: 'qtyOrdered',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'qtyDelivered',
+    column: 'qtyDelivered',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'orderDate',
+    column: 'orderDate',
+    filter: false,
+    type: 'TEXT'
   }]);
 
 }());

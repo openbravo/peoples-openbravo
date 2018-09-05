@@ -63,7 +63,7 @@ enyo.kind({
   components: [{
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
-    name: 'associativeFilterSelector',
+    name: 'filterSelector',
     filters: OB.Model.OrderAssociationsFilter.getProperties()
   }, {
     showing: true,
@@ -220,7 +220,7 @@ enyo.kind({
       this.owner.addClass('ob-orderline');
       this.$.order.hide();
       this.$.orderline.show();
-      this.$.orderlineInfo.setContent(OB.I18N.getLabel('OBPOS_LblLineInfo', [this.model.get('lineNo'), this.model.get('qtyOrdered'), this.model.get('productName')]));
+      this.$.orderlineInfo.setContent(OB.I18N.getLabel('OBPOS_LblLineInfo', [this.model.get('lineNo'), this.model.get('qtyPending'), this.model.get('productName')]));
       var qty = this.model.get('toAssociate') ? this.model.get('toAssociate') : 0;
       this.associateOrder(null, {
         value: qty
@@ -332,30 +332,23 @@ enyo.kind({
         receipt = modalSelector.receipt ? modalSelector.receipt : OB.MobileApp.model.receipt,
         deferredQty = relatedLines.length;
 
-    if (OB.UTIL.isNullOrUndefined(relatedLines[0].bpName) || OB.UTIL.isNullOrUndefined(relatedLines[0].qtyOrdered)) {
+    if (OB.UTIL.isNullOrUndefined(relatedLines[0].bpName) || OB.UTIL.isNullOrUndefined(relatedLines[0].qtyPending)) {
       relatedLines[0].bpName = receipt.get('bp').get('name');
-      relatedLines[0].qtyOrdered = selectedLine.getQty();
+      relatedLines[0].qtyPending = selectedLine.getQty();
     }
 
     _.each(
     this.ordersList.models, function (line) {
-      if (line.get('ltype') === 'ORDERLINE' && line.get('toAssociate') === 1 && !associatedOrderLineIds.includes(line.get('lineId')) && selectedLine.get('id') !== line.get('lineId')) {
+      if (line.get('ltype') === 'ORDERLINE' && line.get('toAssociate') === 1 && !associatedOrderLineIds.includes(line.get('orderlineId')) && selectedLine.get('id') !== line.get('orderlineId')) {
         var newRelatedLine = {};
-        newRelatedLine.orderlineId = line.get('lineId');
+        newRelatedLine.orderlineId = line.get('orderlineId');
         newRelatedLine.productName = line.get('productName');
         newRelatedLine.orderDocumentNo = line.get('documentNo');
         newRelatedLine.otherTicket = line.get('documentNo') === receipt.get('documentNo') ? false : true;
-        newRelatedLine.deferred = true;
-        newRelatedLine.qty = line.get('qtyOrdered');
-        newRelatedLine.gross = line.get('lineTotal');
-        newRelatedLine.net = line.get('net');
-        newRelatedLine.obposCanbedelivered = line.get('obposCanbedelivered');
-        newRelatedLine.obposIspaid = line.get('obposIspaid');
-        newRelatedLine.bpName = line.get('bpName');
-        newRelatedLine.qtyOrdered = line.get('qtyOrdered');
-        newRelatedLine.promotions = line.get('promotions') ? line.get('promotions') : [];
+        newRelatedLine.bpName = line.get('businessPartnerName');
+        newRelatedLine.qtyPending = line.get('qtyPending');
         relatedLines.push(newRelatedLine);
-        associatedOrderLineIds.push(line.get('lineId'));
+        associatedOrderLineIds.push(line.get('orderlineId'));
         deferredQty++;
       }
     });
@@ -381,7 +374,8 @@ enyo.kind({
     var me = this,
         orderLinesToExclude = [],
         selectedLine = this.parent.parent.selectedLine,
-        bp = this.parent.parent.receipt.get('bp').get('id');
+        bp = this.parent.parent.receipt.get('bp').get('id'),
+        filterModel = OB.Model.OrderAssociationsFilter;
     this.ordersList.reset();
     me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(true);
     _.each(selectedLine.get('relatedLines'), function (relatedLine) {
@@ -407,82 +401,55 @@ enyo.kind({
       if (data && !data.exception) {
         me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(data.length === 0);
         var ordersLoaded = new Backbone.Collection();
-        _.each(
-        data, function (iter) {
+        _.each(data.models, function (iter) {
           var order = _.find(
           ordersLoaded.models, function (ord) {
-            return ord.id === iter.orderId;
+            return ord.id === iter.get('orderId');
           });
           if (!order) {
-            var bpartner = {
-              'name': iter.bpName,
-              'searchKey': iter.bpSearchKey
-            };
             order = new OB.Model.OrderAssociationsFilter({
-              id: iter.orderId,
+              id: iter.get('orderId'),
               ltype: 'ORDER',
-              documentNo: iter.documentNo,
+              documentNo: iter.get('documentNo'),
               orderedDate: moment(
-              iter.orderDate, "YYYY-MM-DD").format(
+              iter.get('orderDate'), "YYYY-MM-DD").format(
               OB.Format.date.toUpperCase()),
-              bpName: iter.bpName,
-              bpId: iter.bpId,
-              description: iter.description,
-              orderTotal: iter.orderTotal,
-              bpartner: bpartner,
+              bpName: iter.get('businessPartnerName'),
+              bpId: iter.get('businessPartner'),
+              orderTotal: iter.get('orderTotal'),
               lines: []
             });
             ordersLoaded.add(order);
           }
 
-          var newline = {};
-          var prop;
-          for (prop in iter) {
-            if (iter.hasOwnProperty(prop)) {
-              newline[prop] = iter[prop];
+          var newline = {},
+              attributes = iter.attributes,
+              propt;
+          for (propt in attributes) {
+            if (attributes.hasOwnProperty(propt)) {
+              newline[propt] = attributes[propt];
             }
           }
           delete newline.renderCmp; // remove
           // cycles
-          newline.orderLineId = iter.lineId;
+          newline.orderlineId = iter.get('orderlineId');
           newline.ltype = 'ORDERLINE';
-          newline.qtyPending = iter.qtyOrdered - iter.qtyDelivered;
-          newline.dateDelivered = iter.dateDelivered ? moment(
-          iter.dateDelivered, "YYYY-MM-DD").format(
+          newline.qtyPending = iter.get('qtyPending');
+          newline.dateDelivered = iter.get('orderDate') ? moment(
+          iter.get('orderDate'), "YYYY-MM-DD").format(
           OB.Format.date.toUpperCase()) : '';
+          newline.lineNo = iter.get('lineNo');
+          newline.productName = iter.get('productName');
+          newline.documentNo = iter.get('documentNo');
+          newline.businessPartnerName = iter.get('businessPartnerName');
+          newline.orderId = iter.get('orderId');
           var orderLine = _.find(
           order.get('lines'), function (line) {
-            return line.get('lineId') === newline.orderLineId;
+            return line.get('orderlineId') === newline.orderlineId;
           });
-          var promotion = {};
-
-          if (!OB.UTIL.isNullOrUndefined(newline.discount_ruleId) && !OB.UTIL.isNullOrUndefined(newline.discountType_id) && !OB.UTIL.isNullOrUndefined(newline.discountType_displayedTotalAmount) && !OB.UTIL.isNullOrUndefined(newline.discountType_obdiscQtyoffer)) {
-            promotion.ruleId = newline.discount_ruleId;
-            promotion.discountType = newline.discountType_id;
-            promotion.name = newline.discountType_name;
-            promotion.amt = newline.discountType_amt;
-            promotion.displayedTotalAmount = newline.discountType_displayedTotalAmount;
-            promotion.obdiscQtyoffer = newline.discountType_obdiscQtyoffer;
-            if (orderLine && orderLine.get('promotions')) {
-              orderLine.get('promotions').push(promotion);
-            } else {
-              newline.promotions = [];
-              newline.promotions.push(promotion);
-              order.get('lines').push(
-              new Backbone.Model(
-              newline));
-            }
-          } else {
-            order.get('lines').push(
-            new Backbone.Model(
-            newline));
-          }
-          delete newline.discount_ruleId;
-          delete newline.discountType_id;
-          delete newline.discountType_name;
-          delete newline.discountType_amt;
-          delete newline.discountType_displayedTotalAmount;
-          delete newline.discountType_obdiscQtyoffer;
+          order.get('lines').push(
+          new Backbone.Model(
+          newline));
         });
         var lines = [];
         _.each(ordersLoaded.models, function (order) {
@@ -507,43 +474,65 @@ enyo.kind({
     this.$.orderSelector.$.tlimit.hide();
     this.$.renderLoading.show();
 
-    var filters = [];
-    filters.push({
-      column: 'productId',
+    var criteria = [],
+        limit;
+
+    if (inEvent.orderby) {
+      criteria._orderByClause = inEvent.orderby.name + ' ' + inEvent.orderby.direction + ', lineNo asc';
+    } else {
+      criteria._orderByClause = 'documentNo desc, lineNo asc';
+    }
+
+    criteria.forceRemote = true;
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
+      limit = filterModel.prototype.dataLimit;
+    } else {
+      limit = filterModel.prototype.remoteDataLimit ? filterModel.prototype.remoteDataLimit : filterModel.prototype.dataLimit;
+    }
+    criteria.remoteFilters = [];
+    criteria.remoteFilters.push({
+      columns: 'productId',
       value: selectedLine.get('product').get('id'),
+      operator: '=',
+      isId: true
+    }, {
+      columns: 'includeProductCategories',
+      value: selectedLine.get('product').get('includeProductCategories'),
       operator: '='
     }, {
-      column: 'businessPartner',
-      value: bp,
+      columns: 'includeProducts',
+      value: selectedLine.get('product').get('includeProducts'),
+      operator: '='
+    }, {
+      columns: 'excluded',
+      value: orderLinesToExclude,
       operator: '='
     });
+
+    if (!inEvent.filters) {
+      criteria.remoteFilters.push({
+        columns: 'businessPartner',
+        value: bp,
+        operator: '=',
+        isId: true
+      });
+    }
     _.each(inEvent.filters, function (flt) {
-      filters.push({
-        column: flt.column,
+      criteria.remoteFilters.push({
+        columns: flt.column,
         operator: flt.operator,
         value: flt.value
       });
     });
-    var orderId = _.find(inEvent.filters, function (flt) {
-      return flt.column === 'orderId';
-    });
-    var process = new OB.DS.Process('org.openbravo.retail.posterminal.AssociateOrderLines');
-    process.exec({
-      excluded: JSON.stringify(
-      orderLinesToExclude ? orderLinesToExclude : '').replace(/\"/g, '\'').replace('[', '').replace(']', ''),
-      storeDocTypes: _.pluck(OB.MobileApp.model.get('storeDocumentTypes'), 'id'),
-      _limit: OB.Dal.REMOTE_DATALIMIT,
-      remoteFilters: filters,
-      orderby: {
-        column: 'documentNo',
-        name: 'documentNo',
-        direction: 'desc'
-      },
-      parameters: {
-        remoteModel: true,
-        originServer: inEvent.originServer
+
+    OB.Dal.find(filterModel, criteria, function (data) {
+      if (data) {
+        successCallbackOrders(data);
+      } else {
+        errorCallback();
       }
-    }, successCallbackOrders, errorCallback);
+    }, errorCallback);
+
 
     return true;
   },
@@ -589,7 +578,11 @@ enyo.kind({
       this.receipt = this.args.receipt;
       this.$.body.$.listOrders.clearAction();
       this.getFilterSelectorTableHeader().clearFilter();
-
+      var businessPartner = _.find(OB.Model.OrderAssociationsFilter.getProperties(), function (prop) {
+        return prop.name === 'businessPartner';
+      }, this);
+      businessPartner.preset.id = this.model.get('order').get('bp').get('id');
+      businessPartner.preset.name = this.model.get('order').get('bp').get('_identifier');
       this.$.body.$.listOrders.searchAction(null, {
         originServer: this.args.originServer
       });
@@ -605,7 +598,7 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(true);
   },
   getFilterSelectorTableHeader: function () {
-    return this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.associativeFilterSelector;
+    return this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.filterSelector;
   },
   getAdvancedFilterBtn: function () {
     return this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAdvancedFilter;
@@ -616,7 +609,7 @@ enyo.kind({
   init: function (model) {
     this.inherited(arguments);
     this.initialized = false;
-    this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.associativeFilterSelector.$.entityFilterText.skipAutoFilterPref = true;
+    this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
   }
 });
 

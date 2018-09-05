@@ -85,7 +85,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.productName.setContent(this.newAttribute.productName);
-    this.$.orderedQuantity.setContent(this.newAttribute.qtyOrdered);
+    this.$.orderedQuantity.setContent(this.newAttribute.qtyPending);
     this.$.documentNo.setContent(this.newAttribute.orderDocumentNo);
     this.$.customer.setContent(this.newAttribute.bpName);
   },
@@ -128,7 +128,7 @@ enyo.kind({
   lineSelected: function (inSender, inEvent) {
     var lines, selectedLine = this.args.selectedLine;
     if (!selectedLine.linesToAssociate) {
-      selectedLine.linesToAssociate = this.args.selectedLine.get('relatedLines');
+      selectedLine.linesToAssociate = selectedLine.get('relatedLines');
     }
     if (inEvent.selected) {
       lines = selectedLine.linesToAssociate.filter(function (relatedLine) {
@@ -144,9 +144,9 @@ enyo.kind({
   },
   applyChanges: function (inSender, inEvent) {
     var selectedLine = this.args.selectedLine;
-    if (!selectedLine.linesToAssociate || selectedLine.linesToAssociate.length === 0) {
+    if (selectedLine.linesToAssociate && selectedLine.linesToAssociate.length === 0) {
       this.args.receipt.deleteLinesFromOrder([selectedLine]);
-    } else {
+    } else if (selectedLine.linesToAssociate && selectedLine.linesToAssociate.length > 0) {
       selectedLine.set('relatedLines', selectedLine.linesToAssociate);
       delete selectedLine.linesToAssociate;
       if (selectedLine.get('quantityRule') === 'PP') {

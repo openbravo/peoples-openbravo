@@ -1,6 +1,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,16 +21,13 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.servercontroller.MobileServerController;
 import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
-import org.openbravo.model.common.plm.Product;
 
 public class AssociateOrderLines extends ProcessHQLQuery {
   public static final Logger log = Logger.getLogger(AssociateOrderLines.class);
@@ -43,9 +41,10 @@ public class AssociateOrderLines extends ProcessHQLQuery {
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     Map<String, Object> params = new HashMap<String, Object>();
-    String orgId = jsonsent.getString("organization");
-    params.put("orgId", orgId);
     Map<String, Object> paramValues = getFilters(jsonsent);
+    params.put("excluded", paramValues.get("excluded"));
+    params.put("productId", paramValues.get("productId"));
+
     Iterator<?> it = paramValues.entrySet().iterator();
     while (it.hasNext()) {
       @SuppressWarnings("rawtypes")
@@ -70,43 +69,40 @@ public class AssociateOrderLines extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     HQLPropertyList queryHQLProperties = ModelExtensionUtils.getPropertyExtensions(propextension);
-
     Map<String, Object> paramValues = getFilters(jsonsent);
+    final StringBuilder hqlPendingLines = new StringBuilder();
 
-    String excluded = jsonsent.getString("excluded");
-    JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
-    JSONObject productFilter = remoteFilters.getJSONObject(0);
+    hqlPendingLines.append("SELECT ");
+    hqlPendingLines.append(queryHQLProperties.getHqlSelect());
+    hqlPendingLines.append("FROM OrderLine AS ol");
+    hqlPendingLines.append(" JOIN ol.product AS p");
+    hqlPendingLines.append(" JOIN ol.salesOrder AS salesOrder");
+    hqlPendingLines.append(" JOIN salesOrder.businessPartner AS bp");
+    hqlPendingLines.append(" WHERE salesOrder.client.id =  $clientId");
+    hqlPendingLines.append(" AND salesOrder.$naturalOrgCriteria");
+    hqlPendingLines.append(" AND p.productType = 'I' AND ol.orderedQuantity > 0");
+    hqlPendingLines.append(" AND salesOrder.obposApplications IS NOT NULL");
+    hqlPendingLines.append(" AND salesOrder.obposIsDeleted = false");
+    hqlPendingLines.append(" AND ol.id NOT IN ( :excluded )");
 
-    String hqlPendingLines = "select " //
-        + queryHQLProperties.getHqlSelect() + " from OrderLine as ol " //
-        + "join ol.product as p " //
-        + "join ol.salesOrder as salesOrder " //
-        + "join salesOrder.businessPartner as bp "; //
-    hqlPendingLines += " where p.productType = 'I'"
-        + " and ol.organization.id = :orgId and ol.orderedQuantity > 0" //
-        + " and salesOrder.obposApplications is not null " //
-        + " and salesOrder.obposIsDeleted = false " //
-        + " and ol.id not in (" + excluded + ")"; //
-
-    Product product = OBDal.getInstance().get(Product.class, productFilter.getString("value"));
-    if ("N".equals(product.getIncludedProductCategories())) {
-      hqlPendingLines += " and exists";
-      hqlPendingLines += "(from ServiceProductCategory as spc where spc.productCategory=p.productCategory and spc.product = '"
-          + product.getId() + "')";
-    } else if ("Y".equals(product.getIncludedProductCategories())) {
-      hqlPendingLines += " and not exists";
-      hqlPendingLines += " (from ServiceProductCategory as spc where spc.productCategory=p.productCategory and spc.product = '"
-          + product.getId() + "')";
+    if ("N".equals(paramValues.get("includeProductCategories"))) {
+      hqlPendingLines.append(" AND EXISTS");
+      hqlPendingLines
+          .append(" (FROM ServiceProductCategory AS spc WHERE spc.productCategory=p.productCategory AND spc.product.id = :productId ) ");
+    } else if ("Y".equals(paramValues.get("includeProductCategories"))) {
+      hqlPendingLines.append(" AND NOT EXISTS");
+      hqlPendingLines
+          .append(" (FROM ServiceProductCategory AS spc WHERE spc.productCategory=p.productCategory AND spc.product.id = :productId )");
     }
 
-    if ("N".equals(product.getIncludedProducts())) {
-      hqlPendingLines += " and exists ";
-      hqlPendingLines += "(from ServiceProduct as spc where spc.relatedProduct=p.id and spc.product = '"
-          + product.getId() + "')";
-    } else if ("Y".equals(product.getIncludedProducts())) {
-      hqlPendingLines += " and not exists ";
-      hqlPendingLines += "(from ServiceProduct as spc where spc.relatedProduct=p.id and spc.product = '"
-          + product.getId() + "')";
+    if ("N".equals(paramValues.get("includeProducts"))) {
+      hqlPendingLines.append(" AND EXISTS");
+      hqlPendingLines
+          .append(" (FROM ServiceProduct AS spc WHERE spc.relatedProduct=p.id AND spc.product.id = :productId )");
+    } else if ("Y".equals(paramValues.get("includeProducts"))) {
+      hqlPendingLines.append(" AND NOT EXISTS");
+      hqlPendingLines
+          .append("  (FROM ServiceProduct AS spc WHERE spc.relatedProduct=p.id AND spc.product.id = :productId )");
     }
 
     Iterator<?> it = paramValues.entrySet().iterator();
@@ -115,35 +111,22 @@ public class AssociateOrderLines extends ProcessHQLQuery {
       Map.Entry entry = (Map.Entry) it.next();
       String column = (String) entry.getKey();
       if ("orderDate".equals(column)) {
-        hqlPendingLines += " and salesOrder.orderDate = to_date(:orderDate, 'YYYY/MM/DD')";
+        hqlPendingLines.append(" AND salesOrder.orderDate = to_date(:orderDate, 'YYYY/MM/DD')");
       } else if ("documentNo".equals(column)) {
-        hqlPendingLines += " and upper(salesOrder.documentNo) like :documentNo";
+        hqlPendingLines.append(" AND upper(salesOrder.documentNo) like :documentNo");
       } else if ("businessPartner".equals(column)) {
-        hqlPendingLines += " and bp.id = :businessPartner";
+        hqlPendingLines.append(" AND bp.id = :businessPartner");
       } else if ("orderId".equals(column)) {
-        hqlPendingLines += " and salesOrder.id = :orderId";
+        hqlPendingLines.append(" AND salesOrder.id = :orderId");
       }
     }
-    if (jsonsent.has("orderby") && !jsonsent.isNull("orderby")) {
-      JSONObject orderby = jsonsent.getJSONObject("orderby");
-      if (orderby != null) {
-        String column = orderby.getString("name");
-        String fullColumn = "";
-        if ("orderDate".equals(column)) {
-          fullColumn = "salesOrder.orderDate";
-        } else if ("documentNo".equals(column)) {
-          fullColumn = "salesOrder.documentNo";
-        } else if ("businessPartner".equals(column)) {
-          fullColumn = "bp.name";
-        } else if ("lineNo".equals(column)) {
-          fullColumn = "ol.lineNo";
-        }
-        if (!"".equals(fullColumn)) {
-          hqlPendingLines += " order by " + fullColumn + " " + orderby.getString("direction");
-        }
-      }
+
+    if ((jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL)
+        || (jsonsent.has("orderByProperties") && jsonsent.get("orderByProperties") != JSONObject.NULL)) {
+      hqlPendingLines.append(" $orderByCriteria");
     }
-    return Arrays.asList(new String[] { hqlPendingLines });
+
+    return Arrays.asList(new String[] { hqlPendingLines.toString() });
   }
 
   private Map<String, Object> getFilters(JSONObject jsonsent) throws JSONException {
@@ -153,7 +136,7 @@ public class AssociateOrderLines extends ProcessHQLQuery {
       for (int i = 0; i < filters.length(); i++) {
         JSONObject flt = filters.getJSONObject(i);
         String operator = flt.getString("operator");
-        String column = flt.getString("column");
+        String column = flt.getString("columns");
         String value = flt.getString("value");
         if (!"".equals(value.trim())) {
           if ("orderDate".equals(column) || "deliveryDate".equals(column)) {
@@ -176,24 +159,23 @@ public class AssociateOrderLines extends ProcessHQLQuery {
 
   @Override
   public void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException {
+    Writer temporal = new StringWriter();
+    super.exec(temporal, jsonsent);
+    String data = temporal.toString();
     try {
-      // Get originServer parameter
-      JSONObject params = jsonsent.getJSONObject("parameters");
-      String originServer = params.optString("originServer");
+      JSONObject result = new JSONObject("{" + w.toString() + "}");
       if (MobileServerController.getInstance().isThisAStoreServer()
-          && "Central".equals(originServer)) {
-        try {
-          final JSONObject result = MobileServerRequestExecutor.getInstance().executeCentralRequest(
-              MobileServerUtils.OBWSPATH + AssociateOrderLines.class.getName(), jsonsent);
-          w.write(result.toString().substring(1, result.toString().length() - 1));
-        } catch (Exception e) {
-        }
-      } else {
-        super.exec(w, jsonsent);
+          && result.optLong("totalRows") == 0) {
+        JSONObject centralResult = MobileServerRequestExecutor.getInstance().executeCentralRequest(
+            MobileServerUtils.OBWSPATH + AssociateOrderLines.class.getName(), jsonsent);
+        data = centralResult.toString().substring(1, centralResult.toString().length() - 1);
       }
     } catch (JSONException e) {
-      throw new OBException(e.getMessage());
+      // Do nothing
     }
+    w.write(data);
+    return;
+
   }
 
   @Override

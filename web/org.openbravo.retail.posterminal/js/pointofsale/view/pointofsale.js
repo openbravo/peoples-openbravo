@@ -283,10 +283,13 @@ enyo.kind({
       name: 'modalOpenRelatedReceipts'
     }, {
       kind: 'OB.UI.ModalAssociateTickets',
-      name: 'modalAssociateTickets'
+      name: 'OBPOS_modalAssociateTickets'
     }, {
       kind: 'OB.UI.ModalRemoveAssociatedTickets',
-      name: 'modalRemoveAssociatedTickets'
+      name: 'OBPOS_modalRemoveAssociatedTickets'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterOrders',
+      name: 'OBPOS_modalAdvancedFilterOrders'
     }]
   }, {
     name: 'mainSubWindow',
