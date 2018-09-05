@@ -83,6 +83,7 @@ public class AssociateOrderLines extends ProcessHQLQuery {
     hqlPendingLines.append(" AND p.productType = 'I' AND ol.orderedQuantity > 0");
     hqlPendingLines.append(" AND salesOrder.obposApplications IS NOT NULL");
     hqlPendingLines.append(" AND salesOrder.obposIsDeleted = false");
+    hqlPendingLines.append(" AND salesOrder.documentStatus <> 'CL'");
     hqlPendingLines.append(" AND ol.id NOT IN ( :excluded )");
 
     if ("N".equals(paramValues.get("includeProductCategories"))) {

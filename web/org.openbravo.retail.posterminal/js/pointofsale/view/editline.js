@@ -500,8 +500,6 @@ enyo.kind({
     }
   },
   rearrangeEditButtonBar: function (line) {
-    var selectedServices;
-
     if (this.$.actionButtonsContainer.$.returnLine) {
       if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
         this.$.actionButtonsContainer.$.returnLine.show();
@@ -511,10 +509,7 @@ enyo.kind({
       }
     }
     if (line) {
-      selectedServices = _.filter(this.selectedModels, function (line) {
-        return line.get('product').get('productType') === 'S';
-      });
-      if (selectedServices[0] && selectedServices.length === 1 && selectedServices[0].get('product') && selectedServices[0].get('product').get('productType') === 'S' && selectedServices[0].get('product').get('isLinkedToProduct') && line.get('isEditable')) {
+      if (this.selectedModels.length === 1 && line.get('product') && line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && this.model.get('order').get('isEditable') && line.get('isEditable')) {
         this.$.actionButtonsContainer.$.addAssociationsButton.show();
         this.$.actionButtonsContainer.$.removeAssociationsButton.show();
       } else {
