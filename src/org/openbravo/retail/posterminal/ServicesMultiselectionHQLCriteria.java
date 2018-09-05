@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2017 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -46,18 +46,18 @@ public class ServicesMultiselectionHQLCriteria extends HQLCriteriaProcess {
           + "             where sprv2.product.id = product.id" //
           + "             and sprv2.validFromDate <= now()" //
           + "             and sprv2.active = true)" //
-          + "     and"
-          + "	          ((product.quantityRule = 'UQ'" //
+          + "     and" //
+          + "            ((product.quantityRule = 'UQ'" //
           + "             and" //
-          + "                  (sprv.obposMinimum is null"  //
+          + "                  (sprv.obposMinimum is null" //
           + "                  or sprv.obposMinimum <= " + totalAmountSelected + ")"//
           + "             and" //
           + "			       (sprv.obposMaximum is null" //
           + "                  or sprv.obposMaximum >= " + totalAmountSelected + "))" //
-          + "             or"
-          + "	          (product.quantityRule = 'PP'" //
+          + "             or" //
+          + "            (product.quantityRule = 'PP'" //
           + "             and" //
-          + "                  (sprv.obposMinimum is null"  //
+          + "                  (sprv.obposMinimum is null" //
           + "                  or sprv.obposMinimum <= " + minimumSelected + ")"//
           + "             and" //
           + "			       (sprv.obposMaximum is null" //
