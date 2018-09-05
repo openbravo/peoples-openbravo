@@ -509,7 +509,7 @@ enyo.kind({
       }
     }
     if (line) {
-      if (this.selectedModels.length === 1 && line.get('product') && line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && this.model.get('order').get('isEditable') && line.get('isEditable')) {
+      if (this.selectedModels && this.selectedModels.length === 1 && line.get('product') && line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && this.model.get('order').get('isEditable') && line.get('isEditable')) {
         this.$.actionButtonsContainer.$.addAssociationsButton.show();
         this.$.actionButtonsContainer.$.removeAssociationsButton.show();
       } else {
