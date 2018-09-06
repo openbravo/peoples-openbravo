@@ -90,6 +90,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       final String paymentDate = (String) bundle.getParams().get("paymentdate");
       final boolean doFlush = bundle.getParams().get("doFlush") != null ? (Boolean) bundle
           .getParams().get("doFlush") : true;
+      throwExceptionIfPaymentIsAlreadyReversed(strAction, payment);
       processPayment(payment, strAction, paymentDate, comingFrom, selectedCreditLineIds, doFlush);
       bundle.setResult(msg);
     } catch (Exception e) {
@@ -99,6 +100,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
       OBDal.getInstance().getConnection().rollback();
+    }
+  }
+
+  private void throwExceptionIfPaymentIsAlreadyReversed(final String strAction,
+      final FIN_Payment payment) {
+    if (StringUtils.equals(strAction, "RV") && payment.getReversedPayment() != null) {
+      throw new OBException(OBMessageUtils.messageBD("APRM_PaymentAlreadyReversed"));
     }
   }
 
