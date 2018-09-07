@@ -1686,8 +1686,8 @@ public class InitialSetupUtility {
 
     OBContext.setAdminMode();
     try {
-      String xmlPath = "/referencedata/standard/" + dataset.getModule().getJavaPackage() + "/"
-          + Utility.wikifiedName(dataset.getName()) + ".xml";
+      String xmlPath = "/WEB-INF/referencedata/standard/" + dataset.getModule().getJavaPackage()
+          + "/" + Utility.wikifiedName(dataset.getName()) + ".xml";
 
       String strXml = null;
       try (InputStream r = RequestContext.getServletContext().getResourceAsStream(xmlPath)) {

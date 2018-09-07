@@ -191,7 +191,7 @@ public class COAUtility {
   public static InputStream getCOAResource(Module coaModule) throws FileNotFoundException {
     OBContext.setAdminMode();
     try {
-      String coaPath = "/referencedata/accounts/" + coaModule.getJavaPackage() + "/COA.csv";
+      String coaPath = "/WEB-INF/referencedata/accounts/" + coaModule.getJavaPackage() + "/COA.csv";
       InputStream inputStream = RequestContext.getServletContext().getResourceAsStream(coaPath);
       if (inputStream == null) {
         throw new FileNotFoundException(RequestContext.getServletContext().getRealPath(coaPath));

@@ -414,13 +414,13 @@ build.war: build a war file in the lib directory.
       <mapper type="regexp" from="(.*\${file.separator}lib\${file.separator}runtime)(.*)" to="\2" />
     </copy>
 
-    <copy todir="${base.context}/referencedata/standard/org.openbravo">
+    <copy todir="${base.context}/WEB-INF/referencedata/standard/org.openbravo">
       <fileset dir="${basedir}/../referencedata/standard">
         <include name="*.xml" />
       </fileset>
     </copy>
 
-    <copy todir="${base.context}/referencedata">
+    <copy todir="${base.context}/WEB-INF/referencedata">
       <fileset dir="${base.modules}">
         <include name="*/referencedata/standard/*.xml" />
         <include name="*/referencedata/accounts/COA.csv" />
