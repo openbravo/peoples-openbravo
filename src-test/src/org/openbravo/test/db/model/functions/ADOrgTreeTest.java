@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,7 +34,6 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -413,11 +411,9 @@ public class ADOrgTreeTest extends Ad_isorgincludedTest {
   }
 
   private String createOrganization(String newOrgName, String newOrgType, String strParentOrg) {
-    Properties properties = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    String strSourcePath = properties.getProperty("source.path");
     InitialOrgSetup initialOrg = new InitialOrgSetup(OBContext.getOBContext().getCurrentClient());
     initialOrg.createOrganization(newOrgName, "", newOrgType, strParentOrg, "", "", "", false,
-        null, "", false, false, false, false, false, strSourcePath);
+        null, "", false, false, false, false, false);
     OBDal.getInstance().get(Organization.class, initialOrg.getOrgId()).setSummaryLevel(true);
     return initialOrg.getOrgId();
   }

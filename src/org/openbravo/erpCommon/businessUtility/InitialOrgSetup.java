@@ -126,8 +126,7 @@ public class InitialOrgSetup {
   public OBError createOrganization(String strOrgName, String strOrgUser, String strOrgType,
       String strParentOrg, String strcLocationId, String strPassword, String strModules,
       boolean boCreateAccounting, FileItem fileCoAFilePath, String strCurrency, boolean bBPartner,
-      boolean bProduct, boolean bProject, boolean bCampaign, boolean bSalesRegion,
-      String strSourcePath) {
+      boolean bProduct, boolean bProject, boolean bCampaign, boolean bSalesRegion) {
     OBError obResult = new OBError();
     obResult.setType(ERRORTYPE);
     strHeaderLog.append("@ReportSummary@").append(NEW_LINE).append(NEW_LINE);
@@ -233,8 +232,8 @@ public class InitialOrgSetup {
     } else {
       logEvent(NEW_LINE + "@StartingReferenceData@");
       log4j.debug("process() - Starting creation of reference data");
-      obResult = createReferenceData(strSourcePath, strModules, bProduct, bBPartner, bProject,
-          bCampaign, bSalesRegion, (bAccountingCreated) ? false : boCreateAccounting, strCurrency);
+      obResult = createReferenceData(strModules, bProduct, bBPartner, bProject, bCampaign,
+          bSalesRegion, (bAccountingCreated) ? false : boCreateAccounting, strCurrency);
       if (!obResult.getType().equals(OKTYPE))
         return obResult;
       logEvent(NEW_LINE + "@CreateReferenceDataSuccess@");
@@ -259,9 +258,9 @@ public class InitialOrgSetup {
 
   }
 
-  private OBError createReferenceData(String strSourcePath, String strModulesProvided,
-      boolean product, boolean partner, boolean project, boolean campaign, boolean salesRegion,
-      boolean boCreateAccounting, String strCurrency) {
+  private OBError createReferenceData(String strModulesProvided, boolean product, boolean partner,
+      boolean project, boolean campaign, boolean salesRegion, boolean boCreateAccounting,
+      String strCurrency) {
     log4j.debug("createReferenceData() - Starting the process to create"
         + " reference data for modules: " + strModulesProvided);
     OBError obeResult = new OBError();
@@ -274,9 +273,8 @@ public class InitialOrgSetup {
       if (boCreateAccounting) {
         try {
           log4j.debug("createReferenceData() - There exists accounting modules to process");
-          obeResult = insertAccountingModule(strSourcePath, strModules, partner, product, project,
-              campaign, salesRegion,
-              InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"),
+          obeResult = insertAccountingModule(strModules, partner, product, project, campaign,
+              salesRegion, InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"),
               InitialSetupUtility.getTranslatedColumnName(language, "C_Calendar_ID"), strCurrency);
           if (!obeResult.getType().equals(OKTYPE))
             return obeResult;
@@ -397,9 +395,9 @@ public class InitialOrgSetup {
     return obeResult;
   }
 
-  private OBError insertAccountingModule(String strSourcePath, String strModules,
-      boolean bBPartner, boolean bProduct, boolean bProject, boolean bCampaign,
-      boolean bSalesRegion, String strAccountText, String strCalendarText, String strCurrency) {
+  private OBError insertAccountingModule(String strModules, boolean bBPartner, boolean bProduct,
+      boolean bProject, boolean bCampaign, boolean bSalesRegion, String strAccountText,
+      String strCalendarText, String strCurrency) {
     log4j.debug("insertAccountingModule() - Starting client creation.");
     if (client == null)
       return logErrorAndRollback(

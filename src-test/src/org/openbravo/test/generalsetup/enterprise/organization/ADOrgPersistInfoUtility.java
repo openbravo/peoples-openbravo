@@ -23,12 +23,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -65,11 +63,9 @@ class ADOrgPersistInfoUtility {
   static String createOrganization(String newOrgType, String strParentOrg, boolean summary,
       String currencyId) {
     long number = System.currentTimeMillis();
-    Properties properties = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-    String strSourcePath = properties.getProperty("source.path");
     InitialOrgSetup initialOrg = new InitialOrgSetup(OBContext.getOBContext().getCurrentClient());
     initialOrg.createOrganization("Test_" + number, "", newOrgType, strParentOrg, "", "", "",
-        false, null, "", false, false, false, false, false, strSourcePath);
+        false, null, "", false, false, false, false, false);
     Organization org = OBDal.getInstance().get(Organization.class, initialOrg.getOrgId());
     org.setSummaryLevel(summary);
     if (StringUtils.equals(newOrgType, ADOrgPersistInfoConstants.ORGTYPE_LEGALWITHACCOUNTING)) {
