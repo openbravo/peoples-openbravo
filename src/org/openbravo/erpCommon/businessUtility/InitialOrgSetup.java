@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,7 @@
 
 package org.openbravo.erpCommon.businessUtility;
 
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
@@ -438,25 +439,23 @@ public class InitialOrgSetup {
         logEvent(NEW_LINE + "@ProcessingAccountingModule@ " + modCoA.getName());
         log4j.debug("createReferenceData() - Processing Chart of Accounts module "
             + modCoA.getName());
-        String strPath = "";
-        try {
-          OBContext.setAdminMode();
-          strPath = strSourcePath + "/modules/" + modCoA.getJavaPackage()
-              + "/referencedata/accounts/COA.csv";
-        } finally {
-          OBContext.restorePreviousMode();
+
+        try (InputStream coaFile = COAUtility.getCOAResource(modCoA)) {
+          COAUtility coaUtility = new COAUtility(client, org, accountTree);
+          obeResult = coaUtility.createAccounting(null, coaFile, bBPartner, bProduct, bProject,
+              bCampaign, bSalesRegion, strAccountText, "US", "A", strCalendarText,
+              InitialSetupUtility.getCurrency(strCurrency));
+          strLog.append(coaUtility.getLog());
+        } catch (FileNotFoundException e) {
+          logEvent("@FileDoesNotExist@ " + e.getMessage());
+          throw new OBException("Could not find resource", e);
         }
-        COAUtility coaUtility = new COAUtility(client, org, accountTree);
-        FileInputStream inputStream = new FileInputStream(strPath);
-        obeResult = coaUtility.createAccounting(null, inputStream, bBPartner, bProduct, bProject,
-            bCampaign, bSalesRegion, strAccountText, "US", "A", strCalendarText,
-            InitialSetupUtility.getCurrency(strCurrency));
-        strLog.append(coaUtility.getLog());
-      } else
+      } else {
         return logErrorAndRollback(
             "@CreateReferenceDataFailed@. @CreateAccountingButNoCoAProvided@",
             "createReferenceData() - Create accounting option was active, but no file was provided, and no accoutning module was chosen",
             null);
+      }
     } catch (Exception e) {
       return logErrorAndRollback("@CreateReferenceDataFailed@",
           "createReferenceData() - Exception while processing accounting modules", e);

@@ -420,11 +420,12 @@ build.war: build a war file in the lib directory.
       </fileset>
     </copy>
 
-    <copy todir="${base.context}/referencedata/standard">
+    <copy todir="${base.context}/referencedata">
       <fileset dir="${base.modules}">
         <include name="*/referencedata/standard/*.xml" />
+        <include name="*/referencedata/accounts/COA.csv" />
       </fileset>
-      <mapper type="regexp" from="(.*\${file.separator})(referencedata\${file.separator}standard\${file.separator})(.*)" to="\1\3" />
+      <mapper type="regexp" from="(.*\${file.separator})referencedata\${file.separator}(standard|accounts)\${file.separator}(.*)" to="\2${file.separator}\1\3" />
     </copy>
 
     <antcall target="build.web.folder" inheritAll="true" inheritrefs="true" />
