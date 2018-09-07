@@ -410,6 +410,8 @@ public abstract class AuthenticationManager {
    *         </ul>
    */
   protected String doWebServiceAuthenticate(HttpServletRequest request) {
+    request.setAttribute("IS_SELF_AUTHENTICATED", "Y");
+
     UserLoginInfo authenticationData = getAuthenticationData(request);
     if (authenticationData == null) {
       return null;

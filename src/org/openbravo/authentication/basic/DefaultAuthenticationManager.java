@@ -78,6 +78,8 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       return sUserId;
     }
 
+    request.setAttribute("IS_SELF_AUTHENTICATED", "Y");
+
     VariablesHistory variables = new VariablesHistory(request);
     String user;
     String pass = null;
