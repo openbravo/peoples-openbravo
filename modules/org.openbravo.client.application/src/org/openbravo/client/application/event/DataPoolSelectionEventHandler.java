@@ -34,6 +34,12 @@ import org.openbravo.client.kernel.event.TransactionBeginEvent;
 import org.openbravo.client.kernel.event.TransactionCompletedEvent;
 import org.openbravo.dal.service.DataPoolChecker;
 
+/**
+ * Refreshes DataPoolChecker report-pool mapping when DataPoolSelection changes.
+ *
+ * Note that in a cluster environment, it is required to restart Tomcat to refresh all changes in
+ * every node.
+ */
 public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserver {
 
   protected Logger logger = Logger.getLogger(this.getClass());

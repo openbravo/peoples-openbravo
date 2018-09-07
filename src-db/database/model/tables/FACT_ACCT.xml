@@ -292,6 +292,9 @@
         <index-column name="C_ACCTSCHEMA_ID"/>
         <index-column name="ACCOUNT_ID"/>
       </index>
+      <index name="FACT_ACCT_ACCOUNT_IDX" unique="false">
+        <index-column name="ACCOUNT_ID"/>
+      </index>
       <index name="FACT_ACCT_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
         <whereClause><![CDATA[C_BPARTNER_ID IS NOT NULL]]></whereClause>

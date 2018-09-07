@@ -351,20 +351,6 @@ public class CancelAndReplaceUtils {
             oldOrder.getDocumentNo()));
       }
 
-      // Check if there's any shipment associated to the old order
-      final StringBuffer hql = new StringBuffer();
-      hql.append("SELECT 1 ");
-      hql.append("FROM OrderLine AS ol ");
-      hql.append("WHERE EXISTS (SELECT 1 ");
-      hql.append("FROM MaterialMgmtShipmentInOutLine AS sl ");
-      hql.append("WHERE sl.salesOrderLine = ol) ");
-      hql.append("AND ol.salesOrder.id = :orderId");
-      final Query<Integer> query = OBDal.getInstance().getSession()
-          .createQuery(hql.toString(), Integer.class);
-      query.setParameter("orderId", oldOrderId);
-      query.setMaxResults(1);
-      final boolean hasShipment = query.uniqueResult() != null;
-
       // Close old reservations
       closeOldReservations(oldOrder);
 
@@ -565,25 +551,18 @@ public class CancelAndReplaceUtils {
       }
       // Create or update the needed services relations
       updateServicesRelations(jsonorder, oldOrder, inverseOrder, newOrder, replaceOrder);
-      // The netting shipment is flaged as processed.
+      // The netting shipment is flagged as processed.
       if (nettingGoodsShipment != null) {
         processShipmentHeader(nettingGoodsShipment);
       }
+      // Adjust the taxes
       if (!triggersDisabled) {
         callCOrderTaxAdjustment(inverseOrder);
       }
 
       // Set the delivered status for the old and inverse orders
-      if (createNettingGoodsShipment) {
-        inverseOrder.setDelivered(true);
-        oldOrder.setDelivered(true);
-      } else if (associateShipmentToNewReceipt && replaceOrder) {
-        inverseOrder.setDelivered(false);
-        oldOrder.setDelivered(false);
-      } else {
-        inverseOrder.setDelivered(false);
-        oldOrder.setDelivered(hasShipment ? true : false);
-      }
+      oldOrder.setDelivered(true);
+      inverseOrder.setDelivered(true);
 
       // Close inverse order
       inverseOrder.setDocumentStatus("CL");
