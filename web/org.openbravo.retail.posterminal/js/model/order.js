@@ -6134,7 +6134,7 @@
                 if (order.get('priceIncludesTax')) {
                   price = OB.DEC.number(iter.unitPrice);
                 } else {
-                  price = OB.DEC.number(iter.baseNetUnitPrice);
+                  price = OB.DEC.number(iter.baseNetUnitPrice > 0 ? iter.baseNetUnitPrice : iter.unitPrice);
                 }
 
                 if (!iter.deliveredQuantity) {
