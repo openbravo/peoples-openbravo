@@ -18,7 +18,7 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -1678,30 +1678,28 @@ public class InitialSetupUtility {
     if (orgProvided == null) {
       if ((organization = getZeroOrg()) == null)
         return null;
-    } else
+    } else {
       organization = orgProvided;
-    ImportResult myResult = null;
-    String strSourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("source.path");
-    if (strSourcePath == null || strSourcePath.equals("")) {
-      throw new OBException("@NoSourcePath@");
     }
-    String strPath = "";
-    File datasetFile;
+    ImportResult myResult = null;
+
     OBContext.setAdminMode();
     try {
-      if (dataset.getModule().getJavaPackage().equals("org.openbravo")) {
-        strPath = strSourcePath + "/referencedata/standard";
-      } else {
-        strPath = strSourcePath + "/modules/" + dataset.getModule().getJavaPackage()
-            + "/referencedata/standard";
+      String xmlPath = "/WEB-INF/referencedata/standard/" + dataset.getModule().getJavaPackage()
+          + "/" + Utility.wikifiedName(dataset.getName()) + ".xml";
+
+      String strXml = null;
+      try (InputStream r = RequestContext.getServletContext().getResourceAsStream(xmlPath)) {
+        if (r == null) {
+          log4j.error("Could not find reference data resource " + xmlPath + " at "
+              + RequestContext.getServletContext().getRealPath(xmlPath));
+          return myResult;
+        }
+        strXml = IOUtils.toString(r);
       }
-      datasetFile = new File(strPath + "/" + Utility.wikifiedName(dataset.getName()) + ".xml");
-      if (!datasetFile.exists()) {
-        return myResult;
-      }
+
       DataImportService myData = DataImportService.getInstance();
-      String strXml = Utility.fileToString(datasetFile.getPath());
+
       boolean filterOrganizations = true;
       myResult = myData.importDataFromXML(client, organization, strXml, dataset.getModule(),
           filterOrganizations);
@@ -1711,9 +1709,9 @@ public class InitialSetupUtility {
         return myResult;
       }
       if (organization.getId().equals(getZeroOrg().getId())
-          && getClientModuleList(client, dataset.getModule()).size() == 0) {
+          && getClientModuleList(client, dataset.getModule()).isEmpty()) {
         insertClientModule(client, dataset.getModule());
-      } else if (getOrgModuleList(client, organization, dataset.getModule()).size() == 0) {
+      } else if (getOrgModuleList(client, organization, dataset.getModule()).isEmpty()) {
         insertOrgModule(client, organization, dataset.getModule());
       }
     } finally {

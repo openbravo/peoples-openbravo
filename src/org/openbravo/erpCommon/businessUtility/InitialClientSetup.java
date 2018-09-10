@@ -11,14 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
 
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -580,17 +580,20 @@ public class InitialClientSetup {
         logEvent(NEW_LINE + "@ProcessingAccountingModule@ " + modCoA.getName());
         log4j.debug("createReferenceData() - Processing Chart of Accounts module "
             + modCoA.getName());
-        String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/"
-            + modCoA.getJavaPackage() + "/referencedata/accounts/COA.csv";
-        COAUtility coaUtility = new COAUtility(client, treeAccount);
-        FileInputStream inputStream = new FileInputStream(strPath);
-        obeResult = coaUtility.createAccounting(vars, inputStream, bBPartner, bProduct, bProject,
-            bCampaign, bSalesRegion, strAccountText, "US", "A", strCalendarText, currency);
-        strLog.append(coaUtility.getLog());
-      } else
+        try (InputStream coaFile = COAUtility.getCOAResource(modCoA)) {
+          COAUtility coaUtility = new COAUtility(client, treeAccount);
+          obeResult = coaUtility.createAccounting(vars, coaFile, bBPartner, bProduct, bProject,
+              bCampaign, bSalesRegion, strAccountText, "US", "A", strCalendarText, currency);
+          strLog.append(coaUtility.getLog());
+        } catch (FileNotFoundException e) {
+          logEvent("@FileDoesNotExist@ " + e.getMessage());
+          throw new OBException("Could not find resource", e);
+        }
+      } else {
         return logErrorAndRollback(
             "@CreateReferenceDataFailed@. @CreateAccountingButNoCoAProvided@",
             "createReferenceData() - Create accounting option was active, but no file was provided, and no accoutning module was chosen");
+      }
     } catch (Exception e) {
       return logErrorAndRollback("@CreateReferenceDataFailed@",
           "createReferenceData() - Exception while processing accounting modules", e);
