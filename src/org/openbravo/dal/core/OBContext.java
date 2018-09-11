@@ -468,7 +468,9 @@ public class OBContext implements OBNotSingleton, Serializable {
       context.setNewUI("true".equals(newUIValue));
     }
 
-    session.setAttribute(CONTEXT_PARAM, context);
+    if (session.getAttribute(CONTEXT_PARAM) != context) {
+      session.setAttribute(CONTEXT_PARAM, context);
+    }
   }
 
   /**
