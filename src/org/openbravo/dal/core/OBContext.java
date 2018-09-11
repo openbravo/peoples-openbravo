@@ -84,6 +84,48 @@ public class OBContext implements OBNotSingleton, Serializable {
   private static final String CLIENT = "#AD_Client_ID";
   private static final String ORG = "#AD_Org_ID";
 
+  private String userID;
+  private String roleID;
+  private String clientID;
+  private String orgID;
+  private String warehouseID;
+  private String langID;
+
+  private transient Client currentClient;
+  private transient Organization currentOrganization;
+  private transient Role role;
+  private transient User user;
+  private transient Language language;
+  private transient boolean translationInstalled;
+  private transient Warehouse warehouse;
+  private transient List<String> organizationList;
+  private transient List<String> deactivatedOrganizationList;
+  private transient String[] readableOrganizations;
+  private transient String[] readableClients;
+  private transient Set<String> writableOrganizations;
+  private transient Set<String> deactivatedOrganizations;
+  private transient String userLevel;
+  private transient Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
+  private transient Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
+  private transient EntityAccessChecker entityAccessChecker;
+
+  // the "0" user is the administrator
+  private transient boolean isAdministrator;
+  private transient boolean isInitialized = false;
+
+  private transient boolean isRTL = false;
+
+  private transient boolean isPortalRole = false;
+
+  private transient boolean isWebServiceEnabled = false;
+
+  private Set<String> additionalWritableOrganizations = new HashSet<String>();
+
+  // check whether using new or old UI
+  private transient boolean newUI = false;
+
+  private transient boolean checkAccessLevel = true;
+
   // set this to a higher value to enable admin mode tracing
   private static int ADMIN_TRACE_SIZE = 0;
 
@@ -538,50 +580,8 @@ public class OBContext implements OBNotSingleton, Serializable {
    */
   public static OBContext getOBContext() {
     final OBContext localContext = instance.get();
-    if (localContext != null && localContext.isSerialized()) {
-      localContext.initializeFromSerializedState();
-    }
     return localContext;
   }
-
-  private Client currentClient;
-  private Organization currentOrganization;
-  private Role role;
-  private User user;
-  private Language language;
-  private boolean translationInstalled;
-  private Warehouse warehouse;
-  private List<String> organizationList;
-  private List<String> deactivatedOrganizationList;
-  private String[] readableOrganizations;
-  private String[] readableClients;
-  private Set<String> writableOrganizations;
-  private Set<String> deactivatedOrganizations;
-  private String userLevel;
-  private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
-  private Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
-  private EntityAccessChecker entityAccessChecker;
-
-  // the "0" user is the administrator
-  private boolean isAdministrator;
-  private boolean isInitialized = false;
-
-  private boolean isRTL = false;
-
-  private boolean isPortalRole = false;
-
-  private boolean isWebServiceEnabled = false;
-
-  private Set<String> additionalWritableOrganizations = new HashSet<String>();
-
-  // support storing the context in a persistent tomcat session
-  private String serializedUserId;
-  private boolean serialized = false;
-
-  // check whether using new or old UI
-  private boolean newUI = false;
-
-  private boolean checkAccessLevel = true;
 
   public String getUserLevel() {
     return userLevel;
@@ -793,42 +793,15 @@ public class OBContext implements OBNotSingleton, Serializable {
     }
   }
 
-  // the obcontext is located in the session, in tomcat sessions are
-  // persisted and its content is serialized. The OBContext contains non-
-  // serializable objects (like non-initialized cglib proxies). Therefore
-  // before really serializing the obcontext is cleaned out.
-  // only the serializedUserId is maintained so that the context can be
-  // refreshed after being de-serialized and at the first request
   private void writeObject(ObjectOutputStream out) throws IOException {
-
-    currentClient = null;
-    currentOrganization = null;
-    role = null;
-    user = null;
-    language = null;
-    warehouse = null;
-    organizationList = null;
-    deactivatedOrganizationList = null;
-    readableOrganizations = null;
-    readableClients = null;
-    writableOrganizations = null;
-    deactivatedOrganizations = null;
-    userLevel = null;
-    organizationStructureProviderByClient = null;
-    acctSchemaStructureProviderByClient = null;
-    entityAccessChecker = null;
-
-    isAdministrator = false;
-    isInitialized = false;
-
-    serializedUserId = getUser().getId();
-    serialized = true;
+    log.trace("Write context: " + this);
     out.defaultWriteObject();
   }
 
-  protected void initializeFromSerializedState() {
-    initialize(serializedUserId);
-    serialized = false;
+  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    log.trace("Read context: " + this);
+    initialize(userID, roleID, clientID, orgID, langID, warehouseID);
   }
 
   // sets the context by reading all user information
@@ -850,6 +823,12 @@ public class OBContext implements OBNotSingleton, Serializable {
   // sets the context by reading all user information
   private boolean initialize(String userId, String roleId, String clientId, String orgId,
       String languageCode, String warehouseId) {
+    userID = userId;
+    roleID = roleId;
+    clientID = clientId;
+    orgID = orgId;
+    langID = languageCode;
+    warehouseID = warehouseId;
 
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
@@ -1257,10 +1236,6 @@ public class OBContext implements OBNotSingleton, Serializable {
     return (String) session.getAttribute(param.toUpperCase());
   }
 
-  public boolean isSerialized() {
-    return serialized;
-  }
-
   public Warehouse getWarehouse() {
     return warehouse;
   }
@@ -1330,6 +1305,12 @@ public class OBContext implements OBNotSingleton, Serializable {
 
   private void setTranslationInstalled(boolean translationInstalled) {
     this.translationInstalled = translationInstalled;
+  }
+
+  @Override
+  public String toString() {
+    return "[user: " + userID + ", role:" + roleID + ", client:" + clientID + ", org:" + orgID
+        + ", warehouse: " + warehouseID + ", lang:" + langID + "]";
   }
 
 }
