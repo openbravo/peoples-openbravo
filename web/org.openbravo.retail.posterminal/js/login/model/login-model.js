@@ -304,6 +304,9 @@
         changesPendingCriteria: {
           'isprocessed': 'Y'
         },
+        removeSyncedElemsCallback: function (dataToSync, tx, requestCallback) {
+          OB.UTIL.deleteCashUps(dataToSync, tx, requestCallback);
+        },
         postProcessingFunction: function (data, callback) {
           OB.UTIL.initCashUp(function () {
             var cashUpId = data.at(0).get('id');
@@ -319,10 +322,12 @@
               }
             });
             // Get Cashup id, if objToSend is not filled compose and synchronize
-            OB.UTIL.deleteCashUps(data);
-            OB.UTIL.calculateCurrentCash();
-            callback();
-          }, null, true);
+            OB.UTIL.calculateCurrentCash(function () {
+              if (callback) {
+                callback();
+              }
+            }, null, data.at(0));
+          }, null, true, data.at(0));
         },
         // skip the syncing of the cashup if it is the same as the last one
         preSendModel: function (me, dataToSync) {
