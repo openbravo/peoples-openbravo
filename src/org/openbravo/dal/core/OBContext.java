@@ -75,6 +75,8 @@ import org.openbravo.model.common.enterprise.Warehouse;
 // Note the getInstance/setInstance and ThreadLocal pattern should be reviewed
 // when using a factory/dependency injection approach.
 public class OBContext implements OBNotSingleton, Serializable {
+  private static final long serialVersionUID = 1L;
+
   private static final Logger log = Logger.getLogger(OBContext.class);
 
   // private static final String AD_USERID = "#AD_USER_ID";
