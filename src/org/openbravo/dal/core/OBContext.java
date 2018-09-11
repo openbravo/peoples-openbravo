@@ -22,6 +22,7 @@ package org.openbravo.dal.core;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -73,7 +74,7 @@ import org.openbravo.model.common.enterprise.Warehouse;
 
 // Note the getInstance/setInstance and ThreadLocal pattern should be reviewed
 // when using a factory/dependency injection approach.
-public class OBContext implements OBNotSingleton {
+public class OBContext implements OBNotSingleton, Serializable {
   private static final Logger log = Logger.getLogger(OBContext.class);
 
   // private static final String AD_USERID = "#AD_USER_ID";
