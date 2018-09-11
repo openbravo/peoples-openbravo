@@ -35,6 +35,11 @@ isc.OBTreeItem.addProperties({
   tree: null,
   init: function (parameters) {
     this.pickerIconSrc = OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc;
+    if (parameters.isPreviewFormItem) {
+      // Do not need to initialize the OBTreeItem components if we are in the personalization form
+      this.Super('init', arguments);
+      return;
+    }
     if (parameters.showTreePopupWindow !== false) {
       this.icons = [{
         src: OB.Styles.OBFormField.DefaultSearch.pickerIconSrc,
@@ -139,7 +144,9 @@ isc.OBTreeItem.addProperties({
   },
 
   moved: function () {
-    this.tree.updatePosition();
+    if (this.tree) {
+      this.tree.updatePosition();
+    }
     return this.Super('moved', arguments);
   },
 
