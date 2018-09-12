@@ -207,7 +207,13 @@
             _.forEach(receipt.get('payments').models, function (item) {
               if (!item.get('isPrePayment') && !item.get('reversedPaymentId') && !receipt.get('isPaid')) {
                 item.set('amount', -item.get('amount'));
+                if (item.get('amountRounded')) {
+                  item.set('amountRounded', -item.get('amountRounded'));
+                }
                 item.set('origAmount', -item.get('origAmount'));
+                if (item.get('origAmountRounded')) {
+                  item.set('origAmountRounded', -item.get('origAmountRounded'));
+                }
                 item.set('paid', -item.get('paid'));
               }
               paymentTotalAmt = OB.DEC.add(paymentTotalAmt, item.get('origAmount'));

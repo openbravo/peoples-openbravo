@@ -204,6 +204,9 @@ enyo.kind({
       kind: 'OB.UI.ModalProviderGroupVoid',
       name: 'modalprovidergroupvoid'
     }, {
+      kind: 'OB.UI.ModalChange',
+      name: 'modalchange'
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
       name: 'modalConfigurationRequiredForCrossStore'
     }, {
