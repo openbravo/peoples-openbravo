@@ -58,6 +58,9 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -92,9 +95,6 @@ import org.openbravo.model.common.geography.Location;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
 
 /**
  * @author Fernando Iriazabal
@@ -1991,7 +1991,7 @@ public class Utility {
     try {
       ByteArrayOutputStream bout = new ByteArrayOutputStream();
       new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
-          getDefaultImageLogo("Empty"), false, true).dumpFile(bout);
+          getDefaultImageLogoPath("Empty"), false, true).dumpFile(bout);
       bout.close();
       return bout.toByteArray();
     } catch (IOException ex) {
@@ -2108,9 +2108,28 @@ public class Utility {
    * @param org
    *          The organization id used to get the logo In the case of requesting the yourcompanydoc
    *          logo you can indicate the organization used to request the logo.
+   *
    * @return The image requested
    */
   public static Image getImageLogoObject(String logo, String org) {
+    return getImageLogoObject(logo, org, false);
+  }
+
+  /**
+   * Provides the image logo as a byte array for the indicated parameters.
+   *
+   * @param logo
+   *          The name of the logo to display This can be one of the following: yourcompanylogin,
+   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   * @param org
+   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
+   *          logo you can indicate the organization used to request the logo.
+   * @param doConnectionClose
+   *          A flag to force the close of the DAL connection after retrieving the image
+   *
+   * @return The image requested
+   */
+  private static Image getImageLogoObject(String logo, String org, boolean doConnectionClose) {
     Image img = null;
     OBContext.setAdminMode();
     try {
@@ -2177,6 +2196,9 @@ public class Utility {
       log4j.error("Could not load logo from database: " + logo + ", " + org, e);
     } finally {
       OBContext.restorePreviousMode();
+      if (doConnectionClose) {
+        OBDal.getReadOnlyInstance().commitAndClose();
+      }
     }
     return img;
   }
@@ -2193,13 +2215,29 @@ public class Utility {
    * @return The image requested
    */
   public static byte[] getImageLogo(String logo, String org) {
+    return getImageLogo(logo, org, false);
+  }
 
+  /**
+   * Provides the image logo as a byte array for the indicated parameters.
+   *
+   * @param logo
+   *          The name of the logo to display This can be one of the following: yourcompanylogin,
+   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   * @param org
+   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
+   *          logo you can indicate the organization used to request the logo.
+   * @param doConnectionClose
+   *          When true, forces the close of the DAL connection after retrieving the image
+   * @return The image requested
+   */
+  private static byte[] getImageLogo(String logo, String org, boolean doConnectionClose) {
     byte[] imageByte;
 
     try {
-      Image img = getImageLogoObject(logo, org);
+      Image img = getImageLogoObject(logo, org, doConnectionClose);
       if (img == null) {
-        String path = getDefaultImageLogo(logo);
+        String path = getDefaultImageLogoPath(logo);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
             path, false, true).dumpFile(bout);
@@ -2222,14 +2260,14 @@ public class Utility {
   }
 
   /**
-   * Provides the image logo as a byte array for the indicated parameters.
+   * Provides the image path for the indicated parameters.
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
    *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
-   * @return The image requested
+   * @return The path of the image requested
    */
-  private static String getDefaultImageLogo(String logo) {
+  private static String getDefaultImageLogoPath(String logo) {
 
     String defaultImagePath = null;
 
@@ -2378,7 +2416,11 @@ public class Utility {
    * @see #getImageLogo(String,String)
    */
   public static BufferedImage showImageLogo(String logo, String org) throws IOException {
-    return ImageIO.read(new ByteArrayInputStream(getImageLogo(logo, org)));
+    // Same as showImage(id), using getImageLogo(id, org, true) to close the DAL connection once the
+    // image has been retrieved.
+    // This is required to avoid connection leaks when invoking this method from a sub-report.
+    // This is needed until issue https://issues.openbravo.com/view.php?id=30182 is fixed.
+    return ImageIO.read(new ByteArrayInputStream(getImageLogo(logo, org, true)));
   }
 
   /**
