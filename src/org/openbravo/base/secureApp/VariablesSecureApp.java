@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -121,8 +121,7 @@ public class VariablesSecureApp extends VariablesBase {
     this.user = strUser;
     this.role = strRole;
     if (StringUtils.isEmpty(strLanguage)) {
-      this.language = System.getProperty("user.language") + "_"
-          + System.getProperty("user.country");
+      this.language = "en_US";
     } else {
       this.language = strLanguage;
     }
