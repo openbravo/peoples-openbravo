@@ -2387,18 +2387,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         continue;
       }
 
-      // When doing a reverse payment, normally the reversal payment has the 'paid' property to 0,
-      // because this 'paid' property is the sum of the total amount paid by this payment method
-      // (normally a payment is reversed to set the total quantity of that payment method to 0).
-      // Because of that, the next condition must be ignored to reversal payments
-      BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
       boolean isReversalPayment = payment.has("reversedPaymentId");
       if (isReversalPayment) {
         hasReversalPayment = true;
       }
-      if (paid.compareTo(BigDecimal.ZERO) == 0 && !isReversalPayment) {
-        continue;
-      }
+
       String paymentTypeName = payment.getString("kind");
       OBCriteria<OBPOSAppPayment> type = OBDal.getInstance().createCriteria(OBPOSAppPayment.class);
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_SEARCHKEY, paymentTypeName));
