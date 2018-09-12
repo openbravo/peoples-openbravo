@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,8 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
@@ -60,12 +62,12 @@ public class HorizontalInheritance extends WeldBaseTest {
   private final List<String> WIDGETS = Arrays.asList("Best Sellers", "Invoices to collect",
       "Motion Chart", "Planet", "Twitter");
   private final List<String> VIEWS = Arrays.asList("OBUIAPP_AlertManagement",
-      "OBUIAPP_RegistrationView");
+      RoleInheritanceTestUtils.DUMMY_VIEW_IMPL_NAME);
   private final List<String> PROCESSES = Arrays
       .asList("Create Purchase Order Lines", "Grant Portal Access", "Manage Variants",
           "Modify Payment In Plan", "Process Cost Adjustment");
-  private final List<String> TABLES = Arrays.asList("AD_User", "C_Order",
-      "FIN_Payment", "M_Warehouse" , "OBUIAPP_Note");
+  private final List<String> TABLES = Arrays.asList("AD_User", "C_Order", "FIN_Payment",
+      "M_Warehouse", "OBUIAPP_Note");
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo",
       "CUSTOMER WITHOUT ACCOUNTING", "Process Execution Failed", "Updates Available",
       "Wrong Purchase Order Payment Plan");
@@ -82,8 +84,17 @@ public class HorizontalInheritance extends WeldBaseTest {
       RoleInheritanceTestUtils.ACCESS_NAMES);
 
   /** this field will take the values defined by parameterValuesRule field. */
-  private @ParameterCdiTest
-  String parameter;
+  private @ParameterCdiTest String parameter;
+
+  @Before
+  public void createDummyView() {
+    RoleInheritanceTestUtils.createDummyView();
+  }
+
+  @After
+  public void removeDummyView() {
+    RoleInheritanceTestUtils.removeDummyView();
+  }
 
   /**
    * Test case for horizontal inheritance

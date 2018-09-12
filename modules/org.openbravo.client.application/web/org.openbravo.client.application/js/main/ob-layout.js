@@ -41,12 +41,6 @@ if (OB.PropertyStore.get('EnableScreenReader') === 'Y') {
   isc.screenReader = true;
 }
 
-// needed for backward compatibility... to open the registration form
-
-function openRegistration() {
-  OB.Utilities.openProcessPopup(OB.Application.contextUrl + 'ad_forms/Registration.html', true);
-}
-
 isc.Canvas.addClassProperties({
   neverUsePNGWorkaround: true
 });

@@ -658,13 +658,6 @@
       // Opens directly the "Heartbeat" window inside a popup
       openHeartbeat: function () {
         cobcomp.Popup.open('Heartbeat', 600, 500, OB.Application.contextUrl + 'ad_forms/Heartbeat.html', '', window, false, false, true);
-      },
-
-      // ** {{{ Popup.openRegistration() }}} **
-      //
-      // Opens directly the "Registration" window inside a popup
-      openRegistration: function () {
-        cobcomp.Popup.open('Registration', 600, 500, OB.Application.contextUrl + 'ad_forms/Registration.html', '', window, false, false, true);
       }
     }
   };
@@ -672,10 +665,3 @@
   // Initialize ClassicOBCompatibility object
   cobcomp = L.ClassicOBCompatibility = new ClassicOBCompatibility();
 }(OB, isc));
-
-isc.ClassFactory.defineClass('OBUIAPP_RegistrationView', isc.Layout).addProperties({
-  showsItself: true,
-  show: function () {
-    OB.Layout.ClassicOBCompatibility.Popup.openRegistration();
-  }
-});

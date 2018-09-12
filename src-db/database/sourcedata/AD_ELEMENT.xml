@@ -19988,20 +19988,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400001-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1005400001--></AD_ELEMENT>
 
-<!--1005400005--><AD_ELEMENT>
-<!--1005400005-->  <AD_ELEMENT_ID><![CDATA[1005400005]]></AD_ELEMENT_ID>
-<!--1005400005-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400005-->  <COLUMNNAME><![CDATA[Registration_ID]]></COLUMNNAME>
-<!--1005400005-->  <NAME><![CDATA[Registration Id]]></NAME>
-<!--1005400005-->  <PRINTNAME><![CDATA[Registration Id]]></PRINTNAME>
-<!--1005400005-->  <DESCRIPTION><![CDATA[Unique registration identifier for customer.]]></DESCRIPTION>
-<!--1005400005-->  <HELP><![CDATA[Unique registration identifier for customer.]]></HELP>
-<!--1005400005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005400005-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1005400005--></AD_ELEMENT>
-
 <!--1005400007--><AD_ELEMENT>
 <!--1005400007-->  <AD_ELEMENT_ID><![CDATA[1005400007]]></AD_ELEMENT_ID>
 <!--1005400007-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -20266,18 +20252,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400035-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1005400035--></AD_ELEMENT>
 
-<!--1005400037--><AD_ELEMENT>
-<!--1005400037-->  <AD_ELEMENT_ID><![CDATA[1005400037]]></AD_ELEMENT_ID>
-<!--1005400037-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400037-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400037-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400037-->  <COLUMNNAME><![CDATA[AD_Registration_Info_ID]]></COLUMNNAME>
-<!--1005400037-->  <NAME><![CDATA[AD_Registration_Info_ID]]></NAME>
-<!--1005400037-->  <PRINTNAME><![CDATA[AD_Registration_Info_ID]]></PRINTNAME>
-<!--1005400037-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005400037-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1005400037--></AD_ELEMENT>
-
 <!--1005400038--><AD_ELEMENT>
 <!--1005400038-->  <AD_ELEMENT_ID><![CDATA[1005400038]]></AD_ELEMENT_ID>
 <!--1005400038-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -20303,20 +20277,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005400039-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400039-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1005400039--></AD_ELEMENT>
-
-<!--1005400040--><AD_ELEMENT>
-<!--1005400040-->  <AD_ELEMENT_ID><![CDATA[1005400040]]></AD_ELEMENT_ID>
-<!--1005400040-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400040-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400040-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400040-->  <COLUMNNAME><![CDATA[Isregistrationactive]]></COLUMNNAME>
-<!--1005400040-->  <NAME><![CDATA[Activate Registration]]></NAME>
-<!--1005400040-->  <PRINTNAME><![CDATA[Activate Registration]]></PRINTNAME>
-<!--1005400040-->  <DESCRIPTION><![CDATA[Enable or disable your registration with Openbravo]]></DESCRIPTION>
-<!--1005400040-->  <HELP><![CDATA[Enable or disable your registration with Openbravo]]></HELP>
-<!--1005400040-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005400040-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1005400040--></AD_ELEMENT>
 
 <!--1005400041--><AD_ELEMENT>
 <!--1005400041-->  <AD_ELEMENT_ID><![CDATA[1005400041]]></AD_ELEMENT_ID>

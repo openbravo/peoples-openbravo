@@ -13986,20 +13986,6 @@ The Warehouse is the warehouse used by the Purchase Orders.]]></MSGTEXT>
 <!--1005500012-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--1005500012--></AD_MESSAGE>
 
-<!--1005800000--><AD_MESSAGE>
-<!--1005800000-->  <AD_MESSAGE_ID><![CDATA[1005800000]]></AD_MESSAGE_ID>
-<!--1005800000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005800000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005800000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005800000-->  <VALUE><![CDATA[REG_WELCOME]]></VALUE>
-<!--1005800000-->  <MSGTEXT><![CDATA[Are you thinking of an Openbravo implementation? You should learn about the benefits of Openbravo Professional Edition.
-
-Register now for more information. It is quick and easy. An Openbravo representative will contact you to answer any of your questions. Find out if Openbravo Professional Edition is right for you.]]></MSGTEXT>
-<!--1005800000-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
-<!--1005800000-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005800000-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--1005800000--></AD_MESSAGE>
-
 <!--1005800001--><AD_MESSAGE>
 <!--1005800001-->  <AD_MESSAGE_ID><![CDATA[1005800001]]></AD_MESSAGE_ID>
 <!--1005800001-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

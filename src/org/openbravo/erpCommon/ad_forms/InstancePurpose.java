@@ -73,10 +73,6 @@ public class InstancePurpose extends HttpSecureAppServlet {
         response.sendRedirect("Heartbeat.html");
         return;
       }
-      if (HeartbeatProcess.isShowRegistrationRequired(vars, myPool)) {
-        response.sendRedirect("Registration.html");
-        return;
-      }
       printPageClosePopUp(response, vars);
     } else {
       pageError(response);

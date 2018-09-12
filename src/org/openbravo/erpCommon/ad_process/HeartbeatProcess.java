@@ -54,7 +54,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.RegistrationData;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
@@ -665,7 +664,7 @@ public class HeartbeatProcess implements Process {
   }
 
   public enum HeartBeatOrRegistration {
-    HeartBeat, Registration, None, InstancePurpose;
+    HeartBeat, None, InstancePurpose;
   }
 
   /**
@@ -693,9 +692,6 @@ public class HeartbeatProcess implements Process {
       }
       if (isShowHeartbeatRequired(javaDateFormat, connectionProvider)) {
         return HeartBeatOrRegistration.HeartBeat;
-      }
-      if (isShowRegistrationRequired(javaDateFormat, connectionProvider)) {
-        return HeartBeatOrRegistration.Registration;
       }
     }
     return HeartBeatOrRegistration.None;
@@ -779,44 +775,6 @@ public class HeartbeatProcess implements Process {
           Date date = null;
           try {
             date = new SimpleDateFormat(javaDateFormat).parse(postponeDate);
-            if (date.before(new Date())) {
-              return true;
-            }
-          } catch (final ParseException e) {
-            log.error(e.getMessage(), e);
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * @see HeartbeatProcess#isShowRegistrationRequired(String, ConnectionProvider)
-   */
-  public static boolean isShowRegistrationRequired(VariablesSecureApp vars,
-      ConnectionProvider connectionProvider) throws ServletException {
-    return isShowRegistrationRequired(vars.getJavaDateFormat(), connectionProvider);
-  }
-
-  /**
-   * Check if the Registration popup must be displayed.
-   * 
-   * @return {@code true} if the Registration popup must be displayed, {@code false} otherwise.
-   */
-  public static boolean isShowRegistrationRequired(String javaDateFormat,
-      ConnectionProvider connectionProvider) throws ServletException {
-    final RegistrationData[] rData = RegistrationData.select(connectionProvider);
-    if (rData.length > 0) {
-      final String isregistrationactive = rData[0].isregistrationactive;
-      final String rPostponeDate = rData[0].postponeDate;
-      if (isregistrationactive == null || isregistrationactive.equals("")) {
-        if (rPostponeDate == null || rPostponeDate.equals("")) {
-          return true;
-        } else {
-          Date date = null;
-          try {
-            date = new SimpleDateFormat(javaDateFormat).parse(rPostponeDate);
             if (date.before(new Date())) {
               return true;
             }
