@@ -72,7 +72,7 @@ enyo.kind({
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
       if (!l.hasErrors) {
-        amount = parseFloat(l.$.textline.getValue());
+        amount = l.getParsedValue();
         precision = l.payment.obposPosprecision;
         if (l.payment.changeRounding) {
           roundingto = l.payment.changeRounding.roundingto;
@@ -122,7 +122,7 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ChangeAmountsNotComplete'));
         return;
       }
-      amount = parseFloat(l.$.textline.getValue());
+      amount = l.getParsedValue();
       origAmount = OB.DEC.div(amount, l.payment.mulrate);
       paymentchangemap.push({
         payment: l.payment,

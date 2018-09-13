@@ -44,8 +44,20 @@ enyo.kind({
     this.inherited(arguments);
     this.$.labelLine.content = this.payment.payment.commercialName;
   },
+  getParsedValue: function () {
+    var value = this.$.textline.getValue();
+    try {
+      if (!OB.I18N.isValidNumber(value)) {
+        return NaN;
+      }
+      value = value.split(OB.Format.defaultGroupingSymbol).join(''); // Replace All
+      return OB.I18N.parseNumber(value);
+    } catch (ex) {
+      return NaN;
+    }
+  },
   actionInput: function (inSender, inEvent) {
-    var value = parseFloat(this.$.textline.getValue());
+    var value = this.getParsedValue();
     this.edited = true;
     this.hasErrors = _.isNaN(value) || value < 0 || OB.DEC.compare(OB.DEC.sub(value, this.calculateAmount(value), this.payment.obposPosprecision));
     this.displayStatus();
@@ -95,7 +107,7 @@ enyo.kind({
     this.assignValidValue(currentChange ? currentChange.amountRounded : 0);
   },
   assignValidValue: function (amountRounded) {
-    this.$.textline.setValue(amountRounded);
+    this.$.textline.setValue(OB.I18N.formatCurrency(amountRounded));
     this.hasErrors = false;
     this.displayStatus();
     setTimeout(function () {
