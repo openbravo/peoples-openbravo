@@ -754,12 +754,13 @@ button.btnbp:disabled {
 .changedialog-properties-label {
   padding: 5px 8px 0px 0px;
   font-size: 15px;
+  width: 35%;
 }
 
 .changedialog-properties-text {
   border: 1px solid #F0F0F0;
   float: left;
-  width: 180px;
+  width: 35%;
 }
 
 .changedialog-properties-input {
@@ -769,6 +770,7 @@ button.btnbp:disabled {
 }
 
 .changedialog-properties-info {
+  widht: 25%;
   float: left;
   margin-left: 25px;
   color: #6f6f6f;
@@ -778,7 +780,6 @@ button.btnbp:disabled {
 
 .changedialog-properties-info-text {
   line-height: 20px;
-  width: 110px;
 }
 
 .changedialog-properties-end {
