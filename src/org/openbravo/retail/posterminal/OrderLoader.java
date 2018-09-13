@@ -140,6 +140,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isModified = false;
   private boolean doCancelAndReplace = false;
   private boolean paidReceipt = false;
+  private boolean deliver = false;
 
   @Inject
   @Any
@@ -224,6 +225,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     doCancelAndReplace = jsonorder.has("doCancelAndReplace")
         && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
+
+    deliver = jsonorder.optBoolean("deliver", true);
   }
 
   @Override
@@ -359,7 +362,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          order.setDelivered(createShipment);
+          order.setDelivered(deliver);
           if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
             order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
@@ -1900,7 +1903,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessed(true);
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
-    order.setDelivered(createShipment);
+    if (!newLayaway && !isQuotation && !isDeleted) {
+      order.setDelivered(deliver);
+    }
 
     if (!doCancelAndReplace) {
       if (order.getDocumentNo().indexOf("/") > -1) {

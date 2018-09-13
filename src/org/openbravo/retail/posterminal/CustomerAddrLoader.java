@@ -153,9 +153,6 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       }
       newLocation.setInvoiceToAddress(jsonCustomerAddr.getBoolean("isBillTo"));
       newLocation.setShipToAddress(jsonCustomerAddr.getBoolean("isShipTo"));
-      // don't set phone of location, the phone is set in contact
-      newLocation.setPhone(null);
-
       newLocation.setBusinessPartner(customer);
       newLocation.setLocationAddress(rootLocation);
       newLocation.setNewOBObject(true);
