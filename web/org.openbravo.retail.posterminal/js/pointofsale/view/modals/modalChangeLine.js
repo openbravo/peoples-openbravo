@@ -92,7 +92,7 @@ enyo.kind({
   actionShow: function (inSender, inEvent) {
     var value, currentChange;
 
-    value = OB.DEC.mul(inEvent.receipt.getPaymentStatus().changeAmt, this.payment.mulrate, this.payment.obposPosprecision);
+    value = OB.DEC.mul(inEvent.change, this.payment.mulrate, this.payment.obposPosprecision);
     this.maxValue = this.calculateAmount(value);
     this.$.infomax.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(this.maxValue, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
     this.$.inforemaining.setContent('');

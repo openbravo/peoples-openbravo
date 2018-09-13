@@ -371,10 +371,15 @@ enyo.kind({
     }
   },
   actionChangeButton: function (inSender, inEvent) {
+    var change = this.model.isValidMultiOrderState() //
+    ? this.model.get('multiOrders').get('change') //
+    : this.receipt.getPaymentStatus().changeAmt;
+
     this.doShowPopup({
       popup: 'modalchange',
       args: {
         receipt: this.receipt,
+        change: change,
         applyPaymentChange: function (paymentchange) {
           var paymentstatus, selectedPayment;
 

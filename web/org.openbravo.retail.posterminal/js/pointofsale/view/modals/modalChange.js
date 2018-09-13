@@ -66,7 +66,7 @@ enyo.kind({
     var i, l, lines, amount, precision, roundingto, roundinggap, origamountmin, origamountmax, changemin, changemax, change, changeRounding;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
-    change = this.args.receipt.getPaymentStatus().changeAmt;
+    change = this.args.change;
     changemin = 0;
     changemax = 0;
     for (i = 0; i < lines.length; i++) {
@@ -102,10 +102,9 @@ enyo.kind({
     });
   },
   actionOK: function (inSender, inEvent) {
-    var paymentstatus, changeRounding, indexRounding, lines, paymentchangemap, paymentchange, amount, origAmount, edited, i, l;
+    var changeRounding, indexRounding, lines, paymentchangemap, paymentchange, amount, origAmount, edited, i, l;
 
-    paymentstatus = this.args.receipt.getPaymentStatus();
-    changeRounding = paymentstatus.changeAmt;
+    changeRounding = this.args.change;
     indexRounding = -1;
     lines = this.$.bodyContent.$.paymentlines.getComponents();
     edited = false;
@@ -161,7 +160,7 @@ enyo.kind({
     if (!inEvent.hasErrors && lines.length === 2) {
       line = lines[inEvent.line === lines[0] ? 1 : 0];
       originalValue = OB.DEC.div(inEvent.value, inEvent.line.payment.mulrate);
-      change = OB.DEC.sub(this.args.receipt.getPaymentStatus().changeAmt, originalValue);
+      change = OB.DEC.sub(this.args.change, originalValue);
       precision = line.payment.obposPosprecision;
       linechange = OB.DEC.mul(change, line.payment.mulrate, precision);
       changeLessThan = line.payment.paymentMethod.changeLessThan;
