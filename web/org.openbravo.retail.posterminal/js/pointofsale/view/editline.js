@@ -509,15 +509,15 @@ enyo.kind({
       }
     }
     if (line) {
+      if (line && !this.isLineInSelection(line)) {
+        return;
+      }
       if (this.selectedModels && this.selectedModels.length === 1 && line.get('product') && line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && this.model.get('order').get('isEditable') && line.get('isEditable')) {
         this.$.actionButtonsContainer.$.addAssociationsButton.show();
         this.$.actionButtonsContainer.$.removeAssociationsButton.show();
       } else {
         this.$.actionButtonsContainer.$.addAssociationsButton.hide();
         this.$.actionButtonsContainer.$.removeAssociationsButton.hide();
-      }
-      if (line && !this.isLineInSelection(line)) {
-        return;
       }
       this.$.returnreason.setSelected(0);
       if (this.line) {

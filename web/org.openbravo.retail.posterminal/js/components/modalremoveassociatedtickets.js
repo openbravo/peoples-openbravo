@@ -85,7 +85,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.productName.setContent(this.newAttribute.productName);
-    this.$.orderedQuantity.setContent(this.newAttribute.qtyPending);
+    this.$.orderedQuantity.setContent(this.newAttribute.qty);
     this.$.documentNo.setContent(this.newAttribute.orderDocumentNo);
     this.$.customer.setContent(this.newAttribute.bpName);
   },
@@ -147,11 +147,11 @@ enyo.kind({
     if (selectedLine.linesToAssociate && selectedLine.linesToAssociate.length === 0) {
       this.args.receipt.deleteLinesFromOrder([selectedLine]);
     } else if (selectedLine.linesToAssociate && selectedLine.linesToAssociate.length > 0) {
-      selectedLine.set('relatedLines', selectedLine.linesToAssociate);
-      delete selectedLine.linesToAssociate;
       if (selectedLine.get('quantityRule') === 'PP') {
         selectedLine.set('qty', selectedLine.get('relatedLines').length);
       }
+      selectedLine.set('relatedLines', selectedLine.linesToAssociate);
+      delete selectedLine.linesToAssociate;
       this.args.receipt.save(function () {
         return true;
       });

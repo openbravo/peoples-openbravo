@@ -220,7 +220,7 @@ enyo.kind({
       this.owner.addClass('ob-orderline');
       this.$.order.hide();
       this.$.orderline.show();
-      this.$.orderlineInfo.setContent(OB.I18N.getLabel('OBPOS_LblLineInfo', [this.model.get('lineNo'), this.model.get('qtyPending'), this.model.get('productName')]));
+      this.$.orderlineInfo.setContent(OB.I18N.getLabel('OBPOS_LblLineInfo', [this.model.get('lineNo'), this.model.get('qty'), this.model.get('productName')]));
       var qty = this.model.get('toAssociate') ? this.model.get('toAssociate') : 0;
       this.associateOrder(null, {
         value: qty
@@ -325,16 +325,14 @@ enyo.kind({
 
   associateSelected: function (inSender, inEvent) {
     var associatedOrderLineIds = [],
-        associatedOrderLineProductNames = [],
         modalSelector = this.parent.parent,
         selectedLine = modalSelector.selectedLine,
         relatedLines = selectedLine.get('relatedLines'),
-        receipt = modalSelector.receipt ? modalSelector.receipt : OB.MobileApp.model.receipt,
-        deferredQty = relatedLines.length;
+        receipt = modalSelector.receipt ? modalSelector.receipt : OB.MobileApp.model.receipt;
 
-    if (OB.UTIL.isNullOrUndefined(relatedLines[0].bpName) || OB.UTIL.isNullOrUndefined(relatedLines[0].qtyPending)) {
+    if (OB.UTIL.isNullOrUndefined(relatedLines[0].bpName) || OB.UTIL.isNullOrUndefined(relatedLines[0].qty)) {
       relatedLines[0].bpName = receipt.get('bp').get('name');
-      relatedLines[0].qtyPending = selectedLine.getQty();
+      relatedLines[0].qty = selectedLine.getQty();
     }
 
     _.each(
@@ -342,14 +340,17 @@ enyo.kind({
       if (line.get('ltype') === 'ORDERLINE' && line.get('toAssociate') === 1 && !associatedOrderLineIds.includes(line.get('orderlineId')) && selectedLine.get('id') !== line.get('orderlineId')) {
         var newRelatedLine = {};
         newRelatedLine.orderlineId = line.get('orderlineId');
+        newRelatedLine.deferred = line.get('deferred');
+        newRelatedLine.gross = line.get('gross');
+        newRelatedLine.net = line.get('net');
         newRelatedLine.productName = line.get('productName');
         newRelatedLine.orderDocumentNo = line.get('documentNo');
         newRelatedLine.otherTicket = line.get('documentNo') === receipt.get('documentNo') ? false : true;
-        newRelatedLine.bpName = line.get('businessPartnerName');
-        newRelatedLine.qtyPending = line.get('qtyPending');
+        newRelatedLine.qty = line.get('qty');
+        newRelatedLine.promotions = line.get('promotions');
+        newRelatedLine.bpName = line.get('bpName');
         relatedLines.push(newRelatedLine);
         associatedOrderLineIds.push(line.get('orderlineId'));
-        deferredQty++;
       }
     });
     if (selectedLine.get('product').get('quantityRule') === 'PP') {
@@ -414,8 +415,8 @@ enyo.kind({
               orderedDate: moment(
               iter.get('orderDate'), "YYYY-MM-DD").format(
               OB.Format.date.toUpperCase()),
-              bpName: iter.get('businessPartnerName'),
-              bpId: iter.get('businessPartner'),
+              bpName: iter.get('bpName'),
+              bpId: iter.get('bpId'),
               orderTotal: iter.get('orderTotal'),
               lines: []
             });
@@ -434,22 +435,55 @@ enyo.kind({
           // cycles
           newline.orderlineId = iter.get('orderlineId');
           newline.ltype = 'ORDERLINE';
-          newline.qtyPending = iter.get('qtyPending');
+          newline.deferred = true;
+          newline.gross = iter.get('gross');
+          newline.net = iter.get('net');
+          newline.qty = iter.get('qty');
           newline.dateDelivered = iter.get('orderDate') ? moment(
           iter.get('orderDate'), "YYYY-MM-DD").format(
           OB.Format.date.toUpperCase()) : '';
           newline.lineNo = iter.get('lineNo');
           newline.productName = iter.get('productName');
           newline.documentNo = iter.get('documentNo');
-          newline.businessPartnerName = iter.get('businessPartnerName');
+          newline.bpName = iter.get('bpName');
           newline.orderId = iter.get('orderId');
           var orderLine = _.find(
           order.get('lines'), function (line) {
             return line.get('orderlineId') === newline.orderlineId;
           });
-          order.get('lines').push(
-          new Backbone.Model(
-          newline));
+
+          var promotion = {};
+
+          if (!OB.UTIL.isNullOrUndefined(newline.discount_ruleId) && !OB.UTIL.isNullOrUndefined(newline.discountType_id) && !OB.UTIL.isNullOrUndefined(newline.discount_displayedTotalAmount) && !OB.UTIL.isNullOrUndefined(newline.discount_userAmt)) {
+            promotion.actualAmt = newline.discount_actualAmt;
+            promotion.amt = newline.discount_totalAmt;
+            promotion.discountType = newline.discountType_id;
+            promotion.displayedTotalAmount = newline.discount_displayedTotalAmount;
+            promotion.name = newline.discountType_name;
+            promotion.ruleId = newline.discount_ruleId;
+            promotion.userAmt = newline.discount_userAmt;
+            if (orderLine && orderLine.get('promotions')) {
+              orderLine.get('promotions').push(promotion);
+            } else {
+              newline.promotions = [];
+              newline.promotions.push(promotion);
+            }
+          } else {
+            newline.promotions = [];
+          }
+          delete newline.discount_actualAmt;
+          delete newline.discount_totalAmt;
+          delete newline.discountType_id;
+          delete newline.discount_displayedTotalAmount;
+          delete newline.discountType_name;
+          delete newline.discount_ruleId;
+          delete newline.discount_userAmt;
+          if (!orderLine) {
+            order.get('lines').push(
+            new Backbone.Model(
+            newline));
+          }
+
         });
         var lines = [];
         _.each(ordersLoaded.models, function (order) {
@@ -505,13 +539,13 @@ enyo.kind({
       operator: '='
     }, {
       columns: 'excluded',
-      value: orderLinesToExclude,
+      value: orderLinesToExclude.toString(),
       operator: '='
     });
 
     if (!inEvent.filters) {
       criteria.remoteFilters.push({
-        columns: 'businessPartner',
+        columns: 'bpId',
         value: bp,
         operator: '=',
         isId: true
@@ -579,7 +613,7 @@ enyo.kind({
       this.$.body.$.listOrders.clearAction();
       this.getFilterSelectorTableHeader().clearFilter();
       var businessPartner = _.find(OB.Model.OrderAssociationsFilter.getProperties(), function (prop) {
-        return prop.name === 'businessPartner';
+        return prop.name === 'bpId';
       }, this);
       businessPartner.preset.id = this.model.get('order').get('bp').get('id');
       businessPartner.preset.name = this.model.get('order').get('bp').get('_identifier');

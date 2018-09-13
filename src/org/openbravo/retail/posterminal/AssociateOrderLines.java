@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,8 @@ public class AssociateOrderLines extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     Map<String, Object> params = new HashMap<String, Object>();
     Map<String, Object> paramValues = getFilters(jsonsent);
-    params.put("excluded", paramValues.get("excluded"));
+    params.put("excluded",
+        new HashSet<String>(Arrays.asList(paramValues.get("excluded").toString().split(","))));
     params.put("productId", paramValues.get("productId"));
 
     Iterator<?> it = paramValues.entrySet().iterator();
@@ -56,8 +58,8 @@ public class AssociateOrderLines extends ProcessHQLQuery {
         params.put("orderDate", dateFormat.format(value));
       } else if ("documentNo".equals(column)) {
         params.put("documentNo", value);
-      } else if ("businessPartner".equals(column)) {
-        params.put("businessPartner", value);
+      } else if ("bpId".equals(column)) {
+        params.put("bpId", value);
       } else if ("orderId".equals(column)) {
         params.put("orderId", value);
       }
@@ -74,7 +76,10 @@ public class AssociateOrderLines extends ProcessHQLQuery {
 
     hqlPendingLines.append("SELECT ");
     hqlPendingLines.append(queryHQLProperties.getHqlSelect());
-    hqlPendingLines.append("FROM OrderLine AS ol");
+    hqlPendingLines.append(" FROM OrderLine AS ol");
+    hqlPendingLines.append(" LEFT JOIN ol.orderLineOfferList AS olo");
+    hqlPendingLines.append(" LEFT JOIN olo.priceAdjustment AS offer");
+    hqlPendingLines.append(" LEFT JOIN offer.discountType AS discType");
     hqlPendingLines.append(" JOIN ol.product AS p");
     hqlPendingLines.append(" JOIN ol.salesOrder AS salesOrder");
     hqlPendingLines.append(" JOIN salesOrder.businessPartner AS bp");
@@ -115,8 +120,8 @@ public class AssociateOrderLines extends ProcessHQLQuery {
         hqlPendingLines.append(" AND salesOrder.orderDate = to_date(:orderDate, 'YYYY/MM/DD')");
       } else if ("documentNo".equals(column)) {
         hqlPendingLines.append(" AND upper(salesOrder.documentNo) like :documentNo");
-      } else if ("businessPartner".equals(column)) {
-        hqlPendingLines.append(" AND bp.id = :businessPartner");
+      } else if ("bpId".equals(column)) {
+        hqlPendingLines.append(" AND bp.id = :bpId");
       } else if ("orderId".equals(column)) {
         hqlPendingLines.append(" AND salesOrder.id = :orderId");
       }

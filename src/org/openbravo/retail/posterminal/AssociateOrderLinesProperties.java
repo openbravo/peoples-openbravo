@@ -21,12 +21,20 @@ public class AssociateOrderLinesProperties extends ModelExtension {
         new HQLProperty("salesOrder.grandTotalAmount", "orderTotal "), //
         new HQLProperty("ol.id", "orderlineId"), //
         new HQLProperty("ol.lineNo", "lineNo"), //
-        new HQLProperty("ol.orderedQuantity - ol.deliveredQuantity", "qtyPending"), //
-        new HQLProperty("ol.lineGrossAmount", "lineTotal"), //
-        new HQLProperty("ol.lineNetAmount", "net"), //
-        new HQLProperty("ol.lineGrossAmount", "gross"), //
-        new HQLProperty("bp.id", "businessPartner"), //
-        new HQLProperty("bp.name", "businessPartnerName"), //
+        new HQLProperty("ol.orderedQuantity", "qty"), //
+        new HQLProperty("ol.lineNetAmount", "net"),//
+        new HQLProperty("ol.lineGrossAmount", "gross"),//
+
+        new HQLProperty("olo.priceAdjustment.id", "discount_ruleId"),//
+        new HQLProperty("offer.id", "discountType_id"),//
+        new HQLProperty("offer.name", "discountType_name"),//
+        new HQLProperty("olo.priceAdjustmentAmt", "discount_userAmt"),//
+        new HQLProperty("olo.totalAmount", "discount_totalAmt"),//
+        new HQLProperty("olo.displayedTotalAmount", "discount_displayedTotalAmount"),//
+        new HQLProperty("olo.obdiscQtyoffer", "discount_actualAmt"),//
+
+        new HQLProperty("bp.id", "bpId"), //
+        new HQLProperty("bp.name", "bpName"), //
         new HQLProperty("p.id", "productId"), //
         new HQLProperty("p.name", "productName")); //
 

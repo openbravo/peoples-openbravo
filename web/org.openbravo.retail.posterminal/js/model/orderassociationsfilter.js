@@ -42,13 +42,13 @@
     operator: OB.Dal.EQ,
     isDate: true
   }, {
-    name: 'businessPartnerName',
+    name: 'bpName',
     filter: false,
     type: 'TEXT'
   }, {
-    name: 'businessPartner',
-    column: 'businessPartner',
-    sortName: 'businessPartnerName',
+    name: 'bpId',
+    column: 'bpId',
+    sortName: 'bpName',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblCustomer',
@@ -65,8 +65,28 @@
     filter: false,
     type: 'TEXT'
   }, {
-    name: 'description',
-    column: 'description',
+    name: 'qty',
+    column: 'qty',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'net',
+    column: 'net',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'gross',
+    column: 'gross',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'orderlineId',
+    column: 'orderlineId',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'productId',
+    column: 'productId',
     filter: false,
     type: 'TEXT'
   }, {
@@ -75,18 +95,43 @@
     filter: false,
     type: 'TEXT'
   }, {
-    name: 'qtyOrdered',
-    column: 'qtyOrdered',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'qtyDelivered',
-    column: 'qtyDelivered',
-    filter: false,
-    type: 'TEXT'
-  }, {
     name: 'orderDate',
     column: 'orderDate',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'discount_ruleId',
+    column: 'discount_ruleId',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'discountType_id',
+    column: 'discountType_id',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'discountType_name',
+    column: 'discountType_name',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'discount_userAmt',
+    column: 'discount_userAmt',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'discount_totalAmt',
+    column: 'discount_totalAmt',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'discount_displayedTotalAmount',
+    column: 'discount_displayedTotalAmount',
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'discount_actualAmt',
+    column: 'discount_actualAmt',
     filter: false,
     type: 'TEXT'
   }]);
