@@ -791,6 +791,10 @@
           now = new Date().getTime(),
           intervalInc;
 
+      if (OB.RR.RequestRouter.isMultiServer()) {
+        OB.UTIL.loginOnCentralServer();
+      }
+
       // lastTotalRefresh should be used to set lastIncRefresh when it is null or minor.
       if (lastIncRefresh === null) {
         lastIncRefresh = lastTotalRefresh;
