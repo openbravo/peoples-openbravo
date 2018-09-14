@@ -62,7 +62,7 @@ enyo.kind({
     lines = this.$.bodyContent.$.paymentlines.getComponents();
     this.calculateRemaining();
   },
-  calculateRemaining: function () {
+  calculateRemainingFor: function (selectedLine) {
     var i, l, lines, amount, precision, roundingto, roundinggap, origamountmin, origamountmax, changemin, changemax, change, changeRounding;
 
     lines = this.$.bodyContent.$.paymentlines.getComponents();
@@ -71,7 +71,7 @@ enyo.kind({
     changemax = 0;
     for (i = 0; i < lines.length; i++) {
       l = lines[i];
-      if (!l.hasErrors) {
+      if (l !== selectedLine && !l.hasErrors) {
         amount = l.getParsedValue();
         precision = l.payment.obposPosprecision;
         if (l.payment.changeRounding) {
@@ -97,10 +97,18 @@ enyo.kind({
       changeRounding = 0; // In range, then complete.
     }
 
-    this.waterfall('onActionShowRemaining', {
-      value: changeRounding
-    });
+    return changeRounding;
   },
+
+  calculateRemaining: function () {
+    var changeremaining = this.calculateRemainingFor(),
+        lines = this.$.bodyContent.$.paymentlines.getComponents();
+
+    lines.forEach(function (l) {
+      l.showRemaining(changeremaining, this.calculateRemainingFor(l));
+    }.bind(this));
+  },
+
   actionOK: function (inSender, inEvent) {
     var changeRounding, indexRounding, lines, paymentchangemap, paymentchange, amount, origAmount, edited, i, l;
 

@@ -12,8 +12,7 @@
 enyo.kind({
   name: 'OB.UI.ModalChangeLine',
   handlers: {
-    onActionShow: 'actionShow',
-    onActionShowRemaining: 'actionShowRemaining'
+    onActionShow: 'actionShow'
   },
   components: [{
     name: 'labelLine',
@@ -68,9 +67,15 @@ enyo.kind({
       line: this
     });
   },
-  actionShowRemaining: function (inSender, inEvent) {
-    var remaining = this.calculateAmount(OB.DEC.mul(inEvent.value, this.payment.mulrate, this.payment.obposPosprecision));
-    switch (OB.DEC.compare(inEvent.value)) {
+  showRemaining: function (changeremaining, partialremaining) {
+    var partialremainingconverted, remainingconverted, currentvalue;
+
+    currentvalue = this.hasErrors ? 0 : this.getParsedValue();
+    partialremainingconverted = this.calculateAmount(OB.DEC.mul(partialremaining, this.payment.mulrate, this.payment.obposPosprecision));
+    remainingconverted = OB.DEC.sub(partialremainingconverted, currentvalue, this.payment.obposPosprecision);
+
+    // Overpayment label depends only on changeremaining BEFORE converting
+    switch (OB.DEC.compare(changeremaining)) {
     case -1:
       this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingOverpaid'));
       this.isComplete = false;
@@ -82,7 +87,7 @@ enyo.kind({
       this.isOverpaid = false;
       break;
     default:
-      this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingChange', [OB.I18N.formatCurrencyWithSymbol(remaining, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
+      this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingChange', [OB.I18N.formatCurrencyWithSymbol(remainingconverted, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
       this.isComplete = false;
       this.isOverpaid = false;
       break;
