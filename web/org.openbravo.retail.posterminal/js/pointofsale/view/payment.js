@@ -476,10 +476,16 @@ enyo.kind({
     this.$.changelbl.setShowing(showing);
   },
   checkEnoughMultiChange: function () {
-    return this.receipt.get('changePayments').every(function (itemchange) {
+    var failedPaymentMethods = [];
+
+    this.receipt.get('changePayments').forEach(function (itemchange) {
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
-      return paymentMethod.foreignCash >= itemchange.amountRounded;
+      if (paymentMethod.foreignCash < itemchange.amountRounded) {
+        failedPaymentMethods.push(paymentMethod.payment._identifier);
+      }
     });
+
+    return failedPaymentMethods;
   },
   getOrigAmountChange: function (payment) {
     var changepayment = this.receipt.get('changePayments').find(function (itemchange) {
@@ -672,7 +678,7 @@ enyo.kind({
         hasAllEnoughCash = true,
         reversedPayments = [],
         currentSelectedPaymentCashAmount = OB.DEC.Zero,
-        reversedCash;
+        failedPaymentMethods, reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
       var changeAmt;
@@ -724,12 +730,19 @@ enyo.kind({
           hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
         }
 
-        hasEnoughCash = hasEnoughCash && this.checkEnoughMultiChange();
+        failedPaymentMethods = this.checkEnoughMultiChange();
+        hasEnoughCash = hasEnoughCash && failedPaymentMethods.length === 0;
       }
 
       if (hasEnoughCash && ((button === 'Layaway' || button === 'Credit') || (button === 'Done' && hasAllEnoughCash))) {
+        this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
         return callback.call(scope, true);
       } else {
+        if (failedPaymentMethods.length > 0 && OB.MobileApp.model.get('terminal').multiChange) {
+          this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCashMultiChange', [failedPaymentMethods.join(', ')]));
+        } else {
+          this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
+        }
         return callback.call(scope, false); // check failed.
       }
     }.bind(this));
