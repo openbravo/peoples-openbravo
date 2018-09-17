@@ -22,7 +22,7 @@ You may obtain a copy of the License at http://www.openbravo.com/legal/license.h
 <!--0-->  <ISTRANSLATIONMODULE><![CDATA[N]]></ISTRANSLATIONMODULE>
 <!--0-->  <HASREFERENCEDATA><![CDATA[Y]]></HASREFERENCEDATA>
 <!--0-->  <REFERENCEDATAINFO><![CDATA[Standard document types for orders, invoices, etc. and settings]]></REFERENCEDATAINFO>
-<!--0-->  <VERSION_LABEL><![CDATA[CI]]></VERSION_LABEL>
+<!--0-->  <VERSION_LABEL><![CDATA[dev]]></VERSION_LABEL>
 <!--0-->  <ISCOMMERCIAL><![CDATA[N]]></ISCOMMERCIAL>
 <!--0-->  <ISTRIALALLOWED><![CDATA[N]]></ISTRIALALLOWED>
 <!--0--></AD_MODULE>
