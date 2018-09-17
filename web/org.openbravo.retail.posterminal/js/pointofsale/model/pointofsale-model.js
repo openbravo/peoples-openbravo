@@ -930,6 +930,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   function syncProcessCallback() {
                     OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
                     orderList.deleteCurrent();
+                    if (OB.MobileApp.model.showSynchronizedDialog) {
+                      OB.MobileApp.model.hideSynchronizingDialog();
+                    }
                     enyo.$.scrim.hide();
                     cloneOrderForPrinting.set('negativeDocNo', documentNo + '*R*');
                     receipt.trigger('print', cloneOrderForPrinting, {
