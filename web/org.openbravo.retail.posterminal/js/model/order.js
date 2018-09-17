@@ -4606,9 +4606,8 @@
             OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
               paymentAdded: payment,
               payments: payments,
-              receipt: order,
-              callback: callback
-            }, function (args) {
+              receipt: order
+            }, function (args2) {
               if (args.callback instanceof Function) {
                 args.callback(order);
               }
