@@ -937,7 +937,6 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.hasPermission(this.permission)) {
-      OB.logUserAction('Menu > Pay Open Tickets');
       this.model.get('orderList').saveCurrent();
       this.doMultiOrders();
     }
