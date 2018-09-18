@@ -34,16 +34,6 @@ enyo.kind({
       return;
     }
     this.selectedModels = inEvent.models;
-    this.selectedModelsSameQty = true;
-    if (this.selectedModels.length > 1) {
-      var i, qty = this.selectedModels[0].get('qty');
-      for (i = 1; i < this.selectedModels.length; i++) {
-        if (qty !== this.selectedModels[i].get('qty')) {
-          this.selectedModelsSameQty = false;
-          break;
-        }
-      }
-    }
   },
   keyboardOnDiscountsMode: function (inSender, inEvent) {
     if (inEvent.status) {
@@ -192,43 +182,41 @@ enyo.kind({
     var actionAddMultiProduct = function (keyboard, qty) {
         var cancelQtyChange = false,
             cancelQtyChangeReturn = false;
-        if (me.selectedModelsSameQty) {
 
-          // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
-          // In that case stop the flow and show an error popup.
-          if (keyboard.receipt.get('replacedorder')) {
-            _.each(me.selectedModels, function (l) {
-              var oldqty = l.get('qty'),
-                  newqty = oldqty + qty;
+        // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
+        // In that case stop the flow and show an error popup.
+        if (keyboard.receipt.get('replacedorder')) {
+          _.each(me.selectedModels, function (l) {
+            var oldqty = l.get('qty'),
+                newqty = oldqty + qty;
 
-              if (oldqty > 0 && newqty < l.get('remainingQuantity')) {
-                cancelQtyChange = true;
-              } else if (oldqty < 0 && l.get('remainingQuantity')) {
-                cancelQtyChangeReturn = true;
-              }
-            });
-          }
-          if (cancelQtyChange) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
-            return;
-          } else if (cancelQtyChangeReturn) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
-            return;
-          }
-
-          keyboard.receipt.set('undo', null);
-          keyboard.receipt.set('multipleUndo', true);
-          var selection = [];
-          _.each(me.selectedModels, function (model) {
-            selection.push(model);
-            keyboard.line = model;
-            actionAddProduct(keyboard, qty);
-          });
-          keyboard.receipt.set('multipleUndo', null);
-          me.doSetMultiSelectionItems({
-            selection: selection
+            if (oldqty > 0 && newqty < l.get('remainingQuantity')) {
+              cancelQtyChange = true;
+            } else if (oldqty < 0 && l.get('remainingQuantity')) {
+              cancelQtyChangeReturn = true;
+            }
           });
         }
+        if (cancelQtyChange) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
+          return;
+        } else if (cancelQtyChangeReturn) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
+          return;
+        }
+
+        keyboard.receipt.set('undo', null);
+        keyboard.receipt.set('multipleUndo', true);
+        var selection = [];
+        _.each(me.selectedModels, function (model) {
+          selection.push(model);
+          keyboard.line = model;
+          actionAddProduct(keyboard, qty);
+        });
+        keyboard.receipt.set('multipleUndo', null);
+        me.doSetMultiSelectionItems({
+          selection: selection
+        });
         };
 
     var actionRemoveProduct = function (keyboard, value) {
