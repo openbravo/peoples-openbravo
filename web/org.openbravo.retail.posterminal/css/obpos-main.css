@@ -739,6 +739,11 @@ button.btnbp:disabled {
     max-height: 100%;
 }
 
+.input::placeholder,
+.input-login::placeholder {
+  color: #bbbbbb;
+  font-style: italic;
+}
 .ob-order {
   border-bottom: 1px solid #ccc;
 }
