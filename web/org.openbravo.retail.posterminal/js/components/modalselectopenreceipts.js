@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _ */
+/*global enyo, _, Promise */
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
@@ -61,54 +61,104 @@ enyo.kind({
     components: [{
       kind: 'OB.UI.ModalSelectOpenedReceipt_btnApply',
       disabled: true,
+      checkModifyTax: function (params) {
+        return new Promise(function (resolve, reject) {
+          function promiseResolve() {
+            resolve(params);
+          }
+          if (params.product.get('modifyTax') && params.attrs.relatedLines && params.attrs.relatedLines.length > 0) {
+            OB.Dal.findUsingCache('ProductServiceLinked', OB.Model.ProductServiceLinked, {
+              'product': params.product.get('id')
+            }, function (data) {
+              var i, j, linkedCat;
+              for (i = 0; i < params.attrs.relatedLines.length; i++) {
+                for (j = 0; j < data.length; j++) {
+                  if (params.attrs.relatedLines[i].productCategory === data.at(j).get('productCategory')) {
+                    // Found taxes modification configuration
+                    // resolve after displaying confirmation message
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_lblHeaderSelectOpenedReceiptModal'), OB.I18N.getLabel('OBPOS_WillNotModifyTax'), [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      isConfirmButton: true,
+                      action: promiseResolve
+                    }], {
+                      autoDismiss: false,
+                      onHideFunction: promiseResolve
+                    });
+                    return;
+                  }
+                }
+              }
+              // Not found taxes modification configuration
+              // resolve silently
+              promiseResolve();
+            }, reject, {
+              modelsAffectedByCache: ['ProductServiceLinked']
+            });
+          } else {
+            // Product to ad does not modfify taxes
+            // resolve silently
+            promiseResolve();
+          }
+        });
+      },
       tap: function () {
         // TODO: Check the behavior with the receipt multi-line selection case.
         // TODO: The 'Undo' button doesn't work in the case the target receipt is opened.
-        var me = this,
-            orderModel = this.owner.owner.selectedLine.model;
-        if (this.owner.owner.selectedLine.id.indexOf('openedReceiptsListLine') === -1) {
-          // 'Create New One' case
-          var orderList = this.owner.owner.owner.model.get('orderList');
-          orderList.saveCurrent();
-          var newOrder = orderList.newOrder(orderList.current.get('bp'));
-          orderList.unshift(newOrder);
-          orderModel = newOrder;
-          orderModel.set('deferredOrder', true);
-        }
-        this.owner.owner.doAddProduct({
-          targetOrder: orderModel,
-          product: this.owner.owner.args.product,
-          attrs: this.owner.owner.args.attrs,
-          options: {
-            blockAddProduct: true
-          },
-          context: this.owner.owner.args.context,
-          callback: function () {
-            if (me.owner.owner.args.callback) {
-              me.owner.owner.args.callback();
-            }
-            if (me.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal.checked) {
+        var me = this;
+        var orderModel = this.owner.owner.selectedLine.model;
+        var product = this.owner.owner.args.product;
+        var attrs = this.owner.owner.args.attrs;
 
-              me.owner.owner.doChangeCurrentOrder({
-                newCurrentOrder: orderModel
-              });
-              me.owner.owner.owner.model.get('order').calculateReceipt(function () {
-                me.owner.owner.owner.model.get('order').get('lines').trigger('updateRelations');
-              });
-            } else {
-              //Hack to calculate totals even if the receipt is not the UI receipt
-              orderModel.setIsCalculateReceiptLockState(false);
-              orderModel.setIsCalculateGrossLockState(false);
-              orderModel.set('belongsToMultiOrder', true);
-              orderModel.calculateReceipt(function () {
-                orderModel.trigger('updateServicePrices');
-                orderModel.set('belongsToMultiOrder', false);
-              });
-            }
+        this.checkModifyTax({
+          product: product,
+          attrs: attrs
+        }) //
+        .then(function (params) {
+          if (me.owner.owner.selectedLine.id.indexOf('openedReceiptsListLine') === -1) {
+            // 'Create New One' case
+            var orderList = me.owner.owner.owner.model.get('orderList');
+            orderList.saveCurrent();
+            var newOrder = orderList.newOrder(orderList.current.get('bp'));
+            orderList.unshift(newOrder);
+            orderModel = newOrder;
+            orderModel.set('deferredOrder', true);
           }
+          me.owner.owner.doAddProduct({
+            targetOrder: orderModel,
+            product: product,
+            attrs: attrs,
+            options: {
+              blockAddProduct: true
+            },
+            context: me.owner.owner.args.context,
+            callback: function () {
+              if (me.owner.owner.args.callback) {
+                me.owner.owner.args.callback();
+              }
+              if (me.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal.checked) {
+
+                me.owner.owner.doChangeCurrentOrder({
+                  newCurrentOrder: orderModel
+                });
+                me.owner.owner.owner.model.get('order').calculateReceipt(function () {
+                  me.owner.owner.owner.model.get('order').get('lines').trigger('updateRelations');
+                });
+              } else {
+                //Hack to calculate totals even if the receipt is not the UI receipt
+                orderModel.setIsCalculateReceiptLockState(false);
+                orderModel.setIsCalculateGrossLockState(false);
+                orderModel.set('belongsToMultiOrder', true);
+                orderModel.calculateReceipt(function () {
+                  orderModel.trigger('updateServicePrices');
+                  orderModel.set('belongsToMultiOrder', false);
+                });
+              }
+            }
+          });
+          me.owner.owner.args.callback = null;
+          me.owner.owner.doHideThisPopup();
+
         });
-        this.owner.owner.args.callback = null;
-        this.owner.owner.doHideThisPopup();
       }
     }, {
       kind: 'OB.UI.ModalSelectOpenedReceipt_btnCancel'
