@@ -25,7 +25,10 @@ enyo.kind({
       kind: 'enyo.Input',
       type: 'text',
       classes: 'input changedialog-properties-input',
-      oninput: 'actionInput'
+      oninput: 'actionInput',
+      attributes: {
+        maxlength: 22
+      }
     }]
   }, {
     classes: 'changedialog-properties-info',
