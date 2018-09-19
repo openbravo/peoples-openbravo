@@ -173,7 +173,7 @@
     <% } %>
 
     <%
-      var changelabel = OB.UTIL.getChangeLabelFromChangePayments(order.get('changePayments'));
+      var changelabel = OB.UTIL.getChangeLabelFromReceipt(order);
       if (changelabel) {
         if (changelabel.length > 34) {
           var changesplit = changelabel.split(' + ');

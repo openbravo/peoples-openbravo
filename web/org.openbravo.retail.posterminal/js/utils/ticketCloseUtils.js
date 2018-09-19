@@ -249,6 +249,14 @@
     }
   };
 
+  OB.UTIL.getChangeLabelFromReceipt = function (receipt) {
+    if (receipt.get('changePayments')) {
+      return OB.UTIL.getChangeLabelFromChangePayments(receipt.get('changePayments'));
+    } else {
+      return OB.UTIL.getChangeLabelFromPayments(receipt.get('payments'));
+    }
+  };
+
   OB.UTIL.getChangeLabelFromChangePayments = function (changePayments) {
     return changePayments.map(function (item) {
       return item.label;
