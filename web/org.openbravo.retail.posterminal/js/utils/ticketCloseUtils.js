@@ -66,7 +66,7 @@
                 });
 
                 // Verify that the receipt has not been changed while the ticket has being closed
-                var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
+                var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.diffReceipt.serializeToJSON());
                 // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
                 delete diff.hasbeenpaid;
                 delete diff.cashUpReportInformation;
@@ -75,7 +75,7 @@
                 // verify if there have been any modification to the receipt
                 var diffStringified = JSON.stringify(diff, undefined, 2);
                 if (diffStringified !== '{}') {
-                  OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
+                  OB.warn("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
                 }
 
                 if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
