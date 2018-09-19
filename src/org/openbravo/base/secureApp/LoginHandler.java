@@ -480,8 +480,8 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, String target)
-      throws IOException, ServletException {
+  private void goToTarget(HttpServletResponse response, String target) throws IOException,
+      ServletException {
 
     // Return a JSON object with the target to redirect to
     try {

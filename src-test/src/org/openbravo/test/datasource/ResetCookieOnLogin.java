@@ -54,8 +54,7 @@ public class ResetCookieOnLogin extends BaseDataSourceTestDal {
       throw new OBException("No JSESSIONID found in cookie");
     }
     JSESSIONID1 = matcher.group(1);
-    cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(),
-        getLogin(), getPassword());
+    cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());
     matcher = Pattern.compile(pattern).matcher(cookie);
     if (!matcher.find()) {
       throw new OBException("No JSESSIONID found in cookie");

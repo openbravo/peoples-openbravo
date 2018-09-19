@@ -115,7 +115,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   private static final long serialVersionUID = 1L;
 
   private static String servletPathPart = "org.openbravo.service.datasource";
-  private static Pattern csrfTokenPattern = Pattern.compile("\\\"csrfToken\\\":\\\"[A-Z0-9]+\\\"");
+  private static Pattern csrfTokenPattern = Pattern
+      .compile("\\\"csrfToken\\\":\\\"(?<token>[A-Z0-9]+)\\\"");
 
   public static String getServletPathPart() {
     return servletPathPart;
@@ -953,7 +954,7 @@ public class DataSourceServlet extends BaseKernelServlet {
   private String getCsrfTokenFromRequestContent(String requestContent) {
     Matcher matcher = csrfTokenPattern.matcher(requestContent);
     if (matcher.find()) {
-      return matcher.group(0).split(":")[1].replace("\"", "");
+      return matcher.group("token");
     }
 
     return "";
