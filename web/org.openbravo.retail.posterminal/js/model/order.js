@@ -2349,46 +2349,25 @@
             options: options,
             newLine: newLine
           }, function (args) {
-            var callbackAddProduct = function () {
-                if (callback) {
-                  callback(true, args.orderline);
-                }
-                };
-            if (args.orderline) {
-              args.orderline.set('hasMandatoryServices', false);
-            }
             if ((!args.options || !args.options.isSilentAddProduct) && args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
               // Display related services after calculate gross, if it is new line
               // and if the line has not been deleted.
               // The line might has been deleted during calculate gross for
               // examples if there was an error in taxes.
-              var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
-              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-                if (data) {
-                  if (data.hasservices) {
-                    args.orderline.set('hasRelatedServices', true);
-                    args.orderline.trigger('showServicesButton');
-                  } else {
-                    args.orderline.set('hasRelatedServices', false);
-                  }
-                  if (data.hasmandatoryservices) {
-                    var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
-                    if (!splitline) {
-                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                      args.orderline.set('hasMandatoryServices', true);
-                      callbackAddProduct();
-                    } else {
-                      callbackAddProduct();
-                    }
-                  } else {
-                    callbackAddProduct();
-                  }
+              if (args.orderline.get('hasRelatedServices')) {
+                args.orderline.trigger('showServicesButton');
+              }
+              if (args.orderline.get('hasMandatoryServices')) {
+                var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
+                if (!splitline) {
+                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
                 } else {
-                  callbackAddProduct();
+                  args.orderline.set('hasMandatoryServices', false);
                 }
-              }, args.orderline);
-            } else {
-              callbackAddProduct();
+              }
+            }
+            if (callback) {
+              callback(true, args.orderline);
             }
           });
         }
@@ -2834,8 +2813,36 @@
     },
 
     addProductToOrder: function (p, qty, options, attrs, callback) {
-      var me = this,
+      var executeAddProduct, finalCallback, me = this,
           attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
+      finalCallback = function (success, orderline) {
+        if (callback) {
+          callback(success, orderline);
+        }
+      };
+      // do not allow generic products to be added to the receipt
+      if (p && p.get('isGeneric')) {
+        OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
+        finalCallback(false, null);
+        return;
+      }
+      if (options && options.line && options.line.get('replacedorderline') && options.line.get('qty') < 0) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
+        finalCallback(false, null);
+        return;
+      }
+      if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && p && p.has('oBPOSAllowAnonymousSale') && !p.get('oBPOSAllowAnonymousSale')) {
+        if (me && me.get('deferredOrder')) {
+          me.unset("deferredOrder", {
+            silent: true
+          });
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowedDeferredSale'));
+        } else {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
+        }
+        finalCallback(false, null);
+        return;
+      }
       OB.UTIL.HookManager.executeHooks('OBPOS_AddProductToOrder', {
         receipt: this,
         productToAdd: p,
@@ -2843,35 +2850,6 @@
         options: options,
         attrs: attrs
       }, function (args) {
-        // do not allow generic products to be added to the receipt
-        if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
-          OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
-          if (callback) {
-            callback(false, null);
-          }
-          return;
-        }
-        if (args && args.options && args.options.line && args.options.line.get('replacedorderline') && args.options.line.get('qty') < 0) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
-          if (callback) {
-            callback(false);
-          }
-          return;
-        }
-        if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && args && args.productToAdd && args.productToAdd.has('oBPOSAllowAnonymousSale') && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
-          if (args.receipt && args.receipt.get('deferredOrder')) {
-            args.receipt.unset("deferredOrder", {
-              silent: true
-            });
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowedDeferredSale'));
-          } else {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
-          }
-          if (callback) {
-            callback(false, null);
-          }
-          return;
-        }
         if (args && args.receipt && args.receipt.get('deferredOrder')) {
           args.receipt.unset("deferredOrder", {
             silent: true
@@ -2879,47 +2857,60 @@
         }
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
-          if (callback) {
-            callback(false);
-          }
+          finalCallback(false, null);
           return;
         }
-        var isQuotationAndAttributeAllowed = args.receipt.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
-        if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.get('isQuotation') || isQuotationAndAttributeAllowed)) {
-          OB.MobileApp.view.waterfall('onShowPopup', {
-            popup: 'modalProductAttribute',
-            args: {
-              callback: function (attributeValue) {
-                if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
-                  var i;
-                  if (OB.UTIL.isNullOrUndefined(attrs)) {
-                    attrs = {};
-                  }
-                  if (_.isEmpty(attributeValue)) {
-                    // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
-                    attributeValue = null;
-                  }
-                  attrs.attributeValue = attributeValue;
-                  me._addProduct(p, qty, options, attrs, function (success, orderline) {
-                    if (callback) {
-                      callback(success, orderline);
+        if (OB.UTIL.isNullOrUndefined(args.attrs)) {
+          args.attrs = {};
+        }
+        args.attrs.hasMandatoryServices = false;
+        args.attrs.hasRelatedServices = false;
+        executeAddProduct = function () {
+          var isQuotationAndAttributeAllowed = args.receipt.get('isQuotation') && OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true);
+          if ((!args || !args.options || !args.options.line) && attributeSearchAllowed && p.get('hasAttributes') && qty >= 1 && (!args.receipt.get('isQuotation') || isQuotationAndAttributeAllowed)) {
+            OB.MobileApp.view.waterfall('onShowPopup', {
+              popup: 'modalProductAttribute',
+              args: {
+                callback: function (attributeValue) {
+                  if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
+                    var i;
+                    if (_.isEmpty(attributeValue)) {
+                      // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
+                      attributeValue = null;
                     }
-                  });
-                } else {
-                  if (callback) {
-                    callback(false, null);
+                    attrs.attributeValue = attributeValue;
+                    me._addProduct(p, qty, options, attrs, function (success, orderline) {
+                      finalCallback(success, orderline);
+                    });
+                  } else {
+                    finalCallback(false, null);
                   }
-                }
-              },
-              options: options
+                },
+                options: options
+              }
+            });
+          } else {
+            me._addProduct(p, qty, options, attrs, function (success, orderline) {
+              finalCallback(success, orderline);
+            });
+          }
+        };
+
+        if ((!args.options || !args.options.isSilentAddProduct) && args.productToAdd.get('productType') !== 'S' && (!args.attrs || !args.attrs.originalOrderLineId)) {
+          var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
+          args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+            if (data) {
+              if (data.hasservices) {
+                args.attrs.hasRelatedServices = true;
+              }
+              if (data.hasmandatoryservices) {
+                args.attrs.hasMandatoryServices = true;
+              }
             }
+            executeAddProduct();
           });
         } else {
-          me._addProduct(p, qty, options, attrs, function (success, orderline) {
-            if (callback) {
-              callback(success, orderline);
-            }
-          });
+          executeAddProduct();
         }
       });
     },
@@ -4573,7 +4564,7 @@
     },
 
     addPayment: function (payment, callback) {
-      var payments, total, i, max, p, order, paymentSign;
+      var payments, total, i, max, p, order, paymentSign, finalCallback;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
@@ -4599,13 +4590,18 @@
         return;
       }
 
+      finalCallback = function () {
+        if (callback instanceof Function) {
+          callback(order);
+        }
+      };
+
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
-        receipt: this,
-        callback: callback
+        receipt: this
       }, function (args) {
         var executeFinalCallback = function (saveChanges) {
             if (saveChanges) {
@@ -4617,12 +4613,9 @@
             OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
               paymentAdded: payment,
               payments: payments,
-              receipt: order,
-              callback: callback
-            }, function (args) {
-              if (args.callback instanceof Function) {
-                args.callback(order);
-              }
+              receipt: order
+            }, function (args2) {
+              finalCallback();
             });
             };
 
@@ -6145,7 +6138,7 @@
                 if (order.get('priceIncludesTax')) {
                   price = OB.DEC.number(iter.unitPrice);
                 } else {
-                  price = OB.DEC.number(iter.baseNetUnitPrice);
+                  price = OB.DEC.number(iter.baseNetUnitPrice > 0 ? iter.baseNetUnitPrice : iter.unitPrice);
                 }
 
                 if (!iter.deliveredQuantity) {
@@ -7004,8 +6997,7 @@
       }
     },
     addPayment: function (payment, callback) {
-      var payments, total;
-      var i, max, p, order;
+      var i, max, p, order, payments, total, finalCallback;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
@@ -7021,25 +7013,27 @@
         return;
       }
 
+      finalCallback = function () {
+        if (callback instanceof Function) {
+          callback(order);
+        }
+      };
+
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       order = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
-        receipt: this,
-        callback: callback
+        receipt: this
       }, function (args) {
         var executeFinalCallback = function () {
             OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
               paymentAdded: payment,
               payments: payments,
-              receipt: order,
-              callback: callback
-            }, function (args) {
-              if (args.callback instanceof Function) {
-                args.callback(order);
-              }
+              receipt: order
+            }, function (args2) {
+              finalCallback();
             });
             };
 

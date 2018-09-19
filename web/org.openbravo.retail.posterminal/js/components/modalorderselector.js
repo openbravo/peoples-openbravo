@@ -141,16 +141,14 @@ enyo.kind({
       style: 'border-bottom: 1px solid #cccccc;',
       classes: 'row-fluid',
       components: [{
-        name: 'containerOfReceiptsListItemPrinter',
-        classes: 'span12',
-        components: [{
-          name: 'renderLoading',
-          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-          showing: false,
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-          }
-        }]
+        name: 'containerOfReceiptsListItemPrinter'
+      }, {
+        name: 'renderLoading',
+        style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+        showing: false,
+        initComponents: function () {
+          this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+        }
       }]
     }]
   }],

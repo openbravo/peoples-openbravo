@@ -634,7 +634,7 @@ enyo.kind({
           prop;
 
       for (prop in taxes) {
-        if (taxes.hasOwnProperty(prop)) {
+        if (taxes.hasOwnProperty(prop) && (taxes[prop].net !== 0 || taxes[prop].amount !== 0)) {
           taxList.add(new OB.Model.TaxLine(taxes[prop]));
           empty = false;
         }

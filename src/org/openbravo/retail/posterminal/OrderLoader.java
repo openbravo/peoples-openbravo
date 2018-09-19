@@ -140,6 +140,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isModified = false;
   private boolean doCancelAndReplace = false;
   private boolean paidReceipt = false;
+  private boolean deliver = false;
 
   @Inject
   @Any
@@ -224,6 +225,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     doCancelAndReplace = jsonorder.has("doCancelAndReplace")
         && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
+
+    deliver = jsonorder.optBoolean("deliver", true);
   }
 
   @Override
@@ -247,6 +250,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
       Invoice invoice = null;
+      OBPOSApplications posTerminal = null;
       boolean createInvoice = false;
       boolean wasPaidOnCredit = false;
       boolean moveShipmentLinesInCanelAndReplace = false;
@@ -257,6 +261,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           && validateOrder(jsonorder)
           && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId")) && !paidReceipt) {
         return successMessage(jsonorder);
+      }
+
+      if (jsonorder.getString("posTerminal") != null) {
+        posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            jsonorder.getString("posTerminal"));
       }
 
       order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
@@ -353,7 +362,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          order.setDelivered(true);
+          order.setDelivered(deliver);
           if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
             order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
@@ -557,20 +566,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             if (createInvoice && moveShipmentLinesInCanelAndReplace) {
               createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
             }
-            // Set the delivered status depending if there's any shipment related to any line and
-            // all lines are delivered
-            boolean deliveredLines = true, hasShipment = false;
-            for (final OrderLine line : order.getOrderLineList()) {
-              if (line.getDeliveredQuantity() != null
-                  && line.getDeliveredQuantity().compareTo(line.getOrderedQuantity()) != 0) {
-                deliveredLines = false;
-                break;
-              }
-              if (!hasShipment && line.getMaterialMgmtShipmentInOutLineList().size() > 0) {
-                hasShipment = true;
-              }
-            }
-            order.setDelivered(deliveredLines && hasShipment);
           } catch (Exception ex) {
             OBDal.getInstance().rollbackAndClose();
             throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
@@ -604,6 +599,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (log.isDebugEnabled()) {
         t6 = System.currentTimeMillis();
       }
+
+      // Save the last order synchronized in obposApplication object
+      if (posTerminal != null) {
+        posTerminal.setTerminalLastordersinchronized(order.getUpdated());
+      }
+
       OBDal.getInstance().flush();
 
       if (log.isDebugEnabled()) {
@@ -1903,7 +1904,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
     if (!newLayaway && !isQuotation && !isDeleted) {
-      order.setDelivered(true);
+      order.setDelivered(deliver);
     }
 
     if (!doCancelAndReplace) {

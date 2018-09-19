@@ -442,7 +442,9 @@ enyo.kind({
     receipt.deleteOrder(this, function () {
       inEvent.status = false;
       me.leftToolbarDisabled(inSender, inEvent);
-      OB.MobileApp.model.runSyncProcess();
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        OB.MobileApp.model.runSyncProcess();
+      }
     });
   },
   addProductToOrder: function (inSender, inEvent) {
@@ -1363,26 +1365,18 @@ enyo.kind({
     this.waterfall('onSetAdvancedSearchMode', inEvent);
   },
   receiptLineSelected: function (inSender, inEvent) {
-    var enableButton = true,
+    var product, i, enableButton = true,
         selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
         selectedLinesSameQty = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModelsSameQty,
-        selectedLinesLength = selectedLines ? this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length : 0,
-        product, i;
-    if (selectedLinesLength > 1) {
+        selectedLinesLength = selectedLines ? this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length : 0;
+
+    if (selectedLinesLength > 0) {
       for (i = 0; i < selectedLinesLength; i++) {
         product = selectedLines[i].get('product');
         if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[i].get('isEditable') || product.get('isSerialNo')) {
           enableButton = false;
           break;
         }
-      }
-      if (enableButton && !selectedLinesSameQty) {
-        enableButton = false;
-      }
-    } else if (selectedLinesLength === 1) {
-      product = selectedLines[0].get('product');
-      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[0].get('isEditable') || product.get('isSerialNo')) {
-        enableButton = false;
       }
     } else {
       enableButton = false;
