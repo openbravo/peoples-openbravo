@@ -410,7 +410,7 @@ public abstract class AuthenticationManager {
    *         </ul>
    */
   protected String doWebServiceAuthenticate(HttpServletRequest request) {
-    request.setAttribute("IS_SELF_AUTHENTICATED", "Y");
+    markRequestAsSelfAuthenticated(request);
 
     UserLoginInfo authenticationData = getAuthenticationData(request);
     if (authenticationData == null) {
@@ -419,6 +419,16 @@ public abstract class AuthenticationManager {
     String user = authenticationData.getUserName();
     String password = authenticationData.getPassword();
     return doWebServiceAuthenticate(user, password);
+  }
+
+  /**
+   * Utility method to mark that the current request has authentication data used to authenticate
+   * this particular request
+   * 
+   * @param request
+   */
+  protected void markRequestAsSelfAuthenticated(HttpServletRequest request) {
+    request.setAttribute("IS_SELF_AUTHENTICATED", "Y");
   }
 
   private UserLoginInfo getAuthenticationData(HttpServletRequest request) {
