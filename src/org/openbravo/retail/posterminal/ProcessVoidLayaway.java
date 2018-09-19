@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
@@ -43,7 +43,8 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
     Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
     if (order != null) {
-      final String loaded = jsonorder.getString("loaded"), updated = OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated());
+      final String loaded = jsonorder.getString("loaded"), updated = OBMOBCUtils
+          .convertToUTCDateComingFromServer(order.getUpdated());
       if (!(loaded.compareTo(updated) >= 0)) {
         throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
             "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
@@ -60,9 +61,9 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
       hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
       hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
       hql.append("AND so.documentStatus <> 'CL' ");
-      final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+      Query<String> query = OBDal.getInstance().getSession()
+          .createQuery(hql.toString(), String.class);
       query.setParameter("orderId", order.getId());
-      @SuppressWarnings("unchecked")
       List<String> documentNoList = query.list();
       if (documentNoList.size() > 0) {
         String errorMsg = OBMessageUtils.messageBD("OBPOS_CannotCancelLayWithDeferred") + " "
