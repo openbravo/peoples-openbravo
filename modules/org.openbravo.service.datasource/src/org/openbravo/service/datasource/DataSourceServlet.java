@@ -116,7 +116,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
   private static String servletPathPart = "org.openbravo.service.datasource";
   private static Pattern csrfTokenPattern = Pattern
-      .compile("\\\"csrfToken\\\":\\\"(?<token>[A-Z0-9]+)\\\"");
+      .compile("\"csrfToken\":\"(?<token>[A-Z0-9]+)\"");
 
   public static String getServletPathPart() {
     return servletPathPart;
