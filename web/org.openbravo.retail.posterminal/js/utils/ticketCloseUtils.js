@@ -136,6 +136,7 @@
 
       // Manage change payments (if there is change)
       if (receipt.get('changePayments')) {
+        prevChange = receipt.get('change');
         mergeable = !OB.MobileApp.model.get('terminal').multiChange && !OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true);
         addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
           // restore attributes
@@ -145,7 +146,6 @@
           triggerReceiptClose(receipt);
         });
 
-        prevChange = receipt.get('change');
         receipt.get('changePayments').forEach(function (changePayment) {
           var paymentToAdd = OB.MobileApp.model.paymentnames[changePayment.key];
           receipt.addPayment(new OB.Model.PaymentLine({
