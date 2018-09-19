@@ -4263,8 +4263,7 @@
     },
 
     addPayment: function (payment, callback) {
-      var payments, total;
-      var i, max, p, order;
+      var i, max, p, order, payments, total, finalCallback;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
@@ -4290,13 +4289,18 @@
         return;
       }
 
+      finalCallback = function () {
+        if (callback instanceof Function) {
+          callback(order);
+        }
+      };
+
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
-        receipt: this,
-        callback: callback
+        receipt: this
       }, function (args) {
         var executeFinalCallback = function (saveChanges) {
             if (saveChanges) {
@@ -4308,12 +4312,9 @@
             OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
               paymentAdded: payment,
               payments: payments,
-              receipt: order,
-              callback: callback
-            }, function (args) {
-              if (args.callback instanceof Function) {
-                args.callback(order);
-              }
+              receipt: order
+            }, function (args2) {
+              finalCallback();
             });
             };
 
@@ -6631,8 +6632,7 @@
       }
     },
     addPayment: function (payment, callback) {
-      var payments, total;
-      var i, max, p, order;
+      var i, max, p, order, payments, total, finalCallback;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
@@ -6648,25 +6648,27 @@
         return;
       }
 
+      finalCallback = function () {
+        if (callback instanceof Function) {
+          callback(order);
+        }
+      };
+
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       order = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
-        receipt: this,
-        callback: callback
+        receipt: this
       }, function (args) {
         var executeFinalCallback = function () {
             OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
               paymentAdded: payment,
               payments: payments,
-              receipt: order,
-              callback: callback
-            }, function (args) {
-              if (args.callback instanceof Function) {
-                args.callback(order);
-              }
+              receipt: order
+            }, function (args2) {
+              finalCallback();
             });
             };
 
