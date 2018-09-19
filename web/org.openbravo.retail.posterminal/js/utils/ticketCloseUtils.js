@@ -41,58 +41,55 @@
                   return true;
                 }
               }, this);
-              receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
               OB.UTIL.setScanningFocus(true);
-              OB.Dal.save(receipt, function () {
-                OB.UTIL.Debug.execute(function () {
-                  if (!args.frozenReceipt) {
-                    throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
-                  }
-                  if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
-                    throw "The isCancelled flag must be set";
-                  }
+              OB.UTIL.Debug.execute(function () {
+                if (!args.frozenReceipt) {
+                  throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
+                }
+                if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
+                  throw "The isCancelled flag must be set";
+                }
+              });
+
+              // verify that the receipt was not cancelled
+              if (args.isCancelled !== true) {
+                var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
+                orderToPrint.get('payments').reset();
+                clonedCollection.each(function (model) {
+                  orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
+                    silent: true
+                  });
+                });
+                orderToPrint.set('hasbeenpaid', 'Y');
+                receipt.trigger('print', orderToPrint, {
+                  offline: true
                 });
 
-                // verify that the receipt was not cancelled
-                if (args.isCancelled !== true) {
-                  var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
-                  orderToPrint.get('payments').reset();
-                  clonedCollection.each(function (model) {
-                    orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
-                      silent: true
-                    });
-                  });
-                  orderToPrint.set('hasbeenpaid', 'Y');
-                  receipt.trigger('print', orderToPrint, {
-                    offline: true
-                  });
-
-                  // Verify that the receipt has not been changed while the ticket has being closed
-                  var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
-                  // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
-                  delete diff.hasbeenpaid;
-                  delete diff.cashUpReportInformation;
-                  // isBeingClosed is a flag only used to log purposes
-                  delete diff.isBeingClosed;
-                  // verify if there have been any modification to the receipt
-                  var diffStringified = JSON.stringify(diff, undefined, 2);
-                  if (diffStringified !== '{}') {
-                    OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
-                  }
-
-                  if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
-                    orderList.deleteCurrent(true);
-                  } else {
-                    orderList.deleteCurrent();
-                  }
-                  receipt.setIsCalculateReceiptLockState(false);
-                  receipt.setIsCalculateGrossLockState(false);
-
-                  orderList.synchronizeCurrentOrder();
+                // Verify that the receipt has not been changed while the ticket has being closed
+                var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
+                // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
+                delete diff.hasbeenpaid;
+                delete diff.cashUpReportInformation;
+                // isBeingClosed is a flag only used to log purposes
+                delete diff.isBeingClosed;
+                // verify if there have been any modification to the receipt
+                var diffStringified = JSON.stringify(diff, undefined, 2);
+                if (diffStringified !== '{}') {
+                  OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
                 }
-                OB.UTIL.ProcessController.finish('completeReceipt', execution);
-                triggerClosedCallback();
-              }, null, false);
+
+                if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
+                  orderList.deleteCurrent(true);
+                } else {
+                  orderList.deleteCurrent();
+                }
+                receipt.setIsCalculateReceiptLockState(false);
+                receipt.setIsCalculateGrossLockState(false);
+
+                orderList.synchronizeCurrentOrder();
+
+              }
+              triggerClosedCallback();
             }
           });
           };
