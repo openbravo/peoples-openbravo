@@ -1375,7 +1375,6 @@ enyo.kind({
   },
   receiptLineSelected: function (inSender, inEvent) {
     var product, i, enableButton = true,
-        enableQtyButton = true,
         selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
         selectedLinesSameQty = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModelsSameQty,
         selectedLinesLength = selectedLines ? this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length : 0;
@@ -1385,32 +1384,25 @@ enyo.kind({
         product = selectedLines[i].get('product');
         if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || !selectedLines[i].get('isEditable') || product.get('isSerialNo')) {
           enableButton = false;
-          enableQtyButton = false;
           break;
         }
       }
-      if (enableButton && selectedLinesLength > 1 && !selectedLinesSameQty) {
-        enableButton = false;
-        enableQtyButton = true;
-      }
     } else {
       enableButton = false;
-      enableQtyButton = false;
     }
-    this.enableKeyboardButton(enableButton, enableQtyButton);
+    this.enableKeyboardButton(enableButton);
     OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
       line: inEvent.line,
       selectedLines: selectedLines,
       context: this
     }, function (args) {});
   },
-  enableKeyboardButton: function (enableButton, enableQtyButton) {
+  enableKeyboardButton: function (enableButton) {
     if (enableButton && !this.model.get('order').get('isEditable')) {
       enableButton = false;
-      enableQtyButton = false;
     }
     this.waterfall('onEnableQtyButton', {
-      enable: enableQtyButton || enableButton
+      enable: enableButton
     });
     this.waterfall('onEnablePlusButton', {
       enable: enableButton

@@ -395,6 +395,14 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       terminalAuthenticationQueryFilters.put(QueryFilter.ORGANIZATION, false);
       terminalAuthenticationValue = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication",
           true, null, null, null, null, (String) null, terminalAuthenticationQueryFilters);
+      result.put("terminalAuthentication", terminalAuthenticationValue);
+    } catch (PropertyException e) {
+      result.put("terminalAuthentication", "Y");
+      result.put(currentPropertyToLaunchError,
+          OBMessageUtils.messageBD("OBPOS_errorWhileReadingTerminalAuthenticationPreference"));
+    }
+
+    try {
       // Get maxTimeInOffline preference
       currentPropertyToLaunchError = "errorReadingMaxAllowedTimeInOffline";
       Map<QueryFilter, Boolean> maxAllowedTimeInOfflineQueryFilters = new HashMap<>();
@@ -403,6 +411,13 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.ORGANIZATION, false);
       maxAllowedTimeInOfflineValue = Preferences.getPreferenceValue("OBPOS_MaxTimeInOffline", true,
           null, null, null, null, (String) null, maxAllowedTimeInOfflineQueryFilters);
+      result.put("maxTimeInOffline", maxAllowedTimeInOfflineValue);
+    } catch (PropertyException e) {
+      // Preference is not defined, max time in offline will not be set
+      result.put(currentPropertyToLaunchError,
+          OBMessageUtils.messageBD("OBPOS_errorWhileReadingMaxAllowedTimeInOfflinePreference"));
+    }
+    try {
       // Get offlineSessionTimeExpiration preference
       currentPropertyToLaunchError = "errorReadingOfflineSessionTimeExpiration";
       Map<QueryFilter, Boolean> offlineSessionTimeExpirationQueryFilters = new HashMap<>();
@@ -412,19 +427,13 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       offlineSessionTimeExpirationValue = Preferences.getPreferenceValue(
           "OBPOS_offlineSessionTimeExpiration", true, null, null, null, null, (String) null,
           offlineSessionTimeExpirationQueryFilters);
+      result.put("offlineSessionTimeExpiration", offlineSessionTimeExpirationValue);
     } catch (PropertyException e) {
-      if (currentPropertyToLaunchError.equals("errorReadingTerminalAuthentication")) {
-        result.put("terminalAuthentication", "Y");
-      } else {
-        result.put("terminalAuthentication", terminalAuthenticationValue);
-      }
-      result.put(currentPropertyToLaunchError,
-          OBMessageUtils.messageBD("OBPOS_errorWhileReadingPreference"));
-      return result;
+      result.put("offlineSessionTimeExpiration", 60);
+      result
+          .put(currentPropertyToLaunchError, OBMessageUtils
+              .messageBD("OBPOS_errorWhileReadingOfflineSessionTimeExpirationPreference"));
     }
-    result.put("terminalAuthentication", terminalAuthenticationValue);
-    result.put("maxTimeInOffline", maxAllowedTimeInOfflineValue);
-    result.put("offlineSessionTimeExpiration", offlineSessionTimeExpirationValue);
     return result;
   }
 
