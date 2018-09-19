@@ -426,6 +426,7 @@ public abstract class AuthenticationManager {
    * this particular request
    * 
    * @param request
+   *          the request to be marked as self-authenticated
    */
   protected void markRequestAsSelfAuthenticated(HttpServletRequest request) {
     request.setAttribute("IS_SELF_AUTHENTICATED", "Y");
