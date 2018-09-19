@@ -12,7 +12,7 @@ package org.openbravo.retail.posterminal.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -74,12 +74,13 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
         hql.append(" where " + OBPOSCurrencyRounding.PROPERTY_CURRENCY + ".id = :currencyId");
         hql.append(" and " + OBPOSCurrencyRounding.PROPERTY_ACTIVE + " = true");
         hql.append(" and ad_isorgincluded(:organizationId, cr.organization.id, :clientId) <> -1");
-        Query qry = OBDal.getInstance().getSession().createQuery(hql.toString());
+        Query<String> qry = OBDal.getInstance().getSession()
+            .createQuery(hql.toString(), String.class);
         qry.setParameter("currencyId", ttpm.getCurrency().getId());
         qry.setParameter("organizationId", ttpm.getOrganization().getId());
         qry.setParameter("clientId", ttpm.getClient().getId());
         qry.setMaxResults(1);
-        String currencyRoundingId = (String) qry.uniqueResult();
+        String currencyRoundingId = qry.uniqueResult();
         if (currencyRoundingId != null) {
           throw new OBException(String.format(OBMessageUtils
               .messageBD("OBPOS_ChangeLogicNotAllowed"), ttpm.getCurrency().getISOCode()));

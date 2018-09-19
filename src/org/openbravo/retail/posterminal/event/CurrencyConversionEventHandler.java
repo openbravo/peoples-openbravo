@@ -12,7 +12,7 @@ package org.openbravo.retail.posterminal.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -64,7 +64,8 @@ public class CurrencyConversionEventHandler extends EntityPersistenceEventObserv
       hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGEPAYMENTTYPE + " is not null");
       hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGEPAYMENTTYPE + " is not null");
       hql.append(" and ad_isorgincluded(ttpm.organization.id, :organizationId, :clientId) <> -1");
-      Query qry = OBDal.getInstance().getSession().createQuery(hql.toString());
+      Query<String> qry = OBDal.getInstance().getSession()
+          .createQuery(hql.toString(), String.class);
       qry.setParameter("currencyId", currencyRounding.getCurrency().getId());
       qry.setParameter("organizationId", currencyRounding.getOrganization().getId());
       qry.setParameter("clientId", currencyRounding.getClient().getId());
