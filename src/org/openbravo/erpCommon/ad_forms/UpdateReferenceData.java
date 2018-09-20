@@ -11,14 +11,13 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2017 Openbravo SLU
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -31,8 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.InitialSetupUtility;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -43,6 +44,7 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DataImportService;
@@ -211,24 +213,27 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
 
         StringBuffer strError = new StringBuffer("");
         for (int j = 0; j < data.length; j++) {
-          String strPath = vars.getSessionValue("#SOURCEPATH");
-          if (!data[j].javapackage.equals("org.openbravo"))
-            strPath = strPath + "/modules/" + data[j].javapackage;
-          strPath = strPath + "/referencedata/standard";
-          File datasetFile = new File(strPath + "/" + Utility.wikifiedName(data[j].datasetname)
-              + ".xml");
-          if (!datasetFile.exists()) {
-            continue;
-          }
+          String fileName = Utility.wikifiedName(data[j].datasetname);
           if (UpdateReferenceDataData.existsOrgModule(cp, vars.getClient(), strOrganization,
               data[j].adModuleId, data[j].version).equals("0")) {
             // Not installed previously
-            String strXml = Utility.fileToString(datasetFile.getPath());
+            OBContext.setAdminMode(true);
+            String strXml;
+            try {
+              strXml = InitialSetupUtility.getDatasetContent(OBDal.getInstance().get(DataSet.class,
+                  data[j].adDatasetId));
+            } catch (IOException ignore) {
+              log4j.error("Error updating reference data for " + fileName, ignore);
+              continue;
+            } finally {
+              OBContext.restorePreviousMode();
+            }
+
             ImportResult myResult = myData.importDataFromXML(
                 OBDal.getInstance().get(Client.class, vars.getClient()),
                 OBDal.getInstance().get(Organization.class, strOrganization), strXml, OBDal
                     .getInstance().get(Module.class, data[j].adModuleId), true);
-            m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+            m_info.append(SALTO_LINEA).append("File: ").append(fileName).append(":")
                 .append(SALTO_LINEA);
             if (myResult.getLogMessages() != null && !myResult.getLogMessages().equals("")
                 && !myResult.getLogMessages().equals("null")) {
@@ -262,7 +267,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
                   .append(SALTO_LINEA);
             }
           } else {
-            m_info.append(SALTO_LINEA).append("File: ").append(datasetFile.getName()).append(":")
+            m_info.append(SALTO_LINEA).append("File: ").append(fileName).append(":")
                 .append(SALTO_LINEA);
             m_info
                 .append(SALTO_LINEA)
