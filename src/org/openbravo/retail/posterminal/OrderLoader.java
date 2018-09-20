@@ -2422,8 +2422,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           continue;
         }
         BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
-            pricePrecision, RoundingMode.HALF_UP);
-        BigDecimal tempWriteoffAmt = new BigDecimal(writeoffAmt.toString());
+            pricePrecision, RoundingMode.HALF_UP), tempWriteoffAmt = BigDecimal.ZERO;
+        if (!isReversalPayment) {
+          tempWriteoffAmt = new BigDecimal(writeoffAmt.toString());
+        }
         if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0 && writeoffAmt.compareTo(amount.abs()) == 1) {
           // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
           // because the payment cannot be 0 (It wouldn't be created)
