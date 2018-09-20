@@ -689,8 +689,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on('voidLayaway', function () {
       var me = this;
       var finishVoidLayaway = function () {
-          var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
-          var auxReceipt = new OB.Model.Order();
+          var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway'),
+              execution = OB.UTIL.ProcessController.start('voidLayaway'),
+              auxReceipt = new OB.Model.Order();
+          enyo.$.scrim.show();
           OB.UTIL.clone(receipt, auxReceipt);
           auxReceipt.prepareToSend(function () {
             OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
@@ -729,11 +731,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       receipt.trigger('change:gross', receipt);
                       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
                     }
+                    OB.UTIL.ProcessController.finish('voidLayaway', execution);
                     if (OB.MobileApp.view.openedPopup === null) {
                       enyo.$.scrim.hide();
                     }
                   }, function () {
                     OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+                    OB.UTIL.ProcessController.finish('voidLayaway', execution);
                     if (OB.MobileApp.view.openedPopup === null) {
                       enyo.$.scrim.hide();
                     }
@@ -769,6 +773,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
               execution = OB.UTIL.ProcessController.start('cancelLayaway');
 
+          enyo.$.scrim.show();
           processCancelLayaway = function () {
             receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);

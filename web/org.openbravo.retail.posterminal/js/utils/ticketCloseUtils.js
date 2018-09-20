@@ -16,6 +16,7 @@
   OB.UTIL.TicketCloseUtils.paymentAccepted = function (receipt, orderList, triggerClosedCallback) {
     receipt.setIsCalculateReceiptLockState(true);
     receipt.setIsCalculateGrossLockState(true);
+    var execution = OB.UTIL.ProcessController.start('completeReceipt');
     receipt.prepareToSend(function () {
       //Create the negative payment for change
       var oldChange = receipt.get('change'),
@@ -28,6 +29,7 @@
           receipt.trigger('closed', {
             callback: function (args) {
               if (args.skipCallback) {
+                OB.UTIL.ProcessController.finish('completeReceipt', execution);
                 triggerClosedCallback();
                 return true;
               }
@@ -93,6 +95,7 @@
                   }
 
                 }
+                OB.UTIL.ProcessController.finish('completeReceipt', execution);
                 triggerClosedCallback();
               }, null, false);
             }
