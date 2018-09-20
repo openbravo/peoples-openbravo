@@ -1718,7 +1718,7 @@ public class InitialSetupUtility {
     return myResult;
   }
 
-  private static String getDatasetContent(DataSet dataset) throws IOException {
+  public static String getDatasetContent(DataSet dataset) throws IOException {
     String fileName = Utility.wikifiedName(dataset.getName()) + ".xml";
     if (SessionFactoryController.isRunningInWebContainer()) {
       String xmlPath = "/WEB-INF/referencedata/standard/" + dataset.getModule().getJavaPackage()

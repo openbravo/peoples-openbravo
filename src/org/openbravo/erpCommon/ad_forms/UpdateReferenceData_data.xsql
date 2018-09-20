@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,7 @@
     <Sql>
       <![CDATA[
       SELECT '' as id, '' as NAME, '' AS HASCHARTOFACCOUNTS, '' AS  ISTRANSLATIONMODULE,
-      '' AS AD_MODULE_ID, '' AS PATH, '' AS  JAVAPACKAGE, '' AS DATASETNAME, '' AS VERSION, '' AS CHECKSUM
+      '' AS AD_MODULE_ID, '' AS PATH, '' AS  JAVAPACKAGE, '' AS DATASETNAME, '' AS VERSION, '' AS CHECKSUM, '' AS AD_DATASET_ID
       FROM DUAL
       ]]>
     </Sql>
@@ -53,7 +53,7 @@
     <Sql>
       <![CDATA[
       SELECT AD_MODULE.NAME, AD_MODULE.HASCHARTOFACCOUNTS, AD_MODULE.ISTRANSLATIONMODULE, 
-      AD_MODULE.AD_MODULE_ID , AD_MODULE.JAVAPACKAGE, AD_DATASET.NAME AS DATASETNAME, AD_MODULE.VERSION, AD_DATASET.CHECKSUM
+      AD_MODULE.AD_MODULE_ID , AD_MODULE.JAVAPACKAGE, AD_DATASET.NAME AS DATASETNAME, AD_MODULE.VERSION, AD_DATASET.CHECKSUM, AD_DATASET.AD_DATASET_ID
       FROM AD_MODULE, AD_DATASET
       WHERE AD_MODULE.AD_MODULE_ID = AD_DATASET.AD_MODULE_ID      
       AND AD_MODULE.AD_MODULE_ID IN ('1')
