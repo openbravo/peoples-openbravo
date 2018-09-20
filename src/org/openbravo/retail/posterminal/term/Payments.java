@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.term;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import javax.servlet.ServletException;
 
 import org.apache.commons.codec.binary.Base64;
@@ -100,7 +103,12 @@ public class Payments extends JSONTerminalProperty {
           payment.put("paymentMethod", pMethod);
 
           payment.put("rate", objPayment[2]);
-          payment.put("mulrate", objPayment[3]);
+          BigDecimal mulrate = BigDecimal.ZERO;
+          BigDecimal rate = new BigDecimal((String) objPayment[2]);
+          if (rate.compareTo(BigDecimal.ZERO) != 0) {
+            mulrate = BigDecimal.ONE.divide(rate, 12, RoundingMode.HALF_UP);
+          }
+          payment.put("mulrate", mulrate.toPlainString());
 
           payment.put("isocode", objPayment[4]);
           payment.put("symbol", objPayment[5]);
