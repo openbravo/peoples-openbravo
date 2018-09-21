@@ -491,6 +491,7 @@
     dialogbuttons.push({
       label: OB.I18N.getLabel('OBPOS_LblRetry'),
       isConfirmButton: true,
+      isDefaultAction: true,
       action: successfunc
     });
     if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
