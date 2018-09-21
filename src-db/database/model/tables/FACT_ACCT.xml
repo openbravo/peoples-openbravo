@@ -301,6 +301,7 @@
       </index>
       <index name="FACT_ACCT_DATEACCT" unique="false">
         <index-column name="DATEACCT"/>
+        <index-column name="FACT_ACCT_ID"/>
       </index>
       <index name="FACT_ACCT_DATEBALANCED" unique="false">
         <index-column name="DATEBALANCED"/>
