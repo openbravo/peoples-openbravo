@@ -61,12 +61,24 @@ enyo.kind({
   actionInput: function (inSender, inEvent) {
     var value = this.getParsedValue();
     this.edited = true;
-    this.hasErrors = _.isNaN(value) || value < 0 || OB.DEC.compare(OB.DEC.sub(value, this.calculateAmount(value), this.payment.obposPosprecision));
+
+    if (_.isNaN(value) || value < 0) {
+      this.hasErrors = true;
+      this.labelError = OB.I18N.getLabel('OBPOS_InvalidNumber');
+    } else if (OB.DEC.compare(OB.DEC.sub(value, this.calculateAmount(value), this.payment.obposPosprecision))) {
+      this.hasErrors = true;
+      this.labelError = OB.I18N.getLabel('OBPOS_InvalidRounding');
+    } else {
+      this.hasErrors = false;
+      this.labelError = '';
+    }
+
     this.displayStatus();
 
     return this.bubble('onActionInput', {
       value: value,
       hasErrors: this.hasErrors,
+      labelError: this.labeError,
       line: this
     });
   },
@@ -117,6 +129,7 @@ enyo.kind({
   assignValidValue: function (amountRounded) {
     this.$.textline.setValue(OB.I18N.formatCurrency(amountRounded));
     this.hasErrors = false;
+    this.labelError = '';
     this.displayStatus();
     setTimeout(function () {
       this.$.textline.hasNode().setSelectionRange(0, this.$.textline.getValue().length);

@@ -30,6 +30,9 @@ enyo.kind({
       components: [{
         name: 'paymentlines'
       }]
+    }, {
+      name: 'errors',
+      classes: 'changedialog-errors'
     }]
   },
   bodyButtons: {
@@ -102,11 +105,30 @@ enyo.kind({
 
   calculateRemaining: function () {
     var changeremaining = this.calculateRemainingFor(),
-        lines = this.$.bodyContent.$.paymentlines.getComponents();
+        lines = this.$.bodyContent.$.paymentlines.getComponents(),
+        errortext = '',
+        overpayment = false;
 
     lines.forEach(function (l) {
       l.showRemaining(changeremaining, this.calculateRemainingFor(l));
+
+      if (l.isOverpaid) {
+        overpayment = true;
+      } else if (l.hasErrors) {
+        if (errortext) {
+          errortext = OB.I18N.getLabel('OBPOS_ChangeAmountsNotValid');
+        } else {
+          errortext = l.labelError;
+        }
+      }
     }.bind(this));
+
+    // Show the change error, if any
+    if (overpayment) {
+      this.$.bodyContent.$.errors.setContent(OB.I18N.getLabel('OBPOS_Overpayment'));
+    } else {
+      this.$.bodyContent.$.errors.setContent(errortext);
+    }
   },
 
   actionOK: function (inSender, inEvent) {

@@ -782,6 +782,12 @@ button.btnbp:disabled {
   line-height: 20px;
 }
 
+.changedialog-errors {
+   color: #b94a48;
+   font-size: medium;
+   height: 25px;
+}
+
 .changedialog-properties-end {
   clear: both;
 }
