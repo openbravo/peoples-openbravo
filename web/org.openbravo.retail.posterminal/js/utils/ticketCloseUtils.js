@@ -13,100 +13,57 @@
 
   OB.UTIL.TicketCloseUtils = {};
 
+  OB.UTIL.TicketCloseUtils.processChangePayments = function (receipt, callback) {
+    var mergeable, addPaymentCallback, prevChange;
+
+    // Manage change payments (if there is change)
+    if (receipt.get('changePayments')) {
+      prevChange = receipt.get('change');
+      mergeable = !OB.MobileApp.model.get('terminal').multiChange && !OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true);
+      addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
+        // restore attributes
+        receipt.set('change', prevChange, {
+          silent: true
+        });
+        callback();
+      });
+
+      receipt.get('changePayments').forEach(function (changePayment) {
+        var paymentToAdd = OB.MobileApp.model.paymentnames[changePayment.key];
+        receipt.addPayment(new OB.Model.PaymentLine({
+          kind: paymentToAdd.payment.searchKey,
+          name: paymentToAdd.payment.commercialName,
+          amount: OB.DEC.sub(0, changePayment.amount, paymentToAdd.obposPosprecision),
+          amountRounded: OB.DEC.sub(0, changePayment.amountRounded, paymentToAdd.obposPosprecision),
+          origAmount: OB.DEC.sub(0, changePayment.origAmount),
+          origAmountRounded: OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounded, paymentToAdd.rate)),
+          rate: paymentToAdd.rate,
+          mulrate: paymentToAdd.mulrate,
+          isocode: paymentToAdd.isocode,
+          allowOpenDrawer: paymentToAdd.paymentMethod.allowopendrawer,
+          isCash: paymentToAdd.paymentMethod.iscash,
+          openDrawer: paymentToAdd.paymentMethod.openDrawer,
+          printtwice: paymentToAdd.paymentMethod.printtwice,
+          changePayment: true,
+          paymentData: {
+            mergeable: mergeable,
+            label: changePayment.label
+          }
+        }), addPaymentCallback);
+      });
+    } else {
+      callback();
+    }
+  };
+
   OB.UTIL.TicketCloseUtils.paymentAccepted = function (receipt, orderList, triggerClosedCallback) {
     receipt.setIsCalculateReceiptLockState(true);
     receipt.setIsCalculateGrossLockState(true);
     receipt.prepareToSend(function () {
       //Create the negative payment for change
       var clonedCollection = new Backbone.Collection(),
-          mergeable, addPaymentCallback, paymentKind, i, prevChange, totalPrePayment = OB.DEC.Zero,
+          paymentKind, i, totalPrePayment = OB.DEC.Zero,
           totalNotPrePayment = OB.DEC.Zero;
-      var triggerReceiptClose = function (receipt) {
-
-          // Adjust leave on credit payments.
-          for (i = 0; i < receipt.get('payments').length; i++) {
-            paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-            if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
-              receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-              receipt.set('paidOnCredit', true);
-            }
-          }
-
-          // There is only 1 receipt object.
-          receipt.set('isBeingClosed', true);
-          receipt.trigger('closed', {
-            callback: function (args) {
-              if (args.skipCallback) {
-                triggerClosedCallback();
-                return true;
-              }
-              receipt.set('isBeingClosed', false);
-
-              _.each(orderList.models, function (ol) {
-                if (ol.get('id') === receipt.get('id')) {
-                  ol.set('isBeingClosed', false);
-                  return true;
-                }
-              }, this);
-              receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
-              OB.UTIL.setScanningFocus(true);
-              OB.Dal.save(receipt, function () {
-                OB.UTIL.Debug.execute(function () {
-                  if (!args.frozenReceipt) {
-                    throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
-                  }
-                  if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
-                    throw "The isCancelled flag must be set";
-                  }
-                });
-
-                // verify that the receipt was not cancelled
-                if (args.isCancelled !== true) {
-                  var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
-                  orderToPrint.get('payments').reset();
-                  clonedCollection.each(function (model) {
-                    orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
-                      silent: true
-                    });
-                  });
-                  orderToPrint.set('hasbeenpaid', 'Y');
-                  receipt.trigger('print', orderToPrint, {
-                    offline: true
-                  });
-
-                  // Verify that the receipt has not been changed while the ticket has being closed
-                  var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
-                  // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
-                  delete diff.hasbeenpaid;
-                  delete diff.cashUpReportInformation;
-                  // isBeingClosed is a flag only used to log purposes
-                  delete diff.isBeingClosed;
-                  // verify if there have been any modification to the receipt
-                  var diffStringified = JSON.stringify(diff, undefined, 2);
-                  if (diffStringified !== '{}') {
-                    OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
-                  }
-
-                  if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
-                    orderList.deleteCurrent(true);
-                  } else {
-                    orderList.deleteCurrent();
-                  }
-                  receipt.setIsCalculateReceiptLockState(false);
-                  receipt.setIsCalculateGrossLockState(false);
-
-                  orderList.synchronizeCurrentOrder();
-
-                  if (OB.MobileApp.model.showSynchronizedDialog) {
-                    OB.MobileApp.model.hideSynchronizingDialog();
-                  }
-
-                }
-                triggerClosedCallback();
-              }, null, false);
-            }
-          });
-          };
 
       if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
         var negativeLines = _.filter(receipt.get('lines').models, function (line) {
@@ -134,44 +91,89 @@
         }
       });
 
-      // Manage change payments (if there is change)
-      if (receipt.get('changePayments')) {
-        prevChange = receipt.get('change');
-        mergeable = !OB.MobileApp.model.get('terminal').multiChange && !OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true);
-        addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
-          // restore attributes
-          receipt.set('change', prevChange, {
-            silent: true
-          });
-          triggerReceiptClose(receipt);
-        });
-
-        receipt.get('changePayments').forEach(function (changePayment) {
-          var paymentToAdd = OB.MobileApp.model.paymentnames[changePayment.key];
-          receipt.addPayment(new OB.Model.PaymentLine({
-            kind: paymentToAdd.payment.searchKey,
-            name: paymentToAdd.payment.commercialName,
-            amount: OB.DEC.sub(0, changePayment.amount, paymentToAdd.obposPosprecision),
-            amountRounded: OB.DEC.sub(0, changePayment.amountRounded, paymentToAdd.obposPosprecision),
-            origAmount: OB.DEC.sub(0, changePayment.origAmount),
-            origAmountRounded: OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounded, paymentToAdd.rate)),
-            rate: paymentToAdd.rate,
-            mulrate: paymentToAdd.mulrate,
-            isocode: paymentToAdd.isocode,
-            allowOpenDrawer: paymentToAdd.paymentMethod.allowopendrawer,
-            isCash: paymentToAdd.paymentMethod.iscash,
-            openDrawer: paymentToAdd.paymentMethod.openDrawer,
-            printtwice: paymentToAdd.paymentMethod.printtwice,
-            changePayment: true,
-            paymentData: {
-              mergeable: mergeable,
-              label: changePayment.label
-            }
-          }), addPaymentCallback);
-        });
-      } else {
-        triggerReceiptClose(receipt);
+      // Adjust leave on credit payments.
+      for (i = 0; i < receipt.get('payments').length; i++) {
+        paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+        if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
+          receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
+          receipt.set('paidOnCredit', true);
+        }
       }
+
+      // There is only 1 receipt object.
+      receipt.set('isBeingClosed', true);
+      receipt.trigger('closed', {
+        callback: function (args) {
+          if (args.skipCallback) {
+            triggerClosedCallback();
+            return true;
+          }
+          receipt.set('isBeingClosed', false);
+
+          _.each(orderList.models, function (ol) {
+            if (ol.get('id') === receipt.get('id')) {
+              ol.set('isBeingClosed', false);
+              return true;
+            }
+          }, this);
+          receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+          OB.UTIL.setScanningFocus(true);
+          OB.Dal.save(receipt, function () {
+            OB.UTIL.Debug.execute(function () {
+              if (!args.frozenReceipt) {
+                throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
+              }
+              if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
+                throw "The isCancelled flag must be set";
+              }
+            });
+
+            // verify that the receipt was not cancelled
+            if (args.isCancelled !== true) {
+              var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
+              orderToPrint.get('payments').reset();
+              clonedCollection.each(function (model) {
+                orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
+                  silent: true
+                });
+              });
+              orderToPrint.set('hasbeenpaid', 'Y');
+              receipt.trigger('print', orderToPrint, {
+                offline: true
+              });
+
+              // Verify that the receipt has not been changed while the ticket has being closed
+              var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.frozenReceipt.serializeToJSON());
+              // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
+              delete diff.hasbeenpaid;
+              delete diff.cashUpReportInformation;
+              // isBeingClosed is a flag only used to log purposes
+              delete diff.isBeingClosed;
+              // verify if there have been any modification to the receipt
+              var diffStringified = JSON.stringify(diff, undefined, 2);
+              if (diffStringified !== '{}') {
+                OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
+              }
+
+              if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
+                orderList.deleteCurrent(true);
+              } else {
+                orderList.deleteCurrent();
+              }
+              receipt.setIsCalculateReceiptLockState(false);
+              receipt.setIsCalculateGrossLockState(false);
+
+              orderList.synchronizeCurrentOrder();
+
+              if (OB.MobileApp.model.showSynchronizedDialog) {
+                OB.MobileApp.model.hideSynchronizingDialog();
+              }
+
+            }
+            triggerClosedCallback();
+          }, null, false);
+        }
+      });
     });
   };
 
