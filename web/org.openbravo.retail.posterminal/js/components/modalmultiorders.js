@@ -447,6 +447,7 @@ enyo.kind({
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
               order.set('loadedFromServer', true);
+              me.owner.owner.model.get('orderList').addMultiReceipt(order);
               order.set('checked', iter.get('checked'));
               OB.DATA.OrderTaxes(order);
               order.set('belongsToMultiOrder', true);

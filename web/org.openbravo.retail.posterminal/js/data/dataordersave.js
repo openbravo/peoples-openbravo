@@ -248,7 +248,7 @@
                   restoreReceiptOnError(eventParams, frozenReceipt);
                   };
 
-
+              receipt.clearWith(frozenReceipt);
               // create a clone of the receipt to be used when executing the final callback
               if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
                 if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && eventParams && eventParams.callback) {
@@ -281,7 +281,6 @@
                         }
                       });
                       };
-                  receipt.clearWith(frozenReceipt);
                   // in synchronized mode do the doc sequence update in the success
                   if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                     OB.UTIL.calculateCurrentCash();
