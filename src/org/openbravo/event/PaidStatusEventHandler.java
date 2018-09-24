@@ -44,8 +44,7 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -72,7 +71,8 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
             for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
               invoicePaidold = psd.isInvoicePaid();
               if (!invoicePaidold) {
-                if (newStatus.equals(transaction.getFinPayment().getStatus())) {
+                if (newStatus.equals(transaction.getFinPayment().getStatus())
+                    && (!psd.getPaymentDetails().isPrepayment())) {
                   psd.setInvoicePaid(true);
                 }
                 if (psd.isInvoicePaid()) {
@@ -92,7 +92,8 @@ public class PaidStatusEventHandler extends EntityPersistenceEventObserver {
             for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
               invoicePaidold = psd.isInvoicePaid();
               if (invoicePaidold) {
-                if (oldStatus.equals(FIN_Utility.invoicePaymentStatus(transaction.getFinPayment()))) {
+                if (oldStatus.equals(FIN_Utility.invoicePaymentStatus(transaction.getFinPayment()))
+                    && (!psd.getPaymentDetails().isPrepayment())) {
                   FIN_Utility.restorePaidAmounts(psd);
                 }
               }
