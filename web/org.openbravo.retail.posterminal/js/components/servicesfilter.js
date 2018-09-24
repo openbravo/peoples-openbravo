@@ -34,8 +34,7 @@ enyo.kind({
         auxCatStr = '(',
         appendProdComma = false,
         appendCatComma = false,
-        existingServices, lineIdList, untSelected = 0,
-        totalAmountSelected = 0,
+        existingServices, lineIdList, totalAmountSelected = 0,
         minimumSelected = Infinity,
         maximumSelected = 0;
 
@@ -268,7 +267,7 @@ enyo.kind({
       columns: [],
       operator: OB.Dal.FILTER,
       value: 'Services_Filter',
-      params: [product.get('forceFilterId') || product.get('id'), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : '-'), totalAmountSelected, minimumSelected, maximumSelected]
+      params: [product.get('isNew') ? null : (product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id')), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : "'-'"), totalAmountSelected, minimumSelected, maximumSelected]
     }, {
       columns: ['ispack'],
       operator: 'equals',
