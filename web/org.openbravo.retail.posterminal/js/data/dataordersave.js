@@ -283,15 +283,12 @@
                       };
                   // in synchronized mode do the doc sequence update in the success
                   if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.UTIL.calculateCurrentCash();
                     OB.Dal.transaction(function (tx) {
+                      OB.UTIL.calculateCurrentCash(null, tx);
                       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
-                        OB.trace('Saving receipt.');
-                        OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
-                          // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                          receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                          successStep();
-                        });
+                        // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                        receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+                        successStep();
                       }, tx);
                     });
                   } else {
