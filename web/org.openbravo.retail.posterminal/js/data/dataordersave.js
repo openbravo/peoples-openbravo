@@ -524,9 +524,6 @@
               }, function (args) {
                 model.get('multiOrders').resetValues();
                 me.context.get('leftColumnViewManager').setOrderMode();
-                if (OB.MobileApp.model.showSynchronizedDialog) {
-                  OB.MobileApp.model.hideSynchronizingDialog();
-                }
                 OB.UTIL.showLoading(false);
                 enyo.$.scrim.hide();
 

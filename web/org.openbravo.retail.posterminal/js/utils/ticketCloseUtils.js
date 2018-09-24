@@ -89,11 +89,6 @@
                   receipt.setIsCalculateGrossLockState(false);
 
                   orderList.synchronizeCurrentOrder();
-
-                  if (OB.MobileApp.model.showSynchronizedDialog) {
-                    OB.MobileApp.model.hideSynchronizingDialog();
-                  }
-
                 }
                 OB.UTIL.ProcessController.finish('completeReceipt', execution);
                 triggerClosedCallback();
