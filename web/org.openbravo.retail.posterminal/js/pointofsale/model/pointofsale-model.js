@@ -943,7 +943,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       syncProcessCallback();
                     }, function () {
                       OB.UTIL.ProcessController.finish('cancelLayaway', execution);
-                      if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                        OB.Dal.get(OB.Model.Order, receipt.get('id'), function (loadedReceipt) {
+                          receipt.clearWith(loadedReceipt);
+                          //We need to restore the payment tab, as that's what the user should see if synchronization fails
+                          OB.MobileApp.view.waterfall('onTabChange', {
+                            tabPanel: 'payment',
+                            keyboard: 'toolbarpayment',
+                            edit: false
+                          });
+                          receipt.set('hasbeenpaid', 'N');
+                          receipt.trigger('updatePending');
+                          OB.Dal.save(receipt, function () {
+                            OB.UTIL.calculateCurrentCash();
+                          }, null, false);
+                        });
+                      } else {
                         syncProcessCallback();
                       }
                     });
