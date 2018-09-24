@@ -10,6 +10,28 @@
 /*global OB, enyo, _ */
 
 enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.Change',
+  tag: 'span',
+  style: 'font-weight: bold;',
+  setContent: function () {
+    var size, length;
+
+    this.inherited(arguments);
+
+    length = this.content.length;
+    if (length < 23) {
+      size = 24;
+    } else if (length < 39) {
+      // (22, 24); (38, 14)
+      size = Math.trunc(-0.625 * length + 37.75);
+    } else {
+      size = 14;
+    }
+    this.setStyle('font-size: ' + size + 'px;');
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Payment',
   published: {
     receipt: null
@@ -149,9 +171,8 @@ enyo.kind({
             style: 'padding: 5px; margin: -5px 10px 0px 0px; width: 40px; height: 25px;',
             ontap: 'actionChangeButton'
           }, {
-            tag: 'span',
-            name: 'change',
-            style: 'font-size: 24px; font-weight: bold;'
+            kind: 'OB.OBPOSPointOfSale.UI.Change',
+            name: 'change'
           }, {
             tag: 'span',
             name: 'changelbl'
