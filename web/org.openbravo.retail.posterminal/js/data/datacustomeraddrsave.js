@@ -92,6 +92,9 @@
             // update each order also so that new name is shown
             OB.DATA.updateDefaultCustomerLocations(customerAddr);
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
+            if (OB.MobileApp.model.showSynchronizedDialog) {
+              OB.MobileApp.model.hideSynchronizingDialog();
+            }
           };
           errorCallback = function () {
             if (callbackError) {
@@ -132,6 +135,9 @@
               // update each order also so that new name is shown
               OB.DATA.updateDefaultCustomerLocations(customerAddr);
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
+              if (OB.MobileApp.model.showSynchronizedDialog) {
+                OB.MobileApp.model.hideSynchronizingDialog();
+              }
             };
             errorCallback = function () {
               if (callbackError) {

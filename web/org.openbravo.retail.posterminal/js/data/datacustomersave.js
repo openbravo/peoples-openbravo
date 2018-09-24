@@ -156,6 +156,9 @@
               var successCallback = function () {
                   OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [customer.get('_identifier')]));
                   finalCallback(true);
+                  if (OB.MobileApp.model.showSynchronizedDialog) {
+                    OB.MobileApp.model.hideSynchronizingDialog();
+                  }
                   };
               OB.MobileApp.model.runSyncProcess(successCallback, function () {
                 finalCallback(false);
@@ -245,6 +248,9 @@
               successCallback = function () {
                 OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [customer.get('_identifier')]));
                 finalCallback(true);
+                if (OB.MobileApp.model.showSynchronizedDialog) {
+                  OB.MobileApp.model.hideSynchronizingDialog();
+                }
               };
               OB.MobileApp.model.runSyncProcess(successCallback, function () {
                 finalCallback(false);
