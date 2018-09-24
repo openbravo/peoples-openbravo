@@ -249,6 +249,7 @@
                   };
 
               receipt.clearWith(frozenReceipt);
+              OB.UTIL.clone(receipt, diffReceipt);
               // create a clone of the receipt to be used when executing the final callback
               if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
                 if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && eventParams && eventParams.callback) {
