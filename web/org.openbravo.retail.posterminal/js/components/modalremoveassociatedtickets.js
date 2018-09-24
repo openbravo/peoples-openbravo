@@ -210,8 +210,13 @@ enyo.kind({
 
     var lineNum = 0;
     _.each(me.args.selectedLine.get('relatedLines'), function (relatedLine) {
-      if (_.isUndefined(relatedLine.orderDocumentNo) && me.args.receipt) {
+      if ((_.isUndefined(relatedLine.orderDocumentNo) || _.isUndefined(relatedLine.bpName) || _.isUndefined(relatedLine.qty)) && me.args.receipt) {
+        var line = _.find(me.args.receipt.get('lines').models, function (line) {
+          return line.id === relatedLine.orderlineId;
+        });
         relatedLine.orderDocumentNo = me.args.receipt.get('documentNo');
+        relatedLine.bpName = me.args.receipt.get('bp').get('name');
+        relatedLine.qty = line.get('qty');
       }
       var lineEnyoObject = me.$.bodyContent.$.attributes.createComponent({
         kind: 'OB.UI.AssociatedOrderLine',
