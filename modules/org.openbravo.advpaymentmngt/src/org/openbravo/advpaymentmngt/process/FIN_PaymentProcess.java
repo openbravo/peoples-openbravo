@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -553,6 +553,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 && pd.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null) {
               reversedPaymentDetail.setPrepayment(true);
               reversedPaymentDetail.setRefund(true);
+            } else if (pd.isPrepayment()
+                && pd.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null) {
+              reversedPaymentDetail.setPrepayment(false);
+              reversedPaymentDetail.setRefund(false);
             }
             List<FIN_PaymentScheduleDetail> reversedSchedDetails = new ArrayList<FIN_PaymentScheduleDetail>();
             OBDal.getInstance().save(reversedPaymentDetail);
