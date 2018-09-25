@@ -303,11 +303,7 @@
       } else if (receipt.get('ordercanceled')) {
         args.template = me.templatecanceledreceipt;
       } else if (receipt.get('cancelLayaway')) {
-        if (receipt.get('orderType') === 2 || receipt.get('isLayaway') || receipt.get('orderType') === 3) {
-          args.template = me.templatecanceledlayaway;
-        } else {
-          args.template = me.templatecanceledreceipt;
-        }
+        args.template = me.templatecanceledlayaway;
       } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1 || hasNegativeLines) {
           args.template = me.templatereturninvoice;
