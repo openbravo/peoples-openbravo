@@ -319,18 +319,15 @@
                     OB.UTIL.calculateCurrentCash();
                     OB.Dal.transaction(function (tx) {
                       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
-                        OB.trace('Saving receipt.');
-                        OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
-                          // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                          receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                          if (eventParams && eventParams.callback) {
-                            eventParams.callback({
-                              frozenReceipt: frozenReceipt,
-                              diffReceipt: diffReceipt,
-                              isCancelled: false
-                            });
-                          }
-                        });
+                        // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                        receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+                        if (eventParams && eventParams.callback) {
+                          eventParams.callback({
+                            frozenReceipt: frozenReceipt,
+                            diffReceipt: diffReceipt,
+                            isCancelled: false
+                          });
+                        }
                       }, tx);
                     });
                   }
