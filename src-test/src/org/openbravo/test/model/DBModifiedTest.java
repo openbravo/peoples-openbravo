@@ -50,7 +50,7 @@ public class DBModifiedTest extends OBBaseTest {
       createDBObject();
       assertTrue("DB changes were not detected", isDBModified(true));
 
-      assertFalse("DB changes were detected just after upating check sum in DB",
+      assertFalse("DB changes were detected just after updating check sum in DB",
           isDBModified(false));
     } finally {
       dropDBObject();
