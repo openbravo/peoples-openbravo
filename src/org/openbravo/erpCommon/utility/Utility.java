@@ -2084,7 +2084,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image as a BufferedImage object.
+   * Provides the image as a BufferedImage object. Commonly used for reports.
    * 
    * @param id
    *          The id of the image to display
@@ -2104,7 +2104,8 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
    * @param org
    *          The organization id used to get the logo In the case of requesting the yourcompanydoc
    *          logo you can indicate the organization used to request the logo.
@@ -2187,7 +2188,8 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
    * @param org
    *          The organization id used to get the logo In the case of requesting the yourcompanydoc
    *          logo you can indicate the organization used to request the logo.
@@ -2202,7 +2204,8 @@ public class Utility {
    *
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
    * @param org
    *          The organization id used to get the logo In the case of requesting the yourcompanydoc
    *          logo you can indicate the organization used to request the logo.
@@ -2249,7 +2252,8 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
    * @return The path of the image requested
    */
   private static String getDefaultImageLogoPath(String logo) {
@@ -2377,7 +2381,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image logo as a BufferedImage object.
+   * Provides the image logo as a BufferedImage object. Commonly used for reports.
    * 
    * @param logo
    *          The name of the logo to display
@@ -2390,7 +2394,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image logo as a BufferedImage object.
+   * Provides the image logo as a BufferedImage object. Commonly used for reports.
    * 
    * @param logo
    *          The name of the logo to display
