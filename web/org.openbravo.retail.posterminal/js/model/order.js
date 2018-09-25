@@ -447,14 +447,20 @@
           callback = function () {};
         }
 
-        OB.Dal.save(this, function () {
-          OB.info('[NewOrder] Order (' + (forceInsert ? 'insert' : 'update') + ') saved in DB with id ' + me.id);
+        if ((this.get('isQuotation') && !this.get('isEditable')) || this.get('isCancelling')) {
           if (callback) {
             callback();
           }
-        }, function () {
-          OB.error(arguments);
-        }, forceInsert);
+        } else {
+          OB.Dal.save(this, function () {
+            OB.info('[NewOrder] Order (' + (forceInsert ? 'insert' : 'update') + ') saved in DB with id ' + me.id);
+            if (callback) {
+              callback();
+            }
+          }, function () {
+            OB.error(arguments);
+          }, forceInsert);
+        }
 
         this.setUndo('SaveOrder', undoCopy);
       } else {
