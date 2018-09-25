@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.OBUIAPPViewImplementation;
 import org.openbravo.client.application.ViewRoleAccess;
@@ -1224,10 +1225,12 @@ public class RoleInheritanceTestUtils {
 
       StringBuilder delete = new StringBuilder();
       delete.append(" delete from " + OBUIAPPViewImplementation.ENTITY_NAME);
-      delete.append(" where " + OBUIAPPViewImplementation.PROPERTY_NAME + " = '%s'");
+      delete.append(" where " + OBUIAPPViewImplementation.PROPERTY_NAME + " = :name");
 
-      OBDal.getInstance().getSession()
-          .createQuery(String.format(delete.toString(), DUMMY_VIEW_IMPL_NAME)).executeUpdate();
+      @SuppressWarnings("rawtypes")
+      Query query = OBDal.getInstance().getSession().createQuery(delete.toString());
+      query.setParameter("name", DUMMY_VIEW_IMPL_NAME);
+      query.executeUpdate();
 
       module.setInDevelopment(currentState);
       OBDal.getInstance().save(module);
