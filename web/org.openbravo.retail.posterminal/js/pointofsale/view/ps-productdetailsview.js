@@ -296,19 +296,20 @@ enyo.kind({
       } else if (data.product === me.product.get('id')) {
         if (data.qty || data.qty === 0) {
           data.product = me.product;
-          me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
-          if (me.localStockModel.get('warehouses').at(0)) {
-            var currentWarehouse;
-            if (me.warehouse.warehouseid) {
-              currentWarehouse = me.localStockModel.getWarehouseById(me.warehouse.warehouseid);
-            } else {
-              currentWarehouse = me.localStockModel.getWarehouseById(me.warehouse.id);
-            }
-            me.loadDefaultWarehouseData(currentWarehouse);
-            me.warehouse.warehouseqty = currentWarehouse.get('warehouseqty');
-          } else {
-            me.warehouse.warehouseqty = OB.DEC.Zero;
+          var currentWarehouse;
+          if (!_.find(data.warehouses, function (warehouse) {
+            return warehouse.warehouseid === OB.MobileApp.model.get('warehouses')[0].warehouseid;
+          })) {
+            data.warehouses.unshift({
+              warehouseid: OB.MobileApp.model.get('warehouses')[0].warehouseid,
+              warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename,
+              warehouseqty: OB.DEC.Zero
+            });
           }
+          me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
+          currentWarehouse = me.localStockModel.getWarehouseById(me.warehouse.warehouseid || me.warehouse.id);
+          me.warehouse.warehouseqty = currentWarehouse.get('warehouseqty');
+          me.loadDefaultWarehouseData(currentWarehouse);
           me.bodyComponent.$.stockHere.removeClass('error');
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
         }
