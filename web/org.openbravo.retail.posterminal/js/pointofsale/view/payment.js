@@ -499,9 +499,12 @@ enyo.kind({
     this.$.changelbl.setShowing(showing);
   },
   checkEnoughMultiChange: function () {
-    var failedPaymentMethods = [];
+    var failedPaymentMethods = [],
+        changePayments = this.model.isValidMultiOrderState() //
+         ? this.model.get('multiOrders').get('changePayments') //
+         : this.receipt.get('changePayments');
 
-    this.receipt.get('changePayments').forEach(function (itemchange) {
+    changePayments.forEach(function (itemchange) {
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
       if (paymentMethod.foreignCash < itemchange.amountRounded) {
         failedPaymentMethods.push(paymentMethod.payment._identifier);
@@ -704,7 +707,7 @@ enyo.kind({
         failedPaymentMethods, reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
-      var changeAmt;
+      var changeAmt, selectedChange, changePayments;
 
       // If there are reverse payments search for those of cash payment method. It will be needed to check if there is enough cash to reverse those payments.
       if (paymentstatus.isReversal) {
@@ -739,7 +742,13 @@ enyo.kind({
             }
           });
         } else if (!_.isUndefined(paymentstatus)) {
-          changeAmt = this.getOrigAmountChange(selectedPayment);
+          changePayments = this.model.isValidMultiOrderState() //
+          ? this.model.get('multiOrders').get('changePayments') //
+          : this.receipt.get('changePayments');
+          selectedChange = changePayments.find(function (item) {
+            return item.key === selectedPayment.payment.searchKey;
+          });
+          changeAmt = selectedChange ? selectedChange.origAmount : 0;
           if (button === 'Layaway' || button === 'Credit') {
             requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, changeAmt);
           } else {
@@ -838,7 +847,6 @@ enyo.kind({
     }
 
     var change = this.model.getChange();
-    var check = true;
     var currentcash = selectedPayment.currentCash;
     var cashIsPresent = false;
     var alternativeCashPayment;
@@ -858,20 +866,12 @@ enyo.kind({
           });
         }
         if (!alternativeCashPayment) {
-          check = false;
           this.$.onlycashpaymentmethod.show();
-        } else if (alternativePaymentInfo && alternativePaymentInfo.currentCash < change) {
-          check = false;
-          this.$.noenoughchangelbl.show();
-        }
-      } else {
-        if (currentcash < change) {
-          check = false;
-          this.$.noenoughchangelbl.show();
+          return false;
         }
       }
     }
-    return check;
+    return true;
   },
 
   checkDrawerPreference: function () {
