@@ -500,13 +500,15 @@
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
                 isConfirmButton: true,
                 action: function () {
+                  OB.UTIL.localStorage.clear();
                   OB.UTIL.showLoading(true);
-                  me.logout();
+                  OB.MobileApp.model.logout();
                 }
               }], {
                 onHideFunction: function () {
+                  OB.UTIL.localStorage.clear();
                   OB.UTIL.showLoading(true);
-                  me.logout();
+                  OB.MobileApp.model.logout();
                 }
               });
             }
@@ -526,13 +528,15 @@
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               isConfirmButton: true,
               action: function () {
+                OB.UTIL.localStorage.clear();
                 OB.UTIL.showLoading(true);
-                me.logout();
+                OB.MobileApp.model.logout();
               }
             }], {
               onHideFunction: function () {
+                OB.UTIL.localStorage.clear();
                 OB.UTIL.showLoading(true);
-                me.logout();
+                OB.MobileApp.model.logout();
               }
             });
           } else {
@@ -682,13 +686,15 @@
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
                 isConfirmButton: true,
                 action: function () {
+                  OB.UTIL.localStorage.clear();
                   OB.UTIL.showLoading(true);
-                  me.logout();
+                  OB.MobileApp.model.logout();
                 }
               }], {
                 onHideFunction: function () {
+                  OB.UTIL.localStorage.clear();
                   OB.UTIL.showLoading(true);
-                  me.logout();
+                  OB.MobileApp.model.logout();
                 }
               });
             }
