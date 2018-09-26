@@ -120,7 +120,7 @@ enyo.kind({
     this.isComplete = true;
     this.isOverpaid = false;
 
-    currentChange = inEvent.receipt.get('changePayments').find(function (item) {
+    currentChange = inEvent.activemodel.get('changePayments').find(function (item) {
       return item.key === this.payment.payment.searchKey;
     }, this);
 

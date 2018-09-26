@@ -394,14 +394,13 @@ enyo.kind({
     }
   },
   actionChangeButton: function (inSender, inEvent) {
-    var change = this.model.isValidMultiOrderState() //
-    ? this.model.get('multiOrders').get('change') //
-    : this.receipt.get('change');
+    var activemodel = this.activeModel(),
+        change = activemodel.get('change');
 
     this.doShowPopup({
       popup: 'modalchange',
       args: {
-        receipt: this.receipt,
+        activemodel: activemodel,
         change: change,
         applyPaymentChange: function (paymentchange) {
           var paymentstatus, selectedPayment;
@@ -486,9 +485,14 @@ enyo.kind({
     // Update receipt and UI with new calculations
     this.applyPaymentChange(paymentchange);
   },
+  activeModel: function () {
+    return this.model.isValidMultiOrderState() //
+    ? this.model.get('multiOrders') //
+    : this.receipt;
+  },
   applyPaymentChange: function (paymentchange) {
     // Set change calculation results
-    this.receipt.set('changePayments', paymentchange.payments);
+    this.activeModel().set('changePayments', paymentchange.payments);
     OB.MobileApp.model.set('changeReceipt', paymentchange.label);
 
     // Set change UI
@@ -499,12 +503,9 @@ enyo.kind({
     this.$.changelbl.setShowing(showing);
   },
   checkEnoughMultiChange: function () {
-    var failedPaymentMethods = [],
-        changePayments = this.model.isValidMultiOrderState() //
-         ? this.model.get('multiOrders').get('changePayments') //
-         : this.receipt.get('changePayments');
+    var failedPaymentMethods = [];
 
-    changePayments.forEach(function (itemchange) {
+    this.activeModel().get('changePayments').forEach(function (itemchange) {
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
       if (paymentMethod.foreignCash < itemchange.amountRounded) {
         failedPaymentMethods.push(paymentMethod.payment._identifier);
@@ -514,7 +515,7 @@ enyo.kind({
     return failedPaymentMethods;
   },
   getOrigAmountChange: function (payment) {
-    var changepayment = this.receipt.get('changePayments').find(function (itemchange) {
+    var changepayment = this.activeModel().get('changePayments').find(function (itemchange) {
       return itemchange.searchKey === payment.searchKey;
     });
     return changepayment ? changepayment.origAmount : 0;
@@ -707,7 +708,7 @@ enyo.kind({
         failedPaymentMethods, reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
-      var changeAmt, selectedChange, changePayments;
+      var changeAmt, selectedChange;
 
       // If there are reverse payments search for those of cash payment method. It will be needed to check if there is enough cash to reverse those payments.
       if (paymentstatus.isReversal) {
@@ -742,10 +743,7 @@ enyo.kind({
             }
           });
         } else if (!_.isUndefined(paymentstatus)) {
-          changePayments = this.model.isValidMultiOrderState() //
-          ? this.model.get('multiOrders').get('changePayments') //
-          : this.receipt.get('changePayments');
-          selectedChange = changePayments.find(function (item) {
+          selectedChange = this.activeModel().get('changePayments').find(function (item) {
             return item.key === selectedPayment.payment.searchKey;
           });
           changeAmt = selectedChange ? selectedChange.origAmount : 0;
