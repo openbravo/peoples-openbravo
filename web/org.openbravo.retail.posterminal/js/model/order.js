@@ -4630,6 +4630,8 @@
                 p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
                   p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+                } else {
+                  p.set('origAmount', p.get('amount'));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
@@ -7035,6 +7037,8 @@
               p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+              } else {
+                p.set('origAmount', p.get('amount'));
               }
               payment.set('date', new Date());
               order.adjustPayment();
