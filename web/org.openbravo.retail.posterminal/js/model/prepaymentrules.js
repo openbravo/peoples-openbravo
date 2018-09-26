@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017 Openbravo S.L.U.
+ * Copyright (C) 2017-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,8 +17,11 @@
       var me = this,
           prepaymentAmount = receipt.get('lines').reduce(function (memo, line) {
           if (line.get('obposCanbedelivered') || line.get('deliveredQuantity') === line.get('qty')) {
-            return memo + me.currentLinePrepaymentAmount(line, 100);
+            var linePrepaymentAmount = me.currentLinePrepaymentAmount(line, 100);
+            line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
+            return memo + linePrepaymentAmount;
           } else {
+            line.set('obposLinePrepaymentAmount', OB.DEC.Zero);
             return memo;
           }
         }, 0),
