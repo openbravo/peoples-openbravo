@@ -1549,12 +1549,12 @@ enyo.kind({
         var approval;
         if (myModel.get('leftColumnViewManager').isOrder()) {
           approval = _.find(me.owner.receipt.get('approvals'), function (approval) {
-            return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
+            return approval.approvalType && (approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit' || approval.approvalType === 'OBPOS_approval.prepaymentUnderLimit');
           });
         } else {
           approval = myModel.get('multiOrders').get('multiOrdersList').every(function (order) {
             var approval = _.find(order.get('approvals'), function (approval) {
-              return approval.approvalType && approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit';
+              return approval.approvalType && (approval.approvalType.approval === 'OBPOS_approval.prepaymentUnderLimit' || approval.approvalType === 'OBPOS_approval.prepaymentUnderLimit');
             });
             return approval;
           });
