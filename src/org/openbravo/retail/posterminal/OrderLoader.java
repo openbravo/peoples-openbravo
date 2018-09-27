@@ -266,6 +266,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         executeOrderLoaderModifiedPreProcessHook(orderModifiedPreProcesses, jsonorder);
       }
 
+      // Set the 'deliver' property again because it can be changed during the previous hook
+      deliver = jsonorder.optBoolean("deliver", true);
+
       if (jsonorder.has("deletedLines")) {
         mergeDeletedLines(jsonorder);
       }
