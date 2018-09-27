@@ -588,9 +588,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }
       };
 
-      setPaymentsToReceipts(this.get('multiOrders').get('multiOrdersList'), this.get('multiOrders').get('payments'), 0, 0, true, function () {
-        me.get('multiOrders').get('multiOrdersList').forEach(function (iter) {
-          iter.prepareToSend(prepareToSendCallback);
+      OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrders_PreSetPaymentsToReceipt', {
+        multiOrderList: this.get('multiOrders').get('multiOrdersList'),
+        payments: this.get('multiOrders').get('payments')
+      }, function (args) {
+        setPaymentsToReceipts(args.get('multiOrders').get('multiOrdersList'), args.payments, 0, 0, true, function () {
+          args.multiOrdersList.forEach(function (iter) {
+            iter.prepareToSend(prepareToSendCallback);
+          });
         });
       });
     }, this);
