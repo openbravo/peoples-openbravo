@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -28,7 +28,9 @@ from m_inoutline minline
 join c_invoiceline inv on minline.m_inoutline_id=inv.m_inoutline_id,
  (select COALESCE(sum(g.movementqty), 0) as suma
       from m_inoutline g where g.m_inout_id =p_minoutid) a
-where minline.m_inout_id=p_minoutid;
+where minline.m_inout_id=p_minoutid
+and exists (select 1 from c_invoice i where i.c_invoice_id = inv.c_invoice_id
+and i.processed = 'Y');
 If (v_percent is NULL) then
 v_percent:=0;
 else if (v_percent > 100) then
