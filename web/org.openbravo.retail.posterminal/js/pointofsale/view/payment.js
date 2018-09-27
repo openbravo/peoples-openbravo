@@ -19,11 +19,11 @@ enyo.kind({
     this.inherited(arguments);
 
     length = this.content.length;
-    if (length < 23) {
+    if (length < 21) {
       size = 24;
     } else if (length < 39) {
-      // (22, 24); (38, 14)
-      size = Math.trunc(-0.625 * length + 37.75);
+      // (20, 24); (38, 14)
+      size = Math.trunc(-0.55555 * length + 35.11111);
     } else {
       size = 14;
     }
