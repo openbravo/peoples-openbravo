@@ -695,6 +695,10 @@ enyo.kind({
       kind: 'OB.UI.MenuSelectPDFPrinter'
     });
 
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuForceIncrementalRefresh'
+    });
+
     //remove duplicates
     this.menuEntries = _.uniq(this.menuEntries, false, function (p) {
       return p.kind + p.name;
