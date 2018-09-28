@@ -509,7 +509,7 @@ enyo.kind({
           }
           OB.Dal.find(OB.Model.Product, criteria, function (data) {
             if (data && data.length > 0 && !receipt.get('isPaid') && !receipt.get('isLayaway')) {
-              me.model.get('order').trigger('showProductList', null, 'final', function () {
+              receipt.trigger('showProductList', null, 'final', function () {
                 me.model.completePayment();
                 me.doClearUserInput();
               });
