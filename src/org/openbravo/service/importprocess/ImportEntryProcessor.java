@@ -38,6 +38,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -421,11 +422,18 @@ public abstract class ImportEntryProcessor {
           } catch (Exception ignored) {
           }
 
-          // store the error
-          try {
-            importEntryManager.setImportEntryErrorIndependent(queuedImportEntry.importEntryId, t);
-          } catch (Throwable ignore) {
-            ImportProcessUtils.logError(logger, ignore);
+          ExternalConnectionPool pool = ExternalConnectionPool.getInstance();
+          if (pool != null && pool.hasNoConnections(t)) {
+            // If the exception was caused by not having connections in pool, import entry will be
+            // kept in Initial status to be processed in next cycle if there are connections. We
+            // also break the loop to stop trying to process any other pending entry in this cycle.
+            break;
+          } else {
+            try {
+              importEntryManager.setImportEntryErrorIndependent(queuedImportEntry.importEntryId, t);
+            } catch (Throwable ignore) {
+              ImportProcessUtils.logError(logger, ignore);
+            }
           }
         } finally {
           cleanUpThreadForNextCycle();
