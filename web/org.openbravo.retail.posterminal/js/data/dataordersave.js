@@ -245,7 +245,7 @@
               }
 
               var synErrorCallback = function () {
-                  restoreReceiptOnError(eventParams, frozenReceipt);
+                  restoreReceiptOnError(eventParams, receipt);
                   };
 
               receipt.clearWith(frozenReceipt);
