@@ -19,7 +19,7 @@
           if (line.get('obposCanbedelivered') || line.get('deliveredQuantity') === line.get('qty')) {
             var linePrepaymentAmount = me.currentLinePrepaymentAmount(line, 100);
             line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
-            return memo + linePrepaymentAmount;
+            return OB.DEC.add(memo, linePrepaymentAmount);
           } else {
             line.set('obposLinePrepaymentAmount', OB.DEC.Zero);
             return memo;
@@ -34,21 +34,21 @@
         price = line.get('grossListPrice') || line.get('priceList');
         if (line.get('promotions') && line.get('promotions').length > 0) {
           discount = line.get('promotions').reduce(function (total, model) {
-            return total + model.amt;
+            return OB.DEC.add(total, model.amt);
           }, 0);
-          price = price - discount * units / line.get('qty');
+          price = OB.DEC.sub(price, OB.DEC.div(OB.DEC.mul(discount, units), line.get('qty')));
         }
-        price = price * units;
+        price = OB.DEC.mul(price, units);
       } else {
         price = line.get('gross');
         if (line.get('promotions') && line.get('promotions').length > 0) {
           discount = line.get('promotions').reduce(function (total, model) {
-            return total + model.amt;
+            return OB.DEC.add(total, model.amt);
           }, 0);
-          price = price - discount;
+          price = OB.DEC.sub(price, discount);
         }
       }
-      return price * percentage / 100;
+      return OB.DEC.div(OB.DEC.mul(price, percentage), 100);
     }
   };
 }());
