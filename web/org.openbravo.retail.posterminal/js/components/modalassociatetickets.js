@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2017 Openbravo S.L.U.
+ * Copyright (C) 2016-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,7 +44,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.ButtonAssociateSelected',
-  style: 'width: 170px; margin: 0px 9px 8px 0px;',
+  style: 'min-width: 170px; margin: 0px 9px 8px 0px;',
   classes: 'btnlink-green btnlink btnlink-small',
   i18nLabel: 'OBPOS_AssociateSelected',
   events: {
