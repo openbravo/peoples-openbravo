@@ -11,6 +11,8 @@
  */
 package org.openbravo.data;
 
-public interface FieldProvider {
+import java.io.Serializable;
+
+public interface FieldProvider extends Serializable {
   public String getField(String fieldName);
 }

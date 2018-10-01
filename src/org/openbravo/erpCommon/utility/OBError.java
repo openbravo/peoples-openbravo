@@ -18,10 +18,11 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OBError {
+public class OBError implements Serializable {
   private String type = "";
   private String title = "";
   private String message = "";
