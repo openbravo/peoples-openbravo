@@ -4197,8 +4197,7 @@
       }
     },
 
-    createQuotationFromOrder: function () {
-      var documentNo = this.get('documentNo');
+    setQuotationProperties: function () {
       this.set('isQuotation', true);
       this.set('generateInvoice', false);
       this.set('orderType', 0);
@@ -4207,8 +4206,11 @@
       this.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
       this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
       this.set('documentNo', nextQuotationno.documentNo);
+    },
+
+    createQuotationFromOrder: function () {
+      this.setQuotationProperties();
       this.trigger('scan');
-      //      OB.logUserAction('Create New Quotation from Order ' + documentNo + ': ' + nextQuotationno.documentNo);
       this.save();
     },
 
@@ -6512,15 +6514,7 @@
     addNewQuotation: function () {
       this.saveCurrent();
       this.current = this.newOrder();
-      this.current.set('isQuotation', true);
-      this.current.set('generateInvoice', false);
-      this.current.set('orderType', 0);
-      this.current.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
-      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-      this.current.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
-      this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
-      this.current.set('documentNo', nextQuotationno.documentNo);
-
+      this.current.setQuotationProperties();
       this.unshift(this.current);
       this.loadCurrent();
     },
