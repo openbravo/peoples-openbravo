@@ -1237,9 +1237,6 @@ enyo.kind({
   name: 'OB.UI.MenuForceIncrementalRefresh',
   kind: 'OB.UI.MenuAction',
   permission: 'OBMOBC_NotAutoLoadIncrementalAtLogin',
-  events: {
-    onModalSelectPDFPrinters: ''
-  },
   i18nLabel: 'OBPOS_MenuForceIncrementalRefreshLabel',
   init: function (model) {
     this.displayLogic();
