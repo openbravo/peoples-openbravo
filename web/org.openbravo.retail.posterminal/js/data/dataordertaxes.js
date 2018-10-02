@@ -41,27 +41,36 @@
           // Group data by product category
           // Calculate the ratio by product category
           // Finally sort by ratio
-          var groupeddata = data.chain().groupBy(function (productbom) {
-            return productbom.get('bomtaxcategory');
-          }).map(function (productboms, bomtaxcategory) {
-            var ratio = _.reduce(productboms, function (memo, productbom) {
-              return memo + OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
-            }, 0);
-            return {
-              'bomtaxcategory': bomtaxcategory,
-              'ratio': ratio
-            };
-          }).sortBy(function (groupedbom) {
-            return groupedbom.ratio;
-          }).value();
+          try {
+            var groupeddata = data.chain().groupBy(function (productbom) {
+              return productbom.get('bomtaxcategory');
+            }).map(function (productboms, bomtaxcategory) {
+              var ratio = _.reduce(productboms, function (memo, productbom) {
+                if (OB.UTIL.isNullOrUndefined(productbom.get('bomprice'))) {
+                  throw 'noBOMPrice';
+                }
+                return memo + OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
+              }, 0);
+              return {
+                'bomtaxcategory': bomtaxcategory,
+                'ratio': ratio
+              };
+            }).sortBy(function (groupedbom) {
+              return groupedbom.ratio;
+            }).value();
 
-          // Assign total ratio
-          groupeddata.totalratio = _.reduce(groupeddata, function (s, productbom) {
-            return OB.DEC.add(s, productbom.ratio);
-          }, OB.DEC.Zero);
+            // Assign total ratio
+            groupeddata.totalratio = _.reduce(groupeddata, function (s, productbom) {
+              return OB.DEC.add(s, productbom.ratio);
+            }, OB.DEC.Zero);
 
-          // Fulfill promise
-          fulfill(groupeddata);
+            // Fulfill promise
+            fulfill(groupeddata);
+          } catch (e) {
+            fulfill({
+              'nobomprice': true
+            });
+          }
         }, {
           modelsAffectedByCache: ['ProductBOM']
         });
@@ -558,6 +567,9 @@
 
             // BOM, calculate taxes based on the products list
             return getProductBOM(product.get('id')).then(function (data) {
+              if (data.nobomprice) {
+                throw OB.I18N.getLabel('OBPOS_BOM_NoPrice');
+              }
               distributeBOM(data, 'bomgross', orggross);
               if (!_.isNull(discountedGross)) {
                 distributeBOM(data, 'bomdiscountedgross', discountedGross);
