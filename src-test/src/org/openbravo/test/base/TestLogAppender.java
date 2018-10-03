@@ -11,24 +11,26 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.base;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Core;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
+import org.apache.logging.log4j.core.config.plugins.PluginElement;
+import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Used in {@link OBBaseTest}, keeps track of all messages written in log in order to make possible
@@ -37,30 +39,34 @@ import org.apache.log4j.spi.LoggingEvent;
  * @author alostale
  *
  */
-public class TestLogAppender extends AppenderSkeleton {
-  private Map<Level, List<String>> messages = new HashMap<Level, List<String>>();
+@Plugin(name = "TestLogAppender", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE)
+public class TestLogAppender extends AbstractAppender {
+  private static Map<Level, List<String>> messages = new HashMap<>();
   private boolean logStackTraces = false;
 
+  protected TestLogAppender(String name, Filter filter) {
+    super(name, filter, null);
+  }
+
   @Override
-  protected void append(LoggingEvent event) {
+  public synchronized void append(LogEvent event) {
     List<String> levelMsgs = messages.get(event.getLevel());
     if (levelMsgs == null) {
-      levelMsgs = new ArrayList<String>();
+      levelMsgs = new ArrayList<>();
       messages.put(event.getLevel(), levelMsgs);
     }
     levelMsgs.add(event.getMessage().toString());
-    if (logStackTraces && event.getThrowableStrRep() != null) {
-      levelMsgs.addAll(Arrays.asList(event.getThrowableStrRep()));
+
+    if (logStackTraces && event.getThrown() != null) {
+      levelMsgs.addAll(Arrays.asList(event.getThrownProxy().getExtendedStackTraceAsString()
+          .split("\n")));
     }
   }
 
-  @Override
-  public void close() {
-  }
-
-  @Override
-  public boolean requiresLayout() {
-    return false;
+  @PluginFactory
+  public static TestLogAppender createAppender(@PluginAttribute("name") String name,
+      @PluginElement("Filter") Filter filter) {
+    return new TestLogAppender(name, filter);
   }
 
   /** Include in messages possible stack traces for logged Throwables */
@@ -79,19 +85,21 @@ public class TestLogAppender extends AppenderSkeleton {
    * returned.
    */
   public List<String> getAllMessages() {
-    List<String> allMessages = new ArrayList<String>();
+    List<String> allMessages = new ArrayList<>();
     for (Entry<Level, List<String>> msgLvl : messages.entrySet()) {
       allMessages.addAll(msgLvl.getValue());
     }
     return allMessages;
   }
 
-  /** Returns a list of tracked message for a given Level, or an empty if none is tracked */
   public List<String> getMessages(Level level) {
-    List<String> msgs = messages.get(level);
-    if (msgs == null) {
-      msgs = Collections.emptyList();
-    }
-    return msgs;
+    return messages.getOrDefault(level, Collections.emptyList());
   }
+
+  /** Returns a list of tracked message for a given Level, or an empty if none is tracked */
+  @Deprecated
+  public List<String> getMessages(org.apache.log4j.Level level) {
+    return getMessages(Level.getLevel(level.toString()));
+  }
+
 }
