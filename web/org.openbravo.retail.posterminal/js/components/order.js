@@ -1080,7 +1080,7 @@ enyo.kind({
         });
         me.order.setUndo('FixOrderLines', oldUndo);
         me.updating = false;
-        me.order.get('lines').trigger('updateServicePrices');
+        me.order.trigger('updateServicePrices');
       }
 
       if (approvalNeeded) {

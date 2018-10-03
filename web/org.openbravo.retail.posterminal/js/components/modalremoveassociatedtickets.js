@@ -152,6 +152,7 @@ enyo.kind({
       }
       selectedLine.set('relatedLines', selectedLine.linesToAssociate);
       delete selectedLine.linesToAssociate;
+      this.args.receipt.trigger('updateServicePrices');
       this.args.receipt.save(function () {
         return true;
       });
