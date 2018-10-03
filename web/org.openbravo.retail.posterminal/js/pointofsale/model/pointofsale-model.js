@@ -39,80 +39,93 @@ function prepareToSendCallback(callback) {
   };
 }
 
-function setPaymentsToReceipts(orderList, paymentList, change, callback, orderListIndex, paymentListIndex) {
+function updateAmountToLayaway(order, amount) {
+  var amountToLayaway = order.get('amountToLayaway');
+  if (!_.isUndefined(amountToLayaway) && !_.isNull(amountToLayaway)) {
+    order.set('amountToLayaway', OB.DEC.sub(amountToLayaway, amount));
+  }
+}
+
+function setPaymentsToReceipts(orderList, paymentList, changePayments, callback, orderListIndex, paymentListIndex) {
   if (orderListIndex >= orderList.length) {
     // Finished
     callback();
     return;
   }
-  var iter = orderList.at(orderListIndex);
-  var amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-  if (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) { //TODO this while LOOP
-    var payment = paymentList.at(paymentListIndex),
-        paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
-    // FIXME:Change is always given back in store currency
-    if (change > 0 && paymentMethod.paymentMethod.iscash) {
-      payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), change));
-      change = 0;
-    }
-    var paymentLine = new OB.Model.PaymentLine();
-    OB.UTIL.clone(payment, paymentLine);
-    if (payment.get('origAmount') <= amountToPay) {
-      var bigDecAmount = new BigDecimal(String(OB.DEC.mul(payment.get('origAmount'), paymentMethod.mulrate)));
-      paymentLine.set('amount', OB.DEC.toNumber(bigDecAmount));
-      paymentLine.set('rate', paymentMethod.rate);
-      paymentLine.set('mulrate', paymentMethod.mulrate);
-      paymentLine.set('isocode', paymentMethod.isocode);
-      paymentLine.set('allowOpenDrawer', payment.get('allowopendrawer'));
-      paymentLine.set('isCash', payment.get('iscash'));
+
+  var order = orderList.at(orderListIndex);
+  var payment = paymentList.at(paymentListIndex);
+  var paymentLine;
+
+  if (orderListIndex === orderList.length - 1) {
+    // Transfer everything
+    if (paymentListIndex < paymentList.length) {
+      // Pending payments to add
+      paymentLine = new OB.Model.PaymentLine();
+      OB.UTIL.clone(payment, paymentLine);
+
       OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
         paymentLine: paymentLine,
         origPayment: payment
       }, function (args) {
-        iter.addPayment(args.paymentLine, function (iter) {
-          if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-            iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), args.origPayment.get('origAmount')));
-          }
-          amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-          setPaymentsToReceipts(orderList, paymentList, change, callback, orderListIndex, paymentListIndex + 1);
+        order.addPayment(args.paymentLine, function () {
+          updateAmountToLayaway(order, args.origPayment.get('origAmount'));
+          setPaymentsToReceipts(orderList, paymentList, changePayments, callback, orderListIndex, paymentListIndex + 1);
         });
       });
     } else {
-      var bigDecAmountAux, amtAux;
-      if (orderListIndex === orderList.length - 1 && !paymentMethod.paymentMethod.iscash) {
-        bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
-        amtAux = OB.DEC.toNumber(bigDecAmountAux);
-        payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), payment.get('origAmount')));
-      } else {
-        bigDecAmountAux = new BigDecimal(String(OB.DEC.mul(amountToPay, paymentMethod.mulrate)));
-        amtAux = OB.DEC.toNumber(bigDecAmountAux);
-        payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), amountToPay));
-      }
-      paymentLine.set('amount', amtAux);
-      paymentLine.set('rate', paymentMethod.rate);
-      paymentLine.set('mulrate', paymentMethod.mulrate);
-      paymentLine.set('isocode', paymentMethod.isocode);
-      paymentLine.set('allowOpenDrawer', payment.get('allowopendrawer'));
-      paymentLine.set('isCash', payment.get('iscash'));
-      OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
-        paymentLine: paymentLine,
-        origPayment: payment
-      }, function (args) {
-        iter.addPayment(args.paymentLine, function (iter) {
-          if (!_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway'))) {
-            iter.set('amountToLayaway', OB.DEC.sub(iter.get('amountToLayaway'), amtAux));
-          }
-          amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(iter.get('gross'), iter.get('payment'));
-          iter.prepareToSend(prepareToSendCallback(function () {
-            setPaymentsToReceipts(orderList, paymentList, change, callback, orderListIndex + 1, paymentListIndex);
-          }));
-        });
-      });
+      // No more payments to add, finish the process
+      order.set('changePayments', changePayments);
+      order.prepareToSend(prepareToSendCallback(function () {
+        // Process finished
+        callback();
+      }));
     }
   } else {
-    iter.prepareToSend(prepareToSendCallback(function () {
-      setPaymentsToReceipts(orderList, paymentList, change, callback, orderListIndex + 1, paymentListIndex);
-    }));
+    var amountToPay = !_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway')) ? order.get('amountToLayaway') : OB.DEC.sub(order.get('gross'), order.get('payment'));
+    if (OB.DEC.compare(amountToPay) > 0) {
+      var paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
+      paymentLine = new OB.Model.PaymentLine();
+      OB.UTIL.clone(payment, paymentLine);
+
+      if (payment.get('origAmount') <= amountToPay) {
+        // Use all the remaining payment amount for this receipt
+        OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
+          paymentLine: paymentLine,
+          origPayment: payment
+        }, function (args) {
+          order.addPayment(args.paymentLine, function () {
+            updateAmountToLayaway(order, args.origPayment.get('origAmount'));
+            setPaymentsToReceipts(orderList, paymentList, changePayments, callback, orderListIndex, paymentListIndex + 1);
+          });
+        });
+      } else {
+        // Get part of the payment and go with the next order
+        var amountToPayForeign = OB.DEC.mul(amountToPay, paymentMethod.mulrate, paymentMethod.obposPosprecision);
+        payment.set('origAmount', OB.DEC.sub(payment.get('origAmount'), amountToPay));
+        payment.set('amount', OB.DEC.sub(payment.get('amount'), amountToPayForeign));
+
+        paymentLine.set('origAmount', amountToPay);
+        paymentLine.set('amount', amountToPayForeign);
+
+        OB.UTIL.HookManager.executeHooks('OBPOS_MultiOrderAddPaymentLine', {
+          paymentLine: paymentLine,
+          origPayment: payment
+        }, function (args) {
+          order.addPayment(args.paymentLine, function () {
+            updateAmountToLayaway(order, args.origPayment.get('origAmount'));
+            order.prepareToSend(prepareToSendCallback(function () {
+              setPaymentsToReceipts(orderList, paymentList, changePayments, callback, orderListIndex + 1, paymentListIndex);
+            }));
+          });
+        });
+      }
+    } else {
+      // This order is already paid, go to the next order
+      order.prepareToSend(prepareToSendCallback(function () {
+        setPaymentsToReceipts(orderList, paymentList, changePayments, callback, orderListIndex + 1, paymentListIndex);
+      }));
+    }
   }
 }
 
@@ -585,7 +598,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         multiorders.get('frozenPayments').add(auxP);
       });
 
-      setPaymentsToReceipts(multiorders.get('multiOrdersList'), multiorders.get('payments'), multiorders.get('change'), function () {
+      setPaymentsToReceipts(multiorders.get('multiOrdersList'), multiorders.get('payments'), multiorders.get('changePayments'), function () {
         multiorders.set('change', OB.DEC.Zero);
         multiorders.trigger('closed');
       }, 0, 0);
