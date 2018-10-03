@@ -90,6 +90,8 @@
       extendHWResource(this.templateclosedinvoice, "printClosedInvoiceTemplate");
       this.templatecanceledreceipt = new OB.DS.HWResource(terminal.printCanceledReceiptTemplate || OB.OBPOSPointOfSale.Print.CanceledReceiptTemplate);
       extendHWResource(this.templatecanceledreceipt, "printCanceledReceiptTemplate");
+      this.templatecanceledlayaway = new OB.DS.HWResource(terminal.printCanceledLayawayTemplate || OB.OBPOSPointOfSale.Print.CanceledLayawayTemplate);
+      extendHWResource(this.templatecanceledlayaway, "printCanceledLayawayTemplate");
       };
 
   PrintReceipt.prototype.print = function (order, printargs) {
@@ -298,8 +300,10 @@
 
       if (args.forcedtemplate) {
         args.template = args.forcedtemplate;
-      } else if (receipt.get('ordercanceled') || receipt.get('cancelLayaway')) {
+      } else if (receipt.get('ordercanceled')) {
         args.template = me.templatecanceledreceipt;
+      } else if (receipt.get('cancelLayaway')) {
+        args.template = me.templatecanceledlayaway;
       } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1 || hasNegativeLines) {
           args.template = me.templatereturninvoice;
@@ -551,4 +555,5 @@
   OB.OBPOSPointOfSale.Print.QuotationTemplate = '../org.openbravo.retail.posterminal/res/printquotation.xml';
   OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate = '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml';
   OB.OBPOSPointOfSale.Print.CanceledReceiptTemplate = '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml';
+  OB.OBPOSPointOfSale.Print.CanceledLayawayTemplate = '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml';
 }());
