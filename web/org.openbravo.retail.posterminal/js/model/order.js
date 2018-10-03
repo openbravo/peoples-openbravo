@@ -445,14 +445,20 @@
         if (callback === undefined || !callback instanceof Function) {
           callback = function () {};
         }
-
-        OB.Dal.save(this, function () {
+        if ((this.get('isQuotation') && !this.get('isEditable')) || this.get('isCancelling')) {
           if (callback) {
             callback();
           }
-        }, function () {
-          OB.error(arguments);
-        }, forceInsert);
+        } else {
+          OB.Dal.save(this, function () {
+            if (callback) {
+              callback();
+            }
+          }, function () {
+            OB.error(arguments);
+          }, forceInsert);
+        }
+
 
         this.setUndo('SaveOrder', undoCopy);
       } else {
