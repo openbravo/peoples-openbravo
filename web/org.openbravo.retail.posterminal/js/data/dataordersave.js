@@ -170,7 +170,7 @@
           }
           OB.UTIL.clone(receipt, frozenReceipt);
 
-          OB.UTIL.TicketCloseUtils.processChangePayments(receipt, function () {
+          OB.UTIL.TicketCloseUtils.processChangePayments(frozenReceipt, function () {
             receipt.trigger('checkOpenDrawer');
 
             if (OB.UTIL.RfidController.isRfidConfigured()) {
