@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,6 +11,7 @@
  */
 package org.openbravo.base;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -1426,6 +1427,15 @@ public class VariablesBase {
    * @param value
    *          The value of the object to store.
    */
+  public void setSessionObject(String attribute, Serializable value) {
+    setSessionObject(attribute, (Object) value);
+  }
+
+  /**
+   * @deprecated Only {@code Serializable} objects should be set in session: use
+   *             {@link #setSessionObject(String, Serializable)} instead
+   */
+  @Deprecated
   public void setSessionObject(String attribute, Object value) {
     try {
       if (session != null) {
