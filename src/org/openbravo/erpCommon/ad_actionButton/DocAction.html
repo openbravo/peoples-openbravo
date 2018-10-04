@@ -11,7 +11,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2017 Openbravo SLU 
+* All portions are Copyright (C) 2001-2018 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -84,6 +84,8 @@
       setWindowElementFocus('firstElement');
 
       applyVoidDateDisplayLogic();
+      
+      applyInvoiceIfPossibleDisplayLogic();
     }
 
     function onResizeDo() {}
@@ -164,6 +166,15 @@
       
       displayLogicElement('voidedDocumentDateRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId || goodsReceiptWindow === currentWindowId));
       displayLogicElement('voidedDocumentDateAcctRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId || goodsReceiptWindow === currentWindowId));
+    }
+    
+    function applyInvoiceIfPossibleDisplayLogic() {
+      var frm = document.frmMain,
+          goodsShipmentWindow = '169',
+          currentWindowId = frm.inpwindowId.value,
+          documentIsInDraftStatus = (frm.inpdocstatus.value === 'DR');
+      
+      displayLogicElement('invoiceIfPossible', documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
     }
     </script>
 </head>
@@ -440,7 +451,16 @@
                   </table>
                 </td>
               </tr>
-
+              
+              <tr id="invoiceIfPossible">
+              	<td class="TitleCell"><span id="lblInvoiceIfPossible" class="LabelText">Invoice if possible</span></td>
+              	<td class="Radio_Check_ContentCell">
+              	  <span class="Checkbox_container_NOT_Focused">
+              	    <input type="checkbox" id="paramInvoiceIfPossible" name="inpInvoiceIfPossible">
+              	  </span>
+              	</td>
+              </tr>
+			
               <tr><td height="20px"></td></tr>
 
               <tr>

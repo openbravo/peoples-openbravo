@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.query.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -48,6 +49,7 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.InventoryCountProcess;
+import org.openbravo.materialmgmt.ShipmentProcessor;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
@@ -158,6 +160,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
     final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessGoods|Tab_ID",
         IsIDFilter.instance);
     final String strM_Inout_ID = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
+    final boolean invoiceIfPossible = StringUtils.equalsIgnoreCase(
+        vars.getStringParameter("inpInvoiceIfPossible"), "on");
 
     OBError myMessage = null;
     try {
@@ -208,6 +212,10 @@ public class ProcessGoods extends HttpSecureAppServlet {
       log4j.debug(myMessage.getMessage());
       vars.setMessage(strTabId, myMessage);
 
+      if (invoiceIfPossible && !"Error".equalsIgnoreCase(myMessage.getType())) {
+        new ShipmentProcessor(goods.getId()).createAndProcessInvoiceConsideringInvoiceTerms();
+      }
+
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
@@ -221,6 +229,13 @@ public class ProcessGoods extends HttpSecureAppServlet {
         return;
       } else {
         vars.setMessage(strTabId, myMessage);
+      }
+    } catch (final OBException e) {
+      if (e.getCause() != null) {
+        throw new OBException(Utility
+            .translateError(this, vars, vars.getLanguage(), e.getMessage()).getMessage());
+      } else {
+        throw e;
       }
     }
   }
