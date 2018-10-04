@@ -24,6 +24,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 
+@SuppressWarnings("serial")
 class TextInterfacesData implements FieldProvider {
   static Logger log4j = Logger.getLogger(TextInterfacesData.class);
   public String filename;

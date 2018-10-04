@@ -310,6 +310,7 @@ public class HelpWindow {
     return formattedGridConfig.toString();
   }
 
+  @SuppressWarnings("serial")
   private static class TabGridConfigParameter implements FieldProvider {
     public String tabId;
     public String tabName;

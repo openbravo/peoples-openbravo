@@ -164,6 +164,7 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
 
 }
 
+@SuppressWarnings("serial")
 class TypeReportPayment implements FieldProvider {
   static Logger log4j = Logger.getLogger(TypeReportPayment.class);
   // private String InitRecordNumber = "0";

@@ -42,6 +42,7 @@ import org.openbravo.data.FieldProvider;
  * This example will call to obj.getName() method.
  * 
  */
+@SuppressWarnings("serial")
 public class FieldProviderFactory implements FieldProvider {
 
   private Object object;

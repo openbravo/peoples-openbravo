@@ -31,6 +31,7 @@ import org.openbravo.data.FieldProvider;
  * 
  *         Chart Of Accounts (COA) Data class
  */
+@SuppressWarnings("serial")
 public class COAData extends MultipartRequest implements FieldProvider {
   private static final Logger log4j = Logger.getLogger(COAData.class);
   String accountValue = "";

@@ -196,6 +196,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
 
 }
 
+@SuppressWarnings("serial")
 class TypeReportRegister implements FieldProvider {
   static Logger log4j = Logger.getLogger(TypeReportRegister.class);
   // private String InitRecordNumber = "0";

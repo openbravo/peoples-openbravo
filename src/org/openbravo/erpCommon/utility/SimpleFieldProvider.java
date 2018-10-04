@@ -28,6 +28,8 @@ import org.openbravo.data.FieldProvider;
  * 
  * @author mtaal
  */
+
+@SuppressWarnings("serial")
 public class SimpleFieldProvider implements FieldProvider {
 
   private final Map<String, String> properties = new HashMap<String, String>();

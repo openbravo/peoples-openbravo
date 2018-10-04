@@ -24,6 +24,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 
+@SuppressWarnings("serial")
 class FieldLabelsData implements FieldProvider {
   static Logger log4j = Logger.getLogger(FieldLabelsData.class);
   public String adColumnId;

@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
+@SuppressWarnings("serial")
 class ShowSessionVariablesStructureData implements FieldProvider {
   static Logger log4j = Logger.getLogger(ShowSessionVariablesStructureData.class);
   boolean isPreference = false;

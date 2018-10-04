@@ -22,6 +22,7 @@ import java.util.Hashtable;
 
 import org.openbravo.data.FieldProvider;
 
+@SuppressWarnings("serial")
 public class SQLReturnObject implements FieldProvider {
   private Hashtable<String, String> data = new Hashtable<String, String>();
 

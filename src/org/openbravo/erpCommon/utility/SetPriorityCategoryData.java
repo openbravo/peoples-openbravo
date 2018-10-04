@@ -19,6 +19,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
+@SuppressWarnings("serial")
 class SetPriorityCategoryData implements FieldProvider {
 
   static Logger log4j = Logger.getLogger(SetPriorityCategoryData.class);

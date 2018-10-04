@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("serial")
 public class OBError implements Serializable {
   private String type = "";
   private String title = "";

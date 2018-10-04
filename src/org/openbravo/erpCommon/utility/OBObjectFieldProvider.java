@@ -42,6 +42,7 @@ import org.openbravo.data.FieldProvider;
  * An implementation of the {@link FieldProviderFactory} which can handle Openbravo business
  * objects.
  */
+@SuppressWarnings("serial")
 public class OBObjectFieldProvider implements FieldProvider, OBNotSingleton {
 
   private BaseOBObject obObject;

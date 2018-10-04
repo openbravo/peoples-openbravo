@@ -18,6 +18,7 @@ import java.util.Vector;
 import org.apache.commons.fileupload.FileItem;
 import org.openbravo.data.FieldProvider;
 
+@SuppressWarnings("serial")
 public class MultipartRequest implements FieldProvider {
   public VariablesBase vars;
   public String filename;

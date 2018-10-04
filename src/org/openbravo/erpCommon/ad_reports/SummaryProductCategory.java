@@ -15,6 +15,7 @@ import org.openbravo.data.FieldProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("serial")
 public class SummaryProductCategory implements FieldProvider {
   static Logger log4j = LoggerFactory.getLogger(SummaryProductCategory.class);
 

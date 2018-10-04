@@ -24,9 +24,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 
-/**
- * Clase SqlStandardData
- */
+@SuppressWarnings("serial")
 class DefaultValuesData implements FieldProvider {
   public String columnname;
   static Logger log4j = Logger.getLogger(DefaultValuesData.class);
