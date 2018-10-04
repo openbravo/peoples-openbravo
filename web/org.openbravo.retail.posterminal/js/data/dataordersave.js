@@ -331,17 +331,18 @@
               }
               };
 
-          var executePreSyncReceipt = function () {
+          var executePreSyncReceipt = function (tx) {
               OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
                 receipt: frozenReceipt,
-                model: model
+                model: model,
+                tx: tx
               }, function (args) {
                 frozenReceipt.set('json', JSON.stringify(receipt.serializeToJSON()));
                 frozenReceipt.set('hasbeenpaid', 'Y');
                 // Important: at this point, the receipt is considered final. Nothing must alter it
                 // when all the properties of the receipt have been set, keep a copy
                 OB.UTIL.clone(receipt, diffReceipt);
-                OB.Dal.save(frozenReceipt, function () {
+                OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
                   successCallback();
                   if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                     // the trigger is fired on the receipt object, as there is only 1 that is being updated
@@ -360,14 +361,14 @@
               OB.UTIL.setScanningFocus(true);
               if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                 OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
-                  executePreSyncReceipt();
+                  executePreSyncReceipt(tx);
                 });
               } else {
                 OB.UTIL.calculateCurrentCash(null, tx);
                 OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
                   OB.trace('Saving receipt.');
                   OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
-                    executePreSyncReceipt();
+                    executePreSyncReceipt(tx);
                   });
                 }, tx);
               }
