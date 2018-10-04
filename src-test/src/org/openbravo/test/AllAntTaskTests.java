@@ -208,6 +208,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ImportEntrySizeTest.class, //
     CryptoUtilities.class, //
     Sessions.class, //
+    OBContextTest.class, //
 
     // xml
     ClientExportImportTest.class, //
