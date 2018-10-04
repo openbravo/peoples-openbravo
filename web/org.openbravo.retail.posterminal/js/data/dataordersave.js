@@ -337,7 +337,7 @@
                 model: model,
                 tx: tx
               }, function (args) {
-                frozenReceipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                frozenReceipt.set('json', JSON.stringify(frozenReceipt.serializeToJSON()));
                 frozenReceipt.set('hasbeenpaid', 'Y');
                 // Important: at this point, the receipt is considered final. Nothing must alter it
                 // when all the properties of the receipt have been set, keep a copy
