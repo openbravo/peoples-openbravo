@@ -750,7 +750,7 @@ enyo.kind({
           if (button === 'Layaway' || button === 'Credit') {
             requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, changeAmt);
           } else {
-            requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, changeAmt), paymentstatus.pendingAmt);
+            requiredCash = OB.DEC.Zero; // Rely on checkEnoughMultiChange() for this case
           }
         }
 
