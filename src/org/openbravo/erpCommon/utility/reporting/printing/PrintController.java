@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
@@ -37,10 +37,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
@@ -61,16 +57,16 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.erpCommon.utility.poc.EmailInfo;
+import org.openbravo.erpCommon.utility.poc.EmailManager;
 import org.openbravo.erpCommon.utility.poc.EmailType;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 import org.openbravo.erpCommon.utility.reporting.Report;
+import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
-import org.openbravo.erpCommon.utility.reporting.Report.OutputTypeEnum;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.system.Language;
@@ -80,6 +76,10 @@ import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
@@ -172,7 +172,8 @@ public class PrintController extends HttpSecureAppServlet {
 
       String fullDocumentIdentifier = localStrDocumentId + documentType.getTableName();
 
-      Map<String, Report> reports;
+      // reports is set in session: defining it as a Serializable HashMap
+      HashMap<String, Report> reports;
 
       // Checks are maintained in this way for mulithread safety
       HashMap<String, Boolean> checks = new HashMap<String, Boolean>();
@@ -194,7 +195,7 @@ public class PrintController extends HttpSecureAppServlet {
 
       multiReports = (documentIds.length > 1);
 
-      reports = (Map<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
+      reports = (HashMap<String, Report>) vars.getSessionObject(sessionValuePrefix + ".Documents");
       final ReportManager reportManager = new ReportManager(globalParameters.strFTPDirectory,
           strReplaceWithFull, globalParameters.strBaseDesignPath,
           globalParameters.strDefaultDesignPath, globalParameters.prefix, multiReports);
