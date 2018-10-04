@@ -121,7 +121,7 @@ public class OBContext implements OBNotSingleton, Serializable {
 
   private transient boolean isWebServiceEnabled = false;
 
-  private Set<String> additionalWritableOrganizations = new HashSet<String>();
+  private transient Set<String> additionalWritableOrganizations;
 
   // check whether using new or old UI
   private transient boolean newUI = false;
@@ -833,6 +833,8 @@ public class OBContext implements OBNotSingleton, Serializable {
     orgID = orgId;
     langID = languageCode;
     warehouseID = warehouseId;
+
+    additionalWritableOrganizations = new HashSet<>();
 
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
