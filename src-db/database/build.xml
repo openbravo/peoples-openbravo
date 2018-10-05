@@ -49,6 +49,7 @@ export.database.structure: Exports the database structure in the xml's files.
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
     </fileset>
+    <pathelement path="${base.config}" />
   </path>
 
   <taskdef name="createscript" classname="org.openbravo.ddlutils.task.CreateXML2SQL">

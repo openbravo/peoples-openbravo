@@ -11,36 +11,47 @@
  */
 package org.openbravo.utils;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.*;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
+import org.apache.logging.log4j.core.config.plugins.PluginElement;
+import org.apache.logging.log4j.core.config.plugins.PluginFactory;
+import org.openbravo.database.ConnectionProviderImpl;
+import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.exception.PoolNotFoundException;
+
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.Filter;
-import org.apache.logging.log4j.core.Layout;
-import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.openbravo.database.ConnectionProviderImpl;
-import org.openbravo.exception.NoConnectionAvailableException;
-import org.openbravo.exception.PoolNotFoundException;
-
 /* This class inserts the rebuild log into a table in the database.
  * This information is used in the rebuild window in Openbravo
  */
+@Plugin(name = "OBRebuildAppender", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE)
 public class OBRebuildAppender extends AbstractAppender {
-
-  protected OBRebuildAppender(String name, Filter filter, Layout<? extends Serializable> layout) {
-    super(name, filter, layout);
-  }
 
   private ConnectionProviderImpl cp;
   private Connection connection;
   private static String baseDir;
 
+  @PluginFactory
+  public static OBRebuildAppender createAppender(@PluginAttribute("name") String name,
+      @PluginElement("Filter") Filter filter,
+      @PluginElement("Layout") Layout<? extends Serializable> layout) {
+    return new OBRebuildAppender(name, filter, layout);
+  }
+
+  protected OBRebuildAppender(String name, Filter filter, Layout<? extends Serializable> layout) {
+    super(name, filter, layout);
+  }
+
   @Override
   public void append(LogEvent event) {
+    System.out.println("Holaaaaaaaa");
     if (event.getLevel().isLessSpecificThan(Level.INFO)) {
       return;
     }
@@ -84,8 +95,8 @@ public class OBRebuildAppender extends AbstractAppender {
     }
   }
 
-  private Connection getConnection()
-      throws PoolNotFoundException, NoConnectionAvailableException, SQLException {
+  private Connection getConnection() throws PoolNotFoundException, NoConnectionAvailableException,
+      SQLException {
     if (cp == null) {
       File fProp = null;
       if (baseDir != null) {
