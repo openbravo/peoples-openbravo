@@ -507,7 +507,7 @@
         label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
         action: function () {
           OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-            popup: 'modalSelectPrinters',
+            popup: isPdf ? 'modalSelectPDFPrinters' : 'modalSelectPrinters',
             args: {
               title: isPdf ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle') : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
               hasPrinterProperty: isPdf ? 'hasPDFPrinter' : 'hasReceiptPrinter',
