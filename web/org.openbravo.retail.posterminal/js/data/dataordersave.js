@@ -506,26 +506,26 @@
             });
           } else {
             OB.MobileApp.model.runSyncProcess(function () {
-              OB.UTIL.calculateCurrentCash();
-              _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
-                me.context.get('multiOrders').trigger('print', theReceipt, {
-                  offline: true
-                });
-                me.context.get('multiOrders').trigger('integrityOk', theReceipt);
-                OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
-                me.context.get('orderList').current = theReceipt;
-                me.context.get('orderList').deleteCurrent();
-              });
-
-              //this logic executed when all orders are ready to be sent
-              if (syncCallback instanceof Function) {
-                syncCallback();
-              }
-
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncMultiReceipt', {
                 receipts: model.get('multiOrders').get('multiOrdersList').models,
                 syncSuccess: true
               }, function (args) {
+                OB.UTIL.calculateCurrentCash();
+                _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
+                  me.context.get('multiOrders').trigger('print', theReceipt, {
+                    offline: true
+                  });
+                  me.context.get('multiOrders').trigger('integrityOk', theReceipt);
+                  OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
+                  me.context.get('orderList').current = theReceipt;
+                  me.context.get('orderList').deleteCurrent();
+                });
+
+                //this logic executed when all orders are ready to be sent
+                if (syncCallback instanceof Function) {
+                  syncCallback();
+                }
+
                 model.get('multiOrders').resetValues();
                 me.context.get('leftColumnViewManager').setOrderMode();
                 OB.UTIL.showLoading(false);
@@ -539,13 +539,14 @@
                 model.get('multiOrders').trigger('checkOpenDrawer');
               });
             }, function () {
-              if (syncCallback instanceof Function) {
-                syncCallback();
-              }
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncMultiReceipt', {
                 receipts: model.get('multiOrders').get('multiOrdersList').models,
                 syncSuccess: false
               }, function (args) {
+                if (syncCallback instanceof Function) {
+                  syncCallback();
+                }
+
                 OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
               });
             });
