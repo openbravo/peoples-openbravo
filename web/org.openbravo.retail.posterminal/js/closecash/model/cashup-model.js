@@ -251,7 +251,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var cStartingCash = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('startingCash'));
             return OB.DEC.add(accum, cStartingCash);
           }
-          return 0;
+          return accum;
         }, 0));
 
         cashUpReport.set('totalDeposits', _.reduce(payMthds.models, function (accum, trx) {
@@ -264,7 +264,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDeposits'), trx.get('totalSales')));
             return OB.DEC.add(accum, cTotalDeposits);
           }
-          return 0;
+          return accum;
         }, 0));
 
         cashUpReport.set('totalDrops', _.reduce(payMthds.models, function (accum, trx) {
@@ -277,7 +277,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDrops'), trx.get('totalReturns')));
             return OB.DEC.add(accum, cTotalDrops);
           }
-          return 0;
+          return accum;
         }, 0));
 
         _.each(payMthds.models, function (p) {
