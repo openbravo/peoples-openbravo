@@ -414,7 +414,7 @@ enyo.kind({
 
           paymentstatus = this.receipt.getPaymentStatus();
           selectedPayment = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')];
-          this.checkValidPayments(paymentstatus, selectedPayment, OB.DEC.compare(this.receipt.get('change')) > 0);
+          this.checkValidPayments(paymentstatus, selectedPayment, OB.DEC.compare(change) > 0);
         }.bind(this)
       }
     });
