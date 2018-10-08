@@ -510,9 +510,14 @@ enyo.kind({
     this.$.changelbl.setShowing(showing);
   },
   checkEnoughMultiChange: function () {
-    var failedPaymentMethods = [];
+    var failedPaymentMethods = [],
+        activeModel = this.activeModel();
 
-    this.activeModel().get('changePayments').forEach(function (itemchange) {
+    if (!activeModel.get('multiOrdersList') && OB.DEC.compare(activeModel.get('gross')) < 0) {
+      return []; // Change for returns is always valid.
+    }
+
+    activeModel.get('changePayments').forEach(function (itemchange) {
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
       if (paymentMethod.foreignCash < itemchange.amountRounded) {
         failedPaymentMethods.push(paymentMethod.payment._identifier);
