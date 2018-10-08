@@ -59,10 +59,10 @@ enyo.kind({
     }, this);
   },
   executeOnShow: function () {
-    var lines;
-
-    this.waterfall('onActionShow', this.args);
-    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    var lines = this.$.bodyContent.$.paymentlines.getComponents();
+    lines.forEach(function (l) {
+      l.executeOnShow(this.args);
+    }.bind(this));
     this.calculateRemaining();
   },
   calculateRemainingFor: function (selectedLine) {
@@ -145,11 +145,11 @@ enyo.kind({
       edited = edited || l.edited;
       if (l.hasErrors) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ChangeAmountsNotValid'));
-        return;
+        return true;
       }
       if (!l.isComplete) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ChangeAmountsNotComplete'));
-        return;
+        return true;
       }
       amount = l.getParsedValue();
       origAmount = OB.DEC.div(amount, l.payment.mulrate);
@@ -181,6 +181,8 @@ enyo.kind({
       this.args.applyPaymentChange(paymentchange);
     }
     this.doHideThisPopup();
+
+    return true;
   },
   actionInput: function (inSender, inEvent) {
     var lines, line, originalValue, change, precision, linechange, changeLessThan;
@@ -208,6 +210,8 @@ enyo.kind({
       line.assignValidValue(linechange);
     }
     this.calculateRemaining();
+
+    return true;
   }
 });
 

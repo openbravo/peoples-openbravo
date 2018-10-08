@@ -418,6 +418,8 @@ enyo.kind({
         }.bind(this)
       }
     });
+
+    return true;
   },
   calculateChangeReset: function () {
     this.applyPaymentChange(new OB.Payments.Change());

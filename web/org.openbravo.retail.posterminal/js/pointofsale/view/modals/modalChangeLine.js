@@ -11,9 +11,6 @@
 
 enyo.kind({
   name: 'OB.UI.ModalChangeLine',
-  handlers: {
-    onActionShow: 'actionShow'
-  },
   components: [{
     name: 'labelLine',
     classes: 'properties-label changedialog-properties-label',
@@ -75,12 +72,14 @@ enyo.kind({
 
     this.displayStatus();
 
-    return this.bubble('onActionInput', {
+    this.bubble('onActionInput', {
       value: value,
       hasErrors: this.hasErrors,
       labelError: this.labeError,
       line: this
     });
+
+    return true;
   },
   showRemaining: function (changeremaining, partialremaining) {
     var partialremainingconverted, remainingconverted, currentvalue;
@@ -109,10 +108,10 @@ enyo.kind({
     }
     this.displayStatus();
   },
-  actionShow: function (inSender, inEvent) {
+  executeOnShow: function (args) {
     var value, currentChange;
 
-    value = OB.DEC.mul(inEvent.change, this.payment.mulrate, this.payment.obposPosprecision);
+    value = OB.DEC.mul(args.change, this.payment.mulrate, this.payment.obposPosprecision);
     this.maxValue = this.calculateAmount(value);
     this.$.infomax.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(this.maxValue, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
     this.$.inforemaining.setContent('');
@@ -120,7 +119,7 @@ enyo.kind({
     this.isComplete = true;
     this.isOverpaid = false;
 
-    currentChange = inEvent.activemodel.get('changePayments').find(function (item) {
+    currentChange = args.activemodel.get('changePayments').find(function (item) {
       return item.key === this.payment.payment.searchKey;
     }, this);
 
