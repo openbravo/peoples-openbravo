@@ -695,55 +695,58 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           enyo.$.scrim.show();
           OB.UTIL.clone(receipt, auxReceipt);
           auxReceipt.prepareToSend(function () {
-            OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
-              receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-              OB.UTIL.calculateCurrentCash(function () {
-                receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-                receipt.set('timezoneOffset', new Date().getTimezoneOffset());
-                receipt.set('gross', OB.DEC.mul(receipt.get('gross'), -1));
-                receipt.get('payments').forEach(function (payment) {
-                  payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
-                  payment.set('paid', OB.DEC.mul(payment.get('paid'), -1));
-                });
-                OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-                  receipt: receipt,
-                  model: me
-                }, function (args) {
-                  receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
-                  process.exec({
-                    messageId: OB.UTIL.get_UUID(),
-                    data: [{
-                      id: receipt.get('id'),
-                      order: receipt
-                    }]
-                  }, function (data) {
-                    if (data && data.exception) {
-                      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
-                    } else {
-                      OB.Dal.remove(receipt, null, function (tx, err) {
-                        OB.UTIL.showError(err);
-                      });
-                      receipt.trigger('print');
-                      if (receipt.get('layawayGross')) {
-                        receipt.set('layawayGross', null);
-                      }
-                      orderList.deleteCurrent();
-                      receipt.trigger('change:gross', receipt);
-                      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
-                    }
-                    OB.UTIL.ProcessController.finish('voidLayaway', execution);
-                    if (OB.MobileApp.view.openedPopup === null) {
-                      enyo.$.scrim.hide();
-                    }
-                  }, function () {
-                    OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-                    OB.UTIL.ProcessController.finish('voidLayaway', execution);
-                    if (OB.MobileApp.view.openedPopup === null) {
-                      enyo.$.scrim.hide();
-                    }
+            OB.Dal.transaction(function (tx) {
+              OB.UTIL.cashUpReport(auxReceipt, function (cashUp) {
+                receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+                OB.UTIL.calculateCurrentCash(function () {
+                  receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+                  receipt.set('timezoneOffset', new Date().getTimezoneOffset());
+                  receipt.set('gross', OB.DEC.mul(receipt.get('gross'), -1));
+                  receipt.get('payments').forEach(function (payment) {
+                    payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
+                    payment.set('paid', OB.DEC.mul(payment.get('paid'), -1));
                   });
-                });
-              });
+                  OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+                    receipt: receipt,
+                    model: me,
+                    tx: tx
+                  }, function (args) {
+                    receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                    process.exec({
+                      messageId: OB.UTIL.get_UUID(),
+                      data: [{
+                        id: receipt.get('id'),
+                        order: receipt
+                      }]
+                    }, function (data) {
+                      if (data && data.exception) {
+                        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
+                      } else {
+                        OB.Dal.remove(receipt, null, function (tx, err) {
+                          OB.UTIL.showError(err);
+                        });
+                        receipt.trigger('print');
+                        if (receipt.get('layawayGross')) {
+                          receipt.set('layawayGross', null);
+                        }
+                        orderList.deleteCurrent();
+                        receipt.trigger('change:gross', receipt);
+                        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+                      }
+                      OB.UTIL.ProcessController.finish('voidLayaway', execution);
+                      if (OB.MobileApp.view.openedPopup === null) {
+                        enyo.$.scrim.hide();
+                      }
+                    }, function () {
+                      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+                      OB.UTIL.ProcessController.finish('voidLayaway', execution);
+                      if (OB.MobileApp.view.openedPopup === null) {
+                        enyo.$.scrim.hide();
+                      }
+                    });
+                  });
+                }, tx);
+              }, tx);
             });
           });
           };

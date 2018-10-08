@@ -449,7 +449,7 @@
         OB.UTIL.showLoading(false);
         };
 
-    var saveAndSyncMultiOrder = function (me, closedReceipts, syncCallback) {
+    var saveAndSyncMultiOrder = function (me, closedReceipts, tx, syncCallback) {
         var recursiveSaveFn, currentReceipt;
         recursiveSaveFn = function (receiptIndex) {
           if (receiptIndex < closedReceipts.length) {
@@ -481,19 +481,20 @@
             currentReceipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
             me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
 
-            OB.UTIL.calculateCurrentCash();
+            OB.UTIL.calculateCurrentCash(null, tx);
             OB.UTIL.cashUpReport(currentReceipt, function (cashUp) {
               currentReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
               OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
                 receipt: currentReceipt,
                 model: model,
+                tx: tx,
                 isMultiOrder: true
               }, function (args) {
                 currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
                 OB.UTIL.setScanningFocus(true);
                 currentReceipt.set('hasbeenpaid', 'Y');
-                OB.Dal.save(currentReceipt, function () {
-                  OB.Dal.get(OB.Model.Order, receiptId, function (savedReceipt) {
+                OB.Dal.saveInTransaction(tx, currentReceipt, function () {
+                  OB.Dal.getInTransaction(tx, OB.Model.Order, receiptId, function (savedReceipt) {
                     if (!_.isUndefined(savedReceipt.get('amountToLayaway')) && !_.isNull(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
                       me.hasInvLayaways = true;
                     }
@@ -503,7 +504,7 @@
                   recursiveSaveFn(receiptIndex + 1);
                 });
               });
-            });
+            }, tx);
           } else {
             OB.MobileApp.model.runSyncProcess(function () {
               OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncMultiReceipt', {
@@ -571,10 +572,12 @@
         });
 
         completeMultiOrder = _.after(closedReceipts.length, function () {
-          saveAndSyncMultiOrder(me, closedReceipts, function () {
-            if (closedCallback instanceof Function) {
-              closedCallback();
-            }
+          OB.Dal.transaction(function (tx) {
+            saveAndSyncMultiOrder(me, closedReceipts, tx, function () {
+              if (closedCallback instanceof Function) {
+                closedCallback();
+              }
+            });
           });
         });
         validateMultiOrder = function () {
