@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2155,22 +2155,23 @@ OB.ViewFormProperties = {
   },
 
   redraw: function () {
-    var focusItemValue;
+    var focusItem, focusItemValue;
     this._isRedrawing = true;
+    focusItem = this.getFocusItem();
     //fetch the focus item value as it is lost sometimes during reflow. Refer issue https://issues.openbravo.com/view.php?id=24960
-    if (this.getFocusItem()) {
-      focusItemValue = this.getFocusItem().getValue();
+    if (focusItem) {
+      focusItemValue = focusItem.getValue();
     }
     this.Super('redraw', arguments);
     delete this._isRedrawing;
     //reset focus item value if lost
-    if (focusItemValue && this.getFocusItem() && this.getFocusItem().getValue() !== focusItemValue) {
-      this.getFocusItem().setValue(focusItemValue);
+    if (focusItemValue && focusItem && focusItem.getValue() !== focusItemValue) {
+      focusItem.setValue(focusItemValue);
     }
 
     // Restore the focus item if it has been deleted because it was a number and was mistaken as an UUID
-    if (this.getFocusItem() && this.getFocusItem().targetEntity !== null && (/^\d+$/).test(focusItemValue) && !this.getFocusItem().getElementValue() && (!this.getFocusItem().valueMap || !this.getFocusItem().valueMap[focusItemValue])) {
-      this.getFocusItem().setElementValue(focusItemValue);
+    if (focusItem && focusItem.targetEntity !== null && (/^\d+$/).test(focusItemValue) && !focusItem.getElementValue() && (!focusItem.valueMap || !focusItem.valueMap[focusItemValue])) {
+      focusItem.setElementValue(focusItemValue);
     }
 
     if (this.selectOnFocusStored) {
