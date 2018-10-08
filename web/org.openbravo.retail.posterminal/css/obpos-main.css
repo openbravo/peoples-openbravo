@@ -747,7 +747,7 @@ button.btnbp:disabled {
     max-height: 100%;
 }
 
-.payment-changebutton {
+button.payment-changebutton {
   padding: 5px;
   margin: -5px 10px 0px 0px;
   width: 40px;
@@ -777,7 +777,6 @@ button.btnbp:disabled {
 }
 
 .changedialog-properties-info {
-  widht: 25%;
   float: left;
   margin-left: 25px;
   color: #6f6f6f;
