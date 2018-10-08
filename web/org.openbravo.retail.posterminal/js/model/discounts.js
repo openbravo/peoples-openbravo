@@ -157,14 +157,15 @@
               return p.manual === true;
             });
             line.set('manualPromotions', manualPromotions);
-            _.each(receipt.get('lines').models, function (line) {
-              if (line.get('splitline') || (line.get('gross') > 0 && line.get('priceIncludesTax')) || (line.get('net') > 0 && !line.get('priceIncludesTax'))) {
-                // Clean the promotions only if the line is not a return
-                line.set('promotions', []);
-                line.set('promotionCandidates', []);
-              }
-
-            });
+            line.set('promotions', []);
+            line.set('promotionCandidates', []);
+          });
+          _.each(receipt.get('lines').models, function (line) {
+            if (line.get('splitline') || (line.get('gross') > 0 && line.get('priceIncludesTax')) || (line.get('net') > 0 && !line.get('priceIncludesTax'))) {
+              // Clean the promotions only if the line is not a return
+              line.set('promotions', []);
+              line.set('promotionCandidates', []);
+            }
           });
         }
         me.applyPromotionsImp(auxReceipt, null, true);

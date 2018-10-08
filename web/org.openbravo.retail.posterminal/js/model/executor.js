@@ -307,11 +307,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
   preAction: function (evt) {
     var line = evt.get('line'),
-        manualPromotions = line.get('manualPromotions') || [],
+        originalManualPromotions = line.get('manualPromotions') || [],
+        manualPromotions = [],
         order = evt.get('receipt'),
-        appliedPromotions = line.get('promotions') || [],
         beforeManualPromo = [],
-        appliedPack;
+        appliedPack, appliedPromotions;
 
     appliedPack = line.isAffectedByPack();
     if (appliedPack) {
@@ -334,18 +334,35 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     }
 
     if (!line.get('originalOrderLineId')) {
-      line.set({
-        promotions: null,
-        discountedLinePrice: null
-      });
+      // Keep only manual discounts in promotions array of the line
+      var keepManual = [],
+          i;
+      for (i = 0; i < line.get('promotions').length; i++) {
+        if (line.get('promotions')[i].manual) {
+          keepManual.push(line.get('promotions')[i]);
+        }
+      }
+      line.set('promotions', keepManual.length > 0 ? keepManual : null);
+      line.set('discountedLinePrice', null);
     }
 
+    appliedPromotions = line.get('promotions');
+    if (appliedPromotions && appliedPromotions.length > 0) {
+      _.forEach(originalManualPromotions, function (promotion) {
+        if (appliedPromotions.indexOf(promotion) === -1) {
+          manualPromotions.push(promotion);
+        }
+      });
+    } else {
+      manualPromotions = originalManualPromotions;
+    }
     // Apply regular manual promotions
     beforeManualPromo = _.filter(manualPromotions, function (promo) {
       return !promo.obdiscApplyafter;
     });
 
     _.forEach(beforeManualPromo, function (promo) {
+      promo.qtyOffer = undefined;
       var promotion = {
         rule: new Backbone.Model(promo),
 
@@ -376,6 +393,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
           return promo.obdiscApplyafter;
         });
         _.forEach(afterManualPromo, function (promo) {
+          promo.qtyOffer = undefined;
           var promotion = {
             rule: new Backbone.Model(promo),
             definition: {
@@ -387,6 +405,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
           };
           OB.Model.Discounts.addManualPromotion(order, [line], promotion);
         });
+        line.set('manualPromotions', []);
       });
       evt.get('receipt').trigger('discountsApplied');
     }

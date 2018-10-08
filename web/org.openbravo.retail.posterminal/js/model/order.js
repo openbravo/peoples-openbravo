@@ -5003,14 +5003,22 @@
         if (_.find(l.get('promotions'), function (promo) {
           return promo.doNotMerge;
         })) {
-          //First, try to find lines with the same qty
+          //First, try to find lines with the same id
           lineToEdit = _.find(me.get('lines').models, function (line) {
-            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function (promo) {
-              return promo.doNotMerge;
-            })) {
+            if (l.get('id') === line.get('id')) {
               return line;
             }
           });
+          //Second, try to find lines with the same qty
+          if (!lineToEdit) {
+            lineToEdit = _.find(me.get('lines').models, function (line) {
+              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function (promo) {
+                return promo.doNotMerge;
+              })) {
+                return line;
+              }
+            });
+          }
           //if we cannot find lines with same qty, find lines with qty > 0
           if (!lineToEdit) {
             lineToEdit = _.find(me.get('lines').models, function (line) {
