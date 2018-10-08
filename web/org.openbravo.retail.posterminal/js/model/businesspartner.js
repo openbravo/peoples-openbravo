@@ -393,6 +393,10 @@
     skipremote: true,
     type: 'TEXT'
   }, {
+    name: 'alternativePhone',
+    column: 'alternativePhone',
+    type: 'TEXT'
+  }, {
     name: 'email',
     column: 'email',
     filter: true,
