@@ -203,6 +203,9 @@ enyo.kind({
               renderEmpty: enyo.kind({
                 style: 'height: 36px'
               }),
+              skipLineRender: function (model) {
+                return model.get('changePayment');
+              },
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
               kind: 'OB.UI.ScrollableTable',
@@ -213,6 +216,9 @@ enyo.kind({
               renderEmpty: enyo.kind({
                 style: 'height: 36px'
               }),
+              skipLineRender: function (model) {
+                return model.get('changePayment');
+              },
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
               style: 'overflow: hidden; height: 30px; margin-top: 3px; color: #ff0000; padding: 5px; position: relative;',
