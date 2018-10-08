@@ -167,8 +167,7 @@ enyo.kind({
           }, {
             kind: 'OB.UI.RegularButton',
             name: 'changebutton',
-            classes: 'btn-icon-split btnlink-green',
-            style: 'padding: 5px; margin: -5px 10px 0px 0px; width: 40px; height: 25px;',
+            classes: 'btn-icon-split btnlink-green payment-changebutton',
             ontap: 'actionChangeButton'
           }, {
             kind: 'OB.OBPOSPointOfSale.UI.Change',
