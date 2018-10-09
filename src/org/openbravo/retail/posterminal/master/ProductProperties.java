@@ -50,10 +50,12 @@ public class ProductProperties extends ModelExtension {
           } else {
             add(new HQLProperty("img.bindaryData", "img"));
             add(new HQLProperty("img.id", "imgId"));
+            add(new HQLProperty("img.mimetype", "mimetype"));
           }
         } catch (PropertyException e) {
           add(new HQLProperty("img.bindaryData", "img"));
           add(new HQLProperty("img.id", "imgId"));
+          add(new HQLProperty("img.mimetype", "mimetype"));
         }
         add(new HQLProperty("pli.bestseller", "bestseller"));
         add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
