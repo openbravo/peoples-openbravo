@@ -76,15 +76,9 @@ import org.openbravo.model.common.enterprise.Warehouse;
 // when using a factory/dependency injection approach.
 public class OBContext implements OBNotSingleton, Serializable {
   private static final long serialVersionUID = 1L;
-
   private static final Logger log = Logger.getLogger(OBContext.class);
 
-  // private static final String AD_USERID = "#AD_USER_ID";
-  // TODO: maybe use authenticated user
-  private static final String AUTHENTICATED_USER = "#AD_User_ID";
-  private static final String ROLE = "#AD_Role_ID";
-  private static final String CLIENT = "#AD_Client_ID";
-  private static final String ORG = "#AD_Org_ID";
+  public static final String CONTEXT_PARAM = "#OBContext";
 
   private String userID;
   private String roleID;
@@ -110,40 +104,31 @@ public class OBContext implements OBNotSingleton, Serializable {
   private transient Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
   private transient Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
   private transient EntityAccessChecker entityAccessChecker;
-
-  // the "0" user is the administrator
   private transient boolean isAdministrator;
   private transient boolean isInitialized = false;
-
   private transient boolean isRTL = false;
-
   private transient boolean isPortalRole = false;
-
   private transient boolean isWebServiceEnabled = false;
-
   private transient Set<String> additionalWritableOrganizations;
-
-  // check whether using new or old UI
   private transient boolean newUI = false;
-
   private transient boolean checkAccessLevel = true;
 
   // set this to a higher value to enable admin mode tracing
   private static int ADMIN_TRACE_SIZE = 0;
 
-  private static ThreadLocal<OBContext> instance = new ThreadLocal<OBContext>();
-
-  private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
-
-  private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
-  private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<List<String>>();
-
-  private static ThreadLocal<Stack<OBAdminMode>> crossOrgAdminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
-  private static ThreadLocal<List<String>> crossOrgAdminModeTrace = new ThreadLocal<List<String>>();
-
-  public static final String CONTEXT_PARAM = "#OBContext";
+  private static ThreadLocal<OBContext> instance = new ThreadLocal<>();
+  private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<>();
+  private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<>();
+  private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<>();
+  private static ThreadLocal<Stack<OBAdminMode>> crossOrgAdminModeStack = new ThreadLocal<>();
+  private static ThreadLocal<List<String>> crossOrgAdminModeTrace = new ThreadLocal<>();
 
   private static OBContext adminContext = null;
+
+  private static final String AUTHENTICATED_USER = "#AD_User_ID";
+  private static final String ROLE = "#AD_Role_ID";
+  private static final String CLIENT = "#AD_Client_ID";
+  private static final String ORG = "#AD_Org_ID";
 
   private enum AdminType {
     ADMIN_MODE("setAdminMode", "restorePreviousMode", adminModeStack, adminModeTrace), //
