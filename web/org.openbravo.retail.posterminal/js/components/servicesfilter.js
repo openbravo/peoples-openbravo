@@ -208,14 +208,16 @@ enyo.kind({
         ol.set('preserveId', true);
         productList.push({
           orderlineId: ol.get('id'),
-          productName: ol.get('product').get('_identifier')
+          productName: ol.get('product').get('_identifier'),
+          productCategory: ol.get('product').get('productCategory')
         });
       });
     } else if (this.orderline) {
       this.orderline.set('preserveId', true);
       productList.push({
         orderlineId: this.orderline.get('id'),
-        productName: this.orderline.get('product').get('_identifier')
+        productName: this.orderline.get('product').get('_identifier'),
+        productCategory: this.orderline.get('product').get('productCategory')
       });
     }
 
