@@ -783,13 +783,17 @@ public class OBContext implements OBNotSingleton, Serializable {
   }
 
   private void writeObject(ObjectOutputStream out) throws IOException {
-    log.trace("Write context: " + this);
+    if (log.isTraceEnabled()) {
+      log.trace("Write context: " + this);
+    }
     out.defaultWriteObject();
   }
 
   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
-    log.trace("Read context: " + this);
+    if (log.isTraceEnabled()) {
+      log.trace("Read context: " + this);
+    }
     initialize(userID, roleID, clientID, orgID, langID, warehouseID);
   }
 
