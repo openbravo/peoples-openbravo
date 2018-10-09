@@ -85,13 +85,11 @@ import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
-import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
@@ -476,17 +474,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
           OBDal.getInstance().save(canceledOrder);
         }
-        if (createInvoice) {
-          // Invoice header
-          invoice = OBProvider.getInstance().get(Invoice.class);
-          createInvoice(invoice, order, jsonorder);
-          OBDal.getInstance().save(invoice);
-
-          // Invoice lines
-          if (!doCancelAndReplace || (doCancelAndReplace && !moveShipmentLinesInCanelAndReplace)) {
-            createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
-          }
-        }
+        // if (createInvoice) {
+        // // Invoice header
+        // invoice = OBProvider.getInstance().get(Invoice.class);
+        // createInvoice(invoice, order, jsonorder);
+        // OBDal.getInstance().save(invoice);
+        //
+        // // Invoice lines
+        // if (!doCancelAndReplace || (doCancelAndReplace && !moveShipmentLinesInCanelAndReplace)) {
+        // createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
+        // }
+        // }
 
         if (log.isDebugEnabled()) {
           t116 = System.currentTimeMillis();
@@ -676,8 +674,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderHook) {
         ((OrderLoaderHook) proc).exec(jsonorder, order, shipment, invoice);
-      } else if (proc instanceof OrderLoaderCreateOrderlineHook) {
-        ((OrderLoaderCreateOrderlineHook) proc).exec(jsonorder, orderLine);
+        // } else if (proc instanceof OrderLoaderCreateOrderlineHook) {
+        // ((OrderLoaderCreateOrderlineHook) proc).exec(jsonorder, orderLine);
       } else if (proc instanceof OrderLoaderHookForQuotations) {
         ((OrderLoaderHookForQuotations) proc).exec(jsonorder, order, shipment, invoice);
       }
@@ -1614,11 +1612,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
 
       orderline.setObposQtytodeliver(orderline.getOrderedQuantity());
-      try {
-        executeHooks(orderCreateOrderLineProcesses, jsonOrderLine, null, null, null, orderline);
-      } catch (Exception e) {
-        throw new OBException("Error in OrderLoader Create OrderLines Hook: ", e);
-      }
+      // try {
+      // executeHooks(orderCreateOrderLineProcesses, jsonOrderLine, null, null, null, orderline);
+      // } catch (Exception e) {
+      // throw new OBException("Error in OrderLoader Create OrderLines Hook: ", e);
+      // }
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
@@ -2732,7 +2730,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
       paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
 
-      boolean resetPSD = false, hasPaymentScheduleInvoice = false;
       List<FIN_PaymentSchedule> paymentScheduleInvoiceList = null;
       if (invoice != null && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
         paymentScheduleInvoiceList = invoice.getFINPaymentScheduleList();
@@ -2743,105 +2740,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 ((FIN_PaymentSchedule) o2).getDueDate());
           }
         });
-      }
-
-      if (paymentScheduleInvoiceList != null) {
-        BigDecimal outstandingPaidAmount = amount, psdAmount = BigDecimal.ZERO;
-        for (FIN_PaymentSchedule paymentScheduleInv : paymentScheduleInvoiceList) {
-          if (outstandingPaidAmount.compareTo(BigDecimal.ZERO) == 0
-              || paymentScheduleInv.getOutstandingAmount().compareTo(BigDecimal.ZERO) == 0) {
-            continue;
-          }
-
-          if (resetPSD) {
-            paymentScheduleDetail = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
-            paymentScheduleDetail.setNewOBObject(true);
-            paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-            paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
-          }
-
-          if (checkPaidOnCreditChecked) {
-            if (paymentScheduleInv.getOutstandingAmount().signum() >= 0) {
-              if (outstandingPaidAmount.signum() >= 0) {
-                if (outstandingPaidAmount.compareTo(paymentScheduleInv.getOutstandingAmount()) >= 0) {
-                  psdAmount = paymentScheduleInv.getOutstandingAmount();
-                  outstandingPaidAmount = outstandingPaidAmount.subtract(paymentScheduleInv
-                      .getOutstandingAmount());
-                } else {
-                  psdAmount = outstandingPaidAmount;
-                  outstandingPaidAmount = BigDecimal.ZERO;
-                }
-              } else {
-                psdAmount = outstandingPaidAmount;
-                outstandingPaidAmount = BigDecimal.ZERO;
-              }
-            } else {
-              if (outstandingPaidAmount.signum() >= 0) {
-                psdAmount = outstandingPaidAmount;
-                outstandingPaidAmount = BigDecimal.ZERO;
-              } else {
-                if (outstandingPaidAmount.compareTo(paymentScheduleInv.getOutstandingAmount()) <= 0) {
-                  psdAmount = paymentScheduleInv.getOutstandingAmount();
-                  outstandingPaidAmount = outstandingPaidAmount.subtract(paymentScheduleInv
-                      .getOutstandingAmount());
-                } else {
-                  psdAmount = outstandingPaidAmount;
-                  outstandingPaidAmount = BigDecimal.ZERO;
-                }
-              }
-            }
-          } else {
-            psdAmount = outstandingPaidAmount;
-            outstandingPaidAmount = BigDecimal.ZERO;
-          }
-
-          paymentScheduleDetail.setAmount(psdAmount);
-          paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInv);
-          paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
-              paymentScheduleDetail);
-          paymentScheduleInv.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-              paymentScheduleDetail);
-          OBDal.getInstance().save(paymentScheduleDetail);
-
-          resetPSD = true;
-          hasPaymentScheduleInvoice = true;
-
-          // Add to Payment List
-          paymentAmount.put(paymentScheduleDetail.getId(), psdAmount);
-          detail.add(paymentScheduleDetail);
-        }
-
-        Fin_OrigPaymentSchedule origPaymentSchedule = OBProvider.getInstance().get(
-            Fin_OrigPaymentSchedule.class);
-        origPaymentSchedule.setCurrency(order.getCurrency());
-        origPaymentSchedule.setInvoice(invoice);
-        origPaymentSchedule.setPaymentMethod(paymentSchedule.getFinPaymentmethod());
-        origPaymentSchedule.setAmount(amount);
-        origPaymentSchedule.setDueDate(order.getOrderDate());
-        origPaymentSchedule.setPaymentPriority(order.getFINPaymentPriority());
-
-        OBDal.getInstance().save(origPaymentSchedule);
-
-        FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
-            FIN_OrigPaymentScheduleDetail.class);
-        origDetail.setArchivedPaymentPlan(origPaymentSchedule);
-        origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
-        origDetail.setAmount(amount);
-        origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount().setScale(
-            pricePrecision, RoundingMode.HALF_UP));
-
-        OBDal.getInstance().save(origDetail);
-      }
-
-      if (!hasPaymentScheduleInvoice) {
-        paymentScheduleDetail.setAmount(amount);
-        paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
-            paymentScheduleDetail);
-        OBDal.getInstance().save(paymentScheduleDetail);
-
-        // Add to Payment List
-        paymentAmount.put(paymentScheduleDetail.getId(), amount);
-        detail.add(paymentScheduleDetail);
       }
 
       DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());

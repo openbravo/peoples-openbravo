@@ -5836,6 +5836,37 @@
 
       return true;
     },
+    generateInvoice: function () {
+      var invoice = new OB.Model.Invoice(this.attributes);
+
+      if (this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) {
+        //TODO: check & generate ids
+        invoice.set('orderId', this.get('id'));
+        invoice.set('id', OB.UTIL.get_UUID());
+        invoice.get('lines').forEach(function (line) {
+          line.set('id', OB.UTIL.get_UUID());
+        });
+
+        invoice.set('skipApplyPromotions', true);
+        invoice.set('hasBeenPaid', true);
+        invoice.set('dummyPaymentId', OB.UTIL.get_UUID());
+
+        invoice.set('belongsToMultiOrder', true);
+        invoice.calculateReceipt(function () {
+          invoice.set('json', JSON.stringify(invoice.serializeToJSON()));
+
+          OB.Dal.save(invoice, function () {
+            invoice.trigger('invoiceCalculated');
+          }, null, true);
+        });
+      } else {
+        //TODO: not the best way to send the event
+        setTimeout(function () {
+          invoice.trigger('invoiceCalculated');
+        }, 0);
+      }
+      return invoice;
+    },
     checkOrderPayment: function () {
       var hasPayments = false;
       if (this.get('payments').length > 0) {

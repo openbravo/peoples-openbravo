@@ -152,7 +152,8 @@
           model: model,
           receipt: model.get('order')
         }, function (args) {
-          var receipt = args.context.receipt;
+          var receipt = args.context.receipt,
+              invoice;
           if (args && args.cancellation && args.cancellation === true) {
             args.context.receipt.set('isbeingprocessed', 'N');
             args.context.receipt.set('hasbeenpaid', 'N');
@@ -350,6 +351,8 @@
                 // when all the properties of the frozenReceipt have been set, keep a copy
                 OB.UTIL.clone(receipt, diffReceipt);
                 OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
+                  invoice.set('hasbeenpaid', 'Y');
+                  OB.Dal.saveInTransaction(tx, invoice, null, null);
                   successCallback();
                   if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                     // the trigger is fired on the receipt object, as there is only 1 that is being updated
@@ -359,34 +362,38 @@
               });
               };
 
-          OB.info("[receipt.closed] Starting transaction. ReceiptId: " + frozenReceipt.get('id'));
-          OB.Dal.transaction(function (tx) {
-            OB.trace('Calculationg cashup information.');
-            OB.UTIL.cashUpReport(frozenReceipt, function (cashUp) {
-              frozenReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-              frozenReceipt.set('json', JSON.stringify(frozenReceipt.serializeToJSON()));
-              OB.UTIL.setScanningFocus(true);
-              if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
-                  executePreSyncReceipt(tx);
-                });
-              } else {
-                OB.UTIL.calculateCurrentCash(null, tx);
-                OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
-                  OB.trace('Saving receipt.');
+          //Create the invoice
+          invoice = frozenReceipt.generateInvoice();
+          invoice.on('invoiceCalculated', function () {
+            OB.info("[receipt.closed] Starting transaction. ReceiptId: " + frozenReceipt.get('id'));
+            OB.Dal.transaction(function (tx) {
+              OB.trace('Calculationg cashup information.');
+              OB.UTIL.cashUpReport(frozenReceipt, function (cashUp) {
+                frozenReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+                frozenReceipt.set('json', JSON.stringify(frozenReceipt.serializeToJSON()));
+                OB.UTIL.setScanningFocus(true);
+                if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                   OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
                     executePreSyncReceipt(tx);
                   });
-                }, tx);
-              }
-            }, tx);
-          }, function () {
-            // the transaction failed
-            OB.UTIL.showError("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
-            // rollback other changes
-            receipt.set('hasbeenpaid', 'N');
-            frozenReceipt.set('hasbeenpaid', 'N');
-          }, null);
+                } else {
+                  OB.UTIL.calculateCurrentCash(null, tx);
+                  OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
+                    OB.trace('Saving receipt.');
+                    OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
+                      executePreSyncReceipt(tx);
+                    });
+                  }, tx);
+                }
+              }, tx);
+            }, function () {
+              // the transaction failed
+              OB.UTIL.showError("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
+              // rollback other changes
+              receipt.set('hasbeenpaid', 'N');
+              frozenReceipt.set('hasbeenpaid', 'N');
+            }, null);
+          });
         });
         };
 
