@@ -479,8 +479,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     // Cancel and Replace
     globalResources.add(createStaticResource("web/js/cancelAndReplace.js", false));
 
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.application/js/log-management/ob-log-manager.js", false));
+    //globalResources.add(createStaticResource(
+    //    "web/org.openbravo.client.application/js/log-management/ob-log-manager.js", false));
 
     return globalResources;
   }

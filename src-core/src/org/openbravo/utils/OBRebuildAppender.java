@@ -51,7 +51,6 @@ public class OBRebuildAppender extends AbstractAppender {
 
   @Override
   public void append(LogEvent event) {
-    System.out.println("Holaaaaaaaa");
     if (event.getLevel().isLessSpecificThan(Level.INFO)) {
       return;
     }
