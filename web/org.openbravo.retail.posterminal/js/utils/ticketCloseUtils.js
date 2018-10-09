@@ -64,6 +64,11 @@
                 receipt.trigger('print', orderToPrint, {
                   offline: true
                 });
+                if (receipt.get('calculatedInvoice').get('id')) {
+                  receipt.trigger('print', receipt.get('calculatedInvoice'), {
+                    offline: true
+                  });
+                }
 
                 // Verify that the receipt has not been changed while the ticket has being closed
                 var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.diffReceipt.serializeToJSON());

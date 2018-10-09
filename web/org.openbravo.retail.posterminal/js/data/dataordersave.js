@@ -352,7 +352,9 @@
                 OB.UTIL.clone(receipt, diffReceipt);
                 OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
                   invoice.set('hasbeenpaid', 'Y');
-                  OB.Dal.saveInTransaction(tx, invoice, null, null);
+                  if (invoice.get('id')) {
+                    OB.Dal.saveInTransaction(tx, invoice, null, null);
+                  }
                   successCallback();
                   if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                     // the trigger is fired on the receipt object, as there is only 1 that is being updated
@@ -364,6 +366,7 @@
 
           //Create the invoice
           invoice = frozenReceipt.generateInvoice();
+          frozenReceipt.set('calculatedInvoice', invoice);
           invoice.on('invoiceCalculated', function () {
             OB.info("[receipt.closed] Starting transaction. ReceiptId: " + frozenReceipt.get('id'));
             OB.Dal.transaction(function (tx) {
@@ -515,9 +518,21 @@
             OB.MobileApp.model.runSyncProcess(function () {
               OB.UTIL.calculateCurrentCash();
               _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
+                var invoice;
+
                 me.context.get('multiOrders').trigger('print', theReceipt, {
                   offline: true
                 });
+
+                invoice = theReceipt.generateInvoice();
+                if (invoice && invoice.get('id')) {
+                  invoice.on('invoiceCalculated', function () {
+                    me.get('multiOrders').trigger('print', invoice, {
+                      offline: true
+                    });
+                  });
+                }
+
                 me.context.get('multiOrders').trigger('integrityOk', theReceipt);
                 OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), theReceipt.get('returnnoSuffix'));
                 me.context.get('orderList').current = theReceipt;

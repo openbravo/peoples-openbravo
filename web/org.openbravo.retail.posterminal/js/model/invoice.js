@@ -27,7 +27,8 @@
     },
 
     defaults: {
-      isbeingprocessed: 'N'
+      isbeingprocessed: 'N',
+      isInvoice: true
     },
 
     createStatement: 'CREATE TABLE IF NOT EXISTS c_invoice (c_invoice_id TEXT PRIMARY KEY, json CLOB, ad_session_id TEXT, isbeingprocessed TEXT)',

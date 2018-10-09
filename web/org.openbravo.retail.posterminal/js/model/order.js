@@ -599,7 +599,7 @@
       if (this.isCalculateGrossLocked === true) {
         OB.error("calculateGross execution is forbidden right now");
         return;
-      } else if (this.isCalculateGrossLocked !== false && !this.get('belongsToMultiOrder')) {
+      } else if (this.isCalculateGrossLocked !== false && !this.get('belongsToMultiOrder') && !this.get('isInvoice')) {
         OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
       }
 
@@ -754,7 +754,7 @@
       if (this.isCalculateReceiptLocked === true) {
         OB.error("calculateReceipt execution is forbidden right now");
         return;
-      } else if (this.isCalculateReceiptLocked !== false && !this.get('belongsToMultiOrder')) {
+      } else if (this.isCalculateReceiptLocked !== false && !this.get('belongsToMultiOrder') && !this.get('isInvoice')) {
         OB.error("setting the isCalculateReceiptLocked state is mandatory before executing it the first time");
       }
       // verify that the ui receipt is the only one in which calculateReceipt is executed
@@ -5837,9 +5837,10 @@
       return true;
     },
     generateInvoice: function () {
-      var invoice = new OB.Model.Invoice(this.attributes);
+      var invoice;
 
       if (this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) {
+        invoice = new OB.Model.Invoice(this.attributes);
         //TODO: check & generate ids
         invoice.set('orderId', this.get('id'));
         invoice.set('id', OB.UTIL.get_UUID());
@@ -5850,8 +5851,8 @@
         invoice.set('skipApplyPromotions', true);
         invoice.set('hasBeenPaid', true);
         invoice.set('dummyPaymentId', OB.UTIL.get_UUID());
-
-        invoice.set('belongsToMultiOrder', true);
+        invoice.set('ignoreCheckIfIsActiveOrder', true);
+        invoice.set('hasbeenpaid', 'Y');
         invoice.calculateReceipt(function () {
           invoice.set('json', JSON.stringify(invoice.serializeToJSON()));
 
@@ -5861,6 +5862,7 @@
         });
       } else {
         //TODO: not the best way to send the event
+        invoice = new Backbone.Model();
         setTimeout(function () {
           invoice.trigger('invoiceCalculated');
         }, 0);
