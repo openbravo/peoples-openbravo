@@ -38,6 +38,7 @@ public class LogDatasource extends ReadOnlyDataSourceService {
         .limit(endRow) //
         .map(l -> {
           Map<String, Object> r = new HashMap<>(2);
+          r.put("id", l.getName());
           r.put("logger", l.getName());
           r.put("level", l.getLevel().toString());
           return r;
@@ -79,7 +80,7 @@ public class LogDatasource extends ReadOnlyDataSourceService {
       case "logger":
         return r.getName().toLowerCase().contains(value);
       case "level":
-        List<String> values = convertJsonArrayToStringList(value);
+        List<String> values = JsonArrayUtils.convertJsonArrayToStringList(new JSONArray(value));
         return values.contains(r.getLevel().toString().toLowerCase());
       }
     } catch (JSONException e) {
@@ -90,24 +91,10 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     return true;
   }
 
-  private static List<String> convertJsonArrayToStringList(String value) {
-    List<String> result = new ArrayList<>();
-    try {
-      JSONArray array = new JSONArray(value);
-      for (int i=0; i < array.length(); i++) {
-        result.add(array.getString(i));
-      }
-    }
-    catch(JSONException e) {
-      e.printStackTrace();
-    }
-
-    return result;
-  }
-
   @Override
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
     List<DataSourceProperty> dataSourceProperties = new ArrayList<>();
+    dataSourceProperties.add(getIdProperty());
     dataSourceProperties.add(getLoggerProperty());
     dataSourceProperties.add(getLevelProperty());
 
@@ -117,6 +104,18 @@ public class LogDatasource extends ReadOnlyDataSourceService {
   private DataSourceProperty getLoggerProperty() {
     final DataSourceProperty dsProperty = new DataSourceProperty();
     dsProperty.setName("logger");
+
+    Reference loggerReference = OBDal.getInstance().get(Reference.class, STRING_REFERENCE_ID);
+    UIDefinition stringUiDefinition = UIDefinitionController.getInstance().getUIDefinition(loggerReference);
+    dsProperty.setUIDefinition(stringUiDefinition);
+
+    return dsProperty;
+  }
+
+  private DataSourceProperty getIdProperty() {
+    final DataSourceProperty dsProperty = new DataSourceProperty();
+    dsProperty.setName("id");
+    dsProperty.setId(true);
 
     Reference loggerReference = OBDal.getInstance().get(Reference.class, STRING_REFERENCE_ID);
     UIDefinition stringUiDefinition = UIDefinitionController.getInstance().getUIDefinition(loggerReference);
