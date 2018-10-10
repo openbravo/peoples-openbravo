@@ -11,7 +11,6 @@ package org.openbravo.retail.posterminal;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.CallableStatement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -44,7 +43,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
@@ -54,17 +52,13 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
-import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -72,17 +66,12 @@ import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.invoice.InvoiceLine;
-import org.openbravo.model.common.invoice.InvoiceLineOffer;
-import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
-import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -93,13 +82,10 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
-import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
-import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook.OrderLoaderPreAddShipmentLineHook_Actions;
 import org.openbravo.retail.posterminal.utility.AttributesUtils;
-import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
+import org.openbravo.retail.posterminal.utility.ShipmentInOut_Utils;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
 import org.openbravo.service.json.JsonConstants;
@@ -110,16 +96,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   private static final Logger log = Logger.getLogger(OrderLoader.class);
 
-  private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
-
   // DocumentNo Handler are used to collect all needed document numbers and create and set
   // them as late in the process as possible
   private static ThreadLocal<List<DocumentNoHandler>> documentNoHandlers = new ThreadLocal<List<DocumentNoHandler>>();
-
-  private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
-      DocumentType docTypeTarget, DocumentType docType) {
-    documentNoHandlers.get().add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
-  }
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
@@ -132,7 +111,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean partialpaidLayaway = false;
   private boolean fullypaidLayaway = false;
   private boolean createShipment = true;
-  private Locator binForRetuns = null;
   private boolean isQuotation = false;
   private boolean isDeleted = false;
   private boolean isModified = false;
@@ -193,7 +171,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
-    documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
+    documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
 
     isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
 
@@ -229,7 +207,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
-    long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
+    long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0;
 
     JSONObject jsoncashup = null;
     if (jsonorder.has("cashUpReportInformation")) {
@@ -251,7 +229,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OBPOSApplications posTerminal = null;
       boolean createInvoice = false;
       boolean wasPaidOnCredit = false;
-      boolean moveShipmentLinesInCanelAndReplace = false;
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
       JSONArray orderlines = jsonorder.getJSONArray("lines");
 
@@ -434,6 +411,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t113 = System.currentTimeMillis();
         }
         createShipment = createShipment && goodsToDeliver(order);
+        final ShipmentInOut_Utils su = new ShipmentInOut_Utils();
         if (createShipment) {
 
           OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
@@ -450,9 +428,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
 
           shipment = OBProvider.getInstance().get(ShipmentInOut.class);
-          createShipment(shipment, order, jsonorder);
+          su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs);
           OBDal.getInstance().save(shipment);
-          createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences, locatorList);
+          su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
+              locatorList);
         }
         if (log.isDebugEnabled()) {
           t115 = System.currentTimeMillis();
@@ -460,31 +439,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (doCancelAndReplace) {
           final String canceledOrderId = jsonorder.getJSONObject("canceledorder").getString("id");
           final Order canceledOrder = OBDal.getInstance().get(Order.class, canceledOrderId);
-          moveShipmentLinesInCanelAndReplace = !CancelAndReplaceUtils
-              .getCreateNettingGoodsShipmentPreferenceValue(canceledOrder)
-              && CancelAndReplaceUtils
-                  .getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(canceledOrder);
           canceledOrder.setObposAppCashup(jsoncashup.getString("id"));
           if (canceledOrder.isObposIslayaway()) {
             canceledOrder.setObposIslayaway(false);
           }
           OBDal.getInstance().save(canceledOrder);
         }
-        // if (createInvoice) {
-        // // Invoice header
-        // invoice = OBProvider.getInstance().get(Invoice.class);
-        // createInvoice(invoice, order, jsonorder);
-        // OBDal.getInstance().save(invoice);
-        //
-        // // Invoice lines
-        // if (!doCancelAndReplace || (doCancelAndReplace && !moveShipmentLinesInCanelAndReplace)) {
-        // createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
-        // }
-        // }
 
-        if (log.isDebugEnabled()) {
-          t116 = System.currentTimeMillis();
-        }
         createApprovals(order, jsonorder);
 
         if (log.isDebugEnabled()) {
@@ -503,7 +464,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
           try {
             // Stock manipulation
-            handleStock(shipment, updateStockStatement);
+            su.handleStock(shipment, updateStockStatement);
           } finally {
             updateStockStatement.close();
           }
@@ -513,8 +474,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t4 = System.currentTimeMillis();
 
           log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
-              + "; Shipment: " + (t115 - t113) + "; Invoice: " + (t116 - t115) + "; Approvals"
-              + (t11 - t116) + "; stock" + (t4 - t3));
+              + "; Shipment: " + (t115 - t113) + "; Approvals" + (t11 - t115) + "; stock"
+              + (t4 - t3));
         }
 
         if (!paidReceipt) {
@@ -565,9 +526,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             // Cancel and Replace the order
             CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
                 useOrderDocumentNoForRelatedDocs);
-            if (createInvoice && moveShipmentLinesInCanelAndReplace) {
-              createInvoiceLines(invoice, order, jsonorder, orderlines, lineReferences);
-            }
           } catch (Exception ex) {
             OBDal.getInstance().rollbackAndClose();
             throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
@@ -744,24 +702,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected OrderLoaderPreAddShipmentLineHook_Response executeOrderLoaderPreAddShipmentLineHook(
-      Instance<? extends Object> hooks, OrderLoaderPreAddShipmentLineHook_Actions action,
-      JSONObject jsonorderline, OrderLine orderline, JSONObject jsonorder, Order order, Locator bin)
-      throws Exception {
-    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
-      Object proc = procIter.next();
-      if (proc instanceof OrderLoaderPreAddShipmentLineHook) {
-        OrderLoaderPreAddShipmentLineHook_Response hookResponse = ((OrderLoaderPreAddShipmentLineHook) proc)
-            .exec(action, jsonorderline, orderline, jsonorder, order, bin);
-        if (hookResponse == null) {
-          return null;
-        }
-        return hookResponse;
-      }
-    }
-    return null;
-  }
-
   private void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
     String quotationId = jsonorder.getString("oldId");
     Order quotation = OBDal.getInstance().get(Order.class, quotationId);
@@ -773,15 +713,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
     quotation.setDocumentStatus("CA");
 
-  }
-
-  private Locator getBinForReturns(String posTerminalId) {
-    if (binForRetuns == null) {
-      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          posTerminalId);
-      binForRetuns = POSUtils.getBinForReturns(posTerminal);
-    }
-    return binForRetuns;
   }
 
   protected JSONObject successMessage(JSONObject jsonorder) throws Exception {
@@ -830,255 +761,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   }
 
-  private DocumentType getInvoiceDocumentType(String documentTypeId) {
-    if (invoiceDocTypes.get(documentTypeId) != null) {
-      return invoiceDocTypes.get(documentTypeId);
-    }
-    DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
-    final DocumentType docType = orderDocType.getDocumentTypeForInvoice();
-    invoiceDocTypes.put(documentTypeId, docType);
-    if (docType == null) {
-      throw new OBException(
-          "There is no 'Document type for Invoice' defined for the specified Document Type. The document type for invoices can be configured in the Document Type window, and it should be configured for the document type: "
-              + orderDocType.getName());
-    }
-    return docType;
-  }
-
-  private DocumentType getShipmentDocumentType(String documentTypeId) {
-    if (shipmentDocTypes.get(documentTypeId) != null) {
-      return shipmentDocTypes.get(documentTypeId);
-    }
-    DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
-    final DocumentType docType = orderDocType.getDocumentTypeForShipment();
-    shipmentDocTypes.put(documentTypeId, docType);
-    if (docType == null) {
-      throw new OBException(
-          "There is no 'Document type for Shipment' defined for the specified Document Type. The document type for shipments can be configured in the Document Type window, and it should be configured for the document type: "
-              + orderDocType.getName());
-    }
-    return docType;
-  }
-
-  private void createInvoiceLine(Invoice invoice, Order order, JSONObject jsonorder,
-      JSONArray orderlines, ArrayList<OrderLine> lineReferences, int numIter, int pricePrecision,
-      ShipmentInOutLine inOutLine, int lineNo, int numLines, int actualLine,
-      BigDecimal movementQtyTotal) throws JSONException {
-
-    if (lineReferences.get(numIter).getObposQtyDeleted() != null
-        && lineReferences.get(numIter).getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
-      return;
-    }
-
-    boolean deliveredQtyEqualsToMovementQty = movementQtyTotal.compareTo(lineReferences
-        .get(numIter).getOrderedQuantity()) == 0;
-
-    BigDecimal movQty = null;
-    if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
-      movQty = inOutLine.getMovementQuantity();
-    } else if (inOutLine == null && movementQtyTotal.compareTo(BigDecimal.ZERO) != 0) {
-      movQty = lineReferences.get(numIter).getOrderedQuantity().subtract(movementQtyTotal);
-    } else {
-      movQty = lineReferences.get(numIter).getOrderedQuantity();
-    }
-
-    BigDecimal ratio = movQty.divide(lineReferences.get(numIter).getOrderedQuantity(), 32,
-        RoundingMode.HALF_UP);
-
-    Entity promotionLineEntity = ModelProvider.getInstance().getEntity(InvoiceLineOffer.class);
-    InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
-    Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);
-    JSONPropertyToEntity.fillBobFromJSON(inlineEntity, line, orderlines.getJSONObject(numIter),
-        jsonorder.getLong("timezoneOffset"));
-    JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(InvoiceLine.class),
-        line, jsonorder, jsonorder.getLong("timezoneOffset"));
-    line.setNewOBObject(true);
-    line.set("creationDate", invoice.getCreationDate());
-    line.setLineNo((long) lineNo);
-    line.setDescription(orderlines.getJSONObject(numIter).has("description") ? orderlines
-        .getJSONObject(numIter).getString("description") : "");
-    BigDecimal qty = movQty;
-
-    // if ratio equals to one, then only one shipment line is related to orderline, then lineNetAmt
-    // and gross is populated from JSON
-    if (ratio.compareTo(BigDecimal.ONE) != 0) {
-      // if there are several shipments line to the same orderline, in the last line of the invoice
-      // of this sales order line, the line net amt will be the pending line net amount
-      if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-        line.setLineNetAmount(lineReferences.get(numIter).getUnitPrice().multiply(qty)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
-        line.setGrossAmount(lineReferences.get(numIter).getGrossUnitPrice().multiply(qty)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
-      } else {
-        BigDecimal partialGrossAmount = BigDecimal.ZERO;
-        BigDecimal partialLineNetAmount = BigDecimal.ZERO;
-        for (InvoiceLine il : invoice.getInvoiceLineList()) {
-          if (il.getSalesOrderLine() != null
-              && il.getSalesOrderLine().getId() == lineReferences.get(numIter).getId()) {
-            partialGrossAmount = partialGrossAmount.add(il.getGrossAmount());
-            partialLineNetAmount = partialLineNetAmount.add(il.getLineNetAmount());
-          }
-        }
-        line.setLineNetAmount(lineReferences.get(numIter).getLineNetAmount()
-            .subtract(partialLineNetAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
-        line.setGrossAmount(lineReferences.get(numIter).getLineGrossAmount()
-            .subtract(partialGrossAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
-      }
-    } else {
-      line.setLineNetAmount(BigDecimal.valueOf(orderlines.getJSONObject(numIter).getDouble("net"))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      line.setGrossAmount(lineReferences.get(numIter).getLineGrossAmount()
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-    }
-
-    line.setInvoicedQuantity(qty);
-    lineReferences.get(numIter).setInvoicedQuantity(
-        (lineReferences.get(numIter).getInvoicedQuantity() != null ? lineReferences.get(numIter)
-            .getInvoicedQuantity().add(qty) : qty));
-    line.setInvoice(invoice);
-    line.setSalesOrderLine(lineReferences.get(numIter));
-    line.setGoodsShipmentLine(inOutLine);
-    line.setAttributeSetValue(lineReferences.get(numIter).getAttributeSetValue());
-    invoice.getInvoiceLineList().add(line);
-    OBDal.getInstance().save(line);
-
-    JSONObject taxes = orderlines.getJSONObject(numIter).getJSONObject("taxLines");
-    @SuppressWarnings("unchecked")
-    Iterator<String> itKeys = taxes.keys();
-    BigDecimal totalTaxAmount = BigDecimal.ZERO;
-    int ind = 0;
-    while (itKeys.hasNext()) {
-      String taxId = itKeys.next();
-      JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
-      InvoiceLineTax invoicelinetax = OBProvider.getInstance().get(InvoiceLineTax.class);
-      TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
-          ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
-      invoicelinetax.setTax(tax);
-
-      // if ratio equals to one, then only one shipment line is related to orderline, then
-      // lineNetAmt and gross is populated from JSON
-      if (ratio.compareTo(BigDecimal.ONE) != 0) {
-        // if there are several shipments line to the same orderline, in the last line of the
-        // splited lines, the tax amount will be calculated as the pending tax amount
-        if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-          invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
-              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
-          invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
-              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
-          totalTaxAmount = totalTaxAmount.add(invoicelinetax.getTaxAmount());
-        } else {
-          BigDecimal partialTaxableAmount = BigDecimal.ZERO;
-          BigDecimal partialTaxAmount = BigDecimal.ZERO;
-          for (InvoiceLineTax ilt : invoice.getInvoiceLineTaxList()) {
-            if (ilt.getInvoiceLine().getSalesOrderLine() != null
-                && ilt.getInvoiceLine().getSalesOrderLine().getId() == lineReferences.get(numIter)
-                    .getId() && ilt.getTax() != null && ilt.getTax().getId() == tax.getId()) {
-              partialTaxableAmount = partialTaxableAmount.add(ilt.getTaxableAmount());
-              partialTaxAmount = partialTaxAmount.add(ilt.getTaxAmount());
-            }
-          }
-          invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net"))
-              .subtract(partialTaxableAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
-          invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount"))
-              .subtract(partialTaxAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
-        }
-      } else {
-        invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
-            pricePrecision, RoundingMode.HALF_UP));
-        invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
-            pricePrecision, RoundingMode.HALF_UP));
-      }
-      invoicelinetax.setInvoice(invoice);
-      invoicelinetax.setInvoiceLine(line);
-      invoicelinetax.setRecalculate(true);
-      invoicelinetax.setLineNo((long) ((ind + 1) * 10));
-      ind++;
-      invoice.getInvoiceLineTaxList().add(invoicelinetax);
-      line.getInvoiceLineTaxList().add(invoicelinetax);
-      invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(line.getSalesOrderLine().getId() + lineNo
-          + (long) ((ind + 1) * 10)));
-      invoicelinetax.setNewOBObject(true);
-      OBDal.getInstance().save(invoicelinetax);
-    }
-
-    // Discounts & Promotions
-    if (orderlines.getJSONObject(numIter).has("promotions")
-        && !orderlines.getJSONObject(numIter).isNull("promotions")
-        && !orderlines.getJSONObject(numIter).getString("promotions").equals("null")) {
-      JSONArray jsonPromotions = orderlines.getJSONObject(numIter).getJSONArray("promotions");
-      for (int p = 0; p < jsonPromotions.length(); p++) {
-        JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
-        boolean hasActualAmt = jsonPromotion.has("actualAmt");
-        if (hasActualAmt && jsonPromotion.getDouble("actualAmt") == 0) {
-          continue;
-        }
-
-        InvoiceLineOffer promotion = OBProvider.getInstance().get(InvoiceLineOffer.class);
-        JSONPropertyToEntity.fillBobFromJSON(promotionLineEntity, promotion, jsonPromotion,
-            jsonorder.getLong("timezoneOffset"));
-
-        if (hasActualAmt) {
-          promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("actualAmt"))
-              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
-        } else {
-          promotion.setTotalAmount(BigDecimal.valueOf(jsonPromotion.getDouble("amt"))
-              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
-        }
-        promotion.setLineNo((long) ((p + 1) * 10));
-        promotion.setId(OBMOBCUtils.getUUIDbyString(line.getId() + p));
-        promotion.setNewOBObject(true);
-        promotion.setInvoiceLine(line);
-        line.getInvoiceLineOfferList().add(promotion);
-      }
-    }
-
-  }
-
-  private void createInvoiceLines(Invoice invoice, Order order, JSONObject jsonorder,
-      JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
-    int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
-        .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
-
-    boolean multipleShipmentsLines = false;
-    int lineNo = 0;
-    for (int i = 0; i < orderlines.length(); i++) {
-      final OBCriteria<ShipmentInOutLine> iolCriteria = OBDal.getInstance().createCriteria(
-          ShipmentInOutLine.class);
-      iolCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
-          lineReferences.get(i)));
-      iolCriteria.addOrder(org.hibernate.criterion.Order.asc(ShipmentInOutLine.PROPERTY_LINENO));
-      final List<ShipmentInOutLine> iolList = iolCriteria.list();
-      if (iolList.size() > 1) {
-        multipleShipmentsLines = true;
-      }
-      if (iolList.size() == 0) {
-        lineNo = lineNo + 10;
-        createInvoiceLine(invoice, order, jsonorder, orderlines, lineReferences, i, pricePrecision,
-            null, lineNo, iolList.size(), 1, BigDecimal.ZERO);
-      } else {
-        int numIter = 0;
-        BigDecimal movementQtyTotal = BigDecimal.ZERO;
-        for (ShipmentInOutLine iol : iolList) {
-          movementQtyTotal = movementQtyTotal.add(iol.getMovementQuantity());
-        }
-        for (ShipmentInOutLine iol : iolList) {
-          numIter++;
-          lineNo = lineNo + 10;
-          createInvoiceLine(invoice, order, jsonorder, orderlines, lineReferences, i,
-              pricePrecision, iol, lineNo, iolList.size(), numIter, movementQtyTotal);
-        }
-        if (movementQtyTotal.compareTo(lineReferences.get(i).getOrderedQuantity()) == -1) {
-          lineNo = lineNo + 10;
-          createInvoiceLine(invoice, order, jsonorder, orderlines, lineReferences, i,
-              pricePrecision, null, lineNo, iolList.size(), iolList.size() + 1, movementQtyTotal);
-        }
-      }
-    }
-    if (multipleShipmentsLines) {
-      updateTaxes(invoice);
-    }
-  }
-
   private List<Invoice> getInvoicesRelatedToOrder(String orderId) {
     List<String> lstInvoicesIds = new ArrayList<String>();
     List<Invoice> lstInvoices = new ArrayList<Invoice>();
@@ -1108,457 +790,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } else {
       return null;
     }
-  }
-
-  protected void createInvoice(Invoice invoice, Order order, JSONObject jsonorder)
-      throws JSONException {
-    Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
-    JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsonorder,
-        jsonorder.getLong("timezoneOffset"));
-    if (jsonorder.has("id")) {
-      invoice.setId(jsonorder.getString("id"));
-      invoice.setNewOBObject(true);
-    }
-    int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
-        .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
-
-    String description = null;
-    if (jsonorder.has("Invoice.description")) {
-      // in case the description is directly set to Invoice entity, preserve it
-      description = jsonorder.getString("Invoice.description");
-    } else {
-      // other case use generic description if present and add relationship to order
-      description = OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
-          + jsonorder.getString("documentNo");
-      if (jsonorder.has("description") && !StringUtils.isEmpty(jsonorder.getString("description"))) {
-        description = StringUtils.substring(jsonorder.getString("description"), 0,
-            255 - description.length() - 1) + "\n" + description;
-      }
-    }
-
-    invoice.setDescription(description);
-    invoice.setDocumentType(getInvoiceDocumentType(order.getDocumentType().getId()));
-    invoice.setTransactionDocument(getInvoiceDocumentType(order.getDocumentType().getId()));
-
-    if (useOrderDocumentNoForRelatedDocs) {
-      invoice.setDocumentNo(order.getDocumentNo());
-    } else {
-      invoice.setDocumentNo(getDummyDocumentNo());
-      addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
-          invoice.getDocumentType());
-    }
-    final Date orderDate = OBMOBCUtils.calculateServerDatetime(jsonorder.getString("orderDate"),
-        Long.parseLong(jsonorder.getString("timezoneOffset")));
-    Date now = new Date();
-    invoice.set("creationDate", orderDate.after(now) ? now : orderDate);
-    final Date invoiceDate = OBMOBCUtils.stripTime(orderDate);
-    invoice.setAccountingDate(invoiceDate);
-    invoice.setInvoiceDate(invoiceDate);
-    invoice.setSalesTransaction(true);
-    invoice.setDocumentStatus("CO");
-    invoice.setDocumentAction("RE");
-    invoice.setAPRMProcessinvoice("RE");
-    invoice.setSalesOrder(order);
-    invoice.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
-        jsonorder.getJSONObject("bp").getString("locId")));
-    invoice.setProcessed(true);
-    invoice.setPaymentMethod(order.getPaymentMethod());
-    invoice.setPaymentTerms(order.getPaymentTerms());
-    invoice.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
-        pricePrecision, RoundingMode.HALF_UP));
-    invoice.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")).setScale(
-        pricePrecision, RoundingMode.HALF_UP));
-    invoice.setTotalPaid(BigDecimal.ZERO);
-    invoice.setOutstandingAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))).setScale(
-        pricePrecision, RoundingMode.HALF_UP));
-    invoice.setDueAmount((BigDecimal.valueOf(jsonorder.getDouble("gross"))).setScale(
-        pricePrecision, RoundingMode.HALF_UP));
-    invoice.setUserContact(order.getUserContact());
-
-    // Create invoice tax lines
-    JSONObject taxes = jsonorder.getJSONObject("taxes");
-    @SuppressWarnings("unchecked")
-    Iterator<String> itKeys = taxes.keys();
-    int i = 0;
-    while (itKeys.hasNext()) {
-      String taxId = itKeys.next();
-      JSONObject jsonOrderTax = taxes.getJSONObject(taxId);
-      InvoiceTax invoiceTax = OBProvider.getInstance().get(InvoiceTax.class);
-      TaxRate tax = (TaxRate) OBDal.getInstance().getProxy(
-          ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
-      invoiceTax.setTax(tax);
-      invoiceTax.setTaxableAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("net")).setScale(
-          pricePrecision, RoundingMode.HALF_UP));
-      invoiceTax.setTaxAmount(BigDecimal.valueOf(jsonOrderTax.getDouble("amount")).setScale(
-          pricePrecision, RoundingMode.HALF_UP));
-      invoiceTax.setInvoice(invoice);
-      invoiceTax.setLineNo((long) ((i + 1) * 10));
-      invoiceTax.setRecalculate(true);
-      invoiceTax.setId(OBMOBCUtils.getUUIDbyString(invoiceTax.getInvoice().getId()
-          + invoiceTax.getLineNo()));
-      invoiceTax.setNewOBObject(true);
-      i++;
-      invoice.getInvoiceTaxList().add(invoiceTax);
-    }
-
-    // Update customer credit
-    OBContext.setAdminMode(false);
-    try {
-      BigDecimal total = invoice.getGrandTotalAmount().setScale(pricePrecision,
-          RoundingMode.HALF_UP);
-
-      JSONArray payments = jsonorder.getJSONArray("payments");
-      for (i = 0; i < payments.length(); i++) {
-        JSONObject payment = payments.getJSONObject(i);
-        if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
-          total = total.subtract(BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
-              pricePrecision, RoundingMode.HALF_UP));
-        }
-      }
-
-      if (!invoice.getCurrency().equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
-        total = convertCurrencyInvoice(invoice);
-      }
-
-      // Same currency, no conversion required
-      invoice.getBusinessPartner().setCreditUsed(
-          invoice.getBusinessPartner().getCreditUsed().add(total));
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-  }
-
-  protected void updateTaxes(Invoice invoice) throws JSONException {
-    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null ? invoice
-        .getCurrency().getPricePrecision().intValue() : invoice.getCurrency()
-        .getObposPosprecision().intValue();
-    for (InvoiceTax taxInv : invoice.getInvoiceTaxList()) {
-      BigDecimal taxAmt = BigDecimal.ZERO;
-      BigDecimal taxableAmt = BigDecimal.ZERO;
-      for (InvoiceLineTax taxLine : invoice.getInvoiceLineTaxList()) {
-        if (taxLine.getTax() == taxInv.getTax()) {
-          taxAmt = taxAmt.add(taxLine.getTaxAmount());
-          taxableAmt = taxableAmt.add(taxLine.getTaxableAmount());
-        }
-      }
-      taxInv.setTaxableAmount(taxableAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
-      taxInv.setTaxAmount(taxAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
-      OBDal.getInstance().save(taxInv);
-    }
-  }
-
-  public static BigDecimal convertCurrencyInvoice(Invoice invoice) {
-    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null ? invoice
-        .getCurrency().getPricePrecision().intValue() : invoice.getCurrency()
-        .getObposPosprecision().intValue();
-    List<Object> parameters = new ArrayList<Object>();
-    List<Class<?>> types = new ArrayList<Class<?>>();
-    parameters.add(invoice.getGrandTotalAmount().setScale(pricePrecision, RoundingMode.HALF_UP));
-    types.add(BigDecimal.class);
-    parameters.add(invoice.getCurrency());
-    types.add(BaseOBObject.class);
-    parameters.add(invoice.getBusinessPartner().getPriceList().getCurrency());
-    types.add(BaseOBObject.class);
-    parameters.add(invoice.getInvoiceDate());
-    types.add(Timestamp.class);
-    parameters.add("S");
-    types.add(String.class);
-    parameters.add(OBContext.getOBContext().getCurrentClient());
-    types.add(BaseOBObject.class);
-    parameters.add(OBContext.getOBContext().getCurrentOrganization());
-    types.add(BaseOBObject.class);
-    parameters.add('A');
-    types.add(Character.class);
-
-    return (BigDecimal) CallStoredProcedure.getInstance().call("c_currency_convert_precision",
-        parameters, types);
-  }
-
-  protected void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
-      JSONArray orderlines, ArrayList<OrderLine> lineReferences, List<Locator> locatorList)
-      throws JSONException {
-    int lineNo = 0;
-    Locator foundSingleBin = null;
-    Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
-
-    if (locatorList.size() == 1) {
-      foundSingleBin = locatorList.get(0);
-    }
-    for (int i = 0; i < orderlines.length(); i++) {
-      OrderLine orderLine = lineReferences.get(i);
-      BigDecimal pendingQty = orderLine.getDeliveredQuantity().abs();
-      if (orderlines.getJSONObject(i).has("deliveredQuantity")
-          && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
-        pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
-            "deliveredQuantity")).abs());
-      }
-      if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
-        boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
-
-        final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
-            : order.getWarehouse());
-        if (!warehouse.equals(shipment.getWarehouse())) {
-          shipment.setWarehouse(warehouse);
-        }
-
-        boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
-            && orderLine.getWarehouseRule() == null
-            && (order.getWarehouse().getId().equals(warehouse.getId()))
-            && orderLine.getProduct().getAttributeSet() == null;
-
-        if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-          OrderLoaderPreAddShipmentLineHook_Response returnBinHookResponse;
-          lineNo += 10;
-          Locator binForReturn = null;
-          if (orderLine.getWarehouse() != null
-              && orderLine.getWarehouse().getReturnlocator() != null) {
-            binForReturn = orderLine.getWarehouse().getReturnlocator();
-          } else {
-            binForReturn = getBinForReturns(jsonorder.getString("posTerminal"));
-          }
-
-          try {
-            returnBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine,
-                OrderLoaderPreAddShipmentLineHook_Actions.ACTION_RETURN,
-                orderlines.getJSONObject(i), orderLine, jsonorder, order, binForReturn);
-          } catch (Exception e) {
-            log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for Return action "
-                + e.getMessage());
-            returnBinHookResponse = null;
-          }
-          if (returnBinHookResponse != null) {
-            if (!returnBinHookResponse.isValid()) {
-              throw new OBException(returnBinHookResponse.getMsg());
-            } else if (returnBinHookResponse.getNewLocator() != null) {
-              binForReturn = returnBinHookResponse.getNewLocator();
-            }
-          }
-          addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, pendingQty.negate(), binForReturn, null, i);
-        } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-          OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
-          lineNo += 10;
-
-          try {
-            singleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine,
-                OrderLoaderPreAddShipmentLineHook_Actions.ACTION_SINGLEBIN,
-                orderlines.getJSONObject(i), orderLine, jsonorder, order, foundSingleBin);
-          } catch (Exception e) {
-            log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SingleBin action"
-                + e.getMessage());
-            singleBinHookResponse = null;
-          }
-          if (singleBinHookResponse != null) {
-            if (!singleBinHookResponse.isValid()) {
-              throw new OBException(singleBinHookResponse.getMsg());
-            } else if (singleBinHookResponse.getNewLocator() != null) {
-              foundSingleBin = singleBinHookResponse.getNewLocator();
-            }
-          }
-          addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, pendingQty, foundSingleBin, null, i);
-        } else {
-          HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
-          if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-
-            String id = callProcessGetStock(orderLine.getId(), orderLine.getClient().getId(),
-                orderLine.getOrganization().getId(), orderLine.getProduct().getId(), orderLine
-                    .getUOM().getId(), warehouse.getId(),
-                orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue().getId()
-                    : null, pendingQty, orderLine.getWarehouseRule() != null ? orderLine
-                    .getWarehouseRule().getId() : null, null);
-
-            OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
-                StockProposed.class);
-            stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, id));
-            stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
-
-            ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
-
-            try {
-              while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
-                // TODO: Can we safely clear session here?
-                StockProposed stock = (StockProposed) bins.get(0);
-                BigDecimal qty;
-                OrderLoaderPreAddShipmentLineHook_Response standardSaleBinHookResponse = null;
-
-                try {
-                  standardSaleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
-                      preAddShipmentLine,
-                      OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE,
-                      orderlines.getJSONObject(i), orderLine, jsonorder, order, stock
-                          .getStorageDetail().getStorageBin());
-                } catch (Exception e) {
-                  log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSale action "
-                      + e.getMessage());
-                  standardSaleBinHookResponse = null;
-                }
-                if (standardSaleBinHookResponse != null) {
-                  if (!standardSaleBinHookResponse.isValid()) {
-                    if (standardSaleBinHookResponse.isCancelExecution()) {
-                      throw new OBException(standardSaleBinHookResponse.getMsg());
-                    }
-                    continue;
-                  }
-                }
-
-                Object stockQty = stock.get("quantity");
-                if (stockQty instanceof Long) {
-                  stockQty = new BigDecimal((Long) stockQty);
-                }
-                if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
-                  qty = (BigDecimal) stockQty;
-                  pendingQty = pendingQty.subtract(qty);
-                } else {
-                  qty = pendingQty;
-                  pendingQty = BigDecimal.ZERO;
-                }
-                lineNo += 10;
-                if (negativeLine) {
-                  qty = qty.negate();
-                }
-                ShipmentInOutLine objShipmentLine = addShipmentline(shipment, shplineentity,
-                    orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty, stock
-                        .getStorageDetail().getStorageBin(), stock.getStorageDetail()
-                        .getAttributeSetValue(), i);
-
-                usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
-
-              }
-            } finally {
-              bins.close();
-            }
-          }
-
-          if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
-            // still qty to ship or return: let's use the bin with highest prio
-            OrderLoaderPreAddShipmentLineHook_Response lastAttemptBinHookResponse = null;
-            JSONObject jsonorderline = orderlines.getJSONObject(i);
-            Locator loc = null;
-            if (jsonorderline.has("overissueStoreBin")) {
-              loc = OBDal.getInstance().get(Locator.class, jsonorderline.get("overissueStoreBin"));
-            } else {
-              loc = locatorList.get(0);
-            }
-
-            try {
-              lastAttemptBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
-                  preAddShipmentLine,
-                  OrderLoaderPreAddShipmentLineHook_Actions.ACTION_LAST_ATTEMPT,
-                  orderlines.getJSONObject(i), orderLine, jsonorder, order, loc);
-            } catch (Exception e) {
-              log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSaleLastAttempt action "
-                  + e.getMessage());
-              lastAttemptBinHookResponse = null;
-            }
-            if (lastAttemptBinHookResponse != null) {
-              if (!lastAttemptBinHookResponse.isValid()) {
-                throw new OBException(lastAttemptBinHookResponse.getMsg());
-              } else if (lastAttemptBinHookResponse.getNewLocator() != null) {
-                loc = lastAttemptBinHookResponse.getNewLocator();
-              }
-            }
-
-            lineNo += 10;
-            if (jsonorder.getLong("orderType") == 1) {
-              pendingQty = pendingQty.negate();
-            }
-            ShipmentInOutLine objShipmentInOutLine = usedBins.get(loc.getId());
-            if (objShipmentInOutLine != null) {
-              objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
-                  .add(pendingQty));
-              OBDal.getInstance().save(objShipmentInOutLine);
-            } else {
-              addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                  jsonorder, lineNo, pendingQty, loc, null, i);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  private ShipmentInOutLine addShipmentline(ShipmentInOut shipment, Entity shplineentity,
-      JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
-      BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance, int i)
-      throws JSONException {
-    String orderOrganizationId = jsonorder.getString("organization");
-
-    ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
-    String shipmentLineId = OBMOBCUtils.getUUIDbyString(orderLine.getId() + lineNo + i);
-    JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
-        jsonorder.getLong("timezoneOffset"));
-    JSONPropertyToEntity.fillBobFromJSON(
-        ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder,
-        jsonorder.getLong("timezoneOffset"));
-    line.setId(shipmentLineId);
-    line.setNewOBObject(true);
-    line.setLineNo(lineNo);
-    line.setShipmentReceipt(shipment);
-    line.setSalesOrderLine(orderLine);
-
-    orderLine.getMaterialMgmtShipmentInOutLineList().add(line);
-
-    line.setMovementQuantity(qty);
-    line.setStorageBin(bin);
-    if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
-        "attSetInstanceDesc")) {
-      line.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
-          jsonOrderLine.get("attSetInstanceDesc").toString(), jsonOrderLine
-              .getJSONObject("product").get("id").toString(), orderOrganizationId));
-    } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
-        "attributeValue")) {
-      line.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
-          jsonOrderLine.get("attributeValue").toString(), jsonOrderLine.getJSONObject("product")
-              .get("id").toString(), orderOrganizationId));
-    } else {
-      line.setAttributeSetValue(attributeSetInstance);
-    }
-    shipment.getMaterialMgmtShipmentInOutLineList().add(line);
-    OBDal.getInstance().save(line);
-    return line;
-  }
-
-  protected void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder)
-      throws JSONException {
-    Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
-    JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
-        jsonorder.getLong("timezoneOffset"));
-    if (jsonorder.has("id")) {
-      shipment.setId(jsonorder.getString("id"));
-      shipment.setNewOBObject(true);
-    }
-    shipment.setDocumentType(getShipmentDocumentType(order.getDocumentType().getId()));
-
-    if (useOrderDocumentNoForRelatedDocs) {
-      String docNum = order.getDocumentNo();
-      if (order.getMaterialMgmtShipmentInOutList().size() > 0) {
-        docNum += "-" + order.getMaterialMgmtShipmentInOutList().size();
-      }
-      shipment.setDocumentNo(docNum);
-    } else {
-      addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
-    }
-
-    if (shipment.getMovementDate() == null) {
-      shipment.setMovementDate(order.getOrderDate());
-    }
-    if (shipment.getAccountingDate() == null) {
-      shipment.setAccountingDate(order.getOrderDate());
-    }
-
-    shipment.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
-        jsonorder.getJSONObject("bp").getString("shipLocId")));
-    shipment.setSalesTransaction(true);
-    shipment.setDocumentStatus("CO");
-    shipment.setDocumentAction("--");
-    shipment.setMovementType("C-");
-    shipment.setProcessNow(false);
-    shipment.setProcessed(true);
-    shipment.setSalesOrder(order);
-    shipment.setProcessGoodsJava("--");
   }
 
   protected void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
@@ -2032,73 +1263,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       orderTax.setNewOBObject(true);
       i++;
       order.getOrderTaxList().add(orderTax);
-    }
-  }
-
-  protected void handleStock(ShipmentInOut shipment, CallableStatement updateStockStatement) {
-    for (ShipmentInOutLine line : shipment.getMaterialMgmtShipmentInOutLineList()) {
-      if (line.getProduct().getProductType().equals("I") && line.getProduct().isStocked()) {
-        // Stock is changed only for stocked products of type "Item"
-        MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
-        transaction.setOrganization(line.getOrganization());
-        transaction.setMovementType(shipment.getMovementType());
-        transaction.setProduct(line.getProduct());
-        transaction.setStorageBin(line.getStorageBin());
-        transaction.setOrderUOM(line.getOrderUOM());
-        transaction.setUOM(line.getUOM());
-        transaction.setOrderQuantity(line.getOrderQuantity());
-        transaction.setMovementQuantity(line.getMovementQuantity().multiply(NEGATIVE_ONE));
-        transaction.setMovementDate(shipment.getMovementDate());
-        transaction.setGoodsShipmentLine(line);
-        transaction.setAttributeSetValue(line.getAttributeSetValue());
-        transaction.setId(line.getId());
-        transaction.setNewOBObject(true);
-
-        updateInventory(transaction, updateStockStatement);
-
-        OBDal.getInstance().save(transaction);
-      }
-    }
-  }
-
-  protected void updateInventory(MaterialTransaction transaction,
-      CallableStatement updateStockStatement) {
-    try {
-      // client
-      updateStockStatement.setString(1, OBContext.getOBContext().getCurrentClient().getId());
-      // org
-      updateStockStatement.setString(2, OBContext.getOBContext().getCurrentOrganization().getId());
-      // user
-      updateStockStatement.setString(3, OBContext.getOBContext().getUser().getId());
-      // product
-      updateStockStatement.setString(4, transaction.getProduct().getId());
-      // locator
-      updateStockStatement.setString(5, transaction.getStorageBin().getId());
-      // attributesetinstance
-      updateStockStatement.setString(6, transaction.getAttributeSetValue() != null ? transaction
-          .getAttributeSetValue().getId() : null);
-      // uom
-      updateStockStatement.setString(7, transaction.getUOM().getId());
-      // product uom
-      updateStockStatement.setString(8, null);
-      // p_qty
-      updateStockStatement.setBigDecimal(9,
-          transaction.getMovementQuantity() != null ? transaction.getMovementQuantity() : null);
-      // p_qtyorder
-      updateStockStatement.setBigDecimal(10,
-          transaction.getOrderQuantity() != null ? transaction.getOrderQuantity() : null);
-      // p_dateLastInventory --- **
-      updateStockStatement.setDate(11, null);
-      // p_preqty
-      updateStockStatement.setBigDecimal(12, BigDecimal.ZERO);
-      // p_preqtyorder
-      updateStockStatement.setBigDecimal(13, transaction.getOrderQuantity() != null ? transaction
-          .getOrderQuantity().multiply(NEGATIVE_ONE) : null);
-
-      updateStockStatement.execute();
-
-    } catch (Exception e) {
-      throw new OBException(e.getMessage(), e);
     }
   }
 
@@ -2930,69 +2094,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
-  }
-
-  private static class DocumentNoHandler {
-
-    private Entity entity;
-    private DocumentType doctypeTarget;
-    private DocumentType doctype;
-    private BaseOBObject bob;
-    private String propertyName = "documentNo";
-
-    DocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType doctypeTarget,
-        DocumentType doctype) {
-      this.entity = entity;
-      this.doctypeTarget = doctypeTarget;
-      this.doctype = doctype;
-      this.bob = bob;
-    }
-
-    public void setDocumentNoAndSave() {
-      final String docNo = getDocumentNumber(entity, doctypeTarget, doctype);
-      bob.setValue(propertyName, docNo);
-      OBDal.getInstance().save(bob);
-    }
-
-    private String getDocumentNumber(Entity localEntity, DocumentType localDoctypeTarget,
-        DocumentType localDoctype) {
-      return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
-          new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
-          localEntity.getTableName(), localDoctypeTarget == null ? "" : localDoctypeTarget.getId(),
-          localDoctype == null ? "" : localDoctype.getId(), false, true);
-    }
-
-  }
-
-  private static String callProcessGetStock(String recordID, String clientId, String orgId,
-      String productId, String uomId, String warehouseId, String attributesetinstanceId,
-      BigDecimal quantity, String warehouseRuleId, String reservationId) {
-    String processId = SequenceIdData.getUUID();
-    OBContext.setAdminMode(false);
-    try {
-      if (log.isDebugEnabled()) {
-        log.debug("Parameters : '" + processId + "', '" + recordID + "', " + quantity + ", '"
-            + productId + "', null, '" + warehouseId + "', null, '" + orgId + "', '"
-            + attributesetinstanceId + "', '" + OBContext.getOBContext().getUser().getId() + "', '"
-            + clientId + "', '" + warehouseRuleId + "', '" + uomId
-            + "', null, null, null, null, null, '" + reservationId + "', 'N'");
-      }
-      long initGetStockProcedureCall = System.currentTimeMillis();
-      StockUtils.getStock(processId, recordID, quantity, productId, null, null, warehouseId, orgId,
-          attributesetinstanceId, OBContext.getOBContext().getUser().getId(), clientId,
-          warehouseRuleId, uomId, null, null, null, null, null, reservationId, "N");
-      long elapsedGetStockProcedureCall = (System.currentTimeMillis() - initGetStockProcedureCall);
-      if (log.isDebugEnabled()) {
-        log.debug("Partial time to execute callGetStock Procedure Call() : "
-            + elapsedGetStockProcedureCall);
-      }
-      return processId;
-    } catch (Exception ex) {
-      throw new OBException("Error in OrderLoader when getting stock for product " + productId
-          + " order line " + recordID, ex);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   protected boolean goodsToDeliver(Order order) {
