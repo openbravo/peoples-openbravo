@@ -717,7 +717,8 @@ enyo.kind({
         hasAllEnoughCash = true,
         reversedPayments = [],
         currentSelectedPaymentCashAmount = OB.DEC.Zero,
-        failedPaymentMethods, reversedCash;
+        failedPaymentMethods = [],
+        reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
       var changeAmt, selectedChange;
