@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -90,6 +90,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       final String paymentDate = (String) bundle.getParams().get("paymentdate");
       final boolean doFlush = bundle.getParams().get("doFlush") != null ? (Boolean) bundle
           .getParams().get("doFlush") : true;
+      throwExceptionIfPaymentIsAlreadyReversed(strAction, payment);
       processPayment(payment, strAction, paymentDate, comingFrom, selectedCreditLineIds, doFlush);
       bundle.setResult(msg);
     } catch (Exception e) {
@@ -99,6 +100,13 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
       OBDal.getInstance().getConnection().rollback();
+    }
+  }
+
+  private void throwExceptionIfPaymentIsAlreadyReversed(final String strAction,
+      final FIN_Payment payment) {
+    if (StringUtils.equals(strAction, "RV") && payment.getReversedPayment() != null) {
+      throw new OBException(OBMessageUtils.messageBD("APRM_PaymentAlreadyReversed"));
     }
   }
 
@@ -545,6 +553,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                 && pd.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() == null) {
               reversedPaymentDetail.setPrepayment(true);
               reversedPaymentDetail.setRefund(true);
+            } else if (pd.isPrepayment()
+                && pd.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null) {
+              reversedPaymentDetail.setPrepayment(false);
+              reversedPaymentDetail.setRefund(false);
             }
             List<FIN_PaymentScheduleDetail> reversedSchedDetails = new ArrayList<FIN_PaymentScheduleDetail>();
             OBDal.getInstance().save(reversedPaymentDetail);

@@ -132,16 +132,25 @@ public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process
 
   private void updateDoubtfulDebtScheduleDetails(FIN_PaymentSchedule salesInvoicePaymentSchedule,
       BigDecimal debtAmount) {
+    BigDecimal pendingDebtAmount = debtAmount;
     for (FIN_PaymentScheduleDetail psd : salesInvoicePaymentSchedule
         .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
       if (psd.getPaymentDetails() == null) {
         // Pending amount should be greater or equals than the doubtful debt amount
-        if (psd.getAmount().compareTo(debtAmount) >= 0) {
-          psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().add(debtAmount));
+        if (psd.getAmount().compareTo(pendingDebtAmount) >= 0) {
+          psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().add(pendingDebtAmount));
+          OBDal.getInstance().save(psd);
+        } else {
+          psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().add(psd.getAmount()));
+          pendingDebtAmount = getDifferenceOfAmountsOrZero(pendingDebtAmount, psd);
           OBDal.getInstance().save(psd);
         }
       }
     }
   }
 
+  private BigDecimal getDifferenceOfAmountsOrZero(BigDecimal debtAmountAux, FIN_PaymentScheduleDetail psd) {
+    return debtAmountAux.subtract(psd.getAmount()).compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO
+        : debtAmountAux.subtract(psd.getAmount());
+  }
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,7 @@
 
 package org.openbravo.erpCommon.businessUtility;
 
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
@@ -125,8 +126,7 @@ public class InitialOrgSetup {
   public OBError createOrganization(String strOrgName, String strOrgUser, String strOrgType,
       String strParentOrg, String strcLocationId, String strPassword, String strModules,
       boolean boCreateAccounting, FileItem fileCoAFilePath, String strCurrency, boolean bBPartner,
-      boolean bProduct, boolean bProject, boolean bCampaign, boolean bSalesRegion,
-      String strSourcePath) {
+      boolean bProduct, boolean bProject, boolean bCampaign, boolean bSalesRegion) {
     OBError obResult = new OBError();
     obResult.setType(ERRORTYPE);
     strHeaderLog.append("@ReportSummary@").append(NEW_LINE).append(NEW_LINE);
@@ -232,8 +232,8 @@ public class InitialOrgSetup {
     } else {
       logEvent(NEW_LINE + "@StartingReferenceData@");
       log4j.debug("process() - Starting creation of reference data");
-      obResult = createReferenceData(strSourcePath, strModules, bProduct, bBPartner, bProject,
-          bCampaign, bSalesRegion, (bAccountingCreated) ? false : boCreateAccounting, strCurrency);
+      obResult = createReferenceData(strModules, bProduct, bBPartner, bProject, bCampaign,
+          bSalesRegion, (bAccountingCreated) ? false : boCreateAccounting, strCurrency);
       if (!obResult.getType().equals(OKTYPE))
         return obResult;
       logEvent(NEW_LINE + "@CreateReferenceDataSuccess@");
@@ -258,9 +258,9 @@ public class InitialOrgSetup {
 
   }
 
-  private OBError createReferenceData(String strSourcePath, String strModulesProvided,
-      boolean product, boolean partner, boolean project, boolean campaign, boolean salesRegion,
-      boolean boCreateAccounting, String strCurrency) {
+  private OBError createReferenceData(String strModulesProvided, boolean product, boolean partner,
+      boolean project, boolean campaign, boolean salesRegion, boolean boCreateAccounting,
+      String strCurrency) {
     log4j.debug("createReferenceData() - Starting the process to create"
         + " reference data for modules: " + strModulesProvided);
     OBError obeResult = new OBError();
@@ -273,9 +273,8 @@ public class InitialOrgSetup {
       if (boCreateAccounting) {
         try {
           log4j.debug("createReferenceData() - There exists accounting modules to process");
-          obeResult = insertAccountingModule(strSourcePath, strModules, partner, product, project,
-              campaign, salesRegion,
-              InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"),
+          obeResult = insertAccountingModule(strModules, partner, product, project, campaign,
+              salesRegion, InitialSetupUtility.getTranslatedColumnName(language, "Account_ID"),
               InitialSetupUtility.getTranslatedColumnName(language, "C_Calendar_ID"), strCurrency);
           if (!obeResult.getType().equals(OKTYPE))
             return obeResult;
@@ -396,9 +395,9 @@ public class InitialOrgSetup {
     return obeResult;
   }
 
-  private OBError insertAccountingModule(String strSourcePath, String strModules,
-      boolean bBPartner, boolean bProduct, boolean bProject, boolean bCampaign,
-      boolean bSalesRegion, String strAccountText, String strCalendarText, String strCurrency) {
+  private OBError insertAccountingModule(String strModules, boolean bBPartner, boolean bProduct,
+      boolean bProject, boolean bCampaign, boolean bSalesRegion, String strAccountText,
+      String strCalendarText, String strCurrency) {
     log4j.debug("insertAccountingModule() - Starting client creation.");
     if (client == null)
       return logErrorAndRollback(
@@ -438,25 +437,23 @@ public class InitialOrgSetup {
         logEvent(NEW_LINE + "@ProcessingAccountingModule@ " + modCoA.getName());
         log4j.debug("createReferenceData() - Processing Chart of Accounts module "
             + modCoA.getName());
-        String strPath = "";
-        try {
-          OBContext.setAdminMode();
-          strPath = strSourcePath + "/modules/" + modCoA.getJavaPackage()
-              + "/referencedata/accounts/COA.csv";
-        } finally {
-          OBContext.restorePreviousMode();
+
+        try (InputStream coaFile = COAUtility.getCOAResource(modCoA)) {
+          COAUtility coaUtility = new COAUtility(client, org, accountTree);
+          obeResult = coaUtility.createAccounting(null, coaFile, bBPartner, bProduct, bProject,
+              bCampaign, bSalesRegion, strAccountText, "US", "A", strCalendarText,
+              InitialSetupUtility.getCurrency(strCurrency));
+          strLog.append(coaUtility.getLog());
+        } catch (FileNotFoundException e) {
+          logEvent("@FileDoesNotExist@ " + e.getMessage());
+          throw new OBException("Could not find resource", e);
         }
-        COAUtility coaUtility = new COAUtility(client, org, accountTree);
-        FileInputStream inputStream = new FileInputStream(strPath);
-        obeResult = coaUtility.createAccounting(null, inputStream, bBPartner, bProduct, bProject,
-            bCampaign, bSalesRegion, strAccountText, "US", "A", strCalendarText,
-            InitialSetupUtility.getCurrency(strCurrency));
-        strLog.append(coaUtility.getLog());
-      } else
+      } else {
         return logErrorAndRollback(
             "@CreateReferenceDataFailed@. @CreateAccountingButNoCoAProvided@",
             "createReferenceData() - Create accounting option was active, but no file was provided, and no accoutning module was chosen",
             null);
+      }
     } catch (Exception e) {
       return logErrorAndRollback("@CreateReferenceDataFailed@",
           "createReferenceData() - Exception while processing accounting modules", e);

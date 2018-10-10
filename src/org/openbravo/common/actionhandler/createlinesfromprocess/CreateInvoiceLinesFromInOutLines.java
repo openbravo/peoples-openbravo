@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,16 +11,21 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
--->
-<REPORT>
-	<template file="Registration.html"/>
-	<PARAMETER id="paramWelcome" name="welcome" replaceCharacters="htmlHelp" />
-	<PARAMETER id="paramDirectory" name="directory" default=""/>
-	<PARAMETER id="paramLanguage" name="language" default=""/>
-	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-    <PARAMETER id="paramURL" name="url" default="" />
-</REPORT>
+ */
+package org.openbravo.common.actionhandler.createlinesfromprocess;
+
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+
+/**
+ * Implementation for Create Invoice Lines From InOut Lines
+ */
+public class CreateInvoiceLinesFromInOutLines extends CreateInvoiceLinesFromHandler<ShipmentInOutLine> {
+  @Override
+  protected Class<ShipmentInOutLine> getFromClass() {
+    return ShipmentInOutLine.class;
+  }
+}

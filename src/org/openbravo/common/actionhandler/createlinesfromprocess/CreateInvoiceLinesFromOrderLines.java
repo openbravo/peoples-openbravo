@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,33 +11,21 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
--->
+ */
+package org.openbravo.common.actionhandler.createlinesfromprocess;
 
-<SqlClass name="RegisterData" package="org.openbravo.erpCommon.ad_forms">
-   <SqlMethod name="dummy" type="preparedStatement" return="String">
-    <Sql>select 1 as dummy from dual</Sql>
-   </SqlMethod>
+import org.openbravo.model.common.order.OrderLine;
 
-   <SqlMethod name="postpone" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_REGISTRATION_INFO set POSTPONE_DATE = TO_DATE(?)
-     ]]>
-     </Sql>
-     <Parameter name="postponeDate"/>
-   </SqlMethod>
-   <SqlMethod name="updateIsRegistrationActive" type="preparedStatement" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        update AD_REGISTRATION_INFO set ISREGISTRATIONACTIVE = TO_CHAR(?)
-     ]]>
-     </Sql>
-     <Parameter name="isregistrationactive"/>
-   </SqlMethod>
-</SqlClass>
+/**
+ * Implementation for Create Invoice Lines From Order Lines
+ */
+public class CreateInvoiceLinesFromOrderLines extends CreateInvoiceLinesFromHandler<OrderLine> {
+  @Override
+  protected Class<OrderLine> getFromClass() {
+    return OrderLine.class;
+  }
+}

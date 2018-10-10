@@ -108,6 +108,10 @@ export.database: exports database structure and data to xml files.
       </or>
     </not>
   </condition>
+  
+  <condition property="jvm.arg.line" value="" else="--add-opens java.base/java.lang=ALL-UNNAMED">
+    <equals arg1="${ant.java.version}" arg2="1.8"/>
+  </condition>
 
   <condition property="calculate.core.rev">
    <istrue value="${calculate.core.revision}"/>
@@ -559,7 +563,7 @@ export.database: exports database structure and data to xml files.
           <include name="*/lib/test/*.jar" />
         </fileset>
       </classpath>
-      <link href="http://docs.oracle.com/javase/7/docs/api/"/>
+      <link href="https://docs.oracle.com/javase/8/docs/api/"/>
     </javadoc>
   </target>
 
@@ -774,6 +778,7 @@ export.database: exports database structure and data to xml files.
   <target name="apply.module" depends="compile.apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}' '${friendlyWarnings}' '${forceRefData}'" />
+      <jvmarg line="${jvm.arg.line}" />
       <classpath refid="apply.module.runtime.classpath" />
     </java>
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />

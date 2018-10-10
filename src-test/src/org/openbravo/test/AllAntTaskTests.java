@@ -44,6 +44,7 @@ import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
 import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.copyLinesFromOrders.CopyLinesFromOrdersTest;
 import org.openbravo.test.costing.TestCosting;
+import org.openbravo.test.createlinesfrom.CreateLinesFromTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
@@ -67,12 +68,14 @@ import org.openbravo.test.dal.ViewTest;
 import org.openbravo.test.db.model.functions.ADOrgTreeTest;
 import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
+import org.openbravo.test.db.pool.PoolHasNoConnectionsDetection;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.generalsetup.enterprise.organization.ADOrgPersistInfoTestSuite;
 import org.openbravo.test.inventoryStatus.InventoryStatusTest;
 import org.openbravo.test.materialMgmt.iscompletelyinvoicedshipment.IsCompletelyInvoicedShipment;
 import org.openbravo.test.model.ClassLoaderTest;
+import org.openbravo.test.model.DBModifiedTest;
 import org.openbravo.test.model.IndexesTest;
 import org.openbravo.test.model.OneToManyTest;
 import org.openbravo.test.model.RuntimeModelTest;
@@ -174,7 +177,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassLoaderTest.class, //
     IndexesTest.class, //
     TrlColumnsOraTypeTest.class, //
-    ADCSInitialization.class,
+    ADCSInitialization.class, //
+    DBModifiedTest.class,
 
     // modularity
     DatasetServiceTest.class, //
@@ -271,6 +275,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // db
     SqlCallableStatement.class, //
+    PoolHasNoConnectionsDetection.class, //
 
     // grid configuration
     ViewGenerationWithDifferentConfigLevelTest.class, //
@@ -299,6 +304,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // CopyFromOrders refactor
     CopyLinesFromOrdersTest.class,
+
+    // Create Lines From refactor
+    CreateLinesFromTest.class,
 
     // Referenced Inventory
     ReferencedInventoryTestSuite.class,

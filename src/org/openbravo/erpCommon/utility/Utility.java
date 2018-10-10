@@ -2000,7 +2000,7 @@ public class Utility {
     try {
       ByteArrayOutputStream bout = new ByteArrayOutputStream();
       new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
-          getDefaultImageLogo("Empty"), false, true).dumpFile(bout);
+          getDefaultImageLogoPath("Empty"), false, true).dumpFile(bout);
       bout.close();
       return bout.toByteArray();
     } catch (IOException ex) {
@@ -2027,14 +2027,14 @@ public class Utility {
    * 
    * @param id
    *          The id of the image to display
-   * @param doCommit
-   *          A flag to force the commit of the DAL connection after retrieve the image
+   * @param doCommitAndClose
+   *          A flag to force the commit and close of the DAL connection after retrieving the image
    * @return The image requested
    */
-  private static byte[] getImage(String id, boolean doCommit) {
+  private static byte[] getImage(String id, boolean doCommitAndClose) {
     byte[] imageByte;
     try {
-      Image img = getImageObject(id, doCommit);
+      Image img = getImageObject(id, doCommitAndClose);
       if (img == null) {
         imageByte = getBlankImage();
       } else {
@@ -2072,11 +2072,11 @@ public class Utility {
    * 
    * @param id
    *          The id of the image to display
-   * @param doCommit
-   *          A flag to force the commit of the DAL connection after retrieve the image
+   * @param doCommitAndClose
+   *          A flag to force the commit and close of the DAL connection after retrieving the image
    * @return The image requested
    */
-  private static Image getImageObject(String id, boolean doCommit) {
+  private static Image getImageObject(String id, boolean doCommitAndClose) {
     Image img = null;
     OBContext.setAdminMode();
     try {
@@ -2085,7 +2085,7 @@ public class Utility {
       log4j.error("Could not load image from database: " + id, e);
     } finally {
       OBContext.restorePreviousMode();
-      if (doCommit) {
+      if (doCommitAndClose) {
         OBDal.getInstance().commitAndClose();
       }
     }
@@ -2093,7 +2093,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image as a BufferedImage object.
+   * Provides the image as a BufferedImage object. Commonly used for reports.
    * 
    * @param id
    *          The id of the image to display
@@ -2113,10 +2113,12 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
    * @param org
    *          The organization id used to get the logo In the case of requesting the yourcompanydoc
    *          logo you can indicate the organization used to request the logo.
+   *
    * @return The image requested
    */
   public static Image getImageLogoObject(String logo, String org) {
@@ -2195,20 +2197,38 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
    * @param org
    *          The organization id used to get the logo In the case of requesting the yourcompanydoc
    *          logo you can indicate the organization used to request the logo.
    * @return The image requested
    */
   public static byte[] getImageLogo(String logo, String org) {
+    return getImageLogo(logo, org, false);
+  }
 
+  /**
+   * Provides the image logo as a byte array for the indicated parameters.
+   *
+   * @param logo
+   *          The name of the logo to display This can be one of the following: yourcompanylogin,
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
+   * @param org
+   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
+   *          logo you can indicate the organization used to request the logo.
+   * @param doConnectionClose
+   *          When true, forces the close of the DAL connection after retrieving the image
+   * @return The image requested
+   */
+  private static byte[] getImageLogo(String logo, String org, boolean doConnectionClose) {
     byte[] imageByte;
 
     try {
       Image img = getImageLogoObject(logo, org);
       if (img == null) {
-        String path = getDefaultImageLogo(logo);
+        String path = getDefaultImageLogoPath(logo);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         new FileUtility(OBConfigFileProvider.getInstance().getServletContext().getRealPath("/"),
             path, false, true).dumpFile(bout);
@@ -2226,19 +2246,26 @@ public class Utility {
     } catch (Exception e) {
       log4j.error("Could not load logo from database: " + logo + ", " + org, e);
       imageByte = getBlankImage();
+    } finally {
+      if (doConnectionClose) {
+        // Closing read-only instance connection because this is the connection used by
+        // getImageLogoObject
+        OBDal.getReadOnlyInstance().commitAndClose();
+      }
     }
     return imageByte;
   }
 
   /**
-   * Provides the image logo as a byte array for the indicated parameters.
+   * Provides the image path for the indicated parameters.
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig or yourcompanydoc
-   * @return The image requested
+   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          or banner-production
+   * @return The path of the image requested
    */
-  private static String getDefaultImageLogo(String logo) {
+  private static String getDefaultImageLogoPath(String logo) {
 
     String defaultImagePath = null;
 
@@ -2363,7 +2390,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image logo as a BufferedImage object.
+   * Provides the image logo as a BufferedImage object. Commonly used for reports.
    * 
    * @param logo
    *          The name of the logo to display
@@ -2376,7 +2403,7 @@ public class Utility {
   }
 
   /**
-   * Provides the image logo as a BufferedImage object.
+   * Provides the image logo as a BufferedImage object. Commonly used for reports.
    * 
    * @param logo
    *          The name of the logo to display
@@ -2387,7 +2414,11 @@ public class Utility {
    * @see #getImageLogo(String,String)
    */
   public static BufferedImage showImageLogo(String logo, String org) throws IOException {
-    return ImageIO.read(new ByteArrayInputStream(getImageLogo(logo, org)));
+    // Same as showImage(id), using getImageLogo(id, org, true) to close the DAL connection once the
+    // image has been retrieved.
+    // This is required to avoid connection leaks when invoking this method from a sub-report.
+    // This is needed until issue https://issues.openbravo.com/view.php?id=30182 is fixed.
+    return ImageIO.read(new ByteArrayInputStream(getImageLogo(logo, org, true)));
   }
 
   /**

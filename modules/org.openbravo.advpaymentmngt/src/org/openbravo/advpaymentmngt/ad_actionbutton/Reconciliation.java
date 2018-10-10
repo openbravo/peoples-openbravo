@@ -134,8 +134,8 @@ public class Reconciliation extends HttpSecureAppServlet {
   private void updateTransactionStatus(HttpServletResponse response, String strFinancialAccountId,
       String strSelectedTransId, boolean isChecked) {
 
-    OBContext.setAdminMode();
     try {
+      OBContext.setAdminMode();
       if (strSelectedTransId != "") {
         FIN_FinaccTransaction trans = OBDal.getInstance().get(FIN_FinaccTransaction.class,
             strSelectedTransId);
@@ -159,6 +159,9 @@ public class Reconciliation extends HttpSecureAppServlet {
 
         trans.setStatus(newStatus);
         OBDal.getInstance().save(trans);
+        OBDal.getInstance().flush();
+        // Force flush because eventhandler is executed in the first flush and data updated in
+        // enventhandler needs to be flush in a admin mode block
         OBDal.getInstance().flush();
       }
       response.setContentType("text/html; charset=UTF-8");

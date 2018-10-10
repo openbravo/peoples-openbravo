@@ -11,13 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -31,11 +32,13 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
@@ -174,6 +177,29 @@ public class COAUtility {
     log4j.debug("createAccounting() - Accounting schema (general ledger) correctly inserted");
 
     return obeResult;
+  }
+
+  /**
+   * Returns the COA.csv resource as an {@link InputStream}, obtained from deployed reources
+   * 
+   * @param coaModule
+   *          Module containing chart of accounts
+   * @return {@link InputStream} to chart of accounts file
+   * @throws FileNotFoundException
+   *           In case expected COA.csv file cannot be found
+   */
+  public static InputStream getCOAResource(Module coaModule) throws FileNotFoundException {
+    OBContext.setAdminMode();
+    try {
+      String coaPath = "/WEB-INF/referencedata/accounts/" + coaModule.getJavaPackage() + "/COA.csv";
+      InputStream inputStream = RequestContext.getServletContext().getResourceAsStream(coaPath);
+      if (inputStream == null) {
+        throw new FileNotFoundException(RequestContext.getServletContext().getRealPath(coaPath));
+      }
+      return inputStream;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private String setAccountType(COAData data) {
@@ -860,8 +886,8 @@ public class COAUtility {
             log4j.debug("updateOperands() - Procesing operand " + strOperand[j][0]
                 + ", of the account " + data[i].accountValue);
             ElementValueOperand operandElement = InitialSetupUtility.insertOperand(operand,
-                elementValue, Long.valueOf((strOperand[j][1].equals("+") ? "1" : "-1")), Long.valueOf(
-                    strSeqNo));
+                elementValue, Long.valueOf((strOperand[j][1].equals("+") ? "1" : "-1")),
+                Long.valueOf(strSeqNo));
             strSeqNo = nextSeqNo(strSeqNo);
             if (operandElement == null)
               logEvent("@OperandNotInserted@. @Account_ID@ = " + data[i].accountValue
