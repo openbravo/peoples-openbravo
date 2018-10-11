@@ -405,7 +405,7 @@
       }
     }, this);
 
-    var restoreMultiOrder = function (callback) {
+    var restoreMultiOrderOnError = function (callback) {
         // recalculate after an error also
         model.get('multiOrders').get('payments').forEach(function (p) {
           var itemP = _.find(model.get('multiOrders').get('frozenPayments').models, function (fp) {
@@ -544,9 +544,11 @@
                 receipts: model.get('multiOrders').get('multiOrdersList').models,
                 syncSuccess: false
               }, function (args) {
-                if (syncCallback instanceof Function) {
-                  syncCallback();
-                }
+                restoreMultiOrderOnError(function () {
+                  if (syncCallback instanceof Function) {
+                    syncCallback();
+                  }
+                });
 
                 OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
               });
@@ -589,7 +591,7 @@
             }, function (args) {
               OB.trace('Execution of pre order save hook OK.');
               if (args && args.cancellation && args.cancellation === true) {
-                restoreMultiOrder(function () {
+                restoreMultiOrderOnError(function () {
                   if (closedCallback instanceof Function) {
                     closedCallback(false);
                   }
@@ -606,7 +608,7 @@
             OB.UTIL.showLoading(false);
             validateMultiOrder();
           }, function () {
-            restoreMultiOrder();
+            restoreMultiOrderOnError();
           });
         } else {
           validateMultiOrder();
