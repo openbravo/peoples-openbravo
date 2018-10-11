@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.CPStandAlone;
@@ -60,15 +59,11 @@ public class ApplyModule {
   public ApplyModule(ConnectionProvider cp, String dir) {
     pool = cp;
     obDir = dir;
-    PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
-    log4j = Logger.getLogger(ApplyModule.class);
   }
 
   public ApplyModule(ConnectionProvider cp, String dir, boolean forceRefData) {
     pool = cp;
     obDir = dir;
-    PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
-    log4j = Logger.getLogger(ApplyModule.class);
     this.forceRefData = forceRefData;
   }
 
@@ -85,7 +80,6 @@ public class ApplyModule {
    * Uninstalled modules Deletes them
    */
   public void execute() {
-    PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
     if (log4j.getLevel() == null || log4j.getLevel().isGreaterOrEqual(Level.INFO)) {
       log4j.setLevel(Level.INFO);
     }

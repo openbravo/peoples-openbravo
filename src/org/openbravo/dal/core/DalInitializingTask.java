@@ -19,12 +19,7 @@
 
 package org.openbravo.dal.core;
 
-import java.util.Properties;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.tools.ant.Task;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -170,20 +165,10 @@ public class DalInitializingTask extends Task {
    * 
    */
   protected void initAntConsoleLogging() {
-    final Properties props = new Properties();
-    final String level = Level.INFO.toString();
-
-    props.setProperty("log4j.rootCategory", level + ",A");
-    props.setProperty("log4j.appender.A", "org.apache.log4j.ConsoleAppender");
-    props.setProperty("log4j.appender.A.layout", "org.apache.log4j.PatternLayout");
-    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%m%n");
     // set all from Openbravo as info and the rest at warn level
-    props.setProperty("log4j.category.org.openbravo", level);
-    props.setProperty("log4j.category.org", Level.WARN.toString());
-    props.setProperty("log4j.category.org.hibernate.SQL", Level.DEBUG.toString());
-
-    LogManager.resetConfiguration();
-    PropertyConfigurator.configure(props);
+    // props.setProperty("log4j.category.org.openbravo", level);
+    // props.setProperty("log4j.category.org", Level.WARN.toString());
+    // props.setProperty("log4j.category.org.hibernate.SQL", Level.DEBUG.toString());
   }
 
   public boolean isAdminMode() {

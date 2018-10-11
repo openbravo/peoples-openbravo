@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -35,7 +35,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.utils.DirFilter;
 import org.xml.sax.Attributes;
@@ -114,7 +113,6 @@ public class Sqlc extends DefaultHandler {
   }
 
   public static void main(String argv[]) throws Exception {
-    PropertyConfigurator.configure("log4j.lcf");
     String dirIni;
     String dirFin;
     boolean boolFilter;

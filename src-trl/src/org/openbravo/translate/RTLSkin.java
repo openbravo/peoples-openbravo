@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,6 @@ import java.nio.file.Paths;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  * @author David Alsasua
@@ -55,7 +54,6 @@ public class RTLSkin {
    * @throws Exception
    */
   public static void main(String argv[]) throws Exception {
-    PropertyConfigurator.configure("log4j.lcf");
 
     if (argv.length != 2) {
       log4j.error("Usage: java RTLSkin pathRTLSkinFolder pathLTRSkinFolder");

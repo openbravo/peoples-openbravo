@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
@@ -40,7 +39,7 @@ public class BuildValidationHandler {
   public static void main(String[] args) {
     basedir = new File(args[0]);
     module = null; // The module is not set so that all BuildValidations are always executed.
-    PropertyConfigurator.configure("log4j.lcf");
+
     propertiesFile = args[2];
     log4j.debug("basedir = " + basedir + ", propertiesFile = " + propertiesFile);
     List<String> classes = new ArrayList<String>();
