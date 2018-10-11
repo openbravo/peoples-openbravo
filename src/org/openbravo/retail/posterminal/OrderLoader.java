@@ -842,9 +842,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (jsonOrderLine.has("obposIsDeleted") && jsonOrderLine.getBoolean("obposIsDeleted")) {
         orderline.setObposQtytodeliver(BigDecimal.ZERO);
       } else {
-        orderline.setObposQtytodeliver(jsonOrderLine.has("obposQtytodeliver")
-            ? new BigDecimal(jsonOrderLine.getDouble("obposQtytodeliver"))
-            : orderline.getOrderedQuantity());
+        orderline
+            .setObposQtytodeliver(jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
+                .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderline
+                .getOrderedQuantity());
       }
 
       lineReferences.add(orderline);
