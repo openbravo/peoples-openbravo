@@ -437,6 +437,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
           locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
           locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+          locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
           locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
           locators.setMaxResults(2);
           List<Locator> locatorList = locators.list();

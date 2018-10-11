@@ -24,12 +24,12 @@ public class ProductCharacteristicValueProperties extends ModelExtension {
       private static final long serialVersionUID = 1L;
       {
         add(new HQLProperty("pcv.id", "id"));
-        add(new HQLProperty("pcv.product.id", "product"));
-        add(new HQLProperty("pcv.characteristic.id", "characteristic"));
-        add(new HQLProperty("pcv.characteristicValue.id", "characteristicValue"));
-        add(new HQLProperty("pcv.characteristic.name", "_identifier"));
-        add(new HQLProperty("pcv.characteristic.active", "active"));
-        add(new HQLProperty("pcv.characteristic.obposFilteronwebpos", "obposFilteronwebpos"));
+        add(new HQLProperty("product.id", "product"));
+        add(new HQLProperty("characteristic.id", "characteristic"));
+        add(new HQLProperty("characteristic.name", "_identifier"));
+        add(new HQLProperty("characteristic.active", "active"));
+        add(new HQLProperty("characteristic.obposFilteronwebpos", "obposFilteronwebpos"));
+        add(new HQLProperty("characteristicValue.id", "characteristicValue"));
       }
     };
     return list;
