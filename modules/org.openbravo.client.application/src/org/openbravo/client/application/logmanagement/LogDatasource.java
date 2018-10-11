@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.spi.AbstractLogger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -16,8 +18,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.json.JsonUtils;
 
 public class LogDatasource extends ReadOnlyDataSourceService {
+  private static final org.apache.logging.log4j.Logger log = LogManager.getLogger(LogDatasource.class);
 
   private static final String LOG_LEVEL_LIST_REFERENCE_ID = "CF8CB8C4E798423081CE42078CA6BD7C";
   private static final String STRING_REFERENCE_ID = "10";
@@ -32,10 +36,11 @@ public class LogDatasource extends ReadOnlyDataSourceService {
       int endRow) {
 
     Stream<Logger> filteredLoggers = getFilteredStream(parameters);
+    filteredLoggers = sortStream(filteredLoggers, parameters);
 
     return filteredLoggers //
         .skip(startRow) //
-        .limit(endRow) //
+        .limit(endRow+1) //
         .map(l -> {
           Map<String, Object> r = new HashMap<>(2);
           r.put("id", l.getName());
@@ -46,20 +51,54 @@ public class LogDatasource extends ReadOnlyDataSourceService {
         .collect(Collectors.toList());
   }
 
+  private Stream<Logger> sortStream(Stream<Logger> loggerStream, Map<String, String> parameters) {
+    if (parameters.containsKey("_sortBy")) {
+      String sortKey = parameters.get("_sortBy");
+      boolean reversed = false;
+      if (sortKey.startsWith("-")) {
+        sortKey = sortKey.substring(1);
+        reversed = true;
+      }
+
+      if(getComparatorForSortKey(sortKey).isPresent()) {
+        Comparator<Logger> comparator = getComparatorForSortKey(sortKey).get();
+        if (reversed) {
+          return loggerStream.sorted(comparator.reversed());
+        }
+
+        return loggerStream.sorted(comparator);
+      }
+    }
+
+    return loggerStream.sorted(getComparatorForSortKey("logger").get());
+  }
+
+  private Optional<Comparator<Logger>> getComparatorForSortKey(String sortKey) {
+    switch (sortKey) {
+      case "logger":
+        return Optional.of(Comparator.comparing(AbstractLogger::getName));
+      case "level":
+        return Optional.of(Comparator.comparing(Logger::getLevel));
+      default:
+        return Optional.empty();
+    }
+  }
+
   private Stream<Logger> getFilteredStream(Map<String, String> parameters) {
-    Optional<JSONObject> criteria = getCriteria(parameters);
+    Optional<JSONArray> criteria = getCriteria(parameters);
 
     LoggerContext lm = (LoggerContext) LogManager.getContext(false);
+
     return lm.getLoggers() //
         .stream() //
         .filter(r -> filterRow(r, criteria));
 
   }
 
-  private Optional<JSONObject> getCriteria(Map<String, String> parameters) {
+  private Optional<JSONArray> getCriteria(Map<String, String> parameters) {
     if (parameters.containsKey("criteria")) {
       try {
-        return Optional.of(new JSONObject(parameters.get("criteria")));
+        return Optional.of((JSONArray) JsonUtils.buildCriteria(parameters).get("criteria"));
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -67,28 +106,40 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     return Optional.empty();
   }
 
-  private static boolean filterRow(Logger r, Optional<JSONObject> criteria) {
+  private static boolean filterRow(Logger r, Optional<JSONArray> criteria) {
     if (!criteria.isPresent()) {
       return true;
     }
-    JSONObject c = criteria.get();
-    try {
-      String field = c.getString("fieldName");
-      String value = c.getString("value").toLowerCase();
 
-      switch (field) {
+    boolean meetsCriteria = true;
+
+    JSONArray criteriaArray = criteria.get();
+    try {
+      for (int i = 0; i < criteriaArray.length(); i++) {
+        JSONObject criterion = criteriaArray.getJSONObject(i);
+        meetsCriteria &= loggerMeetsCriterion(r, criterion);
+      }
+    }
+    catch(JSONException e) {
+      log.error("Error matching criteria", e);
+    }
+
+    return meetsCriteria;
+  }
+
+  private static boolean loggerMeetsCriterion(Logger r, JSONObject criterion) throws JSONException {
+    String field = criterion.getString("fieldName");
+    String value = criterion.getString("value").toLowerCase();
+
+    switch (field) {
       case "logger":
         return r.getName().toLowerCase().contains(value);
       case "level":
         List<String> values = JsonArrayUtils.convertJsonArrayToStringList(new JSONArray(value));
         return values.contains(r.getLevel().toString().toLowerCase());
-      }
-    } catch (JSONException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      default:
+        return true;
     }
-
-    return true;
   }
 
   @Override

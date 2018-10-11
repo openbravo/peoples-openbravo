@@ -24,30 +24,33 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Action to set the log level to one or more Loggers
  */
-public class SetLogLevelActionHandler extends BaseProcessActionHandler {
+public class LogManagementActionHandler extends BaseProcessActionHandler {
 
-  private static final Logger log = LogManager.getLogger(SetLogLevelActionHandler.class);
+  private static final Logger log = LogManager.getLogger(LogManagementActionHandler.class);
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
       JSONObject request = new JSONObject(content);
       JSONObject params = request.getJSONObject("_params");
-      List<String> loggersToUpdate = JsonArrayUtils.convertJsonArrayToStringList(request
-          .getJSONArray("recordIds"));
-      Level newLogLevel = Level.getLevel(params.getString("level"));
+      List<String> loggersToUpdate = getLoggerToUpdateList(params
+          .getJSONObject("loggers").getJSONArray("_selection"));
+      Level newLogLevel = Level.getLevel(params.getString("loglevel"));
 
       updateLoggerConfiguration(loggersToUpdate, newLogLevel);
 
@@ -61,13 +64,35 @@ public class SetLogLevelActionHandler extends BaseProcessActionHandler {
     }
   }
 
+  private List<String> getLoggerToUpdateList(JSONArray array) {
+    List<String> result = new ArrayList<>();
+
+    for (int i=0;i<array.length(); i++) {
+      try {
+        result.add(array.getJSONObject(i).getString("logger"));
+      }
+      catch(JSONException e) {
+        log.error("Error getting logger name for index {}", i);
+      }
+    }
+
+    return result;
+  }
+
   private void updateLoggerConfiguration(List<String> loggersToUpdate, Level newLogLevel) {
     final LoggerContext context = LoggerContext.getContext(false);
     final Configuration config = context.getConfiguration();
 
     for (String loggerName : loggersToUpdate) {
       LoggerConfig loggerConfig = config.getLoggerConfig(loggerName);
-      loggerConfig.setLevel(newLogLevel);
+
+      LoggerConfig specificConfig = loggerConfig;
+      if (!loggerConfig.getName().equals(loggerName)) {
+        specificConfig = new LoggerConfig(loggerName, newLogLevel, true);
+        specificConfig.setParent(loggerConfig);
+        config.addLogger(loggerName, specificConfig);
+      }
+      specificConfig.setLevel(newLogLevel);
       log.info("Setting logger {} to level {}", loggerName, newLogLevel.toString());
     }
 

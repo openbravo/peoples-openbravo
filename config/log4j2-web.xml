@@ -6,6 +6,8 @@
     </Console>
   </Appenders>
   <Loggers>
+    <Logger name="org.hibernate" level="error"/>
+    <Logger name="org.openbravo" level="warn"/>
     <Root level="INFO">
       <AppenderRef ref="Console"/>
     </Root>
