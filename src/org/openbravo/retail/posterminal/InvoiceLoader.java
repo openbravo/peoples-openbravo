@@ -248,6 +248,10 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
       BigDecimal movementQtyTotal) throws JSONException {
     final OrderLine orderLine = lineReferences.get(numIter);
     final JSONObject jsonInvoiceLine = invoicelines.getJSONObject(numIter);
+    final BigDecimal qtyToInvoice = BigDecimal.valueOf(jsonInvoiceLine.getDouble("qty"));
+    final BigDecimal lineGrossAmount = BigDecimal.valueOf(jsonInvoiceLine
+        .getDouble("lineGrossAmount"));
+    final BigDecimal lineNetAmount = BigDecimal.valueOf(jsonInvoiceLine.getDouble("net"));
 
     if (orderLine.getObposQtyDeleted() != null
         && orderLine.getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
@@ -270,21 +274,16 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     invoiceLine.setDescription(jsonInvoiceLine.has("description") ? jsonInvoiceLine
         .getString("description") : "");
 
-    final BigDecimal orderedQuantity = BigDecimal.valueOf(jsonInvoiceLine.getDouble("qty"));
-    final BigDecimal lineGrossAmount = BigDecimal.valueOf(jsonInvoiceLine
-        .getDouble("lineGrossAmount"));
-    final BigDecimal lineNetAmount = BigDecimal.valueOf(jsonInvoiceLine.getDouble("net"));
-
     BigDecimal movQty = null;
     if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
       movQty = inOutLine.getMovementQuantity();
     } else if (inOutLine == null && movementQtyTotal.compareTo(BigDecimal.ZERO) != 0) {
-      movQty = orderedQuantity.subtract(movementQtyTotal);
+      movQty = qtyToInvoice.subtract(movementQtyTotal);
     } else {
-      movQty = orderedQuantity;
+      movQty = qtyToInvoice;
     }
 
-    BigDecimal ratio = movQty.divide(orderedQuantity, 32, RoundingMode.HALF_UP);
+    BigDecimal ratio = movQty.divide(qtyToInvoice, 32, RoundingMode.HALF_UP);
 
     BigDecimal qty = movQty;
 
@@ -325,12 +324,6 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     invoiceLine.setAttributeSetValue(orderLine.getAttributeSetValue());
     invoice.getInvoiceLineList().add(invoiceLine);
     OBDal.getInstance().save(invoiceLine);
-
-    try {
-      executeHooks(createInvoiceLineProcesses, jsonInvoiceLine, null, null, null, invoiceLine);
-    } catch (Exception e) {
-      throw new OBException("Error in OrderLoader Create invoicelines Hook: ", e);
-    }
 
     JSONObject taxes = jsonInvoiceLine.getJSONObject("taxLines");
     @SuppressWarnings("unchecked")
