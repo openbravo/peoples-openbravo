@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,6 +80,7 @@
                       when 'Y' then 'Income' else 'Payment' end)
        and (fat.fin_finacc_transaction_id is null
             or fat.statementdate>now())
+       and (p.fin_payment_id is null or (p.amount <> 0 and (select seqno from ad_ref_list rl where rl.ad_reference_id = '575BCB88A4694C27BC013DE9C73E6FE7' and value = p.status) < 40))
      group by psd.ad_client_id, psd.ad_org_id, fa.fin_financial_account_id, fa.name, fa.accountno, fa.c_currency_id,
        COALESCE(coalesce(case when fat.fin_finacc_transaction_id is null then null 
                          else case when fat.depositamt-fat.paymentamt < 0 then 'N' else 'Y' end end, p.isreceipt), i.issotrx),
