@@ -5898,6 +5898,7 @@
             lineToInvoice = new OB.Model.OrderLine(ol.attributes);
             lineToInvoice.set('id', OB.UTIL.get_UUID());
             lineToInvoice.set('qty', qtyToInvoice);
+            lineToInvoice.set('orderLineId', ol.get('id'));
             lineToInvoice.get('product').set('ignorePromotions', true);
             if (OB.DEC.abs(qtyAlreadyInvoiced) > 0) {
               lineToInvoice.get('promotions').forEach(function (p) {

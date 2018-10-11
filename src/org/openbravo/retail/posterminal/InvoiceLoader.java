@@ -249,34 +249,34 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
       JSONArray invoicelines, ArrayList<OrderLine> lineReferences, int numIter, int pricePrecision,
       ShipmentInOutLine inOutLine, int lineNo, int numLines, int actualLine,
       BigDecimal movementQtyTotal) throws JSONException {
+    final OrderLine orderLine = lineReferences.get(numIter);
+    final JSONObject jsonInvoiceLine = invoicelines.getJSONObject(numIter);
 
-    if (lineReferences.get(numIter).getObposQtyDeleted() != null
-        && lineReferences.get(numIter).getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
+    if (orderLine.getObposQtyDeleted() != null
+        && orderLine.getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
       return;
     }
 
-    boolean deliveredQtyEqualsToMovementQty = movementQtyTotal.compareTo(lineReferences
-        .get(numIter).getOrderedQuantity()) == 0;
+    boolean deliveredQtyEqualsToMovementQty = movementQtyTotal.compareTo(orderLine
+        .getOrderedQuantity()) == 0;
 
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(InvoiceLineOffer.class);
-    InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
+    final InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
     Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);
-    JSONPropertyToEntity.fillBobFromJSON(inlineEntity, line, invoicelines.getJSONObject(numIter),
+    JSONPropertyToEntity.fillBobFromJSON(inlineEntity, invoiceLine, jsonInvoiceLine,
         jsoninvoice.getLong("timezoneOffset"));
     JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(InvoiceLine.class),
-        line, jsoninvoice, jsoninvoice.getLong("timezoneOffset"));
-    line.setNewOBObject(true);
-    line.set("creationDate", invoice.getCreationDate());
-    line.setLineNo((long) lineNo);
-    line.setDescription(invoicelines.getJSONObject(numIter).has("description") ? invoicelines
-        .getJSONObject(numIter).getString("description") : "");
+        invoiceLine, jsoninvoice, jsoninvoice.getLong("timezoneOffset"));
+    invoiceLine.setNewOBObject(true);
+    invoiceLine.set("creationDate", invoice.getCreationDate());
+    invoiceLine.setLineNo((long) lineNo);
+    invoiceLine.setDescription(jsonInvoiceLine.has("description") ? jsonInvoiceLine
+        .getString("description") : "");
 
-    final BigDecimal orderedQuantity = BigDecimal.valueOf(invoicelines.getJSONObject(numIter)
-        .getDouble("qty"));
-    final BigDecimal lineGrossAmount = BigDecimal.valueOf(invoicelines.getJSONObject(numIter)
+    final BigDecimal orderedQuantity = BigDecimal.valueOf(jsonInvoiceLine.getDouble("qty"));
+    final BigDecimal lineGrossAmount = BigDecimal.valueOf(jsonInvoiceLine
         .getDouble("lineGrossAmount"));
-    final BigDecimal lineNetAmount = BigDecimal.valueOf(invoicelines.getJSONObject(numIter)
-        .getDouble("net"));
+    final BigDecimal lineNetAmount = BigDecimal.valueOf(jsonInvoiceLine.getDouble("net"));
 
     BigDecimal movQty = null;
     if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
@@ -297,49 +297,45 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
       // if there are several shipments line to the same orderline, in the last line of the invoice
       // of this sales order line, the line net amt will be the pending line net amount
       if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-        line.setLineNetAmount(lineReferences.get(numIter).getUnitPrice().multiply(qty)
+        invoiceLine.setLineNetAmount(orderLine.getUnitPrice().multiply(qty)
             .setScale(pricePrecision, RoundingMode.HALF_UP));
-        line.setGrossAmount(lineReferences.get(numIter).getGrossUnitPrice().multiply(qty)
+        invoiceLine.setGrossAmount(orderLine.getGrossUnitPrice().multiply(qty)
             .setScale(pricePrecision, RoundingMode.HALF_UP));
       } else {
         BigDecimal partialGrossAmount = BigDecimal.ZERO;
         BigDecimal partialLineNetAmount = BigDecimal.ZERO;
         for (InvoiceLine il : invoice.getInvoiceLineList()) {
-          if (il.getSalesOrderLine() != null
-              && il.getSalesOrderLine().getId() == lineReferences.get(numIter).getId()) {
+          if (il.getSalesOrderLine() != null && il.getSalesOrderLine().getId() == orderLine.getId()) {
             partialGrossAmount = partialGrossAmount.add(il.getGrossAmount());
             partialLineNetAmount = partialLineNetAmount.add(il.getLineNetAmount());
           }
         }
-        line.setLineNetAmount(lineNetAmount.subtract(partialLineNetAmount).setScale(pricePrecision,
-            RoundingMode.HALF_UP));
-        line.setGrossAmount(lineGrossAmount.subtract(partialGrossAmount).setScale(pricePrecision,
-            RoundingMode.HALF_UP));
+        invoiceLine.setLineNetAmount(lineNetAmount.subtract(partialLineNetAmount).setScale(
+            pricePrecision, RoundingMode.HALF_UP));
+        invoiceLine.setGrossAmount(lineGrossAmount.subtract(partialGrossAmount).setScale(
+            pricePrecision, RoundingMode.HALF_UP));
       }
     } else {
-      line.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
-      line.setGrossAmount(lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+      invoiceLine.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+      invoiceLine.setGrossAmount(lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
     }
-
-    line.setInvoicedQuantity(qty);
-    lineReferences.get(numIter).setInvoicedQuantity(
-        (lineReferences.get(numIter).getInvoicedQuantity() != null ? lineReferences.get(numIter)
-            .getInvoicedQuantity().add(qty) : qty));
-    line.setInvoice(invoice);
-    line.setSalesOrderLine(lineReferences.get(numIter));
-    line.setGoodsShipmentLine(inOutLine);
-    line.setAttributeSetValue(lineReferences.get(numIter).getAttributeSetValue());
-    invoice.getInvoiceLineList().add(line);
-    OBDal.getInstance().save(line);
+    invoiceLine.setInvoicedQuantity(qty);
+    orderLine.setInvoicedQuantity((orderLine.getInvoicedQuantity() != null ? orderLine
+        .getInvoicedQuantity().add(qty) : qty));
+    invoiceLine.setInvoice(invoice);
+    invoiceLine.setSalesOrderLine(orderLine);
+    invoiceLine.setGoodsShipmentLine(inOutLine);
+    invoiceLine.setAttributeSetValue(orderLine.getAttributeSetValue());
+    invoice.getInvoiceLineList().add(invoiceLine);
+    OBDal.getInstance().save(invoiceLine);
 
     try {
-      executeHooks(createInvoiceLineProcesses, invoicelines.getJSONObject(numIter), null, null,
-          null, line);
+      executeHooks(createInvoiceLineProcesses, jsonInvoiceLine, null, null, null, invoiceLine);
     } catch (Exception e) {
       throw new OBException("Error in OrderLoader Create invoicelines Hook: ", e);
     }
 
-    JSONObject taxes = invoicelines.getJSONObject(numIter).getJSONObject("taxLines");
+    JSONObject taxes = jsonInvoiceLine.getJSONObject("taxLines");
     @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
     BigDecimal totalTaxAmount = BigDecimal.ZERO;
@@ -370,8 +366,8 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
           BigDecimal partialTaxAmount = BigDecimal.ZERO;
           for (InvoiceLineTax ilt : invoice.getInvoiceLineTaxList()) {
             if (ilt.getInvoiceLine().getSalesOrderLine() != null
-                && ilt.getInvoiceLine().getSalesOrderLine().getId() == lineReferences.get(numIter)
-                    .getId() && ilt.getTax() != null && ilt.getTax().getId() == tax.getId()) {
+                && ilt.getInvoiceLine().getSalesOrderLine().getId() == orderLine.getId()
+                && ilt.getTax() != null && ilt.getTax().getId() == tax.getId()) {
               partialTaxableAmount = partialTaxableAmount.add(ilt.getTaxableAmount());
               partialTaxAmount = partialTaxAmount.add(ilt.getTaxAmount());
             }
@@ -386,23 +382,22 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
         invoicelinetax.setTaxAmount(taxAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
       }
       invoicelinetax.setInvoice(invoice);
-      invoicelinetax.setInvoiceLine(line);
+      invoicelinetax.setInvoiceLine(invoiceLine);
       invoicelinetax.setRecalculate(true);
       invoicelinetax.setLineNo((long) ((ind + 1) * 10));
       ind++;
       invoice.getInvoiceLineTaxList().add(invoicelinetax);
-      line.getInvoiceLineTaxList().add(invoicelinetax);
-      invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(line.getSalesOrderLine().getId() + lineNo
-          + (long) ((ind + 1) * 10)));
+      invoiceLine.getInvoiceLineTaxList().add(invoicelinetax);
+      invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getSalesOrderLine().getId()
+          + lineNo + (long) ((ind + 1) * 10)));
       invoicelinetax.setNewOBObject(true);
       OBDal.getInstance().save(invoicelinetax);
     }
 
     // Discounts & Promotions
-    if (invoicelines.getJSONObject(numIter).has("promotions")
-        && !invoicelines.getJSONObject(numIter).isNull("promotions")
-        && !invoicelines.getJSONObject(numIter).getString("promotions").equals("null")) {
-      JSONArray jsonPromotions = invoicelines.getJSONObject(numIter).getJSONArray("promotions");
+    if (jsonInvoiceLine.has("promotions") && !jsonInvoiceLine.isNull("promotions")
+        && !jsonInvoiceLine.getString("promotions").equals("null")) {
+      JSONArray jsonPromotions = jsonInvoiceLine.getJSONArray("promotions");
       for (int p = 0; p < jsonPromotions.length(); p++) {
         JSONObject jsonPromotion = jsonPromotions.getJSONObject(p);
         boolean hasActualAmt = jsonPromotion.has("actualAmt");
@@ -422,10 +417,10 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
               .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
         }
         promotion.setLineNo((long) ((p + 1) * 10));
-        promotion.setId(OBMOBCUtils.getUUIDbyString(line.getId() + p));
+        promotion.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getId() + p));
         promotion.setNewOBObject(true);
-        promotion.setInvoiceLine(line);
-        line.getInvoiceLineOfferList().add(promotion);
+        promotion.setInvoiceLine(invoiceLine);
+        invoiceLine.getInvoiceLineOfferList().add(promotion);
       }
     }
 
