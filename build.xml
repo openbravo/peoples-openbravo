@@ -844,25 +844,6 @@ export.database: exports database structure and data to xml files.
     </java>
   </target>
 
-  <!-- 
-		This task is called from the Openbravo ui, it spawns a java call which again
-		calls the tomcat.reload.do task as a spawned task.
-	-->
-  <target name="tomcat.reload" description="Reload the Openbravo context">
-    <echo message="Reloading webapp..." />
-    <java classname="org.openbravo.service.system.ReloadContext" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" spawn="true" fork="true">
-      <arg line="${base.src}" />
-      <classpath refid="project.class.path" />
-    </java>
-  </target>
-
-  <target name="tomcat.reload.do">
-    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <reload url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context.name}" />
-  </target>
-
   <target name="tomcat.list">
     <taskdef name="list" classname="org.apache.catalina.ant.ListTask">
       <classpath refid="project.class.path" />
