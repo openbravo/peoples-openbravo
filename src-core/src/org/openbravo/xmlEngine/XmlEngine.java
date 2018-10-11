@@ -76,7 +76,6 @@ public class XmlEngine extends HttpServlet {
       log4jXmlEngine.debug("XmlEngine v0.846-2");
     super.init(config);
     configXMLEngine = config;
-    configureLog4j(getInitParameter("fileConfigurationLog4j"));
     strBaseLocation = getInitParameter("BaseLocation");
     strDriverDefault = getInitParameter("driver");
     strUrlDefault = getInitParameter("URL");
@@ -543,17 +542,8 @@ public class XmlEngine extends HttpServlet {
     closeConnections();
   }
 
-  static void configureLog4j(String file) {
-    if (file != null) {
-      PropertyConfigurator.configure(file);
-    } else {
-      PropertyConfigurator.configure("log4j.lcf");
-    }
-  }
-
   public static void main(String argv[]) {
     int i;
-    configureLog4j(null);
     String strFile;
     if (argv.length < 1) {
       log4jXmlEngine.error("Usage: java XmlEngine [driver URL] file");

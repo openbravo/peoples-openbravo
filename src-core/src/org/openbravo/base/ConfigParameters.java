@@ -86,7 +86,6 @@ public class ConfigParameters {
     strContext = extractContext(getActualPathContext());
 
     strBaseConfigPath = getResolvedParameter(context, "BaseConfigPath");
-    configureLog4j(context, strBaseConfigPath);
 
     log4j.debug("context: " + strContext);
     log4j.debug("************************prefix: " + prefix);
@@ -164,33 +163,6 @@ public class ConfigParameters {
     } catch (java.security.AccessControlException err) {
       log4j.warn(err.getMessage());
       return "en_US";
-    }
-  }
-
-  private void configureLog4j(ServletContext context, String _strBaseConfigPath) {
-    String file = getResolvedParameter(context, "log4j-init-file");
-
-    // if the log4j-init-file is not set, then no point in trying
-    if (file != null) {
-      try {
-        // Configure using resource url.. That way we don't need to
-        // worry about
-        // the real path
-        InputStream resource = context.getResourceAsStream("/" + _strBaseConfigPath + "/" + file);
-        if (resource != null) {
-          Properties config = new Properties();
-          config.load(resource);
-          resource.close();
-          config.setProperty("application_context", getApplicationContext());
-          config.setProperty("actual_path_context", getActualPathContext());
-          PropertyConfigurator.configure(config);
-        }
-      } catch (MalformedURLException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace(); // To change body of catch statement use
-        // File | Settings | File Templates.
-      }
     }
   }
 
