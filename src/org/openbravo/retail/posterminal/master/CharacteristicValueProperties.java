@@ -48,6 +48,7 @@ public class CharacteristicValueProperties extends ModelExtension {
           add(new HQLProperty("cv.summaryLevel", "summaryLevel"));
           add(new HQLProperty("cv.name", "_identifier"));
           add(new HQLProperty("cv.active", "active"));
+          add(new HQLProperty("cv.characteristic.name", "characteristicName"));
         }
       };
     } catch (org.openbravo.erpCommon.utility.PropertyException e) {
