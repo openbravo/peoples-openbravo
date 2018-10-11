@@ -357,7 +357,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     } catch (final Exception e) {
       // Re-login
       log4j.error("HTTPSecureAppServlet.service() - exception caught: ", e);
-      logout(request, response);
+      response.setStatus(500);
       return;
     } finally {
       final boolean sessionCreated = !sessionExists && null != request.getSession(false);
