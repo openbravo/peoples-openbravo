@@ -190,6 +190,10 @@
     column: 'isLinkedToProduct',
     type: 'BOOL'
   }, {
+    name: 'modifyTax',
+    column: 'modifyTax',
+    type: 'BOOL'
+  }, {
     name: 'allowDeferredSell',
     column: 'allowDeferredSell',
     type: 'BOOL'
