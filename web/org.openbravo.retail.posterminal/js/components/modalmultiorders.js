@@ -436,31 +436,29 @@ enyo.kind({
     me.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
-        var continueExecution = function () {
-            iter.set('checked', true);
-            iter.save();
-            selectedMultiOrders.push(iter);
-            addOrdersToOrderList();
-            };
-        iter.getPrepaymentAmount(continueExecution);
+        iter.getPrepaymentAmount(function () {
+          iter.set('checked', true);
+          iter.save();
+          selectedMultiOrders.push(iter);
+          addOrdersToOrderList();
+        });
       } else {
         process.exec({
           orderid: iter.id
         }, function (data) {
           if (data) {
             me.owner.owner.model.get('orderList').newPaidReceipt(data[0], function (order) {
-              var continueExecution = function () {
-                  order.calculateReceipt(function () {
-                    selectedMultiOrders.push(order);
-                    addOrdersToOrderList();
-                  });
-                  };
               order.set('loadedFromServer', true);
               me.owner.owner.model.get('orderList').addMultiReceipt(order);
               order.set('checked', iter.get('checked'));
               OB.DATA.OrderTaxes(order);
               order.set('belongsToMultiOrder', true);
-              order.getPrepaymentAmount(continueExecution);
+              order.getPrepaymentAmount(function () {
+                order.calculateReceipt(function () {
+                  selectedMultiOrders.push(order);
+                  addOrdersToOrderList();
+                });
+              });
             });
           } else {
             OB.UTIL.showLoading(false);
