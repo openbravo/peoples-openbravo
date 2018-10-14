@@ -1388,15 +1388,23 @@ enyo.kind({
       });
     }, this);
     this.orderList.on('reset add remove amountToLayaway', function () {
-      this.total = _.reduce(this.orderList.models, function (memo, order) {
-        return memo + !OB.UTIL.isNullOrUndefined(order.get('amountToLayaway')) ? order.get('amountToLayaway') : order.getPending();
-      }, 0);
-      this.prepayment = _.reduce(this.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
-        return memo + !OB.UTIL.isNullOrUndefined(order.get('amountToLayaway')) ? order.get('amountToLayaway') : order.get('prepaymentAmt');
-      }, 0);
-      this.prepaymentLimit = _.reduce(this.model.get('multiOrders').get('multiOrdersList').models, function (memo, order) {
-        return memo + !OB.UTIL.isNullOrUndefined(order.get('amountToLayaway')) ? order.get('amountToLayaway') : order.get('prepaymentLimitAmt');
-      }, 0);
+      var total = OB.DEC.Zero,
+          prepayment = OB.DEC.Zero,
+          prepaymentLimit = OB.DEC.Zero;
+      _.each(this.orderList.models, function (order) {
+        if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
+          total = OB.DEC.add(total, order.getPending());
+          prepayment = OB.DEC.add(prepayment, order.get('prepaymentAmt'));
+          prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('prepaymentLimitAmt'));
+        } else {
+          total = OB.DEC.add(total, order.get('amountToLayaway'));
+          prepayment = OB.DEC.add(prepayment, order.get('amountToLayaway'));
+          prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('amountToLayaway'));
+        }
+      });
+      this.total = total;
+      this.prepayment = prepayment;
+      this.prepaymentLimit = prepaymentLimit;
       this.multiOrders.set('total', this.total);
       this.model.get('multiOrders').set('prepaymentAmt', this.prepayment);
       this.model.get('multiOrders').set('prepaymentLimitAmt', this.prepaymentLimit);
