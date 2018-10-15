@@ -50,10 +50,12 @@ public class ProductProperties extends ModelExtension {
           } else {
             add(new HQLProperty("img.bindaryData", "img"));
             add(new HQLProperty("img.id", "imgId"));
+            add(new HQLProperty("img.mimetype", "mimetype"));
           }
         } catch (PropertyException e) {
           add(new HQLProperty("img.bindaryData", "img"));
           add(new HQLProperty("img.id", "imgId"));
+          add(new HQLProperty("img.mimetype", "mimetype"));
         }
         add(new HQLProperty("pli.bestseller", "bestseller"));
         add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
@@ -159,6 +161,7 @@ public class ProductProperties extends ModelExtension {
             add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
             add(new HQLProperty("product.quantityRule", "quantityRule"));
             add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
+            add(new HQLProperty("product.weight", "weight"));
             if (multiPriceList) {
               add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
             }

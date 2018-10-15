@@ -18,6 +18,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -71,6 +72,15 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
       paramValues.put("productListId", productList.getId());
       paramValues.put("priceListVersionId", priceListVersion.getId());
 
+      // Optional filtering by a list of m_product_id
+      if (jsonsent.getJSONObject("parameters").has("filterProductList")
+          && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
+          && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
+        JSONArray filterProductList = jsonsent.getJSONObject("parameters").getJSONArray(
+            "filterProductList");
+        paramValues.put("filterProductList", filterProductList);
+      }
+
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -81,6 +91,7 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     List<String> hqlQueries = new ArrayList<String>();
+    String hqlQuery = "";
 
     Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined")
@@ -89,24 +100,37 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
     HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries
-        .add("select "
-            + regularProductsCharacteristicHQLProperties.getHqlSelect()
-            + "from ProductCharacteristicValue pcv "
-            + "inner join pcv.product.oBRETCOProlProductList opp "
-            + "inner join pcv.product.pricingProductPriceList ppp "
-            + "where opp.obretcoProductlist.id= :productListId "
-            + "and ppp.priceListVersion.id= :priceListVersionId "
-            + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
-            + "and pcv.$filtersCriteria AND pcv.$hqlCriteria "
-            + "and pcv.$naturalOrgCriteria and pcv.$readableSimpleClientCriteria "
-            + ((lastUpdated != null) ? "and (opp.$incrementalUpdateCriteria OR ppp.$incrementalUpdateCriteria OR "
-                + "pcv.$incrementalUpdateCriteria OR pcv.characteristic.$incrementalUpdateCriteria OR "
-                + "pcv.characteristicValue.$incrementalUpdateCriteria) "
-                : "and (opp.$incrementalUpdateCriteria AND ppp.$incrementalUpdateCriteria AND "
-                    + "pcv.$incrementalUpdateCriteria AND pcv.characteristic.$incrementalUpdateCriteria AND "
-                    + "pcv.characteristicValue.$incrementalUpdateCriteria) ")
-            + "and pcv.characteristic.active = 'Y' " + "order by pcv.id");
+    hqlQuery = "select "
+        + regularProductsCharacteristicHQLProperties.getHqlSelect()
+        + "from ProductCharacteristicValue pcv "
+        + "inner join pcv.characteristic characteristic "
+        + "inner join pcv.characteristicValue characteristicValue "
+        + "inner join pcv.product product "
+        + "inner join product.oBRETCOProlProductList opp "
+        + "inner join product.pricingProductPriceList ppp "
+        + "where opp.obretcoProductlist.id= :productListId "
+        + "and ppp.priceListVersion.id= :priceListVersionId "
+        + "and characteristic.obposUseonwebpos = true "
+        + "and pcv.$filtersCriteria AND pcv.$hqlCriteria "
+        + "and pcv.$naturalOrgCriteria and pcv.$readableSimpleClientCriteria "
+        + ((lastUpdated != null) ? "and (opp.$incrementalUpdateCriteria OR ppp.$incrementalUpdateCriteria OR "
+            + "pcv.$incrementalUpdateCriteria OR characteristic.$incrementalUpdateCriteria OR "
+            + "characteristicValue.$incrementalUpdateCriteria) "
+            : "and (opp.$incrementalUpdateCriteria AND ppp.$incrementalUpdateCriteria AND "
+                + "pcv.$incrementalUpdateCriteria AND characteristic.$incrementalUpdateCriteria AND "
+                + "characteristicValue.$incrementalUpdateCriteria) ")
+        + "and characteristic.active = 'Y' ";
+
+    // Optional filtering by a list of m_product_id
+    if (jsonsent.getJSONObject("parameters").has("filterProductList")
+        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
+        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
+      hqlQuery += "and pcv.product.id in (:filterProductList) ";
+    }
+
+    hqlQuery += "order by pcv.id";
+
+    hqlQueries.add(hqlQuery);
     return hqlQueries;
   }
 }

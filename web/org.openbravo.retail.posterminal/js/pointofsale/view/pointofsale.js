@@ -204,6 +204,9 @@ enyo.kind({
       kind: 'OB.UI.ModalProviderGroupVoid',
       name: 'modalprovidergroupvoid'
     }, {
+      kind: 'OB.UI.ModalChange',
+      name: 'modalchange'
+    }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
       name: 'modalConfigurationRequiredForCrossStore'
     }, {
@@ -1283,7 +1286,6 @@ enyo.kind({
     _.each(inEvent.value, function (iter) {
       //iter.set('isMultiOrder', true);
       iter.set('belongsToMultiOrder', true);
-      me.model.get('orderList').addMultiReceipt(iter);
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
     this.model.get('leftColumnViewManager').setMultiOrderMode();

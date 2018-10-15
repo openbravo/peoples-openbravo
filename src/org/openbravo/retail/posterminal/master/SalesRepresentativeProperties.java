@@ -1,3 +1,11 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2018 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
@@ -19,7 +27,8 @@ public class SalesRepresentativeProperties extends ModelExtension {
         add(new HQLProperty("user.name", "name"));
         add(new HQLProperty("user.username", "username"));
         add(new HQLProperty("user.name", "_identifier"));
-        add(new HQLProperty("user.active", "active"));
+        add(new HQLProperty("case when user.active='Y' and "
+            + "user.businessPartner.active='Y' then true else false end", "active"));
       }
     };
     return list;
