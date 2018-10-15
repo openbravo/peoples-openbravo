@@ -34,6 +34,19 @@ enyo.kind({
       return;
     }
     this.selectedModels = inEvent.models;
+    this.selectedEditPrice = OB.MobileApp.model.hasPermission('OBPOS_order.changePrice', false);
+    if (this.selectedEditPrice) {
+      var i;
+      for (i = 0; i < this.selectedModels.length; i++) {
+        if (!this.selectedModels[i].get('product').get('obposEditablePrice')) {
+          this.selectedEditPrice = false;
+          break;
+        }
+      }
+    }
+    this.$.btnPrice.waterfall('onDisableButton', {
+      disabled: !this.selectedEditPrice
+    });
   },
   keyboardOnDiscountsMode: function (inSender, inEvent) {
     if (inEvent.status) {

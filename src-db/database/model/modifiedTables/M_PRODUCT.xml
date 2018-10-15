@@ -33,9 +33,14 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="EM_OBPOS_EDITABLE_PRICE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <index name="EM_OBPOS_M_PRODUCT_PRODUCTTYPE" unique="false">
         <index-column name="PRODUCTTYPE"/>
       </index>
+      <check name="EM_OBPOS_EDITABLE_PRICE_CHK"><![CDATA[EM_OBPOS_EDITABLE_PRICE IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_ISMULTISELECTABLE_CHK"><![CDATA[EM_OBPOS_ISMULTISELECTABLE IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_LINKPROD_PROPTYPE_CHK"><![CDATA[ISLINKEDTOPRODUCT = 'Y' AND EM_OBPOS_PROPOSAL_TYPE IS NOT NULL OR ISLINKEDTOPRODUCT = 'N']]></check>
       <check name="EM_OBPOS_M_PRODUCT_ANONYM_CHK"><![CDATA[EM_OBPOS_ALLOWANONYMOUSSALE IN ('Y', 'N')]]></check>

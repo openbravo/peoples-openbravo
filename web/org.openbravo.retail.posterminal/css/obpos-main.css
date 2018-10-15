@@ -811,3 +811,10 @@ button.payment-changebutton {
   color: #bbbbbb;
   font-style: italic;
 }
+
+.onyx-menu-item {
+  cursor: pointer;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
