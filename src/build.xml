@@ -187,7 +187,6 @@ build.war: build a war file in the lib directory.
       </syspropertyset>
     </java>
     <copy file="${base.src}/buildAD.xml" tofile="${build.AD}/build.xml" />
-    <copy file="${base.src}/log4j.lcf" tofile="${build.AD}/log4j.lcf" />
     <ant dir="${build.AD}" target="buildAD" inheritAll="true" inheritRefs="true" />
   </target>
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 - 2016 Openbravo SLU
+ * All portions are Copyright (C) 2014 - 2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,12 +52,15 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private final static String BASEDIR = getUserDir();
   private final static String BASEDIR_CONFIG = BASEDIR + "/config/";
   private final static String BASEDIR_TEST = BASEDIR + "/src-test/";
+  private final static String BASEDIR_TEST_SRC = BASEDIR + "/src-test/src/";
   private final static String SUFFIX_AUX = ".aux";
   private final static String OPENBRAVO_PROPERTIES = BASEDIR_CONFIG + "Openbravo.properties";
   private final static String OPENBRAVO_PROPERTIES_AUX = BASEDIR_CONFIG + "Openbravo.properties"
       + SUFFIX_AUX;
   private final static String FORMAT_XML = BASEDIR_CONFIG + "Format.xml";
-  private final static String LOG4J_LCF = BASEDIR_CONFIG + "log4j.lcf";
+  private final static String LOG4J2_XML = BASEDIR_CONFIG + "log4j2.xml";
+  private final static String LOG4J2TEST_XML = BASEDIR_CONFIG + "log4j2-test.xml";
+  private final static String LOG4J2WEB_XML = BASEDIR_CONFIG + "log4j2-web.xml";
   private final static String USERCONFIG_XML = BASEDIR_CONFIG + "userconfig.xml";
   private final static String COMMON_COMPONENT = ".settings/org.eclipse.wst.common.component";
   private final static String CLASSPATH = ".classpath";
@@ -738,10 +741,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private static void fileCopySomeTemplates(Project p) {
     fileCopyTemplate(FORMAT_XML + ".template", FORMAT_XML, p);
-    fileCopyTemplate(LOG4J_LCF + ".template", LOG4J_LCF, p);
+    fileCopyTemplate(LOG4J2_XML + ".template", LOG4J2_XML, p);
+    fileCopyTemplate(LOG4J2WEB_XML + ".template", LOG4J2WEB_XML, p);
     fileCopyTemplate(USERCONFIG_XML + ".template", USERCONFIG_XML, p);
     fileCopyTemplate(CLASSPATH + ".template", CLASSPATH, p);
     fileCopyTemplate(BASEDIR_TEST + CLASSPATH + ".template", BASEDIR_TEST + CLASSPATH, p);
+    fileCopyTemplate(BASEDIR_TEST_SRC + LOG4J2TEST_XML + ".template", BASEDIR_TEST_SRC
+        + LOG4J2TEST_XML, p);
   }
 
   /**
