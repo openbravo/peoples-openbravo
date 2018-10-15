@@ -93,25 +93,25 @@ public class UpdateActuals extends DalBaseProcess {
         // get the natural tree
         TreeUtility treeUtility = new TreeUtility();
         String activityTree = activity != null ? commaSeparated(treeUtility.getChildTree(activity,
-            "AY", true)) : activity;
+            "AY")) : activity;
         String productCategoryTree = productCategory != null ? commaSeparated(treeUtility
-            .getChildTree(productCategory, "PC", true)) : productCategory;
-        String assetTree = asset != null ? commaSeparated(treeUtility.getChildTree(asset, "AS",
-            true)) : asset;
+            .getChildTree(productCategory, "PC")) : productCategory;
+        String assetTree = asset != null ? commaSeparated(treeUtility.getChildTree(asset, "AS"))
+            : asset;
         String costcenterTree = costcenter != null ? commaSeparated(treeUtility.getChildTree(
-            costcenter, "CC", true)) : costcenter;
+            costcenter, "CC")) : costcenter;
         String accountTree = account != null ? commaSeparated(treeUtility.getChildTree(account,
-            "EV", true)) : account;
+            "EV")) : account;
         String projectTree = project != null ? commaSeparated(treeUtility.getChildTree(project,
-            "PJ", true)) : project;
+            "PJ")) : project;
         String campaignTree = salesCampaign != null ? commaSeparated(treeUtility.getChildTree(
-            salesCampaign, "MC", true)) : salesCampaign;
+            salesCampaign, "MC")) : salesCampaign;
         String regionTree = salesRegion != null ? commaSeparated(treeUtility.getChildTree(
-            salesRegion, "SR", true)) : salesRegion;
-        String user1Tree = user1 != null ? commaSeparated(treeUtility.getChildTree(user1, "U1",
-            true)) : user1;
-        String user2Tree = user2 != null ? commaSeparated(treeUtility.getChildTree(user2, "U2",
-            true)) : user2;
+            salesRegion, "SR")) : salesRegion;
+        String user1Tree = user1 != null ? commaSeparated(treeUtility.getChildTree(user1, "U1"))
+            : user1;
+        String user2Tree = user2 != null ? commaSeparated(treeUtility.getChildTree(user2, "U2"))
+            : user2;
 
         final String orgId = myBudget.getOrganization().getId();
 
