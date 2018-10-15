@@ -124,6 +124,8 @@ public class UpdateActuals extends DalBaseProcess {
         queryString.append(" from FinancialMgmtAccountingFact e where");
         queryString.append(" e.client.id='").append(myBudget.getClient().getId()).append("'");
         queryString.append(" and e.organization.id in (").append(OrgTreeList).append(")");
+        queryString.append(" and e.period.year.id='").append(myBudget.getYear().getId())
+            .append("'");
 
         if (!"".equals(activity)) {
           queryString.append(" and e.activity.id in (").append(activityTree).append(")");
