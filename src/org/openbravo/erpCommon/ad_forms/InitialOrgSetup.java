@@ -74,8 +74,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
       OBError obeResult = ios.createOrganization(strOrganization, strOrgUser, strOrgType,
           strParentOrg, strcLocationId, strPassword, strModules, isTrue(strCreateAccounting),
-          fileCoAFilePath, strCurrency, bBPartner, bProduct, bProject, bCampaign, bSalesRegion,
-          vars.getSessionValue("#SOURCEPATH"));
+          fileCoAFilePath, strCurrency, bBPartner, bProduct, bProject, bCampaign, bSalesRegion);
       if (!obeResult.getType().equals(OKTYPE)) {
         OBContext.getOBContext().removeWritableOrganization(ios.getOrgId());
         OBContext.getOBContext().removeFromWritableOrganization(ios.getOrgId());

@@ -217,7 +217,10 @@ isc.OBViewDataSource.addProperties({
     if (jsonData) {
       var errorStatus = !jsonData.response || jsonData.response.status === 'undefined' || jsonData.response.status !== isc.RPCResponse.STATUS_SUCCESS;
       if (errorStatus) {
-        var handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
+        var handled = false;
+        if (!this.view.destroyed) {
+          handled = this.view.setErrorMessageFromResponse(dsResponse, jsonData, dsRequest);
+        }
 
         if (!handled && !dsRequest.willHandleError && jsonData.response && jsonData.response.error) {
           OB.KernelUtilities.handleSystemException(jsonData.response.error.message);

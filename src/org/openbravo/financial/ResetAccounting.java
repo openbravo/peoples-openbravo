@@ -110,7 +110,7 @@ public class ResetAccounting {
             // period control associated
             Map<String, String> organizationPeriodControl = new HashMap<>();
 
-            String myQuery1 = "select ad_org_id, ad_org_getperiodcontrolallow(ad_org_id) from ad_org where ad_org_id in (:orgIds)";
+            String myQuery1 = "select ad_org_id, ad_periodcontrolallowed_org_id from ad_org where ad_org_id in (:orgIds)";
 
             @SuppressWarnings("rawtypes")
             Query query1 = OBDal.getInstance().getSession().createNativeQuery(myQuery1);
@@ -418,7 +418,9 @@ public class ResetAccounting {
         accountingTables.add(myTable.getId());
         return accountingTables;
       }
-      String myQuery = "select distinct e.table.id from FinancialMgmtAccountingFact e where e.table.id <> '145'";
+
+      String myQuery = "select distinct t.id from ADTable t where t.id  <> '145' "
+          + " and exists (select 1 from FinancialMgmtAccountingFact e where e.table.id=t.id) ";
       accountingTables = OBDal.getInstance().getSession().createQuery(myQuery).list();
       return accountingTables;
     } finally {
@@ -440,10 +442,14 @@ public class ResetAccounting {
   }
 
   private static List<String> getDocbasetypes(String clientId, String tableId, String recordId) {
-    String myQuery = "select distinct e.documentCategory from FinancialMgmtAccountingFact e where e.client.id = :clientId and e.table.id = :tableId ";
+
+    String myQuery = "select distinct d.documentCategory from DocumentType d where d.client.id = :clientId and d.table.id = :tableId"
+        + " and exists (select 1 from FinancialMgmtAccountingFact e where e.documentCategory=d.documentCategory ";
+
     if (!"".equals(recordId)) {
       myQuery = myQuery + "and e.recordID=:recordId";
     }
+    myQuery = myQuery + ")";
     Query<String> query = OBDal.getInstance().getSession().createQuery(myQuery, String.class);
     query.setParameter("clientId", clientId);
     query.setParameter("tableId", tableId);

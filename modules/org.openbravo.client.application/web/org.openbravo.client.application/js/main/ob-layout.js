@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,12 +39,6 @@ try {
 // This preference is the one which enables the accessibility for the people with reduced visual capabilities.
 if (OB.PropertyStore.get('EnableScreenReader') === 'Y') {
   isc.screenReader = true;
-}
-
-// needed for backward compatibility... to open the registration form
-
-function openRegistration() {
-  OB.Utilities.openProcessPopup(OB.Application.contextUrl + 'ad_forms/Registration.html', true);
 }
 
 isc.Canvas.addClassProperties({

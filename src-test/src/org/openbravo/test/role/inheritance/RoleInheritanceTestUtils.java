@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,11 +23,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.OBUIAPPViewImplementation;
 import org.openbravo.client.application.ViewRoleAccess;
 import org.openbravo.client.myob.WidgetClass;
 import org.openbravo.client.myob.WidgetClassAccess;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.FieldAccess;
@@ -42,6 +44,7 @@ import org.openbravo.model.ad.alert.AlertRecipient;
 import org.openbravo.model.ad.alert.AlertRule;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Preference;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Form;
@@ -68,6 +71,8 @@ public class RoleInheritanceTestUtils {
    */
   public final static List<String> ACCESS_NAMES = Arrays.asList("ORGANIZATION", "WINDOW", "TAB",
       "FIELD", "REPORT", "FORM", "WIDGET", "VIEW", "PROCESS", "TABLE", "ALERT", "PREFERENCE");
+
+  public static final String DUMMY_VIEW_IMPL_NAME = "OBUIAPP_DummyView";
 
   /**
    * Creates a new role
@@ -1165,6 +1170,77 @@ public class RoleInheritanceTestUtils {
     return null;
   }
 
+  /**
+   * Workaround to be able to test role inheritance of view implementations as core only have one
+   * view available
+   */
+  public static void createDummyView() {
+    try {
+      OBContext.setAdminMode(false);
+
+      Module module = OBDal.getInstance().get(Module.class, "9BA0836A3CD74EE4AB48753A47211BCC");
+      boolean currentState = module.isInDevelopment();
+
+      module.setInDevelopment(true);
+      OBDal.getInstance().save(module);
+
+      OBDal.getInstance().flush();
+
+      Client client = OBDal.getInstance().getProxy(Client.class, "0");
+      Organization org = OBDal.getInstance().getProxy(Organization.class, "0");
+      Module mod = OBDal.getInstance().getProxy(Module.class, "9BA0836A3CD74EE4AB48753A47211BCC");
+      OBUIAPPViewImplementation viewImplementation = OBProvider.getInstance().get(
+          OBUIAPPViewImplementation.class);
+      viewImplementation.setClient(client);
+      viewImplementation.setOrganization(org);
+      viewImplementation.setModule(mod);
+      viewImplementation.setName(DUMMY_VIEW_IMPL_NAME);
+      OBDal.getInstance().save(viewImplementation);
+
+      module.setInDevelopment(currentState);
+      OBDal.getInstance().save(module);
+
+      OBDal.getInstance().flush();
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Workaround to be able to test role inheritance of view implementations as core only have one
+   * view available
+   */
+  public static void removeDummyView() {
+    try {
+      OBContext.setAdminMode(false);
+
+      Module module = OBDal.getInstance().get(Module.class, "9BA0836A3CD74EE4AB48753A47211BCC");
+      boolean currentState = module.isInDevelopment();
+
+      module.setInDevelopment(true);
+      OBDal.getInstance().save(module);
+
+      OBDal.getInstance().flush();
+
+      StringBuilder delete = new StringBuilder();
+      delete.append(" delete from " + OBUIAPPViewImplementation.ENTITY_NAME);
+      delete.append(" where " + OBUIAPPViewImplementation.PROPERTY_NAME + " = :name");
+
+      @SuppressWarnings("rawtypes")
+      Query query = OBDal.getInstance().getSession().createQuery(delete.toString());
+      query.setParameter("name", DUMMY_VIEW_IMPL_NAME);
+      query.executeUpdate();
+
+      module.setInDevelopment(currentState);
+      OBDal.getInstance().save(module);
+
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   private static String[] getOrgsFromOrgAccesses(Role role) {
     final OBCriteria<RoleOrganization> obCriteria = OBDal.getInstance().createCriteria(
         RoleOrganization.class);
@@ -1176,8 +1252,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (RoleOrganization ro : list) {
       result[i] = ro.getOrganization().getName();
-      result[i + 1] = ro.getInheritedFrom() != null ? ro.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = ro.getInheritedFrom() != null ? ro.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1193,8 +1268,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (WindowAccess wa : list) {
       result[i] = wa.getWindow().getName();
-      result[i + 1] = wa.getInheritedFrom() != null ? wa.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = wa.getInheritedFrom() != null ? wa.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1220,8 +1294,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (TabAccess ta : list) {
       result[i] = ta.getTab().getName();
-      result[i + 1] = ta.getInheritedFrom() != null ? ta.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = ta.getInheritedFrom() != null ? ta.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1262,8 +1335,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (FieldAccess fa : list) {
       result[i] = fa.getField().getName();
-      result[i + 1] = fa.getInheritedFrom() != null ? fa.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = fa.getInheritedFrom() != null ? fa.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1281,8 +1353,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (org.openbravo.model.ad.access.ProcessAccess pa : list) {
       result[i] = pa.getProcess().getName();
-      result[i + 1] = pa.getInheritedFrom() != null ? pa.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = pa.getInheritedFrom() != null ? pa.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1297,8 +1368,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (FormAccess fa : list) {
       result[i] = fa.getSpecialForm().getName();
-      result[i + 1] = fa.getInheritedFrom() != null ? fa.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = fa.getInheritedFrom() != null ? fa.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1315,8 +1385,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (WidgetClassAccess wa : list) {
       result[i] = wa.getWidgetClass().getWidgetTitle();
-      result[i + 1] = wa.getInheritedFrom() != null ? wa.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = wa.getInheritedFrom() != null ? wa.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1333,8 +1402,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (ViewRoleAccess va : list) {
       result[i] = va.getViewImplementation().getName();
-      result[i + 1] = va.getInheritedFrom() != null ? va.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = va.getInheritedFrom() != null ? va.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1352,8 +1420,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (org.openbravo.client.application.ProcessAccess pa : list) {
       result[i] = pa.getObuiappProcess().getName();
-      result[i + 1] = pa.getInheritedFrom() != null ? pa.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = pa.getInheritedFrom() != null ? pa.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1369,8 +1436,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (TableAccess ta : list) {
       result[i] = ta.getTable().getDBTableName();
-      result[i + 1] = ta.getInheritedFrom() != null ? ta.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = ta.getInheritedFrom() != null ? ta.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1386,8 +1452,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (AlertRecipient ar : list) {
       result[i] = ar.getAlertRule().getName();
-      result[i + 1] = ar.getInheritedFrom() != null ? ar.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = ar.getInheritedFrom() != null ? ar.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;
@@ -1402,8 +1467,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (Preference p : list) {
       result[i] = p.getProperty();
-      result[i + 1] = p.getInheritedFrom() != null ? p.getInheritedFrom().getId()
-          : "";
+      result[i + 1] = p.getInheritedFrom() != null ? p.getInheritedFrom().getId() : "";
       i += 2;
     }
     return result;

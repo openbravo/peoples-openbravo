@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -272,7 +272,7 @@ BEGIN
        FROM fin_payment p
        WHERE p.c_bpartner_id = :new.C_BPartner_ID
        AND p.generated_credit <> 0
-       AND p.generated_credit-COALESCE(p.used_credit, 0) <> 0;
+       AND obequals(p.generated_credit, p.used_credit) = 'N';
       
 			 IF (v_currency_pl <> COALESCE(v_currency_credit, v_currency_pl)) THEN
 			   SELECT iso_code

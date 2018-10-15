@@ -108,6 +108,10 @@ export.database: exports database structure and data to xml files.
       </or>
     </not>
   </condition>
+  
+  <condition property="jvm.arg.line" value="" else="--add-opens java.base/java.lang=ALL-UNNAMED">
+    <equals arg1="${ant.java.version}" arg2="1.8"/>
+  </condition>
 
   <condition property="calculate.core.rev">
    <istrue value="${calculate.core.revision}"/>
@@ -422,11 +426,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
     <updatesystemstatuswhennot v="RB51" previous="RB12"/>
-    <!-- only restart tomcat if the restart prop was set to true -->
-    <condition property="dorestart">
-      <istrue value="${restart}" />
-    </condition>
-    <antcall target="if.restart.tomcat" />
   </target>
 
   <target name="update.database.if.no.local" if="no.local">
@@ -453,10 +452,6 @@ export.database: exports database structure and data to xml files.
 
   <target name="build.deploy.war" if="mode.war">
     <antcall target="war" />
-  </target>
-
-  <target name="if.restart.tomcat" if="dorestart">
-    <antcall target="tomcat.restart" />
   </target>
 
   <target name="compile" depends="init,core.lib, wad.lib, trl.lib">
@@ -774,6 +769,7 @@ export.database: exports database structure and data to xml files.
   <target name="apply.module" depends="compile.apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}' '${friendlyWarnings}' '${forceRefData}'" />
+      <jvmarg line="${jvm.arg.line}" />
       <classpath refid="apply.module.runtime.classpath" />
     </java>
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
@@ -802,7 +798,7 @@ export.database: exports database structure and data to xml files.
 		This task is called from the Openbravo ui, it spawns a java call which again
 		calls the restart.tomcat.do task as a spawned task.
 	-->
-  <target name="tomcat.restart" description="Restart the tomcat server process">
+  <target name="tomcat.restart">
     <echo message="Restarting tomcat..." />
     <java classname="org.openbravo.service.system.RestartTomcat" spawn="true" fork="true" maxmemory="${build.maxmemory}">
       <arg line="${base.src}" />
@@ -813,7 +809,7 @@ export.database: exports database structure and data to xml files.
   <!--
 		Is called by the org.openbravo.service.system.RestartTomcat class.
 	-->
-  <target name="tomcat.restart.do" description="Restart the tomcat server process">
+  <target name="tomcat.restart.do">
     <echo message="Restarting Tomcat at ${env.CATALINA_HOME}" />
     <java classname="org.apache.catalina.startup.Bootstrap" fork="true">
       <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar:${env.CATALINA_HOME}/bin/tomcat-juli.jar" />
@@ -837,25 +833,6 @@ export.database: exports database structure and data to xml files.
       <jvmarg value="-Djava.io.tmpdir=${env.CATALINA_BASE}/temp" />
       <arg line="start" />
     </java>
-  </target>
-
-  <!-- 
-		This task is called from the Openbravo ui, it spawns a java call which again
-		calls the tomcat.reload.do task as a spawned task.
-	-->
-  <target name="tomcat.reload" description="Reload the Openbravo context">
-    <echo message="Reloading webapp..." />
-    <java classname="org.openbravo.service.system.ReloadContext" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" spawn="true" fork="true">
-      <arg line="${base.src}" />
-      <classpath refid="project.class.path" />
-    </java>
-  </target>
-
-  <target name="tomcat.reload.do">
-    <taskdef name="reload" classname="org.apache.catalina.ant.ReloadTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <reload url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context.name}" />
   </target>
 
   <target name="tomcat.list">
