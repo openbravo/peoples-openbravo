@@ -67,7 +67,7 @@
         shouldExecuteBenchmark: true
       });
 
-      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication', me.get('appName')) === 'Y' ? OB.UTIL.localStorage.getItem('terminalName', me.get('appName')) : OB.UTIL.getParameterByName("terminal"));
 
       OB.UTIL.HookManager.registerHook('OBMOBC_InitActions', function (args, c) {
         me.initActions(function () {
