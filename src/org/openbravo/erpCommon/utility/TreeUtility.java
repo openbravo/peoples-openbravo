@@ -21,13 +21,10 @@ package org.openbravo.erpCommon.utility;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -35,50 +32,10 @@ import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
 
 public class TreeUtility {
-  private static final Logger log4j = Logger.getLogger(TreeUtility.class);
-
-  private Map<String, Set<String>> childTrees = new HashMap<>();
-  private Map<String, Set<String>> naturalTrees = new HashMap<>();
-
-  /**
-   * Gets Natural tree for the given node
-   */
-  @Deprecated
-  public Set<String> getNaturalTree(String nodeId, String treeType) {
-    initialize(treeType);
-    Set<String> result;
-    if (naturalTrees.get(nodeId) == null) {
-      result = new HashSet<>();
-      result.add(nodeId);
-    } else {
-      result = new HashSet<>(naturalTrees.get(nodeId));
-    }
-    log4j.debug("Natural Tree(" + treeType + ") for the node" + nodeId + ":" + result.toString());
-    return result;
-  }
 
   /**
    * Gets the Child tree for the given node, including optionally given node
    */
-  @Deprecated
-  public Set<String> getChildTree(String nodeId, String treeType, boolean includeNode) {
-    initialize(treeType);
-    Set<String> childNode = this.getChildNode(nodeId, treeType);
-    Set<String> result = new HashSet<>();
-
-    if (includeNode)
-      result.add(nodeId);
-
-    while (!childNode.isEmpty()) {
-      for (String co : childNode) {
-        result.add(co);
-        childNode = this.getChildTree(co, treeType, false);
-        result.addAll(childNode);
-      }
-    }
-    return result;
-  }
-
   public Set<String> getChildTree(String nodeId, String treeType) {
     Set<String> result = new HashSet<>();
 
@@ -113,55 +70,13 @@ public class TreeUtility {
   /**
    * Gets Child node in the tree
    */
-  @Deprecated
   public Set<String> getChildNode(String nodeId, String treeType) {
-    initialize(treeType);
-    if (childTrees.get(nodeId) == null) {
-      return new HashSet<>();
-    } else {
-      return new HashSet<>(childTrees.get(nodeId));
+    Set<String> result = new HashSet<>();
+
+    if (!nodeId.isEmpty()) {
+      result.addAll(getChildrenOf(nodeId, treeType));
     }
-  }
-
-  @Deprecated
-  private void initialize(String treeType) {
-
-    final List<Tree> ts = getTreeIdsFromTreeType(treeType);
-
-    final List<TreeNode> treeNodes = new ArrayList<>();
-    for (final Tree t : ts) {
-      final List<TreeNode> tns = getTreeNodesOfTree(t);
-      treeNodes.addAll(tns);
-    }
-
-    final List<Node> nodes = new ArrayList<>(treeNodes.size());
-    for (final TreeNode tn : treeNodes) {
-      final Node on = new Node();
-      on.setTreeNode(tn);
-      nodes.add(on);
-    }
-
-    for (final Node on : nodes) {
-      on.resolve(nodes);
-    }
-
-    for (final Node on : nodes) {
-      naturalTrees.put(on.getTreeNode().getNode(), on.getNaturalTree());
-      if (on.getChildren() != null) {
-        Set<String> os = new HashSet<>();
-        for (Node o : on.getChildren())
-          os.add(o.getTreeNode().getNode());
-        childTrees.put(on.getTreeNode().getNode(), os);
-      }
-    }
-  }
-
-  private List<TreeNode> getTreeNodesOfTree(final Tree t) {
-    final String nodeQryStr = "select tn from " + TreeNode.class.getName()
-        + " tn where tn.tree.id='" + t.getId() + "'";
-    final Query<TreeNode> nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr,
-        TreeNode.class);
-    return nodeQry.list();
+    return result;
   }
 
   private List<Tree> getTreeIdsFromTreeType(String treeType) {
