@@ -18,6 +18,10 @@
  */
 package org.openbravo.client.application.logmanagement;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,11 +35,6 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Action to set the log level to one or more Loggers
  */
@@ -48,15 +47,19 @@ public class LogManagementActionHandler extends BaseProcessActionHandler {
     try {
       JSONObject request = new JSONObject(content);
       JSONObject params = request.getJSONObject("_params");
-      List<String> loggersToUpdate = getLoggerToUpdateList(params
-          .getJSONObject("loggers").getJSONArray("_selection"));
+      List<String> loggersToUpdate = getLoggerToUpdateList(params.getJSONObject("loggers")
+          .getJSONArray("_selection"));
       Level newLogLevel = Level.getLevel(params.getString("loglevel"));
 
       updateLoggerConfiguration(loggersToUpdate, newLogLevel);
 
-      return getResponseBuilder().showMsgInView(ResponseActionsBuilder.MessageType.SUCCESS,
-          OBMessageUtils.messageBD("Success"), OBMessageUtils.messageBD("OBUIAPP_LogLevelChanged" +
-          "")).build();
+      return getResponseBuilder()
+          .refreshGridParameter("loggers")
+          .showMsgInProcessView(ResponseActionsBuilder.MessageType.SUCCESS,
+              OBMessageUtils.messageBD("OBUIAPP_LogLevelChanged")) //
+          .retryExecution() //
+          .build();
+
     } catch (JSONException e) {
       log.error("Error in set log level process", e);
       return getResponseBuilder().showMsgInView(ResponseActionsBuilder.MessageType.ERROR,
@@ -67,11 +70,10 @@ public class LogManagementActionHandler extends BaseProcessActionHandler {
   private List<String> getLoggerToUpdateList(JSONArray array) {
     List<String> result = new ArrayList<>();
 
-    for (int i=0;i<array.length(); i++) {
+    for (int i = 0; i < array.length(); i++) {
       try {
         result.add(array.getJSONObject(i).getString("logger"));
-      }
-      catch(JSONException e) {
+      } catch (JSONException e) {
         log.error("Error getting logger name for index {}", i);
       }
     }
