@@ -775,7 +775,7 @@
       var loadModelsIncFunc;
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc,
-          minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
+          minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal,
           lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
           now = new Date().getTime(),
@@ -789,8 +789,12 @@
           lastIncRefresh = lastTotalRefresh;
         }
       }
-      intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
+      // Transform minIncRefresh and minTotalRefresh to miliseconds
       minIncRefresh = (minIncRefresh > 99999 ? 99999 : minIncRefresh) * 60 * 1000;
+      minTotalRefresh = minTotalRefresh * 60 * 1000;
+
+      // Calculate the incremental interval in miliseconds
+      intervalInc = lastIncRefresh ? (now - lastIncRefresh - minIncRefresh) : 0;
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
         OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
