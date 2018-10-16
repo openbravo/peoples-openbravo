@@ -1407,9 +1407,9 @@ enyo.kind({
       this.prepaymentLimit = prepaymentLimit;
       this.existingPayment = existingPayment;
       this.multiOrders.set('total', this.total);
-      this.model.get('multiOrders').set('obposPrepaymentamt', this.prepayment);
-      this.model.get('multiOrders').set('obposPrepaymentlimitamt', this.prepaymentLimit);
-      this.model.get('multiOrders').set('existingPayment', this.existingPayment);
+      this.multiOrders.set('obposPrepaymentamt', this.prepayment);
+      this.multiOrders.set('obposPrepaymentlimitamt', this.prepaymentLimit);
+      this.multiOrders.set('existingPayment', this.existingPayment);
       this.$.totalMultiReceiptLine.renderTotal(this.total);
       this.listMultiOrders.reset(this.orderList.models);
       if (model.get('leftColumnViewManager').isMultiOrder()) {
