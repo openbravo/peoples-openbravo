@@ -531,7 +531,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var iter = orderList.at(orderListIndex),
             auxAmountToPay = (iter.get('obposPrepaymentamt') && iter.get('obposPrepaymentamt') !== 0 && iter.get('obposPrepaymentamt') !== iter.get('gross') && considerPrepaymentAmount ? iter.get('obposPrepaymentamt') : iter.get('gross')),
             amountToPay = !_.isUndefined(iter.get('amountToLayaway')) && !_.isNull(iter.get('amountToLayaway')) ? iter.get('amountToLayaway') : OB.DEC.sub(auxAmountToPay, iter.get('payment'));
-        if (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && iter.get('gross') > iter.get('payment')) || (iter.get('amountToLayaway') > 0)) { //TODO this while LOOP
+        if (((_.isUndefined(iter.get('amountToLayaway')) || iter.get('amountToLayaway') > 0) && auxAmountToPay > iter.get('payment')) || (iter.get('amountToLayaway') > 0) || (!considerPrepaymentAmount && orderListIndex === orderList.length - 1)) {
           var payment = paymentList.at(paymentListIndex),
               paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
           //FIXME:Change is always given back in store currency
@@ -567,6 +567,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           } else {
             var bigDecAmountAux, amtAux;
             if (orderListIndex === orderList.length - 1 && !considerPrepaymentAmount && !paymentMethod.paymentMethod.iscash) {
+              paymentLine.set('forceAddPayment', true);
               bigDecAmountAux = new BigDecimal(String(payment.get('origAmount')));
               amtAux = OB.DEC.toNumber(bigDecAmountAux);
               paymentList.at(paymentListIndex).set('origAmount', OB.DEC.sub(paymentList.at(paymentListIndex).get('origAmount'), payment.get('origAmount')));

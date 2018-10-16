@@ -4740,7 +4740,7 @@
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
         return;
       }
-      if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0) {
+      if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0 && !payment.get('forceAddPayment')) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
         return;
       }
