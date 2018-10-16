@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -49,15 +50,17 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
       String strKey = vars.getRequiredGlobalVariable("inpcBudgetId",
           "ReportBudgetGenerateExcel|inpcBudgetId");
       printPageDataExportExcel(response, vars, strKey);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPageDataExportExcel(HttpServletResponse response, VariablesSecureApp vars,
       String strBudgetId) throws IOException, ServletException {
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: EXCEL");
+    }
 
     vars.removeSessionValue("ReportBudgetGenerateExcel|inpTabId");
 
@@ -78,16 +81,16 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
         OBError myMessage = null;
         new UpdateActuals().execute(pb);
         myMessage = (OBError) pb.getResult();
-        if (myMessage != null && "Error".equals(myMessage.getType())) {
+        if (myMessage != null && StringUtils.equals("Error", myMessage.getType())) {
           log4j.error(myMessage.getMessage());
         }
       } catch (Exception e) {
-        e.printStackTrace();
+        log4j.error("Error in printPageDataExportExcel of ReportBudgetExportExcel", e);
       }
     }
     data = ReportBudgetGenerateExcelData.selectLines(this, vars.getLanguage(), strBudgetId);
 
-    if (data.length != 0 && data[0].exportactual.equals("Y")) {
+    if (data.length != 0 && StringUtils.equals(data[0].exportactual, "Y")) {
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS").createXmlDocument();
     } else {
@@ -101,6 +104,7 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
 
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
+    out.close();
 
   }
 

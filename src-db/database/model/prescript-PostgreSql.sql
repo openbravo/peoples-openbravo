@@ -1289,7 +1289,7 @@ $BODY$
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
+* All portions are Copyright (C) 2009-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -1338,7 +1338,6 @@ begin
 	   WHERE pg_proc.prorettype <> 'pg_catalog.cstring'::pg_catalog.regtype
 	     AND (pg_proc.proargtypes[0] IS NULL
 	      OR pg_proc.proargtypes[0] <> 'pg_catalog.cstring'::pg_catalog.regtype)
-	     AND NOT pg_proc.proisagg
 	     AND pg_catalog.pg_function_is_visible(pg_proc.oid)
 	     AND pg_proc.proname = i.realname
              and pg_proc.pronargs = i.pronargs

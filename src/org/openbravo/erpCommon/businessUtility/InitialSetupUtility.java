@@ -18,7 +18,11 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +36,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -84,6 +90,8 @@ import org.openbravo.model.financialmgmt.gl.GLCategory;
 import org.openbravo.service.datasource.DataSource;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
+
+import com.google.common.base.Charsets;
 
 /**
  * @author David Alsasua
@@ -1686,18 +1694,7 @@ public class InitialSetupUtility {
 
     OBContext.setAdminMode();
     try {
-      String xmlPath = "/WEB-INF/referencedata/standard/" + dataset.getModule().getJavaPackage()
-          + "/" + Utility.wikifiedName(dataset.getName()) + ".xml";
-
-      String strXml = null;
-      try (InputStream r = RequestContext.getServletContext().getResourceAsStream(xmlPath)) {
-        if (r == null) {
-          log4j.error("Could not find reference data resource " + xmlPath + " at "
-              + RequestContext.getServletContext().getRealPath(xmlPath));
-          return myResult;
-        }
-        strXml = IOUtils.toString(r);
-      }
+      String strXml = getDatasetContent(dataset);
 
       DataImportService myData = DataImportService.getInstance();
 
@@ -1720,6 +1717,32 @@ public class InitialSetupUtility {
     }
 
     return myResult;
+  }
+
+  public static String getDatasetContent(DataSet dataset) throws IOException {
+    String fileName = Utility.wikifiedName(dataset.getName()) + ".xml";
+    if (SessionFactoryController.isRunningInWebContainer()) {
+      String xmlPath = "/WEB-INF/referencedata/standard/" + dataset.getModule().getJavaPackage()
+          + "/" + fileName;
+
+      try (InputStream r = RequestContext.getServletContext().getResourceAsStream(xmlPath)) {
+        if (r == null) {
+          log4j.error("Could not find reference data resource " + xmlPath + " at "
+              + RequestContext.getServletContext().getRealPath(xmlPath));
+          throw new FileNotFoundException(fileName);
+        }
+        return IOUtils.toString(r);
+      }
+    } else {
+      String xmlPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          .getProperty("source.path");
+      boolean isCore = dataset.getModule().getId().equals("0");
+      if (!isCore) {
+        xmlPath += "/modules/" + dataset.getModule().getJavaPackage();
+      }
+      xmlPath += "/referencedata/standard";
+      return new String(Files.readAllBytes(Paths.get(xmlPath, fileName)), Charsets.UTF_8);
+    }
   }
 
   private static List<ADClientModule> getClientModuleList(Client client, Module module) {

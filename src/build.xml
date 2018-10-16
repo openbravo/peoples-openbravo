@@ -211,6 +211,7 @@ build.war: build a war file in the lib directory.
   <target name="generate.entities.quick" depends="compile.src.gen">
     <java classname="org.openbravo.base.gen.GenerateEntitiesTask" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
       <arg line="'${base.src}' '${friendlyWarnings}'" />
+      <jvmarg line="${jvm.arg.line}" />
       <classpath refid="project.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />

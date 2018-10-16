@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1362,7 +1362,7 @@ isc.OBStandardView.addProperties({
   shouldOpenDefaultEditMode: function () {
     // can open default edit mode if defaultEditMode is set
     // and this is the root view or a child view with a selected parent.
-    var oneOrMoreSelected = this.viewGrid.data && this.viewGrid.data.lengthIsKnown && this.viewGrid.data.lengthIsKnown() && this.viewGrid.data.getLength() >= 1;
+    var oneOrMoreSelected = this.viewGrid && this.viewGrid.data && this.viewGrid.data.lengthIsKnown && this.viewGrid.data.lengthIsKnown() && this.viewGrid.data.getLength() >= 1;
     return this.allowDefaultEditMode && oneOrMoreSelected && this.defaultEditMode && (this.isRootView || this.parentView.viewGrid.getSelectedRecords().length === 1);
   },
 
@@ -1832,7 +1832,7 @@ isc.OBStandardView.addProperties({
   },
 
   hasSelectionStateChanged: function () {
-    return ((this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount) || (this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id)) || (this.lastRecordSelected && !this.viewGrid.getSelectedRecord());
+    return this.viewGrid && (((this.viewGrid.getSelectedRecords() && this.viewGrid.getSelectedRecords().length !== this.lastRecordSelectedCount) || (this.viewGrid.getSelectedRecord() && this.viewGrid.getSelectedRecord().id !== this.lastRecordSelected.id)) || (this.lastRecordSelected && !this.viewGrid.getSelectedRecord()));
   },
 
   updateLastSelectedState: function () {

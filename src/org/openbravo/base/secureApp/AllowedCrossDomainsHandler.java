@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,7 +63,7 @@ public class AllowedCrossDomainsHandler {
   private boolean fromAllowedOrigin(HttpServletRequest request) {
     final String origin = request.getHeader("Origin");
 
-    if (origin == null) {
+    if (isNullOrEmpty(origin)) {
       return false;
     }
 
@@ -76,15 +76,16 @@ public class AllowedCrossDomainsHandler {
   }
 
   /**
-   * Checks if an origin is set on the header, if not then false is returned. If there are no checkers installed then also false
-   * is returned. If there are checkers installed then the origin is checked and the result is returned.
+   * Checks if an origin is set on the header, if not then false is returned. If there are no
+   * checkers installed then also false is returned. If there are checkers installed then the origin
+   * is checked and the result is returned.
    * 
    * Note: will return true if there is indeed an invalid confirmed origin.
    */
   public boolean isCheckedInvalidOrigin(HttpServletRequest request) {
     final String origin = request.getHeader("Origin");
 
-    if (origin == null) {
+    if (isNullOrEmpty(origin)) {
       return false;
     }
 
@@ -124,40 +125,41 @@ public class AllowedCrossDomainsHandler {
    */
   public void setCORSHeaders(HttpServletRequest request, HttpServletResponse response) {
 
-    // don't do anything if no checkers anyway
-    if (getCheckers().isEmpty()) {
+    final String origin = request.getHeader("Origin");
+
+    // don't do anything if no checkers or no origin
+    if (getCheckers().isEmpty() || isNullOrEmpty(origin)) {
       return;
     }
 
     try {
-      final String origin = request.getHeader("Origin");
-
-      if (origin != null && !origin.equals("")) {
-
-        if (request.getRequestURL().indexOf(origin) == 0) {
-          // if the request url starts with the origin then no need to set
-          // headers either
-          return;
-        }
-
-        if (!fromAllowedOrigin(request)) {
-          return;
-        }
-
-        response.setHeader("Access-Control-Allow-Origin", origin);
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers",
-            "Content-Type, Origin, Accept, X-Requested-With, Access-Control-Allow-Credentials");
-
-        response.setHeader("Access-Control-Max-Age", "10000");
+      if (request.getRequestURL().indexOf(origin) == 0) {
+        // if the request url starts with the origin then no need to set
+        // headers either
+        return;
       }
+
+      if (!fromAllowedOrigin(request)) {
+        return;
+      }
+
+      response.setHeader("Access-Control-Allow-Origin", origin);
+      response.setHeader("Access-Control-Allow-Credentials", "true");
+      response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+      response.setHeader("Access-Control-Allow-Headers",
+          "Content-Type, Origin, Accept, X-Requested-With, Access-Control-Allow-Credentials");
+
+      response.setHeader("Access-Control-Max-Age", "10000");
     } catch (Exception logIt) {
       // on purpose not stopping on this to retain some robustness
       log.error(
           "Error when setting cors headers " + logIt.getMessage() + " " + request.getRequestURL()
               + " " + request.getQueryString(), logIt);
     }
+  }
+
+  private boolean isNullOrEmpty(final String origin) {
+    return origin == null || origin.equals("") || origin.equals("null");
   }
 
   /**

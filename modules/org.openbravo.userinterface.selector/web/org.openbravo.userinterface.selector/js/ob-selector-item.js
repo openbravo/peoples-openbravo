@@ -180,7 +180,9 @@ isc.OBSelectorPopupWindow.addProperties({
             rowNum = this.getRecordIndex(record);
             this.selectSingleRecord(record);
             // give grid time to draw
-            this.fireOnPause('scrollRecordIntoView', this.scrollRecordIntoView, [rowNum, true], this);
+            this.fireOnPause('scrollRecordIntoView_' + rowNum, function () {
+              this.scrollRecordIntoView(rowNum, true);
+            });
             delete this.targetRecordId;
           } else if (this.data.lengthIsKnown() && this.data.getLength() === 1) {
             // only one record, select that one straight away

@@ -355,9 +355,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       invalidateSession(request);
       return;
     } catch (final Exception e) {
-      // Re-login
-      log4j.error("HTTPSecureAppServlet.service() - exception caught: ", e);
-      logout(request, response);
+      // There was an unknown problem when verifying that session is valid, or that access is
+      // correct. Session will not be invalidated, Internal Server Error will be returned instead
+      log4j.error("Exception caught when verifying session", e);
+      response.setStatus(500);
       return;
     } finally {
       final boolean sessionCreated = !sessionExists && null != request.getSession(false);
