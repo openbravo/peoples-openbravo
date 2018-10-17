@@ -1259,7 +1259,8 @@
         options = args.options || {};
         options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
-        if (!args.line.get('isEditable')) {
+        var allowModifyVerifyReturnLinePrice = OB.MobileApp.model.hasPermission('OBPOS_ModifyPriceVerifiedReturns', true) && args.line.get('originalDocumentNo') && !args.context.get('isPaid');
+        if (!args.line.get('isEditable') && !(allowModifyVerifyReturnLinePrice && args.price < args.line.get('price'))) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
         } else if (args.line.get('replacedorderline') && args.line.get('qty') < 0) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));

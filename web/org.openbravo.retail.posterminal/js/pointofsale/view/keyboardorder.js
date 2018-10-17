@@ -261,27 +261,44 @@ enyo.kind({
 
     var changePrice = function (keyboardComponent, keyboard, price) {
         var cancelChange = false;
-        if (keyboardComponent.selectedModels.length > 1) {
-          keyboard.receipt.set('undo', null);
-          keyboard.receipt.set('multipleUndo', true);
-          _.each(keyboardComponent.selectedModels, function (model) {
-            if (model.get('replacedorderline') && model.get('qty') < 0) {
-              cancelChange = true;
+
+        var setPrice = function () {
+            if (keyboardComponent.selectedModels.length > 1) {
+              keyboard.receipt.set('undo', null);
+              keyboard.receipt.set('multipleUndo', true);
+              _.each(keyboardComponent.selectedModels, function (model) {
+                if (model.get('replacedorderline') && model.get('qty') < 0) {
+                  cancelChange = true;
+                }
+              });
+              if (cancelChange) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
+                return;
+              }
+              _.each(keyboardComponent.selectedModels, function (model) {
+                keyboard.receipt.setPrice(model, price);
+              });
+              keyboard.receipt.set('multipleUndo', null);
+            } else {
+              keyboard.receipt.setPrice(keyboard.line, price);
+            }
+            keyboard.receipt.calculateReceipt();
+            keyboard.receipt.trigger('scan');
+            };
+
+        if (OB.MobileApp.model.get('priceModificationReasons').length > 0) {
+          me.doShowPopup({
+            popup: 'modalPriceModification',
+            args: {
+              callback: setPrice,
+              selectedModels: me.selectedModels,
+              receipt: keyboard.receipt,
+              line: keyboard.line
             }
           });
-          if (cancelChange) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
-            return;
-          }
-          _.each(keyboardComponent.selectedModels, function (model) {
-            keyboard.receipt.setPrice(model, price);
-          });
-          keyboard.receipt.set('multipleUndo', null);
         } else {
-          keyboard.receipt.setPrice(keyboard.line, price);
+          setPrice();
         }
-        keyboard.receipt.calculateReceipt();
-        keyboard.receipt.trigger('scan');
         };
 
     var changeQuantity = function (keyboardComponent, keyboard, value) {
@@ -357,6 +374,18 @@ enyo.kind({
           OB.UTIL.Approval.requestApproval(
           me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
             if (approved) {
+              var approvals = keyboard.receipt.get('approvals') || [],
+                  approval = {
+                  approvalType: {
+                    approval: 'OBPOS_approval.setPrice',
+                    message: 'OBPOS_approval.setPriceMessage',
+                    params: [keyboard.line.get('product').get('_identifier'), OB.I18N.formatCurrency(keyboard.line.getGross()), OB.I18N.formatCurrency(price)]
+                  },
+                  userContact: supervisor.get('id'),
+                  created: (new Date()).getTime()
+                  };
+              approvals.push(approval);
+              keyboard.receipt.set('approvals', approvals);
               changePrice(me, keyboard, price);
             }
           });

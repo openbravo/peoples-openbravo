@@ -174,6 +174,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
         "components/modalrejectquotation",
+        "components/modalPriceModification",
         // Detection of change in context
         "components/modalcontextchanged",
         "components/modalproductcharacteristic",

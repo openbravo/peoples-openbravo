@@ -186,6 +186,9 @@ enyo.kind({
       kind: 'OB.UI.ModalRejectQuotation',
       name: 'modalRejectQuotation'
     }, {
+      kind: 'OB.UI.ModalPriceModification',
+      name: 'modalPriceModification'
+    }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl',
       name: 'receiptPropertiesDialog'
     }, {

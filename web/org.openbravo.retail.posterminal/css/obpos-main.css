@@ -818,3 +818,11 @@ button.payment-changebutton {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
 }
+
+.modal-body-label {
+  text-align: right;
+  padding-right:10px;
+  width: 40%;
+  height: 40px;
+  float: left;
+}

@@ -1182,51 +1182,30 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
    * in backend for audit purposes.
    */
   approvedRequest: function (approved, supervisor, approvalType, callback) {
-    var order = this.get('order'),
-        newApprovals = [],
-        approvals, approval, i, date, callbackFunc, hasPermission = false;
+    var newApprovals, approvals, approval, i, date, callbackFunc, hasPermission = false,
+        saveApproval, executeHook, request, me = this;
 
-    callbackFunc = function () {
-      if (enyo.isFunction(callback)) {
-        callback(approved, supervisor, approvalType);
-      }
-    };
+    saveApproval = function (order, silent) {
+      date = new Date().getTime();
+      newApprovals = [];
 
-    if (_.isArray(approvalType)) {
-      hasPermission = _.every(approvalType, function (a) {
-        return OB.MobileApp.model.hasPermission(a, true);
-      });
-    } else if (!OB.UTIL.isNullOrUndefined(approvalType)) {
-      hasPermission = OB.MobileApp.model.hasPermission(approvalType, true);
-    } else {
-      callbackFunc();
-      return;
-    }
-    if (hasPermission) {
-      callbackFunc();
-      return;
-    }
-
-    approvals = order.get('approvals') || [];
-    if (!Array.isArray(approvalType)) {
-      approvalType = [approvalType];
-    }
-
-    _.each(approvals, function (appr) {
-      var results;
-      results = _.find(approvalType, function (apprType) {
-        return apprType === appr.approvalType;
-      });
-
-      if (_.isUndefined(results)) {
-        newApprovals.push(appr);
+      approvals = order.get('approvals') || [];
+      if (!Array.isArray(approvalType)) {
+        approvalType = [approvalType];
       }
 
-    });
+      _.each(approvals, function (appr) {
+        var results;
+        results = _.find(approvalType, function (apprType) {
+          return apprType === appr.approvalType;
+        });
 
-    if (approved) {
-      date = new Date();
-      date = date.getTime();
+        if (_.isUndefined(results)) {
+          newApprovals.push(appr);
+        }
+
+      });
+
       for (i = 0; i < approvalType.length; i++) {
         approval = {
           approvalType: approvalType[i],
@@ -1235,13 +1214,74 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         };
         newApprovals.push(approval);
       }
-      order.set('approvals', newApprovals);
+      order.set('approvals', newApprovals, {
+        silent: silent
+      });
+    };
+
+    callbackFunc = function () {
+      if (enyo.isFunction(callback)) {
+        callback(approved, supervisor, approvalType);
+      }
+    };
+
+    executeHook = function (approvalType, finalCallback) {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PostRequestApproval_' + approvalType, {
+        approved: approved,
+        supervisor: supervisor,
+        approvalType: approvalType,
+        callbackApproval: callback,
+        context: me
+      }, function (args) {
+        finalCallback(args);
+      });
+    };
+
+    request = function (args) {
+      if (_.isArray(approvalType)) {
+        hasPermission = _.every(approvalType, function (a) {
+          return OB.MobileApp.model.hasPermission(a, true);
+        });
+      } else if (!OB.UTIL.isNullOrUndefined(approvalType)) {
+        hasPermission = OB.MobileApp.model.hasPermission(approvalType, true);
+      } else {
+        callbackFunc();
+        return;
+      }
+      if (hasPermission) {
+        callbackFunc();
+        return;
+      }
+
+      if (approved) {
+        if (me.get('leftColumnViewManager').isOrder()) {
+          saveApproval(me.get('order'));
+        } else {
+          me.get('multiOrders').get('multiOrdersList').forEach(function (order) {
+            saveApproval(order, true);
+          });
+        }
+      }
+
+      me.trigger('approvalChecked', {
+        approved: approved
+      });
+      callbackFunc();
+    };
+
+    if (_.isArray(approvalType)) {
+      var afterExecuteHook = _.after(approvalType.length, function (args) {
+        request(args);
+      });
+      _.each(approvalType, function (type) {
+        executeHook(type.approval, function (args) {
+          afterExecuteHook(args);
+        });
+      });
+    } else {
+      executeHook(approvalType, function (args) {
+        request(args);
+      });
     }
-
-
-    this.trigger('approvalChecked', {
-      approved: approved
-    });
-    callbackFunc();
   }
 });
