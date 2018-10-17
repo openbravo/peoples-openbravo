@@ -4054,7 +4054,7 @@
         me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
         me.set('hasbeenpaid', 'N');
-        me.unset('isPaid');
+        me.set('isPaid', false);
         me.set('isEditable', true);
 
         deliveredLine = _.find(me.get('lines').models, function (line) {
