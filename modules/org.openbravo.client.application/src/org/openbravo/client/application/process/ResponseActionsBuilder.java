@@ -274,6 +274,32 @@ public class ResponseActionsBuilder {
   }
 
   /**
+   * Allows to re-execute the process again, by enabling the process UI. This is useful to do
+   * backend validations as this allows the user to fix data and resubmit again. In addition, a
+   * message will be displayed with the severity, title and text specified with the parameters of
+   * this method.
+   *
+   * @param msgType
+   *          The message type.
+   * @param msgTitle
+   *          The title of the message.
+   * @param msgText
+   *          The text of the message.
+   * @return a ResponseActionsBuilder configured to retry the process execution.
+   */
+  public ResponseActionsBuilder retryExecution(MessageType msgType, String msgTitle, String msgText) {
+    try {
+      retryExecution = true;
+      retryExecutionMsg = new JSONObject();
+      retryExecutionMsg.put("severity", msgType.getType());
+      retryExecutionMsg.put("title", msgTitle);
+      retryExecutionMsg.put("text", msgText);
+    } catch (JSONException ignore) {
+    }
+    return this;
+  }
+
+  /**
    * Allows to configure the response to show the result of a process directly in the process window
    * itself.
    * 
