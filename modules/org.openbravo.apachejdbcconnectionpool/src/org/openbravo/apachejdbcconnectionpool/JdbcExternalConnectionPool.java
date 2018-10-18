@@ -19,6 +19,7 @@
 package org.openbravo.apachejdbcconnectionpool;
 
 import java.sql.Connection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import javax.naming.InitialContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.tomcat.jdbc.pool.DataSource;
+import org.apache.tomcat.jdbc.pool.PoolExhaustedException;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -47,11 +49,13 @@ import org.slf4j.LoggerFactory;
  * connection from a pool, close the different pools and other actions.
  */
 public class JdbcExternalConnectionPool extends ExternalConnectionPool {
-
   final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
 
   private Map<String, DataSource> availableDataSources = null;
   private DataSource defaultDataSource = null;
+
+  private static final List<Class<? extends Exception>> EXHAUSTED_EXCEPTION = Arrays
+      .asList(PoolExhaustedException.class);
 
   /**
    * This method loads all the interceptors of Apache JDBC Connection Pool injected with weld.
@@ -349,4 +353,10 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     }
     super.closePool();
   }
+
+  @Override
+  protected List<Class<? extends Exception>> getExhaustedExceptions() {
+    return EXHAUSTED_EXCEPTION;
+  }
+
 }
