@@ -49,6 +49,10 @@ OB.UTIL.getImageURL = function (id) {
   return imageUrl;
 };
 
+OB.UTIL.getMinimizedImageURL = function (id) {
+  return this.getImageURL(id) + '_min';
+};
+
 OB.UTIL.getNumberOfSequence = function (documentNo, isQuotation) {
   if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')) && !OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')).docNoPrefix) {
     var posDocumentNoPrefix = OB.MobileApp.model.get('terminal').docNoPrefix;
