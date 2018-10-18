@@ -69,8 +69,10 @@
     });
 
     var restoreReceiptOnError = function (eventParams, receipt) {
-        var frozenReceipt = new OB.Model.Order();
+        var frozenReceipt = new OB.Model.Order(),
+            diffReceipt = new OB.Model.Order();
         OB.UTIL.clone(receipt, frozenReceipt);
+        OB.UTIL.clone(receipt, diffReceipt);
         if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
           // rollback other changes
           OB.Dal.get(OB.Model.Order, receipt.get('id'), function (loadedReceipt) {
@@ -82,6 +84,7 @@
               edit: false
             });
             receipt.set('hasbeenpaid', 'N');
+            diffReceipt.set('hasbeenpaid', 'N');
             frozenReceipt.set('hasbeenpaid', 'N');
             OB.Dal.save(receipt, function () {
               OB.UTIL.calculateCurrentCash();
@@ -89,6 +92,7 @@
               if (eventParams && eventParams.callback) {
                 eventParams.callback({
                   frozenReceipt: frozenReceipt,
+                  diffReceipt: diffReceipt,
                   isCancelled: true
                 });
                 receipt.setIsCalculateReceiptLockState(false);
@@ -100,6 +104,7 @@
         } else if (eventParams && eventParams.callback) {
           eventParams.callback({
             frozenReceipt: frozenReceipt,
+            diffReceipt: diffReceipt,
             isCancelled: false
           });
         }
@@ -124,7 +129,8 @@
         var orderDate = new Date();
         var normalizedCreationDate = OB.I18N.normalizeDate(context.receipt.get('creationDate'));
         var creationDate;
-        var frozenReceipt = new OB.Model.Order();
+        var frozenReceipt = new OB.Model.Order(),
+            diffReceipt = new OB.Model.Order();
         if (normalizedCreationDate === null) {
           creationDate = new Date();
           normalizedCreationDate = OB.I18N.normalizeDate(creationDate);
@@ -147,6 +153,7 @@
             if (eventParams && eventParams.callback) {
               eventParams.callback({
                 frozenReceipt: receipt,
+                diffReceipt: diffReceipt,
                 isCancelled: true,
                 skipCallback: args.skipCallback
               });
@@ -155,70 +162,70 @@
             args.context.receipt.setIsCalculateGrossLockState(false);
             return true;
           }
-
+          OB.UTIL.clone(receipt, frozenReceipt);
           receipt.trigger('checkOpenDrawer');
 
           if (OB.UTIL.RfidController.isRfidConfigured()) {
-            OB.UTIL.RfidController.processRemainingCodes(receipt);
+            OB.UTIL.RfidController.processRemainingCodes(frozenReceipt);
             OB.UTIL.RfidController.updateEpcBuffers();
           }
 
           OB.trace('Execution of pre order save hook OK.');
-          delete receipt.attributes.json;
-          receipt.set('creationDate', normalizedCreationDate);
-          receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
-          receipt.set('created', creationDate.getTime());
-          receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
-          receipt.set('orderDate', orderDate);
-          receipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
-          receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
-          receipt.set('undo', null);
-          receipt.set('multipleUndo', null);
+          delete frozenReceipt.attributes.json;
+          frozenReceipt.set('creationDate', normalizedCreationDate);
+          frozenReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
+          frozenReceipt.set('created', creationDate.getTime());
+          frozenReceipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+          frozenReceipt.set('orderDate', orderDate);
+          frozenReceipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
+          frozenReceipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
+          frozenReceipt.set('undo', null);
+          frozenReceipt.set('multipleUndo', null);
 
-          receipt.set('paymentMethodKind', null);
-          if (receipt.get('payments').length === 1 && receipt.get('orderType') === 0 && !receipt.get('isLayaway') && !receipt.get('isQuotation') && !receipt.get('paidOnCredit')) {
-            var payment = receipt.get('payments').models[0];
-            receipt.set('paymentMethodKind', payment.get('kind'));
+          frozenReceipt.set('paymentMethodKind', null);
+          if (frozenReceipt.get('payments').length === 1 && frozenReceipt.get('orderType') === 0 && !frozenReceipt.get('isLayaway') && !frozenReceipt.get('isQuotation') && !frozenReceipt.get('paidOnCredit')) {
+            var payment = frozenReceipt.get('payments').models[0];
+            frozenReceipt.set('paymentMethodKind', payment.get('kind'));
           }
 
           // multiterminal support
           // be sure that the active terminal is the one set as the order proprietary
-          receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-          receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
+          frozenReceipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+          frozenReceipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
-          receipt.get("approvals").forEach(function (approval) {
+          frozenReceipt.get("approvals").forEach(function (approval) {
             if (typeof (approval.approvalType) === 'object') {
               approval.approvalMessage = OB.I18N.getLabel(approval.approvalType.message, approval.approvalType.params);
               approval.approvalType = approval.approvalType.approval;
             }
           });
 
-          receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+          frozenReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
           // convert returns
-          if (receipt.getGross() < 0 || !_.isUndefined(receipt.get('paidInNegativeStatusAmt'))) {
+          if (frozenReceipt.getGross() < 0 || !_.isUndefined(frozenReceipt.get('paidInNegativeStatusAmt'))) {
             var paymentTotalAmt = OB.DEC.Zero;
-            _.forEach(receipt.get('payments').models, function (item) {
-              if (!item.get('isPrePayment') && !item.get('reversedPaymentId') && !receipt.get('isPaid')) {
+            _.forEach(frozenReceipt.get('payments').models, function (item) {
+              if (!item.get('isPrePayment') && !item.get('reversedPaymentId') && !frozenReceipt.get('isPaid')) {
                 item.set('amount', -item.get('amount'));
                 item.set('origAmount', -item.get('origAmount'));
                 item.set('paid', -item.get('paid'));
               }
               paymentTotalAmt = OB.DEC.add(paymentTotalAmt, item.get('origAmount'));
             });
-            if (!_.isUndefined(receipt.get('paidInNegativeStatusAmt'))) {
-              receipt.set('payment', paymentTotalAmt);
+            if (!_.isUndefined(frozenReceipt.get('paidInNegativeStatusAmt'))) {
+              frozenReceipt.set('payment', paymentTotalAmt);
             }
           }
 
           var successCallback = function () {
 
               // success transaction...
-              OB.info("[receipt.closed] Transaction success. ReceiptId: " + receipt.get('id'));
+              OB.info("[receipt.closed] Transaction success. ReceiptId: " + frozenReceipt.get('id'));
 
-              function serverMessageForQuotation(receipt) {
-                var isLayaway = (receipt.get('orderType') === 2 || receipt.get('isLayaway'));
-                var currentDocNo = receipt.get('documentNo');
-                if (receipt && receipt.get('isQuotation')) {
+              function serverMessageForQuotation(frozenReceipt) {
+                var isLayaway = (frozenReceipt.get('orderType') === 2 || frozenReceipt.get('isLayaway'));
+                var currentDocNo = frozenReceipt.get('documentNo');
+                if (frozenReceipt && frozenReceipt.get('isQuotation')) {
                   OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationSaved', [currentDocNo]));
                 } else {
                   if (isLayaway) {
@@ -235,12 +242,13 @@
                   restoreReceiptOnError(eventParams, receipt);
                   };
 
-
+              receipt.clearWith(frozenReceipt);
+              OB.UTIL.clone(receipt, diffReceipt);
               // create a clone of the receipt to be used when executing the final callback
               if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
                 // create a clone of the receipt to be used within the hook
                 var receiptForPostSyncReceipt = new OB.Model.Order();
-                OB.UTIL.clone(receipt, receiptForPostSyncReceipt);
+                OB.UTIL.clone(frozenReceipt, receiptForPostSyncReceipt);
                 //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
                 //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
                 OB.trace('Execution Sync process.');
@@ -251,27 +259,24 @@
                         receipt: receiptForPostSyncReceipt,
                         syncSuccess: true
                       }, function () {
-                        serverMessageForQuotation(receipt);
+                        serverMessageForQuotation(frozenReceipt);
                         if (eventParams && eventParams.callback) {
                           eventParams.callback({
                             frozenReceipt: frozenReceipt,
+                            diffReceipt: diffReceipt,
                             isCancelled: false
                           });
                         }
                       });
                       };
-
                   // in synchronized mode do the doc sequence update in the success
                   if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.UTIL.calculateCurrentCash();
                     OB.Dal.transaction(function (tx) {
-                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
-                        OB.trace('Saving receipt.');
-                        OB.Dal.saveInTransaction(tx, receipt, function () {
-                          // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                          receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                          successStep();
-                        });
+                      OB.UTIL.calculateCurrentCash(null, tx);
+                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
+                        // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                        receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+                        successStep();
                       }, tx);
                     });
                   } else {
@@ -290,6 +295,7 @@
                 if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && eventParams && eventParams.callback) {
                   eventParams.callback({
                     frozenReceipt: frozenReceipt,
+                    diffReceipt: diffReceipt,
                     isCancelled: false
                   });
                 }
@@ -298,18 +304,16 @@
                   if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                     OB.UTIL.calculateCurrentCash();
                     OB.Dal.transaction(function (tx) {
-                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
-                        OB.trace('Saving receipt.');
-                        OB.Dal.saveInTransaction(tx, receipt, function () {
-                          // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                          receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
-                          if (eventParams && eventParams.callback) {
-                            eventParams.callback({
-                              frozenReceipt: frozenReceipt,
-                              isCancelled: false
-                            });
-                          }
-                        });
+                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
+                        // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                        receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
+                        if (eventParams && eventParams.callback) {
+                          eventParams.callback({
+                            frozenReceipt: frozenReceipt,
+                            diffReceipt: diffReceipt,
+                            isCancelled: false
+                          });
+                        }
                       }, tx);
                     });
                   }
@@ -326,23 +330,23 @@
             OB.UTIL.cashUpReport(receipt, function (cashUp) {
               receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
               OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-                receipt: receipt,
+                receipt: frozenReceipt,
                 model: model,
                 transaction: tx
               }, function (args) {
-                receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
+                frozenReceipt.set('json', JSON.stringify(frozenReceipt.serializeToJSON()));
                 OB.UTIL.setScanningFocus(true);
-                receipt.set('hasbeenpaid', 'Y');
+                frozenReceipt.set('hasbeenpaid', 'Y');
                 // Important: at this point, the receipt is considered final. Nothing must alter it
-                OB.UTIL.clone(receipt, frozenReceipt);
+                OB.UTIL.clone(receipt, diffReceipt);
                 // when all the properties of the receipt have been set, keep a copy
                 if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                  OB.Dal.saveInTransaction(args.transaction, receipt, successCallback);
+                  OB.Dal.saveInTransaction(args.transaction, frozenReceipt, successCallback);
                 } else {
                   OB.UTIL.calculateCurrentCash(null, args.transaction);
-                  OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
-                    OB.trace('Saving receipt.');
-                    OB.Dal.saveInTransaction(args.transaction, receipt, function () {
+                  OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
+                    OB.trace('Saving frozenReceipt.');
+                    OB.Dal.saveInTransaction(args.transaction, frozenReceipt, function () {
                       successCallback();
                       // the trigger is fired on the receipt object, as there is only 1 that is being updated
                       receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.   
