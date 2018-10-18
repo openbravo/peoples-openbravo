@@ -1772,6 +1772,12 @@
             OB.UTIL.RfidController.removeEpcLine(line);
           }
 
+          if (line.has('obposQtytodeliver')) {
+            line.unset('obposQtytodeliver', {
+              silent: true
+            });
+          }
+
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
             if (!line.get('hasTaxError')) {
               line.set('obposQtyDeleted', line.get('qty'));
