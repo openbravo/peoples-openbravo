@@ -84,6 +84,9 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
         "language_string"));
     list.add(new HQLProperty("pos.organization.obposReturnAnonymousbp", "returns_anonymouscustomer"));
+    list.add(new HQLProperty(
+        "CASE WHEN pos.organization.obretcoCustomerseq.id is not null THEN true ELSE false END",
+        "hasCustomerSequence"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);
