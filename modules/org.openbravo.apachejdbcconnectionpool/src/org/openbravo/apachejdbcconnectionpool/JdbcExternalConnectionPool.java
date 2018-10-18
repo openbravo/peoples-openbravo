@@ -19,6 +19,7 @@
 package org.openbravo.apachejdbcconnectionpool;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -54,8 +55,8 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   private Map<String, DataSource> availableDataSources = null;
   private DataSource defaultDataSource = null;
 
-  private static final List<Class<? extends Exception>> EXHAUSTED_EXCEPTION = Arrays
-      .asList(PoolExhaustedException.class);
+  private static final List<Class<? extends Exception>> EXHAUSTED_EXCEPTION = new ArrayList<Class<? extends Exception>>(
+      Arrays.asList(PoolExhaustedException.class));
 
   /**
    * This method loads all the interceptors of Apache JDBC Connection Pool injected with weld.
