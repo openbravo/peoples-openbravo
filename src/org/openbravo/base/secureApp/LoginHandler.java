@@ -142,6 +142,7 @@ public class LoginHandler extends HttpBaseServlet {
           if (StringUtils.isEmpty(strUserAuth)) {
             throw new AuthenticationException("Message");// FIXME
           }
+
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
 
         } catch (AuthenticationExpirationPasswordException | ChangePasswordException exception) {

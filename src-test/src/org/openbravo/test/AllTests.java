@@ -69,7 +69,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     AllowedOrganizationsTest.class, //
     WritableReadableOrganizationClientTest.class, //
     OBContextCollectionsTest.class, //
-    PasswordStrengthCheckerTest.class,
+    PasswordStrengthCheckerTest.class, //
 
     // dal
     HiddenUpdateTest.class, //
