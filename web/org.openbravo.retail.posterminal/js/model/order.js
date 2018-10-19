@@ -3999,9 +3999,9 @@
 
     setQuantitiesToDeliver: function () {
       var me = this,
-          fullyPaid = this.get('payment') >= Math.abs(this.get('gross')) || this.get('paidOnCredit'),
+          fullyPaid = this.isFullyPaid() || this.get('paidOnCredit'),
           receiptCompleted = this.get('donePressed') || this.get('paidOnCredit'),
-          prePaid = this.get('payment') < Math.abs(this.get('gross')) && this.get('donePressed') && !this.get('paidOnCredit');
+          prePaid = !fullyPaid && this.get('donePressed') && !this.get('paidOnCredit');
       _.each(this.get('lines').models, function (line) {
         if (fullyPaid) {
           line.set('obposCanbedelivered', true);
@@ -4749,41 +4749,51 @@
       // Calculation of the change....
       //FIXME
       if (pcash) {
+        var payment;
         if (isNegative) {
           if (OB.DEC.add(notModifiableAmount, noCash, precision) < total) {
+            payment = OB.DEC.add(notModifiableAmount, noCash, precision);
             pcash.set('paid', OB.DEC.Zero);
-            this.set('payment', OB.DEC.abs(OB.DEC.add(notModifiableAmount, noCash, precision)));
+            this.set('payment', OB.DEC.abs(payment));
+            this.set('paymentWithSign', payment);
             this.set('change', OB.DEC.abs(totalCash));
           } else if (totalPaid < total) {
             pcash.set('paid', OB.DEC.sub(pcash.get('origAmount'), OB.DEC.abs(OB.DEC.sub(total, totalPaid)), precision));
             this.set('payment', OB.DEC.abs(total));
+            this.set('paymentWithSign', total);
             //The change value will be computed through a rounded total value, to ensure that the total plus change
             //add up to the paid amount without any kind of precission loss
             this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, OB.Utilities.Number.roundJSNumber(total, 2), precision)));
           } else {
             pcash.set('paid', pcash.get('origAmount'));
             this.set('payment', OB.DEC.abs(totalPaid));
+            this.set('paymentWithSign', totalPaid);
             this.set('change', OB.DEC.Zero);
           }
         } else {
           if (OB.DEC.add(notModifiableAmount, noCash, precision) > total) {
+            payment = OB.DEC.add(notModifiableAmount, noCash, precision);
             pcash.set('paid', OB.DEC.Zero);
-            this.set('payment', OB.DEC.add(notModifiableAmount, noCash, precision));
+            this.set('payment', OB.DEC.abs(payment));
+            this.set('paymentWithSign', payment);
             this.set('change', OB.DEC.abs(totalCash));
           } else if (totalPaid > total) {
             pcash.set('paid', OB.DEC.sub(pcash.get('origAmount'), OB.DEC.abs(OB.DEC.sub(totalPaid, total)), precision));
             this.set('payment', OB.DEC.abs(total));
+            this.set('paymentWithSign', total);
             //The change value will be computed through a rounded total value, to ensure that the total plus change
             //add up to the paid amount without any kind of precission loss
             this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, OB.Utilities.Number.roundJSNumber(total, 2), precision)));
           } else {
             pcash.set('paid', pcash.get('origAmount'));
             this.set('payment', OB.DEC.abs(totalPaid));
+            this.set('paymentWithSign', totalPaid);
             this.set('change', OB.DEC.Zero);
           }
         }
       } else {
         this.set('payment', OB.DEC.abs(totalPaid));
+        this.set('paymentWithSign', totalPaid);
         this.set('change', OB.DEC.Zero);
       }
     },
@@ -6061,7 +6071,6 @@
       var receiptShouldBeInvoiced = false,
           line, me = this,
           invoice, isQuotation = this.get('isQuotation'),
-          notpaidLayaway = (this.get('isLayaway') || this.get('orderType') === 2) && Math.abs(this.get('payment')) < Math.abs(this.get('gross')) && !this.get('paidOnCredit') && !this.get('donePressed'),
           isDeleted = this.get('obposIsDeleted'),
           paidReceipt = (this.get('orderType') === 0 || this.get('orderType') === 1) && this.get('isPaid'),
           receiptShouldBeShipped = false;
@@ -7498,6 +7507,9 @@
     },
     getPayment: function () {
       return this.get('payment');
+    },
+    isFullyPaid: function () {
+      return (!this.isNegative() && this.get('paymentWithSign') >= this.getGross()) || (this.isNegative() && this.get('paymentWithSign') <= this.getGross());
     },
     getPending: function () {
       return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());

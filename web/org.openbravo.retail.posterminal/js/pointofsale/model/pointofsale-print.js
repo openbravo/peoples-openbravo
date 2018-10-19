@@ -165,7 +165,7 @@
         var filesArray = [],
             callbackGetFiles, callbackGetBinaryData, recursivePrintFiles, i = 0;
 
-        if (receipt.get('isPaid') || receipt.get('payment') >= receipt.get('gross') || (receipt.isLayaway() && receipt.get('payment') > 0)) {
+        if (receipt.get('isPaid') || receipt.isFullyPaid() || (receipt.isLayaway() && receipt.get('payment') > 0)) {
 
           recursivePrintFiles = function () {
             if (filesArray.length > 0) {

@@ -187,9 +187,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     isNegative = jsonorder.optBoolean("isNegative", false);
 
-    boolean fullyPaid = isNegative ? jsonorder.getDouble("payment") <= Math.abs(jsonorder
-        .getDouble("gross")) : jsonorder.getDouble("payment") >= Math.abs(jsonorder
-        .getDouble("gross"));
+    boolean fullyPaid = isNegative ? jsonorder.getDouble("paymentWithSign") <= jsonorder
+        .getDouble("gross") : jsonorder.getDouble("paymentWithSign") >= jsonorder
+        .getDouble("gross");
 
     isNewReceipt = !jsonorder.optBoolean("isLayaway", false)
         && !jsonorder.optBoolean("isPaid", false);
@@ -340,6 +340,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                   .getOrderedQuantity();
               orderLine.setDeliveredQuantity(qtyToDeliver);
               lineReferences.add(orderLine);
+              OBDal.getInstance().save(orderLine);
             }
           }
         }
@@ -1306,11 +1307,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     JSONArray payments = jsonorder.getJSONArray("payments");
 
     // Create a unique payment schedule for all payments
-    BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
-    for (int i = 0; i < payments.length(); i++) {
-      paymentAmt = paymentAmt
-          .add(BigDecimal.valueOf(payments.getJSONObject(i).getDouble("amount")));
-    }
+    final BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("paymentWithSign", 0));
     final BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
 
     if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {

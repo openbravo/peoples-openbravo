@@ -157,7 +157,7 @@
         if (!payment.paymentMethod.iscash) {
           payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
         }
-        if (receipt.get('payment') >= receipt.get('gross') || (OB.DEC.compare(receipt.getGross()) !== -1 && receipt.isNegative() && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
+        if (receipt.isFullyPaid() || (OB.DEC.compare(receipt.getGross()) !== -1 && receipt.isNegative() && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
           receipt.addPayment(new OB.Model.PaymentLine({
             'kind': payment.payment.searchKey,
             'name': payment.payment.commercialName,
