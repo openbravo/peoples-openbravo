@@ -152,8 +152,7 @@
           model: model,
           receipt: model.get('order')
         }, function (args) {
-          var receipt = args.context.receipt,
-              invoice;
+          var receipt = args.context.receipt;
           if (args && args.cancellation && args.cancellation === true) {
             args.context.receipt.set('isbeingprocessed', 'N');
             args.context.receipt.set('hasbeenpaid', 'N');
@@ -189,30 +188,8 @@
           frozenReceipt.set('undo', null);
           frozenReceipt.set('multipleUndo', null);
 
-          if (Math.abs(receipt.get('payment')) >= Math.abs(receipt.get('gross')) || (receipt.get('paidOnCredit') && !receipt.get('donePressed'))) {
-            receipt.get('lines').forEach(function (line) {
-              line.set('obposCanbedelivered', true);
-              line.set('obposIspaid', true);
-            });
-          }
-
-          receipt.get('lines').forEach(function (line) {
-            if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && !line.has('obposQtytodeliver') && line.get('qty') > 0) {
-              var qtyToDeliver = OB.DEC.Zero;
-              line.get('relatedLines').forEach(function (relatedLine) {
-                var orderline = receipt.get('lines').get(relatedLine.orderlineId);
-                if (orderline && orderline.get('obposIspaid')) {
-                  qtyToDeliver += orderline.get('qty');
-                } else if (relatedLine.obposIspaid) {
-                  qtyToDeliver += relatedLine.qty;
-                }
-              });
-              line.set('obposQtytodeliver', qtyToDeliver);
-              if (qtyToDeliver) {
-                line.set('obposCanbedelivered', true);
-              }
-            }
-          });
+          // Set the quantities to deliver
+          frozenReceipt.setQuantitiesToDeliver();
 
           frozenReceipt.set('paymentMethodKind', null);
           if (frozenReceipt.get('payments').length === 1 && (frozenReceipt.get('orderType') === 0 || frozenReceipt.get('orderType') === 1 || (frozenReceipt.get('orderType') === 2 && frozenReceipt.getPayment() >= frozenReceipt.getTotal())) && !frozenReceipt.get('isQuotation') && !frozenReceipt.get('paidOnCredit')) {
@@ -373,10 +350,6 @@
                 // when all the properties of the frozenReceipt have been set, keep a copy
                 OB.UTIL.clone(receipt, diffReceipt);
                 OB.Dal.saveInTransaction(tx, frozenReceipt, function () {
-                  invoice.set('hasbeenpaid', 'Y');
-                  if (invoice.get('id')) {
-                    OB.Dal.saveInTransaction(tx, invoice, null, null);
-                  }
                   successCallback();
                   if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                     // the trigger is fired on the receipt object, as there is only 1 that is being updated
@@ -387,9 +360,10 @@
               };
 
           //Create the invoice
-          invoice = frozenReceipt.generateInvoice();
-          frozenReceipt.set('calculatedInvoice', invoice);
-          invoice.on('invoiceCalculated', function () {
+          frozenReceipt.generateInvoice(function (invoice) {
+            if (invoice) {
+              frozenReceipt.set('calculatedInvoice', invoice);
+            }
             OB.info("[receipt.closed] Starting transaction. ReceiptId: " + frozenReceipt.get('id'));
             OB.Dal.transaction(function (tx) {
               OB.trace('Calculationg cashup information.');
@@ -515,26 +489,17 @@
             currentReceipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             currentReceipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
-            currentReceipt.get('lines').forEach(function (line) {
-              if (Math.abs(currentReceipt.get('payment')) >= Math.abs(currentReceipt.get('gross')) || currentReceipt.get('paidOnCredit')) {
-                line.set('obposCanbedelivered', true);
-                line.set('obposIspaid', true);
-              }
-              if (Math.abs(currentReceipt.get('payment')) < Math.abs(currentReceipt.get('gross')) && currentReceipt.get('donePressed')) {
-                if (line.get('obposCanbedelivered')) {
-                  line.set('obposIspaid', true);
-                }
-              }
-            });
+            // Set the quantities to deliver
+            currentReceipt.setQuantitiesToDeliver();
 
             me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
 
             OB.UTIL.calculateCurrentCash();
 
-            var invoice = currentReceipt.generateInvoice();
-            currentReceipt.set('calculatedInvoice', invoice);
-
-            invoice.on('invoiceCalculated', function () {
+            currentReceipt.generateInvoice(function (invoice) {
+              if (invoice) {
+                currentReceipt.set('calculatedInvoice', invoice);
+              }
               OB.UTIL.cashUpReport(currentReceipt, function (cashUp) {
                 currentReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
                 OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {

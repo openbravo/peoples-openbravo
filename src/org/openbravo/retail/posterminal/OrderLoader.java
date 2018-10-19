@@ -121,6 +121,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean paidOnCredit = false;
   private boolean isNegative = false;
 
+  final ShipmentInOut_Utils su = new ShipmentInOut_Utils();
+
   @Inject
   @Any
   private Instance<OrderLoaderHook> orderProcesses;
@@ -201,13 +203,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     isDeleted = jsonorder.optBoolean("obposIsDeleted", false);
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
 
-    createShipment = !isQuotation && !isDeleted && !paidReceipt
-        && jsonorder.optBoolean("generateShipment", true);
+    createShipment = !isQuotation && !isDeleted && jsonorder.optBoolean("generateShipment", false);
+    deliver = !isQuotation && !isDeleted && jsonorder.optBoolean("deliver", false);
 
     doCancelAndReplace = jsonorder.optBoolean("doCancelAndReplace", false);
     doCancelLayaway = jsonorder.optBoolean("cancelLayaway", false);
-
-    deliver = jsonorder.optBoolean("deliver", true);
   }
 
   @Override
@@ -266,8 +266,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         executeOrderLoaderModifiedPreProcessHook(orderModifiedPreProcesses, jsonorder);
       }
 
-      // Set the 'deliver' property again because it can be changed during the previous hook
-      deliver = jsonorder.optBoolean("deliver", true);
+      // Set the 'deliver' and 'createShipment' properties again because it can be changed during
+      // the previous hook
+      createShipment = !isQuotation && !isDeleted
+          && jsonorder.optBoolean("generateShipment", false);
+      deliver = !isQuotation && !isDeleted && jsonorder.optBoolean("deliver", false);
 
       if (jsonorder.has("deletedLines")) {
         mergeDeletedLines(jsonorder);
@@ -400,8 +403,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t113 = System.currentTimeMillis();
         }
 
-        createShipment = createShipment && goodsToDeliver(order);
-        final ShipmentInOut_Utils su = new ShipmentInOut_Utils();
         if (createShipment) {
 
           BigDecimal pendingQtyToDeliver = BigDecimal.ZERO;
@@ -440,7 +441,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             }
 
             shipment = OBProvider.getInstance().get(ShipmentInOut.class);
-            su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs);
+            su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs,
+                documentNoHandlers);
             OBDal.getInstance().save(shipment);
             su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
                 locatorList);
@@ -1890,17 +1892,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
-  }
-
-  protected boolean goodsToDeliver(Order order) {
-    for (OrderLine line : order.getOrderLineList()) {
-      if (line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0 || !line.isObposIspaid()) {
-        continue;
-      } else {
-        return true;
-      }
-    }
-    return false;
   }
 
 }

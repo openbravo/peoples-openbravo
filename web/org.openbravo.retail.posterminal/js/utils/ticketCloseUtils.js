@@ -232,13 +232,6 @@
             callbackErrorOrderCancelled();
             return;
           } else {
-            if (_.isUndefined(_.find(receipt.get('lines').models, function (line) {
-              var qty = line.get('qty') ? line.get('qty') : 0,
-                  deliveredQuantity = line.getDeliveredQuantity();
-              return (qty > 0 && qty > deliveredQuantity) || (qty < 0 && qty < deliveredQuantity);
-            }))) {
-              receipt.set('generateShipment', false);
-            }
             callbackPaymentAccepted(openDrawer);
           }
         }, function () {

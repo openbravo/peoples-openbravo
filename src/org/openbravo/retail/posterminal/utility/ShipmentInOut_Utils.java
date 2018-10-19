@@ -64,10 +64,6 @@ public class ShipmentInOut_Utils {
 
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
 
-  // DocumentNo Handlers are used to collect all needed document numbers and create and set
-  // them as late in the process as possible
-  private static ThreadLocal<List<DocumentNoHandler>> documentNoHandlers = new ThreadLocal<List<DocumentNoHandler>>();
-
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
 
   @Inject
@@ -75,12 +71,14 @@ public class ShipmentInOut_Utils {
   private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
 
   private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
-      DocumentType docTypeTarget, DocumentType docType) {
+      DocumentType docTypeTarget, DocumentType docType,
+      ThreadLocal<List<DocumentNoHandler>> documentNoHandlers) {
     documentNoHandlers.get().add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
   }
 
   public void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder,
-      boolean useOrderDocumentNoForRelatedDocs) throws JSONException {
+      boolean useOrderDocumentNoForRelatedDocs, ThreadLocal<List<DocumentNoHandler>> docNoHandler)
+      throws JSONException {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
     JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
         jsonorder.getLong("timezoneOffset"));
@@ -103,7 +101,7 @@ public class ShipmentInOut_Utils {
       }
       shipment.setDocumentNo(docNum);
     } else {
-      addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
+      addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType(), docNoHandler);
     }
 
     if (shipment.getMovementDate() == null) {

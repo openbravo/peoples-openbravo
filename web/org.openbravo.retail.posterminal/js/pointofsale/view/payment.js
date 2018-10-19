@@ -1418,14 +1418,6 @@ enyo.kind({
     var continueExecution = function () {
         myModel.get('order').set('donePressed', true);
 
-        if (myModel.get('leftColumnViewManager').isOrder()) {
-          me.owner.receipt.get('lines').forEach(function (line) {
-            if (line.get('obposCanbedelivered')) {
-              line.set('obposIspaid', true);
-            }
-          });
-        }
-
         if (!avoidPayment) {
           if (isMultiOrder) {
             payments = me.owner.model.get('multiOrders').get('payments');

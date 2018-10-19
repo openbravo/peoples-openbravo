@@ -74,9 +74,6 @@ enyo.kind({
     this.owner.owner.actionCancel = false;
     this.doHideThisPopup();
     this.model.get('order').set('paidOnCredit', true);
-    _.each(this.model.get('order').get('lines').models, function (line) {
-      line.set('obposCanbedelivered', true);
-    }, this);
     this.allowOpenDrawer = false;
     var payments = this.model.get('order').get('payments');
     var me = this;
