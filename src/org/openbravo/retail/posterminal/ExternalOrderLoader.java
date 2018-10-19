@@ -595,6 +595,7 @@ public class ExternalOrderLoader extends OrderLoader {
     } else if ("ship".equals(step)) {
       orderJson.put("payment", orderJson.getDouble("grossAmount"));
       orderJson.put("generateShipment", true);
+      orderJson.put("deliver", true);
       orderJson.put("isLayaway", true);
     } else if ("all".equals(step)) {
       copyPropertyValue(orderJson, "grossAmount", "payment");

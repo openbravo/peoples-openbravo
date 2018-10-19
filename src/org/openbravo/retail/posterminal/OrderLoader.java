@@ -103,11 +103,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, JSONArray> orderLineServiceList;
   String paymentDescription = null;
-  private boolean newLayaway = false;
-  private boolean notpaidLayaway = false;
-  private boolean creditpaidLayaway = false;
-  private boolean partialpaidLayaway = false;
-  private boolean fullypaidLayaway = false;
   private boolean createShipment = true;
   private boolean isQuotation = false;
   private boolean isDeleted = false;
@@ -120,6 +115,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean donePressed = false;
   private boolean paidOnCredit = false;
   private boolean isNegative = false;
+  private boolean isNewReceipt = false;
 
   final ShipmentInOut_Utils su = new ShipmentInOut_Utils();
 
@@ -176,15 +172,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
+    documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
+
     isNegative = jsonorder.optBoolean("isNegative", false);
 
     boolean fullyPaid = isNegative ? jsonorder.getDouble("payment") <= Math.abs(jsonorder
         .getDouble("gross")) : jsonorder.getDouble("payment") >= Math.abs(jsonorder
         .getDouble("gross"));
-    boolean isLayaway = jsonorder.optBoolean("isLayaway", false)
-        || jsonorder.optLong("orderType") == 2;
 
-    documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
+    isNewReceipt = !jsonorder.optBoolean("isLayaway", false)
+        && !jsonorder.optBoolean("isPaid", false);
 
     isQuotation = jsonorder.optBoolean("isQuotation", false);
 
@@ -193,12 +190,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     donePressed = jsonorder.optBoolean("donePressed", false);
     hasPrepayment = donePressed && !fullyPaid;
     paidOnCredit = !paidReceipt && jsonorder.optBoolean("paidOnCredit", false);
-
-    newLayaway = jsonorder.getLong("orderType") == 2;
-    notpaidLayaway = isLayaway && !paidOnCredit && !donePressed && !fullyPaid;
-    creditpaidLayaway = isLayaway && (paidOnCredit || (donePressed && !fullyPaid));
-    partialpaidLayaway = jsonorder.optBoolean("isLayaway", false) && !fullyPaid;
-    fullypaidLayaway = isLayaway && fullyPaid;
 
     isDeleted = jsonorder.optBoolean("obposIsDeleted", false);
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
@@ -296,68 +287,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t111 = System.currentTimeMillis();
         }
 
-        if (paidReceipt) {
-          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          for (OrderLine line : order.getOrderLineList()) {
-            lineReferences.add(line);
-          }
-          if (orderlines.length() > 0) {
-            List<OrderLine> lstResultOL = getOrderLineList(order);
-            for (int i = 0; i < lstResultOL.size(); i++) {
-              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-              OrderLine ol = lstResultOL.get(i);
-              ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
-              ol.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
-            }
-          }
-        } else if (!newLayaway && notpaidLayaway) {
-          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          if (orderlines.length() > 0) {
-            List<OrderLine> lstResultOL = getOrderLineList(order);
-            for (int i = 0; i < lstResultOL.size(); i++) {
-              OrderLine ol = lstResultOL.get(i);
-              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-              ol.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
-              lineReferences.add(ol);
-            }
-          }
-        } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
-          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          order.setDelivered(deliver);
-          if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
-            order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
-          }
-          if (orderlines.length() > 0) {
-            List<OrderLine> lstResultOL = getOrderLineList(order);
-
-            for (int i = 0; i < lstResultOL.size(); i++) {
-              orderLine = lstResultOL.get(i);
-              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-              orderLine.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered",
-                  false));
-              orderLine.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
-              BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
-                  .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine
-                  .getOrderedQuantity();
-              orderLine.setObposQtytodeliver(qtyToDeliver);
-              orderLine.setDeliveredQuantity(qtyToDeliver);
-              lineReferences.add(orderLine);
-            }
-          }
-        } else if (partialpaidLayaway) {
-          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-          if (!jsonorder.has("channel")) {
-            order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          }
-          if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
-            order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
-          }
-        } else {
+        if (isNewReceipt || isModified) {
           verifyOrderLineTax(jsonorder);
-
           if (isModified) {
             order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
             if (order != null) {
@@ -374,7 +305,29 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBDal.getInstance().save(order);
           lineReferences = new ArrayList<OrderLine>();
           createOrderLines(order, jsonorder, orderlines, lineReferences);
-
+        } else {
+          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          order.setDelivered(deliver);
+          if (!jsonorder.has("channel")) {
+            order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          }
+          order.setOBPOSNotInvoiceOnCashUp(jsonorder.optBoolean("oBPOSNotInvoiceOnCashUp", false));
+          if (orderlines.length() > 0) {
+            List<OrderLine> lstResultOL = getOrderLineList(order);
+            for (int i = 0; i < lstResultOL.size(); i++) {
+              orderLine = lstResultOL.get(i);
+              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+              orderLine.setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered",
+                  false));
+              orderLine.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
+              BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
+                  .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine
+                  .getOrderedQuantity();
+              orderLine.setDeliveredQuantity(qtyToDeliver);
+              lineReferences.add(orderLine);
+            }
+          }
         }
 
         // 37240: done outside of createOrderLines, since needs to be done in all order loaders, not
@@ -385,7 +338,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t112 = System.currentTimeMillis();
         }
 
-        order.setObposIslayaway(notpaidLayaway);
+        order.setObposIslayaway(!isQuotation && !isDeleted && !donePressed && !paidOnCredit);
 
         // Order lines
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
@@ -824,23 +777,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
 
-      if ((createShipment && orderline.isObposIspaid())
-          || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
-        // shipment is created or is a C&R and is not a layaway, so all is delivered
-        orderline
-            .setDeliveredQuantity(jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
-                .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderline
-                .getOrderedQuantity());
-      }
-
-      if (jsonOrderLine.has("obposIsDeleted") && jsonOrderLine.getBoolean("obposIsDeleted")) {
-        orderline.setObposQtytodeliver(BigDecimal.ZERO);
-      } else {
-        orderline
-            .setObposQtytodeliver(jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
-                .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderline
-                .getOrderedQuantity());
-      }
+      orderline.setDeliveredQuantity(jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
+          .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderline.getOrderedQuantity());
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
@@ -1146,9 +1084,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessed(true);
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
-    if (!newLayaway && !isQuotation && !isDeleted) {
-      order.setDelivered(deliver);
-    }
+    order.setDelivered(deliver);
 
     if (!doCancelAndReplace && !doCancelLayaway) {
       if (order.getDocumentNo().indexOf("/") > -1) {
