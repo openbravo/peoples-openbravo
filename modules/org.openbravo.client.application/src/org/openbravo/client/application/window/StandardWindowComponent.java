@@ -106,6 +106,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   public void setWindow(Window window) {
     this.window = window;
+    rootTabComponent = null;
   }
 
   public OBViewTab getRootTabComponent() {
