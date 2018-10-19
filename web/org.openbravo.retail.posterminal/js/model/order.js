@@ -896,7 +896,7 @@
     },
 
     getPending: function () {
-      return OB.DEC.abs(OB.DEC.sub(this.getGross(), this.get('paymentWithSign')));
+      return this.get('paymentWithSign') ? OB.DEC.abs(OB.DEC.sub(this.getGross(), this.get('paymentWithSign'))) : this.getPaymentStatus().pendingAmt;
     },
 
     getDeliveredQuantityAmount: function () {
