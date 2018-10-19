@@ -324,11 +324,11 @@
               }
               };
 
-          OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
+          OB.info("[receipt.closed] Starting transaction. ReceiptId: " + frozenReceipt.get('id'));
           OB.Dal.transaction(function (tx) {
             OB.trace('Calculationg cashup information.');
-            OB.UTIL.cashUpReport(receipt, function (cashUp) {
-              receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+            OB.UTIL.cashUpReport(frozenReceipt, function (cashUp) {
+              frozenReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
               OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
                 receipt: frozenReceipt,
                 model: model,
