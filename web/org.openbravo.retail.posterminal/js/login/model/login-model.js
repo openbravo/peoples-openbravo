@@ -269,19 +269,6 @@
       });
 
       this.get('dataSyncModels').push({
-        name: 'Invoice',
-        model: OB.Model.Invoice,
-        modelFunc: 'OB.Model.Invoice',
-        className: 'org.openbravo.retail.posterminal.InvoiceLoader',
-        timeout: 20000,
-        timePerRecord: 1000,
-        criteria: {},
-        getIdentifier: function (model) {
-          return model.documentNo;
-        }
-      });
-
-      this.get('dataSyncModels').push({
         name: 'Cash Management',
         model: OB.Model.CashManagement,
         modelFunc: 'OB.Model.CashManagement',

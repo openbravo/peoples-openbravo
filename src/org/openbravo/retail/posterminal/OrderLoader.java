@@ -82,6 +82,7 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.retail.posterminal.utility.AttributesUtils;
 import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
+import org.openbravo.retail.posterminal.utility.Invoice_Utils;
 import org.openbravo.retail.posterminal.utility.ShipmentInOut_Utils;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -103,7 +104,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, JSONArray> orderLineServiceList;
   String paymentDescription = null;
-  private boolean createShipment = true;
+  private boolean createShipment = false;
+  private boolean createInvoice = false;
   private boolean isQuotation = false;
   private boolean isDeleted = false;
   private boolean isModified = false;
@@ -118,6 +120,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isNewReceipt = false;
 
   final ShipmentInOut_Utils su = new ShipmentInOut_Utils();
+  final Invoice_Utils iu = new Invoice_Utils();
 
   @Inject
   @Any
@@ -146,6 +149,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Inject
   @Any
   private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
+
+  @Inject
+  @Any
+  private Instance<InvoicePreProcessHook> invoicePreProcesses;
+
+  @Inject
+  @Any
+  private Instance<InvoiceHook> invoiceProcesses;
 
   private boolean useOrderDocumentNoForRelatedDocs = false;
   private int paymentCount = 0;
@@ -196,6 +207,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     createShipment = !isQuotation && !isDeleted && jsonorder.optBoolean("generateShipment", false);
     deliver = !isQuotation && !isDeleted && jsonorder.optBoolean("deliver", false);
+    createInvoice = jsonorder.has("calculatedInvoice");
 
     doCancelAndReplace = jsonorder.optBoolean("doCancelAndReplace", false);
     doCancelLayaway = jsonorder.optBoolean("cancelLayaway", false);
@@ -221,6 +233,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Order order = null;
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
+      Invoice invoice = null;
+      JSONObject jsoninvoice = null;
       OBPOSApplications posTerminal = null;
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
       JSONArray orderlines = jsonorder.getJSONArray("lines");
@@ -440,6 +454,34 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         }
 
+        createInvoice = createInvoice && !order.isOBPOSNotInvoiceOnCashUp();
+        if (createInvoice) {
+          // Create the invoice for the lines to invoice
+          jsoninvoice = jsonorder.getJSONObject("calculatedInvoice");
+
+          executeInvoicePreProcessHook(invoicePreProcesses, jsoninvoice);
+
+          ArrayList<OrderLine> invoicelineReferences = new ArrayList<OrderLine>();
+          JSONArray invoicelines = jsoninvoice.getJSONArray("lines");
+
+          for (int i = 0; i < invoicelines.length(); i++) {
+            invoicelineReferences.add(OBDal.getInstance().get(OrderLine.class,
+                invoicelines.getJSONObject(i).getString("orderLineId")));
+          }
+
+          // Invoice header
+          invoice = OBProvider.getInstance().get(Invoice.class);
+          iu.createInvoice(invoice, order, jsoninvoice, useOrderDocumentNoForRelatedDocs,
+              documentNoHandlers);
+          OBDal.getInstance().save(invoice);
+
+          // Invoice lines
+          iu.createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
+
+          iu.updateAuditInfo(invoice, jsoninvoice);
+
+        }
+
         if (log.isDebugEnabled()) {
           t4 = System.currentTimeMillis();
 
@@ -487,6 +529,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           return paymentResponse;
         }
 
+        JSONObject invoicePaymentResponse = null;
+        if (createInvoice) {
+          // Invoice Payment
+          invoicePaymentResponse = iu.handlePayments(jsoninvoice, order, invoice);
+          if (invoicePaymentResponse.getInt(JsonConstants.RESPONSE_STATUS) == JsonConstants.RPCREQUEST_STATUS_FAILURE) {
+            return invoicePaymentResponse;
+          }
+        }
+
         if (doCancelAndReplace && order.getReplacedorder() != null) {
           TriggerHandler.getInstance().disable();
           try {
@@ -508,21 +559,23 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             ((OrderLoaderPaymentHook) hook).setPaymentSchedule(paymentResponse
                 .has("paymentSchedule") ? (FIN_PaymentSchedule) paymentResponse
                 .get("paymentSchedule") : null);
-            ((OrderLoaderPaymentHook) hook).setPaymentScheduleInvoice(paymentResponse
-                .has("paymentScheduleInvoice") ? (FIN_PaymentSchedule) paymentResponse
-                .get("paymentScheduleInvoice") : null);
+            if (invoicePaymentResponse != null) {
+              ((OrderLoaderPaymentHook) hook).setPaymentScheduleInvoice(invoicePaymentResponse
+                  .has("paymentScheduleInvoice") ? (FIN_PaymentSchedule) invoicePaymentResponse
+                  .get("paymentScheduleInvoice") : null);
+            }
           }
         }
 
         // Call all OrderProcess injected.
         if (!isModified) {
-          executeHooks(orderProcesses, jsonorder, order, shipment, null);
+          executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
         } else {
-          executeModifiedHooks(orderModifiedProcesses, jsonorder, order, shipment, null);
+          executeModifiedHooks(orderModifiedProcesses, jsonorder, order, shipment, invoice);
         }
       } else {
         // Call all OrderProcess injected when order is a quotation
-        executeHooks(quotationProcesses, jsonorder, order, shipment, null);
+        executeHooks(quotationProcesses, jsonorder, order, shipment, invoice);
       }
 
       if (log.isDebugEnabled()) {
@@ -676,6 +729,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderPreProcessPaymentHook) {
         ((OrderLoaderPreProcessPaymentHook) proc).exec(jsonorder, order, jsonpayment, payment);
+      }
+    }
+  }
+
+  protected void executeInvoicePreProcessHook(Instance<? extends Object> hooks,
+      JSONObject jsoninvoice) throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof OrderLoaderPreProcessPaymentHook) {
+        ((InvoicePreProcessHook) proc).exec(jsoninvoice);
       }
     }
   }
@@ -1226,12 +1290,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     return (BigDecimal) CallStoredProcedure.getInstance().call("c_currency_convert_precision",
         parameters, types);
-  }
-
-  @Deprecated
-  protected JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
-      boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
-    return handlePayments(jsonorder, order);
   }
 
   protected JSONObject handlePayments(JSONObject jsonorder, Order order) throws Exception {

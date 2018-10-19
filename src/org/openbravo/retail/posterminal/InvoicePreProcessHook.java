@@ -16,6 +16,6 @@ import org.codehaus.jettison.json.JSONObject;
  * jsoninvoice parameter.
  * 
  */
-public interface InvoiceLoaderPreProcessHook {
+public interface InvoicePreProcessHook {
   public void exec(JSONObject jsoninvoice) throws Exception;
 }

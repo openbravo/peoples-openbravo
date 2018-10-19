@@ -14,7 +14,7 @@ import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 
-public interface InvoiceLoaderHook {
+public interface InvoiceHook {
 
   public void exec(JSONObject jsoninvoice, Order order, ShipmentInOut shipment, Invoice invoice)
       throws Exception;

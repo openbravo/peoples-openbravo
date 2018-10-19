@@ -6,23 +6,21 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-package org.openbravo.retail.posterminal;
+
+package org.openbravo.retail.posterminal.utility;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -33,15 +31,9 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
-import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
@@ -56,176 +48,33 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
+import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
 import org.openbravo.service.json.JsonConstants;
 
-@DataSynchronization(entity = "Invoice")
-public class InvoiceLoader extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class Invoice_Utils {
 
   private static final String STATUS_PAYMENT_RECEIVED = "RPR";
-
-  private static final Logger log = Logger.getLogger(InvoiceLoader.class);
-
-  // DocumentNo Handlers are used to collect all needed document numbers and create and set
-  // them as late in the process as possible
-  private static ThreadLocal<List<DocumentNoHandler>> documentNoHandlers = new ThreadLocal<List<DocumentNoHandler>>();
-
-  private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
-      DocumentType docTypeTarget, DocumentType docType) {
-    documentNoHandlers.get().add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
-  }
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, JSONArray> invoicelineserviceList;
-  String paymentDescription = null;
 
-  @Inject
-  @Any
-  private Instance<InvoiceLoaderHook> invoiceProcesses;
-
-  @Inject
-  @Any
-  private Instance<InvoiceLoaderPreProcessHook> invoicePreProcesses;
-
-  @Inject
-  @Any
-  private Instance<InvoiceLoaderCreateInvoicelineHook> createInvoiceLineProcesses;
-
-  private boolean useOrderDocumentNoForRelatedDocs = false;
-
-  protected String getImportQualifier() {
-    return "OBPOS_Invoice";
+  private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
+      DocumentType docTypeTarget, DocumentType docType,
+      ThreadLocal<List<DocumentNoHandler>> documentNoHandlers) {
+    documentNoHandlers.get().add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
   }
 
-  @Override
-  public JSONObject saveRecord(JSONObject jsoninvoice) throws Exception {
-
-    try {
-      try {
-        useOrderDocumentNoForRelatedDocs = "Y".equals(Preferences.getPreferenceValue(
-            "OBPOS_UseOrderDocumentNoForRelatedDocs", true, OBContext.getOBContext()
-                .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
-                .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
-      } catch (PropertyException e1) {
-        log.error(
-            "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(),
-            e1);
-      }
-
-      documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
-
-      executeHooks(invoicePreProcesses, jsoninvoice, null, null, null, null);
-      boolean wasPaidOnCredit = Math.abs(jsoninvoice.getDouble("payment")) < Math.abs(new Double(
-          jsoninvoice.getDouble("gross")));
-
-      Order order = null;
-      ShipmentInOut shipment = null;
-      Invoice invoice = null;
-
-      TriggerHandler.getInstance().disable();
-      try {
-
-        ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
-        JSONArray invoicelines = jsoninvoice.getJSONArray("lines");
-
-        order = OBDal.getInstance().get(Order.class, jsoninvoice.getString("orderId"));
-
-        for (int i = 0; i < invoicelines.length(); i++) {
-          lineReferences.add(OBDal.getInstance().get(OrderLine.class,
-              invoicelines.getJSONObject(i).getString("orderLineId")));
-        }
-
-        // Invoice header
-        invoice = OBProvider.getInstance().get(Invoice.class);
-        createInvoice(invoice, order, jsoninvoice);
-        OBDal.getInstance().save(invoice);
-
-        // Invoice lines
-        createInvoiceLines(invoice, order, jsoninvoice, invoicelines, lineReferences);
-
-        updateAuditInfo(invoice, jsoninvoice);
-
-        // if (!paidReceipt) {
-        // do the docnumbers at the end
-        OBContext.setAdminMode(false);
-        try {
-          for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
-            documentNoHandler.setDocumentNoAndSave();
-          }
-          OBDal.getInstance().flush();
-        } finally {
-          // set to null, should not be used anymore after this.
-          documentNoHandlers.set(null);
-          OBContext.restorePreviousMode();
-        }
-        // }
-
-      } catch (Exception ex) {
-        throw new OBException("Error in InvoiceLoader: ", ex);
-      } finally {
-        // flush and enable triggers, the rest of this method needs enabled
-        // triggers
-        try {
-          OBDal.getInstance().flush();
-          TriggerHandler.getInstance().enable();
-        } catch (Throwable ignored) {
-        }
-      }
-
-      // Payment
-      JSONObject paymentResponse = handlePayments(jsoninvoice, order, invoice, wasPaidOnCredit);
-      if (paymentResponse.getInt(JsonConstants.RESPONSE_STATUS) == JsonConstants.RPCREQUEST_STATUS_FAILURE) {
-        return paymentResponse;
-      }
-
-      // Call all OrderProcess injected.
-      executeHooks(invoiceProcesses, jsoninvoice, order, shipment, invoice, null);
-
-      OBDal.getInstance().flush();
-
-      return successMessage(jsoninvoice);
-    } finally {
-      documentNoHandlers.set(null);
-    }
-  }
-
-  protected void executeHooks(Instance<? extends Object> hooks, JSONObject jsoninvoice,
-      Order order, ShipmentInOut shipment, Invoice invoice, InvoiceLine invoiceLine)
-      throws Exception {
-
-    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
-      Object proc = procIter.next();
-      if (proc instanceof OrderLoaderHook) {
-        ((InvoiceLoaderHook) proc).exec(jsoninvoice, order, shipment, invoice);
-      } else if (proc instanceof OrderLoaderCreateOrderlineHook) {
-        ((InvoiceLoaderCreateInvoicelineHook) proc).exec(jsoninvoice, invoiceLine);
-      } else {
-        ((InvoiceLoaderPreProcessHook) proc).exec(jsoninvoice);
-      }
-    }
-  }
-
-  private void updateAuditInfo(Invoice invoice, JSONObject jsoninvoice) throws JSONException {
+  public void updateAuditInfo(Invoice invoice, JSONObject jsoninvoice) throws JSONException {
     Long value = jsoninvoice.getLong("created");
     invoice.set("creationDate", new Date(value));
   }
 
-  protected JSONObject successMessage(JSONObject jsoninvoice) throws Exception {
-    final JSONObject jsonResponse = new JSONObject();
-
-    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-    jsonResponse.put("result", "0");
-    return jsonResponse;
-  }
-
-  protected DocumentType getInvoiceDocumentType(String documentTypeId) {
+  private DocumentType getInvoiceDocumentType(String documentTypeId) {
     if (invoiceDocTypes.get(documentTypeId) != null) {
       return invoiceDocTypes.get(documentTypeId);
     }
@@ -240,7 +89,7 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     return docType;
   }
 
-  private void createInvoiceLine(Invoice invoice, Order order, JSONObject jsoninvoice,
+  public void createInvoiceLine(Invoice invoice, Order order, JSONObject jsoninvoice,
       JSONArray invoicelines, ArrayList<OrderLine> lineReferences, int numIter, int pricePrecision,
       ShipmentInOutLine inOutLine, int lineNo, int numLines, int actualLine,
       BigDecimal movementQtyTotal) throws JSONException {
@@ -414,7 +263,7 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
 
   }
 
-  private void createInvoiceLines(Invoice invoice, Order order, JSONObject jsoninvoice,
+  public void createInvoiceLines(Invoice invoice, Order order, JSONObject jsoninvoice,
       JSONArray invoicelines, ArrayList<OrderLine> lineReferences) throws JSONException {
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
@@ -462,7 +311,8 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice)
+  public void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice,
+      boolean useOrderDocumentNoForRelatedDocs, ThreadLocal<List<DocumentNoHandler>> docNoHandler)
       throws JSONException {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
     JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsoninvoice,
@@ -498,7 +348,7 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     } else {
       invoice.setDocumentNo(getDummyDocumentNo());
       addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
-          invoice.getDocumentType());
+          invoice.getDocumentType(), docNoHandler);
     }
     final Date orderDate = OBMOBCUtils.calculateServerDatetime(jsoninvoice.getString("orderDate"),
         Long.parseLong(jsoninvoice.getString("timezoneOffset")));
@@ -556,7 +406,7 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
 
   }
 
-  protected void updateTaxes(Invoice invoice) throws JSONException {
+  private void updateTaxes(Invoice invoice) throws JSONException {
     int pricePrecision = invoice.getCurrency().getObposPosprecision() == null ? invoice
         .getCurrency().getPricePrecision().intValue() : invoice.getCurrency()
         .getObposPosprecision().intValue();
@@ -575,8 +425,8 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  public JSONObject handlePayments(JSONObject jsoninvoice, Order order, Invoice invoice,
-      Boolean wasPaidOnCredit) throws JSONException {
+  public JSONObject handlePayments(JSONObject jsoninvoice, Order order, Invoice invoice)
+      throws JSONException {
     final JSONObject jsonResponse = new JSONObject();
 
     FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
@@ -595,6 +445,9 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
           .valueOf(jsoninvoice.getDouble("gross")).setScale(pricePrecision, RoundingMode.HALF_UP));
 
       final BigDecimal gross = BigDecimal.valueOf(jsoninvoice.getDouble("gross"));
+
+      boolean wasPaidOnCredit = Math.abs(jsoninvoice.getDouble("payment")) < Math.abs(new Double(
+          jsoninvoice.getDouble("gross")));
 
       if (wasPaidOnCredit) {
         OBCriteria<PaymentTermLine> lineCriteria = OBDal.getInstance().createCriteria(
@@ -629,8 +482,8 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
             }
             pendingGrossAmount = pendingGrossAmount.subtract(amount);
 
-            Date dueDate = POSUtils.getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
-                null, paymentTermLine);
+            Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(), null,
+                paymentTermLine);
 
             if (i == 0) {
               paymentScheduleInvoice.setAmount(amount);
@@ -644,7 +497,7 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
             }
             if (termLineList.size() == i) {
               if (pendingGrossAmount.compareTo(BigDecimal.ZERO) != 0) {
-                dueDate = POSUtils.getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
+                dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
                     order.getPaymentTerms(), null);
 
                 addPaymentSchedule(order, invoice, pendingGrossAmount, pendingGrossAmount, dueDate);
@@ -653,7 +506,7 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
             }
           }
         } else {
-          Date dueDate = POSUtils.getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
+          Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
               order.getPaymentTerms(), null);
           paymentScheduleInvoice.setDueDate(dueDate);
           paymentScheduleInvoice.setExpectedDate(dueDate);
@@ -845,6 +698,98 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     }
     invoice.getFINPaymentScheduleList().add(pymtSchedule);
     OBDal.getInstance().save(pymtSchedule);
+  }
+
+  private Date getCalculatedDueDateBasedOnPaymentTerms(Date startingDate, PaymentTerm paymentTerm,
+      PaymentTermLine paymentTermLine) {
+    // TODO Take into account the flag "Next business date"
+    // TODO Take into account the flag "Fixed due date"
+    Calendar calculatedDueDate = new GregorianCalendar();
+    calculatedDueDate.setTime(startingDate);
+    calculatedDueDate.set(Calendar.HOUR_OF_DAY, 0);
+    calculatedDueDate.set(Calendar.MINUTE, 0);
+    calculatedDueDate.set(Calendar.SECOND, 0);
+    calculatedDueDate.set(Calendar.MILLISECOND, 0);
+    long daysToAdd, monthOffset, maturityDate1 = 0, maturityDate2 = 0, maturityDate3 = 0;
+    String dayToPay;
+
+    if (paymentTerm != null) {
+      daysToAdd = paymentTerm.getOverduePaymentDaysRule();
+      monthOffset = paymentTerm.getOffsetMonthDue();
+      dayToPay = paymentTerm.getOverduePaymentDayRule();
+      if (paymentTerm.isFixedDueDate()) {
+        maturityDate1 = paymentTerm.getMaturityDate1() == null ? 0 : paymentTerm.getMaturityDate1();
+        maturityDate2 = paymentTerm.getMaturityDate2() == null ? 0 : paymentTerm.getMaturityDate2();
+        maturityDate3 = paymentTerm.getMaturityDate3() == null ? 0 : paymentTerm.getMaturityDate3();
+      }
+    } else if (paymentTermLine != null) {
+      daysToAdd = paymentTermLine.getOverduePaymentDaysRule();
+      monthOffset = paymentTermLine.getOffsetMonthDue() == null ? 0 : paymentTermLine
+          .getOffsetMonthDue();
+      dayToPay = paymentTermLine.getOverduePaymentDayRule();
+      if (paymentTermLine.isFixedDueDate()) {
+        maturityDate1 = paymentTermLine.getMaturityDate1() == null ? 0 : paymentTermLine
+            .getMaturityDate1();
+        maturityDate2 = paymentTermLine.getMaturityDate2() == null ? 0 : paymentTermLine
+            .getMaturityDate2();
+        maturityDate3 = paymentTermLine.getMaturityDate3() == null ? 0 : paymentTermLine
+            .getMaturityDate3();
+      }
+    } else {
+      return calculatedDueDate.getTime();
+    }
+    if (monthOffset > 0) {
+      calculatedDueDate.add(Calendar.MONTH, (int) monthOffset);
+    }
+    if (daysToAdd > 0) {
+      calculatedDueDate.add(Calendar.DATE, (int) daysToAdd);
+    }
+    // Calculating due date based on "Fixed due date"
+    if ((paymentTerm != null && paymentTerm.isFixedDueDate())
+        || (paymentTermLine != null && paymentTermLine.isFixedDueDate())) {
+      long dueDateDay = calculatedDueDate.get(Calendar.DAY_OF_MONTH), finalDueDateDay = 0;
+      if (maturityDate3 > 0 && maturityDate2 > 0 && maturityDate2 < dueDateDay
+          && maturityDate3 >= dueDateDay) {
+        finalDueDateDay = maturityDate3;
+      } else if (maturityDate2 > 0 && maturityDate1 > 0 && maturityDate1 < dueDateDay
+          && maturityDate2 >= dueDateDay) {
+        finalDueDateDay = maturityDate2;
+      } else if (maturityDate1 > 0) {
+        finalDueDateDay = maturityDate1;
+      } else {
+        // Due Date day should be maximum of Month's Last day
+        finalDueDateDay = 1;
+      }
+
+      if ((int) finalDueDateDay > calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+        finalDueDateDay = calculatedDueDate.getActualMaximum(Calendar.DAY_OF_MONTH);
+      }
+      calculatedDueDate.set(Calendar.DAY_OF_MONTH, (int) finalDueDateDay);
+      if (finalDueDateDay < dueDateDay) {
+        calculatedDueDate.add(Calendar.MONTH, 1);
+      }
+    }
+    if (!StringUtils.isEmpty(dayToPay)) {
+      // for us: 1 -> Monday
+      // for Calendar: 1 -> Sunday
+      int dayOfTheWeekToPay = Integer.parseInt(dayToPay);
+      dayOfTheWeekToPay += 1;
+      if (dayOfTheWeekToPay == 8) {
+        dayOfTheWeekToPay = 1;
+      }
+      if (calculatedDueDate.get(Calendar.DAY_OF_WEEK) == dayOfTheWeekToPay) {
+        return calculatedDueDate.getTime();
+      } else {
+        Boolean dayFound = false;
+        while (dayFound == false) {
+          calculatedDueDate.add(Calendar.DATE, 1);
+          if (calculatedDueDate.get(Calendar.DAY_OF_WEEK) == dayOfTheWeekToPay) {
+            dayFound = true;
+          }
+        }
+      }
+    }
+    return calculatedDueDate.getTime();
   }
 
   private void assignRemainingAmount(Order order, FIN_PaymentSchedule paymentSchedule,
