@@ -81,6 +81,10 @@ isc.OBViewDataSource.addProperties({
     requestProperties = requestProperties || {};
     requestProperties.clientContext = requestProperties.clientContext || {};
 
+    if (operationType === 'add' || operationType === 'update' || operationType === 'remove') {
+      this.setCsrfToken(OB.User.csrfToken);
+    }
+
     // only update the values of the record itself but not of any referenced 
     // entity
     if (operationType === 'update' || operationType === 'add') {
@@ -133,6 +137,7 @@ isc.OBViewDataSource.addProperties({
       sendOriginalIDBack: true,
       _extraProperties: this.getAdditionalProps()
     };
+
     isc.addProperties(newRequestProperties.params, additionalPara);
     if (!newRequestProperties.dataSource) {
       newRequestProperties.dataSource = this;

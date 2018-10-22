@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2016 Openbravo SLU
+* All portions are Copyright (C) 2012-2018 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -55,6 +55,7 @@
   v_product_value       M_PRODUCT.value%type;
   v_locator_value       M_LOCATOR.value%type;
   v_uom_value           C_UOM.uomsymbol%type;
+  v_res_stock_exists    NUMBER;
 
   TYPE RECORD IS REF CURSOR;
   cur_reserved_stock    RECORD;
@@ -116,8 +117,15 @@ BEGIN
   WHERE rs.m_locator_id = p_locator_id
     AND rs.m_reservation_id = p_reservation_id
     AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0');
+
+  SELECT 1 
+    INTO v_res_stock_exists 
+    FROM dual
+    WHERE EXISTS (SELECT 1 FROM m_reservation_stock rs WHERE rs.m_locator_id = p_locator_id
+                  AND rs.m_reservation_id = p_reservation_id
+                  AND COALESCE(rs.m_attributesetinstance_id, '0') = COALESCE(p_attributesetinstance_id, '0'));
   
-  IF (v_pendingtorelease > v_this_sd_reserved) THEN
+  IF (v_pendingtorelease > v_this_sd_reserved AND v_res_stock_exists IS NOT NULL) THEN
     -- The reservation does not have enough stock reserved on given locator and attributes, reallocation is needed.
     M_RESERVATION_REALLOCATE(p_reservation_id, p_locator_id, p_attributesetinstance_id, p_qty, p_user_id, p_result, p_message);
   END IF;
@@ -146,7 +154,7 @@ BEGIN
     END IF;
   END LOOP;
   
-  IF (v_pendingtorelease > 0) THEN
+  IF (v_pendingtorelease > 0 AND  v_res_stock_exists IS NOT NULL) THEN
     RAISE_APPLICATION_ERROR(-20000, '@CannotConsumeAllStock@'||' @of@'||' @Product@: '||v_product_value||', @AttributeSetInstance@: '||COALESCE(v_attr_description, '-')||', @UOM@: '||v_uom_value||' @And@'||' @StorageBin@: '||COALESCE(v_locator_value, '-'));
   END IF;
 EXCEPTION

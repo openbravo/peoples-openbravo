@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2017 Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,8 @@ OB.User = {
         writableOrganizations: [
         <#list data.writableOrganizations as property>
             '${property?js_string}'<#if property_has_next>,</#if>
-        </#list>]
+        </#list>],
+        csrfToken: '${data.csrfToken?js_string}'
 };
 
 OB.AccessibleEntities = {

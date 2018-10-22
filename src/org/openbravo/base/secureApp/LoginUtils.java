@@ -38,6 +38,7 @@ import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
@@ -238,6 +239,8 @@ public class LoginUtils {
     } catch (PropertyException prefNotDefined) {
     }
 
+    String csrfToken = SequenceIdData.getUUID();
+
     OBContext.getOBContext().setCheckAccessLevel(shouldCheckAccessLevel);
 
     // Set session vars
@@ -248,7 +251,7 @@ public class LoginUtils {
     vars.setSessionValue("#AD_Client_ID", strCliente);
     vars.setSessionValue("#AD_Org_ID", strOrg);
     vars.setSessionValue("#M_Warehouse_ID", strAlmacen);
-
+    vars.setSessionValue("#CSRF_Token", csrfToken);
     vars.setSessionValue("#StdPrecision", "2");
 
     // Organizations tree

@@ -225,6 +225,9 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
   // ugly inheriting from HttpSecureAppServlet because it provides a number of methods...
   private static class UserSessionSetter extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
+    private static final String TEXT_DIRECTION = "#TextDirection";
+    private static final String SESSION_ID = "#AD_Session_ID";
+    private static final String AUTHENTICATED_USER = "#Authenticated_user";
 
     private void resetSession(HttpServletRequest request, boolean isDefault, String userId,
         String roleId, String clientId, String organizationId, String languageId,
@@ -232,9 +235,9 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       final VariablesSecureApp vars = new VariablesSecureApp(request); // refresh
       final Language language = OBDal.getInstance().get(Language.class, languageId);
       if (language.isRTLLanguage()) {
-        vars.setSessionValue("#TextDirection", "RTL");
+        vars.setSessionValue(TEXT_DIRECTION, "RTL");
       } else {
-        vars.setSessionValue("#TextDirection", "LTR");
+        vars.setSessionValue(TEXT_DIRECTION, "LTR");
       }
 
       if (isDefault) {
@@ -259,11 +262,11 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       }
 
       // Clear session variables maintaining session and user
-      String sessionID = vars.getSessionValue("#AD_Session_ID");
-      String sessionUser = (String) request.getSession(true).getAttribute("#Authenticated_user");
+      String sessionID = vars.getSessionValue(SESSION_ID);
+      String sessionUser = (String) request.getSession(true).getAttribute(AUTHENTICATED_USER);
       vars.clearSession(false);
-      vars.setSessionValue("#AD_Session_ID", sessionID);
-      request.getSession(true).setAttribute("#Authenticated_user", sessionUser);
+      vars.setSessionValue(SESSION_ID, sessionID);
+      request.getSession(true).setAttribute(AUTHENTICATED_USER, sessionUser);
 
       OBDal.getInstance().flush();
       boolean result = LoginUtils

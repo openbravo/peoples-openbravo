@@ -68,6 +68,7 @@ import org.openbravo.test.dal.ViewTest;
 import org.openbravo.test.db.model.functions.ADOrgTreeTest;
 import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
+import org.openbravo.test.db.pool.PoolHasNoConnectionsDetection;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.generalsetup.enterprise.organization.ADOrgPersistInfoTestSuite;
@@ -195,7 +196,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     CrossOrganizationUI.class, //
     CrossOrganizationUICDI.class, //
     OBContextCollectionsTest.class, //
-    PasswordStrengthCheckerTest.class,
+    PasswordStrengthCheckerTest.class, //
 
     // system
     SystemServiceTest.class, //
@@ -274,6 +275,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // db
     SqlCallableStatement.class, //
+    PoolHasNoConnectionsDetection.class, //
 
     // grid configuration
     ViewGenerationWithDifferentConfigLevelTest.class, //

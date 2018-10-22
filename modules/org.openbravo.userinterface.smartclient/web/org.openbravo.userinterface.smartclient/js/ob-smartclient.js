@@ -792,7 +792,7 @@ isc.RPCManager.addClassProperties({
     }
   },
 
-  parseErrorMessage: function(response) {
+  parseErrorMessage: function (response) {
     if (response.httpResponseText) {
       var jsonResponse = JSON.parse(response.httpResponseText);
       if (jsonResponse.response && jsonResponse.response.error && jsonResponse.response.error.message) {

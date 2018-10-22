@@ -30,6 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -1472,7 +1473,10 @@ public class CreateFrom extends HttpSecureAppServlet {
                 if (data[i].cAum.isEmpty()) {
                   data[i].cAum = getDefaultAUMForData(data[i]);
                 }
-                if (data[i].aumqty.isEmpty()) {
+                strAumQty = vars.getNumericParameter("inpaumqty" + strLineId);
+                if (StringUtils.isNotEmpty(strAumQty)) {
+                  data[i].aumqty = strAumQty;
+                } else if (data[i].aumqty.isEmpty()) {
                   data[i].aumqty = getConvertedAUMQtyForData(data[i]);
                 }
                 BigDecimal qtyAum = new BigDecimal(data[i].aumqty);
