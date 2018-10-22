@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.database.ConnectionProvider;
 import org.xml.sax.InputSource;
@@ -89,8 +88,8 @@ public class XmlEngine extends HttpServlet {
     strReplaceWhat = getInitParameter("ReplaceWhat");
     strReplaceWith = getInitParameter("ReplaceWith");
     if (log4jXmlEngine.isDebugEnabled())
-      log4jXmlEngine.debug("Replace attribute value: \"" + strReplaceWhat + "\" with: \""
-          + strReplaceWith + "\".");
+      log4jXmlEngine.debug(
+          "Replace attribute value: \"" + strReplaceWhat + "\" with: \"" + strReplaceWith + "\".");
     strTextDividedByZero = getInitParameter("TextDividedByZero");
     if (log4jXmlEngine.isDebugEnabled())
       log4jXmlEngine.debug("TextDividedByZero: " + strTextDividedByZero);
@@ -210,11 +209,11 @@ public class XmlEngine extends HttpServlet {
     try {
       // xmlParserFormat.parse(new InputSource(new
       // FileReader(fileXmlEngineFormat)));
-      xmlParserFormat.parse(new InputSource(new InputStreamReader(new FileInputStream(
-          fileXmlEngineFormat), "UTF-8")));
+      xmlParserFormat.parse(new InputSource(
+          new InputStreamReader(new FileInputStream(fileXmlEngineFormat), "UTF-8")));
     } catch (FileNotFoundException e) {
-      log4jXmlEngine.error("not found fileXmlEngineFormat: " + fileXmlEngineFormat + "\n"
-          + e.getMessage());
+      log4jXmlEngine
+          .error("not found fileXmlEngineFormat: " + fileXmlEngineFormat + "\n" + e.getMessage());
       return;
     } catch (IOException e) {
       log4jXmlEngine.error("IOException in fileXmlEngineFormat: " + fileXmlEngineFormat);
@@ -334,8 +333,8 @@ public class XmlEngine extends HttpServlet {
       if (log4jXmlEngine.isDebugEnabled()) {
         log4jXmlEngine
             .debug("fileXmlEngineConfiguration: " + fileXmlEngineConfiguration.toString());
-        log4jXmlEngine.debug("Parent fileXmlEngineConfiguration: "
-            + fileXmlEngineConfiguration.getParent());
+        log4jXmlEngine
+            .debug("Parent fileXmlEngineConfiguration: " + fileXmlEngineConfiguration.getParent());
       }
     }
     xmlTemplate.clear();
@@ -343,8 +342,8 @@ public class XmlEngine extends HttpServlet {
       // if (!isResource) xmlParser.parse(new InputSource(new
       // FileReader(fileXmlEngineConfiguration)));
       if (!isResource)
-        xmlParser.parse(new InputSource(new InputStreamReader(new FileInputStream(
-            fileXmlEngineConfiguration), "UTF-8")));
+        xmlParser.parse(new InputSource(
+            new InputStreamReader(new FileInputStream(fileXmlEngineConfiguration), "UTF-8")));
       else
         xmlParser.parse(new InputSource(ClassLoader.getSystemResourceAsStream(strFile)));
     } catch (FileNotFoundException e) {
@@ -352,21 +351,21 @@ public class XmlEngine extends HttpServlet {
         log4jXmlEngine.error("not found fileXmlEngineConfiguration: " + fileXmlEngineConfiguration
             + "\n" + e.getMessage());
       else
-        log4jXmlEngine.error("not found fileXmlEngineConfiguration: " + strFile + "\n"
-            + e.getMessage());
+        log4jXmlEngine
+            .error("not found fileXmlEngineConfiguration: " + strFile + "\n" + e.getMessage());
       return;
     } catch (IOException e) {
       if (!isResource)
-        log4jXmlEngine.error("IOException in fileXmlEngineConfiguration: "
-            + fileXmlEngineConfiguration);
+        log4jXmlEngine
+            .error("IOException in fileXmlEngineConfiguration: " + fileXmlEngineConfiguration);
       else
         log4jXmlEngine.error("IOException in fileXmlEngineConfiguration: " + strFile);
       e.printStackTrace();
       return;
     } catch (Exception e) {
       if (!isResource)
-        log4jXmlEngine.error("Exception in fileXmlEngineConfiguration: "
-            + fileXmlEngineConfiguration);
+        log4jXmlEngine
+            .error("Exception in fileXmlEngineConfiguration: " + fileXmlEngineConfiguration);
       else
         log4jXmlEngine.error("Exception in fileXmlEngineConfiguration: " + strFile);
       e.printStackTrace();
@@ -378,13 +377,13 @@ public class XmlEngine extends HttpServlet {
     XMLReader templateParser;
     if (xmlTemplate.configuration.strTemplate.substring(posExtension).equals(".html")) {
       if (log4jXmlEngine.isDebugEnabled())
-        log4jXmlEngine.debug("Html file: -"
-            + xmlTemplate.configuration.strTemplate.substring(posExtension) + "-");
+        log4jXmlEngine.debug(
+            "Html file: -" + xmlTemplate.configuration.strTemplate.substring(posExtension) + "-");
       templateParser = htmlParser;
     } else {
       if (log4jXmlEngine.isDebugEnabled())
-        log4jXmlEngine.debug("Xml file: -"
-            + xmlTemplate.configuration.strTemplate.substring(posExtension) + "-");
+        log4jXmlEngine.debug(
+            "Xml file: -" + xmlTemplate.configuration.strTemplate.substring(posExtension) + "-");
       templateParser = xmlParser;
     }
     templateParser.setContentHandler(xmlTemplate);
@@ -409,15 +408,15 @@ public class XmlEngine extends HttpServlet {
       // if (!isResource) templateParser.parse(new InputSource(new
       // FileReader(fileXmlEngineTemplate)));
       if (!isResource)
-        templateParser.parse(new InputSource(new InputStreamReader(new FileInputStream(
-            fileXmlEngineTemplate), "UTF-8")));
+        templateParser.parse(new InputSource(
+            new InputStreamReader(new FileInputStream(fileXmlEngineTemplate), "UTF-8")));
       else
-        templateParser.parse(new InputSource(ClassLoader.getSystemResourceAsStream(strPath
-            + xmlTemplate.configuration.strTemplate)));
+        templateParser.parse(new InputSource(ClassLoader
+            .getSystemResourceAsStream(strPath + xmlTemplate.configuration.strTemplate)));
     } catch (FileNotFoundException e) {
       if (!isResource)
-        log4jXmlEngine.error("not found fileXmlEngineTemplate: " + fileXmlEngineTemplate + "\n"
-            + e.getMessage());
+        log4jXmlEngine.error(
+            "not found fileXmlEngineTemplate: " + fileXmlEngineTemplate + "\n" + e.getMessage());
       else
         log4jXmlEngine.error("not found fileXmlEngineTemplate: " + strPath
             + xmlTemplate.configuration.strTemplate + "\n" + e.getMessage());
@@ -483,12 +482,12 @@ public class XmlEngine extends HttpServlet {
     for (ParameterValue parameter : report.xmlDocument.hasParameterValue.values()) {
       parameter.strValue = request.getParameter(parameter.parameterTemplate.strName);
       if (parameter.strValue == null) {
-        log4jXmlEngine.debug("getParameter of: " + parameter.parameterTemplate.strName
-            + " default assigned");
+        log4jXmlEngine
+            .debug("getParameter of: " + parameter.parameterTemplate.strName + " default assigned");
         parameter.strValue = parameter.parameterTemplate.strDefault;
       }
-      log4jXmlEngine.debug("getParameter: " + parameter.parameterTemplate.strName + " value: "
-          + parameter.strValue);
+      log4jXmlEngine.debug(
+          "getParameter: " + parameter.parameterTemplate.strName + " value: " + parameter.strValue);
     }
 
     // Label of the report (not for the SQL query's)
@@ -577,7 +576,8 @@ public class XmlEngine extends HttpServlet {
           log4jXmlEngine.debug("Parameter(main): " + parameter.parameterTemplate.strName
               + " valor: " + parameter.strValue);
       }
-      for (Enumeration<Object> e3 = elementDataValue.vecLabelValue.elements(); e3.hasMoreElements();) {
+      for (Enumeration<Object> e3 = elementDataValue.vecLabelValue.elements(); e3
+          .hasMoreElements();) {
         LabelValue labelValue = (LabelValue) e3.nextElement();
         i++;
         labelValue.strValue = argv[1];

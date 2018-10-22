@@ -54,7 +54,6 @@ import org.openbravo.erpCommon.ad_process.buildStructure.Build;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStep;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildStep;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
-import org.openbravo.erpCommon.modules.ApplyModule;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
@@ -73,8 +72,8 @@ public class ApplyModules extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -106,8 +105,8 @@ public class ApplyModules extends HttpSecureAppServlet {
   private void printPageRestartTomcat(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/RestartTomcat").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/RestartTomcat").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -132,8 +131,9 @@ public class ApplyModules extends HttpSecureAppServlet {
   private void restartApplicationServer(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/RestartingContext").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/RestartingContext")
+        .createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     final String message = Utility.messageBD(this, "TOMCAT_RESTART", vars.getLanguage());
@@ -168,8 +168,8 @@ public class ApplyModules extends HttpSecureAppServlet {
           "Build information couldn't be read (possibly because the file couldn't be found)");
     }
     String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -260,9 +260,8 @@ public class ApplyModules extends HttpSecureAppServlet {
           .replace("RB", "");
     }
     // We also add the successful final state of the last main step
-    arraySteps += ","
-        + build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode()
-            .replace("RB", "");
+    arraySteps += "," + build.getMainSteps().get(build.getMainSteps().size() - 1).getSuccessCode()
+        .replace("RB", "");
     errorStatus += ",''";
     numofWarns += ",0";
     numofErrors += ",0";
@@ -289,8 +288,9 @@ public class ApplyModules extends HttpSecureAppServlet {
   private void printExternalRebuild(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, boolean restart) throws IOException {
     String[] discard = { restart ? "rebuildMsg" : "restartMsg" };
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/ApplyModulesExternal", discard).createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/ApplyModulesExternal", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -331,8 +331,8 @@ public class ApplyModules extends HttpSecureAppServlet {
     File[] modules = modulesF.listFiles();
     File translationFile = null;
     for (int i = 0; i < modules.length && translationFile == null; i++) {
-      File provisionalFile = new File(modules[i], "referencedata/translation/" + language
-          + "/buildStructureTrl.xml");
+      File provisionalFile = new File(modules[i],
+          "referencedata/translation/" + language + "/buildStructureTrl.xml");
       if (provisionalFile.exists())
         translationFile = provisionalFile;
     }
@@ -347,9 +347,8 @@ public class ApplyModules extends HttpSecureAppServlet {
 
     beanReader.getBindingConfiguration().setMapIDs(false);
 
-    beanReader.getXMLIntrospector().register(
-        new InputSource(new FileReader(new File(source,
-            "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
+    beanReader.getXMLIntrospector().register(new InputSource(new FileReader(
+        new File(source, "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
 
     beanReader.registerBeanClass("BuildTranslation", BuildTranslation.class);
 
@@ -360,12 +359,12 @@ public class ApplyModules extends HttpSecureAppServlet {
 
   protected Build getBuildFromXMLFile() {
     try {
-      String source = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .get("source.path").toString();
-      return Build.getBuildFromXMLFile(source
-          + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml", new File(
-          source, "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml")
-          .getAbsolutePath());
+      String source = OBPropertiesProvider.getInstance().getOpenbravoProperties().get("source.path")
+          .toString();
+      return Build.getBuildFromXMLFile(
+          source + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml",
+          new File(source, "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml")
+              .getAbsolutePath());
 
     } catch (Exception e) {
       log4j.error("Error while reading the build information file");
@@ -398,7 +397,8 @@ public class ApplyModules extends HttpSecureAppServlet {
           + build.getMainSteps().get(0).getCode() + "'");
       ps2.executeUpdate();
       // We also cancel sessions opened for users different from the current one
-      updateSession = getPreparedStatement("UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>? and SESSION_ACTIVE='Y'");
+      updateSession = getPreparedStatement(
+          "UPDATE AD_SESSION SET SESSION_ACTIVE='N' WHERE CREATEDBY<>? and SESSION_ACTIVE='Y'");
       updateSession.setString(1, currentUser.getId());
       updateSession.executeUpdate();
 
@@ -480,7 +480,7 @@ public class ApplyModules extends HttpSecureAppServlet {
 
     LoggerConfig rootLoggerConfig = config.getRootLogger();
     rootLoggerConfig.addAppender(OBRebuildAppender.createAppender("OBRebuildAppender", null, null),
-      Level.WARN, null);
+        Level.WARN, null);
 
     context.updateLoggers();
     log4j = Logger.getLogger(ApplyModules.class);

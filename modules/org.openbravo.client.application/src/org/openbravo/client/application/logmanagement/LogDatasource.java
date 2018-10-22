@@ -1,13 +1,36 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
 package org.openbravo.client.application.logmanagement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -21,7 +44,8 @@ import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
 
 public class LogDatasource extends ReadOnlyDataSourceService {
-  private static final org.apache.logging.log4j.Logger log = LogManager.getLogger(LogDatasource.class);
+  private static final org.apache.logging.log4j.Logger log = LogManager
+      .getLogger(LogDatasource.class);
 
   private static final String LOG_LEVEL_LIST_REFERENCE_ID = "CF8CB8C4E798423081CE42078CA6BD7C";
   private static final String STRING_REFERENCE_ID = "10";
@@ -40,7 +64,7 @@ public class LogDatasource extends ReadOnlyDataSourceService {
 
     return filteredLoggers //
         .skip(startRow) //
-        .limit(endRow+1) //
+        .limit(endRow + 1) //
         .map(l -> {
           Map<String, Object> r = new HashMap<>(2);
           r.put("id", l.getName());
@@ -60,7 +84,7 @@ public class LogDatasource extends ReadOnlyDataSourceService {
         reversed = true;
       }
 
-      if(getComparatorForSortKey(sortKey).isPresent()) {
+      if (getComparatorForSortKey(sortKey).isPresent()) {
         Comparator<Logger> comparator = getComparatorForSortKey(sortKey).get();
         if (reversed) {
           return loggerStream.sorted(comparator.reversed());
@@ -75,12 +99,12 @@ public class LogDatasource extends ReadOnlyDataSourceService {
 
   private Optional<Comparator<Logger>> getComparatorForSortKey(String sortKey) {
     switch (sortKey) {
-      case "logger":
-        return Optional.of(Comparator.comparing(AbstractLogger::getName));
-      case "level":
-        return Optional.of(Comparator.comparing(Logger::getLevel));
-      default:
-        return Optional.empty();
+    case "logger":
+      return Optional.of(Comparator.comparing(AbstractLogger::getName));
+    case "level":
+      return Optional.of(Comparator.comparing(Logger::getLevel));
+    default:
+      return Optional.empty();
     }
   }
 
@@ -119,8 +143,7 @@ public class LogDatasource extends ReadOnlyDataSourceService {
         JSONObject criterion = criteriaArray.getJSONObject(i);
         meetsCriteria &= loggerMeetsCriterion(r, criterion);
       }
-    }
-    catch(JSONException e) {
+    } catch (JSONException e) {
       log.error("Error matching criteria", e);
     }
 
@@ -132,13 +155,13 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     String value = criterion.getString("value").toLowerCase();
 
     switch (field) {
-      case "logger":
-        return r.getName().toLowerCase().contains(value);
-      case "level":
-        List<String> values = JsonArrayUtils.convertJsonArrayToStringList(new JSONArray(value));
-        return values.contains(r.getLevel().toString().toLowerCase());
-      default:
-        return true;
+    case "logger":
+      return r.getName().toLowerCase().contains(value);
+    case "level":
+      List<String> values = JsonArrayUtils.convertJsonArrayToStringList(new JSONArray(value));
+      return values.contains(r.getLevel().toString().toLowerCase());
+    default:
+      return true;
     }
   }
 
@@ -157,7 +180,8 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     dsProperty.setName("logger");
 
     Reference loggerReference = OBDal.getInstance().get(Reference.class, STRING_REFERENCE_ID);
-    UIDefinition stringUiDefinition = UIDefinitionController.getInstance().getUIDefinition(loggerReference);
+    UIDefinition stringUiDefinition = UIDefinitionController.getInstance()
+        .getUIDefinition(loggerReference);
     dsProperty.setUIDefinition(stringUiDefinition);
 
     return dsProperty;
@@ -169,7 +193,8 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     dsProperty.setId(true);
 
     Reference loggerReference = OBDal.getInstance().get(Reference.class, STRING_REFERENCE_ID);
-    UIDefinition stringUiDefinition = UIDefinitionController.getInstance().getUIDefinition(loggerReference);
+    UIDefinition stringUiDefinition = UIDefinitionController.getInstance()
+        .getUIDefinition(loggerReference);
     dsProperty.setUIDefinition(stringUiDefinition);
 
     return dsProperty;
@@ -179,13 +204,16 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     final DataSourceProperty dsProperty = new DataSourceProperty();
     dsProperty.setName("level");
 
-    Reference logLevelReference = OBDal.getInstance().get(Reference.class, LOG_LEVEL_LIST_REFERENCE_ID);
-    UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(logLevelReference);
+    Reference logLevelReference = OBDal.getInstance().get(Reference.class,
+        LOG_LEVEL_LIST_REFERENCE_ID);
+    UIDefinition uiDefinition = UIDefinitionController.getInstance()
+        .getUIDefinition(logLevelReference);
     dsProperty.setUIDefinition(uiDefinition);
 
     Set<String> allowedValues = DataSourceProperty.getAllowedValues(logLevelReference);
     dsProperty.setAllowedValues(allowedValues);
-    dsProperty.setValueMap(DataSourceProperty.createValueMap(allowedValues, LOG_LEVEL_LIST_REFERENCE_ID));
+    dsProperty
+        .setValueMap(DataSourceProperty.createValueMap(allowedValues, LOG_LEVEL_LIST_REFERENCE_ID));
 
     return dsProperty;
   }

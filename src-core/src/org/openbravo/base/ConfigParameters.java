@@ -15,17 +15,15 @@ package org.openbravo.base;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Application parameters stored in web.xml as init parameters.
@@ -54,7 +52,7 @@ public class ConfigParameters {
   private final String poolFileName;
   public final String strTextDividedByZero;
 
-  private static final Logger log4j = Logger.getLogger(ConfigParameters.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public final String loginServlet;
   public final String strServletSinIdentificar;
@@ -137,8 +135,8 @@ public class ConfigParameters {
   private String getResolvedParameter(ServletContext context, String name) {
     String value = context.getInitParameter(name);
     if (value != null) {
-      return value.replace("@actual_path_context@", getActualPathContext()).replace(
-          "@application_context@", getApplicationContext());
+      return value.replace("@actual_path_context@", getActualPathContext())
+          .replace("@application_context@", getApplicationContext());
     } else {
       return value;
     }
