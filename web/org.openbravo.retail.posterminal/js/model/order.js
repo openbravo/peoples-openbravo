@@ -4008,13 +4008,17 @@
           fullyPaid = this.isFullyPaid() || this.get('paidOnCredit'),
           receiptCompleted = this.get('donePressed') || this.get('paidOnCredit'),
           prePaid = !fullyPaid && this.get('donePressed') && !this.get('paidOnCredit');
+      if (fullyPaid || prePaid) {
+        _.each(this.get('lines').models, function (line) {
+          if (fullyPaid) {
+            line.set('obposCanbedelivered', true);
+            line.set('obposIspaid', true);
+          } else if (prePaid && line.get('obposCanbedelivered')) {
+            line.set('obposIspaid', true);
+          }
+        });
+      }
       _.each(this.get('lines').models, function (line) {
-        if (fullyPaid) {
-          line.set('obposCanbedelivered', true);
-          line.set('obposIspaid', true);
-        } else if (prePaid && line.get('obposCanbedelivered')) {
-          line.set('obposIspaid', true);
-        }
         if (!line.has('obposQtytodeliver')) {
           if (receiptCompleted) {
             if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct')) {
@@ -4028,6 +4032,9 @@
                     qtyToDeliver = OB.DEC.add(qtyToDeliver, relatedLine.qty);
                   }
                 });
+                if (qtyToDeliver && line.get('product').get('quantityRule') === 'UQ') {
+                  qtyToDeliver = OB.DEC.One;
+                }
                 line.set('obposQtytodeliver', qtyToDeliver);
                 if (qtyToDeliver) {
                   line.set('obposCanbedelivered', true);
