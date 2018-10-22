@@ -1630,6 +1630,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           final FIN_PaymentScheduleDetail newPSD;
           if (remainingPSDList.size() > 0) {
             newPSD = remainingPSDList.get(remainingPSDList.size() - 1);
+            OBDal.getInstance().save(newPSD);
           } else {
             // Create a new PSD if there was not a remaining amount
             newPSD = POSUtils.createPSD(BigDecimal.ZERO, paymentSchedule, null,
@@ -1641,7 +1642,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
           // Set the quantity to the payment that is being created
           newPSD.setAmount(remainingAmount);
-          OBDal.getInstance().save(newPSD);
 
           paymentScheduleDetailList.add(newPSD);
           paymentAmountMap.put(newPSD.getId(), remainingAmount);
