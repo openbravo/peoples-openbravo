@@ -1632,11 +1632,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             newPSD = remainingPSDList.get(remainingPSDList.size() - 1);
           } else {
             // Create a new PSD if there was not a remaining amount
-            newPSD = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
-            newPSD.setNewOBObject(true);
-            newPSD.setOrderPaymentSchedule(paymentSchedule);
-            newPSD.setBusinessPartner(order.getBusinessPartner());
-            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
+            newPSD = POSUtils.createPSD(BigDecimal.ZERO, paymentSchedule, null,
+                order.getBusinessPartner());
           }
           // Create the new PSD for the remaining amount
           POSUtils.createPSD(newPSD.getAmount().subtract(remainingAmount), paymentSchedule,
