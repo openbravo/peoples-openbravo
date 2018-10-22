@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.servlet.ServletConfig;
@@ -113,6 +115,8 @@ public class DataSourceServlet extends BaseKernelServlet {
   private static final long serialVersionUID = 1L;
 
   private static String servletPathPart = "org.openbravo.service.datasource";
+  private static Pattern csrfTokenPattern = Pattern
+      .compile("\"csrfToken\":\"(?<token>[A-Z0-9]+)\"");
 
   public static String getServletPathPart() {
     return servletPathPart;
@@ -847,9 +851,12 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new OBUserException("AccessTableNoView");
       }
 
+      String content = getRequestContent(request);
+
+      checkCsrfToken(getCsrfTokenFromRequestContent(content), request);
+
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
-        String content = getRequestContent(request);
         parameters.put(DataSourceConstants.ADD_CONTENT_OPERATION, content);
         getDataSource(request).checkEditDatasourceAccess(parameters);
         final String result = getDataSource(request).add(parameters, content);
@@ -872,6 +879,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
+
+      checkCsrfToken(parameters.get(JsonConstants.CSRF_TOKEN_PARAMETER), request);
 
       final String id = parameters.get(JsonConstants.ID);
       if (id == null) {
@@ -911,16 +920,49 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new OBUserException("AccessTableNoView");
       }
 
+      String requestContent = getRequestContent(request);
+
+      checkCsrfToken(getCsrfTokenFromRequestContent(requestContent), request);
+
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
         getDataSource(request).checkEditDatasourceAccess(parameters);
-        final String result = getDataSource(request).update(parameters, getRequestContent(request));
+        final String result = getDataSource(request).update(parameters, requestContent);
         writeResult(response, result);
       }
 
     } catch (Exception e) {
       handleException(e, response);
     }
+  }
+
+  private void checkCsrfToken(String requestToken, HttpServletRequest request) {
+    String sessionToken = getSessionCsrfToken(request);
+    if (!hasValidCsrfToken(requestToken, sessionToken)) {
+      log.error("CSRF token check failed. Request=" + request.getRequestURI() + ", SessionID="
+          + request.getSession(false).getId() + ", SessionToken=" + sessionToken
+          + ", RequestToken=" + requestToken);
+      throw new OBUserException("InvalidCSRFToken");
+    }
+  }
+
+  private boolean hasValidCsrfToken(String requestToken, String sessionToken) {
+    return StringUtils.isNotEmpty(requestToken) && StringUtils.isNotEmpty(sessionToken)
+        && requestToken.equals(sessionToken);
+  }
+
+  private String getCsrfTokenFromRequestContent(String requestContent) {
+    Matcher matcher = csrfTokenPattern.matcher(requestContent);
+    if (matcher.find()) {
+      return matcher.group("token");
+    }
+
+    return "";
+  }
+
+  private String getSessionCsrfToken(HttpServletRequest request) {
+    String token = (String) request.getSession(false).getAttribute("#CSRF_TOKEN");
+    return token != null ? token : "";
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,

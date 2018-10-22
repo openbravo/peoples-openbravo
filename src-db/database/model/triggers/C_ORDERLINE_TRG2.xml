@@ -80,7 +80,8 @@ IF (UPDATING) THEN
   OR COALESCE(:old.AD_Org_ID,'0') <> COALESCE(:NEW.AD_Org_ID,'0')
   OR COALESCE(:old.TaxBaseAmt,0) <> COALESCE(:NEW.TaxBaseAmt,0)
   OR COALESCE(:old.M_AttributeSetInstance_ID,'0') <> COALESCE(:NEW.M_AttributeSetInstance_ID,'0')
-  OR COALESCE(:old.line_gross_amount,0) <> COALESCE(:NEW.line_gross_amount,0))
+  OR COALESCE(:old.line_gross_amount,0) <> COALESCE(:NEW.line_gross_amount,0)
+  OR COALESCE(:old.returnline,'0') <> COALESCE(:NEW.returnline,'0'))
   THEN
   RETURN;
   END IF;
@@ -256,7 +257,7 @@ IF (UPDATING) THEN
    END IF;
   END IF;
  END IF;
-
+ 
 END C_ORDERLINE_TRG2
 ]]></body>
     </trigger>

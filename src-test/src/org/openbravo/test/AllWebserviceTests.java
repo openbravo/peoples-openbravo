@@ -43,6 +43,7 @@ import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.TestNoteDatasource;
+import org.openbravo.test.security.CSRFAttackTest;
 import org.openbravo.test.security.ExplicitCrossOrganizationReference;
 import org.openbravo.test.security.UserInfoSessionDataTest;
 import org.openbravo.test.selector.TestSelectorDefaultFilterActionHandler;
@@ -100,7 +101,8 @@ DataSourceWhereParameter.class, //
     ResetCookieOnLogin.class, //
     ETagGeneration.class, //
     TestSelectorDefaultFilterActionHandler.class, //
-    SummaryFieldRequestTest.class //
+    SummaryFieldRequestTest.class, //
+    CSRFAttackTest.class //
 })
 public class AllWebserviceTests {
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Valery Lezhebokov.
  ************************************************************************
@@ -205,6 +205,8 @@ isc.OBNoteLayout.addProperties({
       organizationOfTheNote = this.notesForm.values.organization;
     }
 
+    noteDS.setCsrfToken(OB.User.csrfToken);
+
     noteDS.addData({
       'client': OB.User.clientId,
       'organization': organizationOfTheNote,
@@ -235,6 +237,7 @@ isc.OBNoteLayout.addProperties({
     }
 
     var noteDS = this.getNoteDataSource();
+    noteDS.setCsrfToken(OB.User.csrfToken);
     var noteSection = this.parentElement.noteSection;
     isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveNote'), function (clickedOK) {
       if (clickedOK) {

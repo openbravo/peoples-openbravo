@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2017 Openbravo SLU
+ * All portions are Copyright (C) 2016-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,6 +51,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.service.json.JsonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test cases to ensure that mechanism of security DataSource access is working properly.
@@ -60,6 +62,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 @RunWith(Parameterized.class)
 public class DataSourceSecurity extends BaseDataSourceTestDal {
+  private static final Logger log = LoggerFactory.getLogger(DataSourceSecurity.class);
   private static final String ASTERISK_ORG_ID = "0";
   private static final String CONTEXT_USER = "100";
   private static final String LANGUAGE_ID = "192";
@@ -489,10 +492,29 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   }
 
   private JSONObject updateDataSource() throws Exception {
+    String parameters = addCsrfTokenToParameters(dataSource.urlAndJson.content);
     String responseUpdate = doRequest("/org.openbravo.service.datasource/" + dataSource.ds
-        + dataSource.urlAndJson.url, dataSource.urlAndJson.content, 200, "PUT", "application/json");
+        + dataSource.urlAndJson.url, parameters, 200, "PUT", "application/json");
 
     return new JSONObject(responseUpdate).getJSONObject("response");
+  }
+
+  private String addCsrfTokenToParameters(String content) {
+    JSONObject params = initializeJSONObject(content);
+    try {
+      params.put(JsonConstants.CSRF_TOKEN_PARAMETER, getSessionCsrfToken());
+    } catch (JSONException e) {
+      log.error("Cannot add the CSRF Token to request params", e);
+    }
+    return params.toString();
+  }
+
+  private JSONObject initializeJSONObject(String content) {
+    try {
+      return new JSONObject(content);
+    } catch (JSONException e) {
+      return new JSONObject();
+    }
   }
 
   private JSONObject fetchDataSource() throws Exception {

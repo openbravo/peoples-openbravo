@@ -171,7 +171,8 @@ public class TestCostingUtils {
     OBDal.getInstance().flush();
   }
 
-  private static void unsetEnableAutomaticPriceDifferenceCorrectionPreference(Preference preference) {
+  private static void unsetEnableAutomaticPriceDifferenceCorrectionPreference(
+      Preference preference) {
     OBDal.getInstance().remove(preference);
     OBDal.getInstance().flush();
   }
@@ -211,7 +212,8 @@ public class TestCostingUtils {
   }
 
   // Create a Product cloning a created one
-  public static Product createProduct(String name, BigDecimal purchasePrice, BigDecimal salesPrice) {
+  public static Product createProduct(String name, BigDecimal purchasePrice,
+      BigDecimal salesPrice) {
     return createProduct(name, "I", purchasePrice, salesPrice, null, null, 0,
         TestCostingConstants.EURO_ID, null, null);
   }
@@ -332,10 +334,10 @@ public class TestCostingUtils {
           productCosting.setManual(true);
           productCosting.setCostType(costType);
           productCosting.setCost(cost);
-          productCosting.setCurrency(OBDal.getInstance().get(Currency.class,
-              TestCostingConstants.EURO_ID));
-          productCosting.setWarehouse(OBDal.getInstance().get(Warehouse.class,
-              TestCostingConstants.SPAIN_WAREHOUSE_ID));
+          productCosting
+              .setCurrency(OBDal.getInstance().get(Currency.class, TestCostingConstants.EURO_ID));
+          productCosting.setWarehouse(
+              OBDal.getInstance().get(Warehouse.class, TestCostingConstants.SPAIN_WAREHOUSE_ID));
           productCosting.setProduct(productClone);
           productClone.getMaterialMgmtCostingList().add(productCosting);
         }
@@ -369,16 +371,13 @@ public class TestCostingUtils {
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(productClone);
 
-      OBCriteria<ProductAccounts> criteria = OBDal.getInstance().createCriteria(
-          ProductAccounts.class);
+      OBCriteria<ProductAccounts> criteria = OBDal.getInstance()
+          .createCriteria(ProductAccounts.class);
       criteria.add(Restrictions.eq(ProductAccounts.PROPERTY_PRODUCT, product));
       criteria.add(Restrictions.isNotNull(ProductAccounts.PROPERTY_INVOICEPRICEVARIANCE));
       criteria.setMaxResults(1);
-      productClone
-          .getProductAccountsList()
-          .get(0)
-          .setInvoicePriceVariance(
-              ((ProductAccounts) criteria.uniqueResult()).getInvoicePriceVariance());
+      productClone.getProductAccountsList().get(0).setInvoicePriceVariance(
+          ((ProductAccounts) criteria.uniqueResult()).getInvoicePriceVariance());
 
       OBDal.getInstance().save(productClone);
       OBDal.getInstance().flush();
@@ -407,10 +406,11 @@ public class TestCostingUtils {
     try {
       OBDal.getInstance().commitAndClose();
       VariablesSecureApp vars = null;
-      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
-          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(), OBContext
-          .getOBContext().getLanguage().getLanguage());
+      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
+          OBContext.getOBContext().getRole().getId(),
+          OBContext.getOBContext().getLanguage().getLanguage());
       ConnectionProvider conn = new DalConnectionProvider(true);
       ProcessBundle pb = new ProcessBundle(TestCostingConstants.VERIFYBOM_PROCESS_ID, vars)
           .init(conn);
@@ -533,8 +533,8 @@ public class TestCostingUtils {
       List<BigDecimal> quantityList = new ArrayList<BigDecimal>();
       for (ShipmentInOut goodsReceipt : goodsReceiptList) {
         goodsReceipIdtList.add(goodsReceipt.getId());
-        quantityList.add(goodsReceipt.getMaterialMgmtShipmentInOutLineList().get(0)
-            .getMovementQuantity());
+        quantityList
+            .add(goodsReceipt.getMaterialMgmtShipmentInOutLineList().get(0).getMovementQuantity());
       }
       Invoice purchaseInvoice = createInvoiceFromMovements(goodsReceipIdtList, false, priceList,
           quantity, day);
@@ -580,13 +580,14 @@ public class TestCostingUtils {
       postDocument(purchaseInvoice);
       Invoice invoice = OBDal.getInstance().get(Invoice.class, purchaseInvoice.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity
-          .multiply(price), null));
+      documentPostAssertList
+          .add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity.multiply(price), null));
       for (InvoiceLine purchaseInvoiceLine : invoice.getInvoiceLineList())
-        documentPostAssertList.add(new DocumentPostAssert(purchaseInvoiceLine.getProduct().getId(),
-            "60000", purchaseInvoiceLine.getInvoicedQuantity().multiply(
-                purchaseInvoiceLine.getUnitPrice()), BigDecimal.ZERO, purchaseInvoiceLine
-                .getInvoicedQuantity()));
+        documentPostAssertList
+            .add(new DocumentPostAssert(purchaseInvoiceLine.getProduct().getId(), "60000",
+                purchaseInvoiceLine.getInvoicedQuantity()
+                    .multiply(purchaseInvoiceLine.getUnitPrice()),
+                BigDecimal.ZERO, purchaseInvoiceLine.getInvoicedQuantity()));
       assertDocumentPost(invoice, null, documentPostAssertList);
 
       if (invoice.getInvoiceLineList().get(0).getGoodsShipmentLine() != null
@@ -628,8 +629,8 @@ public class TestCostingUtils {
   public static ShipmentInOut createGoodsReceipt(Order purchaseOrder, BigDecimal price,
       BigDecimal quantity, int day) {
     try {
-      return createGoodsReceipt(purchaseOrder, price, quantity,
-          TestCostingConstants.LOCATOR_L01_ID, day);
+      return createGoodsReceipt(purchaseOrder, price, quantity, TestCostingConstants.LOCATOR_L01_ID,
+          day);
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -735,14 +736,16 @@ public class TestCostingUtils {
               "40090", BigDecimal.ZERO, goodsReceiptLine.getMovementQuantity().multiply(price),
               goodsReceiptLine.getMovementQuantity()));
         } else {
+          documentPostAssertList
+              .add(new DocumentPostAssert(goodsReceiptLine.getProduct().getId(), "35000",
+                  goodsReceiptLine.getMovementQuantity()
+                      .multiply(goodsReceiptLine.getSalesOrderLine().getUnitPrice()),
+                  BigDecimal.ZERO, goodsReceiptLine.getMovementQuantity()));
           documentPostAssertList.add(new DocumentPostAssert(goodsReceiptLine.getProduct().getId(),
-              "35000", goodsReceiptLine.getMovementQuantity().multiply(
-                  goodsReceiptLine.getSalesOrderLine().getUnitPrice()), BigDecimal.ZERO,
+              "40090", BigDecimal.ZERO,
+              goodsReceiptLine.getMovementQuantity()
+                  .multiply(goodsReceiptLine.getSalesOrderLine().getUnitPrice()),
               goodsReceiptLine.getMovementQuantity()));
-          documentPostAssertList.add(new DocumentPostAssert(goodsReceiptLine.getProduct().getId(),
-              "40090", BigDecimal.ZERO, goodsReceiptLine.getMovementQuantity().multiply(
-                  goodsReceiptLine.getSalesOrderLine().getUnitPrice()), goodsReceiptLine
-                  .getMovementQuantity()));
         }
       }
       assertDocumentPost(receipt, null, documentPostAssertList);
@@ -750,8 +753,8 @@ public class TestCostingUtils {
       if (receipt.getInvoice() != null) {
         int i = 0;
         for (InvoiceLine purchaseInvoiceLine : receipt.getInvoice().getInvoiceLineList()) {
-          postMatchedPurchaseInvoice(purchaseInvoiceLine, receipt
-              .getMaterialMgmtShipmentInOutLineList().get(i));
+          postMatchedPurchaseInvoice(purchaseInvoiceLine,
+              receipt.getMaterialMgmtShipmentInOutLineList().get(i));
           i++;
         }
       }
@@ -765,15 +768,15 @@ public class TestCostingUtils {
   public static void postMatchedPurchaseInvoice(InvoiceLine purchaseInvoiceLine,
       ShipmentInOutLine goodsReceiptLine) {
     try {
-      OBCriteria<ReceiptInvoiceMatch> criteria1 = OBDal.getInstance().createCriteria(
-          ReceiptInvoiceMatch.class);
+      OBCriteria<ReceiptInvoiceMatch> criteria1 = OBDal.getInstance()
+          .createCriteria(ReceiptInvoiceMatch.class);
       criteria1.add(Restrictions.eq(ReceiptInvoiceMatch.PROPERTY_INVOICELINE, purchaseInvoiceLine));
-      criteria1.add(Restrictions.eq(ReceiptInvoiceMatch.PROPERTY_GOODSSHIPMENTLINE,
-          goodsReceiptLine));
+      criteria1
+          .add(Restrictions.eq(ReceiptInvoiceMatch.PROPERTY_GOODSSHIPMENTLINE, goodsReceiptLine));
       criteria1.setMaxResults(1);
       ReceiptInvoiceMatch receiptInvoiceMatch = (ReceiptInvoiceMatch) criteria1.uniqueResult();
-      assertMatchedInvoice(receiptInvoiceMatch, new MatchedInvoicesAssert(purchaseInvoiceLine,
-          goodsReceiptLine));
+      assertMatchedInvoice(receiptInvoiceMatch,
+          new MatchedInvoicesAssert(purchaseInvoiceLine, goodsReceiptLine));
 
       postDocument(receiptInvoiceMatch);
       receiptInvoiceMatch = OBDal.getInstance().get(ReceiptInvoiceMatch.class,
@@ -781,36 +784,39 @@ public class TestCostingUtils {
 
       BigDecimal invoicePrice = OBDal.getInstance()
           .get(Invoice.class, purchaseInvoiceLine.getInvoice().getId())
-          .getCurrencyConversionRateDocList().size() == 0 ? purchaseInvoiceLine.getUnitPrice()
-          : purchaseInvoiceLine.getUnitPrice().multiply(
-              OBDal.getInstance().get(Invoice.class, purchaseInvoiceLine.getInvoice().getId())
-                  .getCurrencyConversionRateDocList().get(0).getRate());
-      OBCriteria<AccountingFact> criteria2 = OBDal.getInstance().createCriteria(
-          AccountingFact.class);
-      criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, goodsReceiptLine
-          .getShipmentReceipt().getId()));
+          .getCurrencyConversionRateDocList().size() == 0
+              ? purchaseInvoiceLine.getUnitPrice()
+              : purchaseInvoiceLine.getUnitPrice()
+                  .multiply(OBDal.getInstance()
+                      .get(Invoice.class, purchaseInvoiceLine.getInvoice().getId())
+                      .getCurrencyConversionRateDocList().get(0).getRate());
+      OBCriteria<AccountingFact> criteria2 = OBDal.getInstance()
+          .createCriteria(AccountingFact.class);
+      criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID,
+          goodsReceiptLine.getShipmentReceipt().getId()));
       criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_LINEID, goodsReceiptLine.getId()));
       criteria2.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
       criteria2.setMaxResults(1);
-      BigDecimal receiptPrice = ((AccountingFact) criteria2.uniqueResult()).getDebit().divide(
-          receiptInvoiceMatch.getQuantity());
+      BigDecimal receiptPrice = ((AccountingFact) criteria2.uniqueResult()).getDebit()
+          .divide(receiptInvoiceMatch.getQuantity());
 
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("40090", receiptPrice
-          .multiply(receiptInvoiceMatch.getQuantity()), BigDecimal.ZERO, goodsReceiptLine
-          .getMovementQuantity()));
-      documentPostAssertList.add(new DocumentPostAssert("60000", BigDecimal.ZERO, invoicePrice
-          .multiply(receiptInvoiceMatch.getQuantity()), purchaseInvoiceLine.getInvoicedQuantity()));
+      documentPostAssertList.add(
+          new DocumentPostAssert("40090", receiptPrice.multiply(receiptInvoiceMatch.getQuantity()),
+              BigDecimal.ZERO, goodsReceiptLine.getMovementQuantity()));
+      documentPostAssertList.add(new DocumentPostAssert("60000", BigDecimal.ZERO,
+          invoicePrice.multiply(receiptInvoiceMatch.getQuantity()),
+          purchaseInvoiceLine.getInvoicedQuantity()));
       if (!invoicePrice.equals(receiptPrice))
         if (invoicePrice.compareTo(receiptPrice) > 0)
-          documentPostAssertList.add(new DocumentPostAssert("99904", invoicePrice.multiply(
-              receiptInvoiceMatch.getQuantity()).add(
-              receiptPrice.multiply(receiptInvoiceMatch.getQuantity()).negate()), BigDecimal.ZERO,
-              goodsReceiptLine.getMovementQuantity()));
+          documentPostAssertList.add(new DocumentPostAssert("99904",
+              invoicePrice.multiply(receiptInvoiceMatch.getQuantity())
+                  .add(receiptPrice.multiply(receiptInvoiceMatch.getQuantity()).negate()),
+              BigDecimal.ZERO, goodsReceiptLine.getMovementQuantity()));
         else
-          documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO, receiptPrice
-              .multiply(receiptInvoiceMatch.getQuantity()).add(
-                  invoicePrice.multiply(receiptInvoiceMatch.getQuantity()).negate()),
+          documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
+              receiptPrice.multiply(receiptInvoiceMatch.getQuantity())
+                  .add(invoicePrice.multiply(receiptInvoiceMatch.getQuantity()).negate()),
               goodsReceiptLine.getMovementQuantity()));
       assertDocumentPost(receiptInvoiceMatch, purchaseInvoiceLine.getProduct().getId(),
           documentPostAssertList);
@@ -823,7 +829,8 @@ public class TestCostingUtils {
   public static ShipmentInOut createGoodsShipment(Product product, BigDecimal price,
       BigDecimal quantity, int day) {
     try {
-      return createGoodsShipment(product, price, quantity, TestCostingConstants.LOCATOR_L01_ID, day);
+      return createGoodsShipment(product, price, quantity, TestCostingConstants.LOCATOR_L01_ID,
+          day);
     } catch (Exception e) {
       throw new OBException(e);
     }
@@ -877,21 +884,21 @@ public class TestCostingUtils {
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       for (ShipmentInOutLine goodsShipmentLine : shipment.getMaterialMgmtShipmentInOutLineList()) {
         if (shipment.getMaterialMgmtShipmentInOutLineList().size() == 1) {
-          documentPostAssertList.add(new DocumentPostAssert("99900", goodsShipmentLine
-              .getMovementQuantity().multiply(price), BigDecimal.ZERO, goodsShipmentLine
-              .getMovementQuantity()));
-          documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
-              goodsShipmentLine.getMovementQuantity().multiply(price), goodsShipmentLine
-                  .getMovementQuantity()));
-        } else {
           documentPostAssertList.add(new DocumentPostAssert("99900",
-              goodsShipmentLine.getMovementQuantity().multiply(
-                  goodsShipmentLine.getSalesOrderLine().getUnitPrice()), BigDecimal.ZERO,
+              goodsShipmentLine.getMovementQuantity().multiply(price), BigDecimal.ZERO,
               goodsShipmentLine.getMovementQuantity()));
           documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
-              goodsShipmentLine.getMovementQuantity().multiply(
-                  goodsShipmentLine.getSalesOrderLine().getUnitPrice()), goodsShipmentLine
-                  .getMovementQuantity()));
+              goodsShipmentLine.getMovementQuantity().multiply(price),
+              goodsShipmentLine.getMovementQuantity()));
+        } else {
+          documentPostAssertList.add(new DocumentPostAssert("99900",
+              goodsShipmentLine.getMovementQuantity()
+                  .multiply(goodsShipmentLine.getSalesOrderLine().getUnitPrice()),
+              BigDecimal.ZERO, goodsShipmentLine.getMovementQuantity()));
+          documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
+              goodsShipmentLine.getMovementQuantity()
+                  .multiply(goodsShipmentLine.getSalesOrderLine().getUnitPrice()),
+              goodsShipmentLine.getMovementQuantity()));
         }
       }
       assertDocumentPost(shipment, productId, documentPostAssertList);
@@ -925,11 +932,11 @@ public class TestCostingUtils {
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       for (ShipmentInOutLine goodsReceiptLine : receipt.getMaterialMgmtShipmentInOutLineList()) {
         documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
-            goodsReceiptLine.getMovementQuantity().negate().multiply(price), goodsReceiptLine
-                .getMovementQuantity()));
-        documentPostAssertList.add(new DocumentPostAssert("40090", goodsReceiptLine
-            .getMovementQuantity().negate().multiply(price), BigDecimal.ZERO, goodsReceiptLine
-            .getMovementQuantity()));
+            goodsReceiptLine.getMovementQuantity().negate().multiply(price),
+            goodsReceiptLine.getMovementQuantity()));
+        documentPostAssertList.add(new DocumentPostAssert("40090",
+            goodsReceiptLine.getMovementQuantity().negate().multiply(price), BigDecimal.ZERO,
+            goodsReceiptLine.getMovementQuantity()));
       }
       assertDocumentPost(receipt, productId, documentPostAssertList);
       return receipt;
@@ -963,11 +970,11 @@ public class TestCostingUtils {
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       for (ShipmentInOutLine goodsShipmentLine : shipment.getMaterialMgmtShipmentInOutLineList()) {
         documentPostAssertList.add(new DocumentPostAssert("99900", BigDecimal.ZERO,
-            goodsShipmentLine.getMovementQuantity().negate().multiply(price), goodsShipmentLine
-                .getMovementQuantity()));
-        documentPostAssertList.add(new DocumentPostAssert("35000", goodsShipmentLine
-            .getMovementQuantity().negate().multiply(price), BigDecimal.ZERO, goodsShipmentLine
-            .getMovementQuantity()));
+            goodsShipmentLine.getMovementQuantity().negate().multiply(price),
+            goodsShipmentLine.getMovementQuantity()));
+        documentPostAssertList.add(new DocumentPostAssert("35000",
+            goodsShipmentLine.getMovementQuantity().negate().multiply(price), BigDecimal.ZERO,
+            goodsShipmentLine.getMovementQuantity()));
       }
       assertDocumentPost(shipment, productId, documentPostAssertList);
       return shipment;
@@ -980,8 +987,8 @@ public class TestCostingUtils {
   public static InternalMovement createGoodsMovement(Product product, BigDecimal price,
       BigDecimal quantity, String locatorFromId, String locatorToId, int day) {
     try {
-      InternalMovement goodsMovement = createGoodsMovement(product.getId(), quantity,
-          locatorFromId, locatorToId, day);
+      InternalMovement goodsMovement = createGoodsMovement(product.getId(), quantity, locatorFromId,
+          locatorToId, day);
       OBDal.getInstance().commitAndClose();
       completeDocument(goodsMovement, TestCostingConstants.PROCESSMOVEMENT_PROCESS_ID);
       goodsMovement.setProcessed(true);
@@ -991,10 +998,10 @@ public class TestCostingUtils {
       postDocument(movement);
       movement = OBDal.getInstance().get(InternalMovement.class, goodsMovement.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity
-          .multiply(price), quantity));
-      documentPostAssertList.add(new DocumentPostAssert("35000", quantity.multiply(price),
-          BigDecimal.ZERO, quantity));
+      documentPostAssertList.add(
+          new DocumentPostAssert("35000", BigDecimal.ZERO, quantity.multiply(price), quantity));
+      documentPostAssertList.add(
+          new DocumentPostAssert("35000", quantity.multiply(price), BigDecimal.ZERO, quantity));
       assertDocumentPost(movement, product.getId(), documentPostAssertList);
       return movement;
     } catch (Exception e) {
@@ -1017,8 +1024,8 @@ public class TestCostingUtils {
   public static InternalConsumption createInternalConsumption(Product product, BigDecimal price,
       BigDecimal quantity, String locatorId, int day) {
     try {
-      InternalConsumption internalConsumption = createInternalConsumption(product.getId(),
-          quantity, locatorId, day);
+      InternalConsumption internalConsumption = createInternalConsumption(product.getId(), quantity,
+          locatorId, day);
       OBDal.getInstance().commitAndClose();
       completeDocument(internalConsumption, TestCostingConstants.PROCESSCONSUMPTION_PROCESS_ID);
       internalConsumption.setProcessed(true);
@@ -1029,10 +1036,10 @@ public class TestCostingUtils {
       postDocument(consumption);
       consumption = OBDal.getInstance().get(InternalConsumption.class, consumption.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99900", quantity.multiply(price),
-          BigDecimal.ZERO, quantity));
-      documentPostAssertList.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity
-          .multiply(price), quantity));
+      documentPostAssertList.add(
+          new DocumentPostAssert("99900", quantity.multiply(price), BigDecimal.ZERO, quantity));
+      documentPostAssertList.add(
+          new DocumentPostAssert("35000", BigDecimal.ZERO, quantity.multiply(price), quantity));
       assertDocumentPost(consumption, product.getId(), documentPostAssertList);
       return consumption;
     } catch (Exception e) {
@@ -1074,13 +1081,13 @@ public class TestCostingUtils {
       runCostingBackground();
 
       List<InventoryCount> inventoryCountList = getPhysicalInventory(inventoryAmountUpdate.getId());
-      assertPhysicalInventory(inventoryCountList, new PhysicalInventoryAssert(product, finalPrice,
-          quantity, day));
+      assertPhysicalInventory(inventoryCountList,
+          new PhysicalInventoryAssert(product, finalPrice, quantity, day));
 
       postDocument(inventoryCountList.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO, quantity
-          .multiply(cost), quantity.negate()));
+      documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
+          quantity.multiply(cost), quantity.negate()));
       documentPostAssertList1.add(new DocumentPostAssert("61000", quantity.multiply(cost),
           BigDecimal.ZERO, quantity.negate()));
       assertDocumentPost(inventoryCountList.get(0), product.getId(), documentPostAssertList1);
@@ -1088,8 +1095,8 @@ public class TestCostingUtils {
       List<DocumentPostAssert> documentPostAssertList2 = new ArrayList<DocumentPostAssert>();
       documentPostAssertList2.add(new DocumentPostAssert("35000", quantity.multiply(finalPrice),
           BigDecimal.ZERO, quantity));
-      documentPostAssertList2.add(new DocumentPostAssert("61000", BigDecimal.ZERO, quantity
-          .multiply(finalPrice), quantity));
+      documentPostAssertList2.add(new DocumentPostAssert("61000", BigDecimal.ZERO,
+          quantity.multiply(finalPrice), quantity));
       assertDocumentPost(inventoryCountList.get(1), product.getId(), documentPostAssertList2);
       return inventoryAmountUpdate;
     } catch (Exception e) {
@@ -1117,19 +1124,19 @@ public class TestCostingUtils {
       OBDal.getInstance().commitAndClose();
       runCostingBackground();
 
-      ProductionTransaction bMaterialsProduction = OBDal.getInstance().get(
-          ProductionTransaction.class, billOfMaterialsProduction.getId());
+      ProductionTransaction bMaterialsProduction = OBDal.getInstance()
+          .get(ProductionTransaction.class, billOfMaterialsProduction.getId());
       postDocument(bMaterialsProduction);
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      List<ProductionLine> productionLinesList = getProductionLines(billOfMaterialsProduction
-          .getId());
+      List<ProductionLine> productionLinesList = getProductionLines(
+          billOfMaterialsProduction.getId());
       productionLinesList.add(0, productionLinesList.get(productionLinesList.size() - 1));
       productionLinesList.remove(productionLinesList.size() - 1);
 
-      final OBCriteria<AccountingFact> criteria1 = OBDal.getInstance().createCriteria(
-          AccountingFact.class);
-      criteria1.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID,
-          billOfMaterialsProduction.getId()));
+      final OBCriteria<AccountingFact> criteria1 = OBDal.getInstance()
+          .createCriteria(AccountingFact.class);
+      criteria1.add(
+          Restrictions.eq(AccountingFact.PROPERTY_RECORDID, billOfMaterialsProduction.getId()));
       criteria1.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
 
       if (!criteria1.list().get(2).getQuantity()
@@ -1157,12 +1164,8 @@ public class TestCostingUtils {
         }
 
         else {
-          amountTotal = amountTotal.add(productionLine
-              .getMovementQuantity()
-              .negate()
-              .multiply(
-                  productionLine.getProduct().getPricingProductPriceList().get(0)
-                      .getStandardPrice()));
+          amountTotal = amountTotal.add(productionLine.getMovementQuantity().negate().multiply(
+              productionLine.getProduct().getPricingProductPriceList().get(0).getStandardPrice()));
           documentPostAssertList1.add(new DocumentPostAssert(productionLine.getProduct().getId(),
               "35000", BigDecimal.ZERO, amountTotal, productionLine.getMovementQuantity()));
           documentPostAssertList1.add(new DocumentPostAssert(productionLine.getProduct().getId(),
@@ -1240,8 +1243,8 @@ public class TestCostingUtils {
       postDocument(returnReceipt);
       returnReceipt = OBDal.getInstance().get(ShipmentInOut.class, returnMaterialReceipt.getId());
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("99900", BigDecimal.ZERO, quantity
-          .multiply(price), quantity.negate()));
+      documentPostAssertList.add(new DocumentPostAssert("99900", BigDecimal.ZERO,
+          quantity.multiply(price), quantity.negate()));
       documentPostAssertList.add(new DocumentPostAssert("35000", quantity.multiply(price),
           BigDecimal.ZERO, quantity.negate()));
       assertDocumentPost(returnReceipt, productId, documentPostAssertList);
@@ -1275,28 +1278,30 @@ public class TestCostingUtils {
 
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
       if (landedCostTypeId.equals(TestCostingConstants.LANDEDCOSTTYPE_FEES_ID)) {
-        documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity
-            .multiply(price), null));
-        documentPostAssertList.add(new DocumentPostAssert("62900", quantity.multiply(price),
-            BigDecimal.ZERO, quantity));
+        documentPostAssertList
+            .add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity.multiply(price), null));
+        documentPostAssertList.add(
+            new DocumentPostAssert("62900", quantity.multiply(price), BigDecimal.ZERO, quantity));
         assertDocumentPost(invoice, null, documentPostAssertList);
       }
 
-      else if (landedCostTypeId.equals(TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID)) {
-        documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity
-            .multiply(price).add(quantity.multiply(price).divide(new BigDecimal("10"))), null));
-        documentPostAssertList.add(new DocumentPostAssert("47200", quantity.multiply(price).divide(
-            new BigDecimal("10")), BigDecimal.ZERO, null));
-        documentPostAssertList.add(new DocumentPostAssert("62400", quantity.multiply(price),
-            BigDecimal.ZERO, quantity));
+      else if (landedCostTypeId
+          .equals(TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID)) {
+        documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO,
+            quantity.multiply(price).add(quantity.multiply(price).divide(new BigDecimal("10"))),
+            null));
+        documentPostAssertList.add(new DocumentPostAssert("47200",
+            quantity.multiply(price).divide(new BigDecimal("10")), BigDecimal.ZERO, null));
+        documentPostAssertList.add(
+            new DocumentPostAssert("62400", quantity.multiply(price), BigDecimal.ZERO, quantity));
         assertDocumentPost(invoice, landedCostTypeId, documentPostAssertList);
       }
 
       else {
-        documentPostAssertList.add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity
-            .multiply(price), null));
-        documentPostAssertList.add(new DocumentPostAssert("62800", quantity.multiply(price),
-            BigDecimal.ZERO, quantity));
+        documentPostAssertList
+            .add(new DocumentPostAssert("40000", BigDecimal.ZERO, quantity.multiply(price), null));
+        documentPostAssertList.add(
+            new DocumentPostAssert("62800", quantity.multiply(price), BigDecimal.ZERO, quantity));
         assertDocumentPost(invoice, landedCostTypeId, documentPostAssertList);
       }
 
@@ -1330,8 +1335,8 @@ public class TestCostingUtils {
       else
         for (int i = 0; i < receiptList.size(); i++) {
           receiptIdList.add(receiptList.get(i) != null ? receiptList.get(i).getId() : null);
-          receiptLineIdList.add(receiptLineList.get(i) != null ? receiptLineList.get(i).getId()
-              : null);
+          receiptLineIdList
+              .add(receiptLineList.get(i) != null ? receiptLineList.get(i).getId() : null);
         }
 
       LandedCost landedCost = createLandedCost(landedCostTypeId, amountList, null, receiptIdList,
@@ -1383,7 +1388,8 @@ public class TestCostingUtils {
       for (Invoice invoice : invoiceList)
         invoiceIdList.add(invoice.getId());
 
-      List<LandedCostCost> landedCostCostList = createLandedCostCost(invoiceIdList, receipt.getId());
+      List<LandedCostCost> landedCostCostList = createLandedCostCost(invoiceIdList,
+          receipt.getId());
       return landedCostCostList;
     } catch (Exception e) {
       throw new OBException(e);
@@ -1419,8 +1425,8 @@ public class TestCostingUtils {
           OBDal.getInstance().get(LandedCost.class, landedCost.getId()));
       List<LCReceipt> landedCostReceiptList = criteria1.list();
 
-      OBCriteria<LandedCostCost> criteria2 = OBDal.getInstance().createCriteria(
-          LandedCostCost.class);
+      OBCriteria<LandedCostCost> criteria2 = OBDal.getInstance()
+          .createCriteria(LandedCostCost.class);
       criteria2.add(Restrictions.eq(LandedCostCost.PROPERTY_LANDEDCOST, landedCost));
       criteria2.addOrderBy(LandedCostCost.PROPERTY_LINENO, true);
       List<LandedCostCost> landedCostCostList = criteria2.list();
@@ -1430,11 +1436,11 @@ public class TestCostingUtils {
         if (!landedCostReceipt.getGoodsShipment().getMaterialMgmtShipmentInOutLineList().get(0)
             .getProduct().getProductType().equals("S"))
           if (landedCostReceipt.getGoodsShipmentLine() == null)
-            receiptTotalAmount = receiptTotalAmount.add(getTransactionAmount(
-                landedCostReceipt.getGoodsShipment(), landedCost));
+            receiptTotalAmount = receiptTotalAmount
+                .add(getTransactionAmount(landedCostReceipt.getGoodsShipment(), landedCost));
           else
-            receiptTotalAmount = receiptTotalAmount.add(getTransactionLineAmount(
-                landedCostReceipt.getGoodsShipmentLine(), landedCost));
+            receiptTotalAmount = receiptTotalAmount.add(
+                getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(), landedCost));
 
       List<List<LandedCostReceiptLineAmountAssert>> landedCostReceiptLineAmountAssertListList = new ArrayList<List<LandedCostReceiptLineAmountAssert>>();
 
@@ -1451,16 +1457,15 @@ public class TestCostingUtils {
 
               if (landedCostReceipt.getGoodsShipmentLine() != null) {
 
-                BigDecimal amount = landedCostCost
-                    .getAmount()
-                    .multiply(
-                        getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(),
-                            landedCost)).divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
+                BigDecimal amount = landedCostCost.getAmount().multiply(
+                    getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(), landedCost))
+                    .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
                 landedCostReceiptLineAmountAssertList.add(new LandedCostReceiptLineAmountAssert(
-                    OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()), OBDal
-                        .getInstance().get(ShipmentInOutLine.class,
-                            landedCostReceipt.getGoodsShipmentLine().getId()), amount));
+                    OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()),
+                    OBDal.getInstance().get(ShipmentInOutLine.class,
+                        landedCostReceipt.getGoodsShipmentLine().getId()),
+                    amount));
 
               } else {
                 for (ShipmentInOutLine receiptLine : landedCostReceipt.getGoodsShipment()
@@ -1470,10 +1475,10 @@ public class TestCostingUtils {
                       .multiply(getTransactionLineAmount(receiptLine, landedCost))
                       .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
-                  landedCostReceiptLineAmountAssertList
-                      .add(new LandedCostReceiptLineAmountAssert(OBDal.getInstance().get(
-                          LandedCostCost.class, landedCostCost.getId()), OBDal.getInstance().get(
-                          ShipmentInOutLine.class, receiptLine.getId()), amount));
+                  landedCostReceiptLineAmountAssertList.add(new LandedCostReceiptLineAmountAssert(
+                      OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()),
+                      OBDal.getInstance().get(ShipmentInOutLine.class, receiptLine.getId()),
+                      amount));
 
                 }
               }
@@ -1489,16 +1494,16 @@ public class TestCostingUtils {
 
                 if (landedCostReceipt.getGoodsShipmentLine() != null) {
 
-                  BigDecimal amount = landedCostMatched
-                      .getAmount()
-                      .multiply(
-                          getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(),
-                              landedCost)).divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
+                  BigDecimal amount = landedCostMatched.getAmount()
+                      .multiply(getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(),
+                          landedCost))
+                      .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
                   landedCostReceiptLineAmountAssertList.add(new LandedCostReceiptLineAmountAssert(
-                      OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()), OBDal
-                          .getInstance().get(ShipmentInOutLine.class,
-                              landedCostReceipt.getGoodsShipmentLine().getId()), amount));
+                      OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()),
+                      OBDal.getInstance().get(ShipmentInOutLine.class,
+                          landedCostReceipt.getGoodsShipmentLine().getId()),
+                      amount));
 
                 } else {
                   for (ShipmentInOutLine receiptLine : landedCostReceipt.getGoodsShipment()
@@ -1508,10 +1513,10 @@ public class TestCostingUtils {
                         .multiply(getTransactionLineAmount(receiptLine, landedCost))
                         .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
-                    landedCostReceiptLineAmountAssertList
-                        .add(new LandedCostReceiptLineAmountAssert(OBDal.getInstance().get(
-                            LandedCostCost.class, landedCostCost.getId()), OBDal.getInstance().get(
-                            ShipmentInOutLine.class, receiptLine.getId()), amount));
+                    landedCostReceiptLineAmountAssertList.add(new LandedCostReceiptLineAmountAssert(
+                        OBDal.getInstance().get(LandedCostCost.class, landedCostCost.getId()),
+                        OBDal.getInstance().get(ShipmentInOutLine.class, receiptLine.getId()),
+                        amount));
 
                   }
                 }
@@ -1526,8 +1531,9 @@ public class TestCostingUtils {
       BigDecimal landedCostCostAmount = BigDecimal.ZERO;
       for (LandedCostCost landedCostCost : landedCostCostList)
         if (landedCostCost.getLandedCostMatchedList().size() == 1)
-          landedCostCostAmount = landedCostCost.isMatchingAdjusted() ? landedCostCost
-              .getMatchingAmount() : landedCostCost.getAmount();
+          landedCostCostAmount = landedCostCost.isMatchingAdjusted()
+              ? landedCostCost.getMatchingAmount()
+              : landedCostCost.getAmount();
         else
           for (LCMatched landedCostMatched : landedCostCost.getLandedCostMatchedList())
             landedCostCostAmount = landedCostCostAmount.add(landedCostMatched.getAmount());
@@ -1554,22 +1560,19 @@ public class TestCostingUtils {
           i++;
         }
 
-        if (!totalAmount.setScale(4, RoundingMode.HALF_UP).equals(
-            landedCostCostAmount.setScale(4, RoundingMode.HALF_UP))) {
-          landedCostReceiptLineAmountAssertListList.get(maxI).set(
-              maxJ,
-              new LandedCostReceiptLineAmountAssert(landedCostReceiptLineAmountAssertListList
-                  .get(maxI).get(maxJ).getLandedCostCost(),
-                  landedCostReceiptLineAmountAssertListList.get(maxI).get(maxJ).getReceiptLine(),
-                  landedCostReceiptLineAmountAssertListList
-                      .get(maxI)
-                      .get(maxJ)
-                      .getAmount()
-                      .add(
-                          totalAmount.add(
-                              (landedCostCost.isMatchingAdjusted() ? landedCostCost
-                                  .getMatchingAmount() : landedCostCost.getAmount()).negate())
-                              .negate())));
+        if (!totalAmount.setScale(4, RoundingMode.HALF_UP)
+            .equals(landedCostCostAmount.setScale(4, RoundingMode.HALF_UP))) {
+          landedCostReceiptLineAmountAssertListList.get(maxI)
+              .set(maxJ,
+                  new LandedCostReceiptLineAmountAssert(
+                      landedCostReceiptLineAmountAssertListList.get(maxI).get(maxJ)
+                          .getLandedCostCost(),
+                      landedCostReceiptLineAmountAssertListList.get(maxI).get(maxJ)
+                          .getReceiptLine(),
+                      landedCostReceiptLineAmountAssertListList.get(maxI).get(maxJ).getAmount()
+                          .add(totalAmount.add((landedCostCost.isMatchingAdjusted()
+                              ? landedCostCost.getMatchingAmount()
+                              : landedCostCost.getAmount()).negate()).negate())));
         }
       }
 
@@ -1583,13 +1586,12 @@ public class TestCostingUtils {
       List<LCReceipt> lCReceiptList = new ArrayList<LCReceipt>(landedCostReceiptList);
       i = 0;
       for (LCReceipt landedCostReceipt : landedCostReceiptList) {
-        if (landedCostReceipt.getGoodsShipmentLine() != null
-            && i < landedCostReceiptList.size() - 1
+        if (landedCostReceipt.getGoodsShipmentLine() != null && i < landedCostReceiptList.size() - 1
             && landedCostReceiptList.get(i + 1).getGoodsShipmentLine() != null
             && landedCostReceipt.getGoodsShipment().getDocumentNo()
                 .equals(landedCostReceiptList.get(i + 1).getGoodsShipment().getDocumentNo())
-            && landedCostReceipt.getGoodsShipmentLine().getLineNo()
-                .compareTo(landedCostReceiptList.get(i + 1).getGoodsShipmentLine().getLineNo()) > 0) {
+            && landedCostReceipt.getGoodsShipmentLine().getLineNo().compareTo(
+                landedCostReceiptList.get(i + 1).getGoodsShipmentLine().getLineNo()) > 0) {
           lCReceiptList.set(i, landedCostReceiptList.get(i + 1));
           lCReceiptList.set(i + 1, landedCostReceipt);
 
@@ -1602,13 +1604,14 @@ public class TestCostingUtils {
       for (LandedCostCost landedCostCost : landedCostCostList) {
 
         String account;
-        if (landedCostCost.getLandedCostType().equals(
-            OBDal.getInstance()
+        if (landedCostCost.getLandedCostType()
+            .equals(OBDal.getInstance()
                 .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID)
                 .getLandedCostTypeList().get(0)))
           account = "62400";
-        else if (landedCostCost.getLandedCostType().equals(
-            OBDal.getInstance().get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
+        else if (landedCostCost.getLandedCostType()
+            .equals(OBDal.getInstance()
+                .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
                 .getLandedCostTypeList().get(0)))
           account = "62800";
         else
@@ -1621,22 +1624,20 @@ public class TestCostingUtils {
 
             if (landedCostReceipt.getGoodsShipmentLine() != null) {
 
-              BigDecimal amount = landedCostCost
-                  .getAmount()
-                  .multiply(
-                      getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(), landedCost))
+              BigDecimal amount = landedCostCost.getAmount().multiply(
+                  getTransactionLineAmount(landedCostReceipt.getGoodsShipmentLine(), landedCost))
                   .divide(receiptTotalAmount, 4, RoundingMode.HALF_UP);
 
-              documentPostAssertList.add(new DocumentPostAssert(landedCostReceipt
-                  .getGoodsShipmentLine().getProduct().getId(), "35000", amount, BigDecimal.ZERO,
-                  null));
-              documentPostAssertList.add(new DocumentPostAssert(account, BigDecimal.ZERO, amount,
-                  null));
+              documentPostAssertList.add(new DocumentPostAssert(
+                  landedCostReceipt.getGoodsShipmentLine().getProduct().getId(), "35000", amount,
+                  BigDecimal.ZERO, null));
+              documentPostAssertList
+                  .add(new DocumentPostAssert(account, BigDecimal.ZERO, amount, null));
 
             } else {
 
-              OBCriteria<ShipmentInOutLine> criteria3 = OBDal.getInstance().createCriteria(
-                  ShipmentInOutLine.class);
+              OBCriteria<ShipmentInOutLine> criteria3 = OBDal.getInstance()
+                  .createCriteria(ShipmentInOutLine.class);
               criteria3.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT,
                   landedCostReceipt.getGoodsShipment()));
               criteria3.addOrderBy(ShipmentInOutLine.PROPERTY_LINENO, true);
@@ -1649,8 +1650,8 @@ public class TestCostingUtils {
 
                 documentPostAssertList.add(new DocumentPostAssert(receiptLine.getProduct().getId(),
                     "35000", amount, BigDecimal.ZERO, null));
-                documentPostAssertList.add(new DocumentPostAssert(account, BigDecimal.ZERO, amount,
-                    null));
+                documentPostAssertList
+                    .add(new DocumentPostAssert(account, BigDecimal.ZERO, amount, null));
 
               }
             }
@@ -1684,14 +1685,15 @@ public class TestCostingUtils {
 
       String account;
       String productId;
-      if (lcCost.getLandedCostType().equals(
-          OBDal.getInstance()
+      if (lcCost.getLandedCostType()
+          .equals(OBDal.getInstance()
               .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID)
               .getLandedCostTypeList().get(0))) {
         account = "62400";
         productId = TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID;
-      } else if (lcCost.getLandedCostType().equals(
-          OBDal.getInstance().get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
+      } else if (lcCost.getLandedCostType()
+          .equals(OBDal.getInstance()
+              .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
               .getLandedCostTypeList().get(0))) {
         account = "62800";
         productId = TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID;
@@ -1709,147 +1711,137 @@ public class TestCostingUtils {
             .equals(lcCost.getMatchingAmount().setScale(2, RoundingMode.HALF_UP))
             && lcCost.isMatchingAdjusted()) {
 
-          documentPostAssertList.add(new DocumentPostAssert(account, lcCost.getAmount(),
-              BigDecimal.ZERO, null));
+          documentPostAssertList
+              .add(new DocumentPostAssert(account, lcCost.getAmount(), BigDecimal.ZERO, null));
 
           LandedCost landedCost = OBDal.getInstance().get(LandedCost.class,
               landedCostCost.getLandedCost().getId());
 
           if (landedCost.getLandedCostReceiptList().size() > 1
-              && !OBDal
-                  .getInstance()
-                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                  .getLandedCostReceiptList()
-                  .get(0)
-                  .getGoodsShipment()
-                  .getMaterialMgmtShipmentInOutLineList()
-                  .get(0)
-                  .getProduct()
-                  .equals(
-                      OBDal.getInstance()
-                          .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                          .getLandedCostReceiptList().get(1).getGoodsShipment()
-                          .getMaterialMgmtShipmentInOutLineList().get(0).getProduct())) {
+              && !OBDal.getInstance().get(LandedCost.class, landedCostCost.getLandedCost().getId())
+                  .getLandedCostReceiptList().get(0).getGoodsShipment()
+                  .getMaterialMgmtShipmentInOutLineList().get(0).getProduct()
+                  .equals(OBDal.getInstance()
+                      .get(LandedCost.class, landedCostCost.getLandedCost().getId())
+                      .getLandedCostReceiptList().get(1).getGoodsShipment()
+                      .getMaterialMgmtShipmentInOutLineList().get(0).getProduct())) {
 
-            final OBCriteria<AccountingFact> criteria = OBDal.getInstance().createCriteria(
-                AccountingFact.class);
+            final OBCriteria<AccountingFact> criteria = OBDal.getInstance()
+                .createCriteria(AccountingFact.class);
             criteria.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, lcCost.getId()));
             criteria.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
 
-            if (criteria
-                .list()
-                .get(2)
-                .getForeignCurrencyDebit()
-                .setScale(2, RoundingMode.HALF_UP)
-                .equals(
-                    lcCost
-                        .getMatchingAmount()
-                        .add(lcCost.getAmount().negate())
-                        .multiply(
-                            getTransactionAmount(landedCost.getLandedCostReceiptList().get(0)
-                                .getGoodsShipment(), landedCost))
-                        .divide(
-                            getTransactionAmount(
-                                landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
-                                landedCost).add(
-                                getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                    .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP))) {
+            if (criteria.list().get(2).getForeignCurrencyDebit().setScale(2, RoundingMode.HALF_UP)
+                .equals(lcCost.getMatchingAmount().add(lcCost.getAmount().negate())
+                    .multiply(getTransactionAmount(
+                        landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                        landedCost))
+                    .divide(getTransactionAmount(
+                        landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(), landedCost)
+                            .add(getTransactionAmount(
+                                landedCost.getLandedCostReceiptList().get(1).getGoodsShipment(),
+                                landedCost)),
+                        2, RoundingMode.HALF_UP))) {
 
-              documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
-                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                  .getLandedCostReceiptList().get(0).getGoodsShipment()
-                  .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), "35000",
-                  lcCost
-                      .getMatchingAmount()
-                      .add(lcCost.getAmount().negate())
-                      .multiply(
-                          getTransactionAmount(landedCost.getLandedCostReceiptList().get(0)
-                              .getGoodsShipment(), landedCost))
-                      .divide(
-                          getTransactionAmount(
-                              landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
-                              landedCost).add(
-                              getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                  .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP),
-                  BigDecimal.ZERO, null));
+              documentPostAssertList
+                  .add(new DocumentPostAssert(
+                      OBDal.getInstance()
+                          .get(LandedCost.class, landedCostCost.getLandedCost().getId())
+                          .getLandedCostReceiptList().get(0).getGoodsShipment()
+                          .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(),
+                      "35000",
+                      lcCost.getMatchingAmount().add(lcCost.getAmount().negate())
+                          .multiply(getTransactionAmount(landedCost.getLandedCostReceiptList()
+                              .get(0).getGoodsShipment(), landedCost))
+                          .divide(
+                              getTransactionAmount(
+                                  landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                                  landedCost).add(
+                                      getTransactionAmount(landedCost.getLandedCostReceiptList()
+                                          .get(1).getGoodsShipment(), landedCost)),
+                              2, RoundingMode.HALF_UP),
+                      BigDecimal.ZERO, null));
 
-              documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
-                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                  .getLandedCostReceiptList().get(1).getGoodsShipment()
-                  .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), "35000",
-                  lcCost
-                      .getMatchingAmount()
-                      .add(lcCost.getAmount().negate())
-                      .multiply(
-                          getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                              .getGoodsShipment(), landedCost))
-                      .divide(
-                          getTransactionAmount(
-                              landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
-                              landedCost).add(
-                              getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                  .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP),
-                  BigDecimal.ZERO, null));
+              documentPostAssertList
+                  .add(new DocumentPostAssert(
+                      OBDal.getInstance()
+                          .get(LandedCost.class, landedCostCost.getLandedCost().getId())
+                          .getLandedCostReceiptList().get(1).getGoodsShipment()
+                          .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(),
+                      "35000",
+                      lcCost.getMatchingAmount().add(lcCost.getAmount().negate())
+                          .multiply(getTransactionAmount(landedCost.getLandedCostReceiptList()
+                              .get(1).getGoodsShipment(), landedCost))
+                          .divide(
+                              getTransactionAmount(
+                                  landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                                  landedCost).add(
+                                      getTransactionAmount(landedCost.getLandedCostReceiptList()
+                                          .get(1).getGoodsShipment(), landedCost)),
+                              2, RoundingMode.HALF_UP),
+                      BigDecimal.ZERO, null));
             }
 
             else {
-              documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
-                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                  .getLandedCostReceiptList().get(1).getGoodsShipment()
-                  .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), "35000",
-                  lcCost
-                      .getMatchingAmount()
-                      .add(lcCost.getAmount().negate())
-                      .multiply(
-                          getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                              .getGoodsShipment(), landedCost))
-                      .divide(
-                          getTransactionAmount(
-                              landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
-                              landedCost).add(
-                              getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                  .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP),
-                  BigDecimal.ZERO, null));
+              documentPostAssertList
+                  .add(new DocumentPostAssert(
+                      OBDal.getInstance()
+                          .get(LandedCost.class, landedCostCost.getLandedCost().getId())
+                          .getLandedCostReceiptList().get(1).getGoodsShipment()
+                          .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(),
+                      "35000",
+                      lcCost.getMatchingAmount().add(lcCost.getAmount().negate())
+                          .multiply(getTransactionAmount(landedCost.getLandedCostReceiptList()
+                              .get(1).getGoodsShipment(), landedCost))
+                          .divide(
+                              getTransactionAmount(
+                                  landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                                  landedCost).add(
+                                      getTransactionAmount(landedCost.getLandedCostReceiptList()
+                                          .get(1).getGoodsShipment(), landedCost)),
+                              2, RoundingMode.HALF_UP),
+                      BigDecimal.ZERO, null));
 
-              documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
-                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                  .getLandedCostReceiptList().get(0).getGoodsShipment()
-                  .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), "35000",
-                  lcCost
-                      .getMatchingAmount()
-                      .add(lcCost.getAmount().negate())
-                      .multiply(
-                          getTransactionAmount(landedCost.getLandedCostReceiptList().get(0)
-                              .getGoodsShipment(), landedCost))
-                      .divide(
-                          getTransactionAmount(
-                              landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
-                              landedCost).add(
-                              getTransactionAmount(landedCost.getLandedCostReceiptList().get(1)
-                                  .getGoodsShipment(), landedCost)), 2, RoundingMode.HALF_UP),
-                  BigDecimal.ZERO, null));
+              documentPostAssertList
+                  .add(new DocumentPostAssert(
+                      OBDal.getInstance()
+                          .get(LandedCost.class, landedCostCost.getLandedCost().getId())
+                          .getLandedCostReceiptList().get(0).getGoodsShipment()
+                          .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(),
+                      "35000",
+                      lcCost.getMatchingAmount().add(lcCost.getAmount().negate())
+                          .multiply(getTransactionAmount(landedCost.getLandedCostReceiptList()
+                              .get(0).getGoodsShipment(), landedCost))
+                          .divide(
+                              getTransactionAmount(
+                                  landedCost.getLandedCostReceiptList().get(0).getGoodsShipment(),
+                                  landedCost).add(
+                                      getTransactionAmount(landedCost.getLandedCostReceiptList()
+                                          .get(1).getGoodsShipment(), landedCost)),
+                              2, RoundingMode.HALF_UP),
+                      BigDecimal.ZERO, null));
             }
 
           } else {
             if (lcCost.getAmount().add(lcCost.getMatchingAmount().negate())
                 .compareTo(BigDecimal.ZERO) > 0)
-              documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
-                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                  .getLandedCostReceiptList().get(0).getGoodsShipment()
-                  .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), "35000",
-                  BigDecimal.ZERO, lcCost.getAmount().add(lcCost.getMatchingAmount().negate()),
-                  null));
+              documentPostAssertList.add(new DocumentPostAssert(
+                  OBDal.getInstance().get(LandedCost.class, landedCostCost.getLandedCost().getId())
+                      .getLandedCostReceiptList().get(0).getGoodsShipment()
+                      .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(),
+                  "35000", BigDecimal.ZERO,
+                  lcCost.getAmount().add(lcCost.getMatchingAmount().negate()), null));
             else
-              documentPostAssertList.add(new DocumentPostAssert(OBDal.getInstance()
-                  .get(LandedCost.class, landedCostCost.getLandedCost().getId())
-                  .getLandedCostReceiptList().get(0).getGoodsShipment()
-                  .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), "35000",
-                  lcCost.getMatchingAmount().add(lcCost.getAmount().negate()), BigDecimal.ZERO,
-                  null));
+              documentPostAssertList.add(new DocumentPostAssert(
+                  OBDal.getInstance().get(LandedCost.class, landedCostCost.getLandedCost().getId())
+                      .getLandedCostReceiptList().get(0).getGoodsShipment()
+                      .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(),
+                  "35000", lcCost.getMatchingAmount().add(lcCost.getAmount().negate()),
+                  BigDecimal.ZERO, null));
           }
         } else {
-          documentPostAssertList.add(new DocumentPostAssert(account, lcCost.getMatchingAmount(),
-              BigDecimal.ZERO, null));
+          documentPostAssertList.add(
+              new DocumentPostAssert(account, lcCost.getMatchingAmount(), BigDecimal.ZERO, null));
         }
       }
 
@@ -1860,18 +1852,14 @@ public class TestCostingUtils {
         criteria1.addOrderBy(LCMatched.PROPERTY_CREATIONDATE, true);
         List<LCMatched> landedCostCostMatchedList = criteria1.list();
 
-        final OBCriteria<AccountingFact> criteria2 = OBDal.getInstance().createCriteria(
-            AccountingFact.class);
+        final OBCriteria<AccountingFact> criteria2 = OBDal.getInstance()
+            .createCriteria(AccountingFact.class);
         criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, lcCost.getId()));
         criteria2.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
 
         if (!criteria2.list().get(0).getForeignCurrencyDebit().setScale(2, RoundingMode.HALF_UP)
             .equals(landedCostCostMatchedList.get(0).getAmount().setScale(2, RoundingMode.HALF_UP))
-            && !criteria2
-                .list()
-                .get(0)
-                .getForeignCurrencyCredit()
-                .setScale(2, RoundingMode.HALF_UP)
+            && !criteria2.list().get(0).getForeignCurrencyCredit().setScale(2, RoundingMode.HALF_UP)
                 .equals(
                     landedCostCostMatchedList.get(0).getAmount().setScale(2, RoundingMode.HALF_UP)))
           Collections.reverse(landedCostCostMatchedList);
@@ -1887,11 +1875,7 @@ public class TestCostingUtils {
 
         if (!criteria2.list().get(2).getForeignCurrencyDebit().setScale(2, RoundingMode.HALF_UP)
             .equals(landedCostCostMatchedList.get(0).getAmount().setScale(2, RoundingMode.HALF_UP))
-            && !criteria2
-                .list()
-                .get(2)
-                .getForeignCurrencyCredit()
-                .setScale(2, RoundingMode.HALF_UP)
+            && !criteria2.list().get(2).getForeignCurrencyCredit().setScale(2, RoundingMode.HALF_UP)
                 .equals(
                     landedCostCostMatchedList.get(0).getAmount().setScale(2, RoundingMode.HALF_UP)))
           Collections.reverse(landedCostCostMatchedList);
@@ -1903,18 +1887,19 @@ public class TestCostingUtils {
               documentPostAssertList.add(new DocumentPostAssert(account, BigDecimal.ZERO,
                   landedCostCostMatched.getAmount().negate(), null));
             else
-              documentPostAssertList.add(new DocumentPostAssert(account, landedCostCostMatched
-                  .getAmount(), BigDecimal.ZERO, null));
+              documentPostAssertList.add(new DocumentPostAssert(account,
+                  landedCostCostMatched.getAmount(), BigDecimal.ZERO, null));
           } else {
             if (landedCostCostMatched.getAmount().compareTo(BigDecimal.ZERO) < 0)
-              documentPostAssertList.add(new DocumentPostAssert(lcCost
-                  .getLandedCostReceiptLineAmtList().get(0).getGoodsShipmentLine().getProduct()
-                  .getId(), "35000", BigDecimal.ZERO, landedCostCostMatched.getAmount().negate(),
-                  null));
+              documentPostAssertList.add(new DocumentPostAssert(
+                  lcCost.getLandedCostReceiptLineAmtList().get(0).getGoodsShipmentLine()
+                      .getProduct().getId(),
+                  "35000", BigDecimal.ZERO, landedCostCostMatched.getAmount().negate(), null));
             else
-              documentPostAssertList.add(new DocumentPostAssert(lcCost
-                  .getLandedCostReceiptLineAmtList().get(0).getGoodsShipmentLine().getProduct()
-                  .getId(), "35000", landedCostCostMatched.getAmount(), BigDecimal.ZERO, null));
+              documentPostAssertList.add(new DocumentPostAssert(
+                  lcCost.getLandedCostReceiptLineAmtList().get(0).getGoodsShipmentLine()
+                      .getProduct().getId(),
+                  "35000", landedCostCostMatched.getAmount(), BigDecimal.ZERO, null));
           }
           i++;
         }
@@ -1984,16 +1969,15 @@ public class TestCostingUtils {
     }
   }
 
-  /********************************************** Specific methods for tests **********************************************/
+  /**********************************************
+   * Specific methods for tests
+   **********************************************/
 
   // Create a new order cloning a previous created one
   public static Order cloneOrder(String productId, boolean issotrx, BigDecimal price,
-      BigDecimal quantity, int day) {
+      BigDecimal quantity, int day, String orderId) {
     try {
-      Order order = issotrx ? OBDal.getInstance()
-          .get(Order.class, TestCostingConstants.ORDEROUT_ID) : OBDal.getInstance().get(
-          Order.class, TestCostingConstants.ORDERIN_ID);
-
+      Order order = OBDal.getInstance().get(Order.class, orderId);
       Order orderClone = (Order) DalUtil.copy(order, false);
       Product product = OBDal.getInstance().get(Product.class, productId);
       TestCostingUtils.setGeneralData(orderClone);
@@ -2022,25 +2006,21 @@ public class TestCostingUtils {
       orderCloneLine.setLineNetAmount(quantity.multiply(price));
       orderCloneLine.setTaxableAmount(quantity.multiply(price));
 
-      if (product
-          .getPricingProductPriceList()
-          .get(0)
-          .getPriceListVersion()
-          .equals(
-              OBDal.getInstance()
-                  .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
-                  .getPricingProductPriceList().get(0).getPriceListVersion())) {
-        orderClone.setCurrency(OBDal.getInstance().get(Currency.class,
-            TestCostingConstants.DOLLAR_ID));
-        orderClone.setPriceList(product.getPricingProductPriceList().get(0).getPriceListVersion()
-            .getPriceList());
+      if (product.getPricingProductPriceList().get(0).getPriceListVersion()
+          .equals(OBDal.getInstance()
+              .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
+              .getPricingProductPriceList().get(0).getPriceListVersion())) {
+        orderClone
+            .setCurrency(OBDal.getInstance().get(Currency.class, TestCostingConstants.DOLLAR_ID));
+        orderClone.setPriceList(
+            product.getPricingProductPriceList().get(0).getPriceListVersion().getPriceList());
         orderClone.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
             TestCostingConstants.BUSINESSPARTNER_VENDOR_USA_ID));
         orderClone.setPartnerAddress(OBDal.getInstance()
             .get(BusinessPartner.class, TestCostingConstants.BUSINESSPARTNER_VENDOR_USA_ID)
             .getBusinessPartnerLocationList().get(0));
-        orderCloneLine.setCurrency(OBDal.getInstance().get(Currency.class,
-            TestCostingConstants.DOLLAR_ID));
+        orderCloneLine
+            .setCurrency(OBDal.getInstance().get(Currency.class, TestCostingConstants.DOLLAR_ID));
         orderCloneLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
             TestCostingConstants.BUSINESSPARTNER_VENDOR_USA_ID));
         orderCloneLine.setPartnerAddress(OBDal.getInstance()
@@ -2059,6 +2039,12 @@ public class TestCostingUtils {
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  public static Order cloneOrder(String productId, boolean issotrx, BigDecimal price,
+      BigDecimal quantity, int day) {
+    String orderId = issotrx ? TestCostingConstants.ORDEROUT_ID : TestCostingConstants.ORDERIN_ID;
+    return cloneOrder(productId, issotrx, price, quantity, day, orderId);
   }
 
   // Book a order
@@ -2137,8 +2123,8 @@ public class TestCostingUtils {
       TestCostingUtils.setGeneralData(invoiceClone);
 
       if (issotrx)
-        invoiceClone.setDocumentNo(getDocumentNo(invoiceClone.getDocumentType()
-            .getDocumentSequence().getId()));
+        invoiceClone.setDocumentNo(
+            getDocumentNo(invoiceClone.getDocumentType().getDocumentSequence().getId()));
       else
         invoiceClone.setDocumentNo(getDocumentNo(TestCostingConstants.INVOICEIN_SEQUENCE_ID));
 
@@ -2170,8 +2156,8 @@ public class TestCostingUtils {
       invoiceLineClone.setTaxAmount(quantity.multiply(price));
       invoiceLineClone.setTaxableAmount(quantity.multiply(price));
       if (bpartnerId != null)
-        invoiceLineClone.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-            bpartnerId));
+        invoiceLineClone
+            .setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class, bpartnerId));
 
       invoiceLineClone.setInvoice(invoiceClone);
       invoiceClone.getInvoiceLineList().add(invoiceLineClone);
@@ -2228,14 +2214,14 @@ public class TestCostingUtils {
           invoiceLine.setUnitPrice(orderLine.getUnitPrice());
           invoiceLine.setListPrice(orderLine.getUnitPrice());
           invoiceLine.setStandardPrice(orderLine.getUnitPrice());
-          invoiceLine.setLineNetAmount(orderLine.getOrderedQuantity().multiply(
-              orderLine.getUnitPrice()));
-          invoiceLine.setTaxAmount(orderLine.getOrderedQuantity()
-              .multiply(orderLine.getUnitPrice()));
+          invoiceLine
+              .setLineNetAmount(orderLine.getOrderedQuantity().multiply(orderLine.getUnitPrice()));
+          invoiceLine
+              .setTaxAmount(orderLine.getOrderedQuantity().multiply(orderLine.getUnitPrice()));
         }
 
-        OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance().createCriteria(
-            ShipmentInOutLine.class);
+        OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance()
+            .createCriteria(ShipmentInOutLine.class);
         criteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, orderLine));
         criteria.setMaxResults(1);
         ShipmentInOutLine shipmentInOutLine = (ShipmentInOutLine) criteria.uniqueResult();
@@ -2272,9 +2258,9 @@ public class TestCostingUtils {
     try {
 
       ShipmentInOut movement = OBDal.getInstance().get(ShipmentInOut.class, movementId);
-      Invoice invoice = cloneInvoice(movement.getMaterialMgmtShipmentInOutLineList().get(0)
-          .getProduct().getId(), issotrx, price, quantity, movement.getBusinessPartner().getId(),
-          day);
+      Invoice invoice = cloneInvoice(
+          movement.getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), issotrx,
+          price, quantity, movement.getBusinessPartner().getId(), day);
       invoice.getMaterialMgmtShipmentInOutList().add(movement);
 
       int i = 0;
@@ -2308,10 +2294,10 @@ public class TestCostingUtils {
           invoiceLine.setUnitPrice(movementLine.getSalesOrderLine().getUnitPrice());
           invoiceLine.setListPrice(movementLine.getSalesOrderLine().getUnitPrice());
           invoiceLine.setStandardPrice(movementLine.getSalesOrderLine().getUnitPrice());
-          invoiceLine.setLineNetAmount(movementLine.getMovementQuantity().multiply(
-              movementLine.getSalesOrderLine().getUnitPrice()));
-          invoiceLine.setTaxAmount(movementLine.getMovementQuantity().multiply(
-              movementLine.getSalesOrderLine().getUnitPrice()));
+          invoiceLine.setLineNetAmount(movementLine.getMovementQuantity()
+              .multiply(movementLine.getSalesOrderLine().getUnitPrice()));
+          invoiceLine.setTaxAmount(movementLine.getMovementQuantity()
+              .multiply(movementLine.getSalesOrderLine().getUnitPrice()));
         }
 
         if (movement.getSalesOrder() != null) {
@@ -2387,8 +2373,8 @@ public class TestCostingUtils {
         invoiceLine.setLineNetAmount(quantityList.get(i).multiply(priceList.get(i)));
         invoiceLine.setTaxAmount(quantityList.get(i).multiply(priceList.get(i)));
 
-        OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance().createCriteria(
-            ShipmentInOutLine.class);
+        OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance()
+            .createCriteria(ShipmentInOutLine.class);
         criteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, orderLine));
         criteria.setMaxResults(1);
         ShipmentInOutLine shipmentInOutLine = (ShipmentInOutLine) criteria.uniqueResult();
@@ -2426,8 +2412,8 @@ public class TestCostingUtils {
 
       Invoice invoice = cloneInvoice(
           OBDal.getInstance().get(ShipmentInOut.class, movementIdList.get(0))
-              .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), issotrx,
-          priceAvg, quantity, day);
+              .getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(),
+          issotrx, priceAvg, quantity, day);
 
       int i = 0;
       for (String movementId : movementIdList) {
@@ -2546,8 +2532,8 @@ public class TestCostingUtils {
     try {
       ShipmentInOut movement;
       if (issotrx)
-        movement = OBDal.getInstance()
-            .get(ShipmentInOut.class, TestCostingConstants.MOVEMENTOUT_ID);
+        movement = OBDal.getInstance().get(ShipmentInOut.class,
+            TestCostingConstants.MOVEMENTOUT_ID);
       else
         movement = OBDal.getInstance().get(ShipmentInOut.class, TestCostingConstants.MOVEMENTIN_ID);
 
@@ -2555,8 +2541,8 @@ public class TestCostingUtils {
       TestCostingUtils.setGeneralData(movement);
 
       if (issotrx)
-        movementClone.setDocumentNo(getDocumentNo(movementClone.getDocumentType()
-            .getDocumentSequence().getId()));
+        movementClone.setDocumentNo(
+            getDocumentNo(movementClone.getDocumentType().getDocumentSequence().getId()));
       else
         movementClone.setDocumentNo(getDocumentNo(TestCostingConstants.SHIPMENTIN_SEQUENCE_ID));
 
@@ -2581,8 +2567,8 @@ public class TestCostingUtils {
       movementLineClone.setMovementQuantity(quantity);
       movementLineClone.setStorageBin(OBDal.getInstance().get(Locator.class, locatorId));
       if (bpartnerId != null)
-        movementLineClone.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-            bpartnerId));
+        movementLineClone
+            .setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class, bpartnerId));
 
       movementLineClone.setShipmentReceipt(movementClone);
       movementClone.getMaterialMgmtShipmentInOutLineList().add(movementLineClone);
@@ -2631,8 +2617,8 @@ public class TestCostingUtils {
   }
 
   // Create a new Goods Movement cloning a previous created one
-  public static InternalConsumption createInternalConsumption(String productId,
-      BigDecimal quantity, String locatorId, int day) {
+  public static InternalConsumption createInternalConsumption(String productId, BigDecimal quantity,
+      String locatorId, int day) {
     try {
       InternalConsumption consumption = OBProvider.getInstance().get(InternalConsumption.class);
       TestCostingUtils.setGeneralData(consumption);
@@ -2640,8 +2626,8 @@ public class TestCostingUtils {
           + formatDate(DateUtils.addDays(new Date(), day)));
       consumption.setMovementDate(DateUtils.addDays(new Date(), day));
 
-      InternalConsumptionLine consumptionLine = OBProvider.getInstance().get(
-          InternalConsumptionLine.class);
+      InternalConsumptionLine consumptionLine = OBProvider.getInstance()
+          .get(InternalConsumptionLine.class);
       TestCostingUtils.setGeneralData(consumptionLine);
       consumptionLine.setStorageBin(OBDal.getInstance().get(Locator.class, locatorId));
       consumptionLine.setProduct(OBDal.getInstance().get(Product.class, productId));
@@ -2705,8 +2691,9 @@ public class TestCostingUtils {
       BigDecimal quantity, String locatorId, int day) {
     try {
       Invoice invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
-      ShipmentInOut movement = cloneMovement(invoice.getInvoiceLineList().get(0).getProduct()
-          .getId(), issotrx, quantity, locatorId, day);
+      ShipmentInOut movement = cloneMovement(
+          invoice.getInvoiceLineList().get(0).getProduct().getId(), issotrx, quantity, locatorId,
+          day);
 
       movement.setInvoice(invoice);
       movement.getMaterialMgmtShipmentInOutLineList().get(0).setReinvoice(true);
@@ -2740,17 +2727,17 @@ public class TestCostingUtils {
   public static ShipmentInOut createMovementFromOrders(List<String> orderIdList, boolean issotrx,
       BigDecimal quantity, String locatorId, int day) {
     try {
-      ShipmentInOut movement = cloneMovement(
-          OBDal.getInstance().get(Order.class, orderIdList.get(0)).getOrderLineList().get(0)
-              .getProduct().getId(), issotrx, quantity, locatorId, day);
+      ShipmentInOut movement = cloneMovement(OBDal.getInstance()
+          .get(Order.class, orderIdList.get(0)).getOrderLineList().get(0).getProduct().getId(),
+          issotrx, quantity, locatorId, day);
 
       int i = 0;
       for (String orderId : orderIdList) {
         Order order = OBDal.getInstance().get(Order.class, orderId);
 
         if (i > 0) {
-          ShipmentInOutLine movementLine = (ShipmentInOutLine) DalUtil.copy(movement
-              .getMaterialMgmtShipmentInOutLineList().get(0), false);
+          ShipmentInOutLine movementLine = (ShipmentInOutLine) DalUtil
+              .copy(movement.getMaterialMgmtShipmentInOutLineList().get(0), false);
           TestCostingUtils.setGeneralData(movementLine);
           movementLine.setShipmentReceipt(movement);
           movement.getMaterialMgmtShipmentInOutLineList().add(movementLine);
@@ -2795,29 +2782,29 @@ public class TestCostingUtils {
   public static InventoryAmountUpdate createInventoryAmountUpdate(String productId,
       BigDecimal originalPrice, BigDecimal finalPrice, BigDecimal quantity, int day) {
     try {
-      InventoryAmountUpdate inventoryAmountUpdate = OBProvider.getInstance().get(
-          InventoryAmountUpdate.class);
+      InventoryAmountUpdate inventoryAmountUpdate = OBProvider.getInstance()
+          .get(InventoryAmountUpdate.class);
       TestCostingUtils.setGeneralData(inventoryAmountUpdate);
 
-      final OBCriteria<DocumentType> criteria = OBDal.getInstance().createCriteria(
-          DocumentType.class);
+      final OBCriteria<DocumentType> criteria = OBDal.getInstance()
+          .createCriteria(DocumentType.class);
       criteria.add(Restrictions.eq(DocumentType.PROPERTY_NAME, "Inventory Amount Update"));
       criteria.setMaxResults(1);
       DocumentType documentType = (DocumentType) criteria.uniqueResult();
 
       inventoryAmountUpdate.setDocumentType(documentType);
-      inventoryAmountUpdate.setDocumentNo(getDocumentNo(inventoryAmountUpdate.getDocumentType()
-          .getDocumentSequence().getId()));
+      inventoryAmountUpdate.setDocumentNo(
+          getDocumentNo(inventoryAmountUpdate.getDocumentType().getDocumentSequence().getId()));
       inventoryAmountUpdate.setDocumentDate(DateUtils.addDays(new Date(), day));
       OBDal.getInstance().save(inventoryAmountUpdate);
 
-      InventoryAmountUpdateLine inventoryAmountUpdateLine = OBProvider.getInstance().get(
-          InventoryAmountUpdateLine.class);
+      InventoryAmountUpdateLine inventoryAmountUpdateLine = OBProvider.getInstance()
+          .get(InventoryAmountUpdateLine.class);
       TestCostingUtils.setGeneralData(inventoryAmountUpdateLine);
       inventoryAmountUpdateLine.setReferenceDate(DateUtils.addDays(new Date(), day));
       inventoryAmountUpdateLine.setProduct(OBDal.getInstance().get(Product.class, productId));
-      inventoryAmountUpdateLine.setWarehouse(OBDal.getInstance().get(Warehouse.class,
-          TestCostingConstants.SPAIN_WAREHOUSE_ID));
+      inventoryAmountUpdateLine.setWarehouse(
+          OBDal.getInstance().get(Warehouse.class, TestCostingConstants.SPAIN_WAREHOUSE_ID));
       inventoryAmountUpdateLine.setInventoryAmount(quantity.multiply(finalPrice));
       inventoryAmountUpdateLine.setCurrentInventoryAmount(quantity.multiply(originalPrice));
       inventoryAmountUpdateLine.setOnHandQty(quantity);
@@ -2841,12 +2828,12 @@ public class TestCostingUtils {
   public static ProductionTransaction createBillOfMaterialsProduction(String productId,
       BigDecimal quantity, String locatorId, int day) {
     try {
-      ProductionTransaction billOfMaterialsProduction = OBProvider.getInstance().get(
-          ProductionTransaction.class);
+      ProductionTransaction billOfMaterialsProduction = OBProvider.getInstance()
+          .get(ProductionTransaction.class);
       TestCostingUtils.setGeneralData(billOfMaterialsProduction);
 
-      billOfMaterialsProduction.setName("BOM - "
-          + OBDal.getInstance().get(Product.class, productId).getName());
+      billOfMaterialsProduction
+          .setName("BOM - " + OBDal.getInstance().get(Product.class, productId).getName());
       billOfMaterialsProduction.setMovementDate(DateUtils.addDays(new Date(), day));
       billOfMaterialsProduction
           .setDocumentNo(getDocumentNo(TestCostingConstants.PRODUCTION_DOCUMENTSEQUENCE_ID));
@@ -2886,15 +2873,15 @@ public class TestCostingUtils {
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(order);
 
-      Order returnFromCustomer = cloneOrder(goodsShipment.getMaterialMgmtShipmentInOutLineList()
-          .get(0).getProduct().getId(), true, price, quantity, day);
-
+      Order returnFromCustomer = cloneOrder(
+          goodsShipment.getMaterialMgmtShipmentInOutLineList().get(0).getProduct().getId(), true,
+          price, quantity, day, TestCostingConstants.RETURNFROMCUSTOMER_ID);
       returnFromCustomer.setDocumentType(OBDal.getInstance().get(DocumentType.class,
           TestCostingConstants.RFCORDER_DOCUMENTTYPE_ID));
       returnFromCustomer.setTransactionDocument(OBDal.getInstance().get(DocumentType.class,
           TestCostingConstants.RFCORDER_DOCUMENTTYPE_ID));
-      returnFromCustomer.setDocumentNo(getDocumentNo(returnFromCustomer.getDocumentType()
-          .getDocumentSequence().getId()));
+      returnFromCustomer.setDocumentNo(
+          getDocumentNo(returnFromCustomer.getDocumentType().getDocumentSequence().getId()));
       returnFromCustomer.setSummedLineAmount(price.multiply(quantity.negate()));
       returnFromCustomer.setGrandTotalAmount(price.multiply(quantity.negate()));
 
@@ -2920,13 +2907,14 @@ public class TestCostingUtils {
       BigDecimal price, BigDecimal quantity, String locatorId, int day) {
     try {
       Order returnFromCustomer = OBDal.getInstance().get(Order.class, returnFromCustomerId);
-      ShipmentInOut returnMaterialReceipt = cloneMovement(returnFromCustomer.getOrderLineList()
-          .get(0).getProduct().getId(), true, quantity, locatorId, day);
+      ShipmentInOut returnMaterialReceipt = cloneMovement(
+          returnFromCustomer.getOrderLineList().get(0).getProduct().getId(), true, quantity,
+          locatorId, day);
 
       returnMaterialReceipt.setDocumentType(OBDal.getInstance().get(DocumentType.class,
           TestCostingConstants.RFCRECEIPT_DOCUMENTTYPE_ID));
-      returnMaterialReceipt.setDocumentNo(getDocumentNo(returnMaterialReceipt.getDocumentType()
-          .getDocumentSequence().getId()));
+      returnMaterialReceipt.setDocumentNo(
+          getDocumentNo(returnMaterialReceipt.getDocumentType().getDocumentSequence().getId()));
 
       returnMaterialReceipt.getMaterialMgmtShipmentInOutLineList().get(0)
           .setMovementQuantity(quantity.negate());
@@ -2957,14 +2945,13 @@ public class TestCostingUtils {
         invoiceLine.setProduct(null);
       }
 
-      else if (landedCostTypeId.equals(TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID)) {
+      else if (landedCostTypeId
+          .equals(TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID)) {
         OBCriteria<TaxRate> criteria = OBDal.getInstance().createCriteria(TaxRate.class);
         criteria.add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY,
             OBDal.getInstance().get(Product.class, landedCostTypeId).getTaxCategory()));
-        criteria.add(Restrictions
-            .eq(TaxRate.PROPERTY_ORGANIZATION,
-                OBDal.getInstance().get(Organization.class,
-                    TestCostingConstants.SPAIN_ORGANIZATION_ID)));
+        criteria.add(Restrictions.eq(TaxRate.PROPERTY_ORGANIZATION, OBDal.getInstance()
+            .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID)));
         criteria.setMaxResults(1);
         invoiceLine.setTax((TaxRate) criteria.uniqueResult());
       }
@@ -2994,8 +2981,8 @@ public class TestCostingUtils {
       landedCost.setReferenceDate(DateUtils.addDays(new Date(), day));
       landedCost.setDocumentType(OBDal.getInstance().get(DocumentType.class,
           TestCostingConstants.LANDEDCOST_DOCUMENTTYPE_ID));
-      landedCost.setDocumentNo(getDocumentNo(landedCost.getDocumentType().getDocumentSequence()
-          .getId()));
+      landedCost
+          .setDocumentNo(getDocumentNo(landedCost.getDocumentType().getDocumentSequence().getId()));
       OBDal.getInstance().save(landedCost);
 
       for (int i = 0; i < (landedCostTypeIdList != null ? landedCostTypeIdList.size()
@@ -3007,8 +2994,8 @@ public class TestCostingUtils {
           String landedCostTypeId = landedCostTypeIdList.get(i);
 
           if (landedCostTypeId.equals(TestCostingConstants.LANDEDCOSTTYPE_FEES_ID))
-            landedCostCost.setLandedCostType(OBDal.getInstance()
-                .get(GLItem.class, landedCostTypeId).getLandedCostTypeAccountList().get(0));
+            landedCostCost.setLandedCostType(OBDal.getInstance().get(GLItem.class, landedCostTypeId)
+                .getLandedCostTypeAccountList().get(0));
           else
             landedCostCost.setLandedCostType(OBDal.getInstance()
                 .get(Product.class, landedCostTypeId).getLandedCostTypeList().get(0));
@@ -3016,11 +3003,11 @@ public class TestCostingUtils {
           landedCostCost.setAmount(amountList.get(i));
 
           if (landedCostTypeId.equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))
-            landedCostCost.setCurrency(OBDal.getInstance().get(Currency.class,
-                TestCostingConstants.DOLLAR_ID));
+            landedCostCost.setCurrency(
+                OBDal.getInstance().get(Currency.class, TestCostingConstants.DOLLAR_ID));
           else
-            landedCostCost.setCurrency(OBDal.getInstance().get(Currency.class,
-                TestCostingConstants.EURO_ID));
+            landedCostCost
+                .setCurrency(OBDal.getInstance().get(Currency.class, TestCostingConstants.EURO_ID));
         }
 
         else {
@@ -3029,19 +3016,19 @@ public class TestCostingUtils {
               .getInvoiceLineList().get(0);
 
           if (invoiceLine.getAccount() != null)
-            landedCostCost.setLandedCostType(invoiceLine.getAccount()
-                .getLandedCostTypeAccountList().get(0));
+            landedCostCost
+                .setLandedCostType(invoiceLine.getAccount().getLandedCostTypeAccountList().get(0));
           else
-            landedCostCost.setLandedCostType(invoiceLine.getProduct().getLandedCostTypeList()
-                .get(0));
+            landedCostCost
+                .setLandedCostType(invoiceLine.getProduct().getLandedCostTypeList().get(0));
 
           landedCostCost.setInvoiceLine(invoiceLine);
           landedCostCost.setAmount(invoiceLine.getLineNetAmount());
           landedCostCost.setCurrency(invoiceLine.getInvoice().getCurrency());
         }
 
-        landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance().get(
-            LCDistributionAlgorithm.class, TestCostingConstants.LANDEDCOSTCOST_ALGORITHM_ID));
+        landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance()
+            .get(LCDistributionAlgorithm.class, TestCostingConstants.LANDEDCOSTCOST_ALGORITHM_ID));
         landedCostCost.setAccountingDate(DateUtils.addDays(new Date(), day));
         landedCostCost.setLineNo((i + 1) * 10L);
         landedCostCost.setDocumentType(OBDal.getInstance().get(DocumentType.class,
@@ -3059,11 +3046,11 @@ public class TestCostingUtils {
         LCReceipt landedCostReceipt = OBProvider.getInstance().get(LCReceipt.class);
         TestCostingUtils.setGeneralData(landedCostReceipt);
         if (receiptIdList.get(i) != null)
-          landedCostReceipt.setGoodsShipment(OBDal.getInstance().get(ShipmentInOut.class,
-              receiptIdList.get(i)));
+          landedCostReceipt
+              .setGoodsShipment(OBDal.getInstance().get(ShipmentInOut.class, receiptIdList.get(i)));
         if (receiptLineIdList.get(i) != null)
-          landedCostReceipt.setGoodsShipmentLine(OBDal.getInstance().get(ShipmentInOutLine.class,
-              receiptLineIdList.get(i)));
+          landedCostReceipt.setGoodsShipmentLine(
+              OBDal.getInstance().get(ShipmentInOutLine.class, receiptLineIdList.get(i)));
         landedCostReceipt.setLandedCost(landedCost);
         landedCost.getLandedCostReceiptList().add(landedCostReceipt);
 
@@ -3094,16 +3081,16 @@ public class TestCostingUtils {
         TestCostingUtils.setGeneralData(landedCostCost);
 
         if (invoiceLine.getAccount() != null)
-          landedCostCost.setLandedCostType(invoiceLine.getAccount().getLandedCostTypeAccountList()
-              .get(0));
+          landedCostCost
+              .setLandedCostType(invoiceLine.getAccount().getLandedCostTypeAccountList().get(0));
         else
           landedCostCost.setLandedCostType(invoiceLine.getProduct().getLandedCostTypeList().get(0));
 
         landedCostCost.setGoodsShipment(OBDal.getInstance().get(ShipmentInOut.class, receiptId));
         landedCostCost.setInvoiceLine(invoiceLine);
         landedCostCost.setAmount(invoiceLine.getLineNetAmount());
-        landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance().get(
-            LCDistributionAlgorithm.class, TestCostingConstants.LANDEDCOSTCOST_ALGORITHM_ID));
+        landedCostCost.setLandedCostDistributionAlgorithm(OBDal.getInstance()
+            .get(LCDistributionAlgorithm.class, TestCostingConstants.LANDEDCOSTCOST_ALGORITHM_ID));
         landedCostCost.setCurrency(invoiceLine.getInvoice().getCurrency());
         landedCostCost.setAccountingDate(new Date());
         landedCostCost.setLineNo((i + 1) * 10L);
@@ -3128,14 +3115,14 @@ public class TestCostingUtils {
       ConversionRateDoc conversion = OBProvider.getInstance().get(ConversionRateDoc.class);
       TestCostingUtils.setGeneralData(conversion);
       conversion.setCurrency(purchaseInvoice.getCurrency());
-      conversion.setToCurrency(purchaseInvoice.getCurrency().getId()
-          .equals(TestCostingConstants.EURO_ID) ? OBDal.getInstance().get(Currency.class,
-          TestCostingConstants.DOLLAR_ID) : OBDal.getInstance().get(Currency.class,
-          TestCostingConstants.EURO_ID));
+      conversion
+          .setToCurrency(purchaseInvoice.getCurrency().getId().equals(TestCostingConstants.EURO_ID)
+              ? OBDal.getInstance().get(Currency.class, TestCostingConstants.DOLLAR_ID)
+              : OBDal.getInstance().get(Currency.class, TestCostingConstants.EURO_ID));
       conversion.setInvoice(purchaseInvoice);
       conversion.setRate(rate);
-      conversion.setForeignAmount(purchaseInvoice.getInvoiceLineList().get(0).getLineNetAmount()
-          .multiply(rate));
+      conversion.setForeignAmount(
+          purchaseInvoice.getInvoiceLineList().get(0).getLineNetAmount().multiply(rate));
 
       OBDal.getInstance().save(conversion);
       OBDal.getInstance().flush();
@@ -3237,7 +3224,8 @@ public class TestCostingUtils {
   }
 
   // Match a purchase invoice landed cost with a landed cost cost
-  public static void matchInvoiceLandedCost(String landedCostCostId, boolean matching, String error) {
+  public static void matchInvoiceLandedCost(String landedCostCostId, boolean matching,
+      String error) {
     try {
       OBDal.getInstance().commitAndClose();
       HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -3265,8 +3253,8 @@ public class TestCostingUtils {
   // Unpost landed cost
   public static void unpostDocument(BaseOBObject document) {
     try {
-      final OBCriteria<AccountingFact> criteria = OBDal.getInstance().createCriteria(
-          AccountingFact.class);
+      final OBCriteria<AccountingFact> criteria = OBDal.getInstance()
+          .createCriteria(AccountingFact.class);
       criteria.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, document.getId()));
       for (AccountingFact accountingFact : criteria.list())
         OBDal.getInstance().remove(accountingFact);
@@ -3308,10 +3296,10 @@ public class TestCostingUtils {
         TestCostingUtils.setGeneralData(processInstance);
         processInstance.setProcess(OBDal.getInstance().get(Process.class, processId));
         processInstance.setRecordID(document.getId().toString());
-        processInstance.setClient(OBDal.getInstance().get(Client.class,
-            TestCostingConstants.QATESTING_CLIENT_ID));
-        processInstance.setUserContact(OBDal.getInstance().get(User.class,
-            TestCostingConstants.OPENBRAVO_USER_ID));
+        processInstance.setClient(
+            OBDal.getInstance().get(Client.class, TestCostingConstants.QATESTING_CLIENT_ID));
+        processInstance.setUserContact(
+            OBDal.getInstance().get(User.class, TestCostingConstants.OPENBRAVO_USER_ID));
         OBDal.getInstance().save(processInstance);
         OBDal.getInstance().flush();
         OBDal.getInstance().refresh(processInstance);
@@ -3349,8 +3337,8 @@ public class TestCostingUtils {
         return;
       } else if (!acct.post((String) document.getId(), false,
           new VariablesSecureApp("100", ((Client) document.get("client")).getId(),
-              ((Organization) document.get("organization")).getId()), conn, con)
-          || acct.errors != 0) {
+              ((Organization) document.get("organization")).getId()),
+          conn, con) || acct.errors != 0) {
         conn.releaseRollbackConnection(con);
         return;
       }
@@ -3400,10 +3388,10 @@ public class TestCostingUtils {
       processInstance.setProcess(OBDal.getInstance().get(Process.class,
           TestCostingConstants.PROCESSPRODUCTION_PROCESS_ID));
       processInstance.setRecordID(billOfMaterialsProduction.getId());
-      processInstance.setClient(OBDal.getInstance().get(Client.class,
-          TestCostingConstants.QATESTING_CLIENT_ID));
-      processInstance.setUserContact(OBDal.getInstance().get(User.class,
-          TestCostingConstants.OPENBRAVO_USER_ID));
+      processInstance.setClient(
+          OBDal.getInstance().get(Client.class, TestCostingConstants.QATESTING_CLIENT_ID));
+      processInstance.setUserContact(
+          OBDal.getInstance().get(User.class, TestCostingConstants.OPENBRAVO_USER_ID));
       OBDal.getInstance().save(processInstance);
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(processInstance);
@@ -3427,10 +3415,9 @@ public class TestCostingUtils {
       OBDal.getInstance().commitAndClose();
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       String content = "{\r    'M_Transaction_ID':'" + materialTransactionId
-          + "', \r    '_params':{\r        'Cost':" + amount.toString()
-          + ", \r        'DateAcct':'" + formatDate(DateUtils.addDays(new Date(), day))
-          + "', \r        'IsIncremental':" + incremental + ", \r        'IsUnitCost':" + unitCost
-          + "\r    }\r}";
+          + "', \r    '_params':{\r        'Cost':" + amount.toString() + ", \r        'DateAcct':'"
+          + formatDate(DateUtils.addDays(new Date(), day)) + "', \r        'IsIncremental':"
+          + incremental + ", \r        'IsUnitCost':" + unitCost + "\r    }\r}";
       Object object = new ManualCostAdjustmentProcessHandler();
       Class<? extends Object> clazz = object.getClass();
       Method method = clazz.getDeclaredMethod("execute", Map.class, String.class);
@@ -3486,10 +3473,11 @@ public class TestCostingUtils {
   public static void runCostingBackground() {
     try {
       VariablesSecureApp vars = null;
-      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
-          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(), OBContext
-          .getOBContext().getLanguage().getLanguage());
+      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
+          OBContext.getOBContext().getRole().getId(),
+          OBContext.getOBContext().getLanguage().getLanguage());
       ConnectionProvider conn = new DalConnectionProvider(true);
       ProcessBundle pb = new ProcessBundle(CostingBackground.AD_PROCESS_ID, vars).init(conn);
       HashMap<String, Object> parameters = new HashMap<String, Object>();
@@ -3504,10 +3492,11 @@ public class TestCostingUtils {
   public static void runPriceBackground() {
     try {
       VariablesSecureApp vars = null;
-      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
-          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(), OBContext
-          .getOBContext().getLanguage().getLanguage());
+      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
+          OBContext.getOBContext().getRole().getId(),
+          OBContext.getOBContext().getLanguage().getLanguage());
       ConnectionProvider conn = new DalConnectionProvider(true);
       ProcessBundle pb = new ProcessBundle(PriceDifferenceBackground.AD_PROCESS_ID, vars)
           .init(conn);
@@ -3524,10 +3513,11 @@ public class TestCostingUtils {
     try {
       OBDal.getInstance().commitAndClose();
       VariablesSecureApp vars = null;
-      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
-          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(), OBContext
-          .getOBContext().getLanguage().getLanguage());
+      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
+          OBContext.getOBContext().getRole().getId(),
+          OBContext.getOBContext().getLanguage().getLanguage());
       ConnectionProvider conn = new DalConnectionProvider(true);
       ProcessBundle pb = new ProcessBundle(TestCostingConstants.VALIDATECOSTINGRULE_PROCESS_ID,
           vars).init(conn);
@@ -3567,7 +3557,8 @@ public class TestCostingUtils {
   }
 
   // Calculates the average price of a price list
-  public static BigDecimal getAveragePrice(List<BigDecimal> priceList, List<BigDecimal> quantityList) {
+  public static BigDecimal getAveragePrice(List<BigDecimal> priceList,
+      List<BigDecimal> quantityList) {
     try {
       BigDecimal priceTotal = BigDecimal.ZERO;
       for (int i = 0; i < quantityList.size(); i++)
@@ -3596,8 +3587,8 @@ public class TestCostingUtils {
       String myQuery = "SELECT DISTINCT t1 "
           + "FROM CostAdjustment t1 LEFT JOIN t1.costAdjustmentLineList t2 LEFT JOIN t2.inventoryTransaction t3 "
           + "WHERE t3.product.id = :productId " + "ORDER BY t1.documentNo";
-      Query<CostAdjustment> query = OBDal.getInstance().getSession()
-          .createQuery(myQuery, CostAdjustment.class);
+      Query<CostAdjustment> query = OBDal.getInstance().getSession().createQuery(myQuery,
+          CostAdjustment.class);
       query.setParameter("productId", productId);
       List<CostAdjustment> costAdjustmentList = query.list();
       return costAdjustmentList.isEmpty() ? null : costAdjustmentList;
@@ -3613,8 +3604,8 @@ public class TestCostingUtils {
           + "FROM MaterialMgmtInventoryCount t1, InventoryAmountUpdate t2 LEFT JOIN t2.inventoryAmountUpdateLineList t3 LEFT JOIN t3.inventoryAmountUpdateLineInventoriesList t4 "
           + "WHERE (t4.initInventory = t1 OR t4.closeInventory = t1) AND t2.id = :inventoryAmountUpdateId "
           + "ORDER BY t1.name";
-      Query<InventoryCount> query = OBDal.getInstance().getSession()
-          .createQuery(myQuery, InventoryCount.class);
+      Query<InventoryCount> query = OBDal.getInstance().getSession().createQuery(myQuery,
+          InventoryCount.class);
       query.setParameter("inventoryAmountUpdateId", inventoryAmountUpdateId);
       return query.list();
     } catch (Exception e) {
@@ -3625,8 +3616,8 @@ public class TestCostingUtils {
   // Get Product Transaction list
   public static List<MaterialTransaction> getProductTransactions(String productId) {
     try {
-      OBCriteria<MaterialTransaction> criteria = OBDal.getInstance().createCriteria(
-          MaterialTransaction.class);
+      OBCriteria<MaterialTransaction> criteria = OBDal.getInstance()
+          .createCriteria(MaterialTransaction.class);
       criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT,
           OBDal.getInstance().get(Product.class, productId)));
       criteria.addOrderBy(MaterialTransaction.PROPERTY_MOVEMENTDATE, true);
@@ -3644,8 +3635,8 @@ public class TestCostingUtils {
       where.append(" as t1 ");
       where.append("\n left join t1." + TransactionCost.PROPERTY_COSTADJUSTMENTLINE + " t2");
       where.append("\n left join t2." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " t3");
-      where.append("\n where t1." + TransactionCost.PROPERTY_INVENTORYTRANSACTION
-          + " = :transaction");
+      where.append(
+          "\n where t1." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " = :transaction");
       where.append("\n order by t3." + CostAdjustment.PROPERTY_DOCUMENTNO + " desc");
       where.append("\n , t2." + CostAdjustmentLine.PROPERTY_LINENO + " desc");
       OBQuery<TransactionCost> hql = OBDal.getInstance().createQuery(TransactionCost.class,
@@ -3686,8 +3677,8 @@ public class TestCostingUtils {
       where.append(" as t1 ");
       where.append("\n left join t1." + ProductionLine.PROPERTY_PRODUCTIONPLAN + " t2");
       where.append("\n left join t1." + ProductionLine.PROPERTY_PRODUCT + " t3");
-      where.append("\n where t2." + ProductionPlan.PROPERTY_PRODUCTION
-          + " = :productionTransaction");
+      where.append(
+          "\n where t2." + ProductionPlan.PROPERTY_PRODUCTION + " = :productionTransaction");
       where.append("\n order by t3." + Product.PROPERTY_NAME);
       OBQuery<ProductionLine> hql = OBDal.getInstance().createQuery(ProductionLine.class,
           where.toString());
@@ -3742,8 +3733,8 @@ public class TestCostingUtils {
       hql.append(" and tc.costAdjustmentLine.costAdjustment.id <> :costAdjusmentID");
     }
 
-    Query<BigDecimal> query = OBDal.getInstance().getSession()
-        .createQuery(hql.toString(), BigDecimal.class);
+    Query<BigDecimal> query = OBDal.getInstance().getSession().createQuery(hql.toString(),
+        BigDecimal.class);
     query.setParameter("transactionID", transaction.getId());
     if (landedCost != null && landedCost.getCostAdjustment() != null) {
       query.setParameter("costAdjusmentID", landedCost.getCostAdjustment().getId());
@@ -3776,13 +3767,13 @@ public class TestCostingUtils {
       assertEquals(receiptInvoiceMatch.getGoodsShipmentLine(),
           matchedInvoicesAssert.getMovementLine());
       assertEquals(receiptInvoiceMatch.getInvoiceLine(), matchedInvoicesAssert.getInvoiceLine());
-      assertEquals(receiptInvoiceMatch.getProduct(), matchedInvoicesAssert.getInvoiceLine()
-          .getProduct());
+      assertEquals(receiptInvoiceMatch.getProduct(),
+          matchedInvoicesAssert.getInvoiceLine().getProduct());
 
       assertEquals(formatDate(receiptInvoiceMatch.getTransactionDate()),
           formatDate(matchedInvoicesAssert.getInvoiceLine().getInvoice().getInvoiceDate()));
-      assertEquals(receiptInvoiceMatch.getQuantity(), matchedInvoicesAssert.getMovementLine()
-          .getMovementQuantity());
+      assertEquals(receiptInvoiceMatch.getQuantity(),
+          matchedInvoicesAssert.getMovementLine().getMovementQuantity());
 
       assertTrue(receiptInvoiceMatch.isProcessed());
     } catch (Exception e) {
@@ -3803,25 +3794,30 @@ public class TestCostingUtils {
           assertEquals(physicalInventory.getName(), "Inventory Amount Update Closing Inventory");
           assertEquals(physicalInventory.getInventoryType(), "C");
 
-          assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-              .getBookQuantity(), physicalInventoryAssert.getQuantity());
-          assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-              .getQuantityCount(), BigDecimal.ZERO);
+          assertEquals(
+              physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getBookQuantity(),
+              physicalInventoryAssert.getQuantity());
+          assertEquals(
+              physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getQuantityCount(),
+              BigDecimal.ZERO);
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getCost(),
               null);
-          assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-              .getRelatedInventory(), physicalInventoryList.get(i + 1)
-              .getMaterialMgmtInventoryCountLineList().get(0));
+          assertEquals(
+              physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
+                  .getRelatedInventory(),
+              physicalInventoryList.get(i + 1).getMaterialMgmtInventoryCountLineList().get(0));
         }
 
         else {
           assertEquals(physicalInventory.getName(), "Inventory Amount Update Opening Inventory");
           assertEquals(physicalInventory.getInventoryType(), "O");
 
-          assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-              .getBookQuantity(), BigDecimal.ZERO);
-          assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-              .getQuantityCount(), physicalInventoryAssert.getQuantity());
+          assertEquals(
+              physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getBookQuantity(),
+              BigDecimal.ZERO);
+          assertEquals(
+              physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getQuantityCount(),
+              physicalInventoryAssert.getQuantity());
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getCost()
               .setScale(2, RoundingMode.HALF_UP), physicalInventoryAssert.getPrice());
           assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
@@ -3845,27 +3841,33 @@ public class TestCostingUtils {
         assertEquals(physicalInventory.getCostCenter(), null);
         assertEquals(physicalInventory.getAsset(), null);
 
-        assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-            .getPhysInventory(), physicalInventory);
-        assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-            .getStorageBin(),
+        assertEquals(
+            physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getPhysInventory(),
+            physicalInventory);
+        assertEquals(
+            physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getStorageBin(),
             OBDal.getInstance().get(Locator.class, TestCostingConstants.LOCATOR_L01_ID));
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getProduct(),
             physicalInventoryAssert.getProduct());
         assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getLineNo(),
             Long.valueOf(10L));
-        assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-            .getDescription(), null);
-        assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-            .getAttributeSetValue(), OBDal.getInstance().get(AttributeSetInstance.class, "0"));
         assertEquals(
-            physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getOrderUOM(), null);
-        assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-            .getOrderQuantity(), null);
-        assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getUOM()
-            .getId(), TestCostingConstants.UOM_ID);
-        assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0)
-            .getQuantityOrderBook(), null);
+            physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getDescription(),
+            null);
+        assertEquals(
+            physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getAttributeSetValue(),
+            OBDal.getInstance().get(AttributeSetInstance.class, "0"));
+        assertEquals(physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getOrderUOM(),
+            null);
+        assertEquals(
+            physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getOrderQuantity(),
+            null);
+        assertEquals(
+            physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getUOM().getId(),
+            TestCostingConstants.UOM_ID);
+        assertEquals(
+            physicalInventory.getMaterialMgmtInventoryCountLineList().get(0).getQuantityOrderBook(),
+            null);
 
         i++;
       }
@@ -3888,31 +3890,28 @@ public class TestCostingUtils {
       criteria1.addOrderBy(LCMatched.PROPERTY_CREATIONDATE, true);
       List<LCMatched> landedCostCostMatchedList = criteria1.list();
 
-      if (!landedCostCostMatchedList
-          .get(0)
-          .getAmount()
-          .setScale(2, RoundingMode.HALF_UP)
-          .equals(
-              landedCostCostMatchedAssertList.get(0).getInvoiceLine().getLineNetAmount()
-                  .setScale(2, RoundingMode.HALF_UP)))
+      if (!landedCostCostMatchedList.get(0).getAmount().setScale(2, RoundingMode.HALF_UP)
+          .equals(landedCostCostMatchedAssertList.get(0).getInvoiceLine().getLineNetAmount()
+              .setScale(2, RoundingMode.HALF_UP)))
         Collections.reverse(landedCostCostMatchedList);
 
       int i = 0;
       for (LCMatched landedCostCostMatched : landedCostCostMatchedList) {
         assertGeneralData(landedCostCostMatched);
         assertEquals(landedCostCostMatched.getLandedCostCost(), landedCostCost);
-        assertEquals(landedCostCostMatched.getInvoiceLine(), landedCostCostMatchedAssertList.get(i)
-            .getInvoiceLine());
+        assertEquals(landedCostCostMatched.getInvoiceLine(),
+            landedCostCostMatchedAssertList.get(i).getInvoiceLine());
 
         if (i == 0) {
+          assertEquals(landedCostCostMatched.getAmount().setScale(2, RoundingMode.HALF_UP),
+              landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount().setScale(2,
+                  RoundingMode.HALF_UP));
           assertEquals(
-              landedCostCostMatched.getAmount().setScale(2, RoundingMode.HALF_UP),
-              landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount()
-                  .setScale(2, RoundingMode.HALF_UP));
-          assertEquals(
-              landedCostCostMatched.getAmountInInvoiceCurrency() == null ? landedCostCostMatched.getAmountInInvoiceCurrency()
+              landedCostCostMatched.getAmountInInvoiceCurrency() == null
+                  ? landedCostCostMatched.getAmountInInvoiceCurrency()
                   : landedCostCostMatched.getAmountInInvoiceCurrency().setScale(2,
-                      RoundingMode.HALF_UP), landedCostCost.getInvoiceLine() != null ? null
+                      RoundingMode.HALF_UP),
+              landedCostCost.getInvoiceLine() != null ? null
                   : landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount()
                       .setScale(2, RoundingMode.HALF_UP));
           assertFalse(landedCostCostMatched.isConversionmatching());
@@ -3921,30 +3920,25 @@ public class TestCostingUtils {
         else {
           Calendar calendar = Calendar.getInstance();
           calendar.set(9999, 0, 1);
-          OBCriteria<ConversionRate> criteria2 = OBDal.getInstance().createCriteria(
-              ConversionRate.class);
+          OBCriteria<ConversionRate> criteria2 = OBDal.getInstance()
+              .createCriteria(ConversionRate.class);
           criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT,
               OBDal.getInstance().get(Client.class, TestCostingConstants.QATESTING_CLIENT_ID)));
           criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY,
               OBDal.getInstance().get(Currency.class, TestCostingConstants.DOLLAR_ID)));
-          criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
-              .get(Currency.class, TestCostingConstants.EURO_ID)));
+          criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY,
+              OBDal.getInstance().get(Currency.class, TestCostingConstants.EURO_ID)));
           criteria2.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
           criteria2.setMaxResults(1);
           BigDecimal rate = ((ConversionRate) criteria2.uniqueResult()).getMultipleRateBy();
 
-          assertEquals(
-              landedCostCostMatched.getAmount().setScale(2, RoundingMode.HALF_UP),
-              landedCostCostMatchedAssertList
-                  .get(i)
-                  .getInvoiceLine()
-                  .getLineNetAmount()
-                  .multiply(
-                      landedCostCostMatchedAssertList.get(i).getInvoiceLine().getInvoice()
-                          .getCurrencyConversionRateDocList().get(0).getRate())
-                  .add(
-                      landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount()
-                          .multiply(rate).negate()).divide(rate, 2, RoundingMode.HALF_UP));
+          assertEquals(landedCostCostMatched.getAmount().setScale(2, RoundingMode.HALF_UP),
+              landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount()
+                  .multiply(landedCostCostMatchedAssertList.get(i).getInvoiceLine().getInvoice()
+                      .getCurrencyConversionRateDocList().get(0).getRate())
+                  .add(landedCostCostMatchedAssertList.get(i).getInvoiceLine().getLineNetAmount()
+                      .multiply(rate).negate())
+                  .divide(rate, 2, RoundingMode.HALF_UP));
           assertEquals(landedCostCostMatched.getAmountInInvoiceCurrency(), null);
           assertTrue(landedCostCostMatched.isConversionmatching());
         }
@@ -3968,8 +3962,8 @@ public class TestCostingUtils {
       where.append(" as t1 ");
       where.append("\n left join t1." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + " t2");
       where.append("\n left join t1." + LCReceiptLineAmt.PROPERTY_GOODSSHIPMENTLINE + " t3");
-      where.append("\n where t1." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT
-          + " = :landedCostReceipt");
+      where.append(
+          "\n where t1." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT + " = :landedCostReceipt");
       where.append("\n order by t2." + LandedCostCost.PROPERTY_LINENO);
       where.append("\n , t3." + ShipmentInOutLine.PROPERTY_LINENO);
       OBQuery<LCReceiptLineAmt> criteria = OBDal.getInstance().createQuery(LCReceiptLineAmt.class,
@@ -3978,13 +3972,9 @@ public class TestCostingUtils {
       List<LCReceiptLineAmt> landedCostReceiptLineAmountList = criteria.list();
 
       if (landedCostReceiptLineAmountList.size() > 0
-          && !landedCostReceiptLineAmountList
-              .get(0)
-              .getAmount()
-              .setScale(4, RoundingMode.HALF_UP)
-              .equals(
-                  landedCostReceiptLineAmountAssertList.get(0).getAmount()
-                      .setScale(4, RoundingMode.HALF_UP)))
+          && !landedCostReceiptLineAmountList.get(0).getAmount().setScale(4, RoundingMode.HALF_UP)
+              .equals(landedCostReceiptLineAmountAssertList.get(0).getAmount().setScale(4,
+                  RoundingMode.HALF_UP)))
         Collections.reverse(landedCostReceiptLineAmountList);
 
       int i = 0;
@@ -4054,50 +4044,45 @@ public class TestCostingUtils {
 
           if (!productTransactionAssert.getShipmentReceiptLine().getShipmentReceipt()
               .isSalesTransaction())
-            assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-                .getShipmentReceiptLine().getMovementQuantity());
+            assertEquals(materialTransaction.getMovementQuantity(),
+                productTransactionAssert.getShipmentReceiptLine().getMovementQuantity());
           else
-            assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-                .getShipmentReceiptLine().getMovementQuantity().negate());
+            assertEquals(materialTransaction.getMovementQuantity(),
+                productTransactionAssert.getShipmentReceiptLine().getMovementQuantity().negate());
 
           if ((!productTransactionAssert.getShipmentReceiptLine().getShipmentReceipt()
-              .isSalesTransaction() && productTransactionAssert.getShipmentReceiptLine()
-              .getCanceledInoutLine() == null)
+              .isSalesTransaction()
+              && productTransactionAssert.getShipmentReceiptLine().getCanceledInoutLine() == null)
               || (productTransactionAssert.getShipmentReceiptLine().getShipmentReceipt()
-                  .isSalesTransaction() && productTransactionAssert.getShipmentReceiptLine()
-                  .getCanceledInoutLine() != null)
+                  .isSalesTransaction()
+                  && productTransactionAssert.getShipmentReceiptLine()
+                      .getCanceledInoutLine() != null)
               || productTransactionAssert.getShipmentReceiptLine().getShipmentReceipt()
                   .getDocumentType().getName().equals("RFC Receipt")) {
-            assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice()
                     .multiply(materialTransaction.getMovementQuantity())
                     .setScale(2, RoundingMode.HALF_UP));
-            assertEquals(
-                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice()
                     .multiply(materialTransaction.getMovementQuantity())
                     .setScale(2, RoundingMode.HALF_UP));
-            assertEquals(
-                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice()
                     .multiply(materialTransaction.getMovementQuantity())
                     .setScale(2, RoundingMode.HALF_UP));
           }
 
           else {
-            assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
                     .setScale(2, RoundingMode.HALF_UP));
-            assertEquals(
-                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
                     .setScale(2, RoundingMode.HALF_UP));
-            assertEquals(
-                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
                     .setScale(2, RoundingMode.HALF_UP));
@@ -4115,38 +4100,36 @@ public class TestCostingUtils {
               productTransactionAssert.getProductionLine());
           assertEquals(materialTransaction.getMovementType(), productTransactionAssert
               .getShipmentReceiptLine().getShipmentReceipt().getMovementType());
-          assertEquals(materialTransaction.getStorageBin(), productTransactionAssert
-              .getShipmentReceiptLine().getStorageBin());
-          assertEquals(materialTransaction.getProduct(), productTransactionAssert
-              .getShipmentReceiptLine().getProduct());
+          assertEquals(materialTransaction.getStorageBin(),
+              productTransactionAssert.getShipmentReceiptLine().getStorageBin());
+          assertEquals(materialTransaction.getProduct(),
+              productTransactionAssert.getShipmentReceiptLine().getProduct());
           assertEquals(formatDate(materialTransaction.getMovementDate()),
               formatDate(productTransactionAssert.getShipmentReceiptLine().getShipmentReceipt()
                   .getMovementDate()));
-          assertEquals(materialTransaction.getUOM(), productTransactionAssert
-              .getShipmentReceiptLine().getUOM());
+          assertEquals(materialTransaction.getUOM(),
+              productTransactionAssert.getShipmentReceiptLine().getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
         }
 
         else if (productTransactionAssert.getInventoryLine() != null) {
 
           if (j % 2 == 0) {
-            assertEquals(materialTransaction.getPhysicalInventoryLine(), productTransactionAssert
-                .getInventoryLine().getInventoryAmountUpdateLineInventoriesList().get(0)
-                .getCloseInventory().getMaterialMgmtInventoryCountLineList().get(0));
-            assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-                .getInventoryLine().getOnHandQty().negate());
-            assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getPhysicalInventoryLine(),
+                productTransactionAssert.getInventoryLine()
+                    .getInventoryAmountUpdateLineInventoriesList().get(0).getCloseInventory()
+                    .getMaterialMgmtInventoryCountLineList().get(0));
+            assertEquals(materialTransaction.getMovementQuantity(),
+                productTransactionAssert.getInventoryLine().getOnHandQty().negate());
+            assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
                     .setScale(2, RoundingMode.HALF_UP));
-            assertEquals(
-                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
                     .setScale(2, RoundingMode.HALF_UP));
-            assertEquals(
-                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice()
                     .multiply(materialTransaction.getMovementQuantity().negate())
                     .setScale(2, RoundingMode.HALF_UP));
@@ -4154,23 +4137,21 @@ public class TestCostingUtils {
           }
 
           else {
-            assertEquals(materialTransaction.getPhysicalInventoryLine(), productTransactionAssert
-                .getInventoryLine().getInventoryAmountUpdateLineInventoriesList().get(0)
-                .getInitInventory().getMaterialMgmtInventoryCountLineList().get(0));
-            assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-                .getInventoryLine().getOnHandQty());
-            assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getOriginalPrice().multiply(
-                    materialTransaction.getMovementQuantity()));
-            assertEquals(
-                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getTotalPrice().multiply(
-                    materialTransaction.getMovementQuantity()));
-            assertEquals(
-                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getUnitPrice().multiply(
-                    materialTransaction.getMovementQuantity()));
+            assertEquals(materialTransaction.getPhysicalInventoryLine(),
+                productTransactionAssert.getInventoryLine()
+                    .getInventoryAmountUpdateLineInventoriesList().get(0).getInitInventory()
+                    .getMaterialMgmtInventoryCountLineList().get(0));
+            assertEquals(materialTransaction.getMovementQuantity(),
+                productTransactionAssert.getInventoryLine().getOnHandQty());
+            assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getOriginalPrice()
+                    .multiply(materialTransaction.getMovementQuantity()));
+            assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getTotalPrice()
+                    .multiply(materialTransaction.getMovementQuantity()));
+            assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getUnitPrice()
+                    .multiply(materialTransaction.getMovementQuantity()));
             assertFalse(materialTransaction.isCheckReservedQuantity());
           }
 
@@ -4183,17 +4164,18 @@ public class TestCostingUtils {
           assertEquals(materialTransaction.getProductionLine(),
               productTransactionAssert.getProductionLine());
           assertEquals(materialTransaction.getMovementType(), "I+");
-          assertEquals(materialTransaction.getStorageBin(), productTransactionAssert
-              .getInventoryLine().getInventoryAmountUpdateLineInventoriesList().get(0)
-              .getCloseInventory().getMaterialMgmtInventoryCountLineList().get(0).getStorageBin());
-          assertEquals(materialTransaction.getProduct(), productTransactionAssert
-              .getInventoryLine().getProduct());
-          assertEquals(formatDate(materialTransaction.getMovementDate()),
-              formatDate(productTransactionAssert.getInventoryLine().getCaInventoryamt()
-                  .getDocumentDate()));
-          assertEquals(materialTransaction.getUOM(), productTransactionAssert.getInventoryLine()
-              .getInventoryAmountUpdateLineInventoriesList().get(0).getCloseInventory()
-              .getMaterialMgmtInventoryCountLineList().get(0).getUOM());
+          assertEquals(materialTransaction.getStorageBin(),
+              productTransactionAssert.getInventoryLine()
+                  .getInventoryAmountUpdateLineInventoriesList().get(0).getCloseInventory()
+                  .getMaterialMgmtInventoryCountLineList().get(0).getStorageBin());
+          assertEquals(materialTransaction.getProduct(),
+              productTransactionAssert.getInventoryLine().getProduct());
+          assertEquals(formatDate(materialTransaction.getMovementDate()), formatDate(
+              productTransactionAssert.getInventoryLine().getCaInventoryamt().getDocumentDate()));
+          assertEquals(materialTransaction.getUOM(),
+              productTransactionAssert.getInventoryLine()
+                  .getInventoryAmountUpdateLineInventoriesList().get(0).getCloseInventory()
+                  .getMaterialMgmtInventoryCountLineList().get(0).getUOM());
 
           j++;
         }
@@ -4201,43 +4183,37 @@ public class TestCostingUtils {
         else if (productTransactionAssert.getMovementLine() != null) {
 
           if (j % 2 == 0) {
-            assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-                .getMovementLine().getMovementQuantity().negate());
-            assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getOriginalPrice().multiply(
-                    materialTransaction.getMovementQuantity().negate()));
-            assertEquals(
-                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getTotalPrice().multiply(
-                    materialTransaction.getMovementQuantity().negate()));
-            assertEquals(
-                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getUnitPrice().multiply(
-                    materialTransaction.getMovementQuantity().negate()));
+            assertEquals(materialTransaction.getMovementQuantity(),
+                productTransactionAssert.getMovementLine().getMovementQuantity().negate());
+            assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getOriginalPrice()
+                    .multiply(materialTransaction.getMovementQuantity().negate()));
+            assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getTotalPrice()
+                    .multiply(materialTransaction.getMovementQuantity().negate()));
+            assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getUnitPrice()
+                    .multiply(materialTransaction.getMovementQuantity().negate()));
             assertEquals(materialTransaction.getMovementType(), "M-");
-            assertEquals(materialTransaction.getStorageBin(), productTransactionAssert
-                .getMovementLine().getStorageBin());
+            assertEquals(materialTransaction.getStorageBin(),
+                productTransactionAssert.getMovementLine().getStorageBin());
           }
 
           else {
-            assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-                .getMovementLine().getMovementQuantity());
-            assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getOriginalPrice().multiply(
-                    materialTransaction.getMovementQuantity()));
-            assertEquals(
-                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getTotalPrice().multiply(
-                    materialTransaction.getMovementQuantity()));
-            assertEquals(
-                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getUnitPrice().multiply(
-                    materialTransaction.getMovementQuantity()));
+            assertEquals(materialTransaction.getMovementQuantity(),
+                productTransactionAssert.getMovementLine().getMovementQuantity());
+            assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getOriginalPrice()
+                    .multiply(materialTransaction.getMovementQuantity()));
+            assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getTotalPrice()
+                    .multiply(materialTransaction.getMovementQuantity()));
+            assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getUnitPrice()
+                    .multiply(materialTransaction.getMovementQuantity()));
             assertEquals(materialTransaction.getMovementType(), "M+");
-            assertEquals(materialTransaction.getStorageBin(), productTransactionAssert
-                .getMovementLine().getNewStorageBin());
+            assertEquals(materialTransaction.getStorageBin(),
+                productTransactionAssert.getMovementLine().getNewStorageBin());
           }
 
           assertEquals(materialTransaction.getGoodsShipmentLine(),
@@ -4250,13 +4226,12 @@ public class TestCostingUtils {
               productTransactionAssert.getConsumptionLine());
           assertEquals(materialTransaction.getProductionLine(),
               productTransactionAssert.getProductionLine());
-          assertEquals(materialTransaction.getProduct(), productTransactionAssert.getMovementLine()
-              .getProduct());
-          assertEquals(
-              formatDate(materialTransaction.getMovementDate()),
-              formatDate(productTransactionAssert.getMovementLine().getMovement().getMovementDate()));
-          assertEquals(materialTransaction.getUOM(), productTransactionAssert.getMovementLine()
-              .getUOM());
+          assertEquals(materialTransaction.getProduct(),
+              productTransactionAssert.getMovementLine().getProduct());
+          assertEquals(formatDate(materialTransaction.getMovementDate()), formatDate(
+              productTransactionAssert.getMovementLine().getMovement().getMovementDate()));
+          assertEquals(materialTransaction.getUOM(),
+              productTransactionAssert.getMovementLine().getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
 
           j++;
@@ -4264,24 +4239,21 @@ public class TestCostingUtils {
 
         else if (productTransactionAssert.getProductionLine() != null) {
 
-          assertEquals(
-              materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
-              productTransactionAssert.getOriginalPrice().multiply(
-                  materialTransaction.getMovementQuantity().abs()));
-          assertEquals(
-              materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
-              productTransactionAssert.getTotalPrice().multiply(
-                  materialTransaction.getMovementQuantity().abs()));
-          assertEquals(
-              materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
-              productTransactionAssert.getUnitPrice().multiply(
-                  materialTransaction.getMovementQuantity().abs()));
+          assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+              productTransactionAssert.getOriginalPrice()
+                  .multiply(materialTransaction.getMovementQuantity().abs()));
+          assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+              productTransactionAssert.getTotalPrice()
+                  .multiply(materialTransaction.getMovementQuantity().abs()));
+          assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+              productTransactionAssert.getUnitPrice()
+                  .multiply(materialTransaction.getMovementQuantity().abs()));
 
-          assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-              .getProductionLine().getMovementQuantity());
+          assertEquals(materialTransaction.getMovementQuantity(),
+              productTransactionAssert.getProductionLine().getMovementQuantity());
           assertEquals(materialTransaction.getMovementType(), "P+");
-          assertEquals(materialTransaction.getStorageBin(), productTransactionAssert
-              .getProductionLine().getStorageBin());
+          assertEquals(materialTransaction.getStorageBin(),
+              productTransactionAssert.getProductionLine().getStorageBin());
 
           assertEquals(materialTransaction.getGoodsShipmentLine(),
               productTransactionAssert.getShipmentReceiptLine());
@@ -4291,13 +4263,13 @@ public class TestCostingUtils {
               productTransactionAssert.getMovementLine());
           assertEquals(materialTransaction.getInternalConsumptionLine(),
               productTransactionAssert.getConsumptionLine());
-          assertEquals(materialTransaction.getProduct(), productTransactionAssert
-              .getProductionLine().getProduct());
+          assertEquals(materialTransaction.getProduct(),
+              productTransactionAssert.getProductionLine().getProduct());
           assertEquals(formatDate(materialTransaction.getMovementDate()),
               formatDate(productTransactionAssert.getProductionLine().getProductionPlan()
                   .getProduction().getMovementDate()));
-          assertEquals(materialTransaction.getUOM(), productTransactionAssert.getProductionLine()
-              .getUOM());
+          assertEquals(materialTransaction.getUOM(),
+              productTransactionAssert.getProductionLine().getUOM());
           assertTrue(materialTransaction.isCheckReservedQuantity());
 
           j++;
@@ -4306,36 +4278,30 @@ public class TestCostingUtils {
         else {
 
           if (j % 2 == 0) {
-            assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-                .getConsumptionLine().getMovementQuantity().negate());
-            assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getOriginalPrice().multiply(
-                    productTransactionAssert.getConsumptionLine().getMovementQuantity()));
-            assertEquals(
-                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getTotalPrice().multiply(
-                    productTransactionAssert.getConsumptionLine().getMovementQuantity()));
-            assertEquals(
-                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
-                productTransactionAssert.getUnitPrice().multiply(
-                    productTransactionAssert.getConsumptionLine().getMovementQuantity()));
+            assertEquals(materialTransaction.getMovementQuantity(),
+                productTransactionAssert.getConsumptionLine().getMovementQuantity().negate());
+            assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getOriginalPrice()
+                    .multiply(productTransactionAssert.getConsumptionLine().getMovementQuantity()));
+            assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getTotalPrice()
+                    .multiply(productTransactionAssert.getConsumptionLine().getMovementQuantity()));
+            assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+                productTransactionAssert.getUnitPrice()
+                    .multiply(productTransactionAssert.getConsumptionLine().getMovementQuantity()));
             assertTrue(materialTransaction.isCheckReservedQuantity());
           }
 
           else {
-            assertEquals(materialTransaction.getMovementQuantity(), productTransactionAssert
-                .getConsumptionLine().getMovementQuantity().negate());
-            assertEquals(
-                materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getMovementQuantity(),
+                productTransactionAssert.getConsumptionLine().getMovementQuantity().negate());
+            assertEquals(materialTransaction.getTransactionCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getOriginalPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity().negate()));
-            assertEquals(
-                materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getTotalCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getTotalPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity().negate()));
-            assertEquals(
-                materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
+            assertEquals(materialTransaction.getUnitCost().setScale(2, RoundingMode.HALF_UP),
                 productTransactionAssert.getUnitPrice().multiply(
                     productTransactionAssert.getConsumptionLine().getMovementQuantity().negate()));
             assertTrue(materialTransaction.isCheckReservedQuantity());
@@ -4351,15 +4317,15 @@ public class TestCostingUtils {
               productTransactionAssert.getConsumptionLine());
 
           assertEquals(materialTransaction.getMovementType(), "D-");
-          assertEquals(materialTransaction.getStorageBin(), productTransactionAssert
-              .getConsumptionLine().getStorageBin());
-          assertEquals(materialTransaction.getProduct(), productTransactionAssert
-              .getConsumptionLine().getProduct());
+          assertEquals(materialTransaction.getStorageBin(),
+              productTransactionAssert.getConsumptionLine().getStorageBin());
+          assertEquals(materialTransaction.getProduct(),
+              productTransactionAssert.getConsumptionLine().getProduct());
           assertEquals(formatDate(materialTransaction.getMovementDate()),
               formatDate(productTransactionAssert.getConsumptionLine().getInternalConsumption()
                   .getMovementDate()));
-          assertEquals(materialTransaction.getUOM(), productTransactionAssert.getConsumptionLine()
-              .getUOM());
+          assertEquals(materialTransaction.getUOM(),
+              productTransactionAssert.getConsumptionLine().getUOM());
 
           j++;
         }
@@ -4367,8 +4333,8 @@ public class TestCostingUtils {
         StringBuffer where = new StringBuffer();
         where.append(" as t1 ");
         where.append("\n left join t1." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " t2");
-        where.append("\n where t1." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION
-            + " = :transaction");
+        where.append(
+            "\n where t1." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + " = :transaction");
         where.append("\n order by t2." + CostAdjustment.PROPERTY_DOCUMENTNO + " desc");
         where.append("\n , t1." + CostAdjustmentLine.PROPERTY_LINENO + " desc");
         OBQuery<CostAdjustmentLine> hql = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
@@ -4384,8 +4350,8 @@ public class TestCostingUtils {
               costAdjustmentLineList.size());
 
         int k = 0;
-        for (TransactionCost materialTransactionCost : getProductTransactionCosts(materialTransaction
-            .getId())) {
+        for (TransactionCost materialTransactionCost : getProductTransactionCosts(
+            materialTransaction.getId())) {
           assertGeneralData(materialTransactionCost);
           assertEquals(materialTransactionCost.getInventoryTransaction(), materialTransaction);
           assertEquals(formatDate(materialTransactionCost.getCostDate()),
@@ -4406,14 +4372,14 @@ public class TestCostingUtils {
 
             Calendar calendar = Calendar.getInstance();
             calendar.set(9999, 0, 1);
-            OBCriteria<ConversionRate> criteria2 = OBDal.getInstance().createCriteria(
-                ConversionRate.class);
+            OBCriteria<ConversionRate> criteria2 = OBDal.getInstance()
+                .createCriteria(ConversionRate.class);
             criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT,
                 OBDal.getInstance().get(Client.class, TestCostingConstants.QATESTING_CLIENT_ID)));
-            criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, OBDal.getInstance()
-                .get(Currency.class, TestCostingConstants.DOLLAR_ID)));
-            criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
-                .get(Currency.class, TestCostingConstants.EURO_ID)));
+            criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY,
+                OBDal.getInstance().get(Currency.class, TestCostingConstants.DOLLAR_ID)));
+            criteria2.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY,
+                OBDal.getInstance().get(Currency.class, TestCostingConstants.EURO_ID)));
             criteria2.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
             criteria2.setMaxResults(1);
             BigDecimal rate = ((ConversionRate) criteria2.uniqueResult()).getMultipleRateBy();
@@ -4421,21 +4387,20 @@ public class TestCostingUtils {
             if (productTransactionAssert.getCurrency().getId().equals(TestCostingConstants.EURO_ID)
                 && costAdjustmentLineList.get(k - 1).getCurrency().getId()
                     .equals(TestCostingConstants.DOLLAR_ID))
-              assertEquals(
-                  materialTransactionCost.getCost().setScale(4, RoundingMode.HALF_UP),
-                  costAdjustmentLineList.get(k - 1).getAdjustmentAmount().multiply(rate)
-                      .setScale(4, RoundingMode.HALF_UP));
+              assertEquals(materialTransactionCost.getCost().setScale(4, RoundingMode.HALF_UP),
+                  costAdjustmentLineList.get(k - 1).getAdjustmentAmount().multiply(rate).setScale(4,
+                      RoundingMode.HALF_UP));
 
             else
-              assertEquals(materialTransactionCost.getCost(), costAdjustmentLineList.get(k - 1)
-                  .getAdjustmentAmount());
+              assertEquals(materialTransactionCost.getCost(),
+                  costAdjustmentLineList.get(k - 1).getAdjustmentAmount());
 
             assertEquals(materialTransactionCost.getCostAdjustmentLine(),
                 costAdjustmentLineList.get(k - 1));
             assertEquals(formatDate(materialTransactionCost.getAccountingDate()),
                 formatDate(costAdjustmentLineList.get(k - 1).getAccountingDate()));
-            assertEquals(materialTransactionCost.isUnitCost(), costAdjustmentLineList.get(k - 1)
-                .isUnitCost());
+            assertEquals(materialTransactionCost.isUnitCost(),
+                costAdjustmentLineList.get(k - 1).isUnitCost());
           }
 
           k++;
@@ -4489,20 +4454,22 @@ public class TestCostingUtils {
             productCostingAssert.getFinalCost().setScale(4, RoundingMode.HALF_UP));
 
         assertEquals(
-            productCosting.getPrice() == null ? null : productCosting.getPrice().setScale(4,
-                RoundingMode.HALF_UP), productCostingAssert.getPrice() == null ? null
+            productCosting.getPrice() == null ? null
+                : productCosting.getPrice().setScale(4, RoundingMode.HALF_UP),
+            productCostingAssert.getPrice() == null ? null
                 : productCostingAssert.getPrice().setScale(4, RoundingMode.HALF_UP));
 
-        assertEquals(productCosting.getOriginalCost() == null ? null : productCosting
-            .getOriginalCost().setScale(4, RoundingMode.HALF_UP),
-            productCostingAssert.getOriginalCost() == null ? null : productCostingAssert
-                .getOriginalCost().setScale(4, RoundingMode.HALF_UP));
+        assertEquals(
+            productCosting.getOriginalCost() == null ? null
+                : productCosting.getOriginalCost().setScale(4, RoundingMode.HALF_UP),
+            productCostingAssert.getOriginalCost() == null ? null
+                : productCostingAssert.getOriginalCost().setScale(4, RoundingMode.HALF_UP));
 
         if (productCostingAssert.getQuantity() == null) {
           assertEquals(productCosting.getQuantity(), null);
         } else {
-          assertEquals(productCosting.getQuantity(), productCostingAssert.getTransaction()
-              .getMovementQuantity());
+          assertEquals(productCosting.getQuantity(),
+              productCostingAssert.getTransaction().getMovementQuantity());
         }
 
         assertEquals(productCosting.isManual(), productCostingAssert.isManual());
@@ -4516,18 +4483,16 @@ public class TestCostingUtils {
         assertEquals(productCosting.getWarehouse(), productCostingAssert.getWarehouse());
         assertEquals(productCosting.getInventoryTransaction(),
             productCostingAssert.getTransaction());
-        assertEquals(
-            productCosting.getCurrency(),
-            productCostingAssert.getTransaction() != null ? productCostingAssert.getTransaction()
-                .getCurrency() : OBDal.getInstance().get(Currency.class,
-                TestCostingConstants.EURO_ID));
+        assertEquals(productCosting.getCurrency(),
+            productCostingAssert.getTransaction() != null
+                ? productCostingAssert.getTransaction().getCurrency()
+                : OBDal.getInstance().get(Currency.class, TestCostingConstants.EURO_ID));
         assertEquals(productCosting.getCostType(), productCostingAssert.getType());
 
         if (productCostingAssert.getYear() != 0)
-          assertEquals(
-              formatDate(productCosting.getStartingDate()),
-              formatDate(DateUtils.addYears(product.getPricingProductPriceList().get(0)
-                  .getPriceListVersion().getValidFromDate(), productCostingAssert.getYear())));
+          assertEquals(formatDate(productCosting.getStartingDate()), formatDate(DateUtils.addYears(
+              product.getPricingProductPriceList().get(0).getPriceListVersion().getValidFromDate(),
+              productCostingAssert.getYear())));
 
         else
           assertEquals(formatDate(productCosting.getStartingDate()), formatDate(new Date()));
@@ -4538,8 +4503,8 @@ public class TestCostingUtils {
           calendar.set(9999, 11, 31);
           assertEquals(formatDate(productCosting.getEndingDate()), formatDate(calendar.getTime()));
         } else {
-          assertEquals(formatDate(productCosting.getEndingDate()), formatDate(productCostingList
-              .get(i + 1).getStartingDate()));
+          assertEquals(formatDate(productCosting.getEndingDate()),
+              formatDate(productCostingList.get(i + 1).getStartingDate()));
         }
 
         i++;
@@ -4563,19 +4528,19 @@ public class TestCostingUtils {
         assertGeneralData(costAdjustment);
         assertEquals(costAdjustment.getDocumentType().getName(), "Cost Adjustment");
         assertEquals(formatDate(costAdjustment.getReferenceDate()), formatDate(new Date()));
-        assertEquals(costAdjustment.getSourceProcess(), costAdjustmentAssertLineList.get(0)
-            .getType());
+        assertEquals(costAdjustment.getSourceProcess(),
+            costAdjustmentAssertLineList.get(0).getType());
         assertTrue(costAdjustment.isProcessed());
         assertFalse(costAdjustment.isProcess());
-        assertEquals(costAdjustment.getDocumentStatus(), costAdjustmentAssertLineList.get(0)
-            .getStatus());
+        assertEquals(costAdjustment.getDocumentStatus(),
+            costAdjustmentAssertLineList.get(0).getStatus());
         assertFalse(costAdjustment.isCancelProcess());
         assertEquals(costAdjustment.getCostAdjustmentLineList().size(),
             costAdjustmentAssertLineList.size());
 
         if (costAdjustmentAssertLineList.get(0).getStatus().equals("VO")) {
-          OBCriteria<CostAdjustmentLine> criteria = OBDal.getInstance().createCriteria(
-              CostAdjustmentLine.class);
+          OBCriteria<CostAdjustmentLine> criteria = OBDal.getInstance()
+              .createCriteria(CostAdjustmentLine.class);
           criteria.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION,
               costAdjustmentAssertLineList.get(0).getMaterialTransaction()));
           criteria.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT,
@@ -4584,8 +4549,8 @@ public class TestCostingUtils {
           criteria.setMaxResults(1);
           assertEquals(costAdjustment.getCostAdjustmentCancel(),
               ((CostAdjustmentLine) criteria.uniqueResult()).getCostAdjustment()
-                  .getCostAdjustmentCancel() != null ? null : criteria.list().get(0)
-                  .getCostAdjustment());
+                  .getCostAdjustmentCancel() != null ? null
+                      : criteria.list().get(0).getCostAdjustment());
         } else
           assertEquals(costAdjustment.getCostAdjustmentCancel(), null);
 
@@ -4623,8 +4588,8 @@ public class TestCostingUtils {
 
           if (costAdjustmentAssertLine.getAmount().setScale(2, RoundingMode.HALF_UP)
               .equals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP))
-              || (costAdjustmentAssertLine.getType().equals("LC") && !costAdjustmentAssertLine
-                  .isNeedPosting())) {
+              || (costAdjustmentAssertLine.getType().equals("LC")
+                  && !costAdjustmentAssertLine.isNeedPosting())) {
             assertFalse(costAdjustmentLine.isNeedsPosting());
           } else {
             assertTrue(costAdjustmentLine.isNeedsPosting());
@@ -4646,100 +4611,63 @@ public class TestCostingUtils {
       List<CostAdjustmentAssert> costAdjustmentAssertLineList, int j,
       CostAdjustmentLine costAdjustmentLine, CostAdjustmentAssert costAdjustmentAssertLine) {
     if (j == 0
-        || (j == 1 && costAdjustmentAssertLine.isSource() && !costAdjustmentLine
-            .getInventoryTransaction()
-            .getStorageBin()
-            .equals(
-                costAdjustment.getCostAdjustmentLineList().get(j - 1).getInventoryTransaction()
-                    .getStorageBin()))
-        || (j == 1 && !costAdjustmentLine
-            .getInventoryTransaction()
-            .getProduct()
-            .equals(
-                costAdjustment.getCostAdjustmentLineList().get(j - 1).getInventoryTransaction()
-                    .getProduct()))
+        || (j == 1 && costAdjustmentAssertLine.isSource()
+            && !costAdjustmentLine.getInventoryTransaction().getStorageBin()
+                .equals(costAdjustment.getCostAdjustmentLineList().get(j - 1)
+                    .getInventoryTransaction().getStorageBin()))
+        || (j == 1 && !costAdjustmentLine.getInventoryTransaction().getProduct()
+            .equals(costAdjustment.getCostAdjustmentLineList().get(j - 1).getInventoryTransaction()
+                .getProduct()))
         || (j == 2
-            && !costAdjustmentLine
-                .getInventoryTransaction()
-                .getProduct()
-                .equals(
-                    costAdjustment.getCostAdjustmentLineList().get(j - 2).getInventoryTransaction()
-                        .getProduct()) && !costAdjustmentLine
-            .getInventoryTransaction()
-            .getProduct()
-            .equals(
-                costAdjustment.getCostAdjustmentLineList().get(j - 1).getInventoryTransaction()
-                    .getProduct()))
-        || (j == 3
-            && !costAdjustmentLine.getInventoryTransaction().getProduct().isBillOfMaterials()
-            && !costAdjustmentLine
-                .getInventoryTransaction()
-                .getProduct()
-                .equals(
-                    costAdjustment.getCostAdjustmentLineList().get(j - 3).getInventoryTransaction()
-                        .getProduct())
-            && !costAdjustmentLine
-                .getInventoryTransaction()
-                .getProduct()
-                .equals(
-                    costAdjustment.getCostAdjustmentLineList().get(j - 2).getInventoryTransaction()
-                        .getProduct()) && !costAdjustmentLine
-            .getInventoryTransaction()
-            .getProduct()
-            .equals(
-                costAdjustment.getCostAdjustmentLineList().get(j - 1).getInventoryTransaction()
-                    .getProduct()))) {
+            && !costAdjustmentLine.getInventoryTransaction().getProduct()
+                .equals(costAdjustment.getCostAdjustmentLineList().get(j - 2)
+                    .getInventoryTransaction().getProduct())
+            && !costAdjustmentLine.getInventoryTransaction().getProduct()
+                .equals(costAdjustment.getCostAdjustmentLineList().get(j - 1)
+                    .getInventoryTransaction().getProduct()))
+        || (j == 3 && !costAdjustmentLine.getInventoryTransaction().getProduct().isBillOfMaterials()
+            && !costAdjustmentLine.getInventoryTransaction().getProduct()
+                .equals(costAdjustment.getCostAdjustmentLineList().get(j - 3)
+                    .getInventoryTransaction().getProduct())
+            && !costAdjustmentLine.getInventoryTransaction().getProduct()
+                .equals(costAdjustment.getCostAdjustmentLineList().get(j - 2)
+                    .getInventoryTransaction().getProduct())
+            && !costAdjustmentLine.getInventoryTransaction().getProduct().equals(costAdjustment
+                .getCostAdjustmentLineList().get(j - 1).getInventoryTransaction().getProduct()))) {
       assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), null);
-    } else if (costAdjustmentLine
-        .getInventoryTransaction()
-        .getProduct()
-        .equals(
-            costAdjustment.getCostAdjustmentLineList().get(0).getInventoryTransaction()
-                .getProduct())
+    } else if (costAdjustmentLine.getInventoryTransaction().getProduct().equals(
+        costAdjustment.getCostAdjustmentLineList().get(0).getInventoryTransaction().getProduct())
         && (costAdjustmentLine
-            .getInventoryTransaction()
-            .getStorageBin()
-            .equals(
-                costAdjustment.getCostAdjustmentLineList().get(0).getInventoryTransaction()
-                    .getStorageBin()) || costAdjustmentAssertLineList.size() == 2)) {
-      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
-          .getCostAdjustmentLineList().get(0));
-    } else if (costAdjustmentLine
-        .getInventoryTransaction()
-        .getProduct()
-        .equals(
-            costAdjustment.getCostAdjustmentLineList().get(1).getInventoryTransaction()
-                .getProduct())
+            .getInventoryTransaction().getStorageBin().equals(costAdjustment
+                .getCostAdjustmentLineList().get(0).getInventoryTransaction().getStorageBin())
+            || costAdjustmentAssertLineList.size() == 2)) {
+      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(),
+          costAdjustment.getCostAdjustmentLineList().get(0));
+    } else if (costAdjustmentLine.getInventoryTransaction().getProduct().equals(
+        costAdjustment.getCostAdjustmentLineList().get(1).getInventoryTransaction().getProduct())
         && (costAdjustmentLine
-            .getInventoryTransaction()
-            .getStorageBin()
-            .equals(
-                costAdjustment.getCostAdjustmentLineList().get(1).getInventoryTransaction()
-                    .getStorageBin()) || costAdjustmentAssertLineList.size() == 3)) {
-      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
-          .getCostAdjustmentLineList().get(1));
-    } else if ((costAdjustmentLine
-        .getInventoryTransaction()
-        .getProduct()
-        .equals(
-            costAdjustment.getCostAdjustmentLineList().get(2).getInventoryTransaction()
-                .getProduct()) && (costAdjustmentLine
-        .getInventoryTransaction()
-        .getStorageBin()
-        .equals(
-            costAdjustment.getCostAdjustmentLineList().get(2).getInventoryTransaction()
-                .getStorageBin()) || costAdjustmentAssertLineList.size() == 4))
+            .getInventoryTransaction().getStorageBin().equals(costAdjustment
+                .getCostAdjustmentLineList().get(1).getInventoryTransaction().getStorageBin())
+            || costAdjustmentAssertLineList.size() == 3)) {
+      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(),
+          costAdjustment.getCostAdjustmentLineList().get(1));
+    } else if ((costAdjustmentLine.getInventoryTransaction().getProduct().equals(
+        costAdjustment.getCostAdjustmentLineList().get(2).getInventoryTransaction().getProduct())
+        && (costAdjustmentLine.getInventoryTransaction().getStorageBin()
+            .equals(costAdjustment.getCostAdjustmentLineList().get(2).getInventoryTransaction()
+                .getStorageBin())
+            || costAdjustmentAssertLineList.size() == 4))
         || costAdjustmentLine.getInventoryTransaction().getProduct().isBillOfMaterials()
-        && costAdjustmentLine.getAdjustmentAmount().equals(
-            costAdjustment.getCostAdjustmentLineList().get(2).getAdjustmentAmount())) {
-      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
-          .getCostAdjustmentLineList().get(2));
+            && costAdjustmentLine.getAdjustmentAmount()
+                .equals(costAdjustment.getCostAdjustmentLineList().get(2).getAdjustmentAmount())) {
+      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(),
+          costAdjustment.getCostAdjustmentLineList().get(2));
     } else if (costAdjustmentLine.getInventoryTransaction().getProduct().isBillOfMaterials()) {
-      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
-          .getCostAdjustmentLineList().get(4));
+      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(),
+          costAdjustment.getCostAdjustmentLineList().get(4));
     } else {
-      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(), costAdjustment
-          .getCostAdjustmentLineList().get(3));
+      assertEquals(costAdjustmentLine.getParentCostAdjustmentLine(),
+          costAdjustment.getCostAdjustmentLineList().get(3));
     }
   }
 
@@ -4756,8 +4684,8 @@ public class TestCostingUtils {
       criteria1.setMaxResults(1);
       Table table = (Table) criteria1.uniqueResult();
 
-      final OBCriteria<AccountingFact> criteria2 = OBDal.getInstance().createCriteria(
-          AccountingFact.class);
+      final OBCriteria<AccountingFact> criteria2 = OBDal.getInstance()
+          .createCriteria(AccountingFact.class);
       criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, document.getId()));
       criteria2.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
       criteria2.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
@@ -4783,8 +4711,8 @@ public class TestCostingUtils {
           StringBuffer where = new StringBuffer();
           where.append(" as t1 ");
           where.append("\n left join t1." + ProductionLine.PROPERTY_PRODUCTIONPLAN + " t2");
-          where.append("\n where t2." + ProductionPlan.PROPERTY_PRODUCTION
-              + " = :productionTransaction");
+          where.append(
+              "\n where t2." + ProductionPlan.PROPERTY_PRODUCTION + " = :productionTransaction");
           where.append("\n order by t1." + ProductionLine.PROPERTY_LINENO);
           OBQuery<ProductionLine> hql = OBDal.getInstance().createQuery(ProductionLine.class,
               where.toString());
@@ -4792,16 +4720,16 @@ public class TestCostingUtils {
               OBDal.getInstance().get(ProductionTransaction.class, document.getId()));
           line = hql.list().get(i / 2);
         } else if (document.getEntityName().equals(CostAdjustment.ENTITY_NAME)) {
-          final OBCriteria<CostAdjustmentLine> criteria3 = OBDal.getInstance().createCriteria(
-              CostAdjustmentLine.class);
+          final OBCriteria<CostAdjustmentLine> criteria3 = OBDal.getInstance()
+              .createCriteria(CostAdjustmentLine.class);
           criteria3.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, document));
           criteria3.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_NEEDSPOSTING, true));
           criteria3.addOrderBy(CostAdjustmentLine.PROPERTY_LINENO, true);
           line = criteria3.list().get(i / 2);
         } else if (productId != null
             && (productId.equals(TestCostingConstants.LANDEDCOSTTYPE_FEES_ID)
-                || productId.equals(TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID) || productId
-                  .equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))) {
+                || productId.equals(TestCostingConstants.LANDEDCOSTTYPE_TRANSPORTATION_COST_ID)
+                || productId.equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))) {
           line = ((List<BaseOBObject>) OBDal.getInstance()
               .get(document.getClass(), document.getId()).get(lineListProperty)).get(0);
         } else if (document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
@@ -4823,9 +4751,7 @@ public class TestCostingUtils {
         } else if (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
           if (((LandedCostCost) document).getLandedCostMatchedList().size() == 1) {
             line = ((LandedCostCost) document).getLandedCostMatchedList().get(0);
-          } else if (!((LandedCostCost) document)
-              .getAmount()
-              .setScale(2, RoundingMode.HALF_UP)
+          } else if (!((LandedCostCost) document).getAmount().setScale(2, RoundingMode.HALF_UP)
               .equals(
                   ((LandedCostCost) document).getMatchingAmount().setScale(2, RoundingMode.HALF_UP))
               && ((LandedCostCost) document).isMatchingAdjusted()) {
@@ -4860,29 +4786,23 @@ public class TestCostingUtils {
         if ((productId != null && productId.equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))
             || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
                 .getCurrency().getId().equals(TestCostingConstants.DOLLAR_ID))
-            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
-                .getLandedCostCost()
-                .getLandedCostType()
-                .equals(
-                    OBDal.getInstance()
+            || (document.getEntityName().equals(LandedCost.ENTITY_NAME)
+                && ((LCReceiptLineAmt) line).getLandedCostCost().getLandedCostType()
+                    .equals(OBDal.getInstance()
                         .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
                         .getLandedCostTypeList().get(0)))
             || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
-                && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
-                .getInvoiceLine().getProduct().getId()
-                .equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))
+                && ((LCMatched) line).getInvoiceLine().getProduct() != null
+                && ((LCMatched) line).getInvoiceLine().getProduct().getId()
+                    .equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))
             || (!document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
                 && !document.getEntityName().equals(LandedCost.ENTITY_NAME)
                 && documentPostAssert.getProductId() != null
                 && !OBDal.getInstance().get(Product.class, documentPostAssert.getProductId())
-                    .getPricingProductPriceList().isEmpty() && OBDal
-                .getInstance()
-                .get(Product.class, documentPostAssert.getProductId())
-                .getPricingProductPriceList()
-                .get(0)
-                .getPriceListVersion()
-                .equals(
-                    OBDal.getInstance()
+                    .getPricingProductPriceList().isEmpty()
+                && OBDal.getInstance().get(Product.class, documentPostAssert.getProductId())
+                    .getPricingProductPriceList().get(0).getPriceListVersion()
+                    .equals(OBDal.getInstance()
                         .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
                         .getPricingProductPriceList().get(0).getPriceListVersion()))) {
 
@@ -4892,14 +4812,14 @@ public class TestCostingUtils {
           } else {
             Calendar calendar = Calendar.getInstance();
             calendar.set(9999, 0, 1);
-            OBCriteria<ConversionRate> criteria = OBDal.getInstance().createCriteria(
-                ConversionRate.class);
+            OBCriteria<ConversionRate> criteria = OBDal.getInstance()
+                .createCriteria(ConversionRate.class);
             criteria.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT,
                 OBDal.getInstance().get(Client.class, TestCostingConstants.QATESTING_CLIENT_ID)));
             criteria.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY,
                 OBDal.getInstance().get(Currency.class, TestCostingConstants.DOLLAR_ID)));
-            criteria.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY, OBDal.getInstance()
-                .get(Currency.class, TestCostingConstants.EURO_ID)));
+            criteria.add(Restrictions.eq(ConversionRate.PROPERTY_TOCURRENCY,
+                OBDal.getInstance().get(Currency.class, TestCostingConstants.EURO_ID)));
             criteria.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
             criteria.setMaxResults(1);
             rate = ((ConversionRate) criteria.uniqueResult()).getMultipleRateBy();
@@ -4910,50 +4830,39 @@ public class TestCostingUtils {
           rate = BigDecimal.ONE;
         }
 
-        assertEquals(
-            accountingFact.getDebit().setScale(2, RoundingMode.HALF_UP),
-            documentPostAssert
-                .getDebit()
-                .multiply(rate)
-                .setScale(
-                    2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
-                        : RoundingMode.HALF_UP));
-        assertEquals(
-            accountingFact.getCredit().setScale(2, RoundingMode.HALF_UP),
-            documentPostAssert
-                .getCredit()
-                .multiply(rate)
-                .setScale(
-                    2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
-                        : RoundingMode.HALF_UP));
+        assertEquals(accountingFact.getDebit().setScale(2, RoundingMode.HALF_UP),
+            documentPostAssert.getDebit().multiply(rate).setScale(2,
+                document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
+                    : RoundingMode.HALF_UP));
+        assertEquals(accountingFact.getCredit().setScale(2, RoundingMode.HALF_UP),
+            documentPostAssert.getCredit().multiply(rate).setScale(2,
+                document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
+                    : RoundingMode.HALF_UP));
 
         if ((productId != null && productId.equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))
             || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
                 .getCurrency().getId().equals(TestCostingConstants.DOLLAR_ID))
-            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
-                .getLandedCostCost()
-                .getLandedCostType()
-                .equals(
-                    OBDal.getInstance()
+            || (document.getEntityName().equals(LandedCost.ENTITY_NAME)
+                && ((LCReceiptLineAmt) line).getLandedCostCost().getLandedCostType()
+                    .equals(OBDal.getInstance()
                         .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
                         .getLandedCostTypeList().get(0)))
             || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
-                && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
-                .getInvoiceLine().getProduct().getId()
-                .equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))) {
+                && ((LCMatched) line).getInvoiceLine().getProduct() != null
+                && ((LCMatched) line).getInvoiceLine().getProduct().getId()
+                    .equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))) {
           rate = BigDecimal.ONE;
         }
 
         else if ((document.getEntityName().equals(ShipmentInOut.ENTITY_NAME)
-            || document.getEntityName().equals(CostAdjustment.ENTITY_NAME) || (document
-            .getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME) && (line.getEntityName()
-            .equals(ShipmentInOutLine.ENTITY_NAME) || (line.getEntityName().equals(
-            InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line).getInvoice().getCurrency().getId()
-            .equals(TestCostingConstants.DOLLAR_ID)))))
+            || document.getEntityName().equals(CostAdjustment.ENTITY_NAME)
+            || (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME) && (line
+                .getEntityName().equals(ShipmentInOutLine.ENTITY_NAME)
+                || (line.getEntityName().equals(InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line)
+                    .getInvoice().getCurrency().getId().equals(TestCostingConstants.DOLLAR_ID)))))
             && OBDal.getInstance()
-                .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID).getCurrency() != null
+                .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID)
+                .getCurrency() != null
             && OBDal.getInstance()
                 .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID).getCurrency()
                 .getId().equals(TestCostingConstants.DOLLAR_ID)
@@ -4961,8 +4870,8 @@ public class TestCostingUtils {
                 .equals(accountingFact.getAccountingSchema().getCurrency().getId())) {
           Calendar calendar = Calendar.getInstance();
           calendar.set(9999, 0, 1);
-          OBCriteria<ConversionRate> criteria = OBDal.getInstance().createCriteria(
-              ConversionRate.class);
+          OBCriteria<ConversionRate> criteria = OBDal.getInstance()
+              .createCriteria(ConversionRate.class);
           criteria.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT,
               OBDal.getInstance().get(Client.class, TestCostingConstants.QATESTING_CLIENT_ID)));
           criteria.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY,
@@ -4983,24 +4892,14 @@ public class TestCostingUtils {
               .getCurrencyConversionRateDocList().get(0).getRate());
         }
 
-        assertEquals(
-            accountingFact.getForeignCurrencyDebit().setScale(2, RoundingMode.HALF_UP),
-            documentPostAssert
-                .getDebit()
-                .multiply(rate)
-                .setScale(
-                    2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
-                        : RoundingMode.HALF_UP));
-        assertEquals(
-            accountingFact.getForeignCurrencyCredit().setScale(2, RoundingMode.HALF_UP),
-            documentPostAssert
-                .getCredit()
-                .multiply(rate)
-                .setScale(
-                    2,
-                    document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
-                        : RoundingMode.HALF_UP));
+        assertEquals(accountingFact.getForeignCurrencyDebit().setScale(2, RoundingMode.HALF_UP),
+            documentPostAssert.getDebit().multiply(rate).setScale(2,
+                document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
+                    : RoundingMode.HALF_UP));
+        assertEquals(accountingFact.getForeignCurrencyCredit().setScale(2, RoundingMode.HALF_UP),
+            documentPostAssert.getCredit().multiply(rate).setScale(2,
+                document.getEntityName().equals(LandedCost.ENTITY_NAME) ? RoundingMode.HALF_EVEN
+                    : RoundingMode.HALF_UP));
 
         Calendar calendar1 = Calendar.getInstance();
         calendar1.setTime(accountingFact.getAccountingDate());
@@ -5018,10 +4917,11 @@ public class TestCostingUtils {
           assertEquals(formatDate(accountingFact.getTransactionDate()), formatDate(new Date()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
               formatDate(((CostAdjustmentLine) line).getAccountingDate()));
-          if (((CostAdjustmentLine) line).getInventoryTransaction().getGoodsShipmentLine() != null) {
-            assertEquals(accountingFact.getBusinessPartner(), ((CostAdjustmentLine) line)
-                .getInventoryTransaction().getGoodsShipmentLine().getShipmentReceipt()
-                .getBusinessPartner());
+          if (((CostAdjustmentLine) line).getInventoryTransaction()
+              .getGoodsShipmentLine() != null) {
+            assertEquals(accountingFact.getBusinessPartner(),
+                ((CostAdjustmentLine) line).getInventoryTransaction().getGoodsShipmentLine()
+                    .getShipmentReceipt().getBusinessPartner());
           } else {
             assertEquals(accountingFact.getBusinessPartner(), null);
           }
@@ -5036,8 +4936,8 @@ public class TestCostingUtils {
               formatDate(((ReceiptInvoiceMatch) document).getTransactionDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
               formatDate(((ReceiptInvoiceMatch) document).getTransactionDate()));
-          assertEquals(accountingFact.getBusinessPartner(), ((ReceiptInvoiceMatch) document)
-              .getInvoiceLine().getBusinessPartner());
+          assertEquals(accountingFact.getBusinessPartner(),
+              ((ReceiptInvoiceMatch) document).getInvoiceLine().getBusinessPartner());
         } else if (document.getEntityName().equals(InternalMovement.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
               formatDate(((InternalMovement) document).getMovementDate()));
@@ -5062,10 +4962,8 @@ public class TestCostingUtils {
           assertEquals(formatDate(accountingFact.getAccountingDate()),
               formatDate(((LandedCost) document).getReferenceDate()));
           if (i % 2 == 0) {
-            assertEquals(
-                accountingFact.getBusinessPartner(),
-                OBDal
-                    .getInstance()
+            assertEquals(accountingFact.getBusinessPartner(),
+                OBDal.getInstance()
                     .get(ShipmentInOutLine.class,
                         ((LCReceiptLineAmt) line).getGoodsShipmentLine().getId())
                     .getBusinessPartner());
@@ -5077,29 +4975,22 @@ public class TestCostingUtils {
               formatDate(((LandedCostCost) document).getAccountingDate()));
           assertEquals(formatDate(accountingFact.getAccountingDate()),
               formatDate(((LandedCostCost) document).getAccountingDate()));
-          if (i == 0
-              || (documentPostAssert.getProductId() != null
-                  && OBDal
-                      .getInstance()
-                      .get(
-                          InvoiceLine.class,
-                          ((LandedCostCost) document).getLandedCostMatchedList().get(0)
-                              .getInvoiceLine().getId()).getProduct() != null && documentPostAssert
-                  .getProductId().equals(
-                      OBDal
-                          .getInstance()
-                          .get(
-                              InvoiceLine.class,
-                              ((LandedCostCost) document).getLandedCostMatchedList().get(0)
-                                  .getInvoiceLine().getId()).getProduct().getId()))) {
-            assertEquals(
-                accountingFact.getBusinessPartner(),
+          if (i == 0 || (documentPostAssert.getProductId() != null
+              && OBDal.getInstance()
+                  .get(InvoiceLine.class,
+                      ((LandedCostCost) document).getLandedCostMatchedList().get(0).getInvoiceLine()
+                          .getId())
+                  .getProduct() != null
+              && documentPostAssert.getProductId()
+                  .equals(OBDal
+                      .getInstance().get(InvoiceLine.class, ((LandedCostCost) document)
+                          .getLandedCostMatchedList().get(0).getInvoiceLine().getId())
+                      .getProduct().getId()))) {
+            assertEquals(accountingFact.getBusinessPartner(),
                 OBDal
-                    .getInstance()
-                    .get(
-                        InvoiceLine.class,
-                        ((LandedCostCost) document).getLandedCostMatchedList().get(0)
-                            .getInvoiceLine().getId()).getBusinessPartner());
+                    .getInstance().get(InvoiceLine.class, ((LandedCostCost) document)
+                        .getLandedCostMatchedList().get(0).getInvoiceLine().getId())
+                    .getBusinessPartner());
           } else {
             assertEquals(accountingFact.getBusinessPartner(), null);
           }
@@ -5115,30 +5006,29 @@ public class TestCostingUtils {
             || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
                 .getCurrency().getId().equals(TestCostingConstants.DOLLAR_ID))
             || (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
-                && line.getEntityName().equals(InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line)
-                .getInvoice().getCurrency().getId().equals(TestCostingConstants.DOLLAR_ID))
-            || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
-                .getLandedCostCost()
-                .getLandedCostType()
-                .equals(
-                    OBDal.getInstance()
+                && line.getEntityName().equals(InvoiceLine.ENTITY_NAME)
+                && ((InvoiceLine) line).getInvoice().getCurrency().getId()
+                    .equals(TestCostingConstants.DOLLAR_ID))
+            || (document.getEntityName().equals(LandedCost.ENTITY_NAME)
+                && ((LCReceiptLineAmt) line).getLandedCostCost().getLandedCostType()
+                    .equals(OBDal.getInstance()
                         .get(Product.class, TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID)
                         .getLandedCostTypeList().get(0)))
             || (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)
-                && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
-                .getInvoiceLine().getProduct().getId()
-                .equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))
+                && ((LCMatched) line).getInvoiceLine().getProduct() != null
+                && ((LCMatched) line).getInvoiceLine().getProduct().getId()
+                    .equals(TestCostingConstants.LANDEDCOSTTYPE_USD_COST_ID))
             || (!document.getEntityName().equals(Invoice.ENTITY_NAME)
-                && !(document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME) && line
-                    .getEntityName().equals(InvoiceLine.ENTITY_NAME))
+                && !(document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
+                    && line.getEntityName().equals(InvoiceLine.ENTITY_NAME))
                 && OBDal.getInstance()
                     .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID)
                     .getCurrency() != null
                 && OBDal.getInstance()
                     .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID)
-                    .getCurrency().getId().equals(TestCostingConstants.DOLLAR_ID) && !accountingFact
-                .getCurrency().getId()
-                .equals(accountingFact.getAccountingSchema().getCurrency().getId()))) {
+                    .getCurrency().getId().equals(TestCostingConstants.DOLLAR_ID)
+                && !accountingFact.getCurrency().getId()
+                    .equals(accountingFact.getAccountingSchema().getCurrency().getId()))) {
           assertEquals(accountingFact.getCurrency(),
               OBDal.getInstance().get(Currency.class, TestCostingConstants.DOLLAR_ID));
         } else {
@@ -5161,10 +5051,8 @@ public class TestCostingUtils {
             OBCriteria<TaxRate> criteria = OBDal.getInstance().createCriteria(TaxRate.class);
             criteria.add(Restrictions.eq(TaxRate.PROPERTY_TAXCATEGORY,
                 OBDal.getInstance().get(Product.class, productId).getTaxCategory()));
-            criteria.add(Restrictions.eq(
-                TaxRate.PROPERTY_ORGANIZATION,
-                OBDal.getInstance().get(Organization.class,
-                    TestCostingConstants.SPAIN_ORGANIZATION_ID)));
+            criteria.add(Restrictions.eq(TaxRate.PROPERTY_ORGANIZATION, OBDal.getInstance()
+                .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID)));
             criteria.setMaxResults(1);
             assertEquals(accountingFact.getTax(), (TaxRate) criteria.uniqueResult());
           } else {
@@ -5183,10 +5071,9 @@ public class TestCostingUtils {
             assertEquals(accountingFact.getTax(), null);
           } else {
             if (productId == null) {
-              assertEquals(
-                  accountingFact.getProduct(),
-                  documentPostAssert.getProductId() == null ? null : OBDal.getInstance().get(
-                      Product.class, documentPostAssert.getProductId()));
+              assertEquals(accountingFact.getProduct(),
+                  documentPostAssert.getProductId() == null ? null
+                      : OBDal.getInstance().get(Product.class, documentPostAssert.getProductId()));
             } else {
               assertEquals(accountingFact.getProduct().getId(), productId);
             }
@@ -5276,10 +5163,10 @@ public class TestCostingUtils {
         assertFalse(accountingFact.isModify());
         assertEquals(accountingFact.getDateBalanced(), null);
 
-        final OBCriteria<ElementValue> criteria4 = OBDal.getInstance().createCriteria(
-            ElementValue.class);
-        criteria4.add(Restrictions.eq(ElementValue.PROPERTY_SEARCHKEY,
-            documentPostAssert.getAccount()));
+        final OBCriteria<ElementValue> criteria4 = OBDal.getInstance()
+            .createCriteria(ElementValue.class);
+        criteria4
+            .add(Restrictions.eq(ElementValue.PROPERTY_SEARCHKEY, documentPostAssert.getAccount()));
         criteria4.setMaxResults(1);
         assertEquals(accountingFact.getAccountingEntryDescription(),
             ((ElementValue) criteria4.uniqueResult()).getDescription());
@@ -5310,62 +5197,68 @@ public class TestCostingUtils {
       final List<MaterialTransaction> transactionList) {
     Collections.sort(transactionList, new Comparator<MaterialTransaction>() {
       @Override
-      public int compare(MaterialTransaction firstTransaction, MaterialTransaction secondTransaction) {
-        return firstTransaction.getMovementQuantity().compareTo(
-            secondTransaction.getMovementQuantity());
+      public int compare(MaterialTransaction firstTransaction,
+          MaterialTransaction secondTransaction) {
+        return firstTransaction.getMovementQuantity()
+            .compareTo(secondTransaction.getMovementQuantity());
       }
     });
   }
 
   public static void assertTransactionsCountIsTwo(final String productId) {
     Product product = OBDal.getInstance().get(Product.class, productId);
-    assertThat("The product should have 2 transactions", product
-        .getMaterialMgmtMaterialTransactionList().size(), equalTo(2));
+    assertThat("The product should have 2 transactions",
+        product.getMaterialMgmtMaterialTransactionList().size(), equalTo(2));
   }
 
   public static void assertTransactionsCostsAre3And30(final String productId) {
     Product product = OBDal.getInstance().get(Product.class, productId);
     sortTransactionsByMovementQuantity(product.getMaterialMgmtMaterialTransactionList());
-    assertThat("The transaction cost should be 3", product.getMaterialMgmtMaterialTransactionList()
-        .get(0).getTransactionCost().intValue(), equalTo(3));
-    assertThat("The transaction cost should be 30", product
-        .getMaterialMgmtMaterialTransactionList().get(1).getTransactionCost().intValue(),
+    assertThat("The transaction cost should be 3",
+        product.getMaterialMgmtMaterialTransactionList().get(0).getTransactionCost().intValue(),
+        equalTo(3));
+    assertThat("The transaction cost should be 30",
+        product.getMaterialMgmtMaterialTransactionList().get(1).getTransactionCost().intValue(),
         equalTo(30));
   }
 
   public static void assertTransactionCostsAdjustmentsForTestIssue37279(final String productId) {
     Product product = OBDal.getInstance().get(Product.class, productId);
     sortTransactionsByMovementQuantity(product.getMaterialMgmtMaterialTransactionList());
-    assertThat("There should be 2 cost adjustment lines for the first transaction", product
-        .getMaterialMgmtMaterialTransactionList().get(0).getTransactionCostList().size(),
+    assertThat("There should be 2 cost adjustment lines for the first transaction",
+        product.getMaterialMgmtMaterialTransactionList().get(0).getTransactionCostList().size(),
         equalTo(2));
-    assertThat("There should be 2 cost adjustment lines for the second transaction", product
-        .getMaterialMgmtMaterialTransactionList().get(1).getTransactionCostList().size(),
+    assertThat("There should be 2 cost adjustment lines for the second transaction",
+        product.getMaterialMgmtMaterialTransactionList().get(1).getTransactionCostList().size(),
         equalTo(2));
 
-    assertThat("The total cost for the first transaction should be 20", product
-        .getMaterialMgmtMaterialTransactionList().get(0).getTotalCost().intValue(), equalTo(20));
+    assertThat("The total cost for the first transaction should be 20",
+        product.getMaterialMgmtMaterialTransactionList().get(0).getTotalCost().intValue(),
+        equalTo(20));
 
-    assertThat("The total cost for the first transaction should be 200", product
-        .getMaterialMgmtMaterialTransactionList().get(1).getTotalCost().intValue(), equalTo(200));
+    assertThat("The total cost for the first transaction should be 200",
+        product.getMaterialMgmtMaterialTransactionList().get(1).getTotalCost().intValue(),
+        equalTo(200));
   }
 
   public static void assertTransactionCostsAdjustmentsForTestIssue37279GoodsReceiptWithNoRelatedPurchaseOrder(
       final String productId) {
     Product product = OBDal.getInstance().get(Product.class, productId);
     sortTransactionsByMovementQuantity(product.getMaterialMgmtMaterialTransactionList());
-    assertThat("There should be 2 cost adjustment lines for the first transaction", product
-        .getMaterialMgmtMaterialTransactionList().get(0).getTransactionCostList().size(),
+    assertThat("There should be 2 cost adjustment lines for the first transaction",
+        product.getMaterialMgmtMaterialTransactionList().get(0).getTransactionCostList().size(),
         equalTo(2));
-    assertThat("There should be 1 cost adjustment line for the second transaction", product
-        .getMaterialMgmtMaterialTransactionList().get(1).getTransactionCostList().size(),
+    assertThat("There should be 1 cost adjustment line for the second transaction",
+        product.getMaterialMgmtMaterialTransactionList().get(1).getTransactionCostList().size(),
         equalTo(1));
 
-    assertThat("The total cost for the first transaction should be 20", product
-        .getMaterialMgmtMaterialTransactionList().get(0).getTotalCost().intValue(), equalTo(20));
+    assertThat("The total cost for the first transaction should be 20",
+        product.getMaterialMgmtMaterialTransactionList().get(0).getTotalCost().intValue(),
+        equalTo(20));
 
-    assertThat("The total cost for the second transaction should be 30", product
-        .getMaterialMgmtMaterialTransactionList().get(1).getTotalCost().intValue(), equalTo(30));
+    assertThat("The total cost for the second transaction should be 30",
+        product.getMaterialMgmtMaterialTransactionList().get(1).getTotalCost().intValue(),
+        equalTo(30));
   }
 
   public static void proessInventoryCount(final InventoryCount physicalInventory) {
@@ -5395,14 +5288,14 @@ public class TestCostingUtils {
     physicalInventory.setWarehouse(warehouse);
     OBDal.getInstance().save(physicalInventory);
 
-    InventoryCountLine physicalInventoryLine = OBProvider.getInstance().get(
-        InventoryCountLine.class);
+    InventoryCountLine physicalInventoryLine = OBProvider.getInstance()
+        .get(InventoryCountLine.class);
     TestCostingUtils.setGeneralData(physicalInventoryLine);
     physicalInventoryLine.setPhysInventory(physicalInventory);
     physicalInventoryLine.setProduct(product);
     physicalInventoryLine.setQuantityCount(quantityCount);
-    Locator storageBin = OBDal.getInstance()
-        .get(Locator.class, TestCostingConstants.LOCATOR_L01_ID);
+    Locator storageBin = OBDal.getInstance().get(Locator.class,
+        TestCostingConstants.LOCATOR_L01_ID);
     physicalInventoryLine.setStorageBin(storageBin);
     physicalInventoryLine.setUOM(OBDal.getInstance().get(UOM.class, TestCostingConstants.UOM_ID));
     physicalInventoryLine.setBookQuantity(getQuantityOnHandOfProductInLocator(product, storageBin));
@@ -5418,8 +5311,8 @@ public class TestCostingUtils {
 
   public static BigDecimal getQuantityOnHandOfProductInLocator(final Product product,
       final Locator storageBin) {
-    OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance().createCriteria(
-        StorageDetail.class);
+    OBCriteria<StorageDetail> storageDetailCriteria = OBDal.getInstance()
+        .createCriteria(StorageDetail.class);
     storageDetailCriteria.add(Restrictions.eq(StorageDetail.PROPERTY_PRODUCT, product));
     storageDetailCriteria.add(Restrictions.eq(StorageDetail.PROPERTY_STORAGEBIN, storageBin));
     storageDetailCriteria.setMaxResults(1);
@@ -5433,7 +5326,8 @@ public class TestCostingUtils {
   public static ConnectionProvider getConnectionProvider() {
     try {
       final String propFile = OBConfigFileProvider.getInstance().getFileLocation();
-      final ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
+      final ConnectionProvider conn = new ConnectionProviderImpl(
+          propFile + "/Openbravo.properties");
       return conn;
     } catch (PoolNotFoundException e) {
       throw new IllegalStateException(e);

@@ -78,6 +78,8 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       return sUserId;
     }
 
+    markRequestAsSelfAuthenticated(request);
+
     VariablesHistory variables = new VariablesHistory(request);
     String user;
     String pass = null;
