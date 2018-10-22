@@ -894,15 +894,19 @@ public class POSUtils {
         FIN_PaymentScheduleDetail.class);
     newPSD.setNewOBObject(true);
     newPSD.setAmount(amount);
-    newPSD.setOrderPaymentSchedule(paymentSchedule);
-    newPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
+    if (paymentSchedule != null) {
+      newPSD.setOrderPaymentSchedule(paymentSchedule);
+      paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
+      OBDal.getInstance().save(paymentSchedule);
+    }
+    if (paymentScheduleInvoice != null) {
+      newPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
+      paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newPSD);
+      OBDal.getInstance().save(paymentScheduleInvoice);
+    }
     newPSD.setPaymentDetails(paymentDetails);
     newPSD.setBusinessPartner(businessPartner);
-    paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-    paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newPSD);
     OBDal.getInstance().save(newPSD);
-    OBDal.getInstance().save(paymentSchedule);
-    OBDal.getInstance().save(paymentScheduleInvoice);
 
     return newPSD;
   }
