@@ -216,7 +216,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   @Override
   public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
-    long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0;
+    long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
 
     JSONObject jsoncashup = null;
     if (jsonorder.has("cashUpReportInformation")) {
@@ -372,64 +372,30 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
 
         if (createShipment) {
+          OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
+          locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
+          locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+          locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
+          locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
+          locators.setMaxResults(2);
+          List<Locator> locatorList = locators.list();
 
-          BigDecimal pendingQtyToDeliver = BigDecimal.ZERO;
-          for (int i = 0; i < order.getOrderLineList().size(); i++) {
-            OrderLine ol = order.getOrderLineList().get(i);
-            if (!ol.isObposIsDeleted()) {
-              JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-              BigDecimal pendingLineQty = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
-                  .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : ol.getOrderedQuantity();
-              ol.setDeliveredQuantity(pendingLineQty);
-              OBDal.getInstance().save(ol);
-              if (pendingLineQty != null) {
-                pendingLineQty = pendingLineQty.abs();
-                if (orderlines.getJSONObject(i).has("deliveredQuantity")
-                    && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
-                  pendingLineQty = pendingLineQty.subtract(new BigDecimal(orderlines.getJSONObject(
-                      i).getLong("deliveredQuantity")));
-                }
-                pendingQtyToDeliver = pendingQtyToDeliver.add(pendingLineQty);
-              }
-            }
+          if (locatorList.isEmpty()) {
+            throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+                "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
+                    .getLanguage()));
           }
 
-          if (pendingQtyToDeliver.compareTo(BigDecimal.ZERO) != 0) {
-            OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
-            locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
-            locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
-            locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
-            locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
-            locators.setMaxResults(2);
-            List<Locator> locatorList = locators.list();
-
-            if (locatorList.isEmpty()) {
-              throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-                  "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
-                      .getLanguage()));
-            }
-
-            shipment = OBProvider.getInstance().get(ShipmentInOut.class);
-            su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs,
-                documentNoHandlers);
-            OBDal.getInstance().save(shipment);
-            su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
-                locatorList);
-          } else {
-            createShipment = false;
-          }
+          shipment = OBProvider.getInstance().get(ShipmentInOut.class);
+          su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs,
+              documentNoHandlers);
+          OBDal.getInstance().save(shipment);
+          su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
+              locatorList);
         }
+
         if (log.isDebugEnabled()) {
           t115 = System.currentTimeMillis();
-        }
-        if (doCancelAndReplace) {
-          final String canceledOrderId = jsonorder.getJSONObject("canceledorder").getString("id");
-          final Order canceledOrder = OBDal.getInstance().get(Order.class, canceledOrderId);
-          canceledOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          if (canceledOrder.isObposIslayaway()) {
-            canceledOrder.setObposIslayaway(false);
-          }
-          OBDal.getInstance().save(canceledOrder);
         }
 
         createApprovals(order, jsonorder);
@@ -454,6 +420,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           } finally {
             updateStockStatement.close();
           }
+        }
+
+        if (log.isDebugEnabled()) {
+          t116 = System.currentTimeMillis();
         }
 
         createInvoice = createInvoice && !order.isOBPOSNotInvoiceOnCashUp();
@@ -489,10 +459,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
           log.debug("Creation of bobs. Order: " + (t112 - t111) + "; Orderlines: " + (t113 - t112)
               + "; Shipment: " + (t115 - t113) + "; Approvals" + (t11 - t115) + "; stock"
-              + (t4 - t3));
+              + (t4 - t3) + "; Invoice: " + (t116 - t4) + ";");
         }
 
-        if (!paidReceipt) {
+        if (createShipment || createInvoice) {
           // do the docnumbers at the end
           OBContext.setAdminMode(false);
           try {

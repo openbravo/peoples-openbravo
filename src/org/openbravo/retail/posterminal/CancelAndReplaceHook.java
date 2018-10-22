@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -30,9 +30,7 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
           oldOrder.setObposIslayaway(false);
           inverseOrder.setObposIslayaway(false);
         }
-      }
-      inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-      if (newOrder != null) {
+        inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
         OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
             jsonorder.getString("posTerminal"));
         inverseOrder.setObposApplications(posTerminal);
