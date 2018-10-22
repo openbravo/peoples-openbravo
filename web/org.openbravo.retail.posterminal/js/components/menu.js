@@ -329,6 +329,7 @@ enyo.kind({
         me = this;
 
     receipt.on('change:isLayaway change:isPaid', function (model) {
+      this.updateLabel(model);
       this.displayLogic();
     }, this);
 

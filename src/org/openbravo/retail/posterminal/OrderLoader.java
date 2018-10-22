@@ -50,6 +50,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
@@ -102,7 +103,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
-  HashMap<String, JSONArray> orderLineServiceList;
+  HashMap<String, JSONArray> orderLineServiceList = new HashMap<String, JSONArray>();;
   String paymentDescription = null;
   private boolean createShipment = false;
   private boolean createInvoice = false;
@@ -226,7 +227,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
     }
 
-    orderLineServiceList = new HashMap<String, JSONArray>();
     try {
 
       initializeVariables(jsonorder);
@@ -398,7 +398,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
             locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
             locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
-          locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
+            locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
             locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
             locators.setMaxResults(2);
             List<Locator> locatorList = locators.list();
@@ -1380,8 +1380,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         continue;
       }
 
-      boolean isReversalPayment = payment.has("reversedPaymentId");
-
       String paymentTypeName = payment.getString("kind");
       OBCriteria<OBPOSAppPayment> type = OBDal.getInstance().createCriteria(OBPOSAppPayment.class);
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_SEARCHKEY, paymentTypeName));
@@ -1723,9 +1721,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
           account == null ? paymentType.getFinancialAccount() : account, (downRounding ? amount
-              : amountRounded).toString(), calculatedDate, order.getOrganization(), null, paymentScheduleDetailList,
-          paymentAmountMap, false, false, order.getCurrency(), mulrate, origAmountRounded, true,
-          payment.has("id") ? payment.getString("id") : null);
+              : amountRounded).toString(), calculatedDate, order.getOrganization(), null,
+          paymentScheduleDetailList, paymentAmountMap, false, false, order.getCurrency(), mulrate,
+          origAmountRounded, true, payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
       // overpayment

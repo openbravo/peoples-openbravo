@@ -883,6 +883,13 @@
       return this.get('payment');
     },
 
+    isFullyPaid: function () {
+      if (!this.get('paymentWithSign')) {
+        this.adjustPayment();
+      }
+      return (!this.isNegative() && this.get('paymentWithSign') >= this.getGross()) || (this.isNegative() && this.get('paymentWithSign') <= this.getGross());
+    },
+
     getNettingPayment: function () {
       return this.has('nettingPayment') ? this.get('nettingPayment') : OB.DEC.Zero;
     },
@@ -4306,6 +4313,8 @@
                         line.set('id', newId);
                         line.set('qty', canceledQty);
                         line.unset('deliveredQuantity');
+                        line.set('obposCanbedelivered', true);
+                        line.set('obposIspaid', false);
                       } else {
                         linesToDelete.push(line);
                       }
@@ -7506,9 +7515,6 @@
     },
     getPayment: function () {
       return this.get('payment');
-    },
-    isFullyPaid: function () {
-      return (!this.isNegative() && this.get('paymentWithSign') >= this.getGross()) || (this.isNegative() && this.get('paymentWithSign') <= this.getGross());
     },
     getPending: function () {
       return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());

@@ -166,9 +166,10 @@ enyo.kind({
 
     if (OB.DEC.compare(amount) > 0) {
       var provider, receiptToPay = this.getReceiptToPay(),
-          me = this;
+          me = this,
+          paymentStatus = receiptToPay.getPaymentStatus();
 
-      if (!receiptToPay.isNegative()) {
+      if (!paymentStatus.isNegative) {
         provider = paymentMethod.paymentProvider;
       } else {
         provider = paymentMethod.refundProvider;
@@ -191,11 +192,11 @@ enyo.kind({
         });
       } else {
         // Calculate total amount to pay with selected PaymentMethod
-        var amountToPay = receiptToPay.isNegative() ? -amount : amount;
+        var amountToPay = paymentStatus.isNegative ? -amount : amount;
         if (receiptToPay.get("payments").length > 0) {
           receiptToPay.get("payments").each(function (item) {
             if (item.get("kind") === key) {
-              if (!receiptToPay.isNegative() || item.get('isPrePayment')) {
+              if (!paymentStatus.isNegative || item.get('isPrePayment')) {
                 amountToPay = OB.DEC.add(amountToPay, item.get("amount"));
               } else {
                 amountToPay = OB.DEC.sub(amountToPay, item.get("amount"));

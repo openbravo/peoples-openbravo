@@ -676,7 +676,7 @@ enyo.kind({
       }
       this.$.totalpendinglbl.show();
 
-      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !this.receipt.getPaymentStatus().isNegative && !this.receipt.get('cancelLayaway')) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !paymentstatus.isNegative && !this.receipt.get('cancelLayaway')) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();
@@ -726,7 +726,6 @@ enyo.kind({
     OB.UTIL.ProcessController.finish('updatePending', execution);
   },
   updatePendingMultiOrders: function () {
-    var paymentstatus = this.model.get('multiOrders');
     var execution = OB.UTIL.ProcessController.start('updatePendingMultiOrders'),
         multiOrders = this.model.get('multiOrders'),
         symbol = '',
@@ -735,9 +734,9 @@ enyo.kind({
         precision = null,
         isCashType = true,
         selectedPayment, paymentStatus = multiOrders.getPaymentStatus(),
-        prepaymentAmount = paymentstatus.get('prepaymentAmt'),
-        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== OB.DEC.add(paymentstatus.get('total'), paymentstatus.get('existingPayment')) && paymentstatus.get('amountToLayaway') === 0,
-        pendingPrepayment = OB.DEC.sub(OB.DEC.sub(prepaymentAmount, (paymentstatus.get('existingPayment') ? paymentstatus.get('existingPayment') : 0)), paymentstatus.get('payment'));
+        prepaymentAmount = multiOrders.get('obposPrepaymentamt'),
+        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== OB.DEC.add(multiOrders.get('total'), multiOrders.get('existingPayment')) && multiOrders.get('amountToLayaway') === 0,
+        pendingPrepayment = OB.DEC.sub(OB.DEC.sub(prepaymentAmount, (multiOrders.get('existingPayment') ? multiOrders.get('existingPayment') : 0)), multiOrders.get('payment'));
 
     this.updateExtraInfo('');
     this.$.layawayaction.hide();
@@ -759,7 +758,7 @@ enyo.kind({
     }
 
     //Update styles based on the prepayment amount
-    if (receiptHasPrepaymentAmount && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) < 0) {
+    if (receiptHasPrepaymentAmount && OB.DEC.compare(OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))) < 0) {
       this.$.prepaymentLine.show();
       this.$.paymentLine.addRemoveClass('paymentline-w-prepayment', true);
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', false);
@@ -770,7 +769,7 @@ enyo.kind({
       this.$.paymentLine.addRemoveClass('paymentline-wo-prepayment', true);
       this.$.totalpending.applyStyle('font-size', '24px');
     }
-    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && paymentstatus.get('amountToLayaway') === 0 && pendingPrepayment > 0 && pendingPrepayment !== OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment'))) {
+    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && multiOrders.get('amountToLayaway') === 0 && pendingPrepayment > 0 && pendingPrepayment !== OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment'))) {
       this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
@@ -788,7 +787,6 @@ enyo.kind({
         this.$.prepaymentsbuttons.show();
         this.$.exactbutton.hide();
       }
-
     }
 
     if (multiOrders.get('change')) {
@@ -818,7 +816,7 @@ enyo.kind({
       this.setTotalPending(OB.DEC.mul(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, precision), symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
-      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !paymentstatus.isNegative && paymentstatus.get('amountToLayaway') === 0) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !paymentStatus.isNegative && multiOrders.get('amountToLayaway') === 0) {
         this.$.donebutton.show();
       } else {
         this.$.donebutton.hide();
@@ -1110,9 +1108,9 @@ enyo.kind({
         }
       } else if (!this.getAddPaymentAction()) {
         // Disable the 'Done' button if the synchronized paid amount is higher than the amount to pay and
-        // there's no reverse payment, the total amount is not zero (or is zero and is a synchronized ticket)
-        // and is not a C&R flow
-        var disableDoneButton = (!this.model.get('order').getGross() && !this.model.get('order').get('isPaid')) || paymentstatus.isReversal || this.model.get('order').get('doCancelAndReplace') ? false : this.model.get('order').getPrePaymentQty() >= this.model.get('order').getGross();
+        // there's no reverse payment or the total amount is not zero (or is zero and is a synchronized ticket)
+        var order = this.model.get('order'),
+            disableDoneButton = order.get('isPaid') && (!order.getGross() || (!paymentstatus.isReversal && ((!paymentstatus.isNegative && order.getPrePaymentQty() >= order.getGross()) || (paymentstatus.isNegative && order.getPrePaymentQty() <= order.getGross()))));
         this.$.donebutton.setLocalDisabled(disableDoneButton);
         this.$.exactbutton.setLocalDisabled(false);
         if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
@@ -1272,12 +1270,13 @@ enyo.kind({
   },
   setStatusButtons: function (resultOK, button) {
     // If there's a reverse payment and the reversed amount is not paid disable also the buttons
-    var statusOK = this.model.get('leftColumnViewManager').isMultiOrder() ? true : this.receipt.isReversedPaid();
+    var isMultiOrder = this.model.get('leftColumnViewManager').isMultiOrder(),
+        statusOK = isMultiOrder ? true : this.receipt.isReversedPaid();
     if (button === 'Done') {
       // If there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
       // the button 'Done' will be disabled (except for the case of doing a cancel and replace).
       // If the ticket is synchronized and the gross is zero, is also disabled.
-      if (statusOK && this.model.get('leftColumnViewManager').isOrder() && (this.receipt.get('isPaid') || this.receipt.get('isLayaway')) && !this.receipt.isNewReversed() && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(this.receipt.getTotal())) {
+      if (statusOK && !isMultiOrder && (this.receipt.get('isPaid') || this.receipt.get('isLayaway')) && !this.receipt.isNewReversed() && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(this.receipt.getTotal())) {
         statusOK = false;
       }
       if (resultOK) {
@@ -1308,7 +1307,7 @@ enyo.kind({
         this.$.creditsalesaction.setLocalDisabled(false);
       } else {
         // If the ticket is a negative ticket, even when there's not enough cash, it must be possible to click on the 'Use Credit' button
-        if (this.receipt.getPaymentStatus().isNegative) {
+        if (!isMultiOrder && this.receipt.isNegative()) {
           this.$.creditsalesaction.setLocalDisabled(false);
         } else {
           this.$.creditsalesaction.setLocalDisabled(true);
@@ -1596,7 +1595,7 @@ enyo.kind({
 
           var errorMsgLbl, totalPaid = 0,
               totalToPaid = OB.DEC.abs(isMultiOrder ? me.owner.model.get('multiOrders').getTotal() : me.owner.receipt.getTotal()),
-              isReturnOrder = isMultiOrder ? false : me.owner.receipt.getPaymentStatus().isNegative;
+              isReturnOrder = isMultiOrder ? false : me.owner.receipt.isNegative();
 
           if (_.filter(payments.models, function (payment) {
             return (OB.UTIL.isNullOrUndefined(payment.get('isReturnOrder')) ? isReturnOrder : payment.get('isReturnOrder')) !== isReturnOrder;

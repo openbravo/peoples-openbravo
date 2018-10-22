@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -68,14 +68,12 @@ public class CancelLayawayLoader extends OrderLoader {
       // Create new inverse order
       final Order inverseOrder = OBProvider.getInstance().get(Order.class);
       createOrder(inverseOrder, json);
-      OBDal.getInstance().save(inverseOrder);
 
       // Create the lines
       createOrderLines(inverseOrder, json, orderlines, lineReferences);
 
       for (final OrderLine orderLine : inverseOrder.getOrderLineList()) {
         orderLine.setObposIspaid(true);
-        orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
         OBDal.getInstance().save(orderLine);
       }
 

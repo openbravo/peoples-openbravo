@@ -51,9 +51,10 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.description", "description"));
         add(new HQLProperty("ordLine.obposSerialNumber", "obposSerialNumber"));
         add(new HQLProperty("ordLine.obposEpccode", "obposEpccode"));
+        add(new HQLProperty("ordLine.deliveredQuantity", "deliveredQuantity"));
         add(new HQLProperty(
             "(select coalesce(sum(iol.movementQuantity), 0) from MaterialMgmtShipmentInOutLine iol where iol.salesOrderLine.id = ordLine.id)",
-            "deliveredQuantity"));
+            "shippedQuantity"));
         add(new HQLProperty("ordLine.invoicedQuantity", "invoicedQuantity"));
         // Only used for returns
         add(new HQLProperty(

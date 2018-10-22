@@ -462,7 +462,7 @@ enyo.kind({
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_quotationsOrdersWithAnonimousCust'));
         return;
       }
-      if (!OB.MobileApp.model.get('isMultiOrderState') && receipt.getPaymentStatus().isNegative) {
+      if (!OB.MobileApp.model.get('isMultiOrderState') && receipt.isNegative()) {
         var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
           return !payment.paymentMethod.refundable;
         }).length === paymentModels.length;

@@ -292,7 +292,7 @@
       receipt.get('lines').remove(linesToRemove);
 
       receipt.get('payments').forEach(function (payment) {
-        if (receipt.getPaymentStatus().isNegative && !payment.get('isPrePayment') && !payment.get('isReversePayment')) {
+        if (receipt.isNegative() && !payment.get('isPrePayment') && !payment.get('isReversePayment')) {
           payment.set('amount', -Math.abs(payment.get('amount')));
           payment.set('origAmount', -Math.abs(payment.get('origAmount')));
         }
