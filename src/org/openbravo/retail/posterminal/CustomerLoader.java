@@ -10,7 +10,6 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -23,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -63,20 +63,24 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
   public JSONObject saveRecord(JSONObject jsoncustomer) throws Exception {
     BusinessPartner customer = null;
     User user = null;
+    String userUpdated = null;
     OBContext.setAdminMode(false);
     try {
       customer = getCustomer(jsoncustomer.getString("id"));
       if (customer.getId() == null) {
         customer = createBPartner(jsoncustomer);
       } else {
-        final Date loaded = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("loaded"),
-            Long.parseLong(jsoncustomer.getString("timezoneOffset")));
+        final String loaded = jsoncustomer.has("loaded") ? jsoncustomer.getString("loaded") : null;
+        final String updated = OBMOBCUtils.convertToUTCDateComingFromServer(customer.getUpdated());
+
         if (jsoncustomer.has("contactId")) {
           user = OBDal.getInstance().get(User.class, jsoncustomer.getString("contactId"));
+          userUpdated = user != null ? OBMOBCUtils.convertToUTCDateComingFromServer(user
+              .getUpdated()) : null;
         }
 
-        if (!(loaded.compareTo(customer.getUpdated()) >= 0)
-            || !(user != null && (loaded.compareTo(user.getUpdated()) >= 0))) {
+        if ((loaded != null && loaded.compareTo(updated) < 0)
+            || (user != null && userUpdated != null && (loaded.compareTo(userUpdated) < 0))) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -135,11 +139,17 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
     }
+    OBPOSApplications pos = OBDal.getInstance().get(OBPOSApplications.class,
+        jsonCustomer.get("posTerminal"));
     // BP search key (required)
     if (!jsonCustomer.has("searchKey") || "null".equals(jsonCustomer.getString("searchKey"))) {
       String errorMessage = "Business partner search key is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
+    } else if (pos.getOrganization().getObretcoCustomerseq() != null
+        && jsonCustomer.getString("searchKey").equals("***")) {
+      String newSk = FIN_Utility.getDocumentNo(true, pos.getOrganization().getObretcoCustomerseq());
+      customer.setSearchKey(newSk);
     } else {
       String possibleSK = jsonCustomer.getString("searchKey").trim(), finalSK = null, searchKeyValue = StringUtils
           .substring(possibleSK, 0, 35);

@@ -264,6 +264,12 @@ enyo.kind({
     maxlength: 40
   }, {
     kind: 'OB.UI.CustomerTextProperty',
+    name: 'alternativePhone',
+    modelProperty: 'alternativePhone',
+    i18nLabel: 'OBPOS_LblAlternativePhone',
+    maxlength: 40
+  }, {
+    kind: 'OB.UI.CustomerTextProperty',
     name: 'customerEmail',
     modelProperty: 'email',
     i18nLabel: 'OBPOS_LblEmail',

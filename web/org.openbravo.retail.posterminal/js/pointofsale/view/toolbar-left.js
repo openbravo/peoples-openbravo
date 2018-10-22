@@ -382,6 +382,8 @@ enyo.kind({
     var receipt = this.model.get('order'),
         me = this;
     if (receipt.get('isQuotation')) {
+      var execution = OB.UTIL.ProcessController.start('completeQuotation');
+      enyo.$.scrim.show();
       if (receipt.get('hasbeenpaid') !== 'Y') {
         receipt.set('isEditable', false);
         var cbk = function () {
@@ -398,7 +400,9 @@ enyo.kind({
                   if (OB.MobileApp.model.get('permissions')['OBPOS_print.quotation']) {
                     receipt.trigger('print');
                   }
+                  enyo.$.scrim.hide();
                   receipt.trigger('scan');
+                  OB.UTIL.ProcessController.finish('completeQuotation', execution);
                   OB.MobileApp.model.orderList.synchronizeCurrentOrder();
                 }
               });
@@ -413,7 +417,9 @@ enyo.kind({
         }
       } else {
         receipt.prepareToSend(function () {
+          enyo.$.scrim.hide();
           receipt.trigger('scan');
+          OB.UTIL.ProcessController.finish('completeQuotation', execution);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });
       }
@@ -456,7 +462,12 @@ enyo.kind({
         paymentModels = OB.MobileApp.model.get('payments'),
         showMandatoryServices, checkStock;
     if (this.disabled === false) {
-      if (!OB.MobileApp.model.get('isMultiOrderState') && this.model.get('order').getPaymentStatus().isNegative) {
+      var receipt = me.model.get('order');
+      if (receipt.get('isQuotation') && receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').quotation_anonymouscustomer) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_quotationsOrdersWithAnonimousCust'));
+        return;
+      }
+      if (!OB.MobileApp.model.get('isMultiOrderState') && receipt.getPaymentStatus().isNegative) {
         var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
           return !payment.paymentMethod.refundable;
         }).length === paymentModels.length;
@@ -467,11 +478,11 @@ enyo.kind({
           return;
         }
       }
-      if (this.model.get('order').get('orderType') === 3) {
+      if (receipt.get('orderType') === 3) {
         this.showPaymentTab();
         return;
       }
-      OB.UTIL.StockUtils.checkOrderLinesStock([me.model.get('order')], function (hasStock) {
+      OB.UTIL.StockUtils.checkOrderLinesStock([receipt], function (hasStock) {
         if (hasStock) {
           me.model.on('showPaymentTab', function (event) {
             me.model.off('showPaymentTab');
@@ -497,8 +508,8 @@ enyo.kind({
             criteria.proposalType = 'FMA';
           }
           OB.Dal.find(OB.Model.Product, criteria, function (data) {
-            if (data && data.length > 0 && !me.model.get('order').get('isPaid') && !me.model.get('order').get('isLayaway')) {
-              me.model.get('order').trigger('showProductList', null, 'final', function () {
+            if (data && data.length > 0 && !receipt.get('isPaid') && !receipt.get('isLayaway')) {
+              receipt.trigger('showProductList', null, 'final', function () {
                 me.model.completePayment();
                 me.doClearUserInput();
               });
@@ -687,6 +698,10 @@ enyo.kind({
 
     this.menuEntries.push({
       kind: 'OB.UI.MenuSelectPDFPrinter'
+    });
+
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuForceIncrementalRefresh'
     });
 
     //remove duplicates

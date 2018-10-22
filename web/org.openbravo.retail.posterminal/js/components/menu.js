@@ -1232,3 +1232,30 @@ enyo.kind({
     this.updateVisibility();
   }
 });
+
+enyo.kind({
+  name: 'OB.UI.MenuForceIncrementalRefresh',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBMOBC_NotAutoLoadIncrementalAtLogin',
+  i18nLabel: 'OBPOS_MenuForceIncrementalRefreshLabel',
+  init: function (model) {
+    this.displayLogic();
+  },
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (OB.MobileApp.model.hasPermission(this.permission, true)) {
+      OB.UTIL.localStorage.setItem('POSForceIncrementalRefresh', true);
+      window.location.reload();
+    }
+  },
+  displayLogic: function () {
+    if (OB.MobileApp.model.hasPermission(this.permission, true)) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  }
+});

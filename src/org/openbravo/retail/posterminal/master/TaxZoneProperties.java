@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,7 +24,12 @@ public class TaxZoneProperties extends ModelExtension {
       private static final long serialVersionUID = 1L;
       {
         add(new HQLProperty("financialMgmtTaxZone.id", "id"));
-        add(new HQLProperty("financialMgmtTaxZone.tax.id", "tax"));
+        add(new HQLProperty("tax.id", "tax"));
+        add(new HQLProperty("tax.name", "name"));
+        add(new HQLProperty("tax.rate", "rate"));
+        add(new HQLProperty("tax.taxCategory.id", "taxCategory"));
+        add(new HQLProperty("tax.summaryLevel", "summaryLevel"));
+        add(new HQLProperty("tax.businessPartnerTaxCategory.id", "businessPartnerTaxCategory"));
         add(new HQLProperty("financialMgmtTaxZone.fromCountry.id", "fromCountry"));
         add(new HQLProperty("financialMgmtTaxZone.destinationCountry.id", "destinationCountry"));
         add(new HQLProperty("financialMgmtTaxZone.fromRegion.id", "fromRegion"));

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -45,6 +45,8 @@ public class TerminalProperties extends ModelExtension {
         "partnerAddress"));
     list.add(new HQLProperty("pos.organization.obposLayawayAnonymousbp",
         "layaway_anonymouscustomer"));
+    list.add(new HQLProperty("pos.organization.obposQuotationAnonymousbp",
+        "quotation_anonymouscustomer"));
     list.add(new HQLProperty("pos.organization.id", "organization"));
     list.add(new HQLProperty("pos.organization.name", getIdentifierAlias("organization")));
     list.add(new HQLProperty("pos.client.id", "client"));
@@ -71,6 +73,7 @@ public class TerminalProperties extends ModelExtension {
         "quotationDocNoPrefix"));
     list.add(new HQLProperty("pos.returndocnoPrefix", "returnDocNoPrefix"));
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
+    list.add(new HQLProperty("pos.obposTerminaltype.multiChange", "multiChange"));
     list.add(new HQLProperty("pos.organization.obposCountDiffLimit", "organizationCountDiffLimit"));
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));
     list.add(new HQLProperty("postype", "terminalType"));
@@ -81,6 +84,9 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
         "language_string"));
     list.add(new HQLProperty("pos.organization.obposReturnAnonymousbp", "returns_anonymouscustomer"));
+    list.add(new HQLProperty(
+        "CASE WHEN pos.organization.obretcoCustomerseq.id is not null THEN true ELSE false END",
+        "hasCustomerSequence"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);
@@ -97,6 +103,8 @@ public class TerminalProperties extends ModelExtension {
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCRPTTEMPLATE, "printCanceledReceiptTemplate",
         list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSCANCLAYAWAYTMPLT,
+        "printCanceledLayawayTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSWELCOMETEMPLATE, "printWelcomeTemplate", list);
 
     // Legal Organization Tax ID

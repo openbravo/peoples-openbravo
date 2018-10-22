@@ -20,7 +20,7 @@
     remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     remote: 'OBPOS_remote.customer',
     saveCustomer: function (callback) {
-      var nameLength, newSk, finalCallback;
+      var nameLength, newSk, saveCallback, finalCallback, me = this;
 
       finalCallback = function (result) {
         if (callback) {
@@ -66,12 +66,17 @@
       }
 
       if (!this.get('searchKey')) {
-        nameLength = this.get('name').toString().length;
-        newSk = this.get('name');
-        if (nameLength > 30) {
-          newSk = this.get('name').substring(0, 30);
+        if (OB.MobileApp.model.get('terminal').hasCustomerSequence) {
+          //Set dummy SK. The real, sequence-based SK will be set on the CustomerLoader
+          this.set('searchKey', '***');
+        } else {
+          nameLength = this.get('name').toString().length;
+          newSk = this.get('name');
+          if (nameLength > 30) {
+            newSk = this.get('name').substring(0, 30);
+          }
+          this.set('searchKey', newSk);
         }
-        this.set('searchKey', newSk);
       }
 
       if (this.get('birthDay') && typeof this.get('birthDay') !== 'object') {
@@ -86,8 +91,28 @@
 
       this.set('_identifier', this.get('name'));
 
-      // in case of synchronized then directly call customer save with the callback
-      OB.DATA.executeCustomerSave(this, callback);
+      saveCallback = function () {
+        // in case of synchronized then directly call customer save with the callback
+        OB.DATA.executeCustomerSave(me, callback);
+      };
+
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        if (OB.MobileApp.model.get('pricelist').id === me.get('priceList')) {
+          me.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+          saveCallback();
+        } else {
+          OB.Dal.get(OB.Model.PriceList, me.get('priceList'), function (pList) {
+            me.set('priceIncludesTax', pList.get('priceIncludesTax'));
+            saveCallback();
+          }, function () {
+            saveCallback();
+          }, function () {
+            saveCallback();
+          });
+        }
+      } else {
+        saveCallback();
+      }
       return true;
     },
     loadById: function (CusId, userCallback) {
@@ -391,6 +416,10 @@
     column: 'phone',
     filter: true,
     skipremote: true,
+    type: 'TEXT'
+  }, {
+    name: 'alternativePhone',
+    column: 'alternativePhone',
     type: 'TEXT'
   }, {
     name: 'email',

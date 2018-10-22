@@ -151,39 +151,21 @@
 
         // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated
         if (!me.preventApplyPromotions) {
-          var manualPromotions;
+          var manualPromotions = [];
           _.each(auxReceipt.get('lines').models, function (line) {
             manualPromotions = _.filter(line.get('promotions'), function (p) {
               return p.manual === true;
-            }) || [];
-
+            });
+            line.set('manualPromotions', manualPromotions);
             line.set('promotions', []);
             line.set('promotionCandidates', []);
-            _.forEach(manualPromotions, function (promo) {
-              promo.qtyOffer = undefined;
-              var promotion = {
-                rule: new Backbone.Model(promo),
-
-                definition: {
-                  userAmt: promo.userAmt,
-                  applyNext: promo.applyNext,
-                  lastApplied: promo.lastApplied,
-                  discountinstance: promo.discountinstance
-                },
-                alreadyCalculated: true // to prevent loops
-              };
-              OB.Model.Discounts.addManualPromotion(auxReceipt, [line], promotion);
-            });
-
           });
-
           _.each(receipt.get('lines').models, function (line) {
             if (line.get('splitline') || (line.get('gross') > 0 && line.get('priceIncludesTax')) || (line.get('net') > 0 && !line.get('priceIncludesTax'))) {
               // Clean the promotions only if the line is not a return
               line.set('promotions', []);
               line.set('promotionCandidates', []);
             }
-
           });
         }
         me.applyPromotionsImp(auxReceipt, null, true);
