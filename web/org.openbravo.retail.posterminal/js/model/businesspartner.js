@@ -66,12 +66,17 @@
       }
 
       if (!this.get('searchKey')) {
-        nameLength = this.get('name').toString().length;
-        newSk = this.get('name');
-        if (nameLength > 30) {
-          newSk = this.get('name').substring(0, 30);
+        if (OB.MobileApp.model.get('terminal').hasCustomerSequence) {
+          //Set dummy SK. The real, sequence-based SK will be set on the CustomerLoader
+          this.set('searchKey', '***');
+        } else {
+          nameLength = this.get('name').toString().length;
+          newSk = this.get('name');
+          if (nameLength > 30) {
+            newSk = this.get('name').substring(0, 30);
+          }
+          this.set('searchKey', newSk);
         }
-        this.set('searchKey', newSk);
       }
 
       if (this.get('birthDay') && typeof this.get('birthDay') !== 'object') {
