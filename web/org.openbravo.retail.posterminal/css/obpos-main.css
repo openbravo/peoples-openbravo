@@ -394,6 +394,14 @@ button.btnbp:disabled {
   background-repeat: no-repeat;
 }
 
+.btn-icon-split {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconChangeSplit.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+  background-size: 18px;
+}
+
 @media all and (max-width: 800px) {
   div[id*=stBPAssignToReceipt_scrollArea] {
     max-height: 497px !important;
@@ -766,8 +774,82 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit > div > div.or
     max-height: 100%;
 }
 
+button.payment-changebutton {
+  padding: 5px;
+  margin: -5px 10px 0px 0px;
+  width: 40px;
+  height: 25px;
+}
+
+.changedialog-properties {
+  background-color: #ffffff;
+}
+
+.changedialog-properties-label {
+  padding: 5px 8px 0px 0px;
+  font-size: 15px;
+  width: 35%;
+}
+
+.changedialog-properties-text {
+  border: 1px solid #F0F0F0;
+  float: left;
+  width: 35%;
+}
+
+.changedialog-properties-input {
+  width: 100%;
+  margin-bottom: 0px;
+  text-align: right;
+}
+
+.changedialog-properties-info {
+  float: left;
+  margin-left: 25px;
+  color: #6f6f6f;
+  font-size: 12px;
+  text-align: right;
+}
+
+.changedialog-properties-info-text {
+  line-height: 20px;
+}
+
+.changedialog-errors {
+   color: #b94a48;
+   font-size: medium;
+   height: 25px;
+}
+
+.changedialog-properties-end {
+  clear: both;
+}
+
+.changedialog-properties-validation-ok {
+  background-color: inherit;
+}
+
+.changedialog-properties-validation-error {
+  background-color: #fe7f7f;
+}
+
 .input::placeholder,
 .input-login::placeholder {
   color: #bbbbbb;
   font-style: italic;
+}
+
+.onyx-menu-item {
+  cursor: pointer;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
+.modal-body-label {
+  text-align: right;
+  padding-right:10px;
+  width: 40%;
+  height: 40px;
+  float: left;
 }

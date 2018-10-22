@@ -290,7 +290,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(this.get('origAmount') || OB.DEC.div(this.get('amount'), this.get('mulrate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
@@ -1007,17 +1007,13 @@
         'done': done,
         'total': OB.I18N.formatCurrency(gross),
         'pending': pending,
-        'change': OB.DEC.compare(change) === 1 ? OB.I18N.formatCurrency(change) : null,
         'overpayment': overpayment,
         'isReturn': isReturn,
         'isNegative': isNegative,
-        'changeAmt': change,
         'totalAmt': gross,
         'pendingAmt': pendingAmt,
         'payments': this.get('payments'),
-        'isReversal': isReversal,
-        'prepaymentChangeMode': this.get('prepaymentChangeMode'),
-        'prepaymentChangeAmt': this.get('prepaymentChangeAmt')
+        'isReversal': isReversal
       };
     },
 
@@ -1318,7 +1314,8 @@
         options = args.options || {};
         options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
 
-        if (!args.line.get('isEditable')) {
+        var allowModifyVerifyReturnLinePrice = OB.MobileApp.model.hasPermission('OBPOS_ModifyPriceVerifiedReturns', true) && args.line.get('originalDocumentNo') && !args.context.get('isPaid');
+        if (!args.line.get('isEditable') && !(allowModifyVerifyReturnLinePrice && args.price < args.line.get('price'))) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
         } else if (args.line.get('replacedorderline') && args.line.get('qty') < 0) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
@@ -3245,6 +3242,8 @@
 
       disc._idx = discount._idx || rule.get('_idx');
 
+      disc.obdiscApplyafter = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscApplyafter'))) ? rule.get('obdiscApplyafter') : false;
+
       var unitsConsumed = 0;
       var unitsConsumedByNoCascadeRules = 0;
       var unitsConsumedByTheSameRule = 0;
@@ -4616,15 +4615,8 @@
       }
     },
     getPrecision: function (payment) {
-      var i, p, max;
-      for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
-        p = OB.MobileApp.model.get('payments')[i];
-        if (p.payment.searchKey === payment.paymenttype) {
-          if (p.obposPrecision) {
-            return p.obposPrecision;
-          }
-        }
-      }
+      var terminalpayment = OB.MobileApp.model.paymentnames[payment.get('kind')];
+      return terminalpayment ? terminalpayment.obposPosprecision : OB.DEC.getScale();
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
       //returns a result with the sum up of every payments based on origAmount field
@@ -4654,9 +4646,10 @@
       //Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
       var differenceInForeingCurrency;
+      var p = this.getPrecision(currentPayment);
       differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
       if (currentPayment && currentPayment.get('rate')) {
-        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'));
+        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'), p);
         return differenceInForeingCurrency;
       } else {
         return differenceInDefaultCurrency;
@@ -4705,17 +4698,17 @@
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
           //Here we are trying to know if the current payment is making the pending to pay 0.
           //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
           //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
           //and finally we transform this difference to the foreign amount
           //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
           //in the default currency is satisfied
-          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount'), precision), precision)) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (OB.DEC.abs(p.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
-              p.set('origAmount', multiCurrencyDifference);
+              p.set('origAmount', p.get('changePayment') ? OB.DEC.mul(multiCurrencyDifference, -1) : multiCurrencyDifference);
             }
           }
         } else {
@@ -4799,7 +4792,7 @@
     },
 
     addPayment: function (payment, callback) {
-      var payments, total, i, max, p, order, paymentSign, finalCallback;
+      var payments, total, i, max, p, order, paymentSign, finalCallback, precision;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && OB.DEC.abs(this.getPrePaymentQty()) >= OB.DEC.abs(this.getTotal()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
@@ -4833,13 +4826,14 @@
 
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
+      precision = this.getPrecision(payment);
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
         receipt: this
       }, function (args) {
         var executeFinalCallback = function (saveChanges) {
-            if (saveChanges) {
+            if (saveChanges && !payment.get('changePayment')) {
               order.adjustPayment();
               order.trigger('displayTotal');
               order.save();
@@ -4864,16 +4858,18 @@
         }
         // search for an existing payment only if is not a reverser payment.
         if (!payment.get('reversedPaymentId')) {
-          if (!payment.get('paymentData')) {
+          if (!payment.get('paymentData') || payment.get('paymentData').mergeable) {
             // search for an existing payment only if there is not paymentData info or if there is, when there is any other paymentData with same groupingCriteria.
             // this avoids to merge for example card payments of different cards.
             for (i = 0, max = payments.length; i < max; i++) {
               p = payments.at(i);
               if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
                 paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
-                p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign), p.get('amount')));
+                p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                  p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+                } else {
+                  p.set('origAmount', p.get('amount'));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
@@ -4885,9 +4881,9 @@
               p = payments.at(i);
               if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria && !p.get('reversedPaymentId') && !p.get('isPrePayment')) {
                 paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
-                p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign), p.get('amount')));
+                p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
                 if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.add(OB.DEC.mul(payment.get('origAmount'), paymentSign), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                  p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
                 }
                 payment.set('date', new Date());
                 executeFinalCallback(true);
@@ -5232,14 +5228,22 @@
         if (_.find(l.get('promotions'), function (promo) {
           return promo.doNotMerge;
         })) {
-          //First, try to find lines with the same qty
+          //First, try to find lines with the same id
           lineToEdit = _.find(me.get('lines').models, function (line) {
-            if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function (promo) {
-              return promo.doNotMerge;
-            })) {
+            if (l.get('id') === line.get('id')) {
               return line;
             }
           });
+          //Second, try to find lines with the same qty
+          if (!lineToEdit) {
+            lineToEdit = _.find(me.get('lines').models, function (line) {
+              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function (promo) {
+                return promo.doNotMerge;
+              })) {
+                return line;
+              }
+            });
+          }
           //if we cannot find lines with same qty, find lines with qty > 0
           if (!lineToEdit) {
             lineToEdit = _.find(me.get('lines').models, function (line) {
@@ -7237,26 +7241,17 @@
       return {
         'total': OB.I18N.formatCurrency(total),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
-        'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.DEC.sub(pay, total) : null,
         'isReturn': this.get('gross') < 0 ? true : false,
         'isNegative': this.get('gross') < 0 ? true : false,
-        'changeAmt': this.getChange(),
         'totalAmt': total,
         'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
         'payments': this.get('payments')
       };
     },
     getPrecision: function (payment) {
-      var i, p, max;
-      for (i = 0, max = OB.MobileApp.model.get('payments').length; i < max; i++) {
-        p = OB.MobileApp.model.get('payments')[i];
-        if (p.payment.searchKey === payment.paymenttype) {
-          if (p.obposPrecision) {
-            return p.obposPrecision;
-          }
-        }
-      }
+      var terminalpayment = OB.MobileApp.model.paymentnames[payment.get('kind')];
+      return terminalpayment ? terminalpayment.obposPosprecision : OB.DEC.getScale();
     },
     getSumOfOrigAmounts: function (paymentToIgnore) {
       //returns a result with the sum up of every payments based on origAmount field
@@ -7286,9 +7281,10 @@
       //Result is returned in the currency used by current payment
       var differenceInDefaultCurrency;
       var differenceInForeingCurrency;
+      var p = this.getPrecision(currentPayment);
       differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
       if (currentPayment && currentPayment.get('rate')) {
-        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'));
+        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'), p);
         return differenceInForeingCurrency;
       } else {
         return differenceInDefaultCurrency;
@@ -7306,17 +7302,17 @@
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
           //Here we are trying to know if the current payment is making the pending to pay 0.
           //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
           //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
           //and finally we transform this difference to the foreign amount
           //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
           //in the default currency is satisfied
-          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount'), precision), precision)) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
             if (p.get('origAmount') !== multiCurrencyDifference) {
-              p.set('origAmount', multiCurrencyDifference);
+              p.set('origAmount', p.get('changePayment') ? OB.DEC.mul(multiCurrencyDifference, -1) : multiCurrencyDifference);
             }
           }
         } else {
@@ -7368,7 +7364,7 @@
       }
     },
     addPayment: function (payment, callback) {
-      var i, max, p, order, payments, total, finalCallback;
+      var i, max, p, order, payments, total, finalCallback, precision;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
@@ -7392,6 +7388,7 @@
 
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
+      precision = this.getPrecision(payment);
       order = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
@@ -7413,15 +7410,17 @@
           return;
         }
 
-        if (!payment.get('paymentData')) {
+        if (!payment.get('paymentData') || payment.get('paymentData').mergeable) {
           // search for an existing payment only if there is not paymentData info.
           // this avoids to merge for example card payments of different cards.
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
             if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
               if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+              } else {
+                p.set('origAmount', p.get('amount'));
               }
               payment.set('date', new Date());
               order.adjustPayment();
@@ -7434,9 +7433,9 @@
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
             if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
               if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+                p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
               }
               payment.set('date', new Date());
               order.adjustPayment();

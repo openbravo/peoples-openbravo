@@ -226,7 +226,7 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
           }
         });
       } else {
-        if (!paymentStatus.change) {
+        if (OB.DEC.compare(popup.receipt.get('change')) <= 0) {
           popupDrawerOpened.$.bodyContent.$.label.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
         } else {
           popupDrawerOpened.$.bodyContent.$.label.setContent(OB.I18N.getLabel('OBPOS_ticketChange') + ': ' + OB.MobileApp.model.get('changeReceipt'));

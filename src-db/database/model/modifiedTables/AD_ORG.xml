@@ -97,6 +97,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_QUOTATION_ANONYMOUSBP" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CANCRCPTEMP">
         <reference local="EM_OBPOS_CANC_RPT_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
@@ -137,5 +141,6 @@
         <reference local="EM_OBPOS_WELCOME_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
       <check name="EM_OBPOS_ORG_FORMAT"><![CDATA[EM_OBPOS_FORMAT_DECIMAL IS NULL AND EM_OBPOS_FORMAT_GROUP IS NULL OR EM_OBPOS_FORMAT_DECIMAL IS NOT NULL AND EM_OBPOS_FORMAT_GROUP IS NOT NULL]]></check>
+      <check name="EM_OBPOS_QUOTATION_ANONYBP_CHK"><![CDATA[EM_OBPOS_QUOTATION_ANONYMOUSBP IN ('Y', 'N')]]></check>
     </table>
   </database>

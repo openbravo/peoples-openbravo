@@ -670,6 +670,7 @@ public class POSUtils {
       // of the warehouse of greater priority
       OBCriteria<Locator> locatorCriteria = OBDal.getInstance().createCriteria(Locator.class);
       locatorCriteria.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, lstWarehouses.get(0)));
+      locatorCriteria.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
       locatorCriteria.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
       locatorCriteria.setMaxResults(1);
 

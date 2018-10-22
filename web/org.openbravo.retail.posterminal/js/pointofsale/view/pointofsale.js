@@ -187,6 +187,9 @@ enyo.kind({
       kind: 'OB.UI.ModalRejectQuotation',
       name: 'modalRejectQuotation'
     }, {
+      kind: 'OB.UI.ModalPriceModification',
+      name: 'modalPriceModification'
+    }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl',
       name: 'receiptPropertiesDialog'
     }, {
@@ -204,6 +207,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalProviderGroupVoid',
       name: 'modalprovidergroupvoid'
+    }, {
+      kind: 'OB.UI.ModalChange',
+      name: 'modalchange'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
       name: 'modalConfigurationRequiredForCrossStore'

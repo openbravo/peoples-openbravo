@@ -21,6 +21,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_PRICEREASON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="EM_OBPOS_QTYTODELIVER" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[0]]></onCreateDefault>
@@ -33,6 +37,9 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="OBPOS_PRICEREASON" name="EM_OBPOS_ORDERLINE_PR">
+        <reference local="EM_OBPOS_PRICEREASON_ID" foreign="OBPOS_PRICEREASON_ID"/>
+      </foreign-key>
       <index name="EM_OBPOS_CANBEDELIVERED" unique="false">
         <index-column name="EM_OBPOS_CANBEDELIVERED"/>
         <index-column name="AD_ORG_ID"/>
@@ -44,6 +51,10 @@
       <index name="EM_OBPOS_ORDEREDQTY" unique="false">
         <index-column name="C_ORDER_ID"/>
         <index-column name="QTYORDERED"/>
+      </index>
+      <index name="EM_OBPOS_ORDERLINE_PRICE" unique="false">
+        <index-column name="EM_OBPOS_PRICEREASON_ID"/>
+        <whereClause><![CDATA[EM_OBPOS_PRICEREASON_ID IS NOT NULL]]></whereClause>
       </index>
       <check name="EM_OBPOS_CANBEDELIVERED_CHECK"><![CDATA[EM_OBPOS_CANBEDELIVERED IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_ISDELETED_OL_CHECK"><![CDATA[EM_OBPOS_ISDELETED IN ('Y', 'N')]]></check>

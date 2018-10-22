@@ -10,6 +10,28 @@
 /*global OB, enyo, _ */
 
 enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.Change',
+  tag: 'span',
+  style: 'font-weight: bold;',
+  setContent: function () {
+    var size, length;
+
+    this.inherited(arguments);
+
+    length = this.content.length;
+    if (length < 21) {
+      size = 24;
+    } else if (length < 39) {
+      // (20, 24); (38, 14)
+      size = Math.trunc(-0.55555 * length + 35.11111);
+    } else {
+      size = 14;
+    }
+    this.setStyle('font-size: ' + size + 'px;');
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Payment',
   published: {
     receipt: null
@@ -34,11 +56,11 @@ enyo.kind({
     }
     return null;
   },
-  setTotalPending: function (pending, mulrate, symbol, currencySymbolAtTheRight, inSender, inEvent) {
-    this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, mulrate), symbol, currencySymbolAtTheRight));
+  setTotalPending: function (pending, symbol, currencySymbolAtTheRight) {
+    this.$.totalpending.setContent(OB.I18N.formatCurrencyWithSymbol(pending, symbol, currencySymbolAtTheRight));
   },
-  setPrepaymentTotalPending: function (pending, mulrate, symbol, currencySymbolAtTheRight) {
-    this.$.prepaymenttotalpending.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(pending, mulrate), symbol, currencySymbolAtTheRight));
+  setPrepaymentTotalPending: function (pending, symbol, currencySymbolAtTheRight) {
+    this.$.prepaymenttotalpending.setContent(OB.I18N.formatCurrencyWithSymbol(pending, symbol, currencySymbolAtTheRight));
   },
   clearPaymentMethodSelect: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
@@ -54,7 +76,7 @@ enyo.kind({
         }
       });
     } else {
-      var payment, change, pending, isMultiOrders, paymentstatus;
+      var payment, change, pending, isMultiOrders, paymentstatus, hasChange;
       payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       this.$.noenoughchangelbl.hide();
       if (_.isUndefined(payment)) {
@@ -79,21 +101,22 @@ enyo.kind({
         if (!_.isNull(this.receipt)) {
           this.receipt.set('selectedPayment', payment.payment.searchKey);
           paymentstatus = this.receipt.getPaymentStatus();
+          hasChange = OB.DEC.compare(this.receipt.get('change')) > 0;
         }
       } else {
         this.model.get('multiOrders').set('selectedPayment', payment.payment.searchKey);
         paymentstatus = this.model.get('multiOrders').getPaymentStatus();
+        hasChange = OB.DEC.compare(this.model.get('multiOrders').get('change')) > 0;
       }
-
       if (!_.isNull(change) && change) {
-        this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
-        OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(change, payment.mulrate), payment.symbol, payment.currencySymbolAtTheRight));
+        this.calculateChange(payment, change);
       } else if (!_.isNull(pending) && pending) {
-        this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
-        this.setPrepaymentTotalPending(this.model.getPrepaymentAmount() + pending - this.model.getTotal(), payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
+        this.calculateChangeReset();
+        this.setTotalPending(OB.DEC.mul(pending, payment.mulrate, payment.obposPosprecision), payment.symbol, payment.currencySymbolAtTheRight);
+        this.setPrepaymentTotalPending(OB.DEC.mul(this.model.getPrepaymentAmount() + pending - this.model.getTotal(), payment.mulrate, payment.obposPosprecision), payment.symbol, payment.currencySymbolAtTheRight);
       }
       if (paymentstatus && inEvent.value.status !== "" && !this.receipt.isCalculateReceiptLocked && !this.receipt.isCalculateGrossLocked) {
-        this.checkValidPayments(paymentstatus, payment);
+        this.checkValidPayments(paymentstatus, payment, hasChange);
       }
       if (inEvent.value.amount) {
         this.doPaymentActionPay({
@@ -162,9 +185,13 @@ enyo.kind({
             tag: 'span',
             name: 'totalpendinglbl'
           }, {
-            tag: 'span',
-            name: 'change',
-            style: 'font-size: 24px; font-weight: bold;'
+            kind: 'OB.UI.RegularButton',
+            name: 'changebutton',
+            classes: 'btn-icon-split btnlink-green payment-changebutton',
+            ontap: 'actionChangeButton'
+          }, {
+            kind: 'OB.OBPOSPointOfSale.UI.Change',
+            name: 'change'
           }, {
             tag: 'span',
             name: 'changelbl'
@@ -195,6 +222,9 @@ enyo.kind({
               renderEmpty: enyo.kind({
                 style: 'height: 36px'
               }),
+              skipLineRender: function (model) {
+                return model.get('changePayment');
+              },
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
               kind: 'OB.UI.ScrollableTable',
@@ -205,6 +235,9 @@ enyo.kind({
               renderEmpty: enyo.kind({
                 style: 'height: 36px'
               }),
+              skipLineRender: function (model) {
+                return model.get('changePayment');
+              },
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
               style: 'overflow: hidden; height: 30px; margin-top: 3px; color: #ff0000; padding: 5px; position: relative;',
@@ -415,7 +448,140 @@ enyo.kind({
       this.$.creditsalesaction.hide();
     }
   },
+  actionChangeButton: function (inSender, inEvent) {
+    var activemodel = this.activeModel(),
+        change = activemodel.get('change');
 
+    this.doShowPopup({
+      popup: 'modalchange',
+      args: {
+        activemodel: activemodel,
+        change: change,
+        applyPaymentChange: function (paymentchange) {
+          var paymentstatus, selectedPayment;
+
+          this.applyPaymentChange(paymentchange);
+
+          paymentstatus = this.receipt.getPaymentStatus();
+          selectedPayment = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')];
+          this.checkValidPayments(paymentstatus, selectedPayment, OB.DEC.compare(change) > 0);
+        }.bind(this)
+      }
+    });
+
+    return true;
+  },
+  calculateChangeReset: function () {
+    this.applyPaymentChange(new OB.Payments.Change());
+  },
+  calculateChange: function (firstpayment, firstchange) {
+    // payment is the first payment to use in the change calculation
+    // change is > 0 and is in the document currency
+    // Result vars...
+    var paymentchange = new OB.Payments.Change(),
+        usedpaymentsids = {};
+
+    // Recursive function to calculate changes, payment by payment
+
+    function calculateNextChange(payment, change) {
+      var precision, changeLessThan, linkedSearchKey, changePayment, changePaymentRounded, linkedPayment;
+
+      usedpaymentsids[payment.paymentMethod.id] = true; // mark this payment as used to avoid cycles.
+      precision = payment.obposPosprecision;
+      changeLessThan = payment.paymentMethod.changeLessThan;
+      if (changeLessThan) {
+        linkedSearchKey = payment.paymentMethod.changePaymentType;
+        if (linkedSearchKey && !usedpaymentsids[linkedSearchKey]) {
+          linkedPayment = OB.MobileApp.model.get('payments').find(function (p) {
+            return p.paymentMethod.id === linkedSearchKey;
+          });
+          if (linkedPayment) {
+            changePayment = OB.DEC.mul(change, payment.mulrate, precision);
+            // Using 5 as rounding precision as a maximum precsion for all currencies
+            changePaymentRounded = OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)), precision);
+            paymentchange.add({
+              payment: payment,
+              amount: changePaymentRounded,
+              origAmount: OB.DEC.div(changePaymentRounded, payment.mulrate)
+            });
+            calculateNextChange(linkedPayment, OB.DEC.sub(change, OB.DEC.div(changePaymentRounded, payment.mulrate)));
+            return;
+          }
+        }
+      }
+      // No changeLessThan and no linked payment to continue,
+      // Then add add change payment for the remaining change and exit
+      paymentchange.add({
+        payment: payment,
+        amount: OB.DEC.mul(change, payment.mulrate, precision),
+        origAmount: change
+      });
+    }
+
+    // Ensure first payment is a cash payment
+    if (!firstpayment.paymentMethod.iscash) {
+      firstpayment = OB.MobileApp.model.get('payments').find(function (item) {
+        return item.paymentMethod.iscash;
+      });
+    }
+
+    if (firstpayment) {
+      if (OB.MobileApp.model.get('terminal').multiChange) {
+        // Here goes the logic to implement multi currency change 
+        calculateNextChange(firstpayment, firstchange);
+      } else {
+        // No multi currency change logic, add a simple change item and return
+        paymentchange.add({
+          payment: firstpayment,
+          amount: OB.DEC.mul(firstchange, firstpayment.mulrate, firstpayment.obposPosprecision),
+          origAmount: firstchange
+        });
+      }
+    }
+
+    // Update receipt and UI with new calculations
+    this.applyPaymentChange(paymentchange);
+  },
+  activeModel: function () {
+    return this.model.isValidMultiOrderState() //
+    ? this.model.get('multiOrders') //
+    : this.receipt;
+  },
+  applyPaymentChange: function (paymentchange) {
+    // Set change calculation results
+    this.activeModel().set('changePayments', paymentchange.payments);
+    OB.MobileApp.model.set('changeReceipt', paymentchange.label);
+
+    // Set change UI
+    var showing = paymentchange.payments.length > 0;
+    this.$.changebutton.setShowing(OB.MobileApp.model.get('terminal').multiChange && showing);
+    this.$.change.setContent(paymentchange.label);
+    this.$.change.setShowing(showing);
+    this.$.changelbl.setShowing(showing);
+  },
+  checkEnoughMultiChange: function () {
+    var failedPaymentMethods = [],
+        activeModel = this.activeModel();
+
+    if (!activeModel.get('multiOrdersList') && OB.DEC.compare(activeModel.get('gross')) < 0) {
+      return []; // Change for returns is always valid.
+    }
+
+    activeModel.get('changePayments').forEach(function (itemchange) {
+      var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
+      if (paymentMethod.foreignCash < itemchange.amountRounded) {
+        failedPaymentMethods.push(paymentMethod.payment._identifier);
+      }
+    });
+
+    return failedPaymentMethods;
+  },
+  getOrigAmountChange: function (payment) {
+    var changepayment = this.activeModel().get('changePayments').find(function (itemchange) {
+      return itemchange.searchKey === payment.searchKey;
+    });
+    return changepayment ? changepayment.origAmount : 0;
+  },
   updatePending: function () {
     var execution = OB.UTIL.ProcessController.start('updatePending');
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -426,6 +592,7 @@ enyo.kind({
         prepaymentAmount = this.receipt.get('obposPrepaymentamt'),
         symbol = '',
         rate = OB.DEC.One,
+        precision = null,
         symbolAtRight = true,
         isCashType = true,
         receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
@@ -438,10 +605,16 @@ enyo.kind({
     if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')])) {
       symbol = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].symbol;
       rate = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].mulrate;
+      precision = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].obposPosprecision;
       symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].currencySymbolAtTheRight;
       isCashType = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].paymentMethod.iscash;
     }
-    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
+    if (OB.DEC.compare(this.receipt.get('change')) > 0) {
+      this.calculateChange(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], this.receipt.getChange());
+    } else {
+      this.calculateChangeReset();
+    }
+    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')], OB.DEC.compare(this.receipt.get('change')) > 0);
 
     //Update styles based on the prepayment amount
     if (receiptHasPrepaymentAmount && paymentstatus.pendingAmt !== 0) {
@@ -476,15 +649,6 @@ enyo.kind({
       }
     }
 
-    if (paymentstatus.change) {
-      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
-      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
-      this.$.change.show();
-      this.$.changelbl.show();
-    } else {
-      this.$.change.hide();
-      this.$.changelbl.hide();
-    }
     if (paymentstatus.pendingAmt <= 0 && paymentstatus.overpayment) {
       this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentstatus.overpayment, symbol, symbolAtRight));
       this.$.overpayment.show();
@@ -503,7 +667,7 @@ enyo.kind({
       this.updateCreditSalesAction();
       this.$.layawayaction.hide();
     } else {
-      this.setTotalPending(paymentstatus.pendingAmt, rate, symbol, symbolAtRight);
+      this.setTotalPending(OB.DEC.mul(paymentstatus.pendingAmt, rate, precision), symbol, symbolAtRight);
       this.$.totalpending.show();
       if (paymentstatus.isNegative) {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_ReturnRemaining'));
@@ -540,7 +704,7 @@ enyo.kind({
       }
       this.updateLayawayAction();
     }
-    if (paymentstatus.pendingAmt === 0 && paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
+    if (paymentstatus.pendingAmt === 0 && paymentstatus.done && OB.DEC.compare(this.receipt.get('change')) <= 0 && !paymentstatus.overpayment) {
       if (this.receipt.getGross() === 0) {
         this.$.exactlbl.hide();
         this.$.donezerolbl.show();
@@ -568,6 +732,7 @@ enyo.kind({
         symbol = '',
         symbolAtRight = true,
         rate = OB.DEC.One,
+        precision = null,
         isCashType = true,
         selectedPayment, paymentStatus = multiOrders.getPaymentStatus(),
         prepaymentAmount = paymentstatus.get('prepaymentAmt'),
@@ -588,6 +753,7 @@ enyo.kind({
     if (!_.isUndefined(selectedPayment)) {
       symbol = selectedPayment.symbol;
       rate = selectedPayment.mulrate;
+      precision = selectedPayment.obposPosprecision;
       symbolAtRight = selectedPayment.currencySymbolAtTheRight;
       isCashType = selectedPayment.paymentMethod.iscash;
     }
@@ -625,16 +791,12 @@ enyo.kind({
 
     }
 
-    this.checkValidPayments(paymentStatus, selectedPayment);
     if (multiOrders.get('change')) {
-      this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(multiOrders.get('change'), rate), symbol, symbolAtRight));
-      OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(multiOrders.get('change'), rate), symbol, symbolAtRight));
-      this.$.change.show();
-      this.$.changelbl.show();
+      this.calculateChange(selectedPayment, multiOrders.get('change'));
     } else {
-      this.$.change.hide();
-      this.$.changelbl.hide();
+      this.calculateChangeReset();
     }
+    this.checkValidPayments(paymentStatus, selectedPayment, OB.DEC.compare(multiOrders.get('change')) > 0);
     //overpayment
     if (paymentStatus.overpayment) {
       this.$.overpayment.setContent(OB.I18N.formatCurrencyWithSymbol(paymentStatus.overpayment, symbol, symbolAtRight));
@@ -653,7 +815,7 @@ enyo.kind({
       }
       this.updateCreditSalesAction();
     } else {
-      this.setTotalPending(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, symbol, symbolAtRight);
+      this.setTotalPending(OB.DEC.mul(OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')), rate, precision), symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
       if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && !paymentstatus.isNegative && paymentstatus.get('amountToLayaway') === 0) {
@@ -706,9 +868,12 @@ enyo.kind({
         hasAllEnoughCash = true,
         reversedPayments = [],
         currentSelectedPaymentCashAmount = OB.DEC.Zero,
+        failedPaymentMethods = [],
         reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
+      var changeAmt, selectedChange;
+
       // If there are reverse payments search for those of cash payment method. It will be needed to check if there is enough cash to reverse those payments.
       if (paymentstatus.isReversal) {
         paymentstatus.payments.each(function (payment) {
@@ -736,16 +901,20 @@ enyo.kind({
               requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
             } else {
               paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-              if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
+              if (paymentmethod && payment.get('amount') > paymentmethod.foreignCash && payment.get('isCash')) {
                 hasAllEnoughCash = false;
               }
             }
           });
         } else if (!_.isUndefined(paymentstatus)) {
+          selectedChange = this.activeModel().get('changePayments').find(function (item) {
+            return item.key === selectedPayment.payment.searchKey;
+          });
+          changeAmt = selectedChange ? selectedChange.origAmount : 0;
           if (button === 'Layaway' || button === 'Credit') {
-            requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt);
+            requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, changeAmt);
           } else {
-            requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
+            requiredCash = OB.DEC.Zero; // Rely on checkEnoughMultiChange() for this case
           }
         }
 
@@ -754,14 +923,23 @@ enyo.kind({
         } else if (!_.isUndefined(requiredCash)) {
           hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
         }
+
+        failedPaymentMethods = this.checkEnoughMultiChange();
+        hasEnoughCash = hasEnoughCash && failedPaymentMethods.length === 0;
       }
 
       if (hasEnoughCash && ((button === 'Layaway' || button === 'Credit') || (button === 'Done' && hasAllEnoughCash))) {
+        this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
         return callback.call(scope, true);
       } else {
+        if (failedPaymentMethods.length > 0 && OB.MobileApp.model.get('terminal').multiChange) {
+          this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCashMultiChange', [failedPaymentMethods.join(', ')]));
+        } else {
+          this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
+        }
         return callback.call(scope, false); // check failed.
       }
-    });
+    }.bind(this));
   },
 
   checkValidOverpayment: function (paymentstatus) {
@@ -805,7 +983,7 @@ enyo.kind({
       return true;
     }
 
-    requiredCash = paymentstatus.changeAmt;
+    requiredCash = this.getOrigAmountChange(selectedPayment);
     if (!OB.UTIL.isNullOrUndefined(requiredCash)) {
       requiredCash = OB.DEC.toNumber(requiredCash);
     }
@@ -831,7 +1009,6 @@ enyo.kind({
     }
 
     var change = this.model.getChange();
-    var check = true;
     var currentcash = selectedPayment.currentCash;
     var cashIsPresent = false;
     var alternativeCashPayment;
@@ -851,20 +1028,12 @@ enyo.kind({
           });
         }
         if (!alternativeCashPayment) {
-          check = false;
           this.$.onlycashpaymentmethod.show();
-        } else if (alternativePaymentInfo && alternativePaymentInfo.currentCash < change) {
-          check = false;
-          this.$.noenoughchangelbl.show();
-        }
-      } else {
-        if (currentcash < change) {
-          check = false;
-          this.$.noenoughchangelbl.show();
+          return false;
         }
       }
     }
-    return check;
+    return true;
   },
 
   checkDrawerPreference: function () {
@@ -883,7 +1052,7 @@ enyo.kind({
     }
   },
 
-  checkValidPayments: function (paymentstatus, selectedPayment) {
+  checkValidPayments: function (paymentstatus, selectedPayment, hasChange) {
     var resultOK, me = this;
 
     if (!selectedPayment) {
@@ -902,7 +1071,7 @@ enyo.kind({
     // Do the checkins
     this.updateAddPaymentAction();
     if (this.checkValidOverpayment(paymentstatus)) {
-      if (selectedPayment.paymentMethod.iscash && paymentstatus.changeAmt > 0) {
+      if (selectedPayment.paymentMethod.iscash && hasChange) {
         resultOK = this.checkValidCashChange(paymentstatus, selectedPayment);
       } else {
         resultOK = undefined;
@@ -911,9 +1080,9 @@ enyo.kind({
       resultOK = false;
     }
     if (resultOK || _.isUndefined(resultOK)) {
-      if (!_.isNull(paymentstatus.change) || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
+      if (hasChange || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
         // avoid checking for shared paymentMethod
-        if (paymentstatus.change && selectedPayment.paymentMethod.isshared) {
+        if (hasChange && selectedPayment.paymentMethod.isshared) {
           resultOK = true;
         } else {
           resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
@@ -2092,6 +2261,60 @@ enyo.kind({
       });
     } else {
       continueExecuting(receipt, negativeLines, me, myModel, payments);
+    }
+  }
+});
+
+enyo.kind({
+  kind: 'enyo.Component',
+  name: 'OB.Payments.Change',
+  statics: {
+    getChangeRounded: function (change) {
+      var precision, roundingto, roundinggap;
+
+      if (change.payment.changeRounding) {
+        precision = change.payment.obposPosprecision;
+        roundingto = change.payment.changeRounding.roundingto;
+        roundinggap = change.payment.changeRounding.roundingdownlimit;
+        // Using 5 as rounding precision as a maximum precsion for all currencies before rounding.
+        // And after rounding using Math.trunc using the payment precision.
+        return OB.DEC.mul(roundingto, Math.trunc(OB.DEC.div(OB.DEC.add(change.amount, OB.DEC.sub(roundingto, roundinggap, 5), 5), roundingto, 5)), precision);
+      }
+      return change.amount;
+    }
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.label = '';
+    this.payments = [];
+  },
+  add: function (change) {
+    // change.payment is the payment of the new change to add
+    // change.amount is the change to add in the payment currency
+    // change.origAmount is the change to add in the document currency
+    var formattedRounded, amountRounded, paymentLabel;
+
+    if (OB.DEC.compare(change.origAmount)) {
+      // Add new change Payment
+      // Calculate amountRounded only in case it is not forced by caller
+      amountRounded = _.isNumber(change.amountRounded) ? change.amountRounded : OB.Payments.Change.getChangeRounded(change);
+      formattedRounded = OB.I18N.formatCurrencyWithSymbol(amountRounded, change.payment.symbol, change.payment.currencySymbolAtTheRight);
+      if (OB.DEC.compare(OB.DEC.sub(change.amount, amountRounded, change.payment.obposPosprecision))) {
+        paymentLabel = OB.I18N.getLabel('OBPOS_OriginalAmount', [formattedRounded, OB.I18N.formatCurrencyWithSymbol(change.amount, change.payment.symbol, change.payment.currencySymbolAtTheRight)]);
+      } else {
+        paymentLabel = formattedRounded;
+      }
+      if (this.label) {
+        this.label += ' + ';
+      }
+      this.label += formattedRounded;
+      this.payments.push({
+        key: change.payment.payment.searchKey,
+        amount: change.amount,
+        amountRounded: amountRounded,
+        origAmount: change.origAmount,
+        label: paymentLabel
+      });
     }
   }
 });

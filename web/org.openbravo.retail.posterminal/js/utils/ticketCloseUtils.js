@@ -13,119 +13,58 @@
 
   OB.UTIL.TicketCloseUtils = {};
 
+  OB.UTIL.TicketCloseUtils.processChangePayments = function (receipt, callback) {
+    var mergeable, addPaymentCallback, prevChange;
+
+    // Manage change payments (if there is change)
+    if (receipt.get('changePayments')) {
+      prevChange = receipt.get('change');
+      mergeable = !OB.MobileApp.model.get('terminal').multiChange && !OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true);
+      addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
+        // restore attributes
+        receipt.set('change', prevChange, {
+          silent: true
+        });
+        callback();
+      });
+
+      receipt.get('changePayments').forEach(function (changePayment) {
+        var paymentToAdd = OB.MobileApp.model.paymentnames[changePayment.key];
+        receipt.addPayment(new OB.Model.PaymentLine({
+          kind: paymentToAdd.payment.searchKey,
+          name: paymentToAdd.payment.commercialName,
+          amount: OB.DEC.sub(0, changePayment.amount, paymentToAdd.obposPosprecision),
+          amountRounded: OB.DEC.sub(0, changePayment.amountRounded, paymentToAdd.obposPosprecision),
+          origAmount: OB.DEC.sub(0, changePayment.origAmount),
+          origAmountRounded: OB.DEC.sub(0, OB.DEC.mul(changePayment.amountRounded, paymentToAdd.rate)),
+          rate: paymentToAdd.rate,
+          mulrate: paymentToAdd.mulrate,
+          isocode: paymentToAdd.isocode,
+          allowOpenDrawer: paymentToAdd.paymentMethod.allowopendrawer,
+          isCash: paymentToAdd.paymentMethod.iscash,
+          openDrawer: paymentToAdd.paymentMethod.openDrawer,
+          printtwice: paymentToAdd.paymentMethod.printtwice,
+          changePayment: true,
+          paymentData: {
+            mergeable: mergeable,
+            label: changePayment.label
+          }
+        }), addPaymentCallback);
+      });
+    } else {
+      callback();
+    }
+  };
+
   OB.UTIL.TicketCloseUtils.paymentAccepted = function (receipt, orderList, triggerClosedCallback) {
     receipt.setIsCalculateReceiptLockState(true);
     receipt.setIsCalculateGrossLockState(true);
     var execution = OB.UTIL.ProcessController.start('completeReceipt');
     receipt.prepareToSend(function () {
       //Create the negative payment for change
-      var oldChange = receipt.get('change'),
-          clonedCollection = new Backbone.Collection(),
+      var clonedCollection = new Backbone.Collection(),
           paymentKind, i, totalPrePayment = OB.DEC.Zero,
           totalNotPrePayment = OB.DEC.Zero;
-      var triggerReceiptClose = function (receipt) {
-          // There is only 1 receipt object.
-          receipt.set('isBeingClosed', true);
-          receipt.trigger('closed', {
-            callback: function (args) {
-              if (args.skipCallback) {
-                OB.UTIL.ProcessController.finish('completeReceipt', execution);
-                triggerClosedCallback();
-                return true;
-              }
-              receipt.set('isBeingClosed', false);
-
-              _.each(orderList.models, function (ol) {
-                if (ol.get('id') === receipt.get('id')) {
-                  ol.set('isBeingClosed', false);
-                  return true;
-                }
-              }, this);
-              OB.UTIL.setScanningFocus(true);
-              OB.UTIL.Debug.execute(function () {
-                if (!args.frozenReceipt) {
-                  throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
-                }
-                if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
-                  throw "The isCancelled flag must be set";
-                }
-              });
-
-              // verify that the receipt was not cancelled
-              if (args.isCancelled !== true) {
-                var orderToPrint = OB.UTIL.clone(args.frozenReceipt),
-                    invoice = orderToPrint.get('calculatedInvoice');
-                orderToPrint.get('payments').reset();
-                clonedCollection.each(function (model) {
-                  orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
-                    silent: true
-                  });
-                });
-                orderToPrint.set('hasbeenpaid', 'Y');
-                receipt.trigger('print', orderToPrint, {
-                  offline: true
-                });
-                if (invoice && invoice.get('id')) {
-                  var printInvoice = function () {
-                      receipt.trigger('print', invoice, {
-                        offline: true
-                      });
-                      };
-                  if (!OB.MobileApp.model.hasPermission('OBPOS_print.return_invoice', true)) {
-                    var positiveLine = _.find(receipt.get('lines').models, function (line) {
-                      return line.get('qty') >= 0;
-                    });
-                    if (!positiveLine) {
-                      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPrintInvoices'), OB.I18N.getLabel('OBPOS_LblPrintInvoicesReturn'), [{
-                        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                        action: function () {
-                          printInvoice();
-                        }
-                      }, {
-                        label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                      }], {
-                        autoDismiss: false
-                      });
-                    } else {
-                      if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
-                        printInvoice();
-                      }
-                    }
-                  } else {
-                    if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
-                      printInvoice();
-                    }
-                  }
-                }
-
-                // Verify that the receipt has not been changed while the ticket has being closed
-                var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.diffReceipt.serializeToJSON());
-                // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
-                delete diff.hasbeenpaid;
-                delete diff.cashUpReportInformation;
-                // isBeingClosed is a flag only used to log purposes
-                delete diff.isBeingClosed;
-                // verify if there have been any modification to the receipt
-                var diffStringified = JSON.stringify(diff, undefined, 2);
-                if (diffStringified !== '{}') {
-                  OB.warn("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
-                }
-
-                if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
-                  orderList.deleteCurrent(true);
-                } else {
-                  orderList.deleteCurrent();
-                }
-                receipt.setIsCalculateReceiptLockState(false);
-                receipt.setIsCalculateGrossLockState(false);
-
-                orderList.synchronizeCurrentOrder();
-
-              }
-              triggerClosedCallback();
-            }
-          });
-          };
 
       if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
         var negativeLines = _.filter(receipt.get('lines').models, function (line) {
@@ -152,45 +91,117 @@
           totalNotPrePayment = OB.DEC.add(totalNotPrePayment, model.get('origAmount'));
         }
       });
-      if (!_.isUndefined(receipt.get('selectedPayment')) && receipt.getChange() > 0) {
-        var payment = OB.MobileApp.model.paymentnames[receipt.get('selectedPayment')];
-        if (!payment.paymentMethod.iscash) {
-          payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+
+      // Adjust leave on credit payments.
+      for (i = 0; i < receipt.get('payments').length; i++) {
+        paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
+        if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
+          receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
+          receipt.set('paidOnCredit', true);
         }
-        if (receipt.isFullyPaid() || (OB.DEC.compare(receipt.getGross()) !== -1 && receipt.isNegative() && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
-          receipt.addPayment(new OB.Model.PaymentLine({
-            'kind': payment.payment.searchKey,
-            'name': payment.payment.commercialName,
-            'amount': OB.DEC.sub(0, OB.DEC.mul(receipt.getChange(), payment.mulrate)),
-            'rate': payment.rate,
-            'mulrate': payment.mulrate,
-            'isocode': payment.isocode,
-            'allowOpenDrawer': payment.paymentMethod.allowopendrawer,
-            'isCash': payment.paymentMethod.iscash,
-            'openDrawer': payment.paymentMethod.openDrawer,
-            'printtwice': payment.paymentMethod.printtwice
-          }), function (receipt) {
-            receipt.set('change', oldChange);
-            for (i = 0; i < receipt.get('payments').length; i++) {
-              paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-              if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
-                receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-                receipt.set('paidOnCredit', true);
+      }
+
+      // There is only 1 receipt object.
+      receipt.set('isBeingClosed', true);
+      receipt.trigger('closed', {
+        callback: function (args) {
+          if (args.skipCallback) {
+            OB.UTIL.ProcessController.finish('completeReceipt', execution);
+            triggerClosedCallback();
+            return true;
+          }
+          receipt.set('isBeingClosed', false);
+
+          _.each(orderList.models, function (ol) {
+            if (ol.get('id') === receipt.get('id')) {
+              ol.set('isBeingClosed', false);
+              return true;
+            }
+          }, this);
+          OB.UTIL.setScanningFocus(true);
+          OB.UTIL.Debug.execute(function () {
+            if (!args.frozenReceipt) {
+              throw "A clone of the receipt must be provided because it is possible that some rogue process could have changed it";
+            }
+            if (OB.UTIL.isNullOrUndefined(args.isCancelled)) { // allow boolean values
+              throw "The isCancelled flag must be set";
+            }
+          });
+
+          // verify that the receipt was not cancelled
+          if (args.isCancelled !== true) {
+            var orderToPrint = OB.UTIL.clone(args.frozenReceipt),
+                invoice = orderToPrint.get('calculatedInvoice');
+            orderToPrint.get('payments').reset();
+            clonedCollection.each(function (model) {
+              orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
+                silent: true
+              });
+            });
+            orderToPrint.set('hasbeenpaid', 'Y');
+            receipt.trigger('print', orderToPrint, {
+              offline: true
+            });
+            if (invoice && invoice.get('id')) {
+              var printInvoice = function () {
+                  receipt.trigger('print', invoice, {
+                    offline: true
+                  });
+                  };
+              if (!OB.MobileApp.model.hasPermission('OBPOS_print.return_invoice', true)) {
+                var positiveLine = _.find(receipt.get('lines').models, function (line) {
+                  return line.get('qty') >= 0;
+                });
+                if (!positiveLine) {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPrintInvoices'), OB.I18N.getLabel('OBPOS_LblPrintInvoicesReturn'), [{
+                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                    action: function () {
+                      printInvoice();
+                    }
+                  }, {
+                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                  }], {
+                    autoDismiss: false
+                  });
+                } else {
+                  if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
+                    printInvoice();
+                  }
+                }
+              } else {
+                if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
+                  printInvoice();
+                }
               }
             }
-            triggerReceiptClose(receipt);
-          });
-        }
-      } else {
-        for (i = 0; i < receipt.get('payments').length; i++) {
-          paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
-          if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
-            receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-            receipt.set('paidOnCredit', true);
+
+            // Verify that the receipt has not been changed while the ticket has being closed
+            var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.diffReceipt.serializeToJSON());
+            // hasBeenPaid and cashUpReportInformation are the only difference allowed in the receipt
+            delete diff.hasbeenpaid;
+            delete diff.cashUpReportInformation;
+            // isBeingClosed is a flag only used to log purposes
+            delete diff.isBeingClosed;
+            // verify if there have been any modification to the receipt
+            var diffStringified = JSON.stringify(diff, undefined, 2);
+            if (diffStringified !== '{}') {
+              OB.warn("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
+            }
+
+            if (OB.MobileApp.model.hasPermission('OBPOS_alwaysCreateNewReceiptAfterPayReceipt', true)) {
+              orderList.deleteCurrent(true);
+            } else {
+              orderList.deleteCurrent();
+            }
+            receipt.setIsCalculateReceiptLockState(false);
+            receipt.setIsCalculateGrossLockState(false);
+
+            orderList.synchronizeCurrentOrder();
+
           }
+          triggerClosedCallback();
         }
-        triggerReceiptClose(receipt);
-      }
+      });
     });
   };
 
@@ -261,4 +272,25 @@
     }
   };
 
+  OB.UTIL.getChangeLabelFromReceipt = function (receipt) {
+    if (receipt.get('changePayments')) {
+      return OB.UTIL.getChangeLabelFromChangePayments(receipt.get('changePayments'));
+    } else {
+      return OB.UTIL.getChangeLabelFromPayments(receipt.get('payments'));
+    }
+  };
+
+  OB.UTIL.getChangeLabelFromChangePayments = function (changePayments) {
+    return changePayments.map(function (item) {
+      return item.label;
+    }).join(' + ');
+  };
+
+  OB.UTIL.getChangeLabelFromPayments = function (payments) {
+    return payments.filter(function (payment) {
+      return payment.get('amount') < 0;
+    }).map(function (payment) {
+      return payment.get('paymentData').label;
+    }).join(' + ');
+  };
 }());

@@ -237,7 +237,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       JSONObject jsoninvoice = null;
       OBPOSApplications posTerminal = null;
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
-      JSONArray orderlines = jsonorder.getJSONArray("lines");
+      JSONArray orderlines = new JSONArray(jsonorder.getJSONArray("lines").toString());
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && validateOrder(jsonorder)
@@ -278,7 +278,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       deliver = !isQuotation && !isDeleted && jsonorder.optBoolean("deliver", false);
 
       if (jsonorder.has("deletedLines")) {
-        mergeDeletedLines(jsonorder);
+        mergeDeletedLines(jsonorder, orderlines);
       }
 
       t0 = System.currentTimeMillis();
@@ -398,6 +398,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
             locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
             locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+          locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
             locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
             locators.setMaxResults(2);
             List<Locator> locatorList = locators.list();
@@ -424,7 +425,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (doCancelAndReplace) {
           final String canceledOrderId = jsonorder.getJSONObject("canceledorder").getString("id");
           final Order canceledOrder = OBDal.getInstance().get(Order.class, canceledOrderId);
-          canceledOrder.setObposAppCashup(jsoncashup.getString("id"));
+          canceledOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           if (canceledOrder.isObposIslayaway()) {
             canceledOrder.setObposIslayaway(false);
           }
@@ -639,14 +640,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return lstResultOL;
   }
 
-  private void mergeDeletedLines(JSONObject jsonorder) {
+  private void mergeDeletedLines(JSONObject jsonorder, JSONArray orderlines) {
     try {
       JSONArray deletedLines = jsonorder.getJSONArray("deletedLines");
-      JSONArray lines = jsonorder.getJSONArray("lines");
       for (int i = 0; i < deletedLines.length(); i++) {
-        lines.put(deletedLines.get(i));
+        orderlines.put(deletedLines.get(i));
       }
-      jsonorder.put("lines", lines);
     } catch (JSONException e) {
       log.error("JSON information couldn't be read when merging deleted lines", e);
       return;
@@ -839,8 +838,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       orderline.setActive(true);
       orderline.setSalesOrder(order);
-      orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
-          pricePrecision, RoundingMode.HALF_UP));
+      BigDecimal lineNetAmount = BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
+          pricePrecision, RoundingMode.HALF_UP);
+      orderline.setLineNetAmount(lineNetAmount);
+      if (lineNetAmount.compareTo(BigDecimal.ZERO) < 0) {
+        orderline.setReturnline("Y");
+      }
 
       orderline.setDeliveredQuantity(jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
           .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderline.getOrderedQuantity());
@@ -1377,15 +1380,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         continue;
       }
 
-      // When doing a reverse payment, normally the reversal payment has the 'paid' property to 0,
-      // because this 'paid' property is the sum of the total amount paid by this payment method
-      // (normally a payment is reversed to set the total quantity of that payment method to 0).
-      // Because of that, the next condition must be ignored to reversal payments
-      BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
       boolean isReversalPayment = payment.has("reversedPaymentId");
-      if (paid.compareTo(BigDecimal.ZERO) == 0 && !isReversalPayment) {
-        continue;
-      }
+
       String paymentTypeName = payment.getString("kind");
       OBCriteria<OBPOSAppPayment> type = OBDal.getInstance().createCriteria(OBPOSAppPayment.class);
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_SEARCHKEY, paymentTypeName));
@@ -1475,7 +1471,22 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
           pricePrecision, RoundingMode.HALF_UP);
+      // Round change variables
       BigDecimal origAmount = amount;
+      BigDecimal amountRounded = amount;
+      BigDecimal roundAmount = BigDecimal.ZERO;
+      BigDecimal origAmountRounded = amount;
+      boolean downRounding = false;
+      if (payment.has("origAmountRounded")) {
+        amountRounded = BigDecimal.valueOf(payment.getDouble("origAmountRounded")).setScale(
+            pricePrecision, RoundingMode.HALF_UP);
+        origAmount = amountRounded;
+        origAmountRounded = amountRounded;
+        roundAmount = BigDecimal.valueOf(payment.getDouble("origAmountRounded"))
+            .subtract(BigDecimal.valueOf(payment.getDouble("origAmount")))
+            .setScale(pricePrecision, RoundingMode.HALF_UP);
+        downRounding = roundAmount.compareTo(BigDecimal.ZERO) == 1;
+      }
       BigDecimal mulrate = new BigDecimal(1);
       // FIXME: Coversion should be only in one direction: (USD-->EUR)
       if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
@@ -1483,6 +1494,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (payment.has("amount")) {
           origAmount = BigDecimal.valueOf(payment.getDouble("amount")).setScale(pricePrecision,
               RoundingMode.HALF_UP);
+          origAmountRounded = origAmount;
+          if (payment.has("origAmountRounded")) {
+            origAmountRounded = payment.has("amountRounded") ? BigDecimal.valueOf(
+                payment.getDouble("amountRounded")).setScale(pricePrecision, RoundingMode.HALF_UP)
+                : BigDecimal.valueOf(payment.getDouble("amount")).setScale(pricePrecision,
+                    RoundingMode.HALF_UP);
+          }
+
         } else {
           origAmount = amount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
         }
@@ -1703,9 +1722,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       // insert the payment
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
-          account == null ? paymentType.getFinancialAccount() : account, amount.toString(),
-          calculatedDate, order.getOrganization(), null, paymentScheduleDetailList,
-          paymentAmountMap, false, false, order.getCurrency(), mulrate, origAmount, true,
+          account == null ? paymentType.getFinancialAccount() : account, (downRounding ? amount
+              : amountRounded).toString(), calculatedDate, order.getOrganization(), null, paymentScheduleDetailList,
+          paymentAmountMap, false, false, order.getCurrency(), mulrate, origAmountRounded, true,
           payment.has("id") ? payment.getString("id") : null);
 
       // Associate a GLItem with the overpayment amount to the payment which generates the
@@ -1716,6 +1735,21 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+      }
+
+      // If there is a rounded amount add a new payment detail against "Rounded Difference" GL Item
+      if (roundAmount.compareTo(BigDecimal.ZERO) != 0) {
+        if (paymentType.getPaymentMethod().getGlitemRound() == null) {
+          throw new OBException(String.format(OBMessageUtils
+              .messageBD("OBPOS_MissingRoundingDifference"), paymentType.getPaymentMethod()
+              .getSearchKey()));
+
+        }
+        FIN_AddPayment.saveGLItem(finPayment, roundAmount, paymentType.getPaymentMethod()
+            .getGlitemRound(),
+            payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
+        // Update Payment In amount after adding GLItem
+        finPayment.setAmount(amountRounded.setScale(pricePrecision, RoundingMode.HALF_UP));
       }
 
       if (paidOnCredit) {

@@ -20,9 +20,21 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.OBPOSCashUp.UI.ButtonBring',
+  kind: 'OB.UI.SmallButton',
+  classes: 'btnlink-gray',
+  style: 'background-color: #e2e2e2; margin: 5px 0px 5px 0px;',
+  initComponents: function () {
+    this.setContent(OB.I18N.getLabel('OBPOS_BringOrder'));
+    return this;
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPendingReceiptLine',
   events: {
-    onVoidOrder: ''
+    onVoidOrder: '',
+    onBringOrder: ''
   },
   components: [{
     style: 'display: table; height: 42px; width: 100%; border-bottom: 1px solid #cccccc;',
@@ -38,6 +50,16 @@ enyo.kind({
     }, {
       name: 'printGross',
       style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%; font-weight: bold; text-align: right;'
+    }, {
+      name: 'sessionUser',
+      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%; color: #d3d3d3; text-align: right;'
+    }, {
+      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%;',
+      components: [{
+        name: 'buttonBring',
+        kind: 'OB.OBPOSCashUp.UI.ButtonBring',
+        ontap: 'bringOrder'
+      }]
     }, {
       style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%;',
       components: [{
@@ -55,6 +77,18 @@ enyo.kind({
     this.$.documentNo.setContent(this.model.get('documentNo'));
     this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     this.$.printGross.setContent(this.model.printGross());
+    if (this.model.get('session') === OB.MobileApp.model.get('session')) {
+      this.$.buttonBring.hide();
+    } else {
+      var me = this;
+      OB.Dal.find(OB.Model.User, {
+        'id': this.model.get('updatedBy')
+      }, function (user) {
+        if (user.models.length > 0 && !_.isUndefined(me.$.sessionUser)) {
+          me.$.sessionUser.setContent(user.models[0].get('name'));
+        }
+      });
+    }
   },
   voidOrder: function (inSender, inEvent) {
     var me = this;
@@ -63,6 +97,25 @@ enyo.kind({
       isConfirmButton: true,
       action: function () {
         me.doVoidOrder();
+      }
+    }, {
+      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+    }]);
+  },
+  bringOrder: function (inSender, inEvent) {
+    var me = this,
+        jsonOrder;
+    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ConfirmBringOrder'), OB.I18N.getLabel('OBPOS_MsgConfirmBringOrder'), [{
+      label: OB.I18N.getLabel('OBPOS_LblYesBring'),
+      isConfirmButton: true,
+      action: function () {
+        jsonOrder = JSON.parse(me.model.get('json'));
+        jsonOrder.session = OB.MobileApp.model.get('session');
+        jsonOrder.createdBy = OB.MobileApp.model.usermodel.id;
+        jsonOrder.updatedBy = OB.MobileApp.model.usermodel.id;
+        me.model.set('json', JSON.stringify(jsonOrder));
+        me.model.set('session', OB.MobileApp.model.get('session'));
+        OB.Dal.save(me.model, null, null, false);
       }
     }, {
       label: OB.I18N.getLabel('OBMOBC_LblCancel')
@@ -113,6 +166,15 @@ enyo.kind({
               },
               ontap: 'voidAllPendingReceipts'
             }, {
+              name: 'btnBringAll',
+              kind: 'OB.UI.SmallButton',
+              classes: 'btnlink-gray',
+              style: 'float: right; min-width: 70px; margin: 2px 5px 2px 5px;',
+              initComponents: function () {
+                this.setContent(OB.I18N.getLabel('OBPOS_BringAll'));
+              },
+              ontap: 'bringAllPendingReceipts'
+            }, {
               style: 'clear: both;'
             }]
           }]
@@ -147,10 +209,17 @@ enyo.kind({
     this.collection.on('remove add reset', this.receiptsChanged, this);
   },
   receiptsChanged: function () {
+    var showBringBtn = false;
     if (this.collection.length === 0) {
       this.$.rowDeleteAll.hide();
     } else {
       this.$.rowDeleteAll.show();
+      showBringBtn = _.find(this.collection.models, function (model) {
+        return model.get('session') !== OB.MobileApp.model.get('session');
+      });
+      if (OB.UTIL.isNullOrUndefined(showBringBtn) || !showBringBtn) {
+        this.$.btnBringAll.hide();
+      }
     }
   },
   voidOrder: function (inSender, inEvent) {
@@ -186,6 +255,30 @@ enyo.kind({
       isConfirmButton: true,
       action: function () {
         me.voidAllOrders();
+      }
+    }, {
+      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+    }]);
+  },
+  bringAllPendingReceipts: function (inSender, inEvent) {
+    var me = this,
+        jsonOrder;
+    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ConfirmBringOrder'), OB.I18N.getLabel('OBPOS_cannotBeUndone'), [{
+      label: OB.I18N.getLabel('OBPOS_LblYesBring'),
+      isConfirmButton: true,
+      action: function () {
+        _.each(me.collection.models, function (model) {
+          if (model.get('session') !== OB.MobileApp.model.get('session')) {
+            jsonOrder = JSON.parse(model.get('json'));
+            jsonOrder.session = OB.MobileApp.model.get('session');
+            jsonOrder.createdBy = OB.MobileApp.model.usermodel.id;
+            jsonOrder.updatedBy = OB.MobileApp.model.usermodel.id;
+            model.set('json', JSON.stringify(jsonOrder));
+            model.set('session', OB.MobileApp.model.get('session'));
+            OB.Dal.save(model, null, null, false);
+          }
+        });
+        me.$.btnBringAll.hide();
       }
     }, {
       label: OB.I18N.getLabel('OBMOBC_LblCancel')

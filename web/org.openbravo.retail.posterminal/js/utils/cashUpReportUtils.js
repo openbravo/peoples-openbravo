@@ -45,17 +45,14 @@
   }
 
   function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
-    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay;
-    var netSales = OB.DEC.Zero;
-    var grossSales = OB.DEC.Zero;
-    var netReturns = OB.DEC.Zero;
-    var grossReturns = OB.DEC.Zero;
-    var taxSales = OB.DEC.Zero;
-    var taxReturns = OB.DEC.Zero;
-    var ctaxSales;
-    var maxtaxSales = OB.DEC.Zero;
-    var ctaxReturns;
-    var maxtaxReturns = OB.DEC.Zero;
+    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, amount, precision, netSales = OB.DEC.Zero,
+        grossSales = OB.DEC.Zero,
+        netReturns = OB.DEC.Zero,
+        grossReturns = OB.DEC.Zero,
+        taxSales = OB.DEC.Zero,
+        taxReturns = OB.DEC.Zero,
+        ctaxSales, maxtaxSales = OB.DEC.Zero,
+        ctaxReturns, maxtaxReturns = OB.DEC.Zero;
 
     cashUp.at(0).set('transitionsToOnline', OB.UTIL.localStorage.getItem('transitionsToOnline'));
     cashUp.at(0).set('logclientErrors', OB.UTIL.localStorage.getItem('logclientErrors'));
@@ -65,6 +62,9 @@
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {
         _.each(order.get('lines').models, function (line) {
+          if (!order.get('isEditable') && !order.get('isLayaway')) {
+            return;
+          }
           if (order.get('priceIncludesTax')) {
             gross = line.get('lineGrossAmount');
           } else {
@@ -152,7 +152,6 @@
           ctaxReturns.taxAmount = OB.DEC.add(ctaxReturns.taxAmount, OB.DEC.sub(OB.DEC.sub(grossReturns, netReturns), taxReturns));
         }
 
-
         OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, {
           'cashup_id': cashUp.at(0).get('id')
         }, function (payMthds) { //OB.Dal.find success
@@ -170,10 +169,12 @@
             if (!auxPay) { //We cannot find this payment in local database, it must be a new payment method, we skip it.
               return;
             }
-            if (payment.get('amount') < 0) {
-              auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), payment.get('amount')));
+            precision = OB.MobileApp.model.paymentnames[auxPay.get('searchKey')].obposPosprecision;
+            amount = _.isNumber(payment.get('amountRounded')) ? payment.get('amountRounded') : payment.get('amount');
+            if (amount < 0) {
+              auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), amount, precision));
             } else {
-              auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), payment.get('amount')));
+              auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), amount, precision));
             }
             //set used in transaction payment methods to true
             auxPay.set('usedInCurrentTrx', true);
@@ -779,7 +780,7 @@
           var cashMgmt = OB.DEC.sub(totalDeps, totalDrops);
           cash = OB.DEC.add(OB.DEC.add(startingCash, OB.DEC.sub(totalSales, totalReturns)), cashMgmt);
           payment.currentCash = OB.UTIL.currency.toDefaultCurrency(payment.paymentMethod.currency, cash);
-          payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, cash);
+          payment.foreignCash = OB.UTIL.currency.toForeignCurrency(payment.paymentMethod.currency, payment.currentCash);
         }, this);
         if (typeof callback === 'function') {
           callback();

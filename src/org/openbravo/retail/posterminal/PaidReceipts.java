@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -357,7 +358,14 @@ public class PaidReceipts extends JSONProcessSimple {
           paymentsType.put("account", objPaymentsType[1]);
           paymentsType.put("kind", objPaymentsType[2]);
           paymentsType.put("rate", objPaymentsType[3]);
-          paymentsType.put("mulrate", objPaymentsType[4]);
+          BigDecimal rate = new BigDecimal(objPaymentsType[3].toString());
+          BigDecimal mulrate;
+          if (rate.compareTo(BigDecimal.ZERO) != 0) {
+            mulrate = BigDecimal.ONE.divide(rate, 12, RoundingMode.HALF_UP);
+          } else {
+            mulrate = BigDecimal.ZERO;
+          }
+          paymentsType.put("mulrate", mulrate.toPlainString());
           paymentsType.put("isocode", objPaymentsType[5]);
           paymentsType.put("openDrawer", objPaymentsType[6]);
           listPaymentsType.put(paymentsType);
@@ -442,7 +450,14 @@ public class PaidReceipts extends JSONProcessSimple {
               paymentsType.put("account", objPaymentsType[1]);
               paymentsType.put("kind", "");
               paymentsType.put("rate", objPaymentsType[2]);
-              paymentsType.put("mulrate", objPaymentsType[3]);
+              BigDecimal rate = new BigDecimal(objPaymentsType[2].toString());
+              BigDecimal mulrate;
+              if (rate.compareTo(BigDecimal.ZERO) != 0) {
+                mulrate = BigDecimal.ONE.divide(rate, 12, RoundingMode.HALF_UP);
+              } else {
+                mulrate = BigDecimal.ZERO;
+              }
+              paymentsType.put("mulrate", mulrate.toPlainString());
               paymentsType.put("isocode", objPaymentsType[4]);
               paymentsType.put("openDrawer", "N");
 

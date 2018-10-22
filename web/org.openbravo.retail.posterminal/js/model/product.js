@@ -206,6 +206,10 @@
     column: 'isPrintServices',
     type: 'BOOL'
   }, {
+    name: 'obposEditablePrice',
+    column: 'obposEditablePrice',
+    type: 'BOOL'
+  }, {
     name: 'hasAttributes',
     column: 'hasAttributes',
     type: 'BOOL'

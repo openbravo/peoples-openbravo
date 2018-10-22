@@ -8,7 +8,6 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.enterprise.inject.Any;
@@ -61,11 +60,11 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       if (location.getId() == null) {
         location = createBPartnerAddr(customer, jsonCustomerAddr);
       } else {
-        final Date loaded = OBMOBCUtils.calculateClientDatetime(
-            jsonCustomerAddr.getString("loaded"),
-            Long.parseLong(jsonCustomerAddr.getString("timezoneOffset")));
+        final String loaded = jsonCustomerAddr.has("loaded") ? jsonCustomerAddr.getString("loaded")
+            : null;
+        final String updated = OBMOBCUtils.convertToUTCDateComingFromServer(location.getUpdated());
 
-        if (!(loaded.compareTo(location.getUpdated()) >= 0)) {
+        if (loaded != null && loaded.compareTo(updated) < 0) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbpl",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }

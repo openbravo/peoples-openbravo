@@ -10,7 +10,6 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -63,20 +62,24 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
   public JSONObject saveRecord(JSONObject jsoncustomer) throws Exception {
     BusinessPartner customer = null;
     User user = null;
+    String userUpdated = null;
     OBContext.setAdminMode(false);
     try {
       customer = getCustomer(jsoncustomer.getString("id"));
       if (customer.getId() == null) {
         customer = createBPartner(jsoncustomer);
       } else {
-        final Date loaded = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("loaded"),
-            Long.parseLong(jsoncustomer.getString("timezoneOffset")));
+        final String loaded = jsoncustomer.has("loaded") ? jsoncustomer.getString("loaded") : null;
+        final String updated = OBMOBCUtils.convertToUTCDateComingFromServer(customer.getUpdated());
+
         if (jsoncustomer.has("contactId")) {
           user = OBDal.getInstance().get(User.class, jsoncustomer.getString("contactId"));
+          userUpdated = user != null ? OBMOBCUtils.convertToUTCDateComingFromServer(user
+              .getUpdated()) : null;
         }
 
-        if (!(loaded.compareTo(customer.getUpdated()) >= 0)
-            || !(user != null && (loaded.compareTo(user.getUpdated()) >= 0))) {
+        if ((loaded != null && loaded.compareTo(updated) < 0)
+            || (user != null && userUpdated != null && (loaded.compareTo(userUpdated) < 0))) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }

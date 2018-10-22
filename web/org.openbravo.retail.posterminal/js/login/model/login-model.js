@@ -91,8 +91,7 @@
         properties: ['terminal'],
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
-          var me = this,
-              max, i, handleError;
+          var max, i, handleError;
           var params = {};
           var currentDate = new Date();
           params.terminalTime = currentDate;
@@ -119,20 +118,7 @@
                 autoDismiss: false
               });
             } else if (OB.MobileApp.model.get('isLoggingIn') === true) {
-              var msg = OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + OB.I18N.getLabel('OBMOBC_LoadingErrorBody');
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), msg, [{
-                label: OB.I18N.getLabel('OBMOBC_Reload'),
-                action: function () {
-                  window.location.reload();
-                }
-              }], {
-                onShowFunction: function (popup) {
-                  OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
-                  popup.$.headerCloseButton.hide();
-                  OB.MobileApp.view.$.containerWindow.destroyComponents();
-                },
-                autoDismiss: false
-              });
+              me.attemptToLoginOffline();
             }
           };
           new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
@@ -501,13 +487,15 @@
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
                 isConfirmButton: true,
                 action: function () {
+                  OB.UTIL.localStorage.clear();
                   OB.UTIL.showLoading(true);
-                  me.logout();
+                  OB.MobileApp.model.logout();
                 }
               }], {
                 onHideFunction: function () {
+                  OB.UTIL.localStorage.clear();
                   OB.UTIL.showLoading(true);
-                  me.logout();
+                  OB.MobileApp.model.logout();
                 }
               });
             }
@@ -527,13 +515,15 @@
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               isConfirmButton: true,
               action: function () {
+                OB.UTIL.localStorage.clear();
                 OB.UTIL.showLoading(true);
-                me.logout();
+                OB.MobileApp.model.logout();
               }
             }], {
               onHideFunction: function () {
+                OB.UTIL.localStorage.clear();
                 OB.UTIL.showLoading(true);
-                me.logout();
+                OB.MobileApp.model.logout();
               }
             });
           } else {
@@ -683,13 +673,15 @@
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
                 isConfirmButton: true,
                 action: function () {
+                  OB.UTIL.localStorage.clear();
                   OB.UTIL.showLoading(true);
-                  me.logout();
+                  OB.MobileApp.model.logout();
                 }
               }], {
                 onHideFunction: function () {
+                  OB.UTIL.localStorage.clear();
                   OB.UTIL.showLoading(true);
-                  me.logout();
+                  OB.MobileApp.model.logout();
                 }
               });
             }
@@ -1292,6 +1284,12 @@
       new OB.OBPOSLogin.UI.LoginRequest({
         url: '../../org.openbravo.retail.posterminal.service.loginutils'
       }).response(this, function (inSender, inResponse) {
+        if (inResponse && inResponse.response && inResponse.response.status && inResponse.response.status === -1) {
+          //There was an unexpected error when receiving loginutils information. Most probably the server is having problems, but we will continue
+          //with the standard flow, and if other requests fail then most probably offline mode will trigger
+          callback();
+          return;
+        }
         if (inResponse && inResponse.errorReadingTerminalAuthentication) {
           OB.UTIL.showWarning(inResponse.errorReadingTerminalAuthentication);
         }

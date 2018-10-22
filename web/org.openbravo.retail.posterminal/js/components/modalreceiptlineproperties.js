@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -144,6 +144,49 @@ enyo.kind({
     modelProperty: 'description',
     i18nLabel: 'OBPOS_LblDescription',
     maxLength: 255
+  }, {
+    kind: 'OB.UI.renderComboProperty',
+    name: 'priceReason',
+    modelProperty: 'oBPOSPriceModificationReason',
+    i18nLabel: 'OBPOS_PriceModification',
+    retrievedPropertyForValue: 'id',
+    retrievedPropertyForText: '_identifier',
+    init: function (model) {
+      this.model = model;
+      this.collection = new Backbone.Collection();
+      this.$.renderCombo.setCollection(this.collection);
+      var i = 0;
+      for (i; i < OB.MobileApp.model.get('priceModificationReasons').length; i++) {
+        model = new Backbone.Model(OB.MobileApp.model.get('priceModificationReasons')[i]);
+        this.collection.add(model);
+      }
+    },
+    loadValue: function (inSender, inEvent) {
+      if (inEvent.modelProperty === this.modelProperty) {
+        if (inEvent.model.get('oBPOSPriceModificationReason')) {
+          var i;
+          for (i = 0; i < OB.MobileApp.model.get('priceModificationReasons').length; i++) {
+            if (inEvent.model.get('oBPOSPriceModificationReason') === OB.MobileApp.model.get('priceModificationReasons')[i].id) {
+              this.$.renderCombo.setSelected(i);
+              break;
+            }
+          }
+        } else {
+          this.$.renderCombo.setSelected(0);
+        }
+      }
+    },
+    applyValue: function (inSender, inEvent) {
+      inSender.set(this.modelProperty, this.$.renderCombo.getValue());
+      return true;
+    },
+    showProperty: function (orderline, callback) {
+      if (orderline.get('oBPOSPriceModificationReason') && OB.MobileApp.model.get('priceModificationReasons').length > 0) {
+        callback(true);
+      } else {
+        callback(false);
+      }
+    }
   }]
 });
 

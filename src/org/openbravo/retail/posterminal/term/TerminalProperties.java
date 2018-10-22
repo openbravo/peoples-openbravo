@@ -45,6 +45,8 @@ public class TerminalProperties extends ModelExtension {
         "partnerAddress"));
     list.add(new HQLProperty("pos.organization.obposLayawayAnonymousbp",
         "layaway_anonymouscustomer"));
+    list.add(new HQLProperty("pos.organization.obposQuotationAnonymousbp",
+        "quotation_anonymouscustomer"));
     list.add(new HQLProperty("pos.organization.id", "organization"));
     list.add(new HQLProperty("pos.organization.name", getIdentifierAlias("organization")));
     list.add(new HQLProperty("pos.client.id", "client"));
@@ -71,6 +73,7 @@ public class TerminalProperties extends ModelExtension {
         "quotationDocNoPrefix"));
     list.add(new HQLProperty("pos.returndocnoPrefix", "returnDocNoPrefix"));
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
+    list.add(new HQLProperty("pos.obposTerminaltype.multiChange", "multiChange"));
     list.add(new HQLProperty("pos.organization.obposCountDiffLimit", "organizationCountDiffLimit"));
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));
     list.add(new HQLProperty("postype", "terminalType"));
