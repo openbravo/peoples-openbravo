@@ -54,7 +54,7 @@ public class OBContextTest extends OBBaseTest {
     OBContext originalCtx = OBContext.getOBContext();
     Path serializedPath = serializeContext(originalCtx);
     OBContext deserialized = deserializeContext(serializedPath);
-    assertThat("Readable clients are kept", Arrays.asList(originalCtx.getReadableClients()),
+    assertThat("Readable clients are kept", Arrays.asList(deserialized.getReadableClients()),
         containsInAnyOrder(originalCtx.getReadableClients()));
   }
 
@@ -65,9 +65,9 @@ public class OBContextTest extends OBBaseTest {
     Path serializedPath = serializeContext(originalCtx);
     OBContext deserialized = deserializeContext(serializedPath);
     assertThat("Readable organizations are kept",
-        Arrays.asList(originalCtx.getReadableOrganizations()),
+        Arrays.asList(deserialized.getReadableOrganizations()),
         containsInAnyOrder(originalCtx.getReadableOrganizations()));
-    assertThat("Writable organizations are kept", originalCtx.getWritableOrganizations(),
+    assertThat("Writable organizations are kept", deserialized.getWritableOrganizations(),
         containsInAnyOrder(originalCtx.getWritableOrganizations().toArray()));
   }
 
