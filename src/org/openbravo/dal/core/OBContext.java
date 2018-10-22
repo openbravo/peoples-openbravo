@@ -20,6 +20,7 @@
 package org.openbravo.dal.core;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -789,7 +790,7 @@ public class OBContext implements OBNotSingleton, Serializable {
     out.defaultWriteObject();
   }
 
-  private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     if (log.isTraceEnabled()) {
       log.trace("Read context: " + this);
