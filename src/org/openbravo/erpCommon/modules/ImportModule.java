@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -101,7 +102,8 @@ import org.w3c.dom.Node;
  * InputStream or as a String file name)
  * 
  */
-public class ImportModule {
+@SuppressWarnings("serial")
+public class ImportModule implements Serializable {
   static ConnectionProvider pool;
   static Logger log4j = Logger.getLogger(ImportModule.class);
   private String obDir;
@@ -1436,7 +1438,7 @@ public class ImportModule {
 
           installModule(ba, localModuleID, dModulesToInstall, dDependencies, dDBprefix);
         } // If install remotely it is no necessary to install the .obx
-        // because it will be get from CR
+          // because it will be get from CR
         obxInputStream.closeEntry();
       } else {
         // Unzip the contents

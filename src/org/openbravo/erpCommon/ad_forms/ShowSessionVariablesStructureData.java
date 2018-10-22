@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * All portions are Copyright (C) 2001-2018 Openbravo S.L.U.
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
+@SuppressWarnings("serial")
 class ShowSessionVariablesStructureData implements FieldProvider {
   static Logger log4j = Logger.getLogger(ShowSessionVariablesStructureData.class);
   boolean isPreference = false;

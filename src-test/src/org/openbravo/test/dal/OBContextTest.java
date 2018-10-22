@@ -19,8 +19,21 @@
 
 package org.openbravo.test.dal;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
@@ -173,6 +186,53 @@ public class OBContextTest extends OBBaseTest {
     OBContext.restorePreviousMode();
     OBContext.restorePreviousMode();
     OBContext.restorePreviousMode();
+  }
+
+  @Test
+  public void basicSerializationShouldWork() throws IOException, ClassNotFoundException {
+    OBContext originalCtx = OBContext.getOBContext();
+    Path serializedPath = serializeContext(originalCtx);
+    OBContext deserialized = deserializeContext(serializedPath);
+    assertThat("Role ID is kept", deserialized.getRole().getId(), is(originalCtx.getRole().getId()));
+  }
+
+  @Test
+  public void clientVisibilityIsCorrectAfterDeserialization() throws IOException,
+      ClassNotFoundException {
+    OBContext originalCtx = OBContext.getOBContext();
+    Path serializedPath = serializeContext(originalCtx);
+    OBContext deserialized = deserializeContext(serializedPath);
+    assertThat("Readable clients are kept", Arrays.asList(deserialized.getReadableClients()),
+        containsInAnyOrder(originalCtx.getReadableClients()));
+  }
+
+  @Test
+  public void organizationVisibilityIsCorrectAfterDeserialization() throws IOException,
+      ClassNotFoundException {
+    OBContext originalCtx = OBContext.getOBContext();
+    Path serializedPath = serializeContext(originalCtx);
+    OBContext deserialized = deserializeContext(serializedPath);
+    assertThat("Readable organizations are kept",
+        Arrays.asList(deserialized.getReadableOrganizations()),
+        containsInAnyOrder(originalCtx.getReadableOrganizations()));
+    assertThat("Writable organizations are kept", deserialized.getWritableOrganizations(),
+        containsInAnyOrder(originalCtx.getWritableOrganizations().toArray()));
+  }
+
+  private Path serializeContext(OBContext ctx) throws IOException {
+    Path serializedPath = Files.createTempFile("serialized", ".tmp");
+    try (OutputStream o = Files.newOutputStream(serializedPath);
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(o)) {
+      objectOutputStream.writeObject(ctx);
+    }
+    return serializedPath;
+  }
+
+  private OBContext deserializeContext(Path path) throws IOException, ClassNotFoundException {
+    try (InputStream is = Files.newInputStream(path, StandardOpenOption.DELETE_ON_CLOSE);
+        ObjectInputStream ois = new ObjectInputStream(is)) {
+      return (OBContext) ois.readObject();
+    }
   }
 
   // the scenario:

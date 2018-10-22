@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008-2010 Openbravo S.L.U.
+ * Copyright (C) 2008-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -24,6 +24,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 
+@SuppressWarnings("serial")
 class InterfaceModuleInfoData implements FieldProvider {
   static Logger log4j = Logger.getLogger(InterfaceModuleInfoData.class);
   public String moduleid;
