@@ -1360,8 +1360,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     // When a replaced ticket or a new one is synchronized without any payment, a new payment
     // schedule detail must be created with the remaining amount
-    if ((!jsonorder.optBoolean("isLayaway", false) && !jsonorder.optBoolean("isPaid", false))
-        || doCancelAndReplace || doCancelLayaway) {
+    if (!jsonorder.optBoolean("isLayaway", false) && !jsonorder.optBoolean("isPaid", false)) {
       final FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
           FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
