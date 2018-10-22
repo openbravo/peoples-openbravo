@@ -49,7 +49,7 @@ public class OBContextTest extends OBBaseTest {
   }
 
   @Test
-  public void clientVisisilityInCorrectAfterDeserialization() throws IOException,
+  public void clientVisibilityIsCorrectAfterDeserialization() throws IOException,
       ClassNotFoundException {
     OBContext originalCtx = OBContext.getOBContext();
     Path serializedPath = serializeContext(originalCtx);
@@ -59,7 +59,7 @@ public class OBContextTest extends OBBaseTest {
   }
 
   @Test
-  public void organizationVisisilityInCorrectAfterDeserialization() throws IOException,
+  public void organizationVisibilityIsCorrectAfterDeserialization() throws IOException,
       ClassNotFoundException {
     OBContext originalCtx = OBContext.getOBContext();
     Path serializedPath = serializeContext(originalCtx);
