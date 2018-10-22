@@ -52,6 +52,7 @@ import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.JsonConstants;
 
 public class Invoice_Utils {
@@ -604,19 +605,8 @@ public class Invoice_Utils {
           }
         } else {
           // Create new paymentScheduleDetail:
-          final FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
-              FIN_PaymentScheduleDetail.class);
-          paymentScheduleDetail.setNewOBObject(true);
-          paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-          paymentScheduleDetail.setPaymentDetails(psd.getPaymentDetails());
-          paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
-          paymentScheduleDetail.setAmount(amtToDistribute);
-          paymentScheduleDetail.setBusinessPartner(paymentSchedule.getOrder().getBusinessPartner());
-          OBDal.getInstance().save(paymentScheduleDetail);
-          paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
-              paymentScheduleDetail);
-          paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-              paymentScheduleDetail);
+          POSUtils.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
+              psd.getPaymentDetails(), paymentSchedule.getOrder().getBusinessPartner());
 
           // Adjust the original payment schedule detail to match the new amount
           psd.setAmount(psd.getAmount().subtract(amtToDistribute));
@@ -627,19 +617,8 @@ public class Invoice_Utils {
             amtToDistribute = BigDecimal.ZERO;
           } else {
             // Create new paymentScheduleDetail for the reverse payment:
-            final FIN_PaymentScheduleDetail newReversalPSD = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
-            newReversalPSD.setNewOBObject(true);
-            newReversalPSD.setOrderPaymentSchedule(paymentSchedule);
-            newReversalPSD.setPaymentDetails(psd.getPaymentDetails());
-            newReversalPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-            newReversalPSD.setAmount(amtToDistribute);
-            newReversalPSD.setBusinessPartner(paymentSchedule.getOrder().getBusinessPartner());
-            OBDal.getInstance().save(paymentScheduleDetail);
-            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
-                newReversalPSD);
-            paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-                newReversalPSD);
+            POSUtils.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
+                psd.getPaymentDetails(), paymentSchedule.getOrder().getBusinessPartner());
 
             // Adjust the original payment schedule detail to match the new amount
             reversalPSD.setAmount(reversalPSD.getAmount().add(amtToDistribute));
@@ -651,7 +630,32 @@ public class Invoice_Utils {
       // If the invoice haven't been completely paid, add the remaining payment
       final BigDecimal remainingAmt = gross.subtract(paymentsAmt);
       if (remainingAmt.compareTo(BigDecimal.ZERO) == 1) {
-        assignRemainingAmount(order, paymentSchedule, paymentScheduleInvoice, remainingAmt);
+        final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
+            .createCriteria(FIN_PaymentScheduleDetail.class);
+        remainingPSDCriteria.add(Restrictions.eq(
+            FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+        remainingPSDCriteria.add(Restrictions
+            .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
+        remainingPSDCriteria.add(Restrictions
+            .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+        remainingPSDCriteria.setMaxResults(1);
+        final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
+            .uniqueResult();
+        if (remainingPSD != null) {
+          if (remainingPSD.getAmount().compareTo(remainingAmt) == 0) {
+            remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
+            paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
+                remainingPSD);
+          } else {
+            // The PSD must be splitted in two PSD, one that belongs to the invoice with the
+            // remaining amount for the invoice and the other only to the order with the remaining
+            // amount for the order that not belongs to an invoice
+            remainingPSD.setAmount(remainingPSD.getAmount().subtract(remainingAmt));
+            POSUtils.createPSD(remainingAmt, paymentSchedule, paymentScheduleInvoice,
+                order.getBusinessPartner());
+          }
+          OBDal.getInstance().save(remainingPSD);
+        }
       }
 
       if (paidAmt.compareTo(invoice.getGrandTotalAmount()) == 0) {
@@ -790,46 +794,6 @@ public class Invoice_Utils {
       }
     }
     return calculatedDueDate.getTime();
-  }
-
-  private void assignRemainingAmount(Order order, FIN_PaymentSchedule paymentSchedule,
-      FIN_PaymentSchedule paymentScheduleInvoice, final BigDecimal remainingAmt) {
-    final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
-        .createCriteria(FIN_PaymentScheduleDetail.class);
-    remainingPSDCriteria.add(Restrictions.eq(
-        FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-    remainingPSDCriteria.add(Restrictions
-        .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
-    remainingPSDCriteria
-        .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-    remainingPSDCriteria.setMaxResults(1);
-    final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
-        .uniqueResult();
-    if (remainingPSD == null) {
-      return;
-    }
-    if (remainingPSD.getAmount().compareTo(remainingAmt) == 0) {
-      remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-      paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-          remainingPSD);
-    } else {
-      // The PSD must be splitted in two PSD, one that belongs to the invoice with the remaining
-      // amount for the invoice and the other only to the order with the remaining amount for
-      // the order that not belongs to an invoice
-      remainingPSD.setAmount(remainingPSD.getAmount().subtract(remainingAmt));
-      final FIN_PaymentScheduleDetail newRemainingPSD = OBProvider.getInstance().get(
-          FIN_PaymentScheduleDetail.class);
-      newRemainingPSD.setNewOBObject(true);
-      newRemainingPSD.setOrderPaymentSchedule(paymentSchedule);
-      newRemainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-      newRemainingPSD.setAmount(remainingAmt);
-      newRemainingPSD.setBusinessPartner(order.getBusinessPartner());
-      paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newRemainingPSD);
-      OBDal.getInstance().save(newRemainingPSD);
-      paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-          newRemainingPSD);
-    }
-    OBDal.getInstance().save(remainingPSD);
   }
 
   private boolean isPaidStatus(FIN_Payment payment) {
