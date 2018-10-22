@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,8 @@ import org.openbravo.data.FieldProvider;
  * 
  * @author mtaal
  */
+
+@SuppressWarnings("serial")
 public class SimpleFieldProvider implements FieldProvider {
 
   private final Map<String, String> properties = new HashMap<String, String>();

@@ -450,6 +450,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   private List<String> getTransactionAllowedOrgs(List<String> orgIds) {
+    initialize();
     List<String> trxAllowedOrgs = new ArrayList<>(orgIds.size());
     for (String orgId : orgIds) {
       OrgNode node = orgNodes.get(orgId);

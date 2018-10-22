@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2017 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2018 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -17,6 +17,7 @@ package org.openbravo.erpCommon.utility.reporting;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -30,7 +31,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class Report {
+@SuppressWarnings("serial")
+public class Report implements Serializable {
   public String getOrgId() {
     return orgId;
   }
