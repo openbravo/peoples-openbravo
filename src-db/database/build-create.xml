@@ -196,7 +196,7 @@ create.database: creates the database from scratch.
   </target>
 
   <target name="create.database.all">
-    <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" dropfirst="false" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.db}/../.." modulesDir="${base.modules}/" dirFilter="*/src-db/database/model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata" systemUser="${bbdd.systemUser}" systemPassword="${bbdd.systemPassword}">
+    <createdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" dropfirst="false" failonerror="false" basedir="${base.db}/../.." modulesDir="${base.modules}/" dirFilter="*/src-db/database/model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata" systemUser="${bbdd.systemUser}" systemPassword="${bbdd.systemPassword}">
     </createdatabase>
     <antcall target="database.poststructure.${bbdd.rdbms}" />
   </target>

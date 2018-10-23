@@ -66,12 +66,12 @@ export.database.structure: Exports the database structure in the xml's files.
   </taskdef>
 
   <target name="export.config.script">
-    <exportconfigscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" filter="com.openbravo.db.OpenbravoMetadataFilter" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" moduledir="${base.modules}" model="model" coreData="${base.db}/sourcedata" verbosity="${bbdd.verbosity}" industryTemplate="${industryTemplate}" />
+    <exportconfigscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" filter="com.openbravo.db.OpenbravoMetadataFilter" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" moduledir="${base.modules}" model="model" coreData="${base.db}/sourcedata" industryTemplate="${industryTemplate}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
 
   <target name="update.database">
-    <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" forcedRecreation="${forcedRecreation}" executeModuleScripts="${execute.modulescripts}" threads="${max.threads}" systemUser="${bbdd.systemUser}" systemPassword="${bbdd.systemPassword}"/>
+    <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" forcedRecreation="${forcedRecreation}" executeModuleScripts="${execute.modulescripts}" threads="${max.threads}" systemUser="${bbdd.systemUser}" systemPassword="${bbdd.systemPassword}"/>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
@@ -89,7 +89,6 @@ export.database.structure: Exports the database structure in the xml's files.
       <arg value="sourcedata"/>
       <arg value="${bbdd.object}"/>
       <arg value="false"/>
-      <arg value="${bbdd.verbosity}"/>
       <arg value="${base.modules}/"/>
       <arg value="*/src-db/database/model"/>
       <arg value="${base.modules}/"/>
@@ -111,18 +110,18 @@ export.database.structure: Exports the database structure in the xml's files.
   </target>
 
   <target name="create.database.script">
-    <createscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" output="${bbdd.outputscript}" dropfirst="false" verbosity="${bbdd.verbosity}" />
+    <createscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" object="${bbdd.object}" output="${bbdd.outputscript}" dropfirst="false" />
   </target>
 
   <target name="update.database.script">
-    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" verbosity="${bbdd.verbosity}"  basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
+    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
   </target>
 
   <target name="export.database.structure">
       <taskdef name="exportdatabase" classname="org.openbravo.ddlutils.task.ExportDatabase">
         <classpath refid="runtime-classpath" />
       </taskdef>
-      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" verbosity="${bbdd.verbosity}" output="sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" checkTranslationConsistency="${checkTranslationConsistency}" threads="${max.threads}"/>
+      <exportdatabase driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" moduledir="${base.modules}" output="sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" validateModel="${validate.model}" testAPI="${isMinorVersion}" datasetList="AD,ADRD" rd="${rd}" checkTranslationConsistency="${checkTranslationConsistency}" threads="${max.threads}"/>
       <antcall target="update.dbupdate.timestamp" />
   </target>
 
@@ -131,14 +130,14 @@ export.database.structure: Exports the database structure in the xml's files.
     <taskdef name="exportsampledata" classname="org.openbravo.ddlutils.task.ExportSampledata">
       <classpath refid="runtime-classpath" />
     </taskdef>
-    <exportsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" verbosity="${bbdd.verbosity}" basedir="${basedir}/../../" client="${client}" module="${module}" rdbms="${bbdd.rdbms}" exportFormat="${exportFormat}" threads="${max.threads}"/>
+    <exportsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" basedir="${basedir}/../../" client="${client}" module="${module}" rdbms="${bbdd.rdbms}" exportFormat="${exportFormat}" threads="${max.threads}"/>
   </target>
 
   <target name="import.sample.data">
     <taskdef name="importsampledata" classname="org.openbravo.ddlutils.task.ImportSampledata">
       <classpath refid="runtime-classpath" />
     </taskdef>
-    <importsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" verbosity="${bbdd.verbosity}" basedir="${basedir}/../../" executeModuleScripts="${execute.modulescripts}" rdbms="${bbdd.rdbms}" threads="${max.threads}"/>
+    <importsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" basedir="${basedir}/../../" executeModuleScripts="${execute.modulescripts}" rdbms="${bbdd.rdbms}" threads="${max.threads}"/>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
   </target>
 

@@ -119,7 +119,6 @@ tomcat.manager.password=admin
 ##########################
 
 bbdd.outputscript=databasescript.sql
-bbdd.verbosity=INFO
 
 # use js/css minimization (in local-context and war-file)
 minimizeJSandCSS=yes

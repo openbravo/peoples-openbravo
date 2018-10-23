@@ -610,7 +610,6 @@ export.database: exports database structure and data to xml files.
                   password="${bbdd.password}" 
                   stableDBdir="${stableDBdir}"
                   testDBdir="${basedir}"
-                  verbosity="${bbdd.verbosity}"
                   modules="${modules}"
     />    
   </target>

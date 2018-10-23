@@ -1438,9 +1438,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       while ((line = br.readLine()) != null) {
         // Searching bbdd.xxx and add/delete "#" symbol.
         if (line.indexOf("bbdd.") == 0) {
-          // Not considering the following options: bbdd.outputscript and bbdd.verbosity because are
-          // always.
-          if (!(line.contains("bbdd.verbosity") || line.contains("bbdd.outputscript"))) {
+          // Not considering bbdd.outputscript because it is always needed
+          if (!line.contains("bbdd.outputscript")) {
             line = line.replace(line, "# " + line);
           }
         } else if (line.indexOf("bbdd.") == 2) {
