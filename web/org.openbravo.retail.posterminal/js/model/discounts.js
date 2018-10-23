@@ -226,12 +226,11 @@
         line.unset('noDiscountCandidates', {
           silent: true
         });
-        if (line.get('qty') > 0) {
+        if (line.get('qty') > 0 || (line.get('qty') < 0 && promotion.rule.get('obdiscAllowinnegativelines'))) {
           rule.addManual(receipt, line, promotion);
         } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions'));
         }
-
       });
 
       receipt.setUndo('AddDiscount', {
