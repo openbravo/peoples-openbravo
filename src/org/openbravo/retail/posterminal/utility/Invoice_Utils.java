@@ -710,7 +710,6 @@ public class Invoice_Utils {
     }
 
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-    jsonResponse.put("paymentSchedule", paymentSchedule);
     jsonResponse.put("paymentScheduleInvoice", paymentScheduleInvoice);
 
     return jsonResponse;
