@@ -113,7 +113,7 @@ enyo.kind({
       } else if (!_.isNull(pending) && pending) {
         this.calculateChangeReset();
         this.setTotalPending(OB.DEC.mul(pending, payment.mulrate, payment.obposPosprecision), payment.symbol, payment.currencySymbolAtTheRight);
-        this.setPrepaymentTotalPending(OB.DEC.mul(this.model.getPrepaymentAmount() + pending - this.model.getTotal(), payment.mulrate, payment.obposPosprecision), payment.symbol, payment.currencySymbolAtTheRight);
+        this.setPrepaymentTotalPending(OB.DEC.mul(OB.DEC.sub(OB.DEC.add(this.model.getPrepaymentAmount(), pending), this.model.getTotal()), payment.mulrate, payment.obposPosprecision), payment.symbol, payment.currencySymbolAtTheRight);
       }
       if (paymentstatus && inEvent.value.status !== "" && !this.receipt.isCalculateReceiptLocked && !this.receipt.isCalculateGrossLocked) {
         this.checkValidPayments(paymentstatus, payment, hasChange);
@@ -630,7 +630,7 @@ enyo.kind({
     }
 
     if ((OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && this.receipt.get('obposPrepaymentlimitamt') < this.receipt.get('gross') && pendingPrepayment > 0 && receiptHasPrepaymentAmount)) {
-      this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
+      this.setPrepaymentTotalPending(OB.DEC.mul(pendingPrepayment, rate, precision), symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();
@@ -770,7 +770,7 @@ enyo.kind({
       this.$.totalpending.applyStyle('font-size', '24px');
     }
     if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && multiOrders.get('amountToLayaway') === 0 && pendingPrepayment > 0 && pendingPrepayment !== OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment'))) {
-      this.setPrepaymentTotalPending(pendingPrepayment, rate, symbol, symbolAtRight);
+      this.setPrepaymentTotalPending(OB.DEC.mul(pendingPrepayment, rate, precision), symbol, symbolAtRight);
       this.$.prepaymenttotalpending.show();
       this.$.prepaymenttotalpendinglbl.show();
       this.$.prepaymentexactlbl.hide();

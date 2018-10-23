@@ -522,7 +522,7 @@
                   currentReceipt.set('hasbeenpaid', 'Y');
                   OB.Dal.saveInTransaction(tx, currentReceipt, function () {
                     OB.Dal.getInTransaction(tx, OB.Model.Order, receiptId, function (savedReceipt) {
-                      if (!_.isUndefined(savedReceipt.get('amountToLayaway')) && !_.isNull(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
+                      if (!OB.UTIL.isNullOrUndefined(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
                         me.hasInvLayaways = true;
                       }
                       recursiveSaveFn(receiptIndex + 1);
