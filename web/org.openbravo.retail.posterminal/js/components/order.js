@@ -1342,22 +1342,23 @@ enyo.kind({
             minimumSelected = Infinity,
             maximumSelected = 0;
         if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
-          _.each(line.get('relatedLines'), function (relatedLine) {
-            _.each(this.attributes.lines.models, function (line2) {
-              if ((line2.id === relatedLine.orderlineId) && line2.get('qty') > 0) {
-                var discountAmount = _.reduce(line2.get('promotions'), function (memo, promo) {
-                  return memo + promo.amt;
-                }, 0),
-                    currentLinePrice = (line2.get('gross') - discountAmount) / line2.get('qty');
-                totalAmountSelected += line2.get('gross') - discountAmount;
-                if (currentLinePrice < minimumSelected) {
-                  minimumSelected = currentLinePrice;
-                }
-                if (currentLinePrice > maximumSelected) {
-                  maximumSelected = currentLinePrice;
-                }
+          _.each(line.get('relatedLines'), function (line2) {
+            if (!line2.deferred) {
+              line2 = this.attributes.lines.get(line2.orderlineId).attributes;
+            }
+            if (line2.qty > 0) {
+              var discountAmount = _.reduce(line2.promotions, function (memo, promo) {
+                return memo + promo.amt;
+              }, 0),
+                  currentLinePrice = OB.DEC.sub(line2.gross, OB.DEC.div(discountAmount, line2.qty));
+              totalAmountSelected = OB.DEC.add(totalAmountSelected, OB.DEC.sub(line2.gross, discountAmount));
+              if (currentLinePrice < minimumSelected) {
+                minimumSelected = currentLinePrice;
               }
-            }, this);
+              if (currentLinePrice > maximumSelected) {
+                maximumSelected = currentLinePrice;
+              }
+            }
           }, this);
         }
         uniqueQuantityServiceToBeDeleted = line.get('product').get('quantityRule') === 'UQ' && ((line.has('serviceTrancheMaximum') && totalAmountSelected > line.get('serviceTrancheMaximum')) || (line.has('serviceTrancheMinimum') && totalAmountSelected < line.get('serviceTrancheMinimum')));
