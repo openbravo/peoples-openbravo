@@ -113,7 +113,7 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
 
   @Test
   public void whenStatementFailsStackTraceIsLoggedHavingDebugLogLevel() throws Exception {
-    Logger sqlcLogger = LogManager.getLogger();
+    Logger sqlcLogger = LogManager.getLogger(ErrorTextParserTestData.class);
     Level originalLogLevel = sqlcLogger.getLevel();
 
     try {
@@ -132,7 +132,7 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
   }
 
   private void setLoggerLevel(Logger logger, Level level) {
-    LoggerContext context = LoggerContext.getContext();
+    LoggerContext context = LoggerContext.getContext(false);
     Configuration config = context.getConfiguration();
     LoggerConfig loggerConfig = config.getLoggerConfig(logger.getName());
     loggerConfig.setLevel(level);
