@@ -1279,6 +1279,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     JSONArray payments = jsonorder.getJSONArray("payments");
 
+    final BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
+    if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      return jsonResponse;
+    }
+
     BigDecimal paymentAmt;
     if (jsonorder.has("paymentWithSign")) {
       paymentAmt = BigDecimal.valueOf(jsonorder.getDouble("paymentWithSign"));
@@ -1288,12 +1294,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         paymentAmt = paymentAmt.add(BigDecimal.valueOf(payments.getJSONObject(i)
             .getDouble("amount")));
       }
-    }
-    final BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
-
-    if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      return jsonResponse;
     }
 
     // Create a unique payment schedule for all payments
