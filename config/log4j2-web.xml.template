@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="warn">
   <Properties>
-    <Property name="catalina.base">${env:CATALINA_BASE}</Property>
+    <Property name="baseDir">${env:CATALINA_BASE}/logs</Property>
   </Properties>
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l{1.}-- %m%n"/>
     </Console>
-    <RollingFile name="RollingFile" fileName="${catalina.base}/logs/openbravo.log"
-      filePattern="${catalina.base}/logs/openbravo-%d{yyyyMMdd}-%i.log.gz">
+    <RollingFile name="RollingFile" fileName="${baseDir}/openbravo.log"
+                 filePattern="${baseDir}/openbravo-%d{yyyyMMdd}-%i.log.gz">
       <PatternLayout pattern="%d{ISO8601} [%t] %-5p %c - %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy />
-        <SizeBasedTriggeringPolicy size="10 MB" />
+        <SizeBasedTriggeringPolicy size="1GB" />
       </Policies>
+      <DefaultRolloverStrategy>
+        <Delete basePath="${baseDir}">
+          <IfLastModified age="7d" />
+        </Delete>
+      </DefaultRolloverStrategy>
     </RollingFile>
   </Appenders>
   <Loggers>
