@@ -4310,9 +4310,9 @@
                       if (OB.DEC.compare(line.getQty()) === 1 && line.getDeliveredQuantity() !== line.getQty()) {
                         var canceledQty = line.getDeliveredQuantity() - line.getQty();
                         _.each(line.get('promotions'), function (promotion) {
-                          promotion.amt = OB.DEC.mul(OB.DEC.mul(promotion.amt, (OB.DEC.abs(canceledQty) / line.getQty())), -1);
-                          promotion.actualAmt = OB.DEC.mul(OB.DEC.mul(promotion.actualAmt, (OB.DEC.abs(canceledQty) / line.getQty())), -1);
-                          promotion.displayedTotalAmount = OB.DEC.mul(OB.DEC.mul(promotion.displayedTotalAmount, (OB.DEC.abs(canceledQty) / line.getQty())), -1);
+                          promotion.amt = OB.DEC.mul(OB.DEC.mul(promotion.amt, OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())), -1);
+                          promotion.actualAmt = OB.DEC.mul(OB.DEC.mul(promotion.actualAmt, OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())), -1);
+                          promotion.displayedTotalAmount = OB.DEC.mul(OB.DEC.mul(promotion.displayedTotalAmount, OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())), -1);
                         });
                         line.set('canceledLine', line.get('id'));
                         var newId = OB.UTIL.get_UUID();
