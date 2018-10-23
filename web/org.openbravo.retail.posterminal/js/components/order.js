@@ -708,7 +708,7 @@ enyo.kind({
 
       // Set the 'New receipt'/'New quotation' labels when converting to a quotation or receipt
       if (!_.isUndefined(model.changed.isQuotation)) {
-        if (!model.get('isQuotation')) {
+        if (model.get('isQuotation')) {
           this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'));
         } else {
           this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
