@@ -1279,8 +1279,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     JSONArray payments = jsonorder.getJSONArray("payments");
 
-    // Create a unique payment schedule for all payments
-    final BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("paymentWithSign", 0));
+    BigDecimal paymentAmt;
+    if (jsonorder.has("paymentWithSign")) {
+      paymentAmt = BigDecimal.valueOf(jsonorder.getDouble("paymentWithSign"));
+    } else {
+      paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
+      for (int i = 0; i < payments.length(); i++) {
+        paymentAmt = paymentAmt.add(BigDecimal.valueOf(payments.getJSONObject(i)
+            .getDouble("amount")));
+      }
+    }
     final BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
 
     if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
@@ -1288,6 +1296,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       return jsonResponse;
     }
 
+    // Create a unique payment schedule for all payments
     FIN_PaymentSchedule paymentSchedule;
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
