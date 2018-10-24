@@ -564,21 +564,17 @@ public class Invoice_Utils {
         final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
             .uniqueResult();
         if (remainingPSD != null) {
-          if (remainingPSD.getAmount().compareTo(remainingAmt) == 0) {
-            remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-            paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-                remainingPSD);
-          } else {
+          if (remainingPSD.getAmount().compareTo(remainingAmt) != 0) {
             // The PSD must be splitted in two PSD, one that belongs to the invoice with the
             // remaining amount for the invoice and the other only to the order with the remaining
             // amount for the order that not belongs to an invoice
             POSUtils.createPSD(remainingPSD.getAmount().subtract(remainingAmt), paymentSchedule,
                 null, order.getBusinessPartner());
             remainingPSD.setAmount(remainingAmt);
-            remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-            paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-                remainingPSD);
           }
+          remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
+          paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
+              remainingPSD);
           OBDal.getInstance().save(remainingPSD);
 
           // There's something remaining to pay, so is necessary to check the payment terms. In case
