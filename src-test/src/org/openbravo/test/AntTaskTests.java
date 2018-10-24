@@ -128,7 +128,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     EntityAccessTest.class, //
     WritableReadableOrganizationClientTest.class, //
     OBContextCollectionsTest.class, //
-    PasswordStrengthCheckerTest.class,
+    PasswordStrengthCheckerTest.class, //
 
     // system
     SystemServiceTest.class, //

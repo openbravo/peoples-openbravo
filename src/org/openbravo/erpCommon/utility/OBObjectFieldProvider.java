@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,7 @@ import org.openbravo.data.FieldProvider;
  * An implementation of the {@link FieldProviderFactory} which can handle Openbravo business
  * objects.
  */
+@SuppressWarnings("serial")
 public class OBObjectFieldProvider implements FieldProvider, OBNotSingleton {
 
   private BaseOBObject obObject;

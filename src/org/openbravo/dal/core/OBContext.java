@@ -20,8 +20,10 @@
 package org.openbravo.dal.core;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -73,32 +75,61 @@ import org.openbravo.model.common.enterprise.Warehouse;
 
 // Note the getInstance/setInstance and ThreadLocal pattern should be reviewed
 // when using a factory/dependency injection approach.
-public class OBContext implements OBNotSingleton {
+public class OBContext implements OBNotSingleton, Serializable {
+  private static final long serialVersionUID = 1L;
   private static final Logger log = Logger.getLogger(OBContext.class);
 
-  // private static final String AD_USERID = "#AD_USER_ID";
-  // TODO: maybe use authenticated user
-  private static final String AUTHENTICATED_USER = "#AD_User_ID";
-  private static final String ROLE = "#AD_Role_ID";
-  private static final String CLIENT = "#AD_Client_ID";
-  private static final String ORG = "#AD_Org_ID";
+  public static final String CONTEXT_PARAM = "#OBContext";
+
+  private String userID;
+  private String roleID;
+  private String clientID;
+  private String orgID;
+  private String warehouseID;
+  private String langID;
+
+  private transient Client currentClient;
+  private transient Organization currentOrganization;
+  private transient Role role;
+  private transient User user;
+  private transient Language language;
+  private transient boolean translationInstalled;
+  private transient Warehouse warehouse;
+  private transient List<String> organizationList;
+  private transient List<String> deactivatedOrganizationList;
+  private transient String[] readableOrganizations;
+  private transient String[] readableClients;
+  private transient Set<String> writableOrganizations;
+  private transient Set<String> deactivatedOrganizations;
+  private transient String userLevel;
+  private transient Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
+  private transient Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
+  private transient EntityAccessChecker entityAccessChecker;
+  private transient boolean isAdministrator;
+  private transient boolean isInitialized = false;
+  private transient boolean isRTL = false;
+  private transient boolean isPortalRole = false;
+  private transient boolean isWebServiceEnabled = false;
+  private transient Set<String> additionalWritableOrganizations;
+  private transient boolean newUI = false;
+  private transient boolean checkAccessLevel = true;
 
   // set this to a higher value to enable admin mode tracing
   private static int ADMIN_TRACE_SIZE = 0;
 
-  private static ThreadLocal<OBContext> instance = new ThreadLocal<OBContext>();
-
-  private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<OBContext>();
-
-  private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
-  private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<List<String>>();
-
-  private static ThreadLocal<Stack<OBAdminMode>> crossOrgAdminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
-  private static ThreadLocal<List<String>> crossOrgAdminModeTrace = new ThreadLocal<List<String>>();
-
-  public static final String CONTEXT_PARAM = "#OBContext";
+  private static ThreadLocal<OBContext> instance = new ThreadLocal<>();
+  private static ThreadLocal<OBContext> adminModeSet = new ThreadLocal<>();
+  private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<>();
+  private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<>();
+  private static ThreadLocal<Stack<OBAdminMode>> crossOrgAdminModeStack = new ThreadLocal<>();
+  private static ThreadLocal<List<String>> crossOrgAdminModeTrace = new ThreadLocal<>();
 
   private static OBContext adminContext = null;
+
+  private static final String AUTHENTICATED_USER = "#AD_User_ID";
+  private static final String ROLE = "#AD_Role_ID";
+  private static final String CLIENT = "#AD_Client_ID";
+  private static final String ORG = "#AD_Org_ID";
 
   private enum AdminType {
     ADMIN_MODE("setAdminMode", "restorePreviousMode", adminModeStack, adminModeTrace), //
@@ -425,7 +456,9 @@ public class OBContext implements OBNotSingleton {
       context.setNewUI("true".equals(newUIValue));
     }
 
-    session.setAttribute(CONTEXT_PARAM, context);
+    if (session.getAttribute(CONTEXT_PARAM) != context) {
+      session.setAttribute(CONTEXT_PARAM, context);
+    }
   }
 
   /**
@@ -537,50 +570,8 @@ public class OBContext implements OBNotSingleton {
    */
   public static OBContext getOBContext() {
     final OBContext localContext = instance.get();
-    if (localContext != null && localContext.isSerialized()) {
-      localContext.initializeFromSerializedState();
-    }
     return localContext;
   }
-
-  private Client currentClient;
-  private Organization currentOrganization;
-  private Role role;
-  private User user;
-  private Language language;
-  private boolean translationInstalled;
-  private Warehouse warehouse;
-  private List<String> organizationList;
-  private List<String> deactivatedOrganizationList;
-  private String[] readableOrganizations;
-  private String[] readableClients;
-  private Set<String> writableOrganizations;
-  private Set<String> deactivatedOrganizations;
-  private String userLevel;
-  private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
-  private Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
-  private EntityAccessChecker entityAccessChecker;
-
-  // the "0" user is the administrator
-  private boolean isAdministrator;
-  private boolean isInitialized = false;
-
-  private boolean isRTL = false;
-
-  private boolean isPortalRole = false;
-
-  private boolean isWebServiceEnabled = false;
-
-  private Set<String> additionalWritableOrganizations = new HashSet<String>();
-
-  // support storing the context in a persistent tomcat session
-  private String serializedUserId;
-  private boolean serialized = false;
-
-  // check whether using new or old UI
-  private boolean newUI = false;
-
-  private boolean checkAccessLevel = true;
 
   public String getUserLevel() {
     return userLevel;
@@ -792,42 +783,19 @@ public class OBContext implements OBNotSingleton {
     }
   }
 
-  // the obcontext is located in the session, in tomcat sessions are
-  // persisted and its content is serialized. The OBContext contains non-
-  // serializable objects (like non-initialized cglib proxies). Therefore
-  // before really serializing the obcontext is cleaned out.
-  // only the serializedUserId is maintained so that the context can be
-  // refreshed after being de-serialized and at the first request
   private void writeObject(ObjectOutputStream out) throws IOException {
-
-    currentClient = null;
-    currentOrganization = null;
-    role = null;
-    user = null;
-    language = null;
-    warehouse = null;
-    organizationList = null;
-    deactivatedOrganizationList = null;
-    readableOrganizations = null;
-    readableClients = null;
-    writableOrganizations = null;
-    deactivatedOrganizations = null;
-    userLevel = null;
-    organizationStructureProviderByClient = null;
-    acctSchemaStructureProviderByClient = null;
-    entityAccessChecker = null;
-
-    isAdministrator = false;
-    isInitialized = false;
-
-    serializedUserId = getUser().getId();
-    serialized = true;
+    if (log.isTraceEnabled()) {
+      log.trace("Write context: " + this);
+    }
     out.defaultWriteObject();
   }
 
-  protected void initializeFromSerializedState() {
-    initialize(serializedUserId);
-    serialized = false;
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    if (log.isTraceEnabled()) {
+      log.trace("Read context: " + this);
+    }
+    initialize(userID, roleID, clientID, orgID, langID, warehouseID);
   }
 
   // sets the context by reading all user information
@@ -849,6 +817,14 @@ public class OBContext implements OBNotSingleton {
   // sets the context by reading all user information
   private boolean initialize(String userId, String roleId, String clientId, String orgId,
       String languageCode, String warehouseId) {
+    userID = userId;
+    roleID = roleId;
+    clientID = clientId;
+    orgID = orgId;
+    langID = languageCode;
+    warehouseID = warehouseId;
+
+    additionalWritableOrganizations = new HashSet<>();
 
     String localClientId = clientId;
     final User u = SessionHandler.getInstance().find(User.class, userId);
@@ -1256,10 +1232,6 @@ public class OBContext implements OBNotSingleton {
     return (String) session.getAttribute(param.toUpperCase());
   }
 
-  public boolean isSerialized() {
-    return serialized;
-  }
-
   public Warehouse getWarehouse() {
     return warehouse;
   }
@@ -1329,6 +1301,12 @@ public class OBContext implements OBNotSingleton {
 
   private void setTranslationInstalled(boolean translationInstalled) {
     this.translationInstalled = translationInstalled;
+  }
+
+  @Override
+  public String toString() {
+    return "[user: " + userID + ", role:" + roleID + ", client:" + clientID + ", org:" + orgID
+        + ", warehouse: " + warehouseID + ", lang:" + langID + "]";
   }
 
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ import java.util.Hashtable;
 
 import org.openbravo.data.FieldProvider;
 
+@SuppressWarnings("serial")
 public class SQLReturnObject implements FieldProvider {
   private Hashtable<String, String> data = new Hashtable<String, String>();
 

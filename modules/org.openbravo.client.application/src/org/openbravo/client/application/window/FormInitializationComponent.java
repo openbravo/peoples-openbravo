@@ -1371,8 +1371,9 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void setSessionValue(String key, Object value) {
-    log.debug("Setting session value. Key: " + key + "  Value:" + value);
-    RequestContext.get().setSessionAttribute(key, value);
+    log.debug("Setting session value. Key: " + key + "  Value:" + value + " - type "
+        + (value != null ? value.getClass() : null));
+    RequestContext.get().setSessionAttribute(key, value != null ? value.toString() : null);
   }
 
   private void setRequestContextParameter(Field field, JSONObject jsonObj) {

@@ -61,6 +61,8 @@ public class TestCostingConstants {
   public static final String ORDERIN_ID = "2C9CEDC0761A41DCB276A5124F8AAA90";
   // Sales Order with documentNo: 50012
   public static final String ORDEROUT_ID = "8B53B7E6CF3B4D8D9BCF3A49EED6FCB4";
+  // Return from customer with documentNo: RFC/2
+  public static final String RETURNFROMCUSTOMER_ID = "C4CD2F1E708B44CB8796521C73D925CB";
   // Purchase Invoice with documentNo: 10000017
   public static final String INVOICEIN_ID = "9D0F6E57E59247F6AB6D063951811F51";
   // Document Sequence with name: DocumentNo_C_Invoice

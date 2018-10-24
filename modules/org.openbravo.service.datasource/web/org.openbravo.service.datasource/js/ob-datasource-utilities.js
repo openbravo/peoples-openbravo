@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2016 Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -183,6 +183,8 @@ isc.OBRestDataSource.addClassProperties({
 });
 
 isc.OBRestDataSource.addProperties({
+  csrfToken: '',
+
   sendDSRequest: function (dsRequest) {
     //TODO: Report an issue to SmartClient - This part is a work around
     var extraProperties = {};
@@ -204,6 +206,34 @@ isc.OBRestDataSource.addProperties({
       }
     }
     this.Super('sendDSRequest', arguments);
+  },
+
+  setCsrfToken: function (token) {
+    this.csrfToken = token;
+  },
+
+  transformRequest: function (dsRequest) {
+    var operationType = dsRequest.operationType;
+
+    if (this.csrfToken && operationType === 'remove') {
+      dsRequest.params.csrfToken = this.csrfToken;
+    }
+
+    //
+    // Request body parameters are generated from an object created in RestDataSource.transformRequest
+    // and there is no way to modify this object to add a new field.
+    // For this reason the resulting string-encoded body from RestDataSource is decoded as JSON
+    // to add the CSRF token and then it is encoded again as a JSON string.
+    //
+    var encodedParams = this.Super('transformRequest', arguments);
+
+    if (this.csrfToken && (operationType === 'add' || operationType === 'update')) {
+      var decodedParams = isc.JSON.decode(encodedParams);
+      decodedParams.csrfToken = this.csrfToken;
+      encodedParams = isc.JSON.encode(decodedParams);
+    }
+
+    return encodedParams;
   },
 
   // always let the dummy criterion be true

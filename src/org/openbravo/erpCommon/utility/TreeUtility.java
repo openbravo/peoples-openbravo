@@ -18,7 +18,9 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +43,7 @@ public class TreeUtility {
   /**
    * Gets Natural tree for the given node
    */
+  @Deprecated
   public Set<String> getNaturalTree(String nodeId, String treeType) {
     initialize(treeType);
     Set<String> result;
@@ -57,6 +60,7 @@ public class TreeUtility {
   /**
    * Gets the Child tree for the given node, including optionally given node
    */
+  @Deprecated
   public Set<String> getChildTree(String nodeId, String treeType, boolean includeNode) {
     initialize(treeType);
     Set<String> childNode = this.getChildNode(nodeId, treeType);
@@ -75,9 +79,41 @@ public class TreeUtility {
     return result;
   }
 
+  public Set<String> getChildTree(String nodeId, String treeType) {
+    Set<String> result = new HashSet<>();
+
+    Deque<String> pendingNodes = new ArrayDeque<>();
+    pendingNodes.push(nodeId);
+
+    while (!pendingNodes.isEmpty()) {
+      String nextNodeId = pendingNodes.pop();
+      result.add(nextNodeId);
+      pendingNodes.addAll(getChildrenOf(nextNodeId, treeType));
+    }
+    return result;
+  }
+
+  private List<String> getChildrenOf(String nodeId, String treeType) {
+    List<Tree> treeIds = getTreeIdsFromTreeType(treeType);
+    List<String> treeNodeIds = new ArrayList<>();
+    for (Tree tree : treeIds) {
+      treeNodeIds.addAll(getChildrenOfTreeNode(tree, nodeId));
+    }
+    return treeNodeIds;
+  }
+
+  private List<String> getChildrenOfTreeNode(final Tree t, String nodeId) {
+    final String nodeQryStr = "select tn.node from " + TreeNode.class.getName()
+        + " tn where tn.tree.id='" + t.getId() + "' and tn.reportSet = '" + nodeId + "'";
+    final Query<String> nodeQry = SessionHandler.getInstance()
+        .createQuery(nodeQryStr, String.class);
+    return nodeQry.list();
+  }
+
   /**
    * Gets Child node in the tree
    */
+  @Deprecated
   public Set<String> getChildNode(String nodeId, String treeType) {
     initialize(treeType);
     if (childTrees.get(nodeId) == null) {
@@ -87,21 +123,14 @@ public class TreeUtility {
     }
   }
 
+  @Deprecated
   private void initialize(String treeType) {
 
-    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
-    final String qryStr = "select t from " + Tree.class.getName() + " t where treetype='"
-        + treeType + "' and client.id='" + clientId + "'";
-    final Query<Tree> qry = SessionHandler.getInstance().createQuery(qryStr, Tree.class);
-    final List<Tree> ts = qry.list();
+    final List<Tree> ts = getTreeIdsFromTreeType(treeType);
 
     final List<TreeNode> treeNodes = new ArrayList<>();
     for (final Tree t : ts) {
-      final String nodeQryStr = "select tn from " + TreeNode.class.getName()
-          + " tn where tn.tree.id='" + t.getId() + "'";
-      final Query<TreeNode> nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr,
-          TreeNode.class);
-      final List<TreeNode> tns = nodeQry.list();
+      final List<TreeNode> tns = getTreeNodesOfTree(t);
       treeNodes.addAll(tns);
     }
 
@@ -125,6 +154,22 @@ public class TreeUtility {
         childTrees.put(on.getTreeNode().getNode(), os);
       }
     }
+  }
+
+  private List<TreeNode> getTreeNodesOfTree(final Tree t) {
+    final String nodeQryStr = "select tn from " + TreeNode.class.getName()
+        + " tn where tn.tree.id='" + t.getId() + "'";
+    final Query<TreeNode> nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr,
+        TreeNode.class);
+    return nodeQry.list();
+  }
+
+  private List<Tree> getTreeIdsFromTreeType(String treeType) {
+    final String clientId = OBContext.getOBContext().getCurrentClient().getId();
+    final String qryStr = "select t from " + Tree.class.getName() + " t where treetype='"
+        + treeType + "' and client.id='" + clientId + "'";
+    final Query<Tree> qry = SessionHandler.getInstance().createQuery(qryStr, Tree.class);
+    return qry.list();
   }
 }
 

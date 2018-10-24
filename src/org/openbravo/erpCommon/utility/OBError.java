@@ -11,17 +11,19 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.utility;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OBError {
+@SuppressWarnings("serial")
+public class OBError implements Serializable {
   private String type = "";
   private String title = "";
   private String message = "";

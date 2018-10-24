@@ -196,7 +196,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     CrossOrganizationUI.class, //
     CrossOrganizationUICDI.class, //
     OBContextCollectionsTest.class, //
-    PasswordStrengthCheckerTest.class,
+    PasswordStrengthCheckerTest.class, //
 
     // system
     SystemServiceTest.class, //
@@ -208,6 +208,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ImportEntrySizeTest.class, //
     CryptoUtilities.class, //
     Sessions.class, //
+    OBContextTest.class, //
 
     // xml
     ClientExportImportTest.class, //

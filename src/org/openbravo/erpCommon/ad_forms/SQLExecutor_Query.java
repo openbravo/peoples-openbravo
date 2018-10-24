@@ -34,6 +34,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
 
+@SuppressWarnings("serial")
 class SQLExecutor_Query implements FieldProvider {
   static Logger log4j = Logger.getLogger(SQLExecutor_Query.class);
   Vector<String> data = new Vector<String>();
