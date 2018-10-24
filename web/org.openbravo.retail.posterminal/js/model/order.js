@@ -4006,7 +4006,7 @@
 
     setQuantitiesToDeliver: function () {
       var me = this,
-          fullyPaid = this.isFullyPaid() || this.get('paidOnCredit'),
+          fullyPaid = this.isFullyPaid() || (this.get('paidOnCredit') && !this.get('isPaid')),
           receiptCompleted = this.get('donePressed') || this.get('paidOnCredit'),
           prePaid = !fullyPaid && this.get('donePressed') && !this.get('paidOnCredit');
       if (fullyPaid || prePaid) {
