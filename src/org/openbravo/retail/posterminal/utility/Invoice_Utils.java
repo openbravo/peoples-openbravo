@@ -445,7 +445,8 @@ public class Invoice_Utils {
       paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
       paymentScheduleInvoice.setAmount(gross);
       paymentScheduleInvoice.setOutstandingAmount(gross);
-
+      paymentScheduleInvoice.setDueDate(order.getOrderDate());
+      paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
       paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
       invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
       OBDal.getInstance().save(paymentScheduleInvoice);
@@ -674,8 +675,6 @@ public class Invoice_Utils {
           }
         }
       } else {
-        paymentScheduleInvoice.setDueDate(order.getOrderDate());
-        paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
         paymentScheduleInvoice.setOutstandingAmount(gross.subtract(paidAmt));
         paymentScheduleInvoice.setPaidAmount(paidAmt);
       }

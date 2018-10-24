@@ -1747,20 +1747,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   private void sortPSDByInvoice(List<FIN_PaymentScheduleDetail> psdList) {
-    Collections.sort(psdList, new Comparator<FIN_PaymentScheduleDetail>() {
-      @Override
-      public int compare(FIN_PaymentScheduleDetail psd1, FIN_PaymentScheduleDetail psd2) {
-        boolean isNullPSD1 = psd1.getInvoicePaymentSchedule() == null;
-        boolean isNullPSD2 = psd2.getInvoicePaymentSchedule() == null;
-        if (isNullPSD1 == isNullPSD2) {
-          return 0;
-        } else if (isNullPSD1) {
-          return -1;
-        } else {
-          return 1;
-        }
-      }
-    });
+    psdList.sort(this::comparePSInvoice);
+  }
+
+  private int comparePSInvoice(FIN_PaymentScheduleDetail psd1, FIN_PaymentScheduleDetail psd2) {
+    boolean isNullPSD1 = psd1.getInvoicePaymentSchedule() == null;
+    boolean isNullPSD2 = psd2.getInvoicePaymentSchedule() == null;
+    if (isNullPSD1 == isNullPSD2) {
+      return 0;
+    } else if (isNullPSD1) {
+      return 1;
+    } else {
+      return -1;
+    }
   }
 
   private int countPayments(Order order) {
