@@ -1311,6 +1311,7 @@ begin
          where  pronamespace = n.oid   and n.nspname=current_schema() 
          and p.oid not in (select tgfoid   from pg_trigger) 
          and p.proname not in ('temp_findinarray', 'ad_db_modified', 'dateformat')
+         and p.probin is null
          order by 1,2,3,4) loop 
       --note that for overloaded functions more than one line will be obtained
 
