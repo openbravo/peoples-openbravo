@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application.window;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 
@@ -217,14 +218,11 @@ public class StandardWindowComponent extends BaseTemplateComponent {
         .stream() : Stream.empty();
 
     Optional<GCTab> selectedGC = candidates //
-        .sorted((o1, o2) -> {
-          if (o2.getSeqno().compareTo(o1.getSeqno()) != 0) {
-            return o2.getSeqno().compareTo(o1.getSeqno());
-          } else {
-            return o2.getId().compareTo(o1.getId());
-          }
-        }) //
+        .sorted( //
+            comparing(GCTab::getSeqno) //
+                .thenComparing(GCTab::getId)) //
         .findFirst();
+
     return new SimpleEntry<>(tab.getId(), selectedGC);
   }
 }
