@@ -40,7 +40,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
  */
 public class LogManagementActionHandler extends BaseProcessActionHandler {
 
-  private static final Logger log = LogManager.getLogger(LogManagementActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

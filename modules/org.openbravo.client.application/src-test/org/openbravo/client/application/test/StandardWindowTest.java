@@ -71,8 +71,7 @@ public class StandardWindowTest extends WeldBaseTest {
       List<String> errors = new ArrayList<>();
       for (Window window : allWindows) {
         if (hasAtLeastOneActiveTab(window)) {
-          log.info("window {} of {}: {}",
-              new Object[] { ++i, allWindows.size(), window.getName() });
+          log.info("window {} of {}: {}", ++i, allWindows.size(), window.getName());
           try {
             generateForWindow(window);
           } catch (Throwable t) {

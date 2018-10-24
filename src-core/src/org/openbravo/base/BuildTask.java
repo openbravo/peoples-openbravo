@@ -12,9 +12,9 @@
 
 package org.openbravo.base;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
@@ -94,7 +94,7 @@ public class BuildTask {
         Level.WARN, null);
 
     context.updateLoggers();
-    log = LogManager.getLogger(BuildTask.class);
+    log = LogManager.getLogger();
   }
 
   private static String getUnnapliedModules() throws Exception {

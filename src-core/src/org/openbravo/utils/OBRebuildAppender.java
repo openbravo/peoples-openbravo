@@ -11,8 +11,18 @@
  */
 package org.openbravo.utils;
 
+import java.io.File;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.*;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Core;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.Layout;
+import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
@@ -21,12 +31,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
-
-import java.io.File;
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 /* This class inserts the rebuild log into a table in the database.
  * This information is used in the rebuild window in Openbravo
