@@ -1343,7 +1343,7 @@ enyo.kind({
             maximumSelected = 0;
         if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
           _.each(line.get('relatedLines'), function (line2) {
-            if (!line2.deferred) {
+            if (!line2.deferred && !line.get('originalOrderLineId')) {
               line2 = this.attributes.lines.get(line2.orderlineId).attributes;
             }
             if (line2.qty > 0) {
