@@ -648,7 +648,6 @@ public class OBViewFieldHandler {
     private String refEntity;
     private Element element;
     private Tab auditTab;
-    JSONObject gridConfiguration;
 
     public String getOnChangeFunction() {
       return null;
@@ -705,28 +704,25 @@ public class OBViewFieldHandler {
     }
 
     public String getGridFieldProperties() {
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       if (SEARCH_REFERENCE.equals(refType)) {
         result.append(", fkField: true");
       }
-      if (this.gridConfiguration != null) {
-        Boolean canSort = null;
-        Boolean canFilter = null;
+
+      if (tab != null) {
+        JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(auditTab,
+            systemGridConfig, getTabGridConfig());
         try {
-          if (this.gridConfiguration.has("canFilter")) {
-            canFilter = (Boolean) this.gridConfiguration.get("canFilter");
+          if (gridConfiguration.has("canFilter")) {
+            boolean canFilter = gridConfiguration.getBoolean("canFilter");
+            result.append(", canFilter: ").append(canFilter);
           }
-          if (this.gridConfiguration.has("canSort")) {
-            canSort = (Boolean) this.gridConfiguration.get("canSort");
+          if (gridConfiguration.has("canSort")) {
+            boolean canSort = gridConfiguration.getBoolean("canSort");
+            result.append(", canSort: ").append(canSort);
           }
         } catch (JSONException e) {
           log.error("Error while getting the grid field properties of an audit field", e);
-        }
-        if (canSort != null) {
-          result.append(", canSort: " + canSort.toString());
-        }
-        if (canFilter != null) {
-          result.append(", canFilter: " + canFilter.toString());
         }
       }
       result.append(", showHover: true");
@@ -795,10 +791,6 @@ public class OBViewFieldHandler {
 
     @Override
     public String getFieldProperties() {
-      if (tab != null) {
-        gridConfiguration = OBViewUtil.getGridConfigurationSettings(auditTab, systemGridConfig,
-            getTabGridConfig());
-      }
       return "";
     }
 
