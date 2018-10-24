@@ -205,8 +205,6 @@ isc.OBNoteLayout.addProperties({
       organizationOfTheNote = this.notesForm.values.organization;
     }
 
-    noteDS.setCsrfToken(OB.User.csrfToken);
-
     noteDS.addData({
       'client': OB.User.clientId,
       'organization': organizationOfTheNote,
@@ -237,7 +235,6 @@ isc.OBNoteLayout.addProperties({
     }
 
     var noteDS = this.getNoteDataSource();
-    noteDS.setCsrfToken(OB.User.csrfToken);
     var noteSection = this.parentElement.noteSection;
     isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveNote'), function (clickedOK) {
       if (clickedOK) {
