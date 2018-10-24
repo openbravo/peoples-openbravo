@@ -290,6 +290,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "utils/unlinkDeviceOnLoad.js", ComponentResource.APP_OB3));
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
+        + "utils/unlinkDeviceValidation.js", ComponentResource.APP_OB3));
+    globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "/utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
 
     // Buttons to Open Hardware Manager

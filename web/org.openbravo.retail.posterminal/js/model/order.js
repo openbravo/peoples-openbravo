@@ -3250,6 +3250,7 @@
       disc._idx = discount._idx || rule.get('_idx');
 
       disc.obdiscApplyafter = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscApplyafter'))) ? rule.get('obdiscApplyafter') : false;
+      disc.obdiscAllowinnegativelines = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscAllowinnegativelines'))) ? rule.get('obdiscAllowinnegativelines') : false;
 
       var unitsConsumed = 0;
       var unitsConsumedByNoCascadeRules = 0;
