@@ -572,11 +572,12 @@ public class Invoice_Utils {
             // The PSD must be splitted in two PSD, one that belongs to the invoice with the
             // remaining amount for the invoice and the other only to the order with the remaining
             // amount for the order that not belongs to an invoice
-            remainingPSD.setAmount(remainingPSD.getAmount().subtract(remainingAmt));
+            POSUtils.createPSD(remainingPSD.getAmount().subtract(remainingAmt), paymentSchedule,
+                null, order.getBusinessPartner());
+            remainingPSD.setAmount(remainingAmt);
             remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
             paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
                 remainingPSD);
-            POSUtils.createPSD(remainingAmt, paymentSchedule, null, order.getBusinessPartner());
           }
           OBDal.getInstance().save(remainingPSD);
 
