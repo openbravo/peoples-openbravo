@@ -286,6 +286,7 @@ public class KernelUtils {
         result.add(moduleLowLevelCode.getModule());
       }
       sortedModules = result;
+      log.debug("Modules ordered by dependency: " + sortedModules);
       return result;
     } finally {
       OBContext.restorePreviousMode();
