@@ -21,16 +21,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_OBPOS_PRICEREASON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="EM_OBPOS_CANBEDELIVERED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="EM_OBPOS_ISPAID" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_PRICEREASON_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="OBPOS_PRICEREASON" name="EM_OBPOS_ORDERLINE_PR">
