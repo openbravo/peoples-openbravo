@@ -143,33 +143,13 @@ public class OBViewUtil {
    *          be used
    * @return a translated name if found or otherwise the name of the owner
    */
-  @SuppressWarnings("unchecked")
   private static String getLabel(BaseOBObject owner, List<?> trlObjects,
       String primaryPropertyName, String secondaryPropertyName) {
     if (OBContext.hasTranslationInstalled()) {
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
 
       List<BaseOBObject> initializedTrlObjects;
-      // owner could have been loaded in a different DAL session via ADCS, as we are not caching trl
-      // entries in ADCS, so we need to handle this case
-      if (!Hibernate.isInitialized(trlObjects) && !OBDal.getInstance().getSession().contains(owner)) {
-        // check if there is already a different instance for the same entry in current DAL session
-        SessionImpl si = ((SessionImpl) OBDal.getInstance().getSession());
-        EntityPersister p = si.getEntityPersister(owner.getEntityName(), owner);
-        BaseOBObject ownerInSession = (BaseOBObject) si.getPersistenceContext().getEntity(
-            new EntityKey((String) owner.getId(), p));
-
-        if (ownerInSession == null) {
-          // there is no a different instance in this session, just load it
-          ownerInSession = OBDal.getInstance().get(owner.getEntityName(), owner.getId());
-        }
-
-        String propName = ((PersistentBag) trlObjects).getRole();
-        propName = propName.substring(propName.indexOf(".") + 1);
-        initializedTrlObjects = (List<BaseOBObject>) ownerInSession.get(propName);
-      } else {
-        initializedTrlObjects = (List<BaseOBObject>) trlObjects;
-      }
+      initializedTrlObjects = getInitializedTrlObjects(owner, trlObjects);
 
       for (BaseOBObject trlObject : initializedTrlObjects) {
         final String trlLanguageId = (String) ((BaseOBObject) trlObject
@@ -188,6 +168,32 @@ public class OBViewUtil {
       return (String) owner.get(primaryPropertyName);
     }
     return (String) owner.get(secondaryPropertyName);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static List<BaseOBObject> getInitializedTrlObjects(BaseOBObject owner, List<?> trlObjects) {
+    List<BaseOBObject> initializedTrlObjects;
+    // owner could have been loaded in a different DAL session via ADCS, as we are not caching trl
+    // entries in ADCS, so we need to handle this case
+    if (!Hibernate.isInitialized(trlObjects) && !OBDal.getInstance().getSession().contains(owner)) {
+      // check if there is already a different instance for the same entry in current DAL session
+      SessionImpl si = ((SessionImpl) OBDal.getInstance().getSession());
+      EntityPersister p = si.getEntityPersister(owner.getEntityName(), owner);
+      BaseOBObject ownerInSession = (BaseOBObject) si.getPersistenceContext().getEntity(
+          new EntityKey((String) owner.getId(), p));
+
+      if (ownerInSession == null) {
+        // there is no a different instance in this session, just load it
+        ownerInSession = OBDal.getInstance().get(owner.getEntityName(), owner.getId());
+      }
+
+      String propName = ((PersistentBag) trlObjects).getRole();
+      propName = propName.substring(propName.indexOf('.') + 1);
+      initializedTrlObjects = (List<BaseOBObject>) ownerInSession.get(propName);
+    } else {
+      initializedTrlObjects = (List<BaseOBObject>) trlObjects;
+    }
+    return initializedTrlObjects;
   }
 
   /**
