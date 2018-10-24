@@ -208,6 +208,8 @@ public class ApplicationDictionaryCachedStructures {
       if (window == null) {
         return;
       }
+
+      initializeDALObject(window.getModule());
       for (Tab tab : window.getADTabList()) {
         initializeTab(tab);
       }
@@ -236,6 +238,7 @@ public class ApplicationDictionaryCachedStructures {
     initializeDALObject(tab.getTable());
     getColumnsOfTable(tab.getTable().getId());
     initializeProcess(tab.getProcess());
+    initializeDALObject(tab.getTableTree());
 
     if (useCache()) {
       tabMap.put(tabId, tab);
@@ -250,6 +253,7 @@ public class ApplicationDictionaryCachedStructures {
     Table table = OBDal.getInstance().get(Table.class, tableId);
     initializeDALObject(table);
     initializeDALObject(table.getADColumnList());
+    initializeDALObject(table.getObserdsDatasource());
     if (useCache()) {
       tableMap.put(tableId, table);
     }
@@ -369,6 +373,13 @@ public class ApplicationDictionaryCachedStructures {
       initializeDALObject(list);
     }
     initializeDALObject(reference.getOBUIAPPRefWindowList());
+
+    for (ReferencedTree refTree : reference.getADReferencedTreeList()) {
+      initializeDALObject(refTree);
+      for (ReferencedTreeField refTreeField : refTree.getADReferencedTreeFieldList()) {
+        initializeDALObject(refTreeField);
+      }
+    }
   }
 
   public List<AuxiliaryInput> getAuxiliarInputList(String tabId) {

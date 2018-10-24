@@ -1715,7 +1715,7 @@ public class Utility {
 
       return url;
     } catch (Exception e) {
-      log4j.error(e.getMessage());
+      log4j.error("Could not get URL for tab " + tab.getId(), e);
       return "";
     } finally {
       OBContext.restorePreviousMode();
