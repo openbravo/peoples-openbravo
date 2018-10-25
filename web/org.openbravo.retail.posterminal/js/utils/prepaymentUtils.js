@@ -44,8 +44,8 @@
             receipt: receipt,
             deliveryChange: Math.min(newCashPaymentsAmount, OB.DEC.abs(pendingPrepayment)),
             callback: function () {
+              receipt.adjustPayment();
               if (callback instanceof Function) {
-                receipt.adjustPayment();
                 callback(receipt);
               }
             }
