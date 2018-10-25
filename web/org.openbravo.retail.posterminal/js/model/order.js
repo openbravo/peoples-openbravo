@@ -5706,7 +5706,7 @@
       function removeReceiptFromDatabase(receipt, callback) {
         var orderList = OB.MobileApp.model.orderList;
         if (receipt.get('id')) {
-          if (receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
+          if (OB.MobileApp.model.orderList && receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
             orderList.saveCurrent();
             OB.Dal.remove(orderList.current, null, null);
             orderList.deleteCurrent();
