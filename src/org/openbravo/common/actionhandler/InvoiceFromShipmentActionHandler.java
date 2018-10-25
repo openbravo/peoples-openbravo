@@ -36,6 +36,10 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Action handler to generate Invoice from Goods Shipment
+ * 
+ */
 public class InvoiceFromShipmentActionHandler extends BaseProcessActionHandler {
   private static final Logger log = LoggerFactory.getLogger(InvoiceFromShipmentActionHandler.class);
 
