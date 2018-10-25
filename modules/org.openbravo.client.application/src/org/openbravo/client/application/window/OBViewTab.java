@@ -794,7 +794,6 @@ public class OBViewTab extends BaseTemplateComponent {
         org.openbravo.client.application.Process newProcess = column.getOBUIAPPProcess();
         processId = newProcess.getId();
         url = "/";
-        // TODO: check if initialized?
         command = newProcess.getJavaClassName();
         newDefinition = true;
         uiPattern = newProcess.getUIPattern();
