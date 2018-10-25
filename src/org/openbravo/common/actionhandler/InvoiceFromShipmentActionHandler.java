@@ -18,14 +18,21 @@
  */
 package org.openbravo.common.actionhandler;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.materialmgmt.ShipmentProcessor;
+import org.openbravo.materialmgmt.InvoiceFromGoodsShipmentUtil;
+import org.openbravo.materialmgmt.InvoiceGeneratorFromGoodsShipment;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,12 +48,26 @@ public class InvoiceFromShipmentActionHandler extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
 
     Invoice invoice;
-    JSONObject message = new JSONObject();
+    final JSONObject message = new JSONObject();
     try {
-      JSONObject request = new JSONObject(content);
-      String shipmentId = request.getString("M_InOut_ID");
+      final JSONObject request = new JSONObject(content);
+      final JSONObject params = request.getJSONObject("_params");
+      final String shipmentId = request.getString("M_InOut_ID");
+      final String invoiceDateStr = params.getString("MovementDate");
+      final String priceListStr = params.getString("priceList");
+      boolean processInvoice = params.getBoolean("processInvoice");
 
-      invoice = new ShipmentProcessor(shipmentId).createAndProcessInvoiceConsideringInvoiceTerms();
+      final Date invoiceDate = getInvoiceDate(invoiceDateStr);
+      final PriceList priceList = OBDal.getInstance().getProxy(PriceList.class, priceListStr);
+
+      if (processInvoice) {
+        invoice = new InvoiceGeneratorFromGoodsShipment(shipmentId, invoiceDate, priceList)
+            .createAndProcessInvoiceConsideringInvoiceTerms();
+      } else {
+        invoice = new InvoiceGeneratorFromGoodsShipment(shipmentId, invoiceDate, priceList)
+            .createInvoiceConsideringInvoiceTerms();
+      }
+
       message.put(MESSAGE, getSuccessMessage(invoice));
 
     } catch (Exception e) {
@@ -60,8 +81,36 @@ public class InvoiceFromShipmentActionHandler extends BaseProcessActionHandler {
     return message;
   }
 
-  private JSONObject getErrorMessage(Exception e) {
-    JSONObject errorMessage = new JSONObject();
+  private Date getInvoiceDate(final String invoiceDateStr) {
+    Date invoiceDate = Calendar.getInstance().getTime();
+    try {
+      final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+      invoiceDate = dateFormatter.parse(invoiceDateStr);
+    } catch (ParseException e) {
+      log.error("Not possible to parse the following date: " + invoiceDateStr, e);
+    }
+    return invoiceDate;
+  }
+
+  protected JSONObject getSuccessMessage(final Invoice invoice) {
+    final JSONObject successMessage = new JSONObject();
+    try {
+      successMessage.put(SEVERITY, "success");
+      successMessage.put(TITLE, OBMessageUtils.messageBD("Success"));
+      if (invoice != null) {
+        successMessage.put(TEXT, String.format(OBMessageUtils.messageBD("NewInvoiceGenerated"),
+            invoice.getDocumentNo(), InvoiceFromGoodsShipmentUtil.getInvoiceStatus(invoice)));
+      } else {
+        successMessage.put(TEXT, OBMessageUtils.messageBD("NoInvoiceGenerated"));
+      }
+    } catch (JSONException e) {
+      log.error(e.getMessage());
+    }
+    return successMessage;
+  }
+
+  private JSONObject getErrorMessage(final Exception e) {
+    final JSONObject errorMessage = new JSONObject();
     try {
       errorMessage.put(SEVERITY, "error");
       errorMessage.put(TITLE, OBMessageUtils.messageBD("Error"));
@@ -70,26 +119,6 @@ public class InvoiceFromShipmentActionHandler extends BaseProcessActionHandler {
       log.error(e.getMessage());
     }
     return errorMessage;
-  }
-
-  protected JSONObject getSuccessMessage(Invoice invoice) {
-    JSONObject successMessage = new JSONObject();
-    try {
-      successMessage.put(SEVERITY, "success");
-      successMessage.put(TITLE, OBMessageUtils.messageBD("Success"));
-      if (invoice != null) {
-        successMessage
-            .put(
-                TEXT,
-                String.format(OBMessageUtils.messageBD("NewInvoiceGenerated"),
-                    invoice.getDocumentNo()));
-      } else {
-        successMessage.put(TEXT, OBMessageUtils.messageBD("NoInvoiceGenerated"));
-      }
-    } catch (JSONException e) {
-      log.error(e.getMessage());
-    }
-    return successMessage;
   }
 
 }

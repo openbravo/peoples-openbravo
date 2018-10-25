@@ -20,6 +20,7 @@ package org.openbravo.materialmgmt;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.common.actionhandler.createlinesfromprocess.CreateInvoiceLinesFromProcess;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -46,6 +48,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
@@ -53,25 +56,55 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class to process Goods Shipments
+ * This class generates and processes Invoice from Goods Shipment. Only goods shipment lines not
+ * linked to a Sales Order, or from Sales Order with Invoice Term "After Delivery",
+ * "After Order Delivery" or "Immediate" are considered.
  *
  */
-public class ShipmentProcessor {
+public class InvoiceGeneratorFromGoodsShipment {
 
   private static final String C_INVOICE_TABLE_ID = "318";
-  private static final Logger log = LoggerFactory.getLogger(ShipmentProcessor.class);
+  private static final Logger log = LoggerFactory
+      .getLogger(InvoiceGeneratorFromGoodsShipment.class);
   private ShipmentInOut shipment;
-  Invoice invoice;
+  private Invoice invoice;
   private CreateInvoiceLinesFromProcess createInvoiceLineProcess;
+  private Date invoiceDate;
+  private PriceList priceList;
 
   private static final String AFTER_ORDER_DELIVERY = "O";
   private static final String AFTER_DELIVERY = "D";
   private static final String IMMEDIATE = "I";
 
-  public ShipmentProcessor(String shipmentId) {
+  /**
+   * Creates an {@link InvoiceGeneratorFromGoodsShipment} based shipment Id
+   * 
+   * @param shipmentId
+   *          The shipment Id
+   * @param invoiceDate
+   *          The invoice date.
+   * @param priceList
+   *          The invoice price list
+   */
+  public InvoiceGeneratorFromGoodsShipment(final String shipmentId, final Date invoiceDate,
+      final PriceList priceList) {
     this.shipment = OBDal.getInstance().get(ShipmentInOut.class, shipmentId);
     this.createInvoiceLineProcess = WeldUtils
         .getInstanceFromStaticBeanManager(CreateInvoiceLinesFromProcess.class);
+    this.invoiceDate = invoiceDate;
+    this.priceList = priceList;
+  }
+
+  /**
+   * Creates an {@link InvoiceGeneratorFromGoodsShipment} based only on shipment Id. The invoice
+   * date is taken from the shipment movement date, and the invoice price list is taken from
+   * shipment business partner
+   * 
+   * @param shipmentId
+   *          The shipment Id
+   */
+  public InvoiceGeneratorFromGoodsShipment(final String shipmentId) {
+    this(shipmentId, null, null);
   }
 
   /**
@@ -82,11 +115,12 @@ public class ShipmentProcessor {
    */
   public Invoice createAndProcessInvoiceConsideringInvoiceTerms() {
     try {
+
       createInvoiceConsideringInvoiceTerms();
       if (invoice != null) {
         processInvoice();
+        OBDal.getInstance().refresh(invoice);
       }
-
     } catch (OBException e) {
       executeRollBack();
       throw new OBException(e.getMessage());
@@ -99,7 +133,26 @@ public class ShipmentProcessor {
     return invoice;
   }
 
-  private Invoice createInvoiceConsideringInvoiceTerms() {
+  /**
+   * Creates an Invoice from Goods Shipment, considering the invoice terms of orders linked to
+   * shipment lines. The invoice is in status 'DR'
+   * 
+   * @return The invoice created
+   */
+  public Invoice createInvoiceConsideringInvoiceTerms() {
+    try {
+
+      createInvoice();
+
+    } catch (OBException e) {
+      executeRollBack();
+      throw new OBException(e.getMessage());
+    }
+
+    return invoice;
+  }
+
+  private Invoice createInvoice() {
     HashSet<String> ordersAlreadyInvoiced = new HashSet<>();
     try (ScrollableResults scrollShipmentLines = getShipmentLines()) {
       while (scrollShipmentLines.next()) {
@@ -255,15 +308,14 @@ public class ShipmentProcessor {
     newInvoice.setDocumentNo(documentNo);
     newInvoice.setDocumentAction("CO");
     newInvoice.setDocumentStatus("DR");
-    newInvoice.setAccountingDate(shipment.getAccountingDate());
-    newInvoice.setInvoiceDate(shipment.getMovementDate());
-    newInvoice.setTaxDate(shipment.getMovementDate());
+    newInvoice.setAccountingDate(getInvoiceDate());
+    newInvoice.setInvoiceDate(getInvoiceDate());
+    newInvoice.setTaxDate(getInvoiceDate());
     newInvoice.setSalesTransaction(true);
     newInvoice.setBusinessPartner(shipment.getBusinessPartner());
     newInvoice.setPartnerAddress(shipment.getPartnerAddress());
-    newInvoice.setPriceList(shipment.getBusinessPartner().getPriceList());
-    newInvoice.setCurrency((shipment.getBusinessPartner().getPriceList() == null) ? null : shipment
-        .getBusinessPartner().getPriceList().getCurrency());
+    newInvoice.setPriceList(getPriceList());
+    newInvoice.setCurrency(getCurrency());
     newInvoice.setSummedLineAmount(BigDecimal.ZERO);
     newInvoice.setGrandTotalAmount(BigDecimal.ZERO);
     newInvoice.setWithholdingamount(BigDecimal.ZERO);
@@ -291,6 +343,24 @@ public class ShipmentProcessor {
       throw new OBException("There is no Document type for Sales Invoice defined");
     }
     return invoiceDocumentType;
+  }
+
+  private Date getInvoiceDate() {
+    if (this.invoiceDate != null) {
+      return this.invoiceDate;
+    }
+    return this.shipment.getMovementDate();
+  }
+
+  private PriceList getPriceList() {
+    if (this.priceList != null) {
+      return this.priceList;
+    }
+    return this.shipment.getBusinessPartner().getPriceList();
+  }
+
+  private Currency getCurrency() {
+    return (getPriceList() == null) ? null : getPriceList().getCurrency();
   }
 
   private void processInvoice() throws Exception {
