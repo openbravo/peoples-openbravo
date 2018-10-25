@@ -532,8 +532,8 @@ enyo.kind({
       var selectedServices = _.filter(this.selectedModels, function (line) {
         return line.get('product').get('productType') === 'S';
       });
-      this.hideDeliveryButton = selectedServices.length ? true : false;
-      this.hideDeliveryLabel = selectedServices.length === this.selectedModels.length ? true : false;
+      this.hideDeliveryButton = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || selectedServices.length ? true : false;
+      this.hideDeliveryLabel = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || selectedServices.length === this.selectedModels.length ? true : false;
       if (this.selectedModels.length > 1) {
         var selectedLinesToDeliver = _.filter(this.selectedModels, function (line) {
           return line.get('obposCanbedelivered');
