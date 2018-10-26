@@ -4373,8 +4373,8 @@
                         me.unset('preventServicesUpdate');
                         OB.MobileApp.model.unset('preventOrderSave');
                         me.save();
+                        OB.MobileApp.model.orderList.saveCurrent();
                       });
-                      OB.MobileApp.model.orderList.saveCurrent();
                       // Finally change to the payments tab
                       context.doTabChange({
                         tabPanel: 'payment',
