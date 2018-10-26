@@ -62,7 +62,7 @@
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {
         _.each(order.get('lines').models, function (line) {
-          if (!order.get('isEditable') && !order.get('isLayaway')) {
+          if (order.get('isPaid')) {
             return;
           }
           if (order.get('priceIncludesTax')) {
@@ -177,10 +177,10 @@
             }
             precision = OB.MobileApp.model.paymentnames[auxPay.get('searchKey')].obposPosprecision;
             amount = _.isNumber(payment.get('amountRounded')) ? payment.get('amountRounded') : payment.get('amount');
-            if (orderType === 3) { // void layaway 
-              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), amount, precision));
-            } else if (payment.get('isReturnOrder')) {
+            if (payment.get('amount') < 0) {
               auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), amount, precision));
+            } else if (orderType === 3) { // void layaway 
+              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), amount, precision));
             } else {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), amount, precision));
             }
