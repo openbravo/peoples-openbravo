@@ -4114,8 +4114,7 @@
       var documentseq, documentseqstr, idMap = {},
           me = this,
           i, splittedDocNo = [],
-          terminalDocNoPrefix, newDocNo = '',
-          nextNumber;
+          terminalDocNoPrefix, newDocNo = '';
 
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
@@ -4207,8 +4206,8 @@
         terminalDocNoPrefix = OB.MobileApp.model.attributes.terminal.docNoPrefix;
         splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length, me.get('documentNo').length).split('-');
         if (splittedDocNo.length > 1) {
-          nextNumber = parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
-          newDocNo = terminalDocNoPrefix + splittedDocNo[0] + '-' + nextNumber;
+          var nextNumber = parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
+          newDocNo = me.get('documentNo').substring(0, me.get('documentNo').lastIndexOf('-')) + '-' + nextNumber;
         } else {
           newDocNo = me.get('documentNo') + '-1';
         }
