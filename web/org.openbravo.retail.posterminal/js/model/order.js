@@ -4345,7 +4345,7 @@
                           _.each(relationsToRemove, function (relationToRemove) {
                             var idx = line.get('relatedLines').map(function (l) {
                               return l.orderlineId;
-                            }).indexOf(relationToRemove.id);
+                            }).indexOf(relationToRemove.orderlineId);
                             line.get('relatedLines').splice(idx, 1);
                           });
                         }
