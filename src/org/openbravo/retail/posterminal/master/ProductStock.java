@@ -88,21 +88,23 @@ public class ProductStock extends Product {
 
     try {
       OBContext.setAdminMode(false);
-      String productListQuery = getRegularProductHql(false, false, jsonsent, false, false);
+      String regularProductHql = getRegularProductHql(false, false, jsonsent, false, false);
       HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
-      String hql = "SELECT " + regularProductStockHQLProperties.getHqlSelect() //
+      String hql = "SELECT "
+          + regularProductStockHQLProperties.getHqlSelect() //
           + "FROM MaterialMgmtStorageDetail AS storagedetail " //
-          + "LEFT JOIN storagedetail.storageBin AS locator " //
-          + "LEFT JOIN locator.warehouse AS warehouse " //
-          + "WHERE storagedetail.product.id IN (" //
-          + "  SELECT product.id " + productListQuery + ") " //
-          + "AND warehouse.id IN ( " //
-          + "  SELECT ow.warehouse.id " //
+          + "JOIN storagedetail.storageBin AS locator " //
+          + "WHERE EXISTS (" //
+          + "  SELECT 1 " + regularProductHql
+          + " AND pli.product.id = storagedetail.product.id) " //
+          + "AND EXISTS ( " //
+          + "  SELECT 1 " //
           + "  FROM OrganizationWarehouse ow " //
-          + "  WHERE ow.organization.id = :orgId) " //
-          + "GROUP BY storagedetail.product, warehouse " //
-          + "ORDER BY storagedetail.product, warehouse ";
+          + "  WHERE ow.organization.id = :orgId"
+          + "  AND ow.warehouse.id = locator.warehouse.id) " //
+          + "GROUP BY storagedetail.product.id, locator.warehouse.id " //
+          + "ORDER BY storagedetail.product.id, locator.warehouse.id ";
 
       products.add(hql);
 

@@ -24,8 +24,8 @@ public class ProductStockProperties extends ModelExtension {
 
     List<HQLProperty> list = new ArrayList<HQLProperty>();
     list.add(new HQLProperty("storagedetail.product.id", "m_product_id"));
-    list.add(new HQLProperty("warehouse.id", "m_warehouse_id"));
-    list.add(new HQLProperty("sum(storagedetail.quantityOnHand) + sum(storagedetail.reservedQty)",
+    list.add(new HQLProperty("locator.warehouse.id", "m_warehouse_id"));
+    list.add(new HQLProperty("sum(storagedetail.quantityOnHand) - sum(storagedetail.reservedQty)",
         "availableStock", false));
 
     return list;
