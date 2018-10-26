@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import org.openbravo.data.FieldProvider;
  * 
  *         Chart Of Accounts (COA) Data class
  */
+@SuppressWarnings("serial")
 public class COAData extends MultipartRequest implements FieldProvider {
   private static final Logger log4j = Logger.getLogger(COAData.class);
   String accountValue = "";

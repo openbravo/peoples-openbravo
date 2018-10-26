@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -243,6 +243,7 @@ public class KernelUtils {
       // a module is returned for each module dependency, take care of this in
       // the for-loop below
       final OBCriteria<Module> modules = OBDal.getInstance().createCriteria(Module.class);
+      modules.addOrderBy(Module.PROPERTY_ID, true);
       modules.setFetchMode(Module.PROPERTY_MODULEDEPENDENCYLIST, FetchMode.JOIN);
       final List<Module> handledModules = new ArrayList<Module>();
       try {
@@ -285,6 +286,7 @@ public class KernelUtils {
         result.add(moduleLowLevelCode.getModule());
       }
       sortedModules = result;
+      log.debug("Modules ordered by dependency: " + sortedModules);
       return result;
     } finally {
       OBContext.restorePreviousMode();

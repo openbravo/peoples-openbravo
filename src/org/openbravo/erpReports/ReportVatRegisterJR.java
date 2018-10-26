@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -196,6 +196,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
 
 }
 
+@SuppressWarnings("serial")
 class TypeReportRegister implements FieldProvider {
   static Logger log4j = Logger.getLogger(TypeReportRegister.class);
   // private String InitRecordNumber = "0";

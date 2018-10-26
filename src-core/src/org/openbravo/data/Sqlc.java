@@ -802,6 +802,8 @@ public class Sqlc extends DefaultHandler {
     if (!javaFileName.equals(sqlcName))
       throw new IOException("File name for xsql class " + javaFileName
           + " is different than the class name defined inside the file: " + sqlcName);
+
+    out3.append("@SuppressWarnings(\"serial\")\n");
     if (sqlcAccessModifier.length() > 0) {
       out3.append(sqlcAccessModifier);
       out3.append(" ");

@@ -11,13 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.erpCommon.ad_forms;
+
+import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
@@ -32,7 +34,8 @@ import org.openbravo.services.webservice.WebService3ImplServiceLocator;
  * repository.
  * 
  */
-public class MaturityLevel {
+@SuppressWarnings("serial")
+public class MaturityLevel implements Serializable {
   private final Logger log4j = Logger.getLogger(MaturityLevel.class);
   private String[][] levels;
   public final static int CS_MATURITY = 500;

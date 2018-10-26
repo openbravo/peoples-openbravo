@@ -357,6 +357,10 @@
       <foreign-key foreignTable="FIN_PAYMENT_PRIORITY" name="FIN_INVOICE_PAYMENT_PRIORITY">
         <reference local="FIN_PAYMENT_PRIORITY_ID" foreign="FIN_PAYMENT_PRIORITY_ID"/>
       </foreign-key>
+      <index name="C_INVOICE_AD_USER" unique="false">
+        <index-column name="AD_USER_ID"/>
+        <whereClause><![CDATA[AD_USER_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="C_INVOICE_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
@@ -378,6 +382,10 @@
       </index>
       <index name="C_INVOICE_POSTED" unique="false">
         <index-column name="POSTED"/>
+      </index>
+      <index name="C_INVOICE_SALESREP" unique="false">
+        <index-column name="SALESREP_ID"/>
+        <whereClause><![CDATA[SALESREP_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="C_INVOICE_UPDATED" unique="false">
         <index-column name="UPDATED"/>

@@ -81,11 +81,7 @@ isc.OBViewDataSource.addProperties({
     requestProperties = requestProperties || {};
     requestProperties.clientContext = requestProperties.clientContext || {};
 
-    if (operationType === 'add' || operationType === 'update' || operationType === 'remove') {
-      this.setCsrfToken(OB.User.csrfToken);
-    }
-
-    // only update the values of the record itself but not of any referenced 
+    // only update the values of the record itself but not of any referenced
     // entity
     if (operationType === 'update' || operationType === 'add') {
       var correctedData = {},
