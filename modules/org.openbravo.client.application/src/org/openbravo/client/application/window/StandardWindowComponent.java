@@ -107,7 +107,11 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   public void setWindow(Window window) {
     this.window = window;
+
+    // reset fields here to be able to use this code in testing: being request scoped will share
+    // instance if it is invoked several times in same test case.
     rootTabComponent = null;
+    processViews = new ArrayList<>();
   }
 
   public OBViewTab getRootTabComponent() {
