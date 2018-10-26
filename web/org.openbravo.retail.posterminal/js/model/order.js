@@ -4344,7 +4344,7 @@
                         if (relationsToRemove.length) {
                           _.each(relationsToRemove, function (relationToRemove) {
                             var idx = line.get('relatedLines').map(function (l) {
-                              return l.id;
+                              return l.orderlineId;
                             }).indexOf(relationToRemove.id);
                             line.get('relatedLines').splice(idx, 1);
                           });
@@ -4365,10 +4365,10 @@
                     me.get('payments').reset();
                     me.set('forceCalculateTaxes', true);
                     me.unset('id');
-                    me.getPrepaymentAmount(function () {
-                      me.adjustPayment();
-                      me.unset('skipCalculateReceipt');
-                      me.calculateReceipt(function () {
+                    me.unset('skipCalculateReceipt');
+                    me.calculateReceipt(function () {
+                      me.getPrepaymentAmount(function () {
+                        me.adjustPayment();
                         me.set('isEditable', false);
                         me.unset('preventServicesUpdate');
                         OB.MobileApp.model.unset('preventOrderSave');
@@ -4403,7 +4403,6 @@
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
         });
       });
-      me.getPrepaymentAmount();
     },
 
     createQuotation: function () {
