@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
 
 public class ReactivateLandedCost extends BaseActionHandler {
   private static final Logger log = LoggerFactory.getLogger(ReactivateLandedCost.class);
-  final String strCategoryLandedCost = "LDC";
-  final String strTableLandedCost = "M_LandedCost";
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
@@ -114,6 +112,9 @@ public class ReactivateLandedCost extends BaseActionHandler {
       if (message.has("severity") && !message.get("severity").equals("success")) {
         return message;
       }
+
+      // Remove related Matched Amount records
+      lcc.getLandedCostMatchedList().clear();
     }
 
     // Reload in case the cancel cost adjustment has cleared the session.
