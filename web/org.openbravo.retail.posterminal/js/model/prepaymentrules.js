@@ -15,9 +15,11 @@
   OB.UTIL.prepaymentRules.OBPOS_Default = {
     execute: function (receipt, callback) {
       var me = this,
+          prepaymentPerc = OB.MobileApp.model.get('terminal').obposPrepaymentPerc,
+          prepaymentPercLimit = OB.MobileApp.model.get('terminal').obposPrepaymentPercLimit,
           prepaymentAmount = receipt.get('lines').reduce(function (memo, line) {
           if (line.get('obposCanbedelivered') || line.get('deliveredQuantity') === line.get('qty')) {
-            var linePrepaymentAmount = me.currentLinePrepaymentAmount(line, 100);
+            var linePrepaymentAmount = me.currentLinePrepaymentAmount(line, prepaymentPerc);
             line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
             return OB.DEC.add(memo, linePrepaymentAmount);
           } else {
@@ -25,7 +27,7 @@
             return memo;
           }
         }, 0),
-          prepaymentLimitAmount = prepaymentAmount;
+          prepaymentLimitAmount = OB.DEC.div(OB.DEC.mul(prepaymentAmount, prepaymentPercLimit), 100);
       callback(prepaymentAmount, prepaymentLimitAmount);
     },
     currentLinePrepaymentAmount: function (line, percentage, units) {
