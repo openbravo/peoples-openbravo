@@ -69,10 +69,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_OBPOS_LAYAWAY_PARTPAID" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
-      </column>
       <column name="EM_OBPOS_CANC_RPT_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
