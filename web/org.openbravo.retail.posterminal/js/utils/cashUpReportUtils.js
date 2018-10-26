@@ -66,7 +66,7 @@
             return;
           }
           if (order.get('priceIncludesTax')) {
-            gross = line.get('lineGrossAmount');
+            gross = line.get('gross');
           } else {
             gross = line.get('discountedGross');
           }
