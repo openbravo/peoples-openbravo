@@ -546,7 +546,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             origPayment: payment
           }, function (args) {
             order.addPayment(args.paymentLine, function () {
-              updateAmountToLayaway(order, args.origPayment.get('origAmount'));
+              updateAmountToLayaway(order, args.paymentLine.get('origAmount'));
               if (addPaymentCallback instanceof Function) {
                 addPaymentCallback();
               }
@@ -556,17 +556,24 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
         if (orderListIndex === orderList.length - 1 && !considerPrepaymentAmount) {
           // Transfer everything
+          order.set('changePayments', changePayments);
           if (paymentListIndex < paymentList.length) {
-            // Pending payments to add
-            paymentLine = new OB.Model.PaymentLine();
-            OB.UTIL.clone(payment, paymentLine);
+            if (OB.DEC.compare(payment.get('origAmount')) !== 0) {
+              // Pending payments to add
+              paymentLine = new OB.Model.PaymentLine();
+              OB.UTIL.clone(payment, paymentLine);
+              paymentLine.set('forceAddPayment', true);
 
-            addPaymentLine(paymentLine, payment, function () {
+              payment.set('origAmount', OB.DEC.Zero);
+              payment.set('amount', OB.DEC.Zero);
+              addPaymentLine(paymentLine, payment, function () {
+                setPaymentsToReceipts(orderList, paymentList, changePayments, orderListIndex, paymentListIndex + 1, considerPrepaymentAmount, callback);
+              });
+            } else {
               setPaymentsToReceipts(orderList, paymentList, changePayments, orderListIndex, paymentListIndex + 1, considerPrepaymentAmount, callback);
-            });
+            }
           } else {
             // No more payments to add, finish the process
-            order.set('changePayments', changePayments);
             order.prepareToSend(prepareToSendCallback(function () {
               if (callback instanceof Function) {
                 // Process finished
@@ -590,6 +597,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
             if (payment.get('origAmount') <= amountToPay) {
               // Use all the remaining payment amount for this receipt
+              payment.set('origAmount', OB.DEC.Zero);
+              payment.set('amount', OB.DEC.Zero);
               addPaymentLine(paymentLine, payment, function () {
                 setPaymentsToReceipts(orderList, paymentList, changePayments, orderListIndex, paymentListIndex + 1, considerPrepaymentAmount, callback);
               });
