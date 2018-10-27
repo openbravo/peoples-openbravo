@@ -6142,7 +6142,7 @@
           } else if (me.get('bp').get('invoiceTerms') === 'I' || me.get('bp').get('invoiceTerms') === 'O') {
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
-          if (qtyToInvoice && ol.get('obposCanbedelivered')) {
+          if (qtyToInvoice && (ol.get('obposCanbedelivered') || me.get('bp').get('invoiceTerms') === 'I')) {
             lineToInvoice = new OB.Model.OrderLine(ol.attributes);
             lineToInvoice.set('id', OB.UTIL.get_UUID());
             lineToInvoice.set('qty', qtyToInvoice);
