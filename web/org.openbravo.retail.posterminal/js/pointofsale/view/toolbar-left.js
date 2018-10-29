@@ -674,6 +674,10 @@ enyo.kind({
     });
 
     this.menuEntries.push({
+      kind: 'OB.UI.MenuCreateQuotationFromOrder'
+    });
+
+    this.menuEntries.push({
       kind: 'OB.UI.MenuQuotation'
     });
     this.menuEntries.push({

@@ -4414,6 +4414,23 @@
       }
     },
 
+    setQuotationProperties: function () {
+      this.set('isQuotation', true);
+      this.set('generateInvoice', false);
+      this.set('orderType', 0);
+      this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
+      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
+      this.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
+      this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
+      this.set('documentNo', nextQuotationno.documentNo);
+    },
+
+    createQuotationFromOrder: function () {
+      this.setQuotationProperties();
+      this.trigger('scan');
+      this.save();
+    },
+
     createOrderFromQuotation: function (updatePrices, callback) {
       var idMap = {},
           oldIdMap = {},
@@ -5934,7 +5951,7 @@
       function removeReceiptFromDatabase(receipt, callback) {
         var orderList = OB.MobileApp.model.orderList;
         if (receipt.get('id')) {
-          if (receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
+          if (OB.MobileApp.model.orderList && receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
             orderList.saveCurrent();
             OB.Dal.remove(orderList.current, null, null);
             orderList.deleteCurrent();
@@ -6876,15 +6893,7 @@
     addNewQuotation: function () {
       this.saveCurrent();
       this.current = this.newOrder();
-      this.current.set('isQuotation', true);
-      this.current.set('generateInvoice', false);
-      this.current.set('orderType', 0);
-      this.current.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
-      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-      this.current.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
-      this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
-      this.current.set('documentNo', nextQuotationno.documentNo);
-
+      this.current.setQuotationProperties();
       this.unshift(this.current);
       this.loadCurrent();
     },

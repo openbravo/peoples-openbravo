@@ -62,7 +62,7 @@
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {
         _.each(order.get('lines').models, function (line) {
-          if (!order.get('isEditable') && !order.get('isLayaway')) {
+          if (order.get('isPaid')) {
             return;
           }
           if (order.get('priceIncludesTax')) {

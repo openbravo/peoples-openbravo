@@ -35,6 +35,8 @@ public class ValidationUnlinkDeviceActionHandler extends BaseActionHandler {
             qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL, terminal));
             qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ISPROCESSEDBO, false));
             qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ISPROCESSED, false));
+            
+            qApp.setMaxResults(1);
 
             final int num = qApp.count();
 
