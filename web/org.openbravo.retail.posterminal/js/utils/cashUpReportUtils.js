@@ -56,6 +56,15 @@
 
     cashUp.at(0).set('transitionsToOnline', OB.UTIL.localStorage.getItem('transitionsToOnline'));
     cashUp.at(0).set('logclientErrors', OB.UTIL.localStorage.getItem('logclientErrors'));
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalLatencyTime'))) {
+      cashUp.at(0).set('averageLatency', parseInt(OB.UTIL.localStorage.getItem('totalLatencyTime'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalLatencyMeasures'), 10));
+    }
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalUploadBandwith'))) {
+      cashUp.at(0).set('averageUploadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwith'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10));
+    }
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalDownloadBandwith'))) {
+      cashUp.at(0).set('averageDownloadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwith'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10));
+    }
 
     if (j < receipt.length && !receipt[j].has('obposIsDeleted')) {
       order = receipt[j];
@@ -254,6 +263,7 @@
   };
   OB.UTIL.createNewCashupFromServer = function (cashup, callback, oldCashupPaymentMethods) {
     OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
+    OB.UTIL.resetNetworkInformation();
     OB.UTIL.resetNumberOfLogClientErrors();
     var promises = [];
     OB.Dal.save(cashup, function () {
@@ -342,6 +352,7 @@
   OB.UTIL.createNewCashup = function (callback, lastCashupModel) {
     // Create the cashup empty
     OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
+    OB.UTIL.resetNetworkInformation();
     OB.UTIL.resetNumberOfLogClientErrors();
     var uuid = OB.UTIL.get_UUID();
     OB.Dal.save(new OB.Model.CashUp({
@@ -875,6 +886,15 @@
     cashUp.at(0).set('lastcashupeportdate', OB.I18N.normalizeDate(new Date()));
     cashUp.at(0).set('transitionsToOnline', OB.UTIL.localStorage.getItem('transitionsToOnline'));
     cashUp.at(0).set('logclientErrors', OB.UTIL.localStorage.getItem('logclientErrors'));
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalLatencyTime'))) {
+      cashUp.at(0).set('averageLatency', parseInt(OB.UTIL.localStorage.getItem('totalLatencyTime'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalLatencyMeasures'), 10));
+    }
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalUploadBandwith'))) {
+      cashUp.at(0).set('averageUploadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwith'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10));
+    }
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalDownloadBandwith'))) {
+      cashUp.at(0).set('averageDownloadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwith'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10));
+    }
     var objToSend = new Backbone.Model({
       posterminal: OB.MobileApp.model.get('terminal').id,
       posTerminal: OB.MobileApp.model.get('terminal').id,
@@ -893,7 +913,10 @@
       creationDate: (new Date(cashUp.at(0).get('creationDate'))).toISOString(),
       lastcashupeportdate: cashUp.at(0).get('lastcashupeportdate'),
       transitionsToOnline: cashUp.at(0).get('transitionsToOnline'),
-      logclientErrors: cashUp.at(0).get('logclientErrors')
+      logclientErrors: cashUp.at(0).get('logclientErrors'),
+      averageLatency: cashUp.at(0).get('averageLatency'),
+      averageUploadBandwidth: cashUp.at(0).get('averageUploadBandwidth'),
+      averageDownloadBandwidth: cashUp.at(0).get('averageDownloadBandwidth')
     });
 
     //process the payment method cash ups
