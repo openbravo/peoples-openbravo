@@ -7529,6 +7529,12 @@
     getPending: function () {
       return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
     },
+    isNegative: function () {
+      return false;
+    },
+    isFullyPaid: function () {
+      return this.getPayment() >= this.getTotal();
+    },
     toInvoice: function (status) {
       if (status === false) {
         this.unset('additionalInfo');

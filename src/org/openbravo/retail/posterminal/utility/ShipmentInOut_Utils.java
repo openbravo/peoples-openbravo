@@ -64,7 +64,7 @@ public class ShipmentInOut_Utils {
 
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
 
-  private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+  private static final BigDecimal NEGATIVE_ONE = BigDecimal.valueOf(-1);
 
   @Inject
   @Any
