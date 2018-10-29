@@ -391,7 +391,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               documentNoHandlers);
           OBDal.getInstance().save(shipment);
           su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
-              locatorList);
+              locatorList, preAddShipmentLine);
         }
 
         if (log.isDebugEnabled()) {

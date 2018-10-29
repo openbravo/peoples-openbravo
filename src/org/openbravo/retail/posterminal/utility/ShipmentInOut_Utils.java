@@ -16,9 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -65,10 +63,6 @@ public class ShipmentInOut_Utils {
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
 
   private static final BigDecimal NEGATIVE_ONE = BigDecimal.valueOf(-1);
-
-  @Inject
-  @Any
-  private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
 
   private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
       DocumentType docTypeTarget, DocumentType docType,
@@ -124,8 +118,8 @@ public class ShipmentInOut_Utils {
   }
 
   public void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
-      JSONArray orderlines, ArrayList<OrderLine> lineReferences, List<Locator> locatorList)
-      throws JSONException {
+      JSONArray orderlines, ArrayList<OrderLine> lineReferences, List<Locator> locatorList,
+      Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine) throws JSONException {
     int lineNo = 0;
     Locator foundSingleBin = null;
     Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
