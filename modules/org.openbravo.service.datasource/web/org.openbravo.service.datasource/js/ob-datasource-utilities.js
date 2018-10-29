@@ -183,7 +183,7 @@ isc.OBRestDataSource.addClassProperties({
 });
 
 isc.OBRestDataSource.addProperties({
-  csrfToken: '',
+  csrfToken: OB.User.csrfToken,
 
   sendDSRequest: function (dsRequest) {
     //TODO: Report an issue to SmartClient - This part is a work around
@@ -206,10 +206,6 @@ isc.OBRestDataSource.addProperties({
       }
     }
     this.Super('sendDSRequest', arguments);
-  },
-
-  setCsrfToken: function (token) {
-    this.csrfToken = token;
   },
 
   transformRequest: function (dsRequest) {

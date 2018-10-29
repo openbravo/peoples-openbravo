@@ -494,6 +494,10 @@
       <index name="M_PRODUCT_PRODUCTCATEGORY" unique="false">
         <index-column name="M_PRODUCT_CATEGORY_ID"/>
       </index>
+      <index name="M_PRODUCT_SALESREP" unique="false">
+        <index-column name="SALESREP_ID"/>
+        <whereClause><![CDATA[SALESREP_ID IS NOT NULL]]></whereClause>
+      </index>
       <index name="M_PRODUCT_UPC_ID" unique="false">
         <index-column name="UPC"/>
         <index-column name="M_PRODUCT_ID"/>
