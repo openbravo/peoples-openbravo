@@ -68,6 +68,7 @@ public class CancelLayawayLoader extends OrderLoader {
       // Create new inverse order
       final Order inverseOrder = OBProvider.getInstance().get(Order.class);
       createOrder(inverseOrder, json);
+      OBDal.getInstance().save(inverseOrder);
 
       // Create the lines
       createOrderLines(inverseOrder, json, orderlines, lineReferences);
@@ -98,7 +99,6 @@ public class CancelLayawayLoader extends OrderLoader {
         OBDal.getInstance().save(orderLine);
       }
 
-      OBDal.getInstance().save(inverseOrder);
       OBDal.getInstance().save(oldOrder);
 
       handlePayments(json, inverseOrder);
