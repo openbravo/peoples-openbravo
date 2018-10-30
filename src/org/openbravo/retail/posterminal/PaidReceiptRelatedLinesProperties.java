@@ -31,21 +31,16 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
-        add(new HQLProperty("olsr.orderlineRelated.id", "orderlineId"));
-        add(new HQLProperty("olsr.orderlineRelated.product.name", "productName"));
-        add(new HQLProperty("olsr.orderlineRelated.salesOrder.documentNo", "orderDocumentNo"));
-        add(new HQLProperty("olsr.orderlineRelated.salesOrder.id", "orderId"));
-        add(new HQLProperty("olsr.orderlineRelated.orderedQuantity", "qty"));
-        add(new HQLProperty(
-            "olsr.orderlineRelated.baseGrossUnitPrice * olsr.orderlineRelated.orderedQuantity",
-            "gross"));
-        add(new HQLProperty(
-            "olsr.orderlineRelated.standardPrice * olsr.orderlineRelated.orderedQuantity", "net"));
-        add(new HQLProperty(
-            "(case when olsr.salesOrderLine.salesOrder.id != olsr.orderlineRelated.salesOrder.id "
-                + "then true else false end)", "deferred"));
-        add(new HQLProperty("olsr.orderlineRelated.obposCanbedelivered", "obposCanbedelivered"));
-        add(new HQLProperty("olsr.orderlineRelated.obposIspaid", "obposIspaid"));
+        add(new HQLProperty("rpl.id", "orderlineId"));
+        add(new HQLProperty("rp.name", "productName"));
+        add(new HQLProperty("rpl.salesOrder.documentNo", "orderDocumentNo"));
+        add(new HQLProperty("po.id", "orderId"));
+        add(new HQLProperty("rpl.orderedQuantity", "qty"));
+        add(new HQLProperty("rpl.baseGrossUnitPrice * rpl.orderedQuantity", "gross"));
+        add(new HQLProperty("rpl.standardPrice * rpl.orderedQuantity", "net"));
+        add(new HQLProperty("(CASE WHEN so.id != po.id THEN true ELSE false END)", "deferred"));
+        add(new HQLProperty("rpl.obposCanbedelivered", "obposCanbedelivered"));
+        add(new HQLProperty("rpl.obposIspaid", "obposIspaid"));
       }
     };
 
