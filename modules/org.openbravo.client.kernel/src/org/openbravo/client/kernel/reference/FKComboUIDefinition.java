@@ -21,6 +21,7 @@ package org.openbravo.client.kernel.reference;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
@@ -88,18 +89,12 @@ public class FKComboUIDefinition extends ForeignKeyUIDefinition {
 
   /* Returns true if the identifier of the table is composed of more than one column */
   private Boolean isTableWithMultipleIdentifierColumns(Table relatedTable) {
-    int nIdentifiers = 0;
-    for (Column curColumn : relatedTable.getADColumnList()) {
-      if (curColumn.isIdentifier()) {
-        nIdentifiers += 1;
-        if (nIdentifiers > 1) {
-          // if there is more than one identifier return true
-          return true;
-        }
-      }
-    }
-    // there is only one identifier column
-    return false;
+    return ModelProvider.getInstance() //
+        .getTable(relatedTable.getDBTableName()) //
+        .getColumns() //
+        .stream() //
+        .filter(org.openbravo.base.model.Column::isIdentifier) //
+        .count() > 1;
   }
 
   private boolean isPropertyField(Field field) {
