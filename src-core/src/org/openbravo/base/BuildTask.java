@@ -12,21 +12,16 @@
 
 package org.openbravo.base;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.openbravo.database.CPStandAlone;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.utils.OBRebuildAppender;
-
 import java.io.FileInputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Properties;
 import java.util.Vector;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.database.CPStandAlone;
+import org.openbravo.database.ConnectionProvider;
 
 /**
  * This class starts a build of Openbravo. It is designed to be called from the application itself
@@ -36,14 +31,12 @@ import java.util.Vector;
 public class BuildTask {
 
   private static String propertiesFile;
-  private static Logger log;
+  private static Logger log = LogManager.getLogger();
 
   /**
    * This class starts a build of Openbravo. The kind of build is decided by this class logic
    */
   public static void main(String[] args) throws Exception {
-    initializeLogger();
-
     propertiesFile = args[0];
     String logFileName = args[1];
     Properties properties = new Properties();
@@ -83,18 +76,6 @@ public class BuildTask {
     log.info("Modules to be applied: " + unnappliedModules);
     ant.runTask(tasks);
     ant.closeLogFile();
-  }
-
-  private static void initializeLogger() {
-    final LoggerContext context = LoggerContext.getContext(false);
-    final Configuration config = context.getConfiguration();
-
-    LoggerConfig rootLoggerConfig = config.getRootLogger();
-    rootLoggerConfig.addAppender(OBRebuildAppender.createAppender("OBRebuildAppender", null, null),
-        Level.WARN, null);
-
-    context.updateLoggers();
-    log = LogManager.getLogger();
   }
 
   private static String getUnnapliedModules() throws Exception {

@@ -72,8 +72,8 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   private static final String ORDER_BP_COLUMN = "2762";
   private static final String ORDERLINE_ORDER_COLUMN = "2213";
 
-  private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays
-      .asList(ORDER_WAREHOUSE_COLUMN, ORDERLINE_ORDER_COLUMN);
+  private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(
+      ORDER_WAREHOUSE_COLUMN, ORDERLINE_ORDER_COLUMN);
 
   /**
    * References from org Spain to USA should not be allowed on insertion even in a column allowing
@@ -274,16 +274,16 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
   @Test
   public void byDefaultCrossOrgAdminShouldBeDisabled() {
-    assertThat("isCrossOrgAdministratorMode",
-        OBContext.getOBContext().isInCrossOrgAdministratorMode(), is(false));
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isInCrossOrgAdministratorMode(), is(false));
   }
 
   @Test
   public void crossOrgAdminModeShoudBePossibleToEnable() {
     OBContext.setCrossOrgReferenceAdminMode();
 
-    assertThat("isCrossOrgAdministratorMode",
-        OBContext.getOBContext().isInCrossOrgAdministratorMode(), is(true));
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isInCrossOrgAdministratorMode(), is(true));
 
     OBContext.restorePreviousCrossOrgReferenceMode();
   }
@@ -293,17 +293,17 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     OBContext.setCrossOrgReferenceAdminMode();
     OBContext.setCrossOrgReferenceAdminMode(); // twice in the stack
 
-    assertThat("isCrossOrgAdministratorMode",
-        OBContext.getOBContext().isInCrossOrgAdministratorMode(), is(true));
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isInCrossOrgAdministratorMode(), is(true));
 
     OBContext.restorePreviousCrossOrgReferenceMode(); // pops 1
 
-    assertThat("isCrossOrgAdministratorMode",
-        OBContext.getOBContext().isInCrossOrgAdministratorMode(), is(true));
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isInCrossOrgAdministratorMode(), is(true));
 
     OBContext.restorePreviousCrossOrgReferenceMode();
-    assertThat("isCrossOrgAdministratorMode",
-        OBContext.getOBContext().isInCrossOrgAdministratorMode(), is(false));
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isInCrossOrgAdministratorMode(), is(false));
   }
 
   @Test
@@ -354,14 +354,15 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     assertThat(getTestLogAppender().getMessages(Level.WARN), hasSize(0));
 
     OBContext.restorePreviousCrossOrgReferenceMode();
-    assertThat(getTestLogAppender().getMessages(Level.WARN), hasItem(containsString(
-        "org.openbravo.test.security.ExplicitCrossOrganizationReference.unbalancedRestorePreviousCrossOrgAdminShouldLogStackIfEnabled")));
+    assertThat(
+        getTestLogAppender().getMessages(Level.WARN),
+        hasItem(containsString("org.openbravo.test.security.ExplicitCrossOrganizationReference.unbalancedRestorePreviousCrossOrgAdminShouldLogStackIfEnabled")));
   }
 
   @Test
-  public void unbalancedOrgAdminThreadFinalizationShouldLogWarn()
-      throws NoSuchMethodException, SecurityException, IllegalAccessException,
-      IllegalArgumentException, InvocationTargetException {
+  public void unbalancedOrgAdminThreadFinalizationShouldLogWarn() throws NoSuchMethodException,
+      SecurityException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException {
     setTestLogAppenderLevel(Level.WARN);
     OBContext.setCrossOrgReferenceAdminMode();
 
@@ -449,8 +450,8 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     params.put("_operationType", "fetch");
     params.put("_startRow", "0");
     params.put("_endRow", "100");
-    return new JSONObject(
-        doRequest("/org.openbravo.service.datasource/OrderLine", params, 200, "POST"));
+    return new JSONObject(doRequest("/org.openbravo.service.datasource/OrderLine", params, 200,
+        "POST"));
   }
 
   @SuppressWarnings("serial")

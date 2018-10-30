@@ -150,8 +150,8 @@ public class DalTest extends OBBaseTest {
     assertEquals(obContext.getUser().getId(), bpg.getUpdatedBy().getId());
 
     // first delete the related accounts
-    final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance()
-        .createCriteria(CategoryAccounts.class);
+    final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance().createCriteria(
+        CategoryAccounts.class);
     obc2.add(Restrictions.eq(CategoryAccounts.PROPERTY_BUSINESSPARTNERCATEGORY, bpgs.get(0)));
     final List<CategoryAccounts> bpgas = obc2.list();
     for (final CategoryAccounts bga : bpgas) {
@@ -187,8 +187,7 @@ public class DalTest extends OBBaseTest {
     final Currency c = cs.get(0);
     // Call getValue and setValue directly to work around security checks on the description
     // that are not the objective of this test.
-    c.setValue(Currency.PROPERTY_DESCRIPTION,
-        c.getValue(Currency.PROPERTY_DESCRIPTION) + " a test");
+    c.setValue(Currency.PROPERTY_DESCRIPTION, c.getValue(Currency.PROPERTY_DESCRIPTION) + " a test");
     try {
       OBDal.getInstance().save(c);
       OBDal.getInstance().commitAndClose();
@@ -260,8 +259,8 @@ public class DalTest extends OBBaseTest {
   public void testITransaction25PageRead() {
     setTestUserContext();
     addReadWriteAccess(MaterialTransaction.class);
-    final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance()
-        .createCriteria(MaterialTransaction.class);
+    final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
+        MaterialTransaction.class);
     final int count = countObc.count();
     final int pageSize = 25;
     int pageCount = 1 + (count / pageSize);
@@ -270,8 +269,8 @@ public class DalTest extends OBBaseTest {
     }
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < pageCount; i++) {
-      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance()
-          .createCriteria(MaterialTransaction.class);
+      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance().createCriteria(
+          MaterialTransaction.class);
       obc.addOrderBy(MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME, false);
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
@@ -291,8 +290,8 @@ public class DalTest extends OBBaseTest {
   @Test
   public void testJTransactionAllPagesTime() {
     setSystemAdministratorContext();
-    final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance()
-        .createCriteria(MaterialTransaction.class);
+    final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance().createCriteria(
+        MaterialTransaction.class);
     final int count = countObc.count();
     long time = System.currentTimeMillis();
     final int pageSize = 25;
@@ -300,8 +299,8 @@ public class DalTest extends OBBaseTest {
     pageCount = 500;
     long avg = 0;
     for (int i = 0; i < pageCount; i++) {
-      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance()
-          .createCriteria(MaterialTransaction.class);
+      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance().createCriteria(
+          MaterialTransaction.class);
       obc.addOrderBy(MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME, false);
       obc.setMaxResults(pageSize);
       obc.setFirstResult(i * pageSize);
@@ -396,8 +395,8 @@ public class DalTest extends OBBaseTest {
 
       // now check if the save indeed worked out by seeing if there is a
       // cashbook account
-      final OBCriteria<CashBookAccounts> cbc = OBDal.getInstance()
-          .createCriteria(CashBookAccounts.ENTITY_NAME);
+      final OBCriteria<CashBookAccounts> cbc = OBDal.getInstance().createCriteria(
+          CashBookAccounts.ENTITY_NAME);
       cbc.add(Restrictions.eq(CashBookAccounts.PROPERTY_CASHBOOK + "." + CashBook.PROPERTY_ID,
           cashBookId));
       final List<?> cbas = cbc.list();
@@ -447,8 +446,8 @@ public class DalTest extends OBBaseTest {
   @Test
   public void getInexistentObjByEntityNameShouldBeNullEvenIfItWasProxied() {
     @SuppressWarnings("unused")
-    BusinessPartner bpProxy = (BusinessPartner) OBDal.getInstance()
-        .getProxy(BusinessPartner.ENTITY_NAME, "DummyId");
+    BusinessPartner bpProxy = (BusinessPartner) OBDal.getInstance().getProxy(
+        BusinessPartner.ENTITY_NAME, "DummyId");
     BusinessPartner bp = (BusinessPartner) OBDal.getInstance().get(BusinessPartner.ENTITY_NAME,
         "DummyId");
 
@@ -602,8 +601,8 @@ public class DalTest extends OBBaseTest {
       OBDal.getReadOnlyInstance().commitAndClose();
     } catch (Exception ignored) {
     }
-    final OBCriteria<Category> obCriteria = OBDal.getReadOnlyInstance()
-        .createCriteria(Category.class);
+    final OBCriteria<Category> obCriteria = OBDal.getReadOnlyInstance().createCriteria(
+        Category.class);
     obCriteria.add(Restrictions.eq(Category.PROPERTY_NAME, "ro_testname"));
     final List<Category> categories = obCriteria.list();
     assertEquals(0, categories.size());

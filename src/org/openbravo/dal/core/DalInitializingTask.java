@@ -159,18 +159,6 @@ public class DalInitializingTask extends Task {
     this.reInitializeModel = reInitializeModel;
   }
 
-  /**
-   * Sets logging to occur also via the console so that ant can pick it up. After the task the
-   * original logging configuration is restored.
-   * 
-   */
-  protected void initAntConsoleLogging() {
-    // set all from Openbravo as info and the rest at warn level
-    // props.setProperty("log4j.category.org.openbravo", level);
-    // props.setProperty("log4j.category.org", Level.WARN.toString());
-    // props.setProperty("log4j.category.org.hibernate.SQL", Level.DEBUG.toString());
-  }
-
   public boolean isAdminMode() {
     return adminMode;
   }

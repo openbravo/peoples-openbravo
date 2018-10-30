@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
