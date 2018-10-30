@@ -4123,6 +4123,7 @@
       OB.Dal.remove(this, function () {
         var deliveredLine, linesWithDeferred = [];
 
+        OB.MobileApp.model.set('preventOrderSave', true);
         me.set('preventServicesUpdate', true);
 
         if (me.get('paidOnCredit')) {
@@ -4222,6 +4223,8 @@
           me.calculateReceipt(function () {
             me.unset('skipApplyPromotions');
             me.unset('preventServicesUpdate');
+            OB.MobileApp.model.unset('preventOrderSave');
+            me.save();
           });
         });
         // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
