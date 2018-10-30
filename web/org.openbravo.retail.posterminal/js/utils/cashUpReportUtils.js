@@ -61,16 +61,13 @@
       order = receipt[j];
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {
-        _.each(order.get('lines').models, function (line) {
-          if (order.get('isPaid')) {
-            return;
-          }
-          if (order.get('priceIncludesTax')) {
-            gross = line.get('gross');
-          } else {
-            gross = line.get('discountedGross');
-          }
-          if (!(order.has('isQuotation') && order.get('isQuotation'))) {
+        if (!(order.has('isQuotation') && order.get('isQuotation')) && !order.get('isPaid') && !(order.get('isLayaway') && !order.get('voidLayaway'))) {
+          _.each(order.get('lines').models, function (line) {
+            if (order.get('priceIncludesTax')) {
+              gross = line.get('gross');
+            } else {
+              gross = line.get('discountedGross');
+            }
             if (order.get('cancelLayaway')) {
               // Cancel Layaway
               netSales = OB.DEC.add(netSales, line.get('net'));
@@ -79,19 +76,17 @@
               // Void Layaway
               netSales = OB.DEC.add(netSales, -line.get('net'));
               grossSales = OB.DEC.add(grossSales, -gross);
-            } else if (!order.get('isLayaway')) {
-              if (line.get('qty') > 0) {
-                // Sales order: Positive line
-                netSales = OB.DEC.add(netSales, line.get('net'));
-                grossSales = OB.DEC.add(grossSales, gross);
-              } else if (line.get('qty') < 0) {
-                // Return from customer or Sales with return: Negative line
-                netReturns = OB.DEC.add(netReturns, -line.get('net'));
-                grossReturns = OB.DEC.add(grossReturns, -gross);
-              }
+            } else if (line.get('qty') > 0) {
+              // Sales order: Positive line
+              netSales = OB.DEC.add(netSales, line.get('net'));
+              grossSales = OB.DEC.add(grossSales, gross);
+            } else if (line.get('qty') < 0) {
+              // Return from customer or Sales with return: Negative line
+              netReturns = OB.DEC.add(netReturns, -line.get('net'));
+              grossReturns = OB.DEC.add(grossReturns, -gross);
             }
-          }
-        });
+          });
+        }
         cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), netSales));
         cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), grossSales));
         cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), netReturns));
