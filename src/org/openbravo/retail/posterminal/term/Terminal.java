@@ -200,7 +200,8 @@ public class Terminal extends JSONProcessSimple {
           + " as sessionTimeout, "
           + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()
-          + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype, PricingPriceList pricelist "
+          + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype inner join pos.organization AS org, "
+          + "PricingPriceList pricelist "
           + fromOrgImage
           + " where pos.$readableSimpleCriteria and pos.$activeCriteria and pos.searchKey =:searchKey and pricelist.id =:pricelistId "
           + whereOrgImage;

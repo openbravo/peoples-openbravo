@@ -35,45 +35,41 @@ public class TerminalProperties extends ModelExtension {
 
     final ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
     list.add(new HQLProperty("pos.id", "id"));
-    list.add(new HQLProperty(
-        "(COALESCE(pos.defaultCustomer.id, pos.organization.obretcoCBpartner.id))",
+    list.add(new HQLProperty("(COALESCE(pos.defaultCustomer.id, org.obretcoCBpartner.id))",
         "businessPartner"));
     list.add(new HQLProperty("pos.name", "_identifier"));
     list.add(new HQLProperty("pos.searchKey", "searchKey"));
-    list.add(new HQLProperty(
-        "(COALESCE(pos.obposCBpartnerLoc.id, pos.organization.obretcoCBpLocation.id))",
+    list.add(new HQLProperty("(COALESCE(pos.obposCBpartnerLoc.id, org.obretcoCBpLocation.id))",
         "partnerAddress"));
-    list.add(new HQLProperty("pos.organization.obposLayawayAnonymousbp",
-        "layaway_anonymouscustomer"));
-    list.add(new HQLProperty("pos.organization.obposQuotationAnonymousbp",
-        "quotation_anonymouscustomer"));
-    list.add(new HQLProperty("pos.organization.id", "organization"));
-    list.add(new HQLProperty("pos.organization.name", getIdentifierAlias("organization")));
+    list.add(new HQLProperty("org.obposLayawayAnonymousbp", "layaway_anonymouscustomer"));
+    list.add(new HQLProperty("org.obposQuotationAnonymousbp", "quotation_anonymouscustomer"));
+    list.add(new HQLProperty("org.id", "organization"));
+    list.add(new HQLProperty("org.name", getIdentifierAlias("organization")));
     list.add(new HQLProperty("pos.client.id", "client"));
     list.add(new HQLProperty("pos.client.name", getIdentifierAlias("client")));
     list.add(new HQLProperty("pos.hardwareurl", "hardwareurl"));
     list.add(new HQLProperty("pos.scaleurl", "scaleurl"));
-    list.add(new HQLProperty("pos.organization.obretcoDbpIrulesid", "defaultbp_invoiceterm"));
-    list.add(new HQLProperty("pos.organization.obretcoDbpPtermid.id", "defaultbp_paymentterm"));
-    list.add(new HQLProperty("pos.organization.obretcoDbpPmethodid.id", "defaultbp_paymentmethod"));
-    list.add(new HQLProperty("pos.organization.obretcoDbpBpcatid.id", "defaultbp_bpcategory"));
+    list.add(new HQLProperty("org.obretcoDbpIrulesid", "defaultbp_invoiceterm"));
+    list.add(new HQLProperty("org.obretcoDbpPtermid.id", "defaultbp_paymentterm"));
+    list.add(new HQLProperty("org.obretcoDbpPmethodid.id", "defaultbp_paymentmethod"));
+    list.add(new HQLProperty("org.obretcoDbpBpcatid.id", "defaultbp_bpcategory"));
     list.add(new HQLProperty(
         "(select pos2.organization.obretcoDbpBpcatid.name from OBPOS_Applications pos2 where pos2 = pos)",
         "defaultbp_bpcategory_name"));
-    list.add(new HQLProperty("pos.organization.obretcoDbpCountryid.id", "defaultbp_bpcountry"));
+    list.add(new HQLProperty("org.obretcoDbpCountryid.id", "defaultbp_bpcountry"));
     list.add(new HQLProperty(
         "(select pos2.organization.obretcoDbpCountryid.name from OBPOS_Applications pos2 where pos2 = pos)",
         "defaultbp_bpcountry_name"));
-    list.add(new HQLProperty("pos.organization.obretcoDbpOrgid.id", "defaultbp_bporg"));
-    list.add(new HQLProperty("pos.organization.obretcoShowtaxid", "bp_showtaxid"));
-    list.add(new HQLProperty("pos.organization.obretcoShowbpcategory", "bp_showcategoryselector"));
+    list.add(new HQLProperty("org.obretcoDbpOrgid.id", "defaultbp_bporg"));
+    list.add(new HQLProperty("org.obretcoShowtaxid", "bp_showtaxid"));
+    list.add(new HQLProperty("org.obretcoShowbpcategory", "bp_showcategoryselector"));
     list.add(new HQLProperty("pos.orderdocnoPrefix", "docNoPrefix"));
     list.add(new HQLProperty("coalesce(pos.quotationdocnoPrefix, concat(pos.searchKey, 'QT'))",
         "quotationDocNoPrefix"));
     list.add(new HQLProperty("pos.returndocnoPrefix", "returnDocNoPrefix"));
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
     list.add(new HQLProperty("pos.obposTerminaltype.multiChange", "multiChange"));
-    list.add(new HQLProperty("pos.organization.obposCountDiffLimit", "organizationCountDiffLimit"));
+    list.add(new HQLProperty("org.obposCountDiffLimit", "organizationCountDiffLimit"));
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));
     list.add(new HQLProperty("postype", "terminalType"));
     list.add(new HQLProperty("pos.printoffline", "printoffline"));
@@ -82,15 +78,13 @@ public class TerminalProperties extends ModelExtension {
         "CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END", "isslave"));
     list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
         "language_string"));
-    list.add(new HQLProperty("pos.organization.obposReturnAnonymousbp", "returns_anonymouscustomer"));
+    list.add(new HQLProperty("org.obposReturnAnonymousbp", "returns_anonymouscustomer"));
     list.add(new HQLProperty(
-        "CASE WHEN pos.organization.obretcoCustomerseq.id is not null THEN true ELSE false END",
+        "CASE WHEN org.obretcoCustomerseq.id is not null THEN true ELSE false END",
         "hasCustomerSequence"));
-
-    list.add(new HQLProperty("pos.organization.obposPrepaymentAlgorithm", "prepaymentAlgorithm"));
-    list.add(new HQLProperty("pos.organization.obposPrepaymentPerc", "obposPrepaymentPerc"));
-    list.add(new HQLProperty("pos.organization.obposPrepaymentPercLimit",
-        "obposPrepaymentPercLimit"));
+    list.add(new HQLProperty("org.obposPrepaymentAlgorithm", "prepaymentAlgorithm"));
+    list.add(new HQLProperty("org.obposPrepaymentPerc", "obposPrepaymentPerc"));
+    list.add(new HQLProperty("org.obposPrepaymentPercLimit", "obposPrepaymentPercLimit"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);
