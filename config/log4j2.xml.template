@@ -2,7 +2,7 @@
 <Configuration packages="org.openbravo.utils" status="warn">
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l{1.}-- %msg%n"/>
+      <PatternLayout pattern="%r [%t] %-5level %l{1.}-- %msg%n"/>
     </Console>
     <OBRebuildAppender name="OBRebuildAppender"/>
   </Appenders>
