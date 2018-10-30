@@ -34,11 +34,13 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
         add(new HQLProperty("rpl.id", "orderlineId"));
         add(new HQLProperty("rp.name", "productName"));
         add(new HQLProperty("rpl.salesOrder.documentNo", "orderDocumentNo"));
-        add(new HQLProperty("po.id", "orderId"));
+        add(new HQLProperty("rpl.salesOrder.id", "orderId"));
         add(new HQLProperty("rpl.orderedQuantity", "qty"));
         add(new HQLProperty("rpl.baseGrossUnitPrice * rpl.orderedQuantity", "gross"));
         add(new HQLProperty("rpl.standardPrice * rpl.orderedQuantity", "net"));
-        add(new HQLProperty("(CASE WHEN so.id != po.id THEN true ELSE false END)", "deferred"));
+        add(new HQLProperty(
+            "(CASE WHEN rsl.salesOrder.id != rpl.salesOrder.id THEN true ELSE false END)",
+            "deferred"));
         add(new HQLProperty("rpl.obposCanbedelivered", "obposCanbedelivered"));
         add(new HQLProperty("rpl.obposIspaid", "obposIspaid"));
       }

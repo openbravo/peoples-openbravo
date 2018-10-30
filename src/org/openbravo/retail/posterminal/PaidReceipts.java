@@ -273,10 +273,8 @@ public class PaidReceipts extends JSONProcessSimple {
               + hqlPropertiesRelatedLines.getHqlSelect() //
               + " FROM OrderlineServiceRelation AS olsr " //
               + "JOIN olsr.orderlineRelated AS rpl " //
-              + "JOIN rpl.salesOrder AS po " //
               + "JOIN rpl.product AS rp " //
               + "JOIN olsr.salesOrderLine AS rsl " //
-              + "JOIN rsl.salesOrder AS so " //
               + "WHERE rsl.id = :salesOrderLineId " //
               + "ORDER BY rpl.lineNo";
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
