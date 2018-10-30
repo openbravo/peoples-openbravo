@@ -1809,7 +1809,7 @@ isc.OBStandardView.addProperties({
     if (!view) {
       return false;
     }
-    return view.parentTab !== null && view.parentTab !== undefined;
+    return view.parentView !== null && view.parentView !== undefined;
   },
 
   //This function returns true if it is a new record and it is being edited
