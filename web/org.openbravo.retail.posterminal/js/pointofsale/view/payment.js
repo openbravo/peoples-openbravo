@@ -2249,12 +2249,12 @@ enyo.kind({
         payments, paymentStatus, prepaymentLimitAmount, receiptHasPrepaymentAmount, pendingPrepayment, hasPayments, allowApproval;
     var continueExecuting = function (receipt, negativeLines, me, myModel, payments) {
         // Avoid closing the order before receipt is being calculated
-        if (this.owner.receipt.calculatingReceipt) {
+        if (receipt.calculatingReceipt) {
           OB.UTIL.showI18NError('OBPOS_ReceiptBeingPrepared');
           return;
         }
 
-        if (!_.isNull(me.model.get('order').get('bp')) && _.isNull(myModel.get('order').get('bp').get('locId'))) {
+        if (!_.isNull(receipt.get('bp')) && _.isNull(myModel.get('order').get('bp').get('locId'))) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
             label: OB.I18N.getLabel('OBPOS_LblOk')
           }]);
