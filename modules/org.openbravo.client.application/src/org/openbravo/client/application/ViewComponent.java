@@ -110,6 +110,9 @@ public class ViewComponent extends BaseComponent {
       } else {
         return generateView(viewId);
       }
+    } catch (Exception e) {
+      log.error("Error generating view {}", viewId, e);
+      throw e;
     } finally {
       // view generation is read only, remove from session whatever DAL loaded to make faster flush
       OBDal.getInstance().getSession().clear();
