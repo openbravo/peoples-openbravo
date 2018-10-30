@@ -26,8 +26,12 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.CPStandAlone;
@@ -52,7 +56,7 @@ import org.openbravo.service.db.ImportResult;
  */
 public class ApplyModule {
   private static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(ApplyModule.class);
+  static Logger log4j = LogManager.getLogger();
   private String obDir;
   private boolean forceRefData = false;
 
@@ -80,8 +84,8 @@ public class ApplyModule {
    * Uninstalled modules Deletes them
    */
   public void execute() {
-    if (log4j.getLevel() == null || log4j.getLevel().isGreaterOrEqual(Level.INFO)) {
-      log4j.setLevel(Level.INFO);
+    if (log4j.getLevel() == null || log4j.getLevel().isMoreSpecificThan(Level.DEBUG)) {
+      setLoggerLevel(Level.INFO);
     }
     try {
       // ************ Reference data for system client modules ************
@@ -193,6 +197,16 @@ public class ApplyModule {
       e.printStackTrace();
       throw new OBException(e);
     }
+  }
+
+  private void setLoggerLevel(Level level) {
+    final LoggerContext context = LoggerContext.getContext(false);
+    final Configuration config = context.getConfiguration();
+
+    LoggerConfig loggerConfig = config.getLoggerConfig(log4j.getName());
+    loggerConfig.setLevel(level);
+
+    context.updateLoggers();
   }
 
   /**

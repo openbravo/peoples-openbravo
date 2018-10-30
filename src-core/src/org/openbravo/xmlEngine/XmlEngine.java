@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.database.ConnectionProvider;
 import org.xml.sax.InputSource;
@@ -57,8 +58,8 @@ public class XmlEngine extends HttpServlet {
 
   static public String strTextDividedByZero;
 
-  static Logger log4jXmlEngine = Logger.getLogger(XmlEngine.class);
-  static Logger log4jReloadXml = Logger.getLogger("reloadXml");
+  static Logger log4jXmlEngine = LogManager.getLogger();
+  static Logger log4jReloadXml = LogManager.getLogger("reloadXml");
 
   ConnectionProvider connProvider;
 
