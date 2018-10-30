@@ -135,8 +135,8 @@ public class ConfigParameters {
   private String getResolvedParameter(ServletContext context, String name) {
     String value = context.getInitParameter(name);
     if (value != null) {
-      return value.replace("@actual_path_context@", getActualPathContext())
-          .replace("@application_context@", getApplicationContext());
+      return value.replace("@actual_path_context@", getActualPathContext()).replace(
+          "@application_context@", getApplicationContext());
     } else {
       return value;
     }

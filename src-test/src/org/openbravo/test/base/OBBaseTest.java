@@ -380,7 +380,7 @@ public class OBBaseTest {
 
     LoggerConfig rootLoggerConfig = config.getRootLogger();
     rootLoggerConfig.removeAppender(TEST_LOG_APPENDER_NAME);
-    //
+
     rootLoggerConfig.addAppender(testLogAppender, level, null);
     context.updateLoggers();
   }

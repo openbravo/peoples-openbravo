@@ -109,7 +109,7 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
     assertThat(
         "Stack trace shouldn't be included in log",
         getTestLogAppender().getMessages(Level.ERROR),
-        not(hasItem(containsString("org.openbravo.test.system.ErrorTextParserTestData.insertUserPK"))));
+        not(hasItem(containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK"))));
   }
 
   @Test
@@ -124,9 +124,10 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
 
       doErrorTextParserTest(1);
 
-      assertThat("Stack trace should be included in log",
+      assertThat(
+          "Stack trace should be included in log",
           getTestLogAppender().getMessages(Level.ERROR),
-          hasItem(containsString("org.openbravo.test.system.ErrorTextParserTestData.insertUserPK")));
+          hasItem(containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK")));
     } finally {
       setLoggerLevel(sqlcLogger, originalLogLevel);
     }
