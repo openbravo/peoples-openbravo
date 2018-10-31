@@ -83,8 +83,8 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.retail.posterminal.utility.AttributesUtils;
 import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
-import org.openbravo.retail.posterminal.utility.Invoice_Utils;
-import org.openbravo.retail.posterminal.utility.ShipmentInOut_Utils;
+import org.openbravo.retail.posterminal.utility.InvoiceUtils;
+import org.openbravo.retail.posterminal.utility.ShipmentInOutUtils;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
@@ -120,8 +120,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isNegative = false;
   private boolean isNewReceipt = false;
 
-  final ShipmentInOut_Utils su = new ShipmentInOut_Utils();
-  final Invoice_Utils iu = new Invoice_Utils();
+  final ShipmentInOutUtils su = new ShipmentInOutUtils();
+  final InvoiceUtils iu = new InvoiceUtils();
 
   @Inject
   @Any

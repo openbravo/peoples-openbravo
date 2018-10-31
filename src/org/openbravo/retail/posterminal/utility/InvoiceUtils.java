@@ -55,7 +55,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.JsonConstants;
 
-public class Invoice_Utils {
+public class InvoiceUtils {
 
   private static final String STATUS_PAYMENT_RECEIVED = "RPR";
 
