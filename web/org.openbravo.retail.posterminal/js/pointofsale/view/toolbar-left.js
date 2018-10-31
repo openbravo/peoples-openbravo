@@ -309,7 +309,7 @@ enyo.kind({
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
-      hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
+      hasBeenPaid = receipt.isFullyPaid();
       requirements.isLocallyGeneratedPayments = !OB.UTIL.isNullOrUndefined(receipt.get('payments').find(function (payment) {
         return !payment.get('isPrePayment');
       }));
