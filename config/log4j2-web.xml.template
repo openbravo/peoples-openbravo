@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="warn">
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="RollingFile"/>
+      <!-- Add this appender to show log messages in console i.e Eclipse: -->
+      <!--
+      <AppenderRef ref="Console"/>
+      -->
+    </Root>
+
+    <Logger name="reloadXml" level="error"/>
+
+    <Logger name="org.hibernate" level="error"/>
+
+    <!-- To debug a specific class/package: -->
+    <!--
+    <Logger name="org.openbravo.erpCommon.ad_process" level="debug"/>
+    -->
+  </Loggers>
   <Properties>
     <Property name="baseDir">${env:CATALINA_BASE}/logs</Property>
   </Properties>
   <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l{1.}-- %m%n"/>
-    </Console>
     <RollingFile name="RollingFile" fileName="${baseDir}/openbravo.log"
                  filePattern="${baseDir}/openbravo-%d{yyyyMMdd}-%i.log.gz">
       <PatternLayout pattern="%d{ISO8601} [%t] %-5p %c - %m%n"/>
@@ -20,21 +35,9 @@
         </Delete>
       </DefaultRolloverStrategy>
     </RollingFile>
+
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %c - %m%n"/>
+    </Console>
   </Appenders>
-  <Loggers>
-    <Root level="info">
-      <AppenderRef ref="RollingFile"/>
-      <!-- Add this appender to show log messages in console i.e Eclipse: -->
-      <!--
-      <AppenderRef ref="Console"/>
-      -->
-    </Root>
-    <Logger name="org.openbravo" level="warn"/>
-    <Logger name="reloadXml" level="error"/>
-    <Logger name="org.hibernate" level="error"/>
-    <!-- To debug a specific class/package: -->
-    <!--
-    <Logger name="org.openbravo.erpCommon.ad_process" level="debug"/>
-    -->
-  </Loggers>
 </Configuration>

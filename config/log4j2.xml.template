@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration packages="org.openbravo.utils" status="warn">
-  <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%r [%t] %-5level %l{1.}-- %msg%n"/>
-    </Console>
-    <OBRebuildAppender name="OBRebuildAppender"/>
-  </Appenders>
   <Loggers>
     <Root level="INFO">
       <AppenderRef ref="Console"/>
       <!-- OBRebuildAppender is required for rebuilding from the GUI -->
       <AppenderRef ref="OBRebuildAppender"/>
     </Root>
+
     <Logger name="org.hibernate" level="error"/>
+
     <Logger name="reloadXml" level="error"/>
   </Loggers>
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%r [%t] %-5p %c - %m%n"/>
+    </Console>
+
+    <OBRebuildAppender name="OBRebuildAppender"/>
+  </Appenders>
 </Configuration>
