@@ -18,8 +18,7 @@
         '' as bpname, '' as c_paymentterm_id, '' as fin_paymentmethod_id
         from c_orderline ol
         join c_order o on ol.c_order_id = o.c_order_id
-        where ol.qtyordered = ol.qtyinvoiced
-        and (select count(1) from m_inoutline il where il.c_orderline_id = ol.c_orderline_id) > 1
+        where (select count(1) from m_inoutline il where il.c_orderline_id = ol.c_orderline_id) > 1
         and o.em_obpos_app_cashup_id = ?
         and exists (select 1 from c_invoice ci join c_invoiceline cl on ci.c_invoice_id = cl.c_invoice_id 
         where cl.c_orderline_id = ol.c_orderline_id and ci.description like ('%' || ? || '%'))
