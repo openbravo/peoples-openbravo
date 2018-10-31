@@ -155,10 +155,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Any
   private Instance<InvoicePreProcessHook> invoicePreProcesses;
 
-  @Inject
-  @Any
-  private Instance<InvoiceHook> invoiceProcesses;
-
   private boolean useOrderDocumentNoForRelatedDocs = false;
   private int paymentCount = 0;
 
