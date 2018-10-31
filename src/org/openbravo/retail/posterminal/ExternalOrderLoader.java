@@ -775,8 +775,9 @@ public class ExternalOrderLoader extends OrderLoader {
         paid = paid.add(origAmount);
       }
       orderJson.put("payment", paid.doubleValue());
-      double gross = Math.abs(orderJson.getDouble("gross"));
-      boolean fullyPaid = gross != 0 && Math.abs(orderJson.getDouble("payment")) >= gross;
+      BigDecimal gross = BigDecimal.valueOf(orderJson.getDouble("gross")).abs();
+      boolean fullyPaid = BigDecimal.ZERO.compareTo(gross) != 0
+          && gross.compareTo(BigDecimal.valueOf(orderJson.getDouble("payment")).abs()) != 1;
       if (fullyPaid) {
         orderJson.put("donePressed", true);
       }
