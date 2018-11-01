@@ -57,11 +57,8 @@ public class LogDatasource extends ReadOnlyDataSourceService {
   @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
-
-    Stream<Logger> filteredLoggers = getFilteredStream(parameters);
-    filteredLoggers = sortStream(filteredLoggers, parameters);
-
-    return filteredLoggers //
+    return getFilteredStream(parameters) //
+        .sorted(getComparatorToSort(parameters)) //
         .skip(startRow) //
         .limit(endRow + 1) //
         .map(l -> {
@@ -74,36 +71,28 @@ public class LogDatasource extends ReadOnlyDataSourceService {
         .collect(Collectors.toList());
   }
 
-  private Stream<Logger> sortStream(Stream<Logger> loggerStream, Map<String, String> parameters) {
-    if (parameters.containsKey("_sortBy")) {
-      String sortKey = parameters.get("_sortBy");
-      boolean reversed = false;
-      if (sortKey.startsWith("-")) {
-        sortKey = sortKey.substring(1);
-        reversed = true;
-      }
-
-      if (getComparatorForSortKey(sortKey).isPresent()) {
-        Comparator<Logger> comparator = getComparatorForSortKey(sortKey).get();
-        if (reversed) {
-          return loggerStream.sorted(comparator.reversed());
-        }
-
-        return loggerStream.sorted(comparator);
-      }
+  private Comparator<Logger> getComparatorToSort(Map<String, String> parameters) {
+    String sortKey = parameters.containsKey("_sortBy") ? parameters.get("_sortBy") : "logger";
+    boolean reversed = sortKey.startsWith("-");
+    if (reversed) {
+      sortKey = sortKey.substring(1);
     }
 
-    return loggerStream.sorted(getComparatorForSortKey("logger").get());
+    Comparator<Logger> comparator = getComparatorForSortKey(sortKey);
+    if (reversed) {
+      comparator = comparator.reversed();
+    }
+    return comparator;
   }
 
-  private Optional<Comparator<Logger>> getComparatorForSortKey(String sortKey) {
+  private Comparator<Logger> getComparatorForSortKey(String sortKey) {
     switch (sortKey) {
     case "logger":
-      return Optional.of(Comparator.comparing(AbstractLogger::getName));
+      return Comparator.comparing(AbstractLogger::getName);
     case "level":
-      return Optional.of(Comparator.comparing(Logger::getLevel));
+      return Comparator.comparing(Logger::getLevel);
     default:
-      return Optional.empty();
+      throw new IllegalArgumentException("Unkown field to sort " + sortKey);
     }
   }
 
