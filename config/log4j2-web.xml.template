@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
 <Configuration status="warn">
   <Loggers>
     <Root level="info">
@@ -19,18 +37,26 @@
     -->
   </Loggers>
   <Properties>
+    <!-- Directory where the log files will be stored -->
     <Property name="baseDir">${env:CATALINA_BASE}/logs</Property>
   </Properties>
   <Appenders>
+    <!-- Creates a file with name defined in fileName -->
+    <!-- When the conditions defined in Policies are reached, the logfile will be moved to another file based on filePattern -->
     <RollingFile name="RollingFile" fileName="${baseDir}/openbravo.log"
                  filePattern="${baseDir}/openbravo-%d{yyyyMMdd}-%i.log.gz">
       <PatternLayout pattern="%d{ISO8601} [%t] %-5p %c - %m%n"/>
       <Policies>
+        <!-- This policy causes a rollover once the date/time pattern no longer applies to the active file-->
+        <!-- Time is determined by the filePattern defined in RollingFile. e.g. using yyyyMMdd will rollover daily -->
         <TimeBasedTriggeringPolicy />
+        <!-- This policy will trigger a logfile rollover when file size exceeds the given size -->
         <SizeBasedTriggeringPolicy size="1GB" />
       </Policies>
-      <DefaultRolloverStrategy>
+      <!-- This strategy defines how logfiles will be removed when reached the max number of log files -->
+      <DefaultRolloverStrategy max="7">
         <Delete basePath="${baseDir}">
+          <!-- If there are more than max files, remove files older than the defined age -->
           <IfLastModified age="7d" />
         </Delete>
       </DefaultRolloverStrategy>
