@@ -167,11 +167,10 @@ public class LogDatasource extends ReadOnlyDataSourceService {
   private static List<String> convertJsonArrayToStringList(JSONArray array) {
     List<String> result = new ArrayList<>();
     try {
-      for (int i=0; i < array.length(); i++) {
+      for (int i = 0; i < array.length(); i++) {
         result.add(array.getString(i));
       }
-    }
-    catch(JSONException e) {
+    } catch (JSONException e) {
       e.printStackTrace();
     }
 
