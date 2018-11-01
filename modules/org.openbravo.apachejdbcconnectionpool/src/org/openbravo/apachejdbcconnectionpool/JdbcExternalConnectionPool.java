@@ -186,8 +186,8 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       try {
         Context initctx = new InitialContext();
         Context ctx = (Context) initctx.lookup("java:/comp/env");
-        javax.sql.DataSource ds = (javax.sql.DataSource) ctx
-            .lookup(props.getProperty("JNDI.resourceName"));
+        javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(props
+            .getProperty("JNDI.resourceName"));
         poolProperties.setDataSource(ds);
         return poolProperties;
       } catch (Exception e) {
@@ -224,16 +224,16 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       poolProperties.setMinIdle(getIntProperty(props, "db.pool.minIdle", poolName));
     }
     if (getStringProperty(props, "db.pool.timeBetweenEvictionRunsMillis", poolName) != null) {
-      poolProperties.setTimeBetweenEvictionRunsMillis(
-          getIntProperty(props, "db.pool.timeBetweenEvictionRunsMillis", poolName));
+      poolProperties.setTimeBetweenEvictionRunsMillis(getIntProperty(props,
+          "db.pool.timeBetweenEvictionRunsMillis", poolName));
     }
     if (getStringProperty(props, "db.pool.minEvictableIdleTimeMillis", poolName) != null) {
-      poolProperties.setMinEvictableIdleTimeMillis(
-          getIntProperty(props, "db.pool.minEvictableIdleTimeMillis", poolName));
+      poolProperties.setMinEvictableIdleTimeMillis(getIntProperty(props,
+          "db.pool.minEvictableIdleTimeMillis", poolName));
     }
     if (getStringProperty(props, "db.pool.removeAbandoned", poolName) != null) {
-      poolProperties
-          .setRemoveAbandoned(getBooleanProperty(props, "db.pool.removeAbandoned", poolName));
+      poolProperties.setRemoveAbandoned(getBooleanProperty(props, "db.pool.removeAbandoned",
+          poolName));
     }
     if (getStringProperty(props, "db.pool.testWhileIdle", poolName) != null) {
       poolProperties.setTestWhileIdle(getBooleanProperty(props, "db.pool.testWhileIdle", poolName));
@@ -245,16 +245,16 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       poolProperties.setTestOnReturn(getBooleanProperty(props, "db.pool.testOnReturn", poolName));
     }
     if (getStringProperty(props, "db.pool.validationInterval", poolName) != null) {
-      poolProperties
-          .setValidationInterval(getIntProperty(props, "db.pool.validationInterval", poolName));
+      poolProperties.setValidationInterval(getIntProperty(props, "db.pool.validationInterval",
+          poolName));
     }
     if (getStringProperty(props, "db.pool.validationQuery", poolName) != null) {
-      poolProperties
-          .setValidationQuery(getStringProperty(props, "db.pool.validationQuery", poolName));
+      poolProperties.setValidationQuery(getStringProperty(props, "db.pool.validationQuery",
+          poolName));
     }
     if (getStringProperty(props, "db.pool.defaultTransactionIsolation", poolName) != null) {
-      poolProperties.setDefaultTransactionIsolation(
-          getIntProperty(props, "db.pool.defaultTransactionIsolation", poolName));
+      poolProperties.setDefaultTransactionIsolation(getIntProperty(props,
+          "db.pool.defaultTransactionIsolation", poolName));
     }
     if (getStringProperty(props, "db.pool.maxIdle", poolName) != null) {
       poolProperties.setMaxIdle(getIntProperty(props, "db.pool.maxIdle", poolName));
@@ -263,24 +263,24 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       poolProperties.setMaxWait(getIntProperty(props, "db.pool.maxWait", poolName));
     }
     if (getStringProperty(props, "db.pool.numTestsPerEvictionRun", poolName) != null) {
-      poolProperties.setNumTestsPerEvictionRun(
-          getIntProperty(props, "db.pool.numTestsPerEvictionRun", poolName));
+      poolProperties.setNumTestsPerEvictionRun(getIntProperty(props,
+          "db.pool.numTestsPerEvictionRun", poolName));
     }
     if (getStringProperty(props, "db.pool.removeAbandonedTimeout", poolName) != null) {
-      poolProperties.setRemoveAbandonedTimeout(
-          getIntProperty(props, "db.pool.removeAbandonedTimeout", poolName));
+      poolProperties.setRemoveAbandonedTimeout(getIntProperty(props,
+          "db.pool.removeAbandonedTimeout", poolName));
     }
     if (getStringProperty(props, "db.pool.accessToUnderlyingConnectionAllowed", poolName) != null) {
-      poolProperties.setAccessToUnderlyingConnectionAllowed(
-          getBooleanProperty(props, "db.pool.accessToUnderlyingConnectionAllowed", poolName));
+      poolProperties.setAccessToUnderlyingConnectionAllowed(getBooleanProperty(props,
+          "db.pool.accessToUnderlyingConnectionAllowed", poolName));
     }
     if (getStringProperty(props, "db.pool.defaultAutoCommit", poolName) != null) {
-      poolProperties
-          .setDefaultAutoCommit(getBooleanProperty(props, "db.pool.defaultAutoCommit", poolName));
+      poolProperties.setDefaultAutoCommit(getBooleanProperty(props, "db.pool.defaultAutoCommit",
+          poolName));
     }
     if (getStringProperty(props, "db.pool.defaultReadOnly", poolName) != null) {
-      poolProperties
-          .setDefaultReadOnly(getBooleanProperty(props, "db.pool.defaultReadOnly", poolName));
+      poolProperties.setDefaultReadOnly(getBooleanProperty(props, "db.pool.defaultReadOnly",
+          poolName));
     }
     if (getStringProperty(props, "db.pool.logAbandoned", poolName) != null) {
       poolProperties.setLogAbandoned(getBooleanProperty(props, "db.pool.logAbandoned", poolName));
@@ -292,16 +292,16 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       poolProperties.setTestOnConnect(getBooleanProperty(props, "db.pool.testOnConnect", poolName));
     }
     if (getStringProperty(props, "db.pool.connectionProperties", poolName) != null) {
-      poolProperties.setConnectionProperties(
-          getStringProperty(props, "db.pool.connectionProperties", poolName));
+      poolProperties.setConnectionProperties(getStringProperty(props,
+          "db.pool.connectionProperties", poolName));
     }
     if (getStringProperty(props, "db.pool.defaultCatalog", poolName) != null) {
       poolProperties
           .setDefaultCatalog(getStringProperty(props, "db.pool.defaultCatalog", poolName));
     }
     if (getStringProperty(props, "db.pool.validatorClassName", poolName) != null) {
-      poolProperties
-          .setValidatorClassName(getStringProperty(props, "db.pool.validatorClassName", poolName));
+      poolProperties.setValidatorClassName(getStringProperty(props, "db.pool.validatorClassName",
+          poolName));
     }
     if (getStringProperty(props, "db.pool.initSQL", poolName) != null) {
       poolProperties.setInitSQL(getStringProperty(props, "db.pool.initSQL", poolName));
@@ -336,8 +336,8 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       return props.getProperty(key);
     }
     String poolSpecificKey = key.replaceFirst("\\.", "." + poolName + ".");
-    return props.containsKey(poolSpecificKey) ? props.getProperty(poolSpecificKey)
-        : props.getProperty(key);
+    return props.containsKey(poolSpecificKey) ? props.getProperty(poolSpecificKey) : props
+        .getProperty(key);
   }
 
   /**
@@ -353,6 +353,11 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
       }
     }
     super.closePool();
+  }
+
+  @Override
+  protected List<Class<? extends Exception>> getExhaustedExceptions() {
+    return EXHAUSTED_EXCEPTION;
   }
 
 }
