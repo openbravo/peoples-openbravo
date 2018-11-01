@@ -42,8 +42,8 @@ import org.apache.fop.events.Event;
 import org.apache.fop.events.EventFormatter;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -64,10 +64,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   protected String strReplaceWithFull;
   protected String strDefaultServlet;
   public XmlEngine xmlEngine = null;
-  private String strBaseConfigPath;
   private static String strContext = null;
   private static String prefix = null;
-  protected Logger log4j = Logger.getLogger(this.getClass());
+  protected Logger log4j = LogManager.getLogger();
 
   private FopFactory fopFactory;
 
@@ -82,7 +81,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   public void init(ServletConfig config) {
     try {
       super.init(config);
-      strBaseConfigPath = config.getServletContext().getInitParameter("BaseConfigPath");
       if (prefix == null) {
         prefix = config.getServletContext().getRealPath("/");
         if (prefix == null || prefix.equals("")) {
@@ -124,16 +122,10 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
             strContext = prefix.substring(secondPath + 1, firstPath);
           }
         }
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("context: " + strContext);
-        String file = config.getServletContext().getInitParameter("log4j-init-file");
-        if (log4j.isDebugEnabled())
-          log4j.debug("Log file: " + file);
-        // if the log4j-init-file is not set, then no point in trying
-        if (file != null) {
-          // PropertyConfigurator.configure(prefix+file);
-          PropertyConfigurator.configure(prefix + "/" + strBaseConfigPath + "/" + file);
         }
+
       }
 
       globalParameters = ConfigParameters.retrieveFrom(config.getServletContext());

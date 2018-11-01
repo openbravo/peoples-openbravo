@@ -36,8 +36,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.betwixt.io.BeanReader;
-import org.apache.log4j.Logger;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
@@ -482,7 +482,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         Level.WARN, null);
 
     context.updateLoggers();
-    log4j = Logger.getLogger(ApplyModules.class);
+    log4j = LogManager.getLogger();
   }
 
   /**
