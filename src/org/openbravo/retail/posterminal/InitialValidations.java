@@ -116,6 +116,16 @@ public class InitialValidations {
       throw new JSONException("OBPOS_InactivePaymentWithCashup");
     }
 
+    String whereclauseRCDR = " as e where e.obposApplications=:terminal and e.financialAccount is not null and exists "
+        + "(select 1 from FIN_Reconciliation as finrc where "
+        + "finrc.account = e.financialAccount and finrc.documentStatus = 'DR')";
+    OBQuery<OBPOSAppPayment> queryReconcilliation = OBDal.getInstance().createQuery(
+        OBPOSAppPayment.class, whereclauseRCDR);
+    queryReconcilliation.setNamedParameter("terminal", posTerminal);
+    if (queryReconcilliation.list().size() > 0) {
+      throw new JSONException("OBPOS_FINAccountReconcileDraft");
+    }
+
     String whereclauseLAC = " as e where e.obposApplications=:terminal and ((e.financialAccount is null "
         + "and e.paymentMethod.leaveascredit = false) or (e.financialAccount is not null and e.paymentMethod.leaveascredit = true))";
     OBQuery<OBPOSAppPayment> queryLeaveAsCredit = OBDal.getInstance().createQuery(
