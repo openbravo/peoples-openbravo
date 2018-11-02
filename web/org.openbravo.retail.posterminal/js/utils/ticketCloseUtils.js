@@ -17,14 +17,18 @@
     var mergeable, addPaymentCallback, prevChange;
 
     // Manage change payments (if there is change)
-    if (receipt.get('changePayments')) {
+    if (receipt.get('changePayments') && receipt.get('changePayments').length) {
       prevChange = receipt.get('change');
       mergeable = !OB.MobileApp.model.get('terminal').multiChange && !OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true);
       addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
         // Set the 'payment' and 'paymentWithSign' attributes
         var paidAmt = OB.DEC.Zero;
         _.each(receipt.get('payments').models, function (payment) {
-          paidAmt = OB.DEC.add(paidAmt, payment.get('origAmount'));
+          if (payment.get('isPrePayment') || payment.get('isReversePayment') || !receipt.isNegative()) {
+            paidAmt = OB.DEC.add(paidAmt, payment.get('origAmount'));
+          } else {
+            paidAmt = OB.DEC.sub(paidAmt, payment.get('origAmount'));
+          }
         });
         receipt.set('payment', OB.DEC.abs(paidAmt), {
           silent: true

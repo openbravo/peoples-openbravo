@@ -3352,7 +3352,8 @@
             warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename
           },
           isEditable: options && options.hasOwnProperty('isEditable') ? options.isEditable : true,
-          isDeletable: options && options.hasOwnProperty('isDeletable') ? options.isEditable : true
+          isDeletable: options && options.hasOwnProperty('isDeletable') ? options.isEditable : true,
+          obposCanbedelivered: options && options.hasOwnProperty('obposCanbedelivered') ? options.obposCanbedelivered : true
         });
 
         if (!_.isUndefined(attrs)) {
