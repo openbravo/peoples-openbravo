@@ -4323,6 +4323,7 @@
                         line.set('id', newId);
                         line.set('qty', canceledQty);
                         line.unset('deliveredQuantity');
+                        line.unset('invoicedQuantity');
                         line.set('obposCanbedelivered', true);
                         line.set('obposIspaid', false);
                       } else {
