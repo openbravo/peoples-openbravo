@@ -97,11 +97,11 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
-      <column name="EM_OBPOS_PREPAYMENT_PERC" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="EM_OBPOS_PREPAYMENT_PERC" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[100]]></default>
         <onCreateDefault/>
       </column>
-      <column name="EM_OBPOS_PREPAYMENT_PERC_LIMIT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="EM_OBPOS_PREPAYMENT_PERC_LIMIT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[100]]></default>
         <onCreateDefault/>
       </column>
