@@ -99,6 +99,13 @@ public class InitialValidations {
       throw new JSONException("OBPOS_LeaveAsCreditNotConfigured");
     }
 
+    for (OBPOSAppPayment obposAppPayment : posTerminal.getOBPOSAppPaymentList()) {
+      if (obposAppPayment.getFinancialAccount().getCurrency() != obposAppPayment.getPaymentMethod()
+          .getCurrency()) {
+        throw new JSONException("OBPOS_FinAcctCurrDiffWithPayMethodCurr");
+      }
+    }
+
     if (posTerminal.getMasterterminal() != null) {
       String whereclauseAppPayment = " as e where e.obposApplications=:terminal and "
           + " e.paymentMethod.isshared = 'Y' ";
