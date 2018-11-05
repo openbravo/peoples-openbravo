@@ -59,11 +59,11 @@
     if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalLatencyTime'))) {
       cashUp.at(0).set('averageLatency', parseInt(OB.UTIL.localStorage.getItem('totalLatencyTime'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalLatencyMeasures'), 10));
     }
-    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalUploadBandwith'))) {
-      cashUp.at(0).set('averageUploadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwith'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10));
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalUploadBandwidth'))) {
+      cashUp.at(0).set('averageUploadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwidth'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10));
     }
-    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalDownloadBandwith'))) {
-      cashUp.at(0).set('averageDownloadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwith'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10));
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'))) {
+      cashUp.at(0).set('averageDownloadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10));
     }
 
     if (j < receipt.length && !receipt[j].has('obposIsDeleted')) {
@@ -889,11 +889,11 @@
     if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalLatencyTime'))) {
       cashUp.at(0).set('averageLatency', parseInt(OB.UTIL.localStorage.getItem('totalLatencyTime'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalLatencyMeasures'), 10));
     }
-    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalUploadBandwith'))) {
-      cashUp.at(0).set('averageUploadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwith'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10));
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalUploadBandwidth'))) {
+      cashUp.at(0).set('averageUploadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwidth'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10));
     }
-    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalDownloadBandwith'))) {
-      cashUp.at(0).set('averageDownloadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwith'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10));
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'))) {
+      cashUp.at(0).set('averageDownloadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10));
     }
     var objToSend = new Backbone.Model({
       posterminal: OB.MobileApp.model.get('terminal').id,
