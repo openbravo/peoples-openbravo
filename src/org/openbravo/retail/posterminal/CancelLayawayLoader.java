@@ -78,16 +78,9 @@ public class CancelLayawayLoader extends OrderLoader {
         OBDal.getInstance().save(orderLine);
       }
 
-      final OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          json.getString("posTerminal"));
-      inverseOrder.setObposApplications(posTerminal);
-      inverseOrder.setObposAppCashup(json.getString("obposAppCashup"));
       final JSONObject canceledOrder = json.getJSONObject("canceledorder");
       final Order oldOrder = OBDal.getInstance().get(Order.class, canceledOrder.getString("id"));
       inverseOrder.setCancelledorder(oldOrder);
-
-      oldOrder.setObposIslayaway(false);
-      inverseOrder.setObposIslayaway(false);
 
       final OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(
           OrderLine.class);
