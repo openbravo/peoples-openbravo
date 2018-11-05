@@ -272,12 +272,8 @@ public class InvoiceUtils {
     boolean multipleShipmentsLines = false;
     int lineNo = 0;
     for (int i = 0; i < invoicelines.length(); i++) {
-      final OBCriteria<ShipmentInOutLine> iolCriteria = OBDal.getInstance().createCriteria(
-          ShipmentInOutLine.class);
-      iolCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
-          lineReferences.get(i)));
-      iolCriteria.addOrder(org.hibernate.criterion.Order.asc(ShipmentInOutLine.PROPERTY_LINENO));
-      final List<ShipmentInOutLine> iolList = iolCriteria.list();
+      final List<ShipmentInOutLine> iolList = lineReferences.get(i)
+          .getMaterialMgmtShipmentInOutLineList();
       if (iolList.size() > 1) {
         multipleShipmentsLines = true;
       }
