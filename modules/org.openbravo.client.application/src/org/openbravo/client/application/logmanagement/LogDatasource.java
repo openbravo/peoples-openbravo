@@ -101,6 +101,7 @@ public class LogDatasource extends ReadOnlyDataSourceService {
 
   private Stream<Logger> getFilteredStream(Map<String, String> parameters) {
     Optional<JSONArray> criteria = getCriteria(parameters);
+    String operator = parameters.get("operator");
 
     LoggerContext lm = (LoggerContext) LogManager.getContext(false);
 

@@ -119,7 +119,6 @@ public class LogDatasourceTest extends BaseDataSourceTestNoDal {
   }
 
   private int getNumberOfTotalRows(JSONObject response) throws JSONException {
-    System.out.println(response);
     return response.getInt("totalRows");
   }
 
