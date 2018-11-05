@@ -896,12 +896,10 @@ public class POSUtils {
     if (paymentSchedule != null) {
       newPSD.setOrderPaymentSchedule(paymentSchedule);
       paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-      OBDal.getInstance().save(paymentSchedule);
     }
     if (paymentScheduleInvoice != null) {
       newPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
       paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newPSD);
-      OBDal.getInstance().save(paymentScheduleInvoice);
     }
     newPSD.setPaymentDetails(paymentDetails);
     newPSD.setBusinessPartner(businessPartner);
