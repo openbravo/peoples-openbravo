@@ -43,6 +43,9 @@ import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
 
+/**
+ * This datasource retrieves a list of registered Loggers and their corresponding log level
+ */
 public class LogDatasource extends ReadOnlyDataSourceService {
   private static final org.apache.logging.log4j.Logger log = LogManager.getLogger();
 
@@ -62,7 +65,7 @@ public class LogDatasource extends ReadOnlyDataSourceService {
         .skip(startRow) //
         .limit(endRow + 1) //
         .map(l -> {
-          Map<String, Object> r = new HashMap<>(2);
+          Map<String, Object> r = new HashMap<>(3);
           r.put("id", l.getName());
           r.put("logger", l.getName());
           r.put("level", l.getLevel().toString());
@@ -103,7 +106,7 @@ public class LogDatasource extends ReadOnlyDataSourceService {
 
     return lm.getLoggers() //
         .stream() //
-        .filter(r -> filterRow(r, criteria));
+        .filter(r -> filterRow(r, criteria, operator));
 
   }
 
@@ -112,24 +115,36 @@ public class LogDatasource extends ReadOnlyDataSourceService {
       try {
         return Optional.of((JSONArray) JsonUtils.buildCriteria(parameters).get("criteria"));
       } catch (JSONException e) {
-        e.printStackTrace();
+        log.error("Failed to build criteria from parameters", e);
       }
     }
     return Optional.empty();
   }
 
-  private static boolean filterRow(Logger r, Optional<JSONArray> criteria) {
+  private static Optional<JSONArray> getCriteria(JSONObject criterion) {
+    if (criterion.has("criteria")) {
+      try {
+        return Optional.of(criterion.getJSONArray("criteria"));
+      } catch (JSONException e) {
+        log.error("Failed to build criteria from criterion", e);
+      }
+    }
+    return Optional.empty();
+  }
+
+  private static boolean filterRow(Logger r, Optional<JSONArray> criteria, String criteriaOperator) {
     if (!criteria.isPresent()) {
       return true;
     }
 
-    boolean meetsCriteria = true;
+    boolean meetsCriteria = criteriaOperator.equals("and");
 
     JSONArray criteriaArray = criteria.get();
     try {
       for (int i = 0; i < criteriaArray.length(); i++) {
         JSONObject criterion = criteriaArray.getJSONObject(i);
-        meetsCriteria &= loggerMeetsCriterion(r, criterion);
+        meetsCriteria = applyOperator(meetsCriteria, loggerMeetsCriterion(r, criterion),
+            criteriaOperator);
       }
     } catch (JSONException e) {
       log.error("Error matching criteria", e);
@@ -138,19 +153,43 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     return meetsCriteria;
   }
 
-  private static boolean loggerMeetsCriterion(Logger r, JSONObject criterion) throws JSONException {
-    String field = criterion.getString("fieldName");
-    String value = criterion.getString("value").toLowerCase();
-
-    switch (field) {
-    case "logger":
-      return r.getName().toLowerCase().contains(value);
-    case "level":
-      List<String> values = convertJsonArrayToStringList(new JSONArray(value));
-      return values.contains(r.getLevel().toString().toLowerCase());
-    default:
-      return true;
+  private static boolean applyOperator(boolean firstOperand, boolean secondOperand, String operation) {
+    if (operation.equals("or")) {
+      return firstOperand || secondOperand;
     }
+
+    return firstOperand && secondOperand;
+  }
+
+  private static boolean loggerMeetsCriterion(Logger r, JSONObject criterion) throws JSONException {
+    String operator = criterion.getString("operator");
+    if (operator.equals("equals") || operator.equals("iContains")) {
+      String field = criterion.getString("fieldName");
+      String value = criterion.getString("value").toLowerCase();
+
+      switch (field) {
+      case "id":
+      case "logger":
+        return matchStrings(r.getName().toLowerCase(), value, operator);
+      case "level":
+        List<String> values = convertJsonArrayToStringList(new JSONArray(value));
+        return values.contains(r.getLevel().toString().toLowerCase());
+      default:
+        return true;
+      }
+    } else if (operator.equals("and") || operator.equals("or")) {
+      return filterRow(r, getCriteria(criterion), operator);
+    }
+
+    return true;
+  }
+
+  private static boolean matchStrings(String firstOperand, String secondOperand, String operator) {
+    if (operator.equals("equals")) {
+      return firstOperand.equals(secondOperand);
+    }
+
+    return firstOperand.contains(secondOperand);
   }
 
   private static List<String> convertJsonArrayToStringList(JSONArray array) {
@@ -160,12 +199,20 @@ public class LogDatasource extends ReadOnlyDataSourceService {
         result.add(array.getString(i));
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      log.error("Failed to convert JSONArray to a list of strings", e);
     }
 
     return result;
   }
 
+  /**
+   * Sets the DataSourceProperty to give the client extra info in order to display/filter the fields
+   * correctly.
+   * 
+   * @param parameters
+   *          The parameters passed to the Datasource
+   * @return A list of DataSourceProperty for each field displayed in the client
+   */
   @Override
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
     List<DataSourceProperty> dataSourceProperties = new ArrayList<>();

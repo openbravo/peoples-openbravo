@@ -19,11 +19,14 @@
 package org.openbravo.test.datasource;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
@@ -58,6 +61,20 @@ public class LogDatasourceTest extends BaseDataSourceTestNoDal {
     int totalRowsFiltered = getNumberOfTotalRows(requestLoggers(paramsFiltered));
 
     assertThat("number of total rows", totalRowsFull, is(greaterThan(totalRowsFiltered)));
+  }
+
+  @Test
+  public void testCombinedFilterWithPinnedItems() throws Exception {
+
+    Map<String, String> paramsFiltered = new ParamBuilder() //
+        .addPinnedItem("freemarker.beans") //
+        .addPinnedItem("freemarker.runtime") //
+        .setSearchLogger("org.hibernate.Version") //
+        .build();
+
+    int totalRowsFiltered = getNumberOfTotalRows(requestLoggers(paramsFiltered));
+
+    assertThat("number of total rows", totalRowsFiltered, is(equalTo(3)));
   }
 
   @Test
@@ -102,6 +119,7 @@ public class LogDatasourceTest extends BaseDataSourceTestNoDal {
   }
 
   private int getNumberOfTotalRows(JSONObject response) throws JSONException {
+    System.out.println(response);
     return response.getInt("totalRows");
   }
 
@@ -112,10 +130,16 @@ public class LogDatasourceTest extends BaseDataSourceTestNoDal {
 
   private class ParamBuilder {
     private String searchLogger = null;
+    private List<String> pinnedItems = new ArrayList<>();
     private String sortBy = null;
 
     public ParamBuilder setSearchLogger(String searchTerm) {
       searchLogger = searchTerm;
+      return this;
+    }
+
+    public ParamBuilder addPinnedItem(String item) {
+      pinnedItems.add(item);
       return this;
     }
 
@@ -135,9 +159,29 @@ public class LogDatasourceTest extends BaseDataSourceTestNoDal {
       params.put("_startRow", "0");
       params.put("_endRow", "1");
 
-      if (searchLogger != null) {
-        params.put("criteria", "{\"fieldName\":\"logger\",\"operator\":\"iContains\",\"value\":\""
-            + searchLogger + "\",\"_constructor\":\"AdvancedCriteria\"}");
+      if (!pinnedItems.isEmpty() || searchLogger != null) {
+        params.put("operator", "or");
+        String criteria = "";
+
+        if (pinnedItems.isEmpty()) {
+          if (searchLogger != null) {
+            criteria += "{\"fieldName\":\"logger\",\"operator\":\"iContains\",\"value\":\""
+                + searchLogger + "\",\"_constructor\":\"AdvancedCriteria\"}__;__";
+          }
+        } else {
+          for (String item : pinnedItems) {
+            criteria += "{\"fieldName\":\"id\",\"operator\":\"equals\",\"value\":\"" + item
+                + "\"}__;__";
+          }
+
+          if (searchLogger != null) {
+            criteria += "{\"operator\":\"and\",\"_constructor\":\"AdvancedCriteria\",\"criteria\":["
+                + "{\"fieldName\":\"logger\",\"operator\":\"iContains\",\"value\":\""
+                + searchLogger + "\"}]}";
+          }
+        }
+
+        params.put("criteria", criteria);
       }
 
       if (sortBy != null) {
