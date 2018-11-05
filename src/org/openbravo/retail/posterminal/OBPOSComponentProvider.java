@@ -74,7 +74,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/changedbusinesspartners",
         "model/changedbplocation",
         "model/order",
-        "model/invoice",
         "model/cashup",
         "model/cashmanagement",
         "model/cancelLayaway",
