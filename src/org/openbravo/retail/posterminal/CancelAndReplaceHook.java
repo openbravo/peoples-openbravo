@@ -10,14 +10,9 @@
 package org.openbravo.retail.posterminal;
 
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceOrderHook;
-import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.mobile.core.process.OutDatedDataChangeException;
-import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.service.db.DalConnectionProvider;
 
 public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
 
@@ -30,13 +25,6 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
   public void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder, Order newOrder,
       Order inverseOrder, JSONObject jsonorder) throws Exception {
     if (jsonorder != null) {
-      // Do not allow to do a C&R or a CL in the case that the order was not fully updated
-      final String loaded = jsonorder.has("loaded") ? jsonorder.getString("loaded") : null, updated = OBMOBCUtils
-          .convertToUTCDateComingFromServer(oldOrder.getUpdated());
-      if (loaded == null || loaded.compareTo(updated) != 0) {
-        throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
-            "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
-      }
       if (oldOrder.isObposIslayaway()) {
         oldOrder.setObposIslayaway(false);
         inverseOrder.setObposIslayaway(false);

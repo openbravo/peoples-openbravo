@@ -255,6 +255,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
         }
+        if (doCancelAndReplace) {
+          // Do not allow to do a C&R in the case that the order was not updated
+          final JSONObject canceledOrder = jsonorder.getJSONObject("canceledorder");
+          final String canceledLoaded = canceledOrder.has("loaded") ? canceledOrder
+              .getString("loaded") : null, canceledUpdated = OBMOBCUtils
+              .convertToUTCDateComingFromServer(order.getUpdated());
+          if (canceledLoaded == null || canceledLoaded.compareTo(canceledUpdated) != 0) {
+            throw new OutDatedDataChangeException(Utility.messageBD(
+                new DalConnectionProvider(false), "OBPOS_outdatedLayaway", OBContext.getOBContext()
+                    .getLanguage().getLanguage()));
+          }
+        }
       }
 
       if (!isQuotation && !jsonorder.getBoolean("isLayaway")) {

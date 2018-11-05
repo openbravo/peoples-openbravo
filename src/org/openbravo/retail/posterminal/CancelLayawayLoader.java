@@ -24,9 +24,13 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
+import org.openbravo.mobile.core.process.OutDatedDataChangeException;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "OBPOS_CancelLayaway")
@@ -60,6 +64,16 @@ public class CancelLayawayLoader extends OrderLoader {
 
       TriggerHandler.getInstance().disable();
 
+      // Do not allow to do a CL in the case that the order was not updated
+      final JSONObject canceledOrder = json.getJSONObject("canceledorder");
+      final Order oldOrder = OBDal.getInstance().get(Order.class, canceledOrder.getString("id"));
+      final String loaded = canceledOrder.has("loaded") ? canceledOrder.getString("loaded") : null, updated = OBMOBCUtils
+          .convertToUTCDateComingFromServer(oldOrder.getUpdated());
+      if (loaded == null || loaded.compareTo(updated) != 0) {
+        throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
+            "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+      }
+
       final ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
       final JSONArray orderlines = json.getJSONArray("lines");
 
@@ -78,8 +92,6 @@ public class CancelLayawayLoader extends OrderLoader {
         OBDal.getInstance().save(orderLine);
       }
 
-      final JSONObject canceledOrder = json.getJSONObject("canceledorder");
-      final Order oldOrder = OBDal.getInstance().get(Order.class, canceledOrder.getString("id"));
       inverseOrder.setCancelledorder(oldOrder);
 
       final OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(
