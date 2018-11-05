@@ -18,16 +18,18 @@
  */
 package org.openbravo.buildvalidation;
 
-import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
-import org.apache.commons.lang.SystemUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openbravo.modulescript.ModuleScript;
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 import org.openbravo.modulescript.OpenbravoVersion;
 
@@ -35,11 +37,9 @@ import org.openbravo.modulescript.OpenbravoVersion;
  * This script will be executed only when migrating from a version which still supports log4j 1.x
  * and copies all new configuration files from the template
  */
-public class CopyLog4jConfigurationFromTemplates extends ModuleScript {
+public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
 
-  private static final Logger log = LogManager.getLogger(CopyLog4jConfigurationFromTemplates.class);
-  private static final String USER_DIR = getUserDir();
-  private static final String CLIENT_APPLICATION_MODULE_ID = "9BA0836A3CD74EE4AB48753A47211BCC";
+  private static final String CORE_MODULE_ID = "0";
   private static final String CONFIG_DIR = "/config/";
   private static final String TEST_SRC_DIR = "/src-test/src/";
   private static final String LOG4J_CONF_FILE = "log4j2.xml";
@@ -47,37 +47,64 @@ public class CopyLog4jConfigurationFromTemplates extends ModuleScript {
   private static final String LOG4J_TEST_CONF_FILE = "log4j2-test.xml";
 
   @Override
-  public void execute() {
-    copyFromTemplateFile(CONFIG_DIR + LOG4J_CONF_FILE);
-    copyFromTemplateFile(CONFIG_DIR + LOG4J_WEB_CONF_FILE);
-    copyFromTemplateFile(TEST_SRC_DIR + LOG4J_TEST_CONF_FILE);
-  }
-
-  private void copyFromTemplateFile(String targetRelativePath) {
-    Path source = Paths.get(USER_DIR, targetRelativePath + ".template");
-    Path target = Paths.get(USER_DIR, targetRelativePath);
-
+  public List<String> execute() {
     try {
-      log.info("Copying {}", USER_DIR + targetRelativePath + ".template");
+      String sourcePath = getSourcePathFromProperties(getOpenbravoPropertiesFile());
+      copyFromTemplateFile(sourcePath + CONFIG_DIR + LOG4J_CONF_FILE);
+      copyFromTemplateFile(sourcePath + CONFIG_DIR + LOG4J_WEB_CONF_FILE);
+      copyFromTemplateFile(sourcePath + TEST_SRC_DIR + LOG4J_TEST_CONF_FILE);
+    } catch (Exception e) {
+      return handleError(e);
+    }
+
+    return new ArrayList<>();
+  }
+
+  private void copyFromTemplateFile(String targetPath) throws Exception {
+    Path source = Paths.get(targetPath + ".template");
+    Path target = Paths.get(targetPath);
+
+    if (Files.notExists(target)) {
       Files.copy(source, target);
-    } catch (FileAlreadyExistsException e) {
-      log.info("{} already exists. Ignoring.", USER_DIR + targetRelativePath);
-    } catch (IOException e) {
-      handleError(e);
     }
   }
 
-  private static String getUserDir() {
-    String userDir = System.getProperty("user.dir");
-    if (SystemUtils.IS_OS_WINDOWS) {
-      userDir = userDir.replace("\\", "/");
+  /**
+   * Starting from the location of this class, navigates backwards through the file hierarchy until
+   * the config/Openbravo.properties is found
+   * 
+   * @return a File descriptor of Openbravo.properties
+   * @throws FileNotFoundException
+   *           if Openbravo.properties cannot be found
+   */
+  private File getOpenbravoPropertiesFile() throws FileNotFoundException {
+    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
+    File f = new File(url.getPath());
+    File propertiesFile;
+    while (f.getParentFile() != null && f.getParentFile().exists()) {
+      f = f.getParentFile();
+      final File configDirectory = new File(f, "config");
+      if (configDirectory.exists()) {
+        propertiesFile = new File(configDirectory, "Openbravo.properties");
+        if (propertiesFile.exists()) {
+          return propertiesFile;
+        }
+      }
     }
-    return userDir;
+
+    throw new FileNotFoundException("Openbravo.properties file not found");
+  }
+
+  private String getSourcePathFromProperties(File openbravoProperties) throws Exception {
+    Properties properties = new Properties();
+    properties.load(new FileReader(openbravoProperties));
+
+    return properties.getProperty("source.path");
   }
 
   @Override
-  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits(CLIENT_APPLICATION_MODULE_ID, null,
-      new OpenbravoVersion(3, 0, 34825));
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits(CORE_MODULE_ID, null, new OpenbravoVersion(3, 0, 34825));
   }
+
 }
