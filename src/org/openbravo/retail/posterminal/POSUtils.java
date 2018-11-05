@@ -892,7 +892,6 @@ public class POSUtils {
       FIN_PaymentDetail paymentDetails, BusinessPartner businessPartner) {
     final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
         FIN_PaymentScheduleDetail.class);
-    newPSD.setNewOBObject(true);
     newPSD.setAmount(amount);
     if (paymentSchedule != null) {
       newPSD.setOrderPaymentSchedule(paymentSchedule);
