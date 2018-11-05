@@ -854,7 +854,7 @@ public class POSUtils {
   }
 
   /**
-   * Method to create a new PSD
+   * Method to create a new Payment Schedule Detail (PSD)
    * 
    * @param amount
    *          Amount of the PSD
@@ -873,7 +873,7 @@ public class POSUtils {
   }
 
   /**
-   * Method to create a new PSD
+   * Method to create a new Payment Schedule Detail (PSD)
    * 
    * @param amount
    *          Amount of the PSD
