@@ -6134,7 +6134,7 @@
         }
       }
       if (receiptShouldBeInvoiced) {
-        invoice = new OB.Model.Invoice(this.attributes);
+        invoice = new OB.Model.Order(this.attributes);
         //TODO: check & generate ids
         invoice.set('orderId', this.get('id'));
         invoice.set('id', OB.UTIL.get_UUID());
@@ -6221,7 +6221,9 @@
           invoice.set('ignoreCheckIfIsActiveOrder', true);
           invoice.set('hasbeenpaid', 'Y');
           invoice.set('forceCalculateTaxes', true);
+          OB.MobileApp.model.set('preventOrderSave', true);
           invoice.calculateReceipt(function () {
+            OB.MobileApp.model.unset('preventOrderSave');
             invoice.adjustPrices();
             invoice.set('json', JSON.stringify(invoice.serializeToJSON()));
 
