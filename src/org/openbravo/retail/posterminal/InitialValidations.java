@@ -104,18 +104,6 @@ public class InitialValidations {
       throw new JSONException("OBPOS_CMEVAccountIsUsedInPayMethod");
     }
 
-    String whereclauseInactivePaymentInCashup = " as e where e.obposApplications=:terminal and (e.active is false or e.paymentMethod.active is false) "
-        + "and exists (select 1 from OBPOS_Paymentmethodcashup as pmc join pmc.cashUp as cashup "
-        + "where cashup.pOSTerminal=:terminal and pmc.paymentType = e and cashup.isProcessed is false and "
-        + "(pmc.totalsales > 0 or pmc.totalreturns > 0 or pmc.totalDeposits > 0 or pmc.totalDrops > 0 or pmc.startingcash > 0))";
-    OBQuery<OBPOSAppPayment> queryInactivePayment = OBDal.getInstance().createQuery(
-        OBPOSAppPayment.class, whereclauseInactivePaymentInCashup);
-    queryInactivePayment.setFilterOnActive(false);
-    queryInactivePayment.setNamedParameter("terminal", posTerminal);
-    if (queryInactivePayment.list().size() > 0) {
-      throw new JSONException("OBPOS_InactivePaymentWithCashup");
-    }
-
     String whereclauseRCDR = " as e where e.obposApplications=:terminal and e.financialAccount is not null and exists "
         + "(select 1 from FIN_Reconciliation as finrc where "
         + "finrc.account = e.financialAccount and finrc.documentStatus = 'DR')";
