@@ -12,8 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.ButtonSelectAll',
-  style: 'width: 160px; margin: 0px 9px 8px 0px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'btnlink-yellow btnlink btnlink-small btnlink-headerButton',
   i18nLabel: 'OBPOS_lblSelectAll',
   events: {
     onSelectAll: ''
@@ -38,17 +37,26 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ButtonAdvancedFilter',
   name: 'OB.UI.SelectorButtonAdvancedFilter',
+  classes: 'btnlink-headerButton',
   dialog: 'OBPOS_modalAdvancedFilterOrders'
 });
 
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.ButtonAssociateSelected',
-  style: 'min-width: 170px; margin: 0px 9px 8px 0px;',
-  classes: 'btnlink-green btnlink btnlink-small',
+  classes: 'btnlink-green btnlink btnlink-small btnlink-headerButton ',
   i18nLabel: 'OBPOS_AssociateSelected',
+  processesToListen: ['associateLines'],
   events: {
     onAssociateSelected: ''
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
+  },
+  destroyComponents: function () {
+    this.inherited(arguments);
+    OB.UTIL.ProcessController.unSubscribe(this.processesToListen, this);
   },
   tap: function () {
     this.setDisabled(true);
@@ -61,27 +69,27 @@ enyo.kind({
   name: 'OB.UI.ModalOrderScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   components: [{
-    style: 'padding: 10px;',
+    classes: 'filterSelectorTableHeader',
     kind: 'OB.UI.FilterSelectorTableHeader',
     name: 'filterSelector',
     filters: OB.Model.OrderAssociationsFilter.getProperties()
   }, {
     showing: true,
-    style: 'padding: 7px;',
+    classes: 'filterSelectorTableHeader_buttons',
     components: [{
-      style: 'display: table; width: 100%',
+      classes: 'filterSelectorTableHeader_Firstbutton',
       components: [{
-        style: 'display: table-cell; text-align: right; width: 38%',
+        classes: 'selectorHeader_btnSelectAll',
         components: [{
           kind: 'OB.UI.ButtonSelectAll'
         }]
       }, {
-        style: 'display: table-cell; text-align: center; width: 24%',
+        classes: 'selectorHeader_btnAdvancedFilter',
         components: [{
           kind: 'OB.UI.SelectorButtonAdvancedFilter'
         }]
       }, {
-        style: 'display: table-cell; width: 38%',
+        classes: 'selectorHeader_btnAssociateSelected',
         components: [{
           kind: 'OB.UI.ButtonAssociateSelected'
         }]
@@ -94,7 +102,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListOrdersLine',
   kind: 'OB.UI.listItemButton',
-  style: 'height: 40px; padding: 0; border-bottom: none;',
+  classes: 'selector_orderLines',
   components: [{
     name: 'order',
     classes: 'ob-row-order',
@@ -105,27 +113,22 @@ enyo.kind({
         this.bubble('onTapOrderIcon');
       }
     }, {
-      classes: 'ob-row-order-text',
+      classes: 'ob-row-order-text-bold',
       name: 'documentNo'
     }, {
       classes: 'ob-row-order-text',
-      style: 'color: #888888;',
       name: 'bpName'
     }, {
       classes: 'ob-row-order-text',
-      style: 'color: #888888;',
       name: 'orderedDate'
-    }, {
-      style: 'clear: both;'
     }]
   }, {
     name: 'orderline',
     classes: 'ob-row-orderline',
-    style: 'height: 40px; border-bottom: none;',
     components: [{
       classes: 'ob-cell-orderline-left',
       components: [{
-        classes: 'ob-orderline-icon ob-checkbox-off',
+        classes: 'ob-checkbox-off',
         name: 'iconOrderLine',
         tap: function () {
           this.bubble('onTapLineIcon');
@@ -134,7 +137,6 @@ enyo.kind({
         classes: 'ob-cell-orderline-left-info',
         components: [{
           classes: 'ob-text-line',
-          style: 'margin-top: 5px;',
           name: 'orderlineInfo'
         }]
       }]
@@ -190,6 +192,7 @@ enyo.kind({
       mode: mode
     });
     this.model.trigger('verifyAssociateTicketsButton', this.model);
+    return true;
   },
 
   tapLineIcon: function () {
@@ -202,6 +205,7 @@ enyo.kind({
     this.associateOrder(null, {
       value: qty
     });
+    return true;
   },
   create: function () {
     var me = this;
@@ -248,8 +252,7 @@ enyo.kind({
   components: [{
     classes: 'span12',
     components: [{
-      style: 'border-bottom: 1px solid #cccccc;',
-      classes: 'row-fluid',
+      classes: 'row-fluid selector_orderList',
       components: [{
         classes: 'span12',
         components: [{
@@ -261,7 +264,7 @@ enyo.kind({
           renderEmpty: 'OB.UI.RenderEmpty'
         }, {
           name: 'renderLoading',
-          style: 'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+          classes: 'selectorLoadingMsg',
           showing: false,
           initComponents: function () {
             this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
@@ -287,6 +290,7 @@ enyo.kind({
         });
       });
     }
+    return true;
   },
 
   changeLine: function (inSender, inEvent) {
@@ -308,6 +312,7 @@ enyo.kind({
           cmp = order.get('renderCmp');
       cmp.changeIconClass(cmp.$.iconOrder, status);
     }
+    return true;
   },
 
   selectAll: function (inSender, inEvent) {
@@ -324,7 +329,8 @@ enyo.kind({
   },
 
   associateSelected: function (inSender, inEvent) {
-    var associatedOrderLineIds = [],
+    var execution = OB.UTIL.ProcessController.start('associateLines'),
+        associatedOrderLineIds = [],
         modalSelector = this.parent.parent,
         selectedLine = modalSelector.selectedLine,
         relatedLines = selectedLine.get('relatedLines'),
@@ -361,6 +367,9 @@ enyo.kind({
       modalSelector.hideSelector();
     });
     modalSelector.initialized = false;
+
+    OB.UTIL.ProcessController.finish('associateLines', execution);
+    return true;
   },
 
   clearAction: function () {
@@ -387,6 +396,9 @@ enyo.kind({
     }
 
     function errorCallback(error) {
+      me.$.renderLoading.hide();
+      me.$.orderSelector.collection.reset();
+      me.$.orderSelector.$.tempty.show();
       if (!inEvent.advanced) {
         me.waterfall('onEnableSearch');
       }
@@ -399,7 +411,7 @@ enyo.kind({
       if (!inEvent.advanced) {
         me.waterfall('onEnableSearch');
       }
-      if (data && !data.exception) {
+      if (data && !data.exception && data.length > 0) {
         me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(data.length === 0);
         var ordersLoaded = new Backbone.Collection();
         _.each(data.models, function (iter) {
@@ -492,13 +504,17 @@ enyo.kind({
             lines.push(line);
           });
         });
+        me.$.renderLoading.hide();
         me.$.orderSelector.collection.reset(lines);
-        me.$.renderLoading.hide();
         me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.changeTo(true);
-      } else {
+      } else if (data.exception && data.exception.message) {
         OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
-        me.$.orderSelector.collection.reset();
         me.$.renderLoading.hide();
+        me.$.orderSelector.collection.reset();
+        me.$.orderSelector.$.tempty.show();
+      } else {
+        me.$.renderLoading.hide();
+        me.$.orderSelector.collection.reset();
         me.$.orderSelector.$.tempty.show();
       }
     }
@@ -599,7 +615,7 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalAssociateTickets',
   topPosition: '45px',
-  style: 'width: 725px',
+  classes: 'modal_associateTickets',
   i18nHeader: 'OBPOS_SelectLinesToAssociate',
   body: {
     kind: 'OB.UI.ListOrders'

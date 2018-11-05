@@ -827,35 +827,93 @@ button.payment-changebutton {
   float: left;
 }
 
-.ob-order {
-  border-bottom: 1px solid #ccc;
+.btnlink-headerButton {
+  width: 170px !important;
+  margin: 0px 8px 6px 0px !important;
+}
+
+.filterSelectorTableHeader{
+  padding: 10px;
+}
+
+.filterSelectorTableHeader_buttons{
+  padding: 7px;
+}
+
+.filterSelectorTableHeader_Firstbutton{
+  display: table; 
+  width: 100%
+}
+
+.selectorHeader_btnSelectAll{
+  display: table-cell; 
+  text-align: right; 
+  width: 38%
+}
+
+.selectorHeader_btnAdvancedFilter{
+  display: table-cell;  
+  text-align: center; 
+  width: 24%
+}
+
+.selectorHeader_btnAssociateSelected{
+  display: table-cell; 
+  width: 38%
+}
+
+.selector_orderLines{
+  height: 40px; 
+  padding: 0; 
+  border-bottom: none;
+}
+
+.selector_orderList{
+  border-bottom: 1px solid #cccccc;
+}
+
+.selectorLoadingMsg{
+	border-bottom: 1px solid #cccccc; 
+	padding: 20px; 
+	text-align: center; 
+	font-weight: bold; 
+	font-size: 30px; 
+	color: #cccccc
 }
 
 .ob-row-order {
-  height: 36px;
+  /*height: 36px;*/
   width: 100%;
-  border-top: 1px solid #ccc;
-  padding: 7px 0px 0px 10px;
+  /*border-top: 1px solid #ccc;
+  padding: 7px 0px 0px 10px;*/
 }
 
 .ob-row-order-text {
   float: left;
   display: inline-block;
-  padding-top: 5px;
+  padding-top: 4px;
+  padding-left: 5px;
+  color: #888888;
+}
+
+.ob-row-order-text-bold {
+  float: left;
+  display: inline-block;
+  padding-top: 4px;
   padding-left: 5px;
 }
 
 .ob-row-orderline {
-  height: 39px;
+  height: 36px;
   width: 100%;
   padding: 0px 5px 0px 23px;
+  border-bottom: none;
 }
 
 .ob-cell-orderline-left {
   float: left;
   display: inline-block; 
   border-top: 1px solid #ccc;
-  padding: 2px 0px 0px 5px;
   height: 100%;
   width:100%;
 }
@@ -876,12 +934,6 @@ li.ob-order + li.ob-orderline > button > div > div > div.ob-cell-orderline-right
   
 }
 
-li.ob-orderline:last-child > button > div > div.ob-cell-orderline-left,
-li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderline-right-col1,
-li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderline-right-col2 {
-  border-bottom: 1px solid #ccc;
-}
-
 li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderline-right-col1:first-child {
   border-bottom: none;
 }
@@ -898,34 +950,30 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   overflow: hidden;
 }   
 
-.ob-orderline-icon {
-  margin-top: 5px;
-}
-
 .ob-checkbox-half-on {
-  width: 37px;
-  height: 30px;
+  width: 34px;
+  height: 25px;
   float: left; 
   display: inline-block;
-  background-image: url('./../img/checkbox-half-on.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-half-on.svg');
   background-repeat: no-repeat;
 }
  
 .ob-checkbox-on {
-  width: 37px;
-  height: 30px;
+  width: 34px;
+  height: 25px;
   float: left; 
   display: inline-block;
-  background-image: url('./../img/checkbox-on.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
   background-repeat: no-repeat;
 }
  
 .ob-checkbox-off {
-  width: 37px;
-  height: 30px;
+  width: 34px;
+  height: 25px;
   float: left; 
   display: inline-block;
-  background-image: url('./../img/checkbox-off.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
   background-repeat: no-repeat;
 }
  
@@ -1008,48 +1056,114 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   overflow: hidden;
 }
 
-.picking-print-btn {
-  width: 50px;
-  background-image: url('./../img/printer.png');
-  background-repeat: no-repeat;
+.modal_associateTickets{
+  width: 725px !important;
 }
 
-.step14 {
-  background-image: url('./../img/progress1_4.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100%;
+.modal-removeAssociatedTickets{
+  width: 900px !important;	
 }
 
-.step24 {
-  background-image: url('./../img/progress2_4.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100%;
+.modal-removeAssociatedTickets-scroller{
+  background-color: #ffffff;
+  margin-top: -8px;
 }
 
-.step34 {
-  background-image: url('./../img/progress3_4.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100%;
+.modal-removeAssociatedTickets-header{
+  padding-bottom: 0px; 
+  margin: 0px !important; 
+  height: 140px;
 }
 
-.step44 {
-  background-image: url('./../img/progress4_4.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100%;
-}
-
-.steptable {
-  display: table !important;
- width: 100%; 
+.modal-removeAssociatedTickets-headerLabels{
+  overflow: hidden; 
+  padding-top: 20px; 
+  border-bottom: 3px solid #cccccc; 
   text-align: center; 
+  color: black; 
+  margin-top: 15px; 
+  padding-bottom: 7px;  
+  font-weight: bold; 
+  background-color: white; 
+  height:40px;
 }
 
-.stephighlight {
-  font-weight: bold;
+.modal-removeAssociatedTickets-headerLabels-productName{
+  line-height: 25px; 
+  font-size: 17px;  
+  width: 179px; 
+  padding-left: 80px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-totalQty{
+  line-height: 25px; 
+  font-size: 17px; 
+  width: 85px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-receipt{
+  line-height: 25px; 
+  font-size: 17px; 
+  width: 180px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-customer{
+  line-height: 25px; 
+  font-size: 17px; 
+  width: 250px; 
+  padding-left: 20px;
+}
+
+.modal-removeAssociatedTickets-headerContent{
+  text-align: center; 
+  color: white;
+}
+
+.modal-removeAssociatedTickets-header-serviceName{
+  line-height: 25px; 
+  font-size: 24px;
+}
+
+.modal-removeAssociatedTickets-header-linesLabel{
+  line-height: 25px; 
   font-size: 20px;
-  color: #6BB23F;
+}
+
+.checkbox_removeAssociations{
+  width: 8%;
+  background-position: 15px center !important;
+}
+
+.associatedOrderLine{
+  border-bottom: 1px solid #cccccc; 
+  text-align: center; 
+  color: black; 
+  padding-top: 9px;
+}
+
+.associatedOrderLine-productName{
+  line-height: 35px; 
+  font-size: 17px; 
+  width: 180px; 
+  padding-left: 6px;
+}
+
+.associatedOrderLine-orderedQuantity{
+  line-height: 35px; 
+  font-size: 17px; 
+  width: 85px;
+}
+
+.associatedOrderLine-documentNo{
+  line-height: 35px; 
+  font-size: 17px; 
+  width:180px;
+  padding-left: 5px;
+}
+
+.associatedOrderLine-customer{
+  line-height: 35px; 
+  font-size: 17px; 
+  width:250px; 
+  padding-left: 20px;
 }

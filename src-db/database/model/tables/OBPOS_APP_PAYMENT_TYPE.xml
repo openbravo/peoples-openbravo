@@ -177,16 +177,16 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REFUNDABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ISREVERSABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="AVAILABLE_REVERSE_DELAY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="REFUNDABLE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
       <column name="COUNTPAYMENTINCASHUP" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">

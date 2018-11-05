@@ -420,9 +420,6 @@ enyo.kind({
     kind: 'OB.UI.SmallButton',
     name: 'addAssociationsButton',
     i18nContent: 'OBPOS_AddAssociations',
-    events: {
-      onShowPopup: ''
-    },
     showing: false,
     classes: 'btnlink-orange',
     tap: function () {
@@ -438,9 +435,6 @@ enyo.kind({
     kind: 'OB.UI.SmallButton',
     name: 'removeAssociationsButton',
     i18nContent: 'OBPOS_RemoveAssociations',
-    events: {
-      onShowPopup: ''
-    },
     showing: false,
     classes: 'btnlink-orange',
     tap: function () {

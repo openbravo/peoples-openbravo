@@ -13,9 +13,18 @@ enyo.kind({
   name: 'OB.UI.ModalRemoveAssociations_btnApply',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
+  processesToListen: ['removeAssociations'],
   events: {
     onApplyChanges: '',
     onLineSelected: ''
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
+  },
+  destroyComponents: function () {
+    this.inherited(arguments);
+    OB.UTIL.ProcessController.unSubscribe(this.processesToListen, this);
   },
   tap: function () {
     this.inherited(arguments);
@@ -41,8 +50,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CheckboxButtonRemoveAssociations',
   kind: 'OB.UI.CheckboxButton',
-  classes: 'modal-dialog-btn-check span1',
-  style: 'width: 8%',
+  classes: 'modal-dialog-btn-check span1 checkbox_removeAssociations',
   events: {
     onLineSelected: ''
   },
@@ -56,7 +64,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.AssociatedOrderLine',
-  style: 'border-bottom: 1px solid #cccccc; text-align: center; color: black; padding-top: 9px;',
+  classes: 'associatedOrderLine',
   handlers: {
     onLineSelected: 'lineSelected'
   },
@@ -65,22 +73,18 @@ enyo.kind({
     name: 'checkboxButtonRemoveAssociations'
   }, {
     name: 'productName',
-    classes: 'span4',
-    style: 'line-height: 35px; font-size: 17px; width: 180px; padding-left: 10px;'
+    classes: 'span4 associatedOrderLine-productName'
   }, {
     name: 'orderedQuantity',
-    classes: 'span2',
-    style: 'line-height: 35px; font-size: 17px; width: 85px;'
+    classes: 'span2 associatedOrderLine-orderedQuantity'
   }, {
     name: 'documentNo',
-    classes: 'span2',
-    style: 'line-height: 35px; font-size: 17px; width:180px;padding-left: 5px;'
+    classes: 'span2 associatedOrderLine-documentNo'
   }, {
     name: 'customer',
-    classes: 'span2',
-    style: 'line-height: 35px; font-size: 17px; width:250px; padding-left: 20px;'
+    classes: 'span2 associatedOrderLine-customer'
   }, {
-    style: 'clear: both;'
+    classes: 'changedialog-properties-end'
   }],
   initComponents: function () {
     this.inherited(arguments);
@@ -91,23 +95,22 @@ enyo.kind({
   },
   lineSelected: function (inSender, inEvent) {
     inEvent.selectedLine = this.newAttribute.orderlineId;
+    return true;
   }
 });
 
 enyo.kind({
   name: 'OB.UI.ModalRemoveAssociatedTickets',
   kind: 'OB.UI.ModalAction',
-  classes: 'modal-dialog',
-  style: 'width: 900px;',
+  classes: 'modal-dialog modal-removeAssociatedTickets',
   handlers: {
     onApplyChanges: 'applyChanges',
-    onCheckedAll: 'checkedAll',
     onLineSelected: 'lineSelected'
   },
   bodyContent: {
     kind: 'Scroller',
     maxHeight: '225px',
-    style: 'background-color: #ffffff;margin-top: -8px;',
+    classes: 'modal-removeAssociatedTickets-scroller',
     thumb: true,
     horizontal: 'hidden',
     components: [{
@@ -143,7 +146,8 @@ enyo.kind({
     }
   },
   applyChanges: function (inSender, inEvent) {
-    var selectedLine = this.args.selectedLine;
+    var execution = OB.UTIL.ProcessController.start('removeAssociations'),
+        selectedLine = this.args.selectedLine;
     if (selectedLine.linesToAssociate && selectedLine.linesToAssociate.length === 0) {
       this.args.receipt.deleteLinesFromOrder([selectedLine]);
     } else if (selectedLine.linesToAssociate && selectedLine.linesToAssociate.length > 0) {
@@ -157,6 +161,7 @@ enyo.kind({
         return true;
       });
     }
+    OB.UTIL.ProcessController.finish('removeAssociations', execution);
   },
   executeOnShow: function () {
     var me = this;
@@ -164,48 +169,42 @@ enyo.kind({
     this.$.bodyContent.$.attributes.destroyComponents();
     this.$.header.destroyComponents();
     this.$.header.createComponent({
-      name: 'CheckAllHeaderDocNum',
-      style: 'text-align: center; color: white;',
+      name: 'ModalRemoveAssociatedTicketsHeader',
+      classes: 'modal-removeAssociatedTickets-headerContent',
       components: [{
         content: OB.I18N.getLabel('OBPOS_ServiceHeader', [me.args.selectedLine.get('product').get('_identifier')]),
-        name: 'documentNo',
-        classes: 'span12',
-        style: 'line-height: 25px; font-size: 24px;'
+        name: 'serviceName',
+        classes: 'span12 modal-removeAssociatedTickets-header-serviceName'
       }, {
         content: OB.I18N.getLabel('OBPOS_SelectAssociationsToRemoved'),
         name: 'linesLabel',
-        classes: 'span12',
-        style: 'line-height: 25px; font-size: 20px;'
+        classes: 'span12 modal-removeAssociatedTickets-header-linesLabel'
       }, {
-        style: 'clear: both;'
+        classes: 'changedialog-properties-end'
       }]
     });
-    this.$.header.addStyles('padding-bottom: 0px; margin: 0px; height: 140px;');
+    this.$.header.addClass('modal-removeAssociatedTickets-header');
     this.$.header.createComponent({
-      name: 'CheckAllHeader',
-      style: 'overflow: hidden; padding-top: 20px; border-bottom: 3px solid #cccccc; text-align: center; color: black; margin-top: 15px; padding-bottom: 7px;  font-weight: bold; background-color: white; height:40px;',
+      name: 'HeaderLabels',
+      classes: 'modal-removeAssociatedTickets-headerLabels',
       components: [{
         content: OB.I18N.getLabel('OBPOS_LblProductName'),
         name: 'productNameLbl',
-        classes: 'span4',
-        style: 'line-height: 25px; font-size: 17px;  width: 179px; padding-left: 80px;'
+        classes: 'span4 modal-removeAssociatedTickets-headerLabels-productName'
       }, {
         name: 'totalQtyLbl',
         content: OB.I18N.getLabel('OBPOS_LblQty'),
-        classes: 'span2',
-        style: 'line-height: 25px; font-size: 17px; width: 85px;'
+        classes: 'span2 modal-removeAssociatedTickets-headerLabels-totalQty'
       }, {
         name: 'receiptLbl',
         content: OB.I18N.getLabel('OBPOS_ticket'),
-        classes: 'span2',
-        style: 'line-height: 25px; font-size: 17px; width: 180px;'
+        classes: 'span2 modal-removeAssociatedTickets-headerLabels-receipt'
       }, {
         content: OB.I18N.getLabel('OBPOS_LblCustomer'),
         name: 'customerLbl',
-        classes: 'span2',
-        style: 'line-height: 25px; font-size: 17px; width: 250px; padding-left: 20px;'
+        classes: 'span2 modal-removeAssociatedTickets-headerLabels-customer'
       }, {
-        style: 'clear: both;'
+        classes: 'changedialog-properties-end'
       }]
     });
 
