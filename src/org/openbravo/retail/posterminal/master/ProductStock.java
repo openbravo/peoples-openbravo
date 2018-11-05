@@ -103,8 +103,8 @@ public class ProductStock extends Product {
           + "  FROM OrganizationWarehouse ow " //
           + "  WHERE ow.organization.id = :orgId"
           + "  AND ow.warehouse.id = locator.warehouse.id) " //
-          + "GROUP BY storagedetail.product.id, locator.warehouse.id " //
-          + "ORDER BY storagedetail.product.id, locator.warehouse.id ";
+          + "GROUP BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id " //
+          + "ORDER BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id ";
 
       products.add(hql);
 

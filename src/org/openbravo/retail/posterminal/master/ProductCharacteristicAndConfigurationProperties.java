@@ -16,20 +16,21 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 
-@Qualifier(ProductStock.productStockPropertyExtension)
-public class ProductStockProperties extends ModelExtension {
+@Qualifier(ProductCharacteristicAndConfiguration.productChAndConfExtension)
+public class ProductCharacteristicAndConfigurationProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
 
     List<HQLProperty> list = new ArrayList<HQLProperty>();
-    list.add(new HQLProperty("storagedetail.product.id", "m_product_id"));
-    list.add(new HQLProperty("storagedetail.product.searchKey", "searchKey"));
-    list.add(new HQLProperty("locator.warehouse.id", "m_warehouse_id"));
-    list.add(new HQLProperty("sum(storagedetail.quantityOnHand) - sum(storagedetail.reservedQty)",
-        "availableStock", false));
+    list.add(new HQLProperty("pc.id", "m_product_ch_id"));
+    list.add(new HQLProperty("pc.sequenceNumber", "m_product_ch_seqno"));
+    list.add(new HQLProperty("pc.characteristic.id", "m_characteristic_id"));
+    list.add(new HQLProperty("pc.characteristic.name", "m_characteristic_name"));
+    list.add(new HQLProperty("pcc.id", "m_product_ch_conf_id"));
+    list.add(new HQLProperty("pcc.characteristicValue.id", "m_ch_value_id"));
+    list.add(new HQLProperty("pcc.characteristicValue.name", "m_ch_value_name"));
 
     return list;
-
   }
 }

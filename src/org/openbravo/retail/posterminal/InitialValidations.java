@@ -24,6 +24,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.common.enterprise.DocumentType;
 
 public class InitialValidations {
 
@@ -69,6 +70,19 @@ public class InitialValidations {
       throw new JSONException("OBPOS_NotAllowSlaveAndMaster");
     }
 
+    DocumentType documentType = posTerminal.getObposTerminaltype().getDocumentType(), returnDocumentType = posTerminal
+        .getObposTerminaltype().getDocumentTypeForReturns();
+    if (documentType.getDocumentTypeForInvoice() == null) {
+      throw new JSONException("OBPOS_DocTypeInvoiceNotConfigured");
+    } else if (documentType.getDocumentTypeForShipment() == null) {
+      throw new JSONException("OBPOS_DocTypeShipmentNotConfigured");
+    }
+    if (returnDocumentType.getDocumentTypeForInvoice() == null) {
+      throw new JSONException("OBPOS_DocTypeReturnInvoiceNotConfigured");
+    } else if (returnDocumentType.getDocumentTypeForShipment() == null) {
+      throw new JSONException("OBPOS_DocTypeReturnShipmentNotConfigured");
+    }
+
     String whereclausePM = " as e where e.obposApplications=:terminal and e.financialAccount is not null "
         + "and not exists (select 1 from FinancialMgmtFinAccPaymentMethod as pmacc where "
         + "pmacc.paymentMethod = e.paymentMethod.paymentMethod and pmacc.account = e.financialAccount"
@@ -90,6 +104,16 @@ public class InitialValidations {
       throw new JSONException("OBPOS_CMEVAccountIsUsedInPayMethod");
     }
 
+    String whereclauseRCDR = " as e where e.obposApplications=:terminal and e.financialAccount is not null and exists "
+        + "(select 1 from FIN_Reconciliation as finrc where "
+        + "finrc.account = e.financialAccount and finrc.documentStatus = 'DR')";
+    OBQuery<OBPOSAppPayment> queryReconcilliation = OBDal.getInstance().createQuery(
+        OBPOSAppPayment.class, whereclauseRCDR);
+    queryReconcilliation.setNamedParameter("terminal", posTerminal);
+    if (queryReconcilliation.list().size() > 0) {
+      throw new JSONException("OBPOS_FINAccountReconcileDraft");
+    }
+
     String whereclauseLAC = " as e where e.obposApplications=:terminal and ((e.financialAccount is null "
         + "and e.paymentMethod.leaveascredit = false) or (e.financialAccount is not null and e.paymentMethod.leaveascredit = true))";
     OBQuery<OBPOSAppPayment> queryLeaveAsCredit = OBDal.getInstance().createQuery(
@@ -97,6 +121,13 @@ public class InitialValidations {
     queryLeaveAsCredit.setNamedParameter("terminal", posTerminal);
     if (queryLeaveAsCredit.list().size() > 0) {
       throw new JSONException("OBPOS_LeaveAsCreditNotConfigured");
+    }
+
+    for (OBPOSAppPayment obposAppPayment : posTerminal.getOBPOSAppPaymentList()) {
+      if (obposAppPayment.getFinancialAccount().getCurrency() != obposAppPayment.getPaymentMethod()
+          .getCurrency()) {
+        throw new JSONException("OBPOS_FinAcctCurrDiffWithPayMethodCurr");
+      }
     }
 
     if (posTerminal.getMasterterminal() != null) {
