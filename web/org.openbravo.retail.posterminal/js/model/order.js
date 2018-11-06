@@ -922,9 +922,10 @@
       var me = this,
           total = this.getTotal();
 
-      function executeCallback(prepaymentAmount, prepaymentLimitAmount) {
+      function executeCallback(prepaymentAmount, prepaymentLimitAmount, prepaymentLayawayLimitAmount) {
         me.set('obposPrepaymentamt', prepaymentAmount);
         me.set('obposPrepaymentlimitamt', prepaymentLimitAmount);
+        me.set('obposPrepaymentlaylimitamt', prepaymentLayawayLimitAmount);
         me.trigger('saveCurrent');
         if (callback instanceof Function) {
           callback(prepaymentAmount, prepaymentLimitAmount);
@@ -934,14 +935,14 @@
       //Otherwise return the total of the receipt so the prepayments logic is not taken into account
       if (!this.getPaymentStatus().isNegative && !this.get('cancelLayaway') && this.get('bp') && this.get('bp').get('id') !== OB.MobileApp.model.get('businessPartner').get('id')) {
         if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && OB.MobileApp.model.get('terminal').prepaymentAlgorithm && me.get('lines').length > 0) {
-          OB.UTIL.prepaymentRules[OB.MobileApp.model.get('terminal').prepaymentAlgorithm].execute(this, function (prepaymentAmount, prepaymentLimitAmount) {
-            executeCallback(prepaymentAmount, prepaymentLimitAmount);
+          OB.UTIL.prepaymentRules[OB.MobileApp.model.get('terminal').prepaymentAlgorithm].execute(this, function (prepaymentAmount, prepaymentLimitAmount, prepaymentLayawayLimitAmount) {
+            executeCallback(prepaymentAmount, prepaymentLimitAmount, prepaymentLayawayLimitAmount);
           });
         } else {
-          executeCallback(total, total);
+          executeCallback(total, total, total);
         }
       } else {
-        executeCallback(total, total);
+        executeCallback(total, total, total);
       }
     },
 

@@ -17,6 +17,7 @@
       var me = this,
           prepaymentPerc = OB.MobileApp.model.get('terminal').obposPrepaymentPerc,
           prepaymentPercLimit = OB.MobileApp.model.get('terminal').obposPrepaymentPercLimit,
+          prepaymentPercLayLimit = OB.MobileApp.model.get('terminal').obposPrepayPercLayLimit,
           prepaymentAmount = receipt.get('lines').reduce(function (memo, line) {
           if (line.get('obposCanbedelivered') || line.get('deliveredQuantity') === line.get('qty')) {
             var linePrepaymentAmount = me.currentLinePrepaymentAmount(line, prepaymentPerc);
@@ -27,8 +28,9 @@
             return memo;
           }
         }, 0),
-          prepaymentLimitAmount = OB.DEC.div(OB.DEC.mul(prepaymentAmount, prepaymentPercLimit), 100);
-      callback(prepaymentAmount, prepaymentLimitAmount);
+          prepaymentLimitAmount = OB.DEC.div(OB.DEC.mul(prepaymentAmount, prepaymentPercLimit), 100),
+          prepaymentLayawayLimitAmount = OB.DEC.div(OB.DEC.mul(prepaymentAmount, prepaymentPercLayLimit), 100);
+      callback(prepaymentAmount, prepaymentLimitAmount, prepaymentLayawayLimitAmount);
     },
     currentLinePrepaymentAmount: function (line, percentage, units) {
       var price, discount;

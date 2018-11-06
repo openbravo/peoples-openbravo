@@ -340,12 +340,22 @@ enyo.kind({
     var me = this;
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
-    this.receipt.on('change:payment change:change calculategross change:bp change:gross change:obposPrepaymentlimitamt', function () {
+    this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
       if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
         //We are processing the receipt, we cannot update pending yet
         return;
       }
       this.updatePending();
+    }, this);
+    this.receipt.on('change:bp', function (model) {
+      if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
+        //We are processing the receipt, we cannot update pending yet
+        return;
+      }
+      // If the business partner has been changed to the or from the anonymous customer, calculate the prepayment amount
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && (model.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner || !model.previousAttributes().bp || model.previousAttributes().bp.id === OB.MobileApp.model.get('terminal').businessPartner)) {
+        model.getPrepaymentAmount(model.updatePending);
+      }
     }, this);
     this.receipt.on('disableDoneButton', function () {
       this.$.donebutton.setDisabled(true);
@@ -2246,7 +2256,7 @@ enyo.kind({
     var receipt = this.owner.receipt,
         negativeLines, me = this,
         myModel = this.owner.model,
-        payments, paymentStatus, prepaymentLimitAmount, receiptHasPrepaymentAmount, pendingPrepayment, hasPayments, allowApproval;
+        payments, paymentStatus, prepaymentLayawayLimitAmount, receiptHasPrepaymentAmount, pendingPrepayment, hasPayments, allowApproval;
     var continueExecuting = function (receipt, negativeLines, me, myModel, payments) {
         // Avoid closing the order before receipt is being calculated
         if (receipt.calculatingReceipt) {
@@ -2307,11 +2317,11 @@ enyo.kind({
         };
 
     paymentStatus = receipt.getPaymentStatus();
-    prepaymentLimitAmount = receipt.get('obposPrepaymentlimitamt');
-    receiptHasPrepaymentAmount = prepaymentLimitAmount !== 0;
+    prepaymentLayawayLimitAmount = receipt.get('obposPrepaymentlaylimitamt');
+    receiptHasPrepaymentAmount = prepaymentLayawayLimitAmount !== 0;
     hasPayments = paymentStatus.payments.length > 0;
     allowApproval = OB.MobileApp.model.hasPermission('OBPOS_AllowPrepaymentUnderLimitLayaway', true);
-    pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt);
+    pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentLayawayLimitAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt);
     if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && receiptHasPrepaymentAmount && pendingPrepayment > 0 && hasPayments && allowApproval) {
       OB.UTIL.Approval.requestApproval(this.model, [{
         approval: 'OBPOS_approval.prepaymentUnderLimitLayaway',

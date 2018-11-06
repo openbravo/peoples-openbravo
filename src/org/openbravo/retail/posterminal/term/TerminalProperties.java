@@ -85,6 +85,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("org.obposPrepaymentAlgorithm", "prepaymentAlgorithm"));
     list.add(new HQLProperty("org.obposPrepaymentPerc", "obposPrepaymentPerc"));
     list.add(new HQLProperty("org.obposPrepaymentPercLimit", "obposPrepaymentPercLimit"));
+    list.add(new HQLProperty("org.obposPrepayPercLayLimit", "obposPrepayPercLayLimit"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);
