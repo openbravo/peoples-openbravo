@@ -354,9 +354,9 @@ enyo.kind({
       }
       // If the business partner has been changed to the or from the anonymous customer, calculate the prepayment amount
       if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && OB.MobileApp.model.get('lastPaneShown') === 'payment' && (model.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner || !model.previousAttributes().bp || model.previousAttributes().bp.id === OB.MobileApp.model.get('terminal').businessPartner)) {
-        model.getPrepaymentAmount(model.updatePending);
+        model.getPrepaymentAmount(this.updatePending);
       } else {
-        model.updatePending();
+        this.updatePending();
       }
     }, this);
     this.receipt.on('disableDoneButton', function () {
