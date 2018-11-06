@@ -97,11 +97,25 @@ public class TestLogAppender extends AbstractAppender {
     return allMessages;
   }
 
+  /**
+   * Returns a list of tracked messages for a given Level
+   *
+   * @param level
+   *          Log level of the tracked messages
+   * @return a list of messages for the given Level, or an empty list if none is tracked
+   */
   public List<String> getMessages(Level level) {
     return messages.getOrDefault(level, Collections.emptyList());
   }
 
-  /** Returns a list of tracked message for a given Level, or an empty if none is tracked */
+  /**
+   * Returns a list of tracked messages for a given Level
+   * 
+   * @param level
+   *          Log level of the tracked messages
+   * @return a list of messages for the given Level, or an empty list if none is tracked
+   * @deprecated use {@link #getMessages(Level)}
+   */
   @Deprecated
   public List<String> getMessages(org.apache.log4j.Level level) {
     return getMessages(Level.getLevel(level.toString()));
