@@ -95,7 +95,8 @@ enyo.kind({
   },
   lineSelected: function (inSender, inEvent) {
     inEvent.selectedLine = this.newAttribute.orderlineId;
-    return true;
+    //Return false value to propagate the event until applyChanges function
+    return false;
   }
 });
 
@@ -144,6 +145,7 @@ enyo.kind({
       });
       selectedLine.linesToAssociate.push(lines);
     }
+    return true;
   },
   applyChanges: function (inSender, inEvent) {
     var execution = OB.UTIL.ProcessController.start('removeAssociations'),
@@ -158,10 +160,12 @@ enyo.kind({
       delete selectedLine.linesToAssociate;
       this.args.receipt.trigger('updateServicePrices');
       this.args.receipt.save(function () {
+        OB.UTIL.ProcessController.finish('removeAssociations', execution);
         return true;
       });
     }
     OB.UTIL.ProcessController.finish('removeAssociations', execution);
+    return true;
   },
   executeOnShow: function () {
     var me = this;
