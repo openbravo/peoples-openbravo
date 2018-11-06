@@ -167,6 +167,7 @@ build.war: build a war file in the lib directory.
       <src path="../src-gen"/>
       <src path="../modules/org.openbravo.base.weld/src/"/>
       <classpath refid="apply.module.compile.classpath" />
+      <compilerarg value="-implicit:class" />
     </javac>
   </target>
   
@@ -226,7 +227,8 @@ build.war: build a war file in the lib directory.
       </javac>
       -->
       <javac srcdir="${base.src}:${base.src.gen}:${base.modules}" includes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**,*/src/**/base/weld/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
-        <classpath refid="project.class.path" />      
+        <classpath refid="project.class.path" />
+        <compilerarg value="-implicit:class" />
       </javac>
       <javac srcdir="${base.src.gen}" excludes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
         <classpath refid="project.class.path" />
@@ -266,6 +268,7 @@ build.war: build a war file in the lib directory.
   <target name="compile.src.gen" depends="init">
     <javac srcdir="${basedir}" includes="org/openbravo/base/exception/**,org/openbravo/base/gen/**,org/openbravo/base/expression/**,org/openbravo/base/provider/**,org/openbravo/base/model/**,org/openbravo/base/session/**,org/openbravo/base/validation/**,org/openbravo/base/util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
       <classpath refid="project.class.path" />
+      <compilerarg value="-implicit:class" />
     </javac>
     <copy todir="${build}">
       <fileset dir="${basedir}">
