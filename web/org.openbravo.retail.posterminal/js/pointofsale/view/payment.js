@@ -340,7 +340,7 @@ enyo.kind({
     var me = this;
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
-    this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
+    this.receipt.on('change:payment change:change calculategross change:gross', function () {
       if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
         //We are processing the receipt, we cannot update pending yet
         return;
@@ -348,13 +348,15 @@ enyo.kind({
       this.updatePending();
     }, this);
     this.receipt.on('change:bp', function (model) {
-      if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
+      if (model.isCalculateReceiptLocked || model.isCalculateGrossLocked) {
         //We are processing the receipt, we cannot update pending yet
         return;
       }
       // If the business partner has been changed to the or from the anonymous customer, calculate the prepayment amount
-      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && (model.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner || !model.previousAttributes().bp || model.previousAttributes().bp.id === OB.MobileApp.model.get('terminal').businessPartner)) {
+      if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && OB.MobileApp.model.get('lastPaneShown') === 'payment' && (model.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner || !model.previousAttributes().bp || model.previousAttributes().bp.id === OB.MobileApp.model.get('terminal').businessPartner)) {
         model.getPrepaymentAmount(model.updatePending);
+      } else {
+        model.updatePending();
       }
     }, this);
     this.receipt.on('disableDoneButton', function () {
