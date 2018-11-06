@@ -7,6 +7,8 @@
 <!--FF1893F761AF46E893E37CB4EF1DFCB1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FF1893F761AF46E893E37CB4EF1DFCB1-->  <VALUE><![CDATA[LogManagement]]></VALUE>
 <!--FF1893F761AF46E893E37CB4EF1DFCB1-->  <NAME><![CDATA[Log Management]]></NAME>
+<!--FF1893F761AF46E893E37CB4EF1DFCB1-->  <DESCRIPTION><![CDATA[Update the log level of the given Loggers]]></DESCRIPTION>
+<!--FF1893F761AF46E893E37CB4EF1DFCB1-->  <HELP><![CDATA[This action updates the log level of the given loggers, overwriting their default configuration. Note that this changes will be reverted if Tomcat is restarted so consider editing the log4j config files if changes are meant to be permanent.]]></HELP>
 <!--FF1893F761AF46E893E37CB4EF1DFCB1-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--FF1893F761AF46E893E37CB4EF1DFCB1-->  <CLASSNAME><![CDATA[org.openbravo.client.application.logmanagement.LogManagementActionHandler]]></CLASSNAME>
 <!--FF1893F761AF46E893E37CB4EF1DFCB1-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
