@@ -60,10 +60,11 @@ public class LogDatasource extends ReadOnlyDataSourceService {
   @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
+    int rowsToFetch = endRow - startRow + 1;
     return getFilteredStream(parameters) //
         .sorted(getComparatorToSort(parameters)) //
         .skip(startRow) //
-        .limit(endRow + 1) //
+        .limit(rowsToFetch) //
         .map(l -> {
           Map<String, Object> r = new HashMap<>(3);
           r.put("id", l.getName());
