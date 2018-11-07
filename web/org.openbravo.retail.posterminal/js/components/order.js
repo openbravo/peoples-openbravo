@@ -501,6 +501,42 @@ enyo.kind({
     onMultiSelectAllTable: 'multiSelectAllTable',
     onTableMultiSelectedItems: 'tableMultiSelectedItems'
   },
+  processesToListen: ['calculateReceipt'],
+  processStarted: function () {},
+  processFinished: function (process, execution, processesInExec) {
+    var removedServices = [],
+        servicesToBeDeleted = [];
+    removedServices.push(OB.I18N.getLabel('OBPOS_ServiceRemoved'));
+    _.each(OB.MobileApp.model.receipt.get('lines').models, function (line) {
+      var trancheValues = [],
+          totalAmountSelected, minimumSelected, maximumSelected, uniqueQuantityServiceToBeDeleted, asPerProductServiceToBeDeleted;
+      if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
+        _.each(line.get('relatedLines'), function (line2) {
+          if (!line2.deferred && !line.get('originalOrderLineId')) {
+            line2 = OB.MobileApp.model.receipt.attributes.lines.get(line2.orderlineId).attributes;
+          }
+          trancheValues = OB.UI.SearchServicesFilter.prototype.calculateTranche(line2, trancheValues);
+        }, this);
+        totalAmountSelected = trancheValues[0];
+        minimumSelected = trancheValues[1];
+        maximumSelected = trancheValues[2];
+        uniqueQuantityServiceToBeDeleted = line.get('product').get('quantityRule') === 'UQ' && ((line.has('serviceTrancheMaximum') && totalAmountSelected > line.get('serviceTrancheMaximum')) || (line.has('serviceTrancheMinimum') && totalAmountSelected < line.get('serviceTrancheMinimum')));
+        asPerProductServiceToBeDeleted = line.get('product').get('quantityRule') === 'PP' && ((line.has('serviceTrancheMaximum') && maximumSelected > line.get('serviceTrancheMaximum')) || (line.has('serviceTrancheMinimum') && minimumSelected < line.get('serviceTrancheMinimum')));
+        if ((!line.has('deliveredQuantity') || line.get('deliveredQuantity') <= 0) && (uniqueQuantityServiceToBeDeleted || asPerProductServiceToBeDeleted)) {
+          servicesToBeDeleted.push(line);
+          removedServices.push(line.get('product').get('_identifier'));
+        }
+      }
+    }, this);
+    if (servicesToBeDeleted.length > 0) {
+      OB.MobileApp.model.receipt.deleteLinesFromOrder(servicesToBeDeleted);
+      OB.MobileApp.model.receipt.set('undo', null);
+    }
+    if (removedServices.length > 1) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ServiceRemovedHeader'), removedServices);
+    }
+
+  },
   components: [{
     kind: 'OB.UI.ScrollableTable',
     name: 'listOrderLines',
@@ -611,6 +647,11 @@ enyo.kind({
         }).render();
       }
     }
+    OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
+  },
+  destroyComponents: function () {
+    this.inherited(arguments);
+    OB.UTIL.ProcessController.unSubscribe(this.processesToListen, this);
   },
   checkBoxBehavior: function (inSender, inEvent) {
     if (inEvent.status) {
@@ -1332,47 +1373,6 @@ enyo.kind({
         paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
       });
     }, this);
-    this.order.on('calculatedReceipt', function () {
-      var removedServices = [],
-          servicesToBeDeleted = [],
-          uniqueQuantityServiceToBeDeleted, asPerProductServiceToBeDeleted;
-      removedServices.push(OB.I18N.getLabel('OBPOS_ServiceRemoved'));
-      _.each(this.get('lines').models, function (line) {
-        var totalAmountSelected = 0,
-            minimumSelected = Infinity,
-            maximumSelected = 0;
-        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
-          _.each(line.get('relatedLines'), function (line2) {
-            if (!line2.deferred && !line.get('originalOrderLineId')) {
-              line2 = this.attributes.lines.get(line2.orderlineId).attributes;
-            }
-            if (line2.qty > 0) {
-              var discountAmount = _.reduce(line2.promotions, function (memo, promo) {
-                return memo + promo.amt;
-              }, 0),
-                  currentLinePrice = OB.DEC.sub(line2.gross, OB.DEC.div(discountAmount, line2.qty));
-              totalAmountSelected = OB.DEC.add(totalAmountSelected, OB.DEC.sub(line2.gross, discountAmount));
-              if (currentLinePrice < minimumSelected) {
-                minimumSelected = currentLinePrice;
-              }
-              if (currentLinePrice > maximumSelected) {
-                maximumSelected = currentLinePrice;
-              }
-            }
-          }, this);
-        }
-        uniqueQuantityServiceToBeDeleted = line.get('product').get('quantityRule') === 'UQ' && ((line.has('serviceTrancheMaximum') && totalAmountSelected > line.get('serviceTrancheMaximum')) || (line.has('serviceTrancheMinimum') && totalAmountSelected < line.get('serviceTrancheMinimum')));
-        asPerProductServiceToBeDeleted = line.get('product').get('quantityRule') === 'PP' && ((line.has('serviceTrancheMaximum') && maximumSelected > line.get('serviceTrancheMaximum')) || (line.has('serviceTrancheMinimum') && minimumSelected < line.get('serviceTrancheMinimum')));
-        if ((!line.has('deliveredQuantity') || line.get('deliveredQuantity') <= 0) && (uniqueQuantityServiceToBeDeleted || asPerProductServiceToBeDeleted)) {
-          servicesToBeDeleted.push(line);
-          removedServices.push(line.get('product').get('_identifier'));
-        }
-      }, this);
-      this.deleteLinesFromOrder(servicesToBeDeleted);
-      if (removedServices.length > 1) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ServiceRemovedHeader'), removedServices);
-      }
-    }, this.order);
   }
 });
 enyo.kind({

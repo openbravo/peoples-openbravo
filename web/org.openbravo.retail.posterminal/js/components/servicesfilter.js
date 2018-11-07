@@ -34,9 +34,8 @@ enyo.kind({
         auxCatStr = '(',
         appendProdComma = false,
         appendCatComma = false,
-        existingServices, lineIdList, totalAmountSelected = 0,
-        minimumSelected = Infinity,
-        maximumSelected = 0;
+        existingServices, lineIdList, trancheValues = [],
+        totalAmountSelected, minimumSelected, maximumSelected;
 
     if (this.productList && this.productList.length > 0) {
       //product multiselection
@@ -75,20 +74,11 @@ enyo.kind({
 
           auxCatFilters.push(l.get('product').get('productCategory'));
         }
-        if (l.get('qty') > 0) {
-          var discountAmount = _.reduce(l.get('promotions'), function (memo, promo) {
-            return memo + promo.amt;
-          }, 0),
-              currentLinePrice = (l.get('gross') - discountAmount) / l.get('qty');
-          totalAmountSelected += l.get('gross') - discountAmount;
-          if (currentLinePrice < minimumSelected) {
-            minimumSelected = currentLinePrice;
-          }
-          if (currentLinePrice > maximumSelected) {
-            maximumSelected = currentLinePrice;
-          }
-        }
+        trancheValues = me.calculateTranche(l.attributes, trancheValues);
       });
+      totalAmountSelected = trancheValues[0];
+      minimumSelected = trancheValues[1];
+      maximumSelected = trancheValues[2];
 
       auxProdStr += ')';
       auxCatStr += ')';
@@ -135,19 +125,10 @@ enyo.kind({
         var product = line.get('product');
         return product.get('forceFilterId') || product.get('id');
       });
-      if (this.orderline.get('qty') > 0) {
-        var discountAmount = _.reduce(this.orderline.get('promotions'), function (memo, promo) {
-          return memo + promo.amt;
-        }, 0),
-            currentLinePrice = (this.orderline.get('gross') - discountAmount) / this.orderline.get('qty');
-        totalAmountSelected += this.orderline.get('gross') - discountAmount;
-        if (currentLinePrice < minimumSelected) {
-          minimumSelected = currentLinePrice;
-        }
-        if (currentLinePrice > maximumSelected) {
-          maximumSelected = currentLinePrice;
-        }
-      }
+      trancheValues = this.calculateTranche(this.orderline.attributes);
+      totalAmountSelected = trancheValues[0];
+      minimumSelected = trancheValues[1];
+      maximumSelected = trancheValues[2];
 
       where = " and product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
 
@@ -186,9 +167,8 @@ enyo.kind({
   },
   hqlCriteria: function () {
     var me = this,
-        prodList, catList, lineIdList, existingServices, totalAmountSelected = 0,
-        minimumSelected = Infinity,
-        maximumSelected = 0;
+        prodList, catList, lineIdList, existingServices, trancheValues = [],
+        totalAmountSelected, minimumSelected, maximumSelected;
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
         var product = line.get('product');
@@ -213,20 +193,11 @@ enyo.kind({
         return product.get('forceFilterId') || product.get('id');
       });
       this.orderlineList.forEach(function (line) {
-        if (line.get('qty') > 0) {
-          var discountAmount = _.reduce(line.get('promotions'), function (memo, promo) {
-            return memo + promo.amt;
-          }, 0),
-              currentLinePrice = (line.get('gross') - discountAmount) / line.get('qty');
-          totalAmountSelected += line.get('gross') - discountAmount;
-          if (currentLinePrice < minimumSelected) {
-            minimumSelected = currentLinePrice;
-          }
-          if (currentLinePrice > maximumSelected) {
-            maximumSelected = currentLinePrice;
-          }
-        }
+        trancheValues = me.calculateTranche(line.attributes, trancheValues);
       });
+      totalAmountSelected = trancheValues[0];
+      minimumSelected = trancheValues[1];
+      maximumSelected = trancheValues[2];
       return [{
         columns: [],
         operator: OB.Dal.FILTER,
@@ -302,6 +273,29 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.caption = OB.I18N.getLabel('OBPOS_ServicesFor');
+  },
+  calculateTranche: function (line, trancheValues) {
+    var totalAmountSelected = 0, minimumSelected = Infinity,
+        maximumSelected = 0;
+    if (trancheValues && trancheValues.length === 3) {
+      totalAmountSelected = trancheValues[0];
+      minimumSelected = trancheValues[1];
+      maximumSelected = trancheValues[2];
+    }
+    if (line.qty > 0) {
+      var discountAmount = _.reduce(line.promotions, function (memo, promo) {
+        return memo + promo.amt;
+      }, 0),
+          currentLinePrice = OB.DEC.sub(line.gross, OB.DEC.div(discountAmount, line.qty));
+      totalAmountSelected = OB.DEC.add(totalAmountSelected, OB.DEC.sub(line.gross, discountAmount));
+      if (currentLinePrice < minimumSelected) {
+        minimumSelected = currentLinePrice;
+      }
+      if (currentLinePrice > maximumSelected) {
+        maximumSelected = currentLinePrice;
+      }
+    }
+    return [totalAmountSelected, minimumSelected, maximumSelected];
   }
 });
 
