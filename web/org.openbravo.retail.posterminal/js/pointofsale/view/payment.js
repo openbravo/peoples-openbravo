@@ -1197,11 +1197,7 @@ enyo.kind({
           });
         }
       } else if (!this.getAddPaymentAction()) {
-        // Disable the 'Done' button if the synchronized paid amount is higher than the amount to pay and
-        // there's no reverse payment or the total amount is not zero (or is zero and is a synchronized ticket)
-        var order = this.model.get('order'),
-            disableDoneButton = order.get('isPaid') && (!order.getGross() || (!paymentstatus.isReversal && ((!paymentstatus.isNegative && order.getPrePaymentQty() >= order.getGross()) || (paymentstatus.isNegative && order.getPrePaymentQty() <= order.getGross()))));
-        this.$.donebutton.setLocalDisabled(disableDoneButton);
+        this.$.donebutton.setLocalDisabled(false);
         this.$.exactbutton.setLocalDisabled(false);
         if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
           this.$.prepaymentsdeliverybutton.setLocalDisabled(false);
@@ -1363,12 +1359,6 @@ enyo.kind({
     var isMultiOrder = this.model.get('leftColumnViewManager').isMultiOrder(),
         statusOK = isMultiOrder ? true : this.receipt.isReversedPaid();
     if (button === 'Done') {
-      // If there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
-      // the button 'Done' will be disabled (except for the case of doing a cancel and replace).
-      // If the ticket is synchronized and the gross is zero, is also disabled.
-      if (statusOK && !isMultiOrder && (this.receipt.get('isPaid') || this.receipt.get('isLayaway')) && !this.receipt.isNewReversed() && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(this.receipt.getTotal())) {
-        statusOK = false;
-      }
       if (resultOK) {
         var disableButton = !statusOK;
         this.$.donebutton.setLocalDisabled(disableButton);
