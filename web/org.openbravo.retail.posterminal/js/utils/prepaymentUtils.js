@@ -14,43 +14,43 @@
   OB.UTIL = window.OB.UTIL || {};
   OB.UTIL.PrepaymentUtils = OB.UTIL.PrepaymentUtils || {};
 
-  OB.UTIL.PrepaymentUtils.managePrepaymentChange = function (receipt, paymentAdded, payments, callback) {
+  OB.UTIL.PrepaymentUtils.managePrepaymentChange = function (receipt, payment, payments, callback) {
     // This method is used both from single and multi order, so for any change in the future, just have it in mind
-    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments && OB.MobileApp.model.hasPermission('OBPOS_GenerateChangeWithPrepayments', true)) {
-      var addedPaymentAmount, amountBeforeLastPayment, newCashPaymentsAmount, calculatePrepayments = OB.MobileApp.model.get('terminal').terminalType.calculateprepayments,
-          paymentStatus = receipt.getPaymentStatus(),
-          prepaymentAmount = receipt.get('obposPrepaymentamt'),
-          pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt),
-          receiptHasPrepaymentAmount = receipt.get('obposPrepaymentlimitamt') < receipt.getTotal() && prepaymentAmount !== 0 && prepaymentAmount !== paymentStatus.totalAmt;
+    var calculatePrepayments = OB.MobileApp.model.get('terminal').terminalType.calculateprepayments;
+    if (calculatePrepayments && OB.MobileApp.model.hasPermission('OBPOS_GenerateChangeWithPrepayments', true)) {
+      var paymentStatus = receipt.getPaymentStatus(),
+          paidAmount = receipt.getPaymentWithSign();
+      if (!paymentStatus.isNegative && paidAmount < receipt.getGross() && payment.get('isCash')) {
+        var prepaymentAmount = receipt.get('obposPrepaymentamt'),
+            pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt),
+            receiptHasPrepaymentAmount = prepaymentAmount && prepaymentAmount !== paymentStatus.totalAmt,
+            paymentAmount;
 
-      if (paymentAdded.get('rate') && paymentAdded.get('rate') !== '1') {
-        addedPaymentAmount = paymentAdded.get('origAmount');
-      } else {
-        addedPaymentAmount = paymentAdded.get('amount');
-      }
-      amountBeforeLastPayment = OB.DEC.sub(receipt.get('payment'), addedPaymentAmount);
-
-      newCashPaymentsAmount = payments.reduce(function (sum, payment) {
-        if (payment.get('isCash') && !payment.get('isPrepayment') && payment.get('origAmount') > 0) {
-          return OB.DEC.add(sum, payment.get('origAmount'));
+        if (payment.get('rate') && payment.get('rate') !== '1') {
+          paymentAmount = payment.get('origAmount');
+        } else {
+          paymentAmount = payment.get('amount');
         }
-        return sum;
-      }, 0);
 
-      if (newCashPaymentsAmount && calculatePrepayments && pendingPrepayment < 0 && receiptHasPrepaymentAmount && amountBeforeLastPayment < prepaymentAmount && receipt.get('payment') < receipt.getTotal()) {
-        OB.MobileApp.view.waterfallDown('onShowPopup', {
-          popup: 'modalDeliveryChange',
-          args: {
-            receipt: receipt,
-            deliveryChange: Math.min(newCashPaymentsAmount, OB.DEC.abs(pendingPrepayment)),
-            callback: function () {
-              receipt.adjustPayment();
-              if (callback instanceof Function) {
-                callback(receipt);
+        if (OB.DEC.add(paidAmount, paymentAmount) > prepaymentAmount) {
+          OB.MobileApp.view.waterfallDown('onShowPopup', {
+            popup: 'modalDeliveryChange',
+            args: {
+              receipt: receipt,
+              deliveryChange: OB.DEC.sub(OB.DEC.add(paidAmount, paymentAmount), prepaymentAmount),
+              callback: function () {
+                receipt.adjustPayment();
+                if (callback instanceof Function) {
+                  callback(receipt);
+                }
               }
             }
+          });
+        } else {
+          if (callback instanceof Function) {
+            callback(receipt);
           }
-        });
+        }
       } else {
         if (callback instanceof Function) {
           callback(receipt);

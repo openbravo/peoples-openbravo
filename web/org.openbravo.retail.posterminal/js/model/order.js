@@ -883,11 +883,15 @@
       return this.get('payment');
     },
 
-    isFullyPaid: function () {
-      if (!this.get('paymentWithSign')) {
+    getPaymentWithSign: function () {
+      if (!this.has('paymentWithSign')) {
         this.adjustPayment();
       }
-      return (!this.isNegative() && this.get('paymentWithSign') >= this.getGross()) || (this.isNegative() && this.get('paymentWithSign') <= this.getGross());
+      return this.get('paymentWithSign');
+    },
+
+    isFullyPaid: function () {
+      return (!this.isNegative() && this.getPaymentWithSign() >= this.getGross()) || (this.isNegative() && this.getPaymentWithSign() <= this.getGross());
     },
 
     getNettingPayment: function () {
@@ -903,7 +907,7 @@
     },
 
     getPending: function () {
-      return this.get('paymentWithSign') ? OB.DEC.abs(OB.DEC.sub(this.getGross(), this.get('paymentWithSign'))) : this.getPaymentStatus().pendingAmt;
+      return OB.DEC.abs(OB.DEC.sub(this.getGross(), this.getPaymentWithSign()));
     },
 
     getDeliveredQuantityAmount: function () {
@@ -4865,95 +4869,97 @@
       total = OB.DEC.abs(this.getTotal());
       precision = this.getPrecision(payment);
       this.unset('prepaymentChangeMode');
-      OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
-        paymentToAdd: payment,
-        payments: payments,
-        receipt: this
-      }, function (args) {
-        var executeFinalCallback = function (saveChanges) {
-            if (saveChanges && !payment.get('changePayment')) {
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              order.save();
-              order.trigger('saveCurrent');
-            }
-            OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
-              paymentAdded: payment,
-              payments: payments,
-              receipt: order
-            }, function (args2) {
-              OB.UTIL.PrepaymentUtils.managePrepaymentChange(args2.receipt, args2.paymentAdded, args2.payments, finalCallback);
-            });
-            };
+      OB.UTIL.PrepaymentUtils.managePrepaymentChange(this, payment, payments, function () {
+        OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
+          paymentToAdd: payment,
+          payments: payments,
+          receipt: this
+        }, function (args) {
+          var executeFinalCallback = function (saveChanges) {
+              if (saveChanges && !payment.get('changePayment')) {
+                order.adjustPayment();
+                order.trigger('displayTotal');
+                order.save();
+                order.trigger('saveCurrent');
+              }
+              OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
+                paymentAdded: payment,
+                payments: payments,
+                receipt: order
+              }, function (args2) {
+                finalCallback();
+              });
+              };
 
-        if (args && args.cancellation) {
-          if (payment.get('reverseCallback')) {
-            var reverseCallback = payment.get('reverseCallback');
-            reverseCallback();
+          if (args && args.cancellation) {
+            if (payment.get('reverseCallback')) {
+              var reverseCallback = payment.get('reverseCallback');
+              reverseCallback();
+            }
+            executeFinalCallback(false);
+            return;
           }
-          executeFinalCallback(false);
+          // search for an existing payment only if is not a reverser payment.
+          if (!payment.get('reversedPaymentId')) {
+            if (!payment.get('paymentData') || payment.get('paymentData').mergeable) {
+              // search for an existing payment only if there is not paymentData info or if there is, when there is any other paymentData with same groupingCriteria.
+              // this avoids to merge for example card payments of different cards.
+              for (i = 0, max = payments.length; i < max; i++) {
+                p = payments.at(i);
+                if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
+                  paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
+                  p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
+                  if (p.get('rate') && p.get('rate') !== '1') {
+                    p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+                  } else {
+                    p.set('origAmount', p.get('amount'));
+                  }
+                  payment.set('date', new Date());
+                  executeFinalCallback(true);
+                  return;
+                }
+              }
+            } else {
+              for (i = 0, max = payments.length; i < max; i++) {
+                p = payments.at(i);
+                if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria && !p.get('reversedPaymentId') && !p.get('isPrePayment')) {
+                  paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
+                  p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
+                  if (p.get('rate') && p.get('rate') !== '1') {
+                    p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+                  }
+                  payment.set('date', new Date());
+                  executeFinalCallback(true);
+                  return;
+                }
+              }
+            }
+          }
+          if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
+            order.set('openDrawer', payment.get('openDrawer'));
+          }
+          payment.set('date', new Date());
+          payment.set('id', OB.UTIL.get_UUID());
+          payment.set('oBPOSPOSTerminal', OB.MobileApp.model.get('terminal').id);
+          payment.set('orderGross', order.getGross());
+          payment.set('isPaid', order.get('isPaid'));
+          payment.set('isReturnOrder', order.getPaymentStatus().isNegative);
+          if (order.get('doCancelAndReplace') && order.get('replacedorder')) {
+            // Added properties to payment related with cancel an replace order
+            payment.set('cancelAndReplace', order.get('doCancelAndReplace'));
+          }
+
+          payments.add(payment, {
+            at: payment.get('index')
+          });
+          // If there is a reversed payment set isReversed properties
+          if (payment.get('reversedPayment')) {
+            payment.get('reversedPayment').set('isReversed', true);
+          }
+          executeFinalCallback(true);
           return;
-        }
-        // search for an existing payment only if is not a reverser payment.
-        if (!payment.get('reversedPaymentId')) {
-          if (!payment.get('paymentData') || payment.get('paymentData').mergeable) {
-            // search for an existing payment only if there is not paymentData info or if there is, when there is any other paymentData with same groupingCriteria.
-            // this avoids to merge for example card payments of different cards.
-            for (i = 0, max = payments.length; i < max; i++) {
-              p = payments.at(i);
-              if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
-                paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
-                p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
-                if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
-                } else {
-                  p.set('origAmount', p.get('amount'));
-                }
-                payment.set('date', new Date());
-                executeFinalCallback(true);
-                return;
-              }
-            }
-          } else {
-            for (i = 0, max = payments.length; i < max; i++) {
-              p = payments.at(i);
-              if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria && !p.get('reversedPaymentId') && !p.get('isPrePayment')) {
-                paymentSign = p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
-                p.set('amount', OB.DEC.add(OB.DEC.mul(payment.get('amount'), paymentSign, precision), p.get('amount'), precision));
-                if (p.get('rate') && p.get('rate') !== '1') {
-                  p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
-                }
-                payment.set('date', new Date());
-                executeFinalCallback(true);
-                return;
-              }
-            }
-          }
-        }
-        if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
-          order.set('openDrawer', payment.get('openDrawer'));
-        }
-        payment.set('date', new Date());
-        payment.set('id', OB.UTIL.get_UUID());
-        payment.set('oBPOSPOSTerminal', OB.MobileApp.model.get('terminal').id);
-        payment.set('orderGross', order.getGross());
-        payment.set('isPaid', order.get('isPaid'));
-        payment.set('isReturnOrder', order.getPaymentStatus().isNegative);
-        if (order.get('doCancelAndReplace') && order.get('replacedorder')) {
-          // Added properties to payment related with cancel an replace order
-          payment.set('cancelAndReplace', order.get('doCancelAndReplace'));
-        }
-
-        payments.add(payment, {
-          at: payment.get('index')
-        });
-        // If there is a reversed payment set isReversed properties
-        if (payment.get('reversedPayment')) {
-          payment.get('reversedPayment').set('isReversed', true);
-        }
-        executeFinalCallback(true);
-        return;
-      }); // call with callback, no args
+        }); // call with callback, no args
+      });
     },
 
     overpaymentExists: function () {
@@ -7424,72 +7430,74 @@
       precision = this.getPrecision(payment);
       order = this;
       this.unset('prepaymentChangeMode');
-      OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
-        paymentToAdd: payment,
-        payments: payments,
-        receipt: this
-      }, function (args) {
-        var executeFinalCallback = function () {
-            OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
-              paymentAdded: payment,
-              payments: payments,
-              receipt: order
-            }, function (args2) {
-              OB.UTIL.PrepaymentUtils.managePrepaymentChange(args2.receipt, args2.paymentAdded, args2.payments, finalCallback);
-            });
-            };
+      OB.UTIL.PrepaymentUtils.managePrepaymentChange(this, payment, payments, function () {
+        OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
+          paymentToAdd: payment,
+          payments: payments,
+          receipt: this
+        }, function (args) {
+          var executeFinalCallback = function () {
+              OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
+                paymentAdded: payment,
+                payments: payments,
+                receipt: order
+              }, function (args2) {
+                finalCallback();
+              });
+              };
 
-        if (args && args.cancellation) {
+          if (args && args.cancellation) {
+            executeFinalCallback();
+            return;
+          }
+
+          if (!payment.get('paymentData') || payment.get('paymentData').mergeable) {
+            // search for an existing payment only if there is not paymentData info.
+            // this avoids to merge for example card payments of different cards.
+            for (i = 0, max = payments.length; i < max; i++) {
+              p = payments.at(i);
+              if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
+                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
+                if (p.get('rate') && p.get('rate') !== '1') {
+                  p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+                } else {
+                  p.set('origAmount', p.get('amount'));
+                }
+                payment.set('date', new Date());
+                order.adjustPayment();
+                order.trigger('displayTotal');
+                executeFinalCallback();
+                return;
+              }
+            }
+          } else {
+            for (i = 0, max = payments.length; i < max; i++) {
+              p = payments.at(i);
+              if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
+                p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
+                if (p.get('rate') && p.get('rate') !== '1') {
+                  p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+                }
+                payment.set('date', new Date());
+                order.adjustPayment();
+                order.trigger('displayTotal');
+                executeFinalCallback();
+                return;
+              }
+            }
+          }
+          if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
+            order.set('openDrawer', payment.get('openDrawer'));
+          }
+          payment.set('date', new Date());
+          payment.set('isReturnOrder', false);
+          payment.set('id', OB.UTIL.get_UUID());
+          payments.add(payment);
+          order.adjustPayment();
+          order.trigger('displayTotal');
           executeFinalCallback();
           return;
-        }
-
-        if (!payment.get('paymentData') || payment.get('paymentData').mergeable) {
-          // search for an existing payment only if there is not paymentData info.
-          // this avoids to merge for example card payments of different cards.
-          for (i = 0, max = payments.length; i < max; i++) {
-            p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
-              if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
-              } else {
-                p.set('origAmount', p.get('amount'));
-              }
-              payment.set('date', new Date());
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
-              return;
-            }
-          }
-        } else {
-          for (i = 0, max = payments.length; i < max; i++) {
-            p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
-              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount'), precision));
-              if (p.get('rate') && p.get('rate') !== '1') {
-                p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
-              }
-              payment.set('date', new Date());
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
-              return;
-            }
-          }
-        }
-        if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
-          order.set('openDrawer', payment.get('openDrawer'));
-        }
-        payment.set('date', new Date());
-        payment.set('isReturnOrder', false);
-        payment.set('id', OB.UTIL.get_UUID());
-        payments.add(payment);
-        order.adjustPayment();
-        order.trigger('displayTotal');
-        executeFinalCallback();
-        return;
+        });
       });
     },
     removePayment: function (payment, cancellationCallback, removeCallback) {
@@ -7541,6 +7549,9 @@
     },
     getPayment: function () {
       return this.get('payment');
+    },
+    getPaymentWithSign: function () {
+      return this.getPayment();
     },
     getPending: function () {
       return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
