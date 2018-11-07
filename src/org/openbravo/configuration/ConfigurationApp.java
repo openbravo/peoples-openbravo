@@ -44,10 +44,10 @@ import org.apache.tools.ant.Project;
  * 
  */
 public class ConfigurationApp extends org.apache.tools.ant.Task {
-  private static List<ConfigureOption> optionOracle = new ArrayList<ConfigureOption>();
-  private static List<ConfigureOption> optionPostgreSQL = new ArrayList<ConfigureOption>();
-  private static List<ConfigureOption> optionForOpenbravo = new ArrayList<ConfigureOption>();
-  private static Map<String, String> replaceProperties = new HashMap<String, String>();
+  private static List<ConfigureOption> optionOracle = new ArrayList<>();
+  private static List<ConfigureOption> optionPostgreSQL = new ArrayList<>();
+  private static List<ConfigureOption> optionForOpenbravo = new ArrayList<>();
+  private static Map<String, String> replaceProperties = new HashMap<>();
 
   private final static String BASEDIR = getUserDir();
   private final static String BASEDIR_CONFIG = BASEDIR + "/config/";
@@ -146,7 +146,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private boolean acceptedLicense = false;
 
   /**
-   * This is the main method that is invoke by ant setup task.
+   * This is the main method that is invoked by ant setup task.
    * 
    */
   public void execute() {
@@ -1109,7 +1109,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * @return List<ConfigureOption> of default properties
    */
   private static List<ConfigureOption> createOpenbravoProperties(Project p) {
-    List<ConfigureOption> options = new ArrayList<ConfigureOption>();
+    List<ConfigureOption> options = new ArrayList<>();
     File fileO = new File(OPENBRAVO_PROPERTIES);
     if (!fileO.exists()) {
       fileCopyTemplate(OPENBRAVO_PROPERTIES + ".template", OPENBRAVO_PROPERTIES_AUX, p);
@@ -1117,7 +1117,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     }
 
     String askInfo = OPT_DATE_FORMAT;
-    ArrayList<String> optChoosen = new ArrayList<String>();
+    ArrayList<String> optChoosen = new ArrayList<>();
     optChoosen.add("DDMMYYYY");
     optChoosen.add("MMDDYYYY");
     optChoosen.add("YYYYMMDD");
@@ -1134,7 +1134,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.add(o0);
 
     askInfo = OPT_DATE_SEPARATOR;
-    optChoosen = new ArrayList<String>();
+    optChoosen = new ArrayList<>();
     optChoosen.add("-");
     optChoosen.add("/");
     optChoosen.add(".");
@@ -1169,7 +1169,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.add(o2);
 
     askInfo = OPT_TIME_SEPARATOR;
-    optChoosen = new ArrayList<String>();
+    optChoosen = new ArrayList<>();
     optChoosen.add(":");
     optChoosen.add(".");
     ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
@@ -1186,7 +1186,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = OPT_ATTACHMENTS;
     ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     String optionValueString = searchOptionsProperties(fileO, PREFIX_ATTACH_PATH, p);
     if (optionValueString.equals("")) {
       o4.setChosenString("/opt/openbravo/attachments");
@@ -1197,7 +1197,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = OPT_CONTEXT_NAME;
     ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_CONTEXT_NAME, p);
     if (optionValueString.equals("")) {
       o5.setChosenString("openbravo");
@@ -1208,7 +1208,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = OPT_WEB_URL;
     ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_WEB_URL, p);
     if (optionValueString.equals("")) {
       o6.setChosenString("@actual_url_context@/web");
@@ -1219,7 +1219,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = OPT_CONTEXT_URL;
     ConfigureOption o7 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_CONTEXT_URL, p);
     if (optionValueString.equals("")) {
       o7.setChosenString("http://localhost:8080/openbravo");
@@ -1240,7 +1240,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     options.add(o8);
 
     askInfo = OPT_DATABASE;
-    optChoosen = new ArrayList<String>();
+    optChoosen = new ArrayList<>();
     optChoosen.add(ORACLE);
     optChoosen.add(POSTGRE_SQL);
     ConfigureOption o9 = new ConfigureOption(ConfigureOption.TYPE_OPT_CHOOSE, askInfo, optChoosen);
@@ -1270,7 +1270,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * @return List<ConfigureOption> of Oracle default properties
    */
   private static List<ConfigureOption> createOPOracle(Project p) {
-    List<ConfigureOption> option = new ArrayList<ConfigureOption>();
+    List<ConfigureOption> option = new ArrayList<>();
 
     File fileO = new File(OPENBRAVO_PROPERTIES);
     if (!fileO.exists()) {
@@ -1293,7 +1293,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     String askInfo = DB_SID;
     ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     String optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SID, p);
     if (optionValueString.equals("")) {
       o0.setChosenString("xe");
@@ -1304,7 +1304,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = DB_SYSTEM_USER;
     ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_USER, p);
     if (optionValueString.equals("")) {
       o1.setChosenString("SYSTEM");
@@ -1315,7 +1315,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = DB_SYSTEM_PASS;
     ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_PASS, p);
     if (optionValueString.equals("")) {
       o2.setChosenString("SYSTEM");
@@ -1326,7 +1326,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = DB_USER;
     ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_DB_USER, p);
     if (optionValueString.equals("")) {
       o3.setChosenString("TAD");
@@ -1337,7 +1337,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = DB_USER_PASS;
     ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     optionValueString = searchOptionsProperties(fileO, PREFIX_DB_PASS, p);
     if (optionValueString.equals("")) {
       o4.setChosenString("TAD");
@@ -1354,13 +1354,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = DB_SERVER;
     ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o5.setChosenString(separateUrl[3].substring(1));
     option.add(o5);
 
     askInfo = DB_SERVER_PORT;
     ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o6.setChosenString(separateUrl[4]);
     option.add(o6);
 
@@ -1379,7 +1379,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * @return List<ConfigureOption> of PostgreSQL default properties
    */
   private static List<ConfigureOption> createOPPostgreSQL(Project p) {
-    List<ConfigureOption> option = new ArrayList<ConfigureOption>();
+    List<ConfigureOption> option = new ArrayList<>();
     String askInfo;
 
     File fileO = new File(OPENBRAVO_PROPERTIES);
@@ -1403,31 +1403,31 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = DB_SID;
     ConfigureOption o0 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o0.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_SID, p));
     option.add(o0);
 
     askInfo = DB_SYSTEM_USER;
     ConfigureOption o1 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o1.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_USER, p));
     option.add(o1);
 
     askInfo = DB_SYSTEM_PASS;
     ConfigureOption o2 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o2.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_SYSTEM_PASS, p));
     option.add(o2);
 
     askInfo = DB_USER;
     ConfigureOption o3 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o3.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_USER, p));
     option.add(o3);
 
     askInfo = DB_USER_PASS;
     ConfigureOption o4 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o4.setChosenString(searchOptionsProperties(fileO, PREFIX_DB_PASS, p));
     option.add(o4);
 
@@ -1436,13 +1436,13 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
     askInfo = DB_SERVER;
     ConfigureOption o5 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o5.setChosenString(separateUrl[2].substring(2));
     option.add(o5);
 
     askInfo = DB_SERVER_PORT;
     ConfigureOption o6 = new ConfigureOption(ConfigureOption.TYPE_OPT_STRING, askInfo,
-        new ArrayList<String>());
+        new ArrayList<>());
     o6.setChosenString(separateUrl[3]);
     option.add(o6);
 
