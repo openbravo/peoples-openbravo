@@ -509,7 +509,10 @@ enyo.kind({
     removedServices.push(OB.I18N.getLabel('OBPOS_ServiceRemoved'));
     _.each(OB.MobileApp.model.receipt.get('lines').models, function (line) {
       var trancheValues = [],
-          totalAmountSelected, minimumSelected, maximumSelected, uniqueQuantityServiceToBeDeleted, asPerProductServiceToBeDeleted;
+          totalAmountSelected = 0,
+          minimumSelected = Infinity,
+          maximumSelected = 0,
+          uniqueQuantityServiceToBeDeleted, asPerProductServiceToBeDeleted;
       if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
         _.each(line.get('relatedLines'), function (line2) {
           if (!line2.deferred && !line.get('originalOrderLineId')) {

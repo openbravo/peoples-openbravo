@@ -35,7 +35,9 @@ enyo.kind({
         appendProdComma = false,
         appendCatComma = false,
         existingServices, lineIdList, trancheValues = [],
-        totalAmountSelected, minimumSelected, maximumSelected;
+        totalAmountSelected = 0,
+        minimumSelected = Infinity,
+        maximumSelected = 0;
 
     if (this.productList && this.productList.length > 0) {
       //product multiselection
@@ -168,7 +170,9 @@ enyo.kind({
   hqlCriteria: function () {
     var me = this,
         prodList, catList, lineIdList, existingServices, trancheValues = [],
-        totalAmountSelected, minimumSelected, maximumSelected;
+        totalAmountSelected = 0,
+        minimumSelected = Infinity,
+        maximumSelected = 0;
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
         var product = line.get('product');
@@ -275,7 +279,8 @@ enyo.kind({
     this.caption = OB.I18N.getLabel('OBPOS_ServicesFor');
   },
   calculateTranche: function (line, trancheValues) {
-    var totalAmountSelected = 0, minimumSelected = Infinity,
+    var totalAmountSelected = 0,
+        minimumSelected = Infinity,
         maximumSelected = 0;
     if (trancheValues && trancheValues.length === 3) {
       totalAmountSelected = trancheValues[0];
