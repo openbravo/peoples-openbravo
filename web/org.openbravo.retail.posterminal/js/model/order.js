@@ -6135,7 +6135,8 @@
         }
       }
       if (receiptShouldBeInvoiced) {
-        invoice = new OB.Model.Order(this.attributes);
+        invoice = new OB.Model.Order();
+        OB.UTIL.clone(this, invoice);
         //TODO: check & generate ids
         invoice.set('orderId', this.get('id'));
         invoice.set('id', OB.UTIL.get_UUID());
@@ -6227,7 +6228,6 @@
           invoice.calculateReceipt(function () {
             OB.MobileApp.model.unset('preventOrderSave');
             invoice.adjustPrices();
-            invoice.set('json', JSON.stringify(invoice.serializeToJSON()));
 
             if (callback instanceof Function) {
               callback(invoice);
