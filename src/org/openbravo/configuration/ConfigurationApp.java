@@ -59,7 +59,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       + SUFFIX_AUX;
   private final static String FORMAT_XML = BASEDIR_CONFIG + "Format.xml";
   private final static String LOG4J2_XML = BASEDIR_CONFIG + "log4j2.xml";
-  private final static String LOG4J2TEST_XML = BASEDIR_CONFIG + "log4j2-test.xml";
+  private final static String LOG4J2TEST_XML = BASEDIR_TEST_SRC + "log4j2-test.xml";
   private final static String LOG4J2WEB_XML = BASEDIR_CONFIG + "log4j2-web.xml";
   private final static String USERCONFIG_XML = BASEDIR_CONFIG + "userconfig.xml";
   private final static String COMMON_COMPONENT = ".settings/org.eclipse.wst.common.component";
@@ -142,22 +142,49 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private Scanner agreementLicense = new Scanner(System.in);
   private Scanner infoCollected = new Scanner(System.in);
 
+  private boolean isNonInteractive = false;
+  private boolean acceptedLicense = false;
+
   /**
    * This is the main method that is invoke by ant setup task.
    * 
    */
   public void execute() {
     Project p = getProject();
+    if (isNonInteractive) {
+      runSetupUnattended(p);
+    } else {
+      runSetupWizard(p);
+    }
+  }
+
+  public void setNonInteractive(boolean nonInteractive) {
+    isNonInteractive = nonInteractive;
+  }
+
+  public void setAcceptLicense(boolean acceptLicense) {
+    acceptedLicense = acceptLicense;
+  }
+
+  private void runSetupUnattended(Project p) {
+    p.log("Running the setup in non-interactive mode...");
+    if (acceptedLicense) {
+      initializeOpenbravoPropertiesWithDefaults(p);
+      setValuesInOpenbravoProperties(p);
+      setValuesInCommonComponent(p);
+      fileCopySomeTemplates(p);
+      p.log("Configuration complete.");
+    } else {
+      p.log("[ERROR] You must accept the License Agreement using argument -DacceptLicense=yes in order to run the setup in non-interactive mode.");
+    }
+  }
+
+  private void runSetupWizard(Project p) {
     while (mainFlowOption != EXIT_APP) {
       switch (mainFlowOption) {
       case WELCOME:
         showWelcome(p);
-        try {
-          readLicense(p);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        acceptLicense(p);
+        showAndAcceptLicense(p);
         break;
       case MAIN_MENU:
         showMainMenu(p);
@@ -203,6 +230,21 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       }
     }
     closeExitProgram(p);
+  }
+
+  private void showAndAcceptLicense(Project p) {
+    if (acceptedLicense) {
+      printMessage("License Agreement already accepted with argument -DacceptLicense", p);
+      mainFlowOption = MAIN_MENU;
+      return;
+    }
+
+    try {
+      readLicense(p);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    acceptLicense(p);
   }
 
   /**
@@ -656,37 +698,31 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     } while (!menuOptionOk);
     // Create options one-by-one
     if (menuOption == 1) {
-      if (optionForOpenbravo.isEmpty()) {
-        optionForOpenbravo = createOpenbravoProperties(p);
-      }
-      // Create optionsDDBB
-      if (chosenDatabase.equals(ORACLE)) {
-        optionOracle = createOPOracle(p);
-        numberOptionsDDBB = optionOracle.size();
-      } else if (chosenDatabase.equals(POSTGRE_SQL)) {
-        optionPostgreSQL = createOPPostgreSQL(p);
-        numberOptionsDDBB = optionPostgreSQL.size();
-      }
+      initializeOpenbravoPropertiesWithDefaults(p);
       mainFlowOption = STEP_BY_STEP;
       // Create all options by default.
     } else if (menuOption == 2) {
-      if (optionForOpenbravo.isEmpty()) {
-        optionForOpenbravo = createOpenbravoProperties(p);
-      }
-      // Oracle or Postgresql options
-      if (chosenDatabase.equals(ORACLE)) {
-        optionOracle = createOPOracle(p);
-        numberOptionsDDBB = optionOracle.size();
-      } else if (chosenDatabase.equals(POSTGRE_SQL)) {
-        optionPostgreSQL = createOPPostgreSQL(p);
-        numberOptionsDDBB = optionPostgreSQL.size();
-      }
+      initializeOpenbravoPropertiesWithDefaults(p);
       // Go to preview options configurate by default
       mainFlowOption = PREVIEW_CONFIGURATION_PROPERTIES;
     } else if (menuOption == 3) {
       mainFlowOption = CONFIRM_EXIT;
     } else {
       p.log("Please, introduce a correct option: ");
+    }
+  }
+
+  private void initializeOpenbravoPropertiesWithDefaults(Project p) {
+    if (optionForOpenbravo.isEmpty()) {
+      optionForOpenbravo = createOpenbravoProperties(p);
+    }
+    // Oracle or Postgresql options
+    if (chosenDatabase.equals(ORACLE)) {
+      optionOracle = createOPOracle(p);
+      numberOptionsDDBB = optionOracle.size();
+    } else if (chosenDatabase.equals(POSTGRE_SQL)) {
+      optionPostgreSQL = createOPPostgreSQL(p);
+      numberOptionsDDBB = optionPostgreSQL.size();
     }
   }
 
@@ -746,8 +782,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     fileCopyTemplate(USERCONFIG_XML + ".template", USERCONFIG_XML, p);
     fileCopyTemplate(CLASSPATH + ".template", CLASSPATH, p);
     fileCopyTemplate(BASEDIR_TEST + CLASSPATH + ".template", BASEDIR_TEST + CLASSPATH, p);
-    fileCopyTemplate(BASEDIR_TEST_SRC + LOG4J2TEST_XML + ".template", BASEDIR_TEST_SRC
-        + LOG4J2TEST_XML, p);
+    fileCopyTemplate(LOG4J2TEST_XML + ".template", LOG4J2TEST_XML, p);
   }
 
   /**

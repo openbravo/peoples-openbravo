@@ -925,7 +925,7 @@ export.database: exports database structure and data to xml files.
     <taskdef name="configurationApp" classname="org.openbravo.configuration.ConfigurationApp">
       <classpath refid="project.class.path" />
     </taskdef>
-    <configurationApp/>
+    <configurationApp nonInteractive="${nonInteractive}" acceptLicense="${acceptLicense}"/>
     </target>
   
   <target name="package.core" depends="init, set.version.number">
