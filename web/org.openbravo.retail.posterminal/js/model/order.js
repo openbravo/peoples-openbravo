@@ -4172,6 +4172,11 @@
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
           line.set('id', idMap[line.get('id')]);
+        });
+
+        // The lines must be iterated a second time after finishing the first loop, to ensure that
+        // all lines are included in the idMap map
+        me.get('lines').each(function (line) {
           if (line.get('relatedLines')) {
             line.get('relatedLines').forEach(function (rl) {
               rl.orderId = me.get('id');
