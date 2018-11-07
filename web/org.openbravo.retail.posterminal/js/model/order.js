@@ -941,7 +941,7 @@
         me.set('obposPrepaymentlaylimitamt', prepaymentLayawayLimitAmount);
         me.trigger('saveCurrent');
         if (callback instanceof Function) {
-          callback(prepaymentAmount, prepaymentLimitAmount);
+          callback();
         }
       }
       //Execute the Prepayments Algorithm only if the receipt is a normal ticket or a layaway
