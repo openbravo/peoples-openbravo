@@ -17,17 +17,22 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<Configuration status="warn">
+<!-- Logger configuration for tests -->
+<Configuration>
   <Loggers>
     <Root level="info">
       <AppenderRef ref="Console"/>
     </Root>
 
     <Logger name="org.hibernate" level="error"/>
+    
+    <!-- To debug a specific class/package: -->
+    <!-- <Logger name="org.openbravo.test.dal.DalUtilTest" level="debug"/> -->
   </Loggers>
+
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5p %c - %m%n"/>
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p %c - %m%n"/>
     </Console>
   </Appenders>
 </Configuration>
