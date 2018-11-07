@@ -75,6 +75,7 @@ enyo.kind({
           orderModel = newOrder;
           orderModel.set('deferredOrder', true);
         }
+        orderModel.set('bp', me.owner.owner.owner.model.get('orderList').current.get('bp'));
         this.owner.owner.doAddProduct({
           targetOrder: orderModel,
           product: this.owner.owner.args.product,
