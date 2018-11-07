@@ -6222,7 +6222,6 @@
           invoice.set('hasBeenPaid', true);
           invoice.set('dummyPaymentId', OB.UTIL.get_UUID());
           invoice.set('ignoreCheckIfIsActiveOrder', true);
-          invoice.set('hasbeenpaid', 'Y');
           invoice.set('forceCalculateTaxes', true);
           OB.MobileApp.model.set('preventOrderSave', true);
           invoice.calculateReceipt(function () {
