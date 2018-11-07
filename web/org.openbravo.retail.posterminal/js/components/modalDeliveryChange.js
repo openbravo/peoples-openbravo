@@ -67,6 +67,7 @@ enyo.kind({
   handlers: {},
   initComponents: function () {
     this.inherited(arguments);
+    this.$.headerCloseButton.hide();
   },
   executeOnShow: function () {
     var symbol = OB.MobileApp.model.get('terminal').symbol,

@@ -907,7 +907,16 @@
     },
 
     getPending: function () {
-      return OB.DEC.abs(OB.DEC.sub(this.getGross(), this.getPaymentWithSign()));
+      var pending;
+      if (this.get('prepaymentChangeMode')) {
+        var paymentsAmt = _.reduce(this.get('payments').models, function (memo, payment) {
+          return OB.DEC.add(memo, payment.get('origAmount'));
+        }, OB.DEC.Zero);
+        pending = OB.DEC.abs(OB.DEC.sub(this.getGross(), paymentsAmt));
+      } else {
+        pending = OB.DEC.abs(OB.DEC.sub(this.getGross(), this.getPaymentWithSign()));
+      }
+      return pending;
     },
 
     getDeliveredQuantityAmount: function () {
@@ -4868,7 +4877,10 @@
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
       precision = this.getPrecision(payment);
-      this.unset('prepaymentChangeMode');
+      if (this.get('prepaymentChangeMode')) {
+        this.unset('prepaymentChangeMode');
+        this.adjustPayment();
+      }
       OB.UTIL.PrepaymentUtils.managePrepaymentChange(this, payment, payments, function () {
         OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
           paymentToAdd: payment,
@@ -4976,7 +4988,10 @@
         return;
       }
 
-      this.unset('prepaymentChangeMode');
+      if (this.get('prepaymentChangeMode')) {
+        this.unset('prepaymentChangeMode');
+        this.adjustPayment();
+      }
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,
@@ -7554,7 +7569,16 @@
       return this.getPayment();
     },
     getPending: function () {
-      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+      var pending;
+      if (this.get('prepaymentChangeMode')) {
+        var paymentsAmt = _.reduce(this.get('payments').models, function (memo, payment) {
+          return OB.DEC.add(memo, payment.get('origAmount'));
+        }, OB.DEC.Zero);
+        pending = OB.DEC.sub(this.getTotal(), paymentsAmt);
+      } else {
+        pending = OB.DEC.sub(this.getTotal(), this.getPayment());
+      }
+      return pending;
     },
     isNegative: function () {
       return false;

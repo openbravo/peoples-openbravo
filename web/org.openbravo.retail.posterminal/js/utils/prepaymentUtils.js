@@ -19,25 +19,27 @@
     var calculatePrepayments = OB.MobileApp.model.get('terminal').terminalType.calculateprepayments;
     if (calculatePrepayments && OB.MobileApp.model.hasPermission('OBPOS_GenerateChangeWithPrepayments', true)) {
       var paymentStatus = receipt.getPaymentStatus(),
-          paidAmount = receipt.getPaymentWithSign();
-      if (!paymentStatus.isNegative && paidAmount < receipt.getGross() && payment.get('isCash')) {
-        var prepaymentAmount = receipt.get('obposPrepaymentamt'),
-            pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt),
+          paidAmount = receipt.getPaymentWithSign(),
+          prepaymentAmount = receipt.get('obposPrepaymentamt');
+      if (!paymentStatus.isNegative && paidAmount < prepaymentAmount && payment.get('isCash')) {
+        var pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentStatus.pendingAmt), paymentStatus.totalAmt),
             receiptHasPrepaymentAmount = prepaymentAmount && prepaymentAmount !== paymentStatus.totalAmt,
-            paymentAmount;
+            paymentAmount, newPaidAmount;
 
         if (payment.get('rate') && payment.get('rate') !== '1') {
-          paymentAmount = payment.get('origAmount');
+          paymentAmount = OB.DEC.div(payment.get('amount'), payment.get('mulrate'));
         } else {
           paymentAmount = payment.get('amount');
         }
 
-        if (OB.DEC.add(paidAmount, paymentAmount) > prepaymentAmount) {
+        newPaidAmount = OB.DEC.add(paidAmount, paymentAmount);
+
+        if (newPaidAmount > prepaymentAmount && newPaidAmount < receipt.getGross()) {
           OB.MobileApp.view.waterfallDown('onShowPopup', {
             popup: 'modalDeliveryChange',
             args: {
               receipt: receipt,
-              deliveryChange: OB.DEC.sub(OB.DEC.add(paidAmount, paymentAmount), prepaymentAmount),
+              deliveryChange: OB.DEC.sub(newPaidAmount, prepaymentAmount),
               callback: function () {
                 receipt.adjustPayment();
                 if (callback instanceof Function) {
