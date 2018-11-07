@@ -80,7 +80,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
         }
 
         if ((loaded != null && loaded.compareTo(updated) < 0)
-            || (user != null && userUpdated != null && (loaded.compareTo(userUpdated) < 0))) {
+            || (loaded != null && user != null && userUpdated != null && (loaded
+                .compareTo(userUpdated) < 0))) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }
