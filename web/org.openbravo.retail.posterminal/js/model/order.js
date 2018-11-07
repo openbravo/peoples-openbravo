@@ -952,7 +952,7 @@
           nettingPayment = this.getNettingPayment(),
           isReturn = true,
           isReversal = false,
-          isSynchronized = this.get('isLayaway') || this.get('isPaid'),
+          loadedFromBackend = this.get('isLayaway') || this.get('isPaid'),
           processedPaymentsAmount = OB.DEC.Zero,
           paymentsAmount = OB.DEC.Zero,
           remainingToPay, isNegative, done, pending, pendingAmt, overpayment;
@@ -969,7 +969,7 @@
 
       processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, nettingPayment);
 
-      if (isSynchronized) {
+      if (loadedFromBackend) {
         isNegative = OB.DEC.compare(gross) === -1;
       } else {
         isNegative = processedPaymentsAmount > gross;
@@ -980,7 +980,7 @@
 
       _.each(this.get('payments').models, function (payment) {
         if (!payment.get('isPrePayment')) {
-          if (isSynchronized || !isNegative || payment.get('isReversePayment')) {
+          if (loadedFromBackend || !isNegative || payment.get('isReversePayment')) {
             paymentsAmount = OB.DEC.add(paymentsAmount, payment.get('origAmount'));
           } else {
             paymentsAmount = OB.DEC.sub(paymentsAmount, payment.get('origAmount'));
