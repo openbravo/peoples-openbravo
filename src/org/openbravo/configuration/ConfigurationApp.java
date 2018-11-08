@@ -33,6 +33,7 @@ import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 /**
@@ -175,7 +176,8 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       fileCopySomeTemplates(p);
       p.log("Configuration complete.");
     } else {
-      p.log("[ERROR] You must accept the License Agreement using argument -DacceptLicense=yes in order to run the setup in non-interactive mode.");
+      throw new BuildException(
+          "You must accept the License Agreement using argument -DacceptLicense=yes in order to run the setup in non-interactive mode.");
     }
   }
 
