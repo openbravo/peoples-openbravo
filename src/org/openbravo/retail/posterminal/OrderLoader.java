@@ -204,7 +204,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     createShipment = !isQuotation && !isDeleted && jsonorder.optBoolean("generateShipment", false);
     deliver = !isQuotation && !isDeleted && jsonorder.optBoolean("deliver", false);
-    createInvoice = jsonorder.has("calculatedInvoice");
+    createInvoice = jsonorder.has("calculatedInvoice")
+        || jsonorder.optBoolean("generateExternalInvoice", false);
 
     doCancelAndReplace = jsonorder.optBoolean("doCancelAndReplace", false);
     doCancelLayaway = jsonorder.optBoolean("cancelLayaway", false);
@@ -437,7 +438,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         createInvoice = createInvoice && !order.isOBPOSNotInvoiceOnCashUp();
         if (createInvoice) {
           // Create the invoice for the lines to invoice
-          jsoninvoice = jsonorder.getJSONObject("calculatedInvoice");
+          if (jsonorder.has("calculatedInvoice")) {
+            jsoninvoice = jsonorder.getJSONObject("calculatedInvoice");
+          } else {
+            jsoninvoice = jsonorder;
+          }
 
           executeInvoicePreProcessHook(invoicePreProcesses, jsoninvoice);
 
