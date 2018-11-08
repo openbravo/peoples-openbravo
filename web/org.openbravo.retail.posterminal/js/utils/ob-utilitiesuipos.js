@@ -695,7 +695,8 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
       if (sprvs && sprvs.length > 0) {
         priceruleVersion = sprvs.at(0);
         if (line) {
-          line.set('priceruleVersion', priceruleVersion);
+          line.set('serviceTrancheMaximum', priceruleVersion.get('maximum'));
+          line.set('serviceTrancheMinimum', priceruleVersion.get('minimum'));
         }
         OB.Dal.get(OB.Model.ServicePriceRule, priceruleVersion.get('servicePriceRule'), function (spr) {
           if (spr.get('ruletype') === 'P') {
