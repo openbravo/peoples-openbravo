@@ -704,18 +704,8 @@ enyo.kind({
   },
   receiptToInvoice: function () {
     if (this.model.get('leftColumnViewManager').isOrder()) {
-      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
-        if (!this.model.get('order').get('hasbeenpaid')) {
-          this.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-        }
-        return true;
-      }
       this.model.get('order').setOrderInvoice();
-      return true;
-    }
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+    } else {
       this.model.get('multiOrders').toInvoice(true);
     }
   },
@@ -780,19 +770,9 @@ enyo.kind({
 
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('leftColumnViewManager').isOrder()) {
-      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
-        this.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return true;
-      }
       this.model.get('order').resetOrderInvoice();
-      return true;
-    }
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-        this.model.get('multiOrders').toInvoice(false);
-      }
+    } else {
+      this.model.get('multiOrders').toInvoice(false);
     }
   },
   checkedLine: function (inSender, inEvent) {

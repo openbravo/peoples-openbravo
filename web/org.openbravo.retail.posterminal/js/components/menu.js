@@ -525,18 +525,11 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isQuotation change:isLayaway', function (model) {
-      if (!model.get('isQuotation') || model.get('isLayaway')) {
-        me.updateVisibility(true);
+    receipt.on('change:generateInvoice change:bp change:isQuotation', function (model) {
+      if (!model.get('isQuotation') && !model.get('generateInvoice') && model.get('bp').get('invoiceTerms') === 'I') {
+        this.updateVisibility(true);
       } else {
-        me.updateVisibility(false);
-      }
-    }, this);
-    receipt.on('change:generateInvoice', function (model) {
-      if (!model.get('generateInvoice')) {
-        me.updateVisibility(true);
-      } else {
-        me.updateVisibility(false);
+        this.updateVisibility(false);
       }
     }, this);
     receipt.on('change:bp', function (model) {
@@ -544,19 +537,6 @@ enyo.kind({
       if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
         me.taxIdValidation(model);
       }
-    }, this);
-    receipt.on('change:isEditable', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
-          this.updateVisibility(false);
-          return;
-        }
-        if (newValue.get('isEditable') === true && newValue.get('isQuotation')) {
-          this.updateVisibility(false);
-          return;
-        }
-      }
-      this.updateVisibility(true);
     }, this);
   }
 });
