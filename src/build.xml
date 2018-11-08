@@ -387,6 +387,7 @@ build.war: build a war file in the lib directory.
         <exclude name="**/setup-properties**" />
         <exclude name="*.template" />
         <exclude name="checksums"/>
+        <exclude name="log4j2.xml"/>
       </fileset>
     </copy>
     <copy todir="${base.context}/WEB-INF" encoding="UTF-8">
