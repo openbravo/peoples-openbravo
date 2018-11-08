@@ -694,6 +694,9 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
       var priceruleVersion;
       if (sprvs && sprvs.length > 0) {
         priceruleVersion = sprvs.at(0);
+        if (line) {
+          line.set('priceruleVersion', priceruleVersion);
+        }
         OB.Dal.get(OB.Model.ServicePriceRule, priceruleVersion.get('servicePriceRule'), function (spr) {
           if (spr.get('ruletype') === 'P') {
             var amount, newprice, oldprice = product.get('listPrice');
