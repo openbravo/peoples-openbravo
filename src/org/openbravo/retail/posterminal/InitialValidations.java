@@ -125,7 +125,7 @@ public class InitialValidations {
     }
 
     for (OBPOSAppPayment obposAppPayment : posTerminal.getOBPOSAppPaymentList()) {
-      if (obposAppPayment.getFinancialAccount().getCurrency()
+      if (!obposAppPayment.getFinancialAccount().getCurrency()
           .equals(obposAppPayment.getPaymentMethod().getCurrency())) {
         throw new JSONException("OBPOS_FinAcctCurrDiffWithPayMethodCurr");
       }
