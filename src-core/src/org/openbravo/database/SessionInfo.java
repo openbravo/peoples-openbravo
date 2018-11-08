@@ -119,21 +119,17 @@ public class SessionInfo {
   }
 
   private static void createAdContextInfoTable(Connection conn) {
-    // Create temporary table
-    PreparedStatement psCreate = null;
-    try {
-      StringBuffer sql = new StringBuffer();
-      sql.append("CREATE TEMPORARY TABLE AD_CONTEXT_INFO");
-      sql.append("(AD_USER_ID VARCHAR(32), ");
-      sql.append("  AD_SESSION_ID VARCHAR(32),");
-      sql.append("  PROCESSTYPE VARCHAR(60), ");
-      sql.append("  PROCESSID VARCHAR(32)) on commit preserve rows");
-      psCreate = getPreparedStatement(conn, sql.toString());
+    String sql = "CREATE TEMPORARY TABLE AD_CONTEXT_INFO" + //
+        "(AD_USER_ID VARCHAR(32), " + //
+        "  AD_SESSION_ID VARCHAR(32)," + //
+        "  PROCESSTYPE VARCHAR(60), " + //
+        "  PROCESSID VARCHAR(32)) on commit preserve rows";
+
+    try (PreparedStatement psCreate = getPreparedStatement(conn, sql)) {
       psCreate.execute();
-    } catch (Exception e) {
+    } catch (SQLException e) {
       log4j.error("Error initializating audit infrastructure", e);
-    } finally {
-      releasePreparedStatement(psCreate);
+      throw new IllegalStateException(e);
     }
   }
 
