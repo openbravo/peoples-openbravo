@@ -1102,225 +1102,38 @@ enyo.kind({
     }, this);
     this.order.on('change:net change:gross updateServicePrices', function () {
       var me = this,
-          handleError;
+          setPriceCallback, handleError, i;
 
-      handleError = function (line, message) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ErrorGettingServicePrice'), OB.I18N.getLabel(message, [line.get('product').get('_identifier')]), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true
-        }], {
-          onHideFunction: function () {
-            me.order.get('lines').remove(line);
-            me.order.set('undo', null);
-            me.$.totalReceiptLine.renderQty();
-          }
-        });
-      };
-
-      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y')) {
+      if (this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable')) {
         return;
       }
 
-      this.order.get('lines').forEach(function (line) {
-        var prod = line.get('product'),
-            amountBeforeDiscounts = 0,
-            amountAfterDiscounts = 0,
-            rangeAmountBeforeDiscounts = 0,
-            rangeAmountAfterDiscounts = 0,
-            relatedQuantity = 0;
-        if (prod.get('productType') === 'S' && prod.get('isPriceRuleBased') && !line.get('originalOrderLineId') && !line.get('obposIsDeleted')) {
-          var criteria = {};
-          line.get('relatedLines').forEach(function (rl) {
-            var l = me.order.get('lines').get(rl.orderlineId);
-            if (l) {
-              relatedQuantity += l.get('qty');
-            } else {
-              relatedQuantity += rl.qty;
+      setPriceCallback = function (line, newprice) {
+        me.order.setPrice(line, newprice, {
+          setUndo: false
+        });
+      };
+
+      handleError = function (line, message) {
+        if (OB.MobileApp.view.openedPopup === null) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ErrorGettingServicePrice'), OB.I18N.getLabel(message, [line.get('product').get('_identifier')]), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true
+          }], {
+            onHideFunction: function () {
+              me.order.get('lines').remove(line);
+              me.order.set('undo', null);
+              me.$.totalReceiptLine.renderQty();
             }
-            if (me.order.get('priceIncludesTax')) {
-              if (l) {
-                amountBeforeDiscounts += Math.abs(l.get('gross'));
-                amountAfterDiscounts += Math.abs(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
-                  return memo + promo.amt;
-                }, 0));
-                if (prod.get('quantityRule') === 'PP') {
-                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('gross'), l.get('qty')));
-                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
-                    return memo + promo.amt;
-                  }, 0), l.get('qty')));
-                }
-              } else {
-                amountBeforeDiscounts += Math.abs(rl.gross);
-                amountAfterDiscounts += Math.abs(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
-                  return memo + promo.amt;
-                }, 0));
-                if (prod.get('quantityRule') === 'PP') {
-                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(rl.gross, rl.qty));
-                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
-                    return memo + promo.amt;
-                  }, 0), rl.qty));
-                }
-              }
-            } else {
-              if (l) {
-                amountBeforeDiscounts += Math.abs(l.get('net'));
-                amountAfterDiscounts += Math.abs(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
-                  return memo + promo.amt;
-                }, 0));
-                if (prod.get('quantityRule') === 'PP') {
-                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('net'), l.get('qty')));
-                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
-                    return memo + promo.amt;
-                  }, 0), l.get('qty')));
-                }
-              } else {
-                amountBeforeDiscounts += Math.abs(rl.net);
-                amountAfterDiscounts += Math.abs(rl.net - _.reduce(rl.promotions, function (memo, promo) {
-                  return memo + promo.amt;
-                }, 0));
-                if (prod.get('quantityRule') === 'PP') {
-                  rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(rl.net, rl.qty));
-                  rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(rl.net - _.reduce(rl.promotions, function (memo, promo) {
-                    return memo + promo.amt;
-                  }, 0), rl.qty));
-                }
-              }
-            }
-          });
-          if (prod.get('quantityRule') === 'UQ') {
-            rangeAmountBeforeDiscounts = amountBeforeDiscounts;
-            rangeAmountAfterDiscounts = amountAfterDiscounts;
-          }
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-            criteria.remoteFilters = [];
-            criteria.remoteFilters.push({
-              columns: ['product'],
-              operator: 'equals',
-              value: line.get('product').get('id'),
-              isId: true
-            });
-            criteria.remoteFilters.push({
-              columns: [],
-              operator: 'filter',
-              value: 'ServicePriceRuleVersion_DateFilter',
-              params: []
-              //TODO: _limit -1
-            });
-          } else {
-            criteria._whereClause = "where product = '" + line.get('product').get('id') + "' and validFromDate <= date('now')";
-            criteria._orderByClause = 'validFromDate desc';
-            criteria._limit = 1;
-          }
-          OB.Dal.find(OB.Model.ServicePriceRuleVersion, criteria, function (sprvs) {
-            var priceruleVersion;
-            if (sprvs && sprvs.length > 0) {
-              priceruleVersion = sprvs.at(0);
-              OB.Dal.get(OB.Model.ServicePriceRule, priceruleVersion.get('servicePriceRule'), function (spr) {
-                if (spr.get('ruletype') === 'P') {
-                  var amount, newprice, oldprice = line.get('priceList');
-                  if (spr.get('afterdiscounts')) {
-                    amount = amountAfterDiscounts * spr.get('percentage') / 100;
-                  } else {
-                    amount = amountBeforeDiscounts * spr.get('percentage') / 100;
-                  }
-                  if (!line.get('groupService')) {
-                    amount = amount / relatedQuantity;
-                  }
-                  newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / line.get('qty'), 2);
-                  me.order.setPrice(line, newprice, {
-                    setUndo: false
-                  });
-                } else { //ruletype = 'R'
-                  var rangeCriteria = {};
-                  if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                    rangeCriteria.remoteFilters = [];
-                    rangeCriteria.remoteFilters.push({
-                      columns: ['servicepricerule'],
-                      operator: 'equals',
-                      value: spr.get('id'),
-                      isId: true
-                    });
-                    rangeCriteria.remoteFilters.push({
-                      columns: [],
-                      operator: 'filter',
-                      value: 'ServicePriceRuleRange_AmountFilter',
-                      params: [spr.get('afterdiscounts') ? rangeAmountAfterDiscounts : rangeAmountBeforeDiscounts]
-                    });
-                  } else {
-                    rangeCriteria._whereClause = "where servicepricerule = '" + spr.get('id') + "' and (( amountUpTo >= " + (spr.get('afterdiscounts') ? rangeAmountAfterDiscounts : rangeAmountBeforeDiscounts) + ") or (amountUpTo is null))";
-                    rangeCriteria._orderByClause = 'amountUpTo is null, amountUpTo';
-                    rangeCriteria._limit = 1;
-                  }
-                  OB.Dal.find(OB.Model.ServicePriceRuleRange, rangeCriteria, function (sppr) {
-                    var range, priceCriteria = {};
-                    if (sppr && sppr.length > 0) {
-                      range = sppr.at(0);
-                      if (range.get('ruleType') === 'P') {
-                        var amount, newprice, oldprice = line.get('priceList');
-                        if (range.get('afterdiscounts')) {
-                          amount = amountAfterDiscounts * range.get('percentage') / 100;
-                        } else {
-                          amount = amountBeforeDiscounts * range.get('percentage') / 100;
-                        }
-                        if (!line.get('groupService')) {
-                          amount = amount / relatedQuantity;
-                        }
-                        newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / line.get('qty'), 2);
-                        me.order.setPrice(line, newprice, {
-                          setUndo: false
-                        });
-                      } else { //ruleType = 'F'
-                        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                          priceCriteria.remoteFilters = [];
-                          priceCriteria.remoteFilters.push({
-                            columns: ['product'],
-                            operator: 'equals',
-                            value: prod.get('id'),
-                            isId: true
-                          });
-                          priceCriteria.remoteFilters.push({
-                            columns: ['priceList'],
-                            operator: 'equals',
-                            value: range.get('priceList'),
-                            isId: true
-                          });
-                        } else {
-                          priceCriteria.product = prod.get('id');
-                          priceCriteria.priceList = range.get('priceList');
-                        }
-                        OB.Dal.find(OB.Model.ServicePriceRuleRangePrices, priceCriteria, function (price) {
-                          var oldprice = line.get('priceList'),
-                              newprice;
-                          if (price && price.length > 0) {
-                            newprice = OB.Utilities.Number.roundJSNumber(oldprice + price.at(0).get('listPrice'), 2);
-                            me.order.setPrice(line, newprice, {
-                              setUndo: false
-                            });
-                          } else {
-                            handleError(line, 'OBPOS_ErrorPriceRuleRangePriceNotFound');
-                          }
-                        }, function () {
-                          handleError(line, 'OBPOS_ErrorGettingPriceRuleRangePrice');
-                        });
-                      }
-                    } else {
-                      handleError(line, 'OBPOS_ErrorPriceRuleRangeNotFound');
-                    }
-                  }, function () {
-                    handleError(line, 'OBPOS_ErrorGettingPriceRuleRange');
-                  });
-                }
-              }, function () {
-                handleError(line, 'OBPOS_ErrorGettingPriceRule');
-              });
-            } else {
-              handleError(line, 'OBPOS_ErrorPriceRuleVersionNotFound');
-            }
-          }, function () {
-            handleError(line, 'OBPOS_ErrorGettingPriceRuleVersion');
           });
         }
-      });
+      };
+
+      for (i = 0; i < this.order.get('lines').length; i++) {
+        var line = this.order.get('lines').at(i);
+        OB.UTIL.getCalculatedPriceForService(line, line.get('product'), line.get('relatedLines'), line.get('qty'), setPriceCallback, handleError);
+      }
+
     }, this);
     this.order.on('change:selectedPayment', function (model) {
       OB.UTIL.HookManager.executeHooks('OBPOS_PaymentSelected', {
