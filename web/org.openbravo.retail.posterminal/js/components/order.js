@@ -534,8 +534,6 @@ enyo.kind({
     if (servicesToBeDeleted.length > 0) {
       OB.MobileApp.model.receipt.deleteLinesFromOrder(servicesToBeDeleted);
       OB.MobileApp.model.receipt.set('undo', null);
-    }
-    if (removedServices.length > 1) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ServiceRemovedHeader'), removedServices);
     }
 
