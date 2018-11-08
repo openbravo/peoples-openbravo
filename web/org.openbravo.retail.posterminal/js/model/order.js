@@ -6148,6 +6148,12 @@
           paidReceipt = (this.get('orderType') === 0 || this.get('orderType') === 1) && this.get('isPaid'),
           receiptShouldBeShipped = false;
 
+      function finalCallback(invoice) {
+        if (callback instanceof Function) {
+          callback(invoice);
+        }
+      }
+
       if (!isDeleted) {
         if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || (this.get('paidOnCredit') && !this.get('isPaid'))) {
           receiptShouldBeInvoiced = true;
@@ -6247,32 +6253,28 @@
           }
         });
 
-        if (invoice.get('lines').length > 0) {
-          invoice.set('skipApplyPromotions', true);
-          invoice.set('hasBeenPaid', true);
-          invoice.set('dummyPaymentId', OB.UTIL.get_UUID());
-          invoice.set('ignoreCheckIfIsActiveOrder', true);
-          invoice.set('forceCalculateTaxes', true);
-          OB.MobileApp.model.set('preventOrderSave', true);
-          invoice.calculateReceipt(function () {
-            OB.MobileApp.model.unset('preventOrderSave');
-            invoice.adjustPrices();
-
-            if (callback instanceof Function) {
-              callback(invoice);
-            }
-          });
+        if (invoice.get('lines').length) {
+          if (invoice.get('lines').length !== me.get('lines').length) {
+            invoice.set('skipApplyPromotions', true);
+            invoice.set('ignoreCheckIfIsActiveOrder', true);
+            invoice.set('forceCalculateTaxes', true);
+            OB.MobileApp.model.set('preventOrderSave', true);
+            invoice.calculateReceipt(function () {
+              OB.MobileApp.model.unset('preventOrderSave');
+              invoice.adjustPrices();
+              finalCallback(invoice);
+            });
+          } else {
+            // The full order is being invoiced
+            finalCallback(invoice);
+          }
         } else {
           //No invoice lines were generated; do not save the invoice, just trigger the event
-          if (callback instanceof Function) {
-            callback();
-          }
+          finalCallback();
         }
       } else {
         // The invoice musn't be created
-        if (callback instanceof Function) {
-          callback();
-        }
+        finalCallback();
       }
     },
     checkOrderPayment: function () {
