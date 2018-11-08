@@ -169,18 +169,14 @@ public class SessionInfo {
   }
 
   private static boolean adContextInfoExists(Connection conn) {
-    PreparedStatement psQuery = null;
     boolean alreadyExists = false;
-    try {
-      psQuery = getPreparedStatement(
-          conn,
-          "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
-      ResultSet rs = psQuery.executeQuery();
+    try (PreparedStatement psQuery = getPreparedStatement(
+        conn,
+        "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
+        ResultSet rs = psQuery.executeQuery()) {
       alreadyExists = rs.next() && !rs.getString(1).equals("0");
     } catch (SQLException e) {
       log4j.error("Error checking if the ad_context_info table exists", e);
-    } finally {
-      releasePreparedStatement(psQuery);
     }
     return alreadyExists;
   }
@@ -310,31 +306,27 @@ public class SessionInfo {
     return conn;
   }
 
-  private static PreparedStatement getPreparedStatement(Connection conn, String SQLPreparedStatement)
+  private static PreparedStatement getPreparedStatement(Connection conn, String sql)
       throws SQLException {
-    if (conn == null || SQLPreparedStatement == null || SQLPreparedStatement.equals(""))
+    if (conn == null || sql == null || sql.equals("")) {
       return null;
+    }
     PreparedStatement ps = null;
 
     try {
-      if (log4j.isDebugEnabled())
-        log4j.debug("preparedStatement requested");
-      ps = conn.prepareStatement(SQLPreparedStatement, ResultSet.TYPE_SCROLL_INSENSITIVE,
-          ResultSet.CONCUR_READ_ONLY);
-      if (log4j.isDebugEnabled())
-        log4j.debug("preparedStatement received");
+      log4j.trace("preparedStatement requested");
+      ps = conn
+          .prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
     } catch (SQLException e) {
-      log4j.error("getPreparedStatement: " + SQLPreparedStatement + "\n" + e);
-      if (conn != null) {
-        try {
-          conn.setAutoCommit(true);
-          conn.close();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
+      log4j.error("getPreparedStatement: " + sql, e);
+      try {
+        conn.setAutoCommit(true);
+        conn.close();
+      } catch (Exception ex) {
+        log4j.error("Could not close PreparedStatement for " + sql, ex);
       }
     }
-    return (ps);
+    return ps;
   }
 
   private static void releasePreparedStatement(PreparedStatement ps) {
