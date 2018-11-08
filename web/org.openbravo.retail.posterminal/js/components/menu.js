@@ -101,7 +101,7 @@ enyo.kind({
           return;
         }
         var order = me.model.get('order');
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_Attention'), OB.I18N.getLabel('OBPOS_VoidLayawayConfirmation'), [{
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_VoidLayawayLbl'), OB.I18N.getLabel('OBPOS_VoidLayawayConfirmation'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
