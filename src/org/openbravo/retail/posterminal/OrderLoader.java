@@ -120,8 +120,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isNegative = false;
   private boolean isNewReceipt = false;
 
-  final ShipmentInOutUtils su = new ShipmentInOutUtils();
-  final InvoiceUtils iu = new InvoiceUtils();
+  @Inject
+  private ShipmentInOutUtils su;
+
+  @Inject
+  private InvoiceUtils iu;
 
   @Inject
   @Any
