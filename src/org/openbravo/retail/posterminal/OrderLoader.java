@@ -404,6 +404,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBDal.getInstance().save(shipment);
           su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
               locatorList, preAddShipmentLine);
+
+          // Stock manipulation
+          org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+          CallableStatement updateStockStatement = cp.getConnection().prepareCall(
+              "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+          try {
+            // Stock manipulation
+            su.handleStock(shipment, updateStockStatement);
+          } finally {
+            updateStockStatement.close();
+          }
         }
 
         if (log.isDebugEnabled()) {
@@ -419,19 +430,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         if (log.isDebugEnabled()) {
           t3 = System.currentTimeMillis();
-        }
-
-        if (createShipment) {
-          // Stock manipulation
-          org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
-          CallableStatement updateStockStatement = cp.getConnection().prepareCall(
-              "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
-          try {
-            // Stock manipulation
-            su.handleStock(shipment, updateStockStatement);
-          } finally {
-            updateStockStatement.close();
-          }
         }
 
         if (log.isDebugEnabled()) {
