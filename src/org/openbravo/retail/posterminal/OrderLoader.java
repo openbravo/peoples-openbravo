@@ -120,6 +120,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean isNegative = false;
   private boolean isNewReceipt = false;
 
+  private BigDecimal paymentAmt = BigDecimal.ZERO;
+
   @Inject
   private ShipmentInOutUtils su;
 
@@ -187,9 +189,20 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     isNegative = jsonorder.optBoolean("isNegative", false);
 
-    boolean fullyPaid = isNegative ? jsonorder.getDouble("paymentWithSign") <= jsonorder
-        .getDouble("gross") : jsonorder.getDouble("paymentWithSign") >= jsonorder
-        .getDouble("gross");
+    final JSONArray payments = jsonorder.getJSONArray("payments");
+    if (jsonorder.has("paymentWithSign")) {
+      paymentAmt = BigDecimal.valueOf(jsonorder.getDouble("paymentWithSign"));
+    } else {
+      paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
+      for (int i = 0; i < payments.length(); i++) {
+        paymentAmt = paymentAmt.add(BigDecimal.valueOf(payments.getJSONObject(i).getDouble(
+            "origAmount")));
+      }
+    }
+
+    boolean fullyPaid = isNegative ? paymentAmt.compareTo(BigDecimal.valueOf(jsonorder
+        .getDouble("gross"))) != 1 : paymentAmt.compareTo(BigDecimal.valueOf(jsonorder
+        .getDouble("gross"))) != -1;
 
     isNewReceipt = !jsonorder.optBoolean("isLayaway", false)
         && !jsonorder.optBoolean("isPaid", false);
@@ -1297,17 +1310,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       return jsonResponse;
-    }
-
-    BigDecimal paymentAmt;
-    if (jsonorder.has("paymentWithSign")) {
-      paymentAmt = BigDecimal.valueOf(jsonorder.getDouble("paymentWithSign"));
-    } else {
-      paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
-      for (int i = 0; i < payments.length(); i++) {
-        paymentAmt = paymentAmt.add(BigDecimal.valueOf(payments.getJSONObject(i)
-            .getDouble("amount")));
-      }
     }
 
     // Create a unique payment schedule for all payments
