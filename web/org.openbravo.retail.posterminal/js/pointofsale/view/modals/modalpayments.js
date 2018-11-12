@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2017 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo, Backbone, */
+/*global enyo, Backbone, _ */
 
 enyo.kind({
   kind: 'OB.UI.Modal',
@@ -84,17 +84,20 @@ enyo.kind({
                 if (!item.disabled) {
                   var dialog = this.owner.owner.owner;
                   dialog.doHideThisPopup();
-                  dialog.bubble('onStatusChanged', {
-                    payment: this.payment,
-                    status: this.payment.payment.searchKey,
-                    amount: dialog.args.amount,
-                    options: dialog.args.options
-                  });
+                  dialog.selectItem = true;
                   dialog.bubble('onPaymentChanged', {
                     payment: this.payment,
                     status: this.payment.payment.searchKey,
                     amount: dialog.args.amount
                   });
+                  if (!dialog.args.cashManagement) {
+                    dialog.bubble('onStatusChanged', {
+                      payment: this.payment,
+                      status: this.payment.payment.searchKey,
+                      amount: dialog.args.amount,
+                      options: dialog.args.options
+                    });
+                  }
                 }
               },
               initComponents: function () {
@@ -120,19 +123,35 @@ enyo.kind({
     var items = [],
         payments = OB.POS.modelterminal.get('payments'),
         filterBy = this.$.body.$.paymentname.getValue().toUpperCase();
-    enyo.forEach(payments, function (payment) {
-      if (payment.paymentMethod.paymentMethodCategory && payment.paymentMethod.paymentMethodCategory === this.args.idCategory && OB.MobileApp.model.hasPermission(payment.payment.searchKey)) {
-        if (filterBy === '' || payment.paymentMethod._identifier.toUpperCase().indexOf(filterBy) >= 0) {
-          var isDisabled = (OB.MobileApp.model.receipt.getTotal() < 0 ? !payment.paymentMethod.refundable : false);
+    if (this.args.availables) {
+      enyo.forEach(this.args.availables, function (sk) {
+        var payment = _.find(payments, function (pay) {
+          return pay.paymentMethod.searchKey === sk;
+        });
+        if (payment) {
           items.push({
             name: payment.paymentMethod._identifier,
             image: payment.image,
             payment: payment,
-            disabled: isDisabled
+            disabled: false
           });
         }
-      }
-    }, this);
+      }, this);
+    } else {
+      enyo.forEach(payments, function (payment) {
+        if (payment.paymentMethod.paymentMethodCategory && payment.paymentMethod.paymentMethodCategory === this.args.idCategory && OB.MobileApp.model.hasPermission(payment.payment.searchKey)) {
+          if (filterBy === '' || payment.paymentMethod._identifier.toUpperCase().indexOf(filterBy) >= 0) {
+            var isDisabled = (OB.MobileApp.model.receipt.getTotal() < 0 ? !payment.paymentMethod.refundable : false);
+            items.push({
+              name: payment.paymentMethod._identifier,
+              image: payment.image,
+              payment: payment,
+              disabled: isDisabled
+            });
+          }
+        }
+      }, this);
+    }
     this.$.body.$.paymentMethods.setItems(items);
     var me = this;
     setTimeout(function () {
@@ -144,5 +163,13 @@ enyo.kind({
     this.searchAction();
     this.bubble('onClearPaymentSelect');
     this.bubble('onPaymentChanged');
+    this.selectItem = false;
+  },
+  executeOnHide: function () {
+    if (!this.selectItem) {
+      this.bubble('onPaymentChangedCancelled', {
+        cashManagement: this.args.cashManagement
+      });
+    }
   }
 });
