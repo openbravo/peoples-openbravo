@@ -40,6 +40,7 @@ import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -1737,4 +1738,62 @@ public class FIN_AddPayment {
     }
     return BigDecimal.ZERO;
   }
+
+  /**
+   * Method to create a new Payment Schedule Detail (PSD)
+   * 
+   * @param amount
+   *          Amount of the PSD
+   * @param paymentSchedule
+   *          The PS that the PSD will belong to
+   * @param paymentScheduleInvoice
+   *          The PS Invoice that the PSD will belong to
+   * @param businessPartner
+   *          The BP of the PSD
+   * @return newPSD The newly created PSD
+   */
+  public static FIN_PaymentScheduleDetail createPSD(BigDecimal amount,
+      FIN_PaymentSchedule paymentSchedule, FIN_PaymentSchedule paymentScheduleInvoice,
+      Organization organization, BusinessPartner businessPartner) {
+    return createPSD(amount, paymentSchedule, paymentScheduleInvoice, null, organization,
+        businessPartner);
+  }
+
+  /**
+   * Method to create a new Payment Schedule Detail (PSD)
+   * 
+   * @param amount
+   *          Amount of the PSD
+   * @param paymentSchedule
+   *          The PS that the PSD will belong to
+   * @param paymentScheduleInvoice
+   *          The PS Invoice that the PSD will belong to
+   * @param paymentDetails
+   *          The PD to which the PSD will be related
+   * @param businessPartner
+   *          The BP of the PSD
+   * @return newPSD The newly created PSD
+   */
+  public static FIN_PaymentScheduleDetail createPSD(BigDecimal amount,
+      FIN_PaymentSchedule paymentSchedule, FIN_PaymentSchedule paymentScheduleInvoice,
+      FIN_PaymentDetail paymentDetails, Organization organization, BusinessPartner businessPartner) {
+    final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
+        FIN_PaymentScheduleDetail.class);
+    newPSD.setAmount(amount);
+    if (paymentSchedule != null) {
+      newPSD.setOrderPaymentSchedule(paymentSchedule);
+      paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
+    }
+    if (paymentScheduleInvoice != null) {
+      newPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
+      paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newPSD);
+    }
+    newPSD.setPaymentDetails(paymentDetails);
+    newPSD.setOrganization(organization);
+    newPSD.setBusinessPartner(businessPartner);
+    OBDal.getInstance().save(newPSD);
+
+    return newPSD;
+  }
+
 }

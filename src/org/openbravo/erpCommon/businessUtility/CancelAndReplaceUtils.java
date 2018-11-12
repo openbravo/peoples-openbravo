@@ -1479,16 +1479,9 @@ public class CancelAndReplaceUtils {
           if (remainingPSD.getAmount().compareTo(remainingAmount) == 1) {
             // The PSD with the remaining amount is bigger to the amount to create, so it must be
             // separated in two different details
-            final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
-            newPSD.setNewOBObject(true);
-            newPSD.setOrganization(order.getOrganization());
-            newPSD.setOrderPaymentSchedule(paymentSchedule);
-            newPSD.setInvoicePaymentSchedule(remainingPSD.getInvoicePaymentSchedule());
-            newPSD.setAmount(remainingPSD.getAmount().subtract(remainingAmount));
-            newPSD.setBusinessPartner(order.getBusinessPartner());
-            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-            OBDal.getInstance().save(newPSD);
+            FIN_AddPayment.createPSD(remainingPSD.getAmount().subtract(remainingAmount),
+                paymentSchedule, remainingPSD.getInvoicePaymentSchedule(), order.getOrganization(),
+                order.getBusinessPartner());
             remainingPSD.setAmount(remainingAmount);
             OBDal.getInstance().save(remainingPSD);
           }
@@ -1508,16 +1501,9 @@ public class CancelAndReplaceUtils {
         lastRemainingPSD.setAmount(lastRemainingPSD.getAmount().add(remainingAmount));
         OBDal.getInstance().save(lastRemainingPSD);
         // And the remaining PSD must be created with the quantity in negative
-        final FIN_PaymentScheduleDetail newRemainingPSD = OBProvider.getInstance().get(
-            FIN_PaymentScheduleDetail.class);
-        newRemainingPSD.setNewOBObject(true);
-        newRemainingPSD.setOrganization(order.getOrganization());
-        newRemainingPSD.setOrderPaymentSchedule(paymentSchedule);
-        newRemainingPSD.setInvoicePaymentSchedule(lastRemainingPSD.getInvoicePaymentSchedule());
-        newRemainingPSD.setAmount(remainingAmount.negate());
-        newRemainingPSD.setBusinessPartner(order.getBusinessPartner());
-        paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newRemainingPSD);
-        OBDal.getInstance().save(newRemainingPSD);
+        FIN_AddPayment.createPSD(remainingAmount.negate(), paymentSchedule,
+            lastRemainingPSD.getInvoicePaymentSchedule(), order.getOrganization(),
+            order.getBusinessPartner());
         FIN_AddPayment.updatePaymentDetail(lastRemainingPSD, _nettingPayment,
             lastRemainingPSD.getAmount(), false);
       }
