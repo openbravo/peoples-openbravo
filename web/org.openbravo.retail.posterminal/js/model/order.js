@@ -608,7 +608,7 @@
       if (this.isCalculateGrossLocked === true) {
         OB.error("calculateGross execution is forbidden right now");
         return;
-      } else if (this.isCalculateGrossLocked !== false && !this.get('belongsToMultiOrder') && !this.get('isInvoice')) {
+      } else if (this.isCalculateGrossLocked !== false && !this.get('belongsToMultiOrder')) {
         OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
       }
 
@@ -762,7 +762,7 @@
       if (this.isCalculateReceiptLocked === true) {
         OB.error("calculateReceipt execution is forbidden right now");
         return;
-      } else if (this.isCalculateReceiptLocked !== false && !this.get('belongsToMultiOrder') && !this.get('isInvoice')) {
+      } else if (this.isCalculateReceiptLocked !== false && !this.get('belongsToMultiOrder')) {
         OB.error("setting the isCalculateReceiptLocked state is mandatory before executing it the first time");
       }
       // verify that the ui receipt is the only one in which calculateReceipt is executed
@@ -6255,6 +6255,8 @@
 
         if (invoice.get('lines').length) {
           if (invoice.get('lines').length !== me.get('lines').length) {
+            me.isCalculateReceiptLocked = false;
+            me.isCalculateGrossLocked = false;
             invoice.set('skipApplyPromotions', true);
             invoice.set('ignoreCheckIfIsActiveOrder', true);
             invoice.set('forceCalculateTaxes', true);
