@@ -55,6 +55,7 @@ import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook;
 import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook.OrderLoaderPreAddShipmentLineHook_Actions;
 import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook_Response;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class ShipmentInOutUtils {
 
@@ -70,12 +71,37 @@ public class ShipmentInOutUtils {
   @Any
   private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
 
-  private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
-      DocumentType docTypeTarget, DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
+  public ShipmentInOut createNewShipment(Order order, JSONObject jsonorder, JSONArray orderlines,
+      ArrayList<OrderLine> lineReferences, List<Locator> locatorList,
+      boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers) {
+    final ShipmentInOut shipment = OBProvider.getInstance().get(ShipmentInOut.class);
+    try {
+      createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs, docNoHandlers);
+      OBDal.getInstance().save(shipment);
+      createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences, locatorList);
+
+      // Stock manipulation
+      org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+      CallableStatement updateStockStatement = cp.getConnection().prepareCall(
+          "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+      try {
+        // Stock manipulation
+        handleStock(shipment, updateStockStatement);
+      } finally {
+        updateStockStatement.close();
+      }
+    } catch (Exception e) {
+      throw new OBException("Error when creating the shipment: " + e);
+    }
+    return shipment;
+  }
+
+  private void addDocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType docTypeTarget,
+      DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
     documentNoHandlers.add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
   }
 
-  public void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder,
+  private void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers)
       throws JSONException {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
@@ -122,7 +148,7 @@ public class ShipmentInOutUtils {
     shipment.setProcessGoodsJava("--");
   }
 
-  public void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
+  private void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
       JSONArray orderlines, ArrayList<OrderLine> lineReferences, List<Locator> locatorList)
       throws JSONException {
     int lineNo = 0;
@@ -425,7 +451,7 @@ public class ShipmentInOutUtils {
     }
   }
 
-  public void handleStock(ShipmentInOut shipment, CallableStatement updateStockStatement) {
+  private void handleStock(ShipmentInOut shipment, CallableStatement updateStockStatement) {
     for (ShipmentInOutLine line : shipment.getMaterialMgmtShipmentInOutLineList()) {
       if (line.getProduct().getProductType().equals("I") && line.getProduct().isStocked()) {
         // Stock is changed only for stocked products of type "Item"

@@ -10,7 +10,6 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.CallableStatement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -151,10 +150,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Inject
   @Any
   private Instance<OrderLoaderPreProcessPaymentHook> preProcessPayment;
-
-  @Inject
-  @Any
-  private Instance<InvoicePreProcessHook> invoicePreProcesses;
 
   private boolean useOrderDocumentNoForRelatedDocs = false;
   private int paymentCount = 0;
@@ -406,23 +401,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                     .getLanguage()));
           }
 
-          shipment = OBProvider.getInstance().get(ShipmentInOut.class);
-          su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs,
-              documentNoHandlers.get());
-          OBDal.getInstance().save(shipment);
-          su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
-              locatorList);
-
-          // Stock manipulation
-          org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
-          CallableStatement updateStockStatement = cp.getConnection().prepareCall(
-              "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
-          try {
-            // Stock manipulation
-            su.handleStock(shipment, updateStockStatement);
-          } finally {
-            updateStockStatement.close();
-          }
+          shipment = su.createNewShipment(order, jsonorder, orderlines, lineReferences,
+              locatorList, useOrderDocumentNoForRelatedDocs, documentNoHandlers.get());
         }
 
         if (log.isDebugEnabled()) {
@@ -453,27 +433,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             jsoninvoice = jsonorder;
           }
 
-          executeInvoicePreProcessHook(invoicePreProcesses, jsoninvoice);
-
-          ArrayList<OrderLine> invoicelineReferences = new ArrayList<OrderLine>();
-          JSONArray invoicelines = jsoninvoice.getJSONArray("lines");
-
-          for (int i = 0; i < invoicelines.length(); i++) {
-            invoicelineReferences.add(OBDal.getInstance().get(OrderLine.class,
-                invoicelines.getJSONObject(i).getString("orderLineId")));
-          }
-
-          // Invoice header
-          invoice = OBProvider.getInstance().get(Invoice.class);
-          iu.createInvoice(invoice, order, jsoninvoice, useOrderDocumentNoForRelatedDocs,
+          invoice = iu.createNewInvoice(jsoninvoice, order, useOrderDocumentNoForRelatedDocs,
               documentNoHandlers.get());
-          OBDal.getInstance().save(invoice);
-
-          // Invoice lines
-          iu.createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
-
-          iu.updateAuditInfo(invoice, jsoninvoice);
-
         }
 
         if (log.isDebugEnabled()) {

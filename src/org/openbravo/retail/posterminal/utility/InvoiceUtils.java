@@ -20,6 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -53,6 +57,7 @@ import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.InvoicePreProcessHook;
 import org.openbravo.service.json.JsonConstants;
 
 public class InvoiceUtils {
@@ -64,12 +69,56 @@ public class InvoiceUtils {
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, JSONArray> invoicelineserviceList;
 
-  private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
-      DocumentType docTypeTarget, DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
+  @Inject
+  @Any
+  private Instance<InvoicePreProcessHook> invoicePreProcesses;
+
+  public Invoice createNewInvoice(JSONObject jsoninvoice, Order order,
+      boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers) {
+    final Invoice invoice = OBProvider.getInstance().get(Invoice.class);
+    try {
+      executeInvoicePreProcessHook(invoicePreProcesses, jsoninvoice);
+
+      final ArrayList<OrderLine> invoicelineReferences = new ArrayList<OrderLine>();
+      JSONArray invoicelines = jsoninvoice.getJSONArray("lines");
+
+      for (int i = 0; i < invoicelines.length(); i++) {
+        invoicelineReferences.add(OBDal.getInstance().get(OrderLine.class,
+            invoicelines.getJSONObject(i).getString("orderLineId")));
+      }
+
+      // Invoice header
+      createInvoice(invoice, order, jsoninvoice, useOrderDocumentNoForRelatedDocs, docNoHandlers);
+      OBDal.getInstance().save(invoice);
+
+      // Invoice lines
+      createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
+
+      updateAuditInfo(invoice, jsoninvoice);
+    } catch (Exception e) {
+      throw new OBException("Error when creating the invoice: " + e);
+    }
+
+    return invoice;
+  }
+
+  private void executeInvoicePreProcessHook(Instance<? extends Object> hooks, JSONObject jsoninvoice)
+      throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof InvoicePreProcessHook) {
+        ((InvoicePreProcessHook) proc).exec(jsoninvoice);
+      }
+    }
+  }
+
+  private void addDocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType docTypeTarget,
+      DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
     documentNoHandlers.add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
   }
 
-  public void updateAuditInfo(Invoice invoice, JSONObject jsoninvoice) throws JSONException {
+  private void updateAuditInfo(Invoice invoice, JSONObject jsoninvoice) throws JSONException {
     Long value = jsoninvoice.getLong("created");
     invoice.set("creationDate", new Date(value));
   }
@@ -89,7 +138,7 @@ public class InvoiceUtils {
     return docType;
   }
 
-  public void createInvoiceLine(Invoice invoice, Order order, JSONObject jsoninvoice,
+  private void createInvoiceLine(Invoice invoice, Order order, JSONObject jsoninvoice,
       JSONArray invoicelines, ArrayList<OrderLine> lineReferences, int numIter, int pricePrecision,
       ShipmentInOutLine inOutLine, int lineNo, int numLines, int actualLine,
       BigDecimal movementQtyTotal) throws JSONException {
@@ -263,7 +312,7 @@ public class InvoiceUtils {
 
   }
 
-  public void createInvoiceLines(Invoice invoice, Order order, JSONObject jsoninvoice,
+  private void createInvoiceLines(Invoice invoice, Order order, JSONObject jsoninvoice,
       JSONArray invoicelines, ArrayList<OrderLine> lineReferences) throws JSONException {
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
@@ -307,7 +356,7 @@ public class InvoiceUtils {
     }
   }
 
-  public void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice,
+  private void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice,
       boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers)
       throws JSONException {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
@@ -822,7 +871,7 @@ public class InvoiceUtils {
         .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
   }
 
-  protected String getDummyDocumentNo() {
+  private String getDummyDocumentNo() {
     return "DOCNO" + System.currentTimeMillis();
   }
 
