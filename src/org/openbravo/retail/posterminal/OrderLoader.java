@@ -83,7 +83,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.retail.posterminal.utility.AttributesUtils;
 import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
 import org.openbravo.retail.posterminal.utility.InvoiceUtils;
-import org.openbravo.retail.posterminal.utility.ShipmentInOutUtils;
+import org.openbravo.retail.posterminal.utility.ShipmentUtils;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
@@ -122,7 +122,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private BigDecimal paymentAmt = BigDecimal.ZERO;
 
   @Inject
-  private ShipmentInOutUtils su;
+  private ShipmentUtils su;
 
   @Inject
   private InvoiceUtils iu;

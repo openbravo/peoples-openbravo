@@ -57,9 +57,9 @@ import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook_Respon
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class ShipmentInOutUtils {
+public class ShipmentUtils {
 
-  private final Logger log = Logger.getLogger(ShipmentInOutUtils.class);
+  private final Logger log = Logger.getLogger(ShipmentUtils.class);
 
   private Locator binForRetuns = null;
 
