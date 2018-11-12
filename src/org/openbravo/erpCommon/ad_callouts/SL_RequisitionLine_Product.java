@@ -79,7 +79,7 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
         PriceList priceListObj = OBDal.getInstance().get(PriceList.class, strPriceListId);
 
         // Set Auxiliary Input parameter Gross Price
-        info.addResult("inpgrossprice", priceListObj.isPriceIncludesTax());
+        info.addResult("inpgrossprice", priceListObj.isPriceIncludesTax() ? "Y" : "N");
 
         // Discount, Price List, Gross Unit Price, Price Actual
         String strMessage = "";
@@ -118,6 +118,8 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
           info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, strMessage,
               info.vars.getLanguage())));
         }
+      } else {
+        info.addResult("inpgrossprice", "");
       }
     }
 
