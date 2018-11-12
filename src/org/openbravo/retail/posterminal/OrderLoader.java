@@ -1444,7 +1444,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private void processPayments(FIN_PaymentSchedule paymentSchedule, Order order,
       OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt,
       JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
-    OBContext.setAdminMode(false);
+    OBContext.setAdminMode(true);
     try {
       int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
           .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
