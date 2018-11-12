@@ -468,7 +468,6 @@ public class ShipmentInOutUtils {
         transaction.setGoodsShipmentLine(line);
         transaction.setAttributeSetValue(line.getAttributeSetValue());
         transaction.setId(line.getId());
-        transaction.setNewOBObject(true);
 
         updateInventory(transaction, updateStockStatement);
 

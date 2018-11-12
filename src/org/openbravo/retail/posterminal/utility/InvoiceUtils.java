@@ -164,7 +164,6 @@ public class InvoiceUtils {
         jsoninvoice.getLong("timezoneOffset"));
     JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(InvoiceLine.class),
         invoiceLine, jsoninvoice, jsoninvoice.getLong("timezoneOffset"));
-    invoiceLine.setNewOBObject(true);
     invoiceLine.set("creationDate", invoice.getCreationDate());
     invoiceLine.setLineNo((long) lineNo);
     invoiceLine.setDescription(jsonInvoiceLine.has("description") ? jsonInvoiceLine
@@ -276,7 +275,6 @@ public class InvoiceUtils {
       invoiceLine.getInvoiceLineTaxList().add(invoicelinetax);
       invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getSalesOrderLine().getId()
           + lineNo + (long) ((ind + 1) * 10)));
-      invoicelinetax.setNewOBObject(true);
       OBDal.getInstance().save(invoicelinetax);
     }
 
@@ -304,7 +302,6 @@ public class InvoiceUtils {
         }
         promotion.setLineNo((long) ((p + 1) * 10));
         promotion.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getId() + p));
-        promotion.setNewOBObject(true);
         promotion.setInvoiceLine(invoiceLine);
         invoiceLine.getInvoiceLineOfferList().add(promotion);
       }
@@ -444,7 +441,6 @@ public class InvoiceUtils {
       invoiceTax.setRecalculate(true);
       invoiceTax.setId(OBMOBCUtils.getUUIDbyString(invoiceTax.getInvoice().getId()
           + invoiceTax.getLineNo()));
-      invoiceTax.setNewOBObject(true);
       i++;
       invoice.getInvoiceTaxList().add(invoiceTax);
     }
