@@ -68,6 +68,7 @@ enyo.kind({
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
     onPaymentChanged: 'paymentChanged',
+    onPaymentChangedCancelled: 'paymentChangedCancelled',
     onPaymentActionPay: 'paymentActionPay',
     onClearPaymentSelect: 'clearPaymentSelect',
     onLayaways: 'layaways',
@@ -1242,6 +1243,10 @@ enyo.kind({
   paymentChanged: function (inSender, inEvent) {
     // sending the event to the components bellow this one
     this.waterfall('onButtonPaymentChanged', inEvent);
+  },
+  paymentChangedCancelled: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onButtonPaymentChangedCancelled', inEvent);
   },
   paymentActionPay: function (inSender, inEvent) {
     // sending the event to the components bellow this one

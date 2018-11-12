@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,7 +17,7 @@ enyo.kind({
   bodyContent: {},
   executeOnShow: function () {
 
-    this.$.header.setContent(this.args.receipt.getTotal() > 0 ? OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(this.args.amount)]) : OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(this.args.amount)]));
+    this.$.header.setContent(this.args.receipt && this.args.receipt.getTotal() > 0 ? OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(this.args.amount)]) : OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(this.args.amount)]));
 
     this.$.bodyContent.destroyComponents();
     //default values to reset changes done by a payment method
@@ -35,6 +35,7 @@ enyo.kind({
       isocode: this.args.isocode,
       key: this.args.key,
       receipt: this.args.receipt,
+      cashManagement: this.args.cashManagement,
       allowOpenDrawer: this.args.paymentMethod.allowopendrawer,
       isCash: this.args.paymentMethod.iscash,
       openDrawer: this.args.paymentMethod.openDrawer,
