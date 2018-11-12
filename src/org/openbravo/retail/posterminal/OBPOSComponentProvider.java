@@ -204,6 +204,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/obpos-supervisor-model",
 
+        "model/prepayment-algorithm",
+
         // Point of sale
         "pointofsale/model/pointofsale-print",
         "pointofsale/model/pointofsale-model",
@@ -284,7 +286,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/rfidWebsocket",
 
         "utils/preScanningFocusHook", "utils/orderSelectorUtils", "utils/stockUtils",
-        "utils/productStatusUtils", "utils/prepaymentUtils" };
+        "utils/productStatusUtils" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
