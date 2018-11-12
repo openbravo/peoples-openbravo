@@ -346,7 +346,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           createOrderLines(order, jsonorder, orderlines, lineReferences);
         } else {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(deliver);
           if (!jsonorder.has("channel")) {
             order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
