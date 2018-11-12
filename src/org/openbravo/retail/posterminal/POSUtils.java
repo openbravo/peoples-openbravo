@@ -24,7 +24,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
@@ -39,15 +38,11 @@ import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
-import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -853,58 +848,4 @@ public class POSUtils {
     return isSynchronizeModeActive;
   }
 
-  /**
-   * Method to create a new Payment Schedule Detail (PSD)
-   * 
-   * @param amount
-   *          Amount of the PSD
-   * @param paymentSchedule
-   *          The PS that the PSD will belong to
-   * @param paymentScheduleInvoice
-   *          The PS Invoice that the PSD will belong to
-   * @param businessPartner
-   *          The BP of the PSD
-   * @return newPSD The newly created PSD
-   */
-  public static FIN_PaymentScheduleDetail createPSD(BigDecimal amount,
-      FIN_PaymentSchedule paymentSchedule, FIN_PaymentSchedule paymentScheduleInvoice,
-      BusinessPartner businessPartner) {
-    return createPSD(amount, paymentSchedule, paymentScheduleInvoice, null, businessPartner);
-  }
-
-  /**
-   * Method to create a new Payment Schedule Detail (PSD)
-   * 
-   * @param amount
-   *          Amount of the PSD
-   * @param paymentSchedule
-   *          The PS that the PSD will belong to
-   * @param paymentScheduleInvoice
-   *          The PS Invoice that the PSD will belong to
-   * @param paymentDetails
-   *          The PD to which the PSD will be related
-   * @param businessPartner
-   *          The BP of the PSD
-   * @return newPSD The newly created PSD
-   */
-  public static FIN_PaymentScheduleDetail createPSD(BigDecimal amount,
-      FIN_PaymentSchedule paymentSchedule, FIN_PaymentSchedule paymentScheduleInvoice,
-      FIN_PaymentDetail paymentDetails, BusinessPartner businessPartner) {
-    final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
-        FIN_PaymentScheduleDetail.class);
-    newPSD.setAmount(amount);
-    if (paymentSchedule != null) {
-      newPSD.setOrderPaymentSchedule(paymentSchedule);
-      paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(newPSD);
-    }
-    if (paymentScheduleInvoice != null) {
-      newPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-      paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(newPSD);
-    }
-    newPSD.setPaymentDetails(paymentDetails);
-    newPSD.setBusinessPartner(businessPartner);
-    OBDal.getInstance().save(newPSD);
-
-    return newPSD;
-  }
 }

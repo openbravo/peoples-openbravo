@@ -1355,7 +1355,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     // If is a new order, create a PSD with the amount of the order
     if (!jsonorder.optBoolean("isLayaway", false) && !jsonorder.optBoolean("isPaid", false)) {
-      POSUtils.createPSD(gross, paymentSchedule, null, order.getBusinessPartner());
+      FIN_AddPayment.createPSD(gross, paymentSchedule, null, order.getOrganization(),
+          order.getBusinessPartner());
     }
 
     for (int i = 0; i < payments.length(); i++) {
@@ -1515,9 +1516,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         final List<FIN_PaymentScheduleDetail> reversedPSDList = reversedPSDQuery.list();
         for (final FIN_PaymentScheduleDetail reversedPSD : reversedPSDList) {
           // Create the new paymentScheduleDetail for the reversal payment
-          final FIN_PaymentScheduleDetail newPSD = POSUtils.createPSD(reversedPSD.getAmount()
+          final FIN_PaymentScheduleDetail newPSD = FIN_AddPayment.createPSD(reversedPSD.getAmount()
               .negate(), paymentSchedule, reversedPSD.getInvoicePaymentSchedule(), order
-              .getBusinessPartner());
+              .getOrganization(), order.getBusinessPartner());
           paymentScheduleDetailList.add(newPSD);
           paymentAmountMap.put(newPSD.getId(), newPSD.getAmount());
           // Created the paymentScheduleDetail with the remaining after adding the reversal payment.
@@ -1541,8 +1542,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
               .uniqueResult();
           if (remainingPSD == null) {
-            POSUtils.createPSD(reversedPSD.getAmount(), paymentSchedule,
-                reversedPSD.getInvoicePaymentSchedule(), order.getBusinessPartner());
+            FIN_AddPayment.createPSD(reversedPSD.getAmount(), paymentSchedule,
+                reversedPSD.getInvoicePaymentSchedule(), order.getOrganization(),
+                order.getBusinessPartner());
           } else {
             remainingPSD.setAmount(remainingPSD.getAmount().add(reversedPSD.getAmount()));
             OBDal.getInstance().save(remainingPSD);
@@ -1572,9 +1574,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               } else {
                 // Create a new paymentScheduleDetail for pending amount to be paid and add it to
                 // the paymentScheduleDetailList and to the paymentAmountList
-                POSUtils.createPSD(currentDetail.getAmount().subtract(remainingAmount),
+                FIN_AddPayment.createPSD(currentDetail.getAmount().subtract(remainingAmount),
                     paymentSchedule, currentDetail.getInvoicePaymentSchedule(),
-                    order.getBusinessPartner());
+                    order.getOrganization(), order.getBusinessPartner());
 
                 // Modify the existing paymentScheduleDetail to match the remaining to pay
                 currentDetail.setAmount(remainingAmount);
@@ -1609,8 +1611,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 newPSInvoice = newPSD.getInvoicePaymentSchedule();
               }
             }
-            POSUtils.createPSD(remainingAmount.negate(), paymentSchedule, newPSInvoice,
-                order.getBusinessPartner());
+            FIN_AddPayment.createPSD(remainingAmount.negate(), paymentSchedule, newPSInvoice,
+                order.getOrganization(), order.getBusinessPartner());
           }
         } else {
           // The quantity that is being introduced has a different sign to the pending quantity.
@@ -1624,12 +1626,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             OBDal.getInstance().save(newPSD);
           } else {
             // Create a new PSD if there was not a remaining amount
-            newPSD = POSUtils.createPSD(BigDecimal.ZERO, paymentSchedule, null,
-                order.getBusinessPartner());
+            newPSD = FIN_AddPayment.createPSD(BigDecimal.ZERO, paymentSchedule, null,
+                order.getOrganization(), order.getBusinessPartner());
           }
           // Create the new PSD for the remaining amount
-          POSUtils.createPSD(newPSD.getAmount().subtract(remainingAmount), paymentSchedule,
-              newPSD.getInvoicePaymentSchedule(), order.getBusinessPartner());
+          FIN_AddPayment.createPSD(newPSD.getAmount().subtract(remainingAmount), paymentSchedule,
+              newPSD.getInvoicePaymentSchedule(), order.getOrganization(),
+              order.getBusinessPartner());
 
           // Set the quantity to the payment that is being created
           newPSD.setAmount(remainingAmount);

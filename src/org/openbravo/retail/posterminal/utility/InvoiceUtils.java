@@ -25,6 +25,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -52,7 +53,6 @@ import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.JsonConstants;
 
 public class InvoiceUtils {
@@ -524,8 +524,8 @@ public class InvoiceUtils {
           }
         } else {
           // Create new paymentScheduleDetail:
-          POSUtils.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
-              psd.getPaymentDetails(), paymentSchedule.getOrder().getBusinessPartner());
+          FIN_AddPayment.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
+              psd.getPaymentDetails(), order.getOrganization(), order.getBusinessPartner());
 
           // Adjust the original payment schedule detail to match the new amount
           psd.setAmount(psd.getAmount().subtract(amtToDistribute));
@@ -536,8 +536,8 @@ public class InvoiceUtils {
             amtToDistribute = BigDecimal.ZERO;
           } else {
             // Create new paymentScheduleDetail for the reverse payment:
-            POSUtils.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
-                psd.getPaymentDetails(), paymentSchedule.getOrder().getBusinessPartner());
+            FIN_AddPayment.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
+                psd.getPaymentDetails(), order.getOrganization(), order.getBusinessPartner());
 
             // Adjust the original payment schedule detail to match the new amount
             reversalPSD.setAmount(reversalPSD.getAmount().add(amtToDistribute));
@@ -565,8 +565,8 @@ public class InvoiceUtils {
             // The PSD must be splitted in two PSD, one that belongs to the invoice with the
             // remaining amount for the invoice and the other only to the order with the remaining
             // amount for the order that not belongs to an invoice
-            POSUtils.createPSD(remainingPSD.getAmount().subtract(remainingAmt), paymentSchedule,
-                null, order.getBusinessPartner());
+            FIN_AddPayment.createPSD(remainingPSD.getAmount().subtract(remainingAmt),
+                paymentSchedule, null, order.getOrganization(), order.getBusinessPartner());
             remainingPSD.setAmount(remainingAmt);
           }
           remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
@@ -654,8 +654,8 @@ public class InvoiceUtils {
                 remainingPSD.setInvoicePaymentSchedule(invoicePS);
               } else {
                 // The remaining PSD must be splitted
-                POSUtils.createPSD(invoicePS.getAmount(), paymentSchedule, invoicePS,
-                    order.getBusinessPartner());
+                FIN_AddPayment.createPSD(invoicePS.getAmount(), paymentSchedule, invoicePS,
+                    order.getOrganization(), order.getBusinessPartner());
                 remainingPSD.setAmount(remainingPSD.getAmount().subtract(invoicePS.getAmount()));
               }
               pendingInPaymentTermsAmt = pendingInPaymentTermsAmt
