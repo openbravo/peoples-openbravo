@@ -154,10 +154,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   @Inject
   @Any
-  private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
-
-  @Inject
-  @Any
   private Instance<InvoicePreProcessHook> invoicePreProcesses;
 
   private boolean useOrderDocumentNoForRelatedDocs = false;
@@ -415,7 +411,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               documentNoHandlers);
           OBDal.getInstance().save(shipment);
           su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
-              locatorList, preAddShipmentLine);
+              locatorList);
 
           // Stock manipulation
           org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
