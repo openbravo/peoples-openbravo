@@ -979,6 +979,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [receipt.get('canceledorder').get('documentNo')]));
                       orderList.deleteCurrent();
                       enyo.$.scrim.hide();
+                      OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                       receipt.trigger('print', cloneOrderForPrinting, {
                         callback: cancelAndNew,
                         forceCallback: true
@@ -989,7 +990,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                       syncProcessCallback();
                     }, function () {
-                      OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                         OB.Dal.get(OB.Model.Order, receipt.get('id'), function (loadedReceipt) {
                           receipt.clearWith(loadedReceipt);
