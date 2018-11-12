@@ -4200,7 +4200,7 @@
           if (OB.MobileApp.model.get('context').isSalesRepresentative) {
             me.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
           } else {
-            me.unset('salesRepresentative', null);
+            me.unset('salesRepresentative');
           }
         }
 
