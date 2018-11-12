@@ -39,7 +39,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 
-public class TestUtils {
+class TestUtils {
 
   private static final String COMPLETE_ACTION = "CO";
   private static final String DRAFT_STATUS = "DR";
@@ -54,7 +54,7 @@ public class TestUtils {
    *          Name of the original Product
    * @return A new Product clone based on the original one
    */
-  public static Product cloneProduct(final String productId, final String name) {
+  static Product cloneProduct(final String productId, final String name) {
     final Product oldProduct = OBDal.getInstance().get(Product.class, productId);
     final Product newProduct = (Product) DalUtil.copy(oldProduct, false);
     int numberOfProductsWithSameName = getNumberOfProducts(name) + 1;
@@ -86,7 +86,7 @@ public class TestUtils {
   /**
    * Returns the number of products with same Product name
    */
-  public static int getNumberOfProducts(final String name) {
+  static int getNumberOfProducts(final String name) {
     try {
       final OBCriteria<Product> criteria = OBDal.getInstance().createCriteria(Product.class);
       criteria.add(Restrictions.like(Product.PROPERTY_NAME, name + "-%"));
@@ -106,7 +106,7 @@ public class TestUtils {
    *          new Order (a clone of the original one)
    * @return A new Order Line clone based on the original one
    */
-  public static Order cloneOrder(final String orderId, final String docNo) {
+  static Order cloneOrder(final String orderId, final String docNo) {
     final Order oldOrder = OBDal.getInstance().get(Order.class, orderId);
     final Order newOrder = (Order) DalUtil.copy(oldOrder, false);
     int numberOfOrdersWithSameDocNo = getNumberOfOrders(docNo) + 1;
@@ -135,7 +135,7 @@ public class TestUtils {
   /**
    * Returns the number of orders with same Document Number
    */
-  public static int getNumberOfOrders(final String docNo) {
+  static int getNumberOfOrders(final String docNo) {
     try {
       final OBCriteria<Order> criteria = OBDal.getInstance().createCriteria(Order.class);
       criteria.add(Restrictions.like(Order.PROPERTY_DOCUMENTNO, docNo + "-%"));
@@ -155,7 +155,7 @@ public class TestUtils {
    *          new Order (a clone of the original one)
    * @return A new Order Line clone based on the original one
    */
-  public static OrderLine cloneOrderLine(final OrderLine oldLine, final Order newOrder) {
+  static OrderLine cloneOrderLine(final OrderLine oldLine, final Order newOrder) {
 
     // Skip discount lines
     if (oldLine.getOrderDiscount() != null) {
@@ -184,7 +184,7 @@ public class TestUtils {
    *          Order to be completed
    * @throws OBException
    */
-  public static void processOrder(final Order order) throws OBException {
+  static void processOrder(final Order order) throws OBException {
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(null);
     parameters.add(order.getId());
@@ -202,7 +202,7 @@ public class TestUtils {
    *          docNo to set to the new Goods Receipt/Shipment
    * @return a Goods Receipt/Shipment not completed
    */
-  public static ShipmentInOut cloneReceiptShipment(final String mInoutId, final String docNo) {
+  static ShipmentInOut cloneReceiptShipment(final String mInoutId, final String docNo) {
     final ShipmentInOut oldInOut = OBDal.getInstance().get(ShipmentInOut.class, mInoutId);
     final ShipmentInOut newInOut = (ShipmentInOut) DalUtil.copy(oldInOut, false);
     int numberOfShipmentsWithSameDocNo = getNumberOfShipments(docNo) + 1;
@@ -230,7 +230,7 @@ public class TestUtils {
   /**
    * Returns the number of Goods Receipts/Shipments with same Document Number
    */
-  public static int getNumberOfShipments(final String docNo) {
+  static int getNumberOfShipments(final String docNo) {
     try {
       final OBCriteria<ShipmentInOut> criteria = OBDal.getInstance().createCriteria(
           ShipmentInOut.class);
@@ -251,7 +251,7 @@ public class TestUtils {
    *          new Goods Receipt/Shipment (a clone of the original one)
    * @return A new Goods Receipt/Shipment Line clone based on the original one
    */
-  public static ShipmentInOutLine cloneReceiptShipmentLine(final ShipmentInOutLine oldLine,
+  static ShipmentInOutLine cloneReceiptShipmentLine(final ShipmentInOutLine oldLine,
       final ShipmentInOut newInOut) {
     final ShipmentInOutLine newLine = (ShipmentInOutLine) DalUtil.copy(oldLine, false);
 
@@ -273,7 +273,7 @@ public class TestUtils {
    *          Shipment or Receipt to be completed
    * @throws OBException
    */
-  public static void processShipmentReceipt(final ShipmentInOut shipmentReceipt) throws OBException {
+  static void processShipmentReceipt(final ShipmentInOut shipmentReceipt) throws OBException {
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(null);
     parameters.add(shipmentReceipt.getId());
@@ -288,7 +288,7 @@ public class TestUtils {
    *          The Invoice.
    * @throws Exception
    */
-  public static void processInvoice(final Invoice invoice) throws Exception {
+  static void processInvoice(final Invoice invoice) throws Exception {
     if (invoice != null) {
       final List<Object> parameters = new ArrayList<>();
       parameters.add(null); // Process Instance parameter

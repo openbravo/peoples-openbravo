@@ -21,11 +21,13 @@ package org.openbravo.test.materialMgmt.invoiceFromShipment;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -117,7 +119,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
           "InvoiceFromShipment_001", AFTER_DELIVERY);
       final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
       setProductInOrderLine(orderLine, product);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(salesOrder);
 
       final ShipmentInOut shipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
@@ -125,13 +126,13 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       final ShipmentInOutLine shipmentLine = getShipmentLineByLineNo(shipment, 10L);
       setProductInShipmentLine(shipmentLine, product);
       setOrderLineInShipmentLine(shipmentLine, orderLine);
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().commitAndClose();
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertGeneratedInvoiceLine(invoice, product, new BigDecimal(12));
+      assertInvoiceDatePriceListAndStatus(invoice, shipment.getMovementDate(),
+          salesOrder.getPriceList(), "CO");
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
@@ -174,7 +175,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInOrderLine(firstLine, productOne);
       final OrderLine secondLine = getOrderLineByLineNo(salesOrder, 20L);
       setProductInOrderLine(secondLine, productTwo);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(salesOrder);
 
       final ShipmentInOut shipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
@@ -182,13 +182,11 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       final ShipmentInOutLine shipmentLine = getShipmentLineByLineNo(shipment, 10L);
       setProductInShipmentLine(shipmentLine, productOne);
       setOrderLineInShipmentLine(shipmentLine, firstLine);
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().flush();
-      OBDal.getInstance().commitAndClose();
+      OBDal.getInstance().refresh(salesOrder); // Necessary to update the delivery status
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertNoInvoiceWasGenerated(invoice);
 
       final ShipmentInOut secondShipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
@@ -196,14 +194,15 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       final ShipmentInOutLine secondShipmentLine = getShipmentLineByLineNo(secondShipment, 10L);
       setProductInShipmentLine(secondShipmentLine, productTwo);
       setOrderLineInShipmentLine(secondShipmentLine, secondLine);
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(secondShipment);
-      OBDal.getInstance().commitAndClose();
+      OBDal.getInstance().getSession().clear(); // Necessary to force DAL to refresh objects status
 
       final Invoice secondInvoice = new InvoiceGeneratorFromGoodsShipment(secondShipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertGeneratedInvoiceLine(secondInvoice, productOne, new BigDecimal(12));
       assertGeneratedInvoiceLine(secondInvoice, productTwo, new BigDecimal(12));
+      assertInvoiceDatePriceListAndStatus(secondInvoice, secondShipment.getMovementDate(),
+          salesOrder.getPriceList(), "CO");
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new OBException(e);
@@ -240,15 +239,14 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       ShipmentInOutLine secondShipmentLine = getShipmentLineByLineNo(shipment, 20L);
       setProductInShipmentLine(secondShipmentLine, productTwo);
 
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().commitAndClose();
+      final PriceList priceList = shipment.getBusinessPartner().getPriceList();
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertGeneratedInvoiceLine(invoice, productOne, new BigDecimal(12));
       assertGeneratedInvoiceLine(invoice, productTwo, new BigDecimal(12));
-
+      assertInvoiceDatePriceListAndStatus(invoice, shipment.getMovementDate(), priceList, "CO");
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new OBException(e);
@@ -297,7 +295,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
           "InvoiceFromShipment_004", AFTER_DELIVERY);
       final OrderLine firstLine = getOrderLineByLineNo(firstSalesOrder, 10L);
       setProductInOrderLine(firstLine, productOne);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(firstSalesOrder);
 
       final Order secondSalesOrder = createAfterOrderDeliveredOrder(SALES_ORDER,
@@ -306,7 +303,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInOrderLine(secondLine, productTwo);
       final OrderLine thirdLine = getOrderLineByLineNo(secondSalesOrder, 20L);
       setProductInOrderLine(thirdLine, productThree);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(secondSalesOrder);
 
       final ShipmentInOut shipment = createShipmentReceiptWithTwoLines(GOODS_SHIPMENT_ID,
@@ -321,15 +317,17 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInShipmentLine(thirdShipmentLine, productFour);
       setOrderLineInShipmentLine(thirdShipmentLine, null);
 
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().commitAndClose();
+      OBDal.getInstance().refresh(firstSalesOrder); // Necessary to update the delivery status
+      OBDal.getInstance().refresh(secondSalesOrder); // Necessary to update the delivery status
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertInvoiceLineNumber(invoice, 2);
       assertGeneratedInvoiceLine(invoice, productOne, new BigDecimal(12));
       assertGeneratedInvoiceLine(invoice, productFour, new BigDecimal(12));
+      assertInvoiceDatePriceListAndStatus(invoice, shipment.getMovementDate(),
+          firstSalesOrder.getPriceList(), "CO");
 
       final ShipmentInOut secondShipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
           "InvoiceFromShipment_004");
@@ -337,16 +335,16 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInShipmentLine(fourthShipmentLine, productThree);
       setOrderLineInShipmentLine(fourthShipmentLine, thirdLine);
 
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(secondShipment);
-      OBDal.getInstance().commitAndClose();
+      OBDal.getInstance().getSession().clear(); // Necessary to force DAL to refresh objects status
 
       final Invoice secondInvoice = new InvoiceGeneratorFromGoodsShipment(secondShipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertInvoiceLineNumber(secondInvoice, 2);
       assertGeneratedInvoiceLine(secondInvoice, productTwo, new BigDecimal(12));
       assertGeneratedInvoiceLine(secondInvoice, productThree, new BigDecimal(12));
-
+      assertInvoiceDatePriceListAndStatus(invoice, shipment.getMovementDate(),
+          firstSalesOrder.getPriceList(), "CO");
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new OBException(e);
@@ -384,14 +382,12 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
           "InvoiceFromShipment_005", AFTER_DELIVERY);
       final OrderLine firstLine = getOrderLineByLineNo(firstSalesOrder, 10L);
       setProductInOrderLine(firstLine, productOne);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(firstSalesOrder);
 
       final Order secondSalesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
           "InvoiceFromShipment_005", AFTER_ORDER_DELIVERY);
       final OrderLine secondLine = getOrderLineByLineNo(secondSalesOrder, 10L);
       setProductInOrderLine(secondLine, productTwo);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(secondSalesOrder);
 
       final ShipmentInOut shipment = createShipmentReceiptWithTwoLines(GOODS_SHIPMENT_ID,
@@ -405,15 +401,16 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setOrderLineInShipmentLine(secondShipmentLine, secondLine);
       updateMovementQuantity(secondShipmentLine, BigDecimal.TEN);
 
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().commitAndClose();
+      OBDal.getInstance().refresh(firstSalesOrder); // Necessary to update the delivery status
+      OBDal.getInstance().refresh(secondSalesOrder); // Necessary to update the delivery status
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertInvoiceLineNumber(invoice, 1);
       assertGeneratedInvoiceLine(invoice, productOne, BigDecimal.TEN);
-
+      assertInvoiceDatePriceListAndStatus(invoice, shipment.getMovementDate(),
+          firstSalesOrder.getPriceList(), "CO");
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new OBException(e);
@@ -451,14 +448,12 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
           "InvoiceFromShipment_006", IMMEDIATE);
       final OrderLine firstLine = getOrderLineByLineNo(firstSalesOrder, 10L);
       setProductInOrderLine(firstLine, productOne);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(firstSalesOrder);
 
       final Order secondSalesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
           "InvoiceFromShipment_006", DO_NOT_INVOICE);
       final OrderLine secondLine = getOrderLineByLineNo(secondSalesOrder, 10L);
       setProductInOrderLine(secondLine, productTwo);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(secondSalesOrder);
 
       final ShipmentInOut shipment = createShipmentReceiptWithTwoLines(GOODS_SHIPMENT_ID,
@@ -470,15 +465,14 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInShipmentLine(secondShipmentLine, productTwo);
       setOrderLineInShipmentLine(secondShipmentLine, secondLine);
 
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().commitAndClose();
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertInvoiceLineNumber(invoice, 1);
       assertGeneratedInvoiceLine(invoice, productOne, new BigDecimal(12));
-
+      assertInvoiceDatePriceListAndStatus(invoice, shipment.getMovementDate(),
+          firstSalesOrder.getPriceList(), "CO");
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new OBException(e);
@@ -530,7 +524,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInOrderLine(firstLine, productOne);
       final OrderLine secondLine = getOrderLineByLineNo(salesOrder, 20L);
       setProductInOrderLine(secondLine, productTwo);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(salesOrder);
 
       final ShipmentInOut firstShipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
@@ -539,9 +532,7 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInShipmentLine(firstShipmentLine, productOne);
       setOrderLineInShipmentLine(firstShipmentLine, firstLine);
 
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(firstShipment);
-      OBDal.getInstance().commitAndClose();
 
       final Invoice invoice = createInvoiceFromShipment(firstShipment, SALES_INVOICE);
       TestUtils.processInvoice(invoice);
@@ -552,16 +543,15 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInShipmentLine(secondShipmentLine, productTwo);
       setOrderLineInShipmentLine(secondShipmentLine, secondLine);
 
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(secondShipment);
-      OBDal.getInstance().commitAndClose();
 
       final Invoice secondInvoice = new InvoiceGeneratorFromGoodsShipment(secondShipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertInvoiceLineNumber(secondInvoice, 2);
       assertGeneratedInvoiceLine(secondInvoice, productOne, new BigDecimal(2));
       assertGeneratedInvoiceLine(secondInvoice, productTwo, new BigDecimal(12));
-
+      assertInvoiceDatePriceListAndStatus(secondInvoice, secondShipment.getMovementDate(),
+          salesOrder.getPriceList(), "CO");
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new OBException(e);
@@ -589,14 +579,12 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
   public void invoiceFromShipment_008() {
     OBContext.setAdminMode();
     try {
-
       final Product product = TestUtils
           .cloneProduct(T_SHIRTS_PRODUCT_ID, "InvoiceFromShipment_008");
       final Order salesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
           "InvoiceFromShipment_008", AFTER_DELIVERY);
       final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
       setProductInOrderLine(orderLine, product);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(salesOrder);
 
       final ShipmentInOut shipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
@@ -604,18 +592,19 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       final ShipmentInOutLine shipmentLine = getShipmentLineByLineNo(shipment, 10L);
       setProductInShipmentLine(shipmentLine, product);
       setOrderLineInShipmentLine(shipmentLine, orderLine);
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().commitAndClose();
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
+          .createInvoiceConsideringInvoiceTerms(true);
       assertInvoiceLineNumber(invoice, 1);
       assertGeneratedInvoiceLine(invoice, product, new BigDecimal(12));
+      assertInvoiceDatePriceListAndStatus(invoice, shipment.getMovementDate(),
+          salesOrder.getPriceList(), "CO");
+      OBDal.getInstance().refresh(orderLine); // Necessary to force DAL to refresh invoiced qty
 
-      final Invoice secondIinvoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
-          .createAndProcessInvoiceConsideringInvoiceTerms();
-      assertNoInvoiceWasGenerated(secondIinvoice);
+      final Invoice secondInvoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
+          .createInvoiceConsideringInvoiceTerms(false);
+      assertNoInvoiceWasGenerated(secondInvoice);
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
@@ -650,7 +639,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
           "InvoiceFromShipment_009", AFTER_DELIVERY);
       final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
       setProductInOrderLine(orderLine, product);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(salesOrder);
 
       final ShipmentInOut shipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
@@ -658,9 +646,7 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       final ShipmentInOutLine shipmentLine = getShipmentLineByLineNo(shipment, 10L);
       setProductInShipmentLine(shipmentLine, product);
       setOrderLineInShipmentLine(shipmentLine, orderLine);
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().commitAndClose();
 
       Calendar calendar = Calendar.getInstance();
       calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -669,7 +655,7 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       PriceList priceList = OBDal.getInstance().get(PriceList.class, PRICE_LIST_SALES_ID);
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId(), invoiceDate,
-          priceList).createAndProcessInvoiceConsideringInvoiceTerms();
+          priceList).createInvoiceConsideringInvoiceTerms(true);
       assertGeneratedInvoiceLine(invoice, product, new BigDecimal(12));
       assertInvoiceDatePriceListAndStatus(invoice, invoiceDate, priceList, "CO");
 
@@ -706,7 +692,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
           "InvoiceFromShipment_010", AFTER_DELIVERY);
       final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
       setProductInOrderLine(orderLine, product);
-      OBDal.getInstance().flush();
       TestUtils.processOrder(salesOrder);
 
       final ShipmentInOut shipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
@@ -714,9 +699,7 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       final ShipmentInOutLine shipmentLine = getShipmentLineByLineNo(shipment, 10L);
       setProductInShipmentLine(shipmentLine, product);
       setOrderLineInShipmentLine(shipmentLine, orderLine);
-      OBDal.getInstance().flush();
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().commitAndClose();
 
       Calendar calendar = Calendar.getInstance();
       calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -725,7 +708,7 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       PriceList priceList = OBDal.getInstance().get(PriceList.class, PRICE_LIST_SALES_ID);
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId(), invoiceDate,
-          priceList).createInvoiceConsideringInvoiceTerms();
+          priceList).createInvoiceConsideringInvoiceTerms(false);
       assertGeneratedInvoiceLine(invoice, product, new BigDecimal(12));
       assertInvoiceDatePriceListAndStatus(invoice, invoiceDate, priceList, "DR");
 
@@ -913,10 +896,10 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       PriceList priceList, String status) {
     assertThat("Invoice status should have been " + status, invoice.getDocumentStatus(),
         equalTo(status));
-    assertThat("Invoice date should have been " + invoiceDate, invoice.getInvoiceDate().getTime(),
-        equalTo(invoiceDate.getTime()));
-    assertThat("Price List should have been " + priceList, invoice.getPriceList().getName(),
-        equalTo(priceList.getName()));
+    assertTrue("Invoice date should have been " + invoiceDate,
+        DateUtils.truncatedEquals(invoice.getInvoiceDate(), invoiceDate, Calendar.DATE));
+    assertThat("Price List should have been " + priceList.getId(), invoice.getPriceList().getId(),
+        equalTo(priceList.getId()));
   }
 
 }

@@ -182,12 +182,13 @@
       var frm = document.frmMain,
           goodsShipmentWindow = '169',
           currentWindowId = frm.inpwindowId.value,
-          documentIsInDraftStatus = (frm.inpdocstatus.value === 'DR');
+          documentIsInDraftStatus = (frm.inpdocstatus.value === 'DR'),
+          isInvoiceIfPossibleChecked = frm.inpInvoiceIfPossible.checked;
       
       displayLogicElement('invoiceIfPossible', documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
-      displayLogicElement('processInvoice', documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
-      displayLogicElement('invoiceDateRow', documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
-      displayLogicElement('priceListRow', documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
+      displayLogicElement('processInvoice', isInvoiceIfPossibleChecked && documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
+      displayLogicElement('invoiceDateRow', isInvoiceIfPossibleChecked && documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
+      displayLogicElement('priceListRow', isInvoiceIfPossibleChecked && documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
     }
     </script>
 </head>
@@ -469,7 +470,7 @@
               	<td class="TitleCell"><span id="lblInvoiceIfPossible" class="LabelText">Invoice if possible</span></td>
               	<td class="Radio_Check_ContentCell">
               	  <span class="Checkbox_container_NOT_Focused">
-              	    <input type="checkbox" id="paramInvoiceIfPossible" name="inpInvoiceIfPossible">
+              	    <input type="checkbox" id="paramInvoiceIfPossible" name="inpInvoiceIfPossible" onchange="applyInvoiceIfPossibleDisplayLogic();" value="Y">
               	  </span>
               	</td>
               </tr>
@@ -531,7 +532,7 @@
               	<td class="TitleCell"><span id="lblProcessInvoice" class="LabelText">Process Invoice</span></td>
               	<td class="Radio_Check_ContentCell">
               	  <span class="Checkbox_container_NOT_Focused">
-              	    <input type="checkbox" id="paramProcessInvoice" name="inpProcessInvoice" checked>
+              	    <input type="checkbox" id="paramProcessInvoice" name="inpProcessInvoice" value="Y" checked>
               	  </span>
               	</td>
               </tr>

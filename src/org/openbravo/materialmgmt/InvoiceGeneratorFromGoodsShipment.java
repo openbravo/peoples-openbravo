@@ -20,9 +20,11 @@ package org.openbravo.materialmgmt;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -30,20 +32,26 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.common.actionhandler.createlinesfromprocess.CreateInvoiceLinesFromProcess;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.order.InvoiceCandidateV;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
@@ -62,37 +70,36 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class InvoiceGeneratorFromGoodsShipment {
-
-  private static final String C_INVOICE_TABLE_ID = "318";
   private static final Logger log = LoggerFactory
       .getLogger(InvoiceGeneratorFromGoodsShipment.class);
-  private ShipmentInOut shipment;
+
+  private String shipmentId;
   private Invoice invoice;
   private CreateInvoiceLinesFromProcess createInvoiceLineProcess;
   private Date invoiceDate;
-  private PriceList priceList;
+  private String priceListId;
+  private final Set<String> ordersWithAfterOrderDeliveryAlreadyInvoiced = new HashSet<>();
 
-  private static final String AFTER_ORDER_DELIVERY = "O";
-  private static final String AFTER_DELIVERY = "D";
-  private static final String IMMEDIATE = "I";
+  private enum InvoiceTerm {
+    IMMEDIATE("I"), AFTER_DELIVERY("D"), CUSTOMERSCHEDULE("S"), AFTER_ORDER_DELIVERY("O");
 
-  /**
-   * Creates an {@link InvoiceGeneratorFromGoodsShipment} based shipment Id
-   * 
-   * @param shipmentId
-   *          The shipment Id
-   * @param invoiceDate
-   *          The invoice date.
-   * @param priceList
-   *          The invoice price list
-   */
-  public InvoiceGeneratorFromGoodsShipment(final String shipmentId, final Date invoiceDate,
-      final PriceList priceList) {
-    this.shipment = OBDal.getInstance().get(ShipmentInOut.class, shipmentId);
-    this.createInvoiceLineProcess = WeldUtils
-        .getInstanceFromStaticBeanManager(CreateInvoiceLinesFromProcess.class);
-    this.invoiceDate = invoiceDate;
-    this.priceList = priceList;
+    private static final List<String> CAN_INVOICE_ORDERLINE_INDIVIDUALLY = Arrays.asList(
+        InvoiceTerm.IMMEDIATE.getInvoiceTerm(), InvoiceTerm.AFTER_DELIVERY.getInvoiceTerm(),
+        CUSTOMERSCHEDULE.getInvoiceTerm());
+
+    private String invoiceTermId;
+
+    private InvoiceTerm(final String invoiceTermId) {
+      this.invoiceTermId = invoiceTermId;
+    }
+
+    private static boolean canInvoiceOrderLineIndividually(final String invoiceTerm) {
+      return CAN_INVOICE_ORDERLINE_INDIVIDUALLY.contains(invoiceTerm);
+    }
+
+    private String getInvoiceTerm() {
+      return invoiceTermId;
+    }
   }
 
   /**
@@ -108,73 +115,91 @@ public class InvoiceGeneratorFromGoodsShipment {
   }
 
   /**
-   * Creates and process an Invoice from Goods Shipment, considering the invoice terms of orders
-   * linked to shipment lines.
+   * Creates an {@link InvoiceGeneratorFromGoodsShipment} based on shipment Id
    * 
-   * @return The invoice created
+   * @param shipmentId
+   *          The shipment Id
+   * @param invoiceDate
+   *          The invoice date. If null it takes the from the shipment movement date.
+   * @param priceList
+   *          The invoice price list. If null it takes the business partner default
    */
-  public Invoice createAndProcessInvoiceConsideringInvoiceTerms() {
+  public InvoiceGeneratorFromGoodsShipment(final String shipmentId, final Date invoiceDate,
+      final PriceList priceList) {
+    Check.isNotNull(shipmentId, "Parameter shipmentId can't be null");
+    this.shipmentId = shipmentId;
+    setInvoiceDate(invoiceDate);
+    setPriceListId(priceList);
+    this.createInvoiceLineProcess = WeldUtils
+        .getInstanceFromStaticBeanManager(CreateInvoiceLinesFromProcess.class);
+  }
+
+  private void setInvoiceDate(final Date date) {
+    this.invoiceDate = date == null ? getShipment().getMovementDate() : date;
+  }
+
+  private void setPriceListId(final PriceList priceList) {
     try {
-
-      createInvoiceConsideringInvoiceTerms();
-      if (invoice != null) {
-        processInvoice();
-        OBDal.getInstance().refresh(invoice);
+      this.priceListId = priceList.getId();
+    } catch (NullPointerException noPriceListProvided) {
+      try {
+        this.priceListId = getShipment().getBusinessPartner().getPriceList().getId();
+      } catch (NullPointerException bpWithoutPriceList) {
+        throw new OBException(OBMessageUtils.messageBD("notnullpricelist"));
       }
-    } catch (OBException e) {
-      executeRollBack();
-      throw new OBException(e.getMessage());
-    } catch (Exception e1) {
-      executeRollBack();
-      Throwable e3 = DbUtility.getUnderlyingSQLException(e1);
-      throw new OBException(e3);
     }
+  }
 
-    return invoice;
+  private ShipmentInOut getShipment() {
+    return OBDal.getInstance().getProxy(ShipmentInOut.class, shipmentId);
+  }
+
+  private Date getInvoiceDate() {
+    return this.invoiceDate;
+  }
+
+  private PriceList getPriceList() {
+    return OBDal.getInstance().getProxy(PriceList.class, priceListId);
   }
 
   /**
-   * Creates an Invoice from Goods Shipment, considering the invoice terms of orders linked to
-   * shipment lines. The invoice is in status 'DR'
+   * Creates a Sales Invoice from Goods Shipment, considering the invoice terms of available orders
+   * linked to the shipment lines.
+   * 
+   * @param doProcessInvoice
+   *          if true the invoice will be automatically processed, otherwise it will remain in draft
+   *          status
    * 
    * @return The invoice created
    */
-  public Invoice createInvoiceConsideringInvoiceTerms() {
+  public Invoice createInvoiceConsideringInvoiceTerms(boolean doProcessInvoice) {
     try {
-
-      createInvoice();
-
-    } catch (OBException e) {
-      executeRollBack();
-      throw new OBException(e.getMessage());
+      createInvoiceIfPossible();
+      if (doProcessInvoice && invoice != null) {
+        processInvoice();
+        OBDal.getInstance().refresh(invoice);
+      }
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      Throwable ex = DbUtility.getUnderlyingSQLException(e);
+      throw new OBException(OBMessageUtils.translateError(ex.getMessage()).getMessage());
     }
 
     return invoice;
   }
 
-  private Invoice createInvoice() {
-    HashSet<String> ordersAlreadyInvoiced = new HashSet<>();
+  private Invoice createInvoiceIfPossible() {
     try (ScrollableResults scrollShipmentLines = getShipmentLines()) {
       while (scrollShipmentLines.next()) {
-        final ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-            scrollShipmentLines.get()[0]);
-
-        final OrderLine orderLine = shipmentLine.getSalesOrderLine();
-        boolean shipmentLineIsLinkedToSalesOrderLine = orderLine != null;
-        final Order order = shipmentLineIsLinkedToSalesOrderLine ? orderLine.getSalesOrder() : null;
-        final String invoiceTerms = order != null ? order.getInvoiceTerms() : null;
-        final Long deliveryStatus = order != null ? order.getDeliveryStatus() : null;
-
-        if (AFTER_DELIVERY.equals(invoiceTerms) || IMMEDIATE.equals(invoiceTerms)
-            || !shipmentLineIsLinkedToSalesOrderLine) {
-          invoiceShimpentLineIfNotYetInvoiced(shipmentLine);
-
-        } else if (AFTER_ORDER_DELIVERY.equals(invoiceTerms) && deliveryStatus == 100
-            && !ordersAlreadyInvoiced.contains(order.getId())) {
-
-          inovoiceAllShipmentLinesNotFullyInvoicedLinkedToOrder(order);
-          ordersAlreadyInvoiced.add(order.getId());
+        final ShipmentInOutLine shipmentLine = (ShipmentInOutLine) scrollShipmentLines.get(0);
+        final OrderLine orderLine = (OrderLine) scrollShipmentLines.get(1);
+        final Order order = orderLine == null ? null : orderLine.getSalesOrder();
+        if (orderLine == null) {
+          invoiceShipmentLineWithoutRelatedOrderLine(shipmentLine);
+        } else if (isOrderCandidateToBeInvoiced(order)) {
+          invoiceShipmentLineWithRelatedOrderLine(shipmentLine, orderLine, order);
         }
+        evictObjects(shipmentLine, orderLine, order);
       }
       OBDal.getInstance().flush();
     }
@@ -182,29 +207,28 @@ public class InvoiceGeneratorFromGoodsShipment {
   }
 
   private ScrollableResults getShipmentLines() {
-    final String shipmentLinesHQLQuery = "select iol.id " //
+    final String shipmentLinesHQLQuery = "select iol, ol " //
         + "from " + ShipmentInOutLine.ENTITY_NAME + " iol " //
-        + "where " + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + ".id = :shipmentId ";
-
+        + "left join iol." + ShipmentInOutLine.PROPERTY_SALESORDERLINE + " ol " //
+        + "where iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + ".id = :shipmentId ";
     final Session session = OBDal.getInstance().getSession();
-    final Query<String> query = session.createQuery(shipmentLinesHQLQuery, String.class);
-    query.setParameter("shipmentId", shipment.getId());
-
+    final Query<Object[]> query = session.createQuery(shipmentLinesHQLQuery, Object[].class);
+    query.setParameter("shipmentId", shipmentId);
     return query.scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  protected void invoiceShimpentLineIfNotYetInvoiced(final ShipmentInOutLine shipmentLine) {
-    final BigDecimal totalInvoiced = getTotalInvoicedForShipmentLine(shipmentLine);
-    if (totalInvoiced.compareTo(shipmentLine.getMovementQuantity()) != 0) {
-      invoiceShipmentLine(shipmentLine);
-    }
+  private void invoiceShipmentLineWithoutRelatedOrderLine(final ShipmentInOutLine shipmentLine) {
+    final BigDecimal qtyToInvoice = shipmentLine.getMovementQuantity().subtract(
+        getTotalInvoicedForShipmentLine(shipmentLine));
+    invoicePendingQtyForShipmentLine(shipmentLine, qtyToInvoice);
   }
 
   private BigDecimal getTotalInvoicedForShipmentLine(final ShipmentInOutLine iol) {
     final String invoiceLinesHqlQuery = "select coalesce(sum(il. "
         + InvoiceLine.PROPERTY_INVOICEDQUANTITY + "), 0) " //
         + "from " + InvoiceLine.ENTITY_NAME + " il " //
-        + "where il." + InvoiceLine.PROPERTY_GOODSSHIPMENTLINE + ".id = :shipmentLineId ";
+        + "where il." + InvoiceLine.PROPERTY_GOODSSHIPMENTLINE + ".id = :shipmentLineId " //
+        + "and il.invoice." + Invoice.PROPERTY_DOCUMENTSTATUS + "= 'CO' ";
 
     final Session sessionInvoiceLines = OBDal.getInstance().getSession();
     final Query<BigDecimal> queryInvoiceLines = sessionInvoiceLines.createQuery(
@@ -214,21 +238,76 @@ public class InvoiceGeneratorFromGoodsShipment {
     return queryInvoiceLines.uniqueResult();
   }
 
-  private void invoiceShipmentLine(final ShipmentInOutLine shipmentLine) {
-    createInvoiceShipmentLine(shipmentLine, shipmentLine.getMovementQuantity());
-
+  protected void invoicePendingQtyForShipmentLine(final ShipmentInOutLine shipmentLine,
+      final BigDecimal qtyToInvoice) {
+    if (BigDecimal.ZERO.compareTo(qtyToInvoice) != 0) {
+      createInvoiceLine(shipmentLine, qtyToInvoice);
+    }
   }
 
-  private void createInvoiceShipmentLine(final ShipmentInOutLine shipmentLine,
+  private boolean isOrderCandidateToBeInvoiced(final Order order) {
+    return !OBDao
+        .getFilteredCriteria(InvoiceCandidateV.class,
+            Restrictions.eq(InvoiceCandidateV.PROPERTY_ID, order.getId())).setMaxResults(1).list()
+        .isEmpty();
+  }
+
+  private void invoiceShipmentLineWithRelatedOrderLine(final ShipmentInOutLine shipmentLine,
+      final OrderLine orderLine, final Order order) {
+    final String invoiceTerm = order.getInvoiceTerms();
+    if (InvoiceTerm.canInvoiceOrderLineIndividually(invoiceTerm)) {
+      final BigDecimal qtyToInvoice = orderLine.getOrderedQuantity()
+          .subtract(orderLine.getInvoicedQuantity()).min(shipmentLine.getMovementQuantity());
+      invoicePendingQtyForShipmentLine(shipmentLine, qtyToInvoice);
+    } else {
+      if (InvoiceTerm.AFTER_ORDER_DELIVERY.getInvoiceTerm().equals(invoiceTerm)) {
+        if (order.getDeliveryStatus() == 100
+            && !ordersWithAfterOrderDeliveryAlreadyInvoiced.contains(order.getId())) {
+          invoiceAllOrderLines(order);
+          ordersWithAfterOrderDeliveryAlreadyInvoiced.add(order.getId());
+        }
+      } else {
+        throw new OBException("Not supported Invoice Term: " + invoiceTerm);
+      }
+    }
+  }
+
+  private void invoiceAllOrderLines(final Order order) {
+    try (ScrollableResults scrollOrderShipmentLines = getAllShipmentLinesLinkedToOrder(order)) {
+      while (scrollOrderShipmentLines.next()) {
+        final ShipmentInOutLine iol = (ShipmentInOutLine) scrollOrderShipmentLines.get()[0];
+        final BigDecimal invoicedQuantity = getTotalInvoicedForShipmentLine(iol);
+        if (invoicedQuantity.compareTo(iol.getMovementQuantity()) != 0) {
+          createInvoiceLine(iol, iol.getMovementQuantity().subtract(invoicedQuantity));
+        }
+        OBDal.getInstance().getSession().evict(iol);
+      }
+    }
+  }
+
+  private ScrollableResults getAllShipmentLinesLinkedToOrder(final Order order) {
+    final String orderLinesHqlQuery = "select iol " //
+        + "from " + ShipmentInOutLine.ENTITY_NAME + " iol " //
+        + "join iol." + ShipmentInOutLine.PROPERTY_SALESORDERLINE + " ol " //
+        + "where ol." + OrderLine.PROPERTY_SALESORDER + ".id = :orderId ";
+
+    final Session sessionOrderLines = OBDal.getInstance().getSession();
+    final Query<ShipmentInOutLine> queryOrderLines = sessionOrderLines.createQuery(
+        orderLinesHqlQuery, ShipmentInOutLine.class);
+    queryOrderLines.setParameter("orderId", order.getId());
+
+    return queryOrderLines.scroll(ScrollMode.FORWARD_ONLY);
+  }
+
+  private void createInvoiceLine(final ShipmentInOutLine shipmentLine,
       final BigDecimal invoicedQuantity) {
     createInvoiceLineProcess.createInvoiceLinesFromDocumentLines(
-        getShipmentLineToBeInvoiced(shipmentLine, invoicedQuantity), getInvoiceHeader(),
+        formatShipmentLineToBeInvoiced(shipmentLine, invoicedQuantity), getInvoiceHeader(),
         ShipmentInOutLine.class);
   }
 
-  private JSONArray getShipmentLineToBeInvoiced(final ShipmentInOutLine shipmentInOutLine,
+  private JSONArray formatShipmentLineToBeInvoiced(final ShipmentInOutLine shipmentInOutLine,
       final BigDecimal invoicedQuantity) {
-
     final JSONArray lines = new JSONArray();
     try {
       final JSONObject line = new JSONObject();
@@ -256,32 +335,12 @@ public class InvoiceGeneratorFromGoodsShipment {
     return lines;
   }
 
-  private void inovoiceAllShipmentLinesNotFullyInvoicedLinkedToOrder(final Order order) {
-    try (ScrollableResults scrollOrderShipmentLines = getShipmentLinesLinkedToASalesOrder(order)) {
-      while (scrollOrderShipmentLines.next()) {
-
-        final ShipmentInOutLine iol = OBDal.getInstance().get(ShipmentInOutLine.class,
-            (String) scrollOrderShipmentLines.get()[0]);
-        final BigDecimal invoicedQuantity = getTotalInvoicedForShipmentLine(iol);
-        if (invoicedQuantity.compareTo(iol.getMovementQuantity()) != 0) {
-          createInvoiceShipmentLine(iol, iol.getMovementQuantity().subtract(invoicedQuantity));
-        }
+  private void evictObjects(final Object... objects) {
+    for (final Object object : objects) {
+      if (object != null) {
+        OBDal.getInstance().getSession().evict(object);
       }
     }
-  }
-
-  private ScrollableResults getShipmentLinesLinkedToASalesOrder(final Order order) {
-    final String orderLinesHqlQuery = "select iol.id " //
-        + "from " + ShipmentInOutLine.ENTITY_NAME + " iol " //
-        + "join iol." + ShipmentInOutLine.PROPERTY_SALESORDERLINE + " ol " //
-        + "where ol." + OrderLine.PROPERTY_SALESORDER + ".id = :orderId ";
-
-    final Session sessionOrderLines = OBDal.getInstance().getSession();
-    final Query<String> queryOrderLines = sessionOrderLines.createQuery(orderLinesHqlQuery,
-        String.class);
-    queryOrderLines.setParameter("orderId", order.getId());
-
-    return queryOrderLines.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private Invoice getInvoiceHeader() {
@@ -294,10 +353,11 @@ public class InvoiceGeneratorFromGoodsShipment {
   private Invoice createInvoiceHeader() {
     final Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
     final Invoice newInvoice = OBProvider.getInstance().get(Invoice.class);
+    final ShipmentInOut shipment = getShipment();
 
     newInvoice.setClient(shipment.getClient());
     newInvoice.setOrganization(shipment.getOrganization());
-    final DocumentType invoiceDocumentType = getInvoiceDocumentType();
+    final DocumentType invoiceDocumentType = getDocumentTypeForARI(getShipment().getOrganization());
     newInvoice.setDocumentType(invoiceDocumentType);
     newInvoice.setTransactionDocument(invoiceDocumentType);
     String documentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
@@ -321,63 +381,48 @@ public class InvoiceGeneratorFromGoodsShipment {
     newInvoice.setWithholdingamount(BigDecimal.ZERO);
     newInvoice.setPaymentMethod(shipment.getBusinessPartner().getPaymentMethod());
     newInvoice.setPaymentTerms(shipment.getBusinessPartner().getPaymentTerms());
+
+    checkInvoiceHasAllMandatoryFields(newInvoice);
+
     OBDal.getInstance().save(newInvoice);
     return newInvoice;
   }
 
-  private DocumentType getInvoiceDocumentType() {
-    String hql = "from DocumentType dt where dt.salesTransaction = true" //
-        + " and dt.default = true and dt.table.id = :cInvoiceTableId" //
-        + " and Ad_Isorgincluded(:invoiceOrgId, dt.organization.id, :clientId) <> -1";
-
-    final Query<DocumentType> query = OBDal.getInstance().getSession()
-        .createQuery(hql.toString(), DocumentType.class);
-    query.setParameter("cInvoiceTableId", C_INVOICE_TABLE_ID);
-    query.setParameter("invoiceOrgId", this.shipment.getOrganization().getId());
-    query.setParameter("clientId", this.shipment.getClient().getId());
-    query.setMaxResults(1);
-
-    final DocumentType invoiceDocumentType = query.uniqueResult();
-
-    if (invoiceDocumentType == null) {
+  private DocumentType getDocumentTypeForARI(final Organization org) {
+    final List<Object> parameters = new ArrayList<>(3);
+    parameters.add(org.getClient().getId());
+    parameters.add(org.getId());
+    parameters.add("ARI");
+    final String documentTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
+        parameters, null, false);
+    try {
+      return OBDal.getInstance().get(DocumentType.class, documentTypeId);
+    } catch (Exception e) {
       throw new OBException("There is no Document type for Sales Invoice defined");
     }
-    return invoiceDocumentType;
-  }
-
-  private Date getInvoiceDate() {
-    if (this.invoiceDate != null) {
-      return this.invoiceDate;
-    }
-    return this.shipment.getMovementDate();
-  }
-
-  private PriceList getPriceList() {
-    if (this.priceList != null) {
-      return this.priceList;
-    }
-    return this.shipment.getBusinessPartner().getPriceList();
   }
 
   private Currency getCurrency() {
     return (getPriceList() == null) ? null : getPriceList().getCurrency();
   }
 
-  private void processInvoice() throws Exception {
+  private void checkInvoiceHasAllMandatoryFields(final Invoice newInvoice) {
+    Check.isNotNull(newInvoice.getInvoiceDate(), OBMessageUtils.messageBD("ParameterMissing") + " "
+        + OBMessageUtils.messageBD(Invoice.PROPERTY_INVOICEDATE));
+    Check.isNotNull(newInvoice.getPriceList(), OBMessageUtils.messageBD("notnullpricelist"));
+    Check.isNotNull(newInvoice.getCurrency(), OBMessageUtils.messageBD("ParameterMissing") + " "
+        + OBMessageUtils.messageBD(Invoice.PROPERTY_CURRENCY));
+    Check.isNotNull(newInvoice.getPaymentMethod(), newInvoice.getBusinessPartner().getIdentifier()
+        + " " + OBMessageUtils.messageBD("PayementMethodNotdefined"));
+    Check.isNotNull(newInvoice.getPaymentTerms(), OBMessageUtils.messageBD("notnullpaymentterm"));
+  }
+
+  private void processInvoice() {
     if (invoice != null) {
-      final List<Object> parameters = new ArrayList<>();
+      final List<Object> parameters = new ArrayList<>(2);
       parameters.add(null); // Process Instance parameter
       parameters.add(invoice.getId());
       CallStoredProcedure.getInstance().call("C_INVOICE_POST", parameters, null, false, false);
-    }
-  }
-
-  protected void executeRollBack() {
-    try {
-      log.error("Error executing creating Invoice");
-      OBDal.getInstance().rollbackAndClose();
-    } catch (Exception e2) {
-      log.error("An error happened when rollback was executed.", e2);
     }
   }
 }

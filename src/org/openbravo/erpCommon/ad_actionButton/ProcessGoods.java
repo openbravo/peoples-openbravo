@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.query.Query;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -166,8 +164,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
     final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessGoods|Tab_ID",
         IsIDFilter.instance);
     final String strM_Inout_ID = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
-    final boolean invoiceIfPossible = StringUtils.equalsIgnoreCase(
-        vars.getStringParameter("inpInvoiceIfPossible"), "on");
+    final boolean invoiceIfPossible = StringUtils.equals(
+        vars.getStringParameter("inpInvoiceIfPossible"), "Y");
 
     OBError myMessage = null;
     try {
@@ -218,26 +216,10 @@ public class ProcessGoods extends HttpSecureAppServlet {
       log4j.debug(myMessage.getMessage());
       vars.setMessage(strTabId, myMessage);
 
-      if (GOODS_SHIPMENT_WINDOW.equals(strWindowId) && invoiceIfPossible
+      if (invoiceIfPossible && GOODS_SHIPMENT_WINDOW.equals(strWindowId)
           && !"Error".equalsIgnoreCase(myMessage.getType())) {
-
-        final boolean processInvoice = StringUtils.equalsIgnoreCase(
-            vars.getStringParameter("inpProcessInvoice"), "on");
-        final String invoiceDateStr = vars.getStringParameter("inpInvoiceDate");
-        final String priceListStr = vars.getStringParameter("inpPriceList");
-
-        Date invoiceDate = getInvoiceDate(invoiceDateStr);
-        final PriceList priceList = OBDal.getInstance().getProxy(PriceList.class, priceListStr);
-
-        Invoice invoice;
-        if (processInvoice) {
-          invoice = new InvoiceGeneratorFromGoodsShipment(goods.getId(), invoiceDate, priceList)
-              .createAndProcessInvoiceConsideringInvoiceTerms();
-        } else {
-          invoice = new InvoiceGeneratorFromGoodsShipment(goods.getId(), invoiceDate, priceList)
-              .createInvoiceConsideringInvoiceTerms();
-        }
-        myMessage = getResultMessage(invoice);
+        myMessage = createInvoice(vars, goods);
+        log4j.debug(myMessage.getMessage());
         vars.setMessage(strTabId, myMessage);
       }
 
@@ -247,7 +229,7 @@ public class ProcessGoods extends HttpSecureAppServlet {
       }
       printPageClosePopUp(response, vars, strWindowPath);
 
-    } catch (ServletException ex) {
+    } catch (ServletException | ParseException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       if (!myMessage.isConnectionAvailable()) {
         bdErrorConnection(response);
@@ -255,24 +237,24 @@ public class ProcessGoods extends HttpSecureAppServlet {
       } else {
         vars.setMessage(strTabId, myMessage);
       }
-    } catch (final OBException e) {
-      if (e.getCause() != null) {
-        throw new OBException(Utility
-            .translateError(this, vars, vars.getLanguage(), e.getMessage()).getMessage());
-      } else {
-        throw e;
-      }
     }
   }
 
-  private Date getInvoiceDate(final String invoiceDateStr) {
-    Date invoiceDate = Calendar.getInstance().getTime();
-    try {
-      invoiceDate = OBDateUtils.getDate(invoiceDateStr);
-    } catch (ParseException e) {
-      log4j.error("Not possible to parse the following date: " + invoiceDateStr, e);
-    }
-    return invoiceDate;
+  private OBError createInvoice(final VariablesSecureApp vars, final ShipmentInOut goodShipment)
+      throws ParseException {
+    OBError myMessage;
+    final boolean processInvoice = StringUtils.equals(vars.getStringParameter("inpProcessInvoice"),
+        "Y");
+    final String invoiceDateStr = vars.getStringParameter("inpInvoiceDate");
+    final String priceListStr = vars.getStringParameter("inpPriceList");
+
+    final Date invoiceDate = OBDateUtils.getDate(invoiceDateStr);
+    final PriceList priceList = OBDal.getInstance().getProxy(PriceList.class, priceListStr);
+
+    final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(goodShipment.getId(),
+        invoiceDate, priceList).createInvoiceConsideringInvoiceTerms(processInvoice);
+    myMessage = getResultMessage(invoice);
+    return myMessage;
   }
 
   private OBError getResultMessage(Invoice invoice) {

@@ -18,9 +18,6 @@
  */
 package org.openbravo.common.actionhandler;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -33,6 +30,7 @@ import org.openbravo.materialmgmt.InvoiceFromGoodsShipmentUtil;
 import org.openbravo.materialmgmt.InvoiceGeneratorFromGoodsShipment;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,30 +48,21 @@ public class InvoiceFromShipmentActionHandler extends BaseProcessActionHandler {
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-
-    Invoice invoice;
     final JSONObject message = new JSONObject();
     try {
       final JSONObject request = new JSONObject(content);
       final JSONObject params = request.getJSONObject("_params");
       final String shipmentId = request.getString("M_InOut_ID");
-      final String invoiceDateStr = params.getString("MovementDate");
+      final String invoiceDateStr = params.getString("DateInvoiced");
       final String priceListStr = params.getString("priceList");
       boolean processInvoice = params.getBoolean("processInvoice");
 
-      final Date invoiceDate = getInvoiceDate(invoiceDateStr);
+      final Date invoiceDate = JsonUtils.createDateFormat().parse(invoiceDateStr);
       final PriceList priceList = OBDal.getInstance().getProxy(PriceList.class, priceListStr);
 
-      if (processInvoice) {
-        invoice = new InvoiceGeneratorFromGoodsShipment(shipmentId, invoiceDate, priceList)
-            .createAndProcessInvoiceConsideringInvoiceTerms();
-      } else {
-        invoice = new InvoiceGeneratorFromGoodsShipment(shipmentId, invoiceDate, priceList)
-            .createInvoiceConsideringInvoiceTerms();
-      }
-
+      final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipmentId, invoiceDate,
+          priceList).createInvoiceConsideringInvoiceTerms(processInvoice);
       message.put(MESSAGE, getSuccessMessage(invoice));
-
     } catch (Exception e) {
       try {
         message.put(MESSAGE, getErrorMessage(e));
@@ -83,17 +72,6 @@ public class InvoiceFromShipmentActionHandler extends BaseProcessActionHandler {
     }
 
     return message;
-  }
-
-  private Date getInvoiceDate(final String invoiceDateStr) {
-    Date invoiceDate = Calendar.getInstance().getTime();
-    try {
-      final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-      invoiceDate = dateFormatter.parse(invoiceDateStr);
-    } catch (ParseException e) {
-      log.error("Not possible to parse the following date: " + invoiceDateStr, e);
-    }
-    return invoiceDate;
   }
 
   protected JSONObject getSuccessMessage(final Invoice invoice) {
