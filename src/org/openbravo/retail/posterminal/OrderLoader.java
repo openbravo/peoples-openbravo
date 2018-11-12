@@ -734,7 +734,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
       Object proc = procIter.next();
-      if (proc instanceof OrderLoaderPreProcessPaymentHook) {
+      if (proc instanceof InvoicePreProcessHook) {
         ((InvoicePreProcessHook) proc).exec(jsoninvoice);
       }
     }
