@@ -65,9 +65,8 @@ public class InvoiceUtils {
   HashMap<String, JSONArray> invoicelineserviceList;
 
   private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
-      DocumentType docTypeTarget, DocumentType docType,
-      ThreadLocal<List<DocumentNoHandler>> documentNoHandlers) {
-    documentNoHandlers.get().add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
+      DocumentType docTypeTarget, DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
+    documentNoHandlers.add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
   }
 
   public void updateAuditInfo(Invoice invoice, JSONObject jsoninvoice) throws JSONException {
@@ -309,7 +308,7 @@ public class InvoiceUtils {
   }
 
   public void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice,
-      boolean useOrderDocumentNoForRelatedDocs, ThreadLocal<List<DocumentNoHandler>> docNoHandler)
+      boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers)
       throws JSONException {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
     JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsoninvoice,
@@ -345,7 +344,7 @@ public class InvoiceUtils {
     } else {
       invoice.setDocumentNo(getDummyDocumentNo());
       addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
-          invoice.getDocumentType(), docNoHandler);
+          invoice.getDocumentType(), docNoHandlers);
     }
     final Date orderDate = OBMOBCUtils.calculateServerDatetime(jsoninvoice.getString("orderDate"),
         Long.parseLong(jsoninvoice.getString("timezoneOffset")));

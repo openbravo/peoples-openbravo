@@ -408,7 +408,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
           shipment = OBProvider.getInstance().get(ShipmentInOut.class);
           su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs,
-              documentNoHandlers);
+              documentNoHandlers.get());
           OBDal.getInstance().save(shipment);
           su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
               locatorList);
@@ -466,7 +466,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           // Invoice header
           invoice = OBProvider.getInstance().get(Invoice.class);
           iu.createInvoice(invoice, order, jsoninvoice, useOrderDocumentNoForRelatedDocs,
-              documentNoHandlers);
+              documentNoHandlers.get());
           OBDal.getInstance().save(invoice);
 
           // Invoice lines

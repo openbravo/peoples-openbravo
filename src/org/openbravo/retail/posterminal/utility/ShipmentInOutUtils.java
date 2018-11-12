@@ -71,13 +71,12 @@ public class ShipmentInOutUtils {
   private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
 
   private static void addDocumentNoHandler(BaseOBObject bob, Entity entity,
-      DocumentType docTypeTarget, DocumentType docType,
-      ThreadLocal<List<DocumentNoHandler>> documentNoHandlers) {
-    documentNoHandlers.get().add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
+      DocumentType docTypeTarget, DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
+    documentNoHandlers.add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
   }
 
   public void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder,
-      boolean useOrderDocumentNoForRelatedDocs, ThreadLocal<List<DocumentNoHandler>> docNoHandler)
+      boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers)
       throws JSONException {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
     JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
@@ -101,7 +100,7 @@ public class ShipmentInOutUtils {
       }
       shipment.setDocumentNo(docNum);
     } else {
-      addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType(), docNoHandler);
+      addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType(), docNoHandlers);
     }
 
     if (shipment.getMovementDate() == null) {
