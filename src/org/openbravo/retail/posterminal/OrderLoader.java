@@ -795,7 +795,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   }
 
-  protected void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
+  void createOrderLines(Order order, JSONObject jsonorder, JSONArray orderlines,
       ArrayList<OrderLine> lineReferences) throws JSONException {
     Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.class);
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
@@ -947,7 +947,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected void deleteOrderlineServiceRelations(Order order) {
+  private void deleteOrderlineServiceRelations(Order order) {
     String deleteStr = "delete " + OrderlineServiceRelation.ENTITY_NAME //
         + " where " + OrderlineServiceRelation.PROPERTY_ID + " in (" //
         + " select rel." + OrderlineServiceRelation.PROPERTY_ID + " from " //
@@ -1011,7 +1011,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected void createOrder(Order order, JSONObject jsonorder) throws JSONException {
+  void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
     if (jsonorder.has("description")
         && StringUtils.length(jsonorder.getString("description")) > 255) {
@@ -1262,7 +1262,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  public static BigDecimal convertCurrencyOrder(Order order, BigDecimal amt) {
+  private BigDecimal convertCurrencyOrder(Order order, BigDecimal amt) {
     int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
         .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
     List<Object> parameters = new ArrayList<Object>();
@@ -1288,7 +1288,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         parameters, types);
   }
 
-  protected JSONObject handlePayments(JSONObject jsonorder, Order order) throws Exception {
+  JSONObject handlePayments(JSONObject jsonorder, Order order) throws Exception {
     final JSONObject jsonResponse = new JSONObject();
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
@@ -1441,7 +1441,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return jsonResponse;
   }
 
-  protected void processPayments(FIN_PaymentSchedule paymentSchedule, Order order,
+  private void processPayments(FIN_PaymentSchedule paymentSchedule, Order order,
       OBPOSAppPayment paymentType, JSONObject payment, BigDecimal writeoffAmt,
       JSONObject jsonorder, FIN_FinancialAccount account) throws Exception {
     OBContext.setAdminMode(false);
