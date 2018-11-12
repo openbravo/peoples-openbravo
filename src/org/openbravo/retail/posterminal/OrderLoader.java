@@ -1593,11 +1593,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               || (isNegativePayment && remainingAmount.compareTo(BigDecimal.ZERO) == -1)) {
             // There can be the possibility that the user is paying more than the remaining amount.
             // In this case, the previously created PSD must be updated to add this amount. This
-            // occurs only in a special case, that is when paying more than the remaining to pay
-            // using a cash payment method and there's no enough change to return in that payment
-            // method. That payment is not set as over payment, even when the amount is higher than
-            // the expected amount. After this payment, another one will come but in negative to set
-            // the paid and outstanding amounts to 0.
+            // occurs only in the case in which change is being generated in a payment method, but
+            // the change is being paid by a different one. That payment is not set as over payment,
+            // even when the amount is higher than the expected amount. After this payment, another
+            // one will come but in negative to set the paid and outstanding amounts to 0.
             FIN_PaymentSchedule newPSInvoice = null;
             if (paymentScheduleDetailList.size() != 0) {
               final FIN_PaymentScheduleDetail newPSD = paymentScheduleDetailList
