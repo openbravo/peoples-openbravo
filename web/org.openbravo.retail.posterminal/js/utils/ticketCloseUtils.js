@@ -112,7 +112,7 @@
         paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
         if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
           receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-          receipt.set('paidOnCredit', true);
+          receipt.set('payOnCredit', true);
         }
       }
 
@@ -274,7 +274,7 @@
           triggerPaymentAccepted(false);
         }
       });
-    } else if (receipt.getPayment() !== OB.DEC.abs(receipt.getGross()) && !receipt.isLayaway() && !receipt.get('paidOnCredit') && OB.DEC.abs(receipt.get('obposPrepaymentamt')) === OB.DEC.abs(receipt.getGross()) && !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
+    } else if (receipt.getPayment() !== OB.DEC.abs(receipt.getGross()) && !receipt.isLayaway() && !receipt.get('payOnCredit') && OB.DEC.abs(receipt.get('obposPrepaymentamt')) === OB.DEC.abs(receipt.getGross()) && !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       callbackPaymentAmountDistinctThanReceipt(function (result) {
         if (result === true) {
           triggerPaymentAccepted(false);

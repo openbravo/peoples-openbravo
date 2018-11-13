@@ -4024,9 +4024,9 @@
 
     setQuantitiesToDeliver: function () {
       var me = this,
-          fullyPaid = this.isFullyPaid() || (this.get('paidOnCredit') && !this.get('isPaid')),
-          receiptCompleted = this.get('donePressed') || this.get('paidOnCredit'),
-          prePaid = !fullyPaid && this.get('donePressed') && !this.get('paidOnCredit');
+          fullyPaid = this.isFullyPaid() || this.get('payOnCredit'),
+          receiptCompleted = this.get('completeTicket') || this.get('payOnCredit'),
+          prePaid = !fullyPaid && this.get('completeTicket');
       if (fullyPaid || prePaid) {
         _.each(this.get('lines').models, function (line) {
           if (fullyPaid) {
@@ -6155,14 +6155,14 @@
       }
 
       if (!isDeleted) {
-        if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || (this.get('paidOnCredit') && !this.get('isPaid'))) {
+        if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('payOnCredit')) {
           receiptShouldBeInvoiced = true;
         } else if (this.get('bp').get('invoiceTerms') === 'O') {
           if (this.get('deliver')) {
             receiptShouldBeInvoiced = true;
           }
         } else if (this.get('bp').get('invoiceTerms') === 'D') {
-          receiptShouldBeShipped = this.get('paidOnCredit') || this.get('donePressed');
+          receiptShouldBeShipped = this.get('payOnCredit') || this.get('completeTicket');
           if (receiptShouldBeShipped) {
             if (this.get('generateShipment')) {
               receiptShouldBeInvoiced = true;

@@ -114,8 +114,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean paidReceipt = false;
   private boolean deliver = false;
   private boolean hasPrepayment = false;
-  private boolean donePressed = false;
-  private boolean paidOnCredit = false;
+  private boolean completeTicket = false;
+  private boolean payOnCredit = false;
   private boolean isNegative = false;
   private boolean isNewReceipt = false;
 
@@ -202,9 +202,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     paidReceipt = jsonorder.optBoolean("isPaid", false);
 
-    donePressed = jsonorder.optBoolean("donePressed", false);
-    hasPrepayment = donePressed && !fullyPaid;
-    paidOnCredit = !paidReceipt && jsonorder.optBoolean("paidOnCredit", false);
+    completeTicket = jsonorder.optBoolean("completeTicket", false);
+    hasPrepayment = completeTicket && !fullyPaid;
+    payOnCredit = jsonorder.optBoolean("payOnCredit", false);
 
     isDeleted = jsonorder.optBoolean("obposIsDeleted", false);
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
@@ -368,7 +368,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t112 = System.currentTimeMillis();
         }
 
-        order.setObposIslayaway(!isQuotation && !isDeleted && !donePressed && !paidOnCredit);
+        order.setObposIslayaway(!isQuotation && !isDeleted && !completeTicket && !payOnCredit);
 
         // Order lines
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
@@ -1356,7 +1356,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (useOrderDocumentNoForRelatedDocs) {
           paymentCount++;
         }
-        if (paidReceipt && donePressed) {
+        if (paidReceipt && completeTicket) {
           // Update customer credit. Subtract the amount paid to the existing credit.
           OBContext.setAdminMode(false);
           try {
@@ -1378,7 +1378,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
       }
     }
-    if (paidOnCredit || (!paidReceipt && hasPrepayment)) {
+    if (payOnCredit || (!paidReceipt && hasPrepayment)) {
       // Update customer credit. Credit generated.
       OBContext.setAdminMode(false);
       try {
@@ -1651,7 +1651,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         finPayment.setAmount(amountRounded.setScale(pricePrecision, RoundingMode.HALF_UP));
       }
 
-      if (paidOnCredit) {
+      if (payOnCredit) {
         List<FIN_PaymentDetail> paymentDetailList = finPayment.getFINPaymentDetailList();
         if (paymentDetailList.size() > 0) {
           for (FIN_PaymentDetail paymentDetail : paymentDetailList) {

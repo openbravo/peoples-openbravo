@@ -1668,7 +1668,7 @@ enyo.kind({
     }
 
     var continueExecution = function () {
-        myModel.get('order').set('donePressed', true);
+        myModel.get('order').set('completeTicket', true);
 
         if (!avoidPayment) {
           if (isMultiOrder) {

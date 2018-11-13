@@ -491,7 +491,7 @@
             currentReceipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
             currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
             if (OB.UTIL.isNullOrUndefined(currentReceipt.get('amountToLayaway'))) {
-              currentReceipt.set('donePressed', true);
+              currentReceipt.set('completeTicket', true);
             }
             // multiterminal support
             // be sure that the active terminal is the one set as the order proprietary
@@ -625,7 +625,7 @@
         validateMultiOrder = function () {
           _.each(closedReceipts, function (receipt) {
             if (OB.UTIL.isNullOrUndefined(receipt.get('amountToLayaway'))) {
-              receipt.set('donePressed', true);
+              receipt.set('completeTicket', true);
             }
             OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
               context: me,

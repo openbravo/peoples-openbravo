@@ -774,10 +774,10 @@ public class ExternalOrderLoader extends OrderLoader {
       boolean fullyPaid = BigDecimal.ZERO.compareTo(gross) != 0
           && gross.compareTo(BigDecimal.valueOf(orderJson.getDouble("payment")).abs()) != 1;
       if (fullyPaid) {
-        orderJson.put("donePressed", true);
+        orderJson.put("completeTicket", true);
       }
     } else {
-      orderJson.put("donePressed", true);
+      orderJson.put("completeTicket", true);
     }
   }
 

@@ -73,7 +73,7 @@ enyo.kind({
 
     this.owner.owner.actionCancel = false;
     this.doHideThisPopup();
-    this.model.get('order').set('paidOnCredit', true);
+    this.model.get('order').set('payOnCredit', true);
     this.allowOpenDrawer = false;
     var payments = this.model.get('order').get('payments');
     var me = this;
