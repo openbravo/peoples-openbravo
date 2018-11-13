@@ -1357,19 +1357,21 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         if (paidReceipt && completeTicket) {
           // Update customer credit. Subtract the amount paid to the existing credit.
-          OBContext.setAdminMode(false);
-          try {
-            BigDecimal creditPaid = BigDecimal.valueOf(payment.getDouble("amount")).setScale(
-                pricePrecision, RoundingMode.HALF_UP);
-            if (!order.getCurrency()
-                .equals(order.getBusinessPartner().getPriceList().getCurrency())) {
-              creditPaid = convertCurrencyOrder(order,
-                  BigDecimal.valueOf(payment.getDouble("amount")));
+          BigDecimal creditPaid = BigDecimal.valueOf(payment.getDouble("amount")).setScale(
+              pricePrecision, RoundingMode.HALF_UP);
+          if (!order.getCurrency().equals(order.getBusinessPartner().getPriceList().getCurrency())) {
+            creditPaid = convertCurrencyOrder(order,
+                BigDecimal.valueOf(payment.getDouble("amount")));
+          }
+          if (creditPaid.compareTo(BigDecimal.ZERO) != 0) {
+            OBContext.setAdminMode(false);
+            try {
+              order.getBusinessPartner().setCreditUsed(
+                  order.getBusinessPartner().getCreditUsed().subtract(creditPaid));
+              OBDal.getInstance().flush();
+            } finally {
+              OBContext.restorePreviousMode();
             }
-            order.getBusinessPartner().setCreditUsed(
-                order.getBusinessPartner().getCreditUsed().subtract(creditPaid));
-          } finally {
-            OBContext.restorePreviousMode();
           }
         }
         processPayments(paymentSchedule, order, paymentType, payment, tempWriteoffAmt, jsonorder,
