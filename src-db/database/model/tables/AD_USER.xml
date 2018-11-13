@@ -215,6 +215,10 @@
       <index name="AD_USER_PARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>
       </index>
+      <index name="AD_USER_SUPERVISOR" unique="false">
+        <index-column name="SUPERVISOR_ID"/>
+        <whereClause><![CDATA[SUPERVISOR_ID IS NOT NULL]]></whereClause>
+      </index>
       <unique name="AD_USER_UN_USERNAME">
         <unique-column name="USERNAME"/>
       </unique>

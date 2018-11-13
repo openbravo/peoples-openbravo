@@ -634,64 +634,64 @@
 		<variableExpression><![CDATA[$V{AMOUNTREF_SUM10}.subtract($V{COSTREF_SUM10})]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM1}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_1}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM1}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_1}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM2}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_2}.divide( $V{AMOUNT_SUM2}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_2}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM2}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_2}.divide( $V{AMOUNT_SUM2}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_2}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM3}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_3}.divide( $V{AMOUNT_SUM3}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_3}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM3}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_3}.divide( $V{AMOUNT_SUM3}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_3}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM4}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_4}.divide( $V{AMOUNT_SUM4}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_4}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM4}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_4}.divide( $V{AMOUNT_SUM4}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_4}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_5" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL5">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM5}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_5}.divide( $V{AMOUNT_SUM5}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_5}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM5}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_5}.divide( $V{AMOUNT_SUM5}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_5}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_6" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL6">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM6}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_6}.divide( $V{AMOUNT_SUM6}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_6}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM6}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_6}.divide( $V{AMOUNT_SUM6}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_6}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_7" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL7">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM7}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_7}.divide( $V{AMOUNT_SUM7}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_7}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM7}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_7}.divide( $V{AMOUNT_SUM7}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_7}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_8" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL8">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM8}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_8}.divide( $V{AMOUNT_SUM8}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_8}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM8}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_8}.divide( $V{AMOUNT_SUM8}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_8}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_9" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL9">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM9}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_9}.divide( $V{AMOUNT_SUM9}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_9}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM9}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_9}.divide( $V{AMOUNT_SUM9}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_9}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_10" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL10">
-		<variableExpression><![CDATA[($V{AMOUNT_SUM10}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO:$V{PROFIT_10}.divide( $V{AMOUNT_SUM10}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_10}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_SUM10}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO:$V{PROFIT_10}.divide( $V{AMOUNT_SUM10}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_10}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM1}.compareTo(BigDecimal.ZERO)==0)?BigDecimal.ZERO:$V{PROFITREF_1}.divide( $V{AMOUNTREF_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_1}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM1}.compareTo(BigDecimal.ZERO)==0)?BigDecimal.ZERO:$V{PROFITREF_1}.divide( $V{AMOUNTREF_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_1}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM2}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_2}.divide( $V{AMOUNTREF_SUM2}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_2}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM2}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_2}.divide( $V{AMOUNTREF_SUM2}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_2}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM3}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_3}.divide( $V{AMOUNTREF_SUM3}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_3}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM3}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_3}.divide( $V{AMOUNTREF_SUM3}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_3}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM4}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_4}.divide( $V{AMOUNTREF_SUM4}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_4}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM4}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_4}.divide( $V{AMOUNTREF_SUM4}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_4}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_5" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL5">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM5}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_5}.divide( $V{AMOUNTREF_SUM5}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_5}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM5}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_5}.divide( $V{AMOUNTREF_SUM5}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_5}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_6" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL6">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM6}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_6}.divide( $V{AMOUNTREF_SUM6}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_6}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM6}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_6}.divide( $V{AMOUNTREF_SUM6}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_6}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_7" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL7">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM7}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_7}.divide( $V{AMOUNTREF_SUM7}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_7}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM7}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_7}.divide( $V{AMOUNTREF_SUM7}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_7}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_8" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL8">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM8}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_8}.divide( $V{AMOUNTREF_SUM8}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_8}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM8}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_8}.divide( $V{AMOUNTREF_SUM8}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_8}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_9" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL9">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM9}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_9}.divide( $V{AMOUNTREF_SUM9}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_9}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM9}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFITREF_9}.divide( $V{AMOUNTREF_SUM9}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_9}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_10" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL10">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM10}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO:$V{PROFITREF_10}.divide( $V{AMOUNTREF_SUM10}, 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_10}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM10}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO:$V{PROFITREF_10}.divide( $V{AMOUNTREF_SUM10}, 4, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFITREF_10}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="WEIGHT_SUM1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Sum">
 		<variableExpression><![CDATA[$F{WEIGHT}]]></variableExpression>
@@ -862,7 +862,7 @@
 		<variableExpression><![CDATA[$V{AMOUNT_TOTAL}.subtract($V{COST_TOTAL})]]></variableExpression>
 	</variable>
 	<variable name="MARGIN_TOTAL" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[($V{AMOUNT_TOTAL}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_TOTAL}.divide($V{AMOUNT_TOTAL}, 10, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROFIT_TOTAL}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNT_TOTAL}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROFIT_TOTAL}.divide($V{AMOUNT_TOTAL}, 10, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).abs().multiply(new BigDecimal($V{PROFIT_TOTAL}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="COSTREF_TOTAL" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{CONVCOSTREF}]]></variableExpression>
@@ -871,7 +871,7 @@
 		<variableExpression><![CDATA[$V{AMOUNTREF_TOTAL}.subtract($V{COSTREF_TOTAL})]]></variableExpression>
 	</variable>
 	<variable name="MARGINREF_TOTAL" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[($V{AMOUNTREF_TOTAL}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROREF_TOTAL}.divide($V{AMOUNTREF_TOTAL}, 10, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROREF_TOTAL}.signum()))]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_TOTAL}.compareTo(BigDecimal.ZERO)==0)? BigDecimal.ZERO: $V{PROREF_TOTAL}.divide($V{AMOUNTREF_TOTAL}, 10, BigDecimal.ROUND_HALF_UP).abs().multiply(new BigDecimal("100")).multiply(new BigDecimal($V{PROREF_TOTAL}.signum()))]]></variableExpression>
 	</variable>
 	<variable name="MARGINDIFF_TOTAL" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[$V{MARGIN_TOTAL}.subtract($V{MARGINREF_TOTAL})]]></variableExpression>
