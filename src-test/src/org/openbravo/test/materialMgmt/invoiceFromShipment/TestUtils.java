@@ -39,7 +39,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 
-class TestUtils {
+public class TestUtils {
 
   private static final String COMPLETE_ACTION = "CO";
   private static final String DRAFT_STATUS = "DR";
@@ -106,7 +106,7 @@ class TestUtils {
    *          new Order (a clone of the original one)
    * @return A new Order Line clone based on the original one
    */
-  static Order cloneOrder(final String orderId, final String docNo) {
+  public static Order cloneOrder(final String orderId, final String docNo) {
     final Order oldOrder = OBDal.getInstance().get(Order.class, orderId);
     final Order newOrder = (Order) DalUtil.copy(oldOrder, false);
     int numberOfOrdersWithSameDocNo = getNumberOfOrders(docNo) + 1;
@@ -155,7 +155,7 @@ class TestUtils {
    *          new Order (a clone of the original one)
    * @return A new Order Line clone based on the original one
    */
-  static OrderLine cloneOrderLine(final OrderLine oldLine, final Order newOrder) {
+  public static OrderLine cloneOrderLine(final OrderLine oldLine, final Order newOrder) {
 
     // Skip discount lines
     if (oldLine.getOrderDiscount() != null) {
@@ -288,7 +288,7 @@ class TestUtils {
    *          The Invoice.
    * @throws Exception
    */
-  static void processInvoice(final Invoice invoice) throws Exception {
+  public static void processInvoice(final Invoice invoice) throws Exception {
     if (invoice != null) {
       final List<Object> parameters = new ArrayList<>();
       parameters.add(null); // Process Instance parameter
