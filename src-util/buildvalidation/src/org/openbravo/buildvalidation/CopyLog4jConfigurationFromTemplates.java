@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openbravo.base.ExecutionLimits;
-import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
@@ -66,6 +65,8 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
 
     if (Files.notExists(target)) {
       Files.copy(source, target);
+      System.out.println(targetPath
+          + " is copied from template file. Please check this configuration is correct.");
     }
   }
 
