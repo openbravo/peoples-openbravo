@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -694,7 +694,8 @@ isc.OBMultiCalendar.addProperties({
     });
     this.calendar = isc.OBMultiCalendarCalendar.create(isc.addProperties(this.calendarProps, {
       multiCalendar: this,
-      lanes: initialLanes
+      lanes: initialLanes,
+      autoFetchData: false
     }));
 
     this.setLoading(false);

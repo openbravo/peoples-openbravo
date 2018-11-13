@@ -19,8 +19,16 @@
 package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -42,6 +50,9 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
   private static final Logger log = Logger.getLogger(AddMultiplePaymentsHandler.class);
   private static final SimpleDateFormat jsDateFormat = JsonUtils.createDateFormat();
   private static final String ACTION_PROCESS_TRANSACTION = "P";
+  @Inject
+  @Any
+  private Instance<AddMultiplePaymentsProcessAfterProcessHook> afterHooks;
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String data) {
@@ -56,16 +67,33 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
       final String strAccountId = jsonData.getString("Fin_Financial_Account_ID");
 
       int selectedPaymentsLength = selectedPayments.length();
-      if (selectedPaymentsLength == 0) {
-        // Validation error: No lines selected
-        return getErrorMessage(OBMessageUtils.messageBD("APRM_NO_PAYMENTS_SELECTED"));
-      }
 
       for (int i = 0; i < selectedPaymentsLength; i++) {
         final JSONObject paymentJS = selectedPayments.getJSONObject(i);
         createAndProcessTransactionFromPayment(paymentJS, statementDate, dateAcct, strAccountId);
         OBDal.getInstance().getSession().clear();
       }
+
+      List<AddMultiplePaymentsProcessAfterProcessHook> hooksPriority = new ArrayList<AddMultiplePaymentsProcessAfterProcessHook>();
+      for (AddMultiplePaymentsProcessAfterProcessHook hook : afterHooks) {
+        hooksPriority.add(hook);
+      }
+      Collections.sort(hooksPriority, new Comparator<AddMultiplePaymentsProcessAfterProcessHook>() {
+        @Override
+        public int compare(AddMultiplePaymentsProcessAfterProcessHook o1,
+            AddMultiplePaymentsProcessAfterProcessHook o2) {
+          return (int) Math.signum(o2.getPriority() - o1.getPriority());
+        }
+      });
+      for (AddMultiplePaymentsProcessAfterProcessHook hook : hooksPriority) {
+        selectedPaymentsLength = selectedPaymentsLength + hook.executeHook(jsonData);
+      }
+
+      if (selectedPaymentsLength == 0) {
+        // Validation error: No lines selected
+        return getErrorMessage(OBMessageUtils.messageBD("APRM_NO_PAYMENTS_SELECTED"));
+      }
+
       // Success Message
       return getSuccessMessage(String.format(
           OBMessageUtils.messageBD("APRM_MULTIPLE_TRANSACTIONS_ADDED"), selectedPaymentsLength));

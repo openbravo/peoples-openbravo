@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -184,8 +184,8 @@ class ErrorTextParserORACLE extends ErrorTextParser {
               getLanguage());
           if (msgText != null) {
             String msgTemplate = msgText.getField("msgText");
+            columnName = getColumnName(tableName, columnName);
             tableName = getTableName(tableName);
-            columnName = getColumnName(columnName);
             Map<String, String> replaceMap = new HashMap<String, String>();
             replaceMap.put("TABLE_NAME", tableName);
             replaceMap.put("COLUMN_NAME", columnName);

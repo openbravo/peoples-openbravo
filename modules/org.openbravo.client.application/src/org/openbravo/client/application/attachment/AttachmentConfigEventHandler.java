@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -115,8 +115,9 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
       return;
     }
     final OBQuery<AttachmentConfig> attachmentConfigQuery = OBDal.getInstance().createQuery(
-        AttachmentConfig.class, "id!=:id");
+        AttachmentConfig.class, "id!=:id and client.id=:clientId");
     attachmentConfigQuery.setNamedParameter("id", newAttachmentConfig.getId());
+    attachmentConfigQuery.setNamedParameter("clientId", newAttachmentConfig.getClient().getId());
     // Ensure that filtering by client and active is done.
     attachmentConfigQuery.setFilterOnReadableClients(true);
     attachmentConfigQuery.setFilterOnActive(true);

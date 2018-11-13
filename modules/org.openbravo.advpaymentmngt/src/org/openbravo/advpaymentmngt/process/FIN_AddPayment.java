@@ -1389,14 +1389,16 @@ public class FIN_AddPayment {
         firstDueDate = paymentSchedule.getDueDate();
     }
 
-    BigDecimal overdueAmount = calculateOverdueAmount(invoicePaymentSchedule);
-    invoice.setPercentageOverdue(overdueAmount.multiply(new BigDecimal("100"))
-        .divide(invoice.getGrandTotalAmount(), 2, RoundingMode.HALF_UP).longValue());
-
-    if (firstDueDate != null)
+    if (invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
+      BigDecimal overdueAmount = calculateOverdueAmount(invoicePaymentSchedule);
+      invoice.setPercentageOverdue(overdueAmount.multiply(new BigDecimal("100"))
+          .divide(invoice.getGrandTotalAmount(), 2, RoundingMode.HALF_UP).longValue());
+    }
+    if (firstDueDate != null) {
       invoice.setDaysTillDue(FIN_Utility.getDaysToDue(firstDueDate));
-    else
+    } else {
       invoice.setDaysTillDue(0L);
+    }
     OBDal.getInstance().save(invoice);
   }
 

@@ -83,6 +83,8 @@ v_rate NUMBER;
 v_PricePr NUMBER;
 v_isinvoicepaid CHAR(1):= 'N';
 v_IsCashVAT C_Invoice.IsCashVAT%TYPE;
+v_prepaymentamt NUMBER;
+v_hasPrepaymentToReturn BOOLEAN := false;
 
 TYPE RECORD IS REF CURSOR;
 Cur_Params RECORD;
@@ -126,13 +128,13 @@ BEGIN
       C_BPartner_ID, DateInvoiced, totallines, fin_paymentmethod_id,
       fin_payment_priority_id, documentNo, poreference,
       c_project_id, c_campaign_id, c_activity_id, user1_id, user2_id, c_costcenter_id,
-      IsCashVAT
+      IsCashVAT, prepaymentamt
   INTO v_Client_ID, v_Org_ID, v_DocTypeTarget_ID, v_IsSOTrx,
       v_GrandTotal, v_PaymentTerm, v_PaymentRule, v_Currency_ID,
       v_BPartner_ID, v_DateInvoiced, v_totallines, v_PaymentMethod,
       v_PaymentPriority, v_documentno, v_poreference,
       v_project_id, v_campaign_id, v_activity_id, v_user1, v_user2, v_costcenter,
-      v_IsCashVAT
+      v_IsCashVAT, v_prepaymentamt
   FROM c_invoice
   WHERE c_invoice_id=p_record_id;
   
@@ -265,11 +267,18 @@ BEGIN
       INTO v_ConsumedGranTotal
       FROM fin_payment_schedule ps
       WHERE ps.c_invoice_id = p_record_id;
+
+      --When the Total Amount of the Invoice is 0 and nothing has been consumed yet for the Invoice
+      --but there is already a prepayment made for a related Order
+      --Related to Issue https://issues.openbravo.com/view.php?id=39415
+      IF (v_GrandTotal = 0 AND v_ConsumedGranTotal = 0 AND v_prepaymentamt <> 0) THEN
+        v_hasPrepaymentToReturn := true;
+      END IF;
             
       --Insert Payment Schedules for Invoices
       v_pendingAmount := v_GrandTotal - coalesce(v_ConsumedGranTotal, 0);
 
-      IF (v_pendingAmount <> 0) THEN
+      IF (v_pendingAmount <> 0 OR v_hasPrepaymentToReturn) THEN
 
         --get number of payment schedules expected for the invoice
         SELECT count(*) INTO v_paymentcount
@@ -1168,8 +1177,6 @@ BEGIN
     END;
 
   ELSIF (p_docaction = 'RC') THEN
-    DECLARE
-      v_prepaymentamt NUMBER;
     BEGIN
       v_delete_paymentplan := TRUE;
       SELECT c_invoice_id INTO v_reversalinvoice_id

@@ -18,15 +18,15 @@
  */
 package org.openbravo.apachejdbcconnectionpool;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.apache.tomcat.jdbc.pool.JdbcInterceptor;
 import org.apache.tomcat.jdbc.pool.PooledConnection;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.PoolInterceptorProvider;
 import org.openbravo.database.SessionInfo;
@@ -40,6 +40,7 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
 
   private static final String SESSION_CONFIG_APPLIED = "OB_INITIALIZED";
   private static final String SESSION_INFO_APPLIED = "SESSION_INFO_INITIALIZED";
+  private static final String CACHED_CONNECTION = "CACHED_CONNECTION";
 
   String rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
       .get("bbdd.rdbms");
@@ -50,46 +51,66 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
    */
   @Override
   public void reset(ConnectionPool parent, PooledConnection con) {
-    if (con != null) {
-      HashMap<Object, Object> attributes = con.getAttributes();
-      Boolean sessionInfoApplied = (Boolean) attributes.get(SESSION_CONFIG_APPLIED);
-      if (sessionInfoApplied == null || !sessionInfoApplied) {
-        PreparedStatement pstmt = null;
-        try {
-          final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
-          final String dbSessionConfig = props.getProperty("bbdd.sessionConfig");
-          pstmt = con.getConnection().prepareStatement(dbSessionConfig);
-          pstmt.executeQuery();
-        } catch (Exception e) {
-          throw new IllegalStateException(e);
-        } finally {
-          try {
-            if (pstmt != null && !pstmt.isClosed()) {
-              pstmt.close();
-            }
-          } catch (SQLException e) {
-            throw new OBException(e);
-          }
-        }
-        attributes.put(SESSION_CONFIG_APPLIED, true);
-      }
+    if (con == null) {
+      return;
+    }
 
-      Boolean sessionInfoInitialized = (Boolean) attributes.get(SESSION_INFO_APPLIED);
-      if (sessionInfoInitialized == null || !sessionInfoInitialized) {
-        boolean initialized = false;
-        if (isReadOnlyPool(parent)) {
-          initialized = true;
-        } else {
-          // SessionInfo will be initialized when the SessionListener ServletContextListener is
-          // invoked. That listener will check if there are audited tables and notify SessionInfo,
-          // from then on SessionInfo will know whether the ad_context_info table should be created
-          if (SessionInfo.isInitialized()) {
-            SessionInfo.initDB(con.getConnection(), rbdms);
-            initialized = true;
-          }
-        }
-        attributes.put(SESSION_INFO_APPLIED, initialized);
+    boolean physicalConnectionChanged = hasPhysicalConnectionChanged(con);
+
+    Map<Object, Object> attributes = con.getAttributes();
+    Boolean sessionInfoApplied = (Boolean) attributes.get(SESSION_CONFIG_APPLIED);
+    if (physicalConnectionChanged || sessionInfoApplied == null || !sessionInfoApplied) {
+      final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+      final String dbSessionConfig = props.getProperty("bbdd.sessionConfig");
+      try (PreparedStatement pstmt = con.getConnection().prepareStatement(dbSessionConfig)) {
+        pstmt.executeQuery();
+      } catch (SQLException e) {
+        throw new IllegalStateException(e);
       }
+      attributes.put(SESSION_CONFIG_APPLIED, true);
+    }
+
+    Boolean sessionInfoInitialized = (Boolean) attributes.get(SESSION_INFO_APPLIED);
+    if (physicalConnectionChanged || sessionInfoInitialized == null || !sessionInfoInitialized) {
+      boolean initialized = false;
+      if (isReadOnlyPool(parent)) {
+        initialized = true;
+      } else if (SessionInfo.isInitialized()) {
+        // SessionInfo will be initialized when the SessionListener ServletContextListener is
+        // invoked. That listener will check if there are audited tables and notify SessionInfo,
+        // from then on SessionInfo will know whether the ad_context_info table should be created
+        SessionInfo.initDB(con.getConnection(), rbdms);
+        initialized = true;
+      }
+      attributes.put(SESSION_INFO_APPLIED, initialized);
+    }
+
+    cachePhysicalConnection(con);
+  }
+
+  /**
+   * The physical database {@code Connection} associated with a {@code PooledConnection} can change
+   * in case it was invalid when trying to borrow it. We need to track it in order to properly
+   * initialize connections also in this case.
+   */
+  private boolean hasPhysicalConnectionChanged(PooledConnection con) {
+    Connection physicalConn = con.getConnection();
+    if (physicalConn == null) {
+      return false;
+    }
+
+    Connection storedConn = (Connection) con.getAttributes().get(CACHED_CONNECTION);
+    if (storedConn == null) {
+      return false;
+    }
+
+    return physicalConn != storedConn;
+  }
+
+  private void cachePhysicalConnection(PooledConnection con) {
+    Connection storedConn = (Connection) con.getAttributes().get(CACHED_CONNECTION);
+    if (storedConn == null || hasPhysicalConnectionChanged(con)) {
+      con.getAttributes().put(CACHED_CONNECTION, con.getConnection());
     }
   }
 
