@@ -405,7 +405,7 @@ enyo.kind({
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
-      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, true);
+      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
     }, this);
   }
 });

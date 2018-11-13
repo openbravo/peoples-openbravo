@@ -7059,10 +7059,10 @@
       // The new functionality of loading document no, makes this function obsolete.
       // The function is not removed to avoid api changes
     },
-    checkForDuplicateReceipts: function (model, callback, errorCallback, fromSelector) {
+    checkForDuplicateReceipts: function (model, callback, errorCallback, calledFrom) {
 
       function openReceiptPermissionError(orderType) {
-        if (fromSelector) {
+        if (calledFrom === 'orderSelector') {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
