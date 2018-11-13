@@ -73,7 +73,6 @@ import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -1649,16 +1648,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(amountRounded.setScale(pricePrecision, RoundingMode.HALF_UP));
-      }
-
-      if (payOnCredit) {
-        List<FIN_PaymentDetail> paymentDetailList = finPayment.getFINPaymentDetailList();
-        if (paymentDetailList.size() > 0) {
-          for (FIN_PaymentDetail paymentDetail : paymentDetailList) {
-            paymentDetail.setPrepayment(true);
-          }
-          OBDal.getInstance().flush();
-        }
       }
 
       if (payment.has("paymentData") && payment.getString("paymentData").length() > 0

@@ -275,6 +275,7 @@ public class InvoiceUtils {
       invoiceLine.getInvoiceLineTaxList().add(invoicelinetax);
       invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getSalesOrderLine().getId()
           + lineNo + (long) ((ind + 1) * 10)));
+      invoicelinetax.setNewOBObject(true);
       OBDal.getInstance().save(invoicelinetax);
     }
 
@@ -302,6 +303,7 @@ public class InvoiceUtils {
         }
         promotion.setLineNo((long) ((p + 1) * 10));
         promotion.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getId() + p));
+        promotion.setNewOBObject(true);
         promotion.setInvoiceLine(invoiceLine);
         invoiceLine.getInvoiceLineOfferList().add(promotion);
       }
@@ -441,6 +443,7 @@ public class InvoiceUtils {
       invoiceTax.setRecalculate(true);
       invoiceTax.setId(OBMOBCUtils.getUUIDbyString(invoiceTax.getInvoice().getId()
           + invoiceTax.getLineNo()));
+      invoiceTax.setNewOBObject(true);
       i++;
       invoice.getInvoiceTaxList().add(invoiceTax);
     }
@@ -588,6 +591,7 @@ public class InvoiceUtils {
             OBDal.getInstance().save(reversalPSD);
           }
         }
+        psd.getPaymentDetails().setPrepayment(true);
       }
 
       // If the invoice haven't been completely paid, add the remaining payment
