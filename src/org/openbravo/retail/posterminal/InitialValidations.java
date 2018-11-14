@@ -109,8 +109,9 @@ public class InitialValidations {
         + "finrc.account = e.financialAccount and finrc.documentStatus = 'DR')";
     OBQuery<OBPOSAppPayment> queryReconcilliation = OBDal.getInstance().createQuery(
         OBPOSAppPayment.class, whereclauseRCDR);
+    queryReconcilliation.setMaxResult(1);
     queryReconcilliation.setNamedParameter("terminal", posTerminal);
-    if (queryReconcilliation.list().size() > 0) {
+    if (queryReconcilliation.count() > 0) {
       throw new JSONException("OBPOS_FINAccountReconcileDraft");
     }
 
@@ -124,8 +125,8 @@ public class InitialValidations {
     }
 
     for (OBPOSAppPayment obposAppPayment : posTerminal.getOBPOSAppPaymentList()) {
-      if (obposAppPayment.getFinancialAccount().getCurrency() != obposAppPayment.getPaymentMethod()
-          .getCurrency()) {
+      if (!obposAppPayment.getFinancialAccount().getCurrency()
+          .equals(obposAppPayment.getPaymentMethod().getCurrency())) {
         throw new JSONException("OBPOS_FinAcctCurrDiffWithPayMethodCurr");
       }
     }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -80,7 +80,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
         }
 
         if ((loaded != null && loaded.compareTo(updated) < 0)
-            || (user != null && userUpdated != null && (loaded.compareTo(userUpdated) < 0))) {
+            || (loaded != null && user != null && userUpdated != null && (loaded
+                .compareTo(userUpdated) < 0))) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -209,6 +210,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
     // Fixed birth date issue(-1 day) when converted to UTC from client time zone
     if (jsonCustomer.has("birthDay") && jsonCustomer.get("birthDay") != null
+        && jsonCustomer.get("birthDay") != JSONObject.NULL
         && !jsonCustomer.getString("birthDay").isEmpty()) {
       final long timezoneOffset;
       if (jsonCustomer.has("timezoneOffset")) {

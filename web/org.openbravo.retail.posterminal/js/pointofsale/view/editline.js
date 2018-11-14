@@ -439,6 +439,36 @@ enyo.kind({
     showing: false
   }, {
     kind: 'OB.UI.SmallButton',
+    name: 'addAssociationsButton',
+    i18nContent: 'OBPOS_AddAssociations',
+    showing: false,
+    classes: 'btnlink-orange',
+    tap: function () {
+      this.owner.owner.doShowPopup({
+        popup: 'OBPOS_modalAssociateTickets',
+        args: {
+          receipt: this.owner.owner.receipt,
+          selectedLines: this.owner.owner.selectedModels
+        }
+      });
+    }
+  }, {
+    kind: 'OB.UI.SmallButton',
+    name: 'removeAssociationsButton',
+    i18nContent: 'OBPOS_RemoveAssociations',
+    showing: false,
+    classes: 'btnlink-orange',
+    tap: function () {
+      this.owner.owner.doShowPopup({
+        popup: 'OBPOS_modalRemoveAssociatedTickets',
+        args: {
+          receipt: this.owner.owner.receipt,
+          selectedLine: this.owner.owner.selectedModels[0]
+        }
+      });
+    }
+  }, {
+    kind: 'OB.UI.SmallButton',
     name: 'canDeliver',
     classes: 'btnlink-orange',
     content: '-',
@@ -566,6 +596,13 @@ enyo.kind({
     if (line) {
       if (line && !this.isLineInSelection(line)) {
         return;
+      }
+      if (this.selectedModels && this.selectedModels.length === 1 && line.get('product') && line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && this.model.get('order').get('isEditable') && line.get('isEditable')) {
+        this.$.actionButtonsContainer.$.addAssociationsButton.show();
+        this.$.actionButtonsContainer.$.removeAssociationsButton.show();
+      } else {
+        this.$.actionButtonsContainer.$.addAssociationsButton.hide();
+        this.$.actionButtonsContainer.$.removeAssociationsButton.hide();
       }
       this.$.returnreason.setSelected(0);
       if (this.line) {

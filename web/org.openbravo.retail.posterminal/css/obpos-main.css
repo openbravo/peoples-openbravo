@@ -853,3 +853,341 @@ button.payment-changebutton {
   height: 40px;
   float: left;
 }
+
+.btnlink-headerButton {
+  width: 170px !important;
+  margin: 0px 8px 6px 0px !important;
+}
+
+.filterSelectorTableHeader{
+  padding: 10px;
+}
+
+.filterSelectorTableHeader_buttons{
+  padding: 7px;
+}
+
+.filterSelectorTableHeader_Firstbutton{
+  display: table; 
+  width: 100%
+}
+
+.selectorHeader_btnSelectAll{
+  display: table-cell; 
+  text-align: right; 
+  width: 38%
+}
+
+.selectorHeader_btnAdvancedFilter{
+  display: table-cell;  
+  text-align: center; 
+  width: 24%
+}
+
+.selectorHeader_btnAssociateSelected{
+  display: table-cell; 
+  width: 38%
+}
+
+.selector_orderLines{
+  height: 40px; 
+  padding: 0; 
+  border-bottom: none;
+}
+
+.selector_orderList{
+  border-bottom: 1px solid #cccccc;
+}
+
+.selectorLoadingMsg{
+	border-bottom: 1px solid #cccccc; 
+	padding: 20px; 
+	text-align: center; 
+	font-weight: bold; 
+	font-size: 30px; 
+	color: #cccccc
+}
+
+.ob-row-order {
+  width: 100%;
+}
+
+.ob-row-order-text {
+  float: left;
+  display: inline-block;
+  padding-top: 4px;
+  padding-left: 5px;
+  color: #888888;
+}
+
+.ob-row-order-text-bold {
+  float: left;
+  display: inline-block;
+  padding-top: 4px;
+  padding-left: 5px;
+}
+
+.ob-row-orderline {
+  height: 36px;
+  width: 100%;
+  padding: 0px 5px 0px 23px;
+  border-bottom: none;
+}
+
+.ob-cell-orderline-left {
+  float: left;
+  display: inline-block; 
+  border-top: 1px solid #ccc;
+  height: 100%;
+  width:100%;
+}
+
+.ob-cell-orderline-left-info {
+  float: left;
+  width: 300px;
+  display: inline-block; 
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+li.ob-order:first-child > button > div.ob-row-order,
+li.ob-order + li.ob-orderline > button > div > div.ob-cell-orderline-left,
+li.ob-order + li.ob-orderline > button > div > div > div.ob-cell-orderline-right-col1:first-child, 
+li.ob-order + li.ob-orderline > button > div > div > div.ob-cell-orderline-right-col2:first-child {
+  border-top: none;
+  
+}
+
+li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderline-right-col1:first-child {
+  border-bottom: none;
+}
+
+.ob-cell-orderline-combobox {
+  background-color: #fff;
+  border: none;
+  color: #555;
+  padding: 4px;
+  width: 100%; 
+  height: 32px; 
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}   
+
+.ob-checkbox-half-on {
+  width: 34px;
+  height: 25px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-half-on.svg');
+  background-repeat: no-repeat;
+}
+ 
+.ob-checkbox-on {
+  width: 34px;
+  height: 25px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+  background-repeat: no-repeat;
+}
+ 
+.ob-checkbox-off {
+  width: 34px;
+  height: 25px;
+  float: left; 
+  display: inline-block;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
+  background-repeat: no-repeat;
+}
+ 
+.ob-button-minus-plus {
+  background-color: #e2e2e2;    
+  height: 18px;
+  float: left;
+  margin: 7px 4px 0px 4px;
+  font-size: 20px;
+}
+
+.ob-button-minus-plus:hover {
+  background-color: #e9e9e9;    
+}
+
+.ob-button-minus {
+  width: 15px;
+  padding: 1px 0px 0px 4px;
+}
+
+.ob-button-plus {
+  width: 15px;
+  padding: 1px 0px 0px 4px;
+}
+
+.ob-button-info {
+  background-color: #e2e2e2;    
+  height: 19px;
+  width: 15px;
+  padding: 0px 0px 0px 4px;
+  float: right; 
+  margin: 10px 4px 0px 4px;
+}
+
+.ob-button-info:hover {
+  background-color: #e9e9e9;    
+}
+
+.ob-button-info-normal {
+  background-image: url('./../img/info-icon.png');
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+.ob-cell-orderline-button-disabled {
+  width: 130px;
+  height: 20px;
+  padding: 5px 0px 0px 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ob-button-info-plus {
+  background-image: url('./../img/info-icon-plus.png');
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-color: #7DA7D9;
+}
+
+.ob-cell-orderline-button {
+  background-color: #e2e2e2;    
+  width: 130px;
+  height: 20px;
+  padding: 5px 0px 0px 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ob-cell-orderline-button:hover {
+  background-color: #e9e9e9;    
+}
+
+.ob-text-line {
+  display: inline-block;
+  width: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.modal_associateTickets{
+  width: 725px !important;
+}
+
+.modal-removeAssociatedTickets{
+  width: 900px !important;	
+}
+
+.modal-removeAssociatedTickets-scroller{
+  background-color: #ffffff;
+  margin-top: -8px;
+}
+
+.modal-removeAssociatedTickets-header{
+  padding-bottom: 0px; 
+  margin: 0px !important; 
+  height: 140px;
+}
+
+.modal-removeAssociatedTickets-headerLabels{
+  overflow: hidden; 
+  padding-top: 20px; 
+  border-bottom: 3px solid #cccccc; 
+  text-align: center; 
+  color: black; 
+  margin-top: 15px; 
+  padding-bottom: 7px;  
+  font-weight: bold; 
+  background-color: white; 
+  height:40px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-productName{
+  line-height: 25px; 
+  font-size: 17px;  
+  width: 179px; 
+  padding-left: 80px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-totalQty{
+  line-height: 25px; 
+  font-size: 17px; 
+  width: 85px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-receipt{
+  line-height: 25px; 
+  font-size: 17px; 
+  width: 180px;
+}
+
+.modal-removeAssociatedTickets-headerLabels-customer{
+  line-height: 25px; 
+  font-size: 17px; 
+  width: 250px; 
+  padding-left: 20px;
+}
+
+.modal-removeAssociatedTickets-headerContent{
+  text-align: center; 
+  color: white;
+}
+
+.modal-removeAssociatedTickets-header-serviceName{
+  line-height: 25px; 
+  font-size: 24px;
+}
+
+.modal-removeAssociatedTickets-header-linesLabel{
+  line-height: 25px; 
+  font-size: 20px;
+}
+
+.checkbox_removeAssociations{
+  width: 8%;
+  background-position: 15px center !important;
+}
+
+.associatedOrderLine{
+  border-bottom: 1px solid #cccccc; 
+  text-align: center; 
+  color: black; 
+  padding-top: 9px;
+}
+
+.associatedOrderLine-productName{
+  line-height: 35px; 
+  font-size: 17px; 
+  width: 180px; 
+  padding-left: 6px;
+}
+
+.associatedOrderLine-orderedQuantity{
+  line-height: 35px; 
+  font-size: 17px; 
+  width: 85px;
+}
+
+.associatedOrderLine-documentNo{
+  line-height: 35px; 
+  font-size: 17px; 
+  width:180px;
+  padding-left: 5px;
+}
+
+.associatedOrderLine-customer{
+  line-height: 35px; 
+  font-size: 17px; 
+  width:250px; 
+  padding-left: 20px;
+}

@@ -69,6 +69,7 @@ enyo.kind({
     onLineChecked: 'checkedLine',
     onStatusChanged: 'statusChanged',
     onPaymentChanged: 'paymentChanged',
+    onPaymentChangedCancelled: 'paymentChangedCancelled',
     onPaymentActionPay: 'paymentActionPay',
     onClearPaymentSelect: 'clearPaymentSelect',
     onLayaways: 'layaways',
@@ -291,6 +292,15 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalOpenRelatedReceipts',
       name: 'modalOpenRelatedReceipts'
+    }, {
+      kind: 'OB.UI.ModalAssociateTickets',
+      name: 'OBPOS_modalAssociateTickets'
+    }, {
+      kind: 'OB.UI.ModalRemoveAssociatedTickets',
+      name: 'OBPOS_modalRemoveAssociatedTickets'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterOrders',
+      name: 'OBPOS_modalAdvancedFilterOrders'
     }]
   }, {
     name: 'mainSubWindow',
@@ -1218,6 +1228,10 @@ enyo.kind({
   paymentChanged: function (inSender, inEvent) {
     // sending the event to the components bellow this one
     this.waterfall('onButtonPaymentChanged', inEvent);
+  },
+  paymentChangedCancelled: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onButtonPaymentChangedCancelled', inEvent);
   },
   paymentActionPay: function (inSender, inEvent) {
     // sending the event to the components bellow this one
