@@ -10,12 +10,16 @@ package org.openbravo.retail.posterminal;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.query.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
@@ -39,10 +43,38 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
     Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
     if (order != null) {
-      final String loaded = jsonorder.getString("loaded"), updated = OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated());
+      final String loaded = jsonorder.getString("loaded"), updated = OBMOBCUtils
+          .convertToUTCDateComingFromServer(order.getUpdated());
       if (!(loaded.compareTo(updated) >= 0)) {
         throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
             "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+      }
+      final StringBuffer hql = new StringBuffer();
+      hql.append("SELECT DISTINCT so.documentNo ");
+      hql.append("FROM OrderlineServiceRelation AS olsr ");
+      hql.append("JOIN olsr.orderlineRelated AS pol ");
+      hql.append("JOIN olsr.salesOrderLine AS sol ");
+      hql.append("JOIN pol.salesOrder AS po ");
+      hql.append("JOIN sol.salesOrder AS so ");
+      hql.append("WHERE po.id = :orderId ");
+      hql.append("AND so.id <> :orderId ");
+      hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
+      hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
+      hql.append("AND so.documentStatus <> 'CL' ");
+      Query<String> query = OBDal.getInstance().getSession()
+          .createQuery(hql.toString(), String.class);
+      query.setParameter("orderId", order.getId());
+      List<String> documentNoList = query.list();
+      if (documentNoList.size() > 0) {
+        String errorMsg = OBMessageUtils.messageBD("OBPOS_CannotCancelLayWithDeferred") + " "
+            + OBMessageUtils.messageBD("OBPOS_RelatedOrders") + " ";
+        for (int i = 0; i < documentNoList.size(); i++) {
+          errorMsg = errorMsg + documentNoList.get(i);
+          if (i < documentNoList.size() - 1) {
+            errorMsg = errorMsg + ", ";
+          }
+        }
+        throw new OBException(errorMsg);
       }
     }
 

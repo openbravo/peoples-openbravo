@@ -602,3 +602,202 @@ OB.UTIL.loadModelsIncFunc = function () {
     }
   }
 };
+
+OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, relatedQty, callback, errorCallback) {
+  var amountBeforeDiscounts = 0,
+      amountAfterDiscounts = 0,
+      rangeAmountBeforeDiscounts = 0,
+      rangeAmountAfterDiscounts = 0,
+      relatedQuantity = 0;
+  if (product.get('productType') === 'S' && product.get('isPriceRuleBased') && (!line || !line.get('originalOrderLineId'))) {
+    var criteria = {};
+    relatedLines.forEach(function (rl) {
+      var l = OB.MobileApp.model.receipt.get('lines').get(rl.orderlineId);
+      if (l) {
+        relatedQuantity += l.get('qty');
+      } else {
+        relatedQuantity += rl.qty;
+      }
+      if (OB.MobileApp.model.receipt.get('priceIncludesTax')) {
+        if (l) {
+          amountBeforeDiscounts += Math.abs(l.get('gross'));
+          amountAfterDiscounts += Math.abs(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
+            return memo + promo.amt;
+          }, 0));
+          if (product.get('quantityRule') === 'PP') {
+            rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('gross'), l.get('qty')));
+            rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('gross') - _.reduce(l.get('promotions'), function (memo, promo) {
+              return memo + promo.amt;
+            }, 0), l.get('qty')));
+          }
+        } else {
+          amountBeforeDiscounts += Math.abs(rl.gross);
+          amountAfterDiscounts += Math.abs(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
+            return memo + promo.amt;
+          }, 0));
+          if (product.get('quantityRule') === 'PP') {
+            rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(rl.gross, rl.qty));
+            rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(rl.gross - _.reduce(rl.promotions, function (memo, promo) {
+              return memo + promo.amt;
+            }, 0), rl.qty));
+          }
+        }
+      } else {
+        if (l) {
+          amountBeforeDiscounts += Math.abs(l.get('net'));
+          amountAfterDiscounts += Math.abs(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+            return memo + promo.amt;
+          }, 0));
+          if (product.get('quantityRule') === 'PP') {
+            rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(l.get('net'), l.get('qty')));
+            rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(l.get('net') - _.reduce(l.get('promotions'), function (memo, promo) {
+              return memo + promo.amt;
+            }, 0), l.get('qty')));
+          }
+        } else {
+          amountBeforeDiscounts += Math.abs(rl.net);
+          amountAfterDiscounts += Math.abs(rl.net - _.reduce(rl.promotions, function (memo, promo) {
+            return memo + promo.amt;
+          }, 0));
+          if (product.get('quantityRule') === 'PP') {
+            rangeAmountBeforeDiscounts += Math.abs(OB.DEC.div(rl.net, rl.qty));
+            rangeAmountAfterDiscounts += Math.abs(OB.DEC.div(rl.net - _.reduce(rl.promotions, function (memo, promo) {
+              return memo + promo.amt;
+            }, 0), rl.qty));
+          }
+        }
+      }
+    });
+
+    relatedQty = Math.abs(relatedQty);
+    if (product.get('quantityRule') === 'UQ') {
+      rangeAmountBeforeDiscounts = amountBeforeDiscounts;
+      rangeAmountAfterDiscounts = amountAfterDiscounts;
+    }
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      criteria.remoteFilters = [];
+      criteria.remoteFilters.push({
+        columns: ['product'],
+        operator: 'equals',
+        value: product.get('id'),
+        isId: true
+      });
+      criteria.remoteFilters.push({
+        columns: [],
+        operator: 'filter',
+        value: 'ServicePriceRuleVersion_DateFilter',
+        params: []
+      });
+    } else {
+      criteria._whereClause = "where product = '" + product.get('id') + "' and validFromDate <= date('now')";
+      criteria._orderByClause = 'validFromDate desc';
+      criteria._limit = 1;
+    }
+    OB.Dal.find(OB.Model.ServicePriceRuleVersion, criteria, function (sprvs) {
+      var priceruleVersion;
+      if (sprvs && sprvs.length > 0) {
+        priceruleVersion = sprvs.at(0);
+        if (line) {
+          line.set('serviceTrancheMaximum', priceruleVersion.get('maximum'));
+          line.set('serviceTrancheMinimum', priceruleVersion.get('minimum'));
+        }
+        OB.Dal.get(OB.Model.ServicePriceRule, priceruleVersion.get('servicePriceRule'), function (spr) {
+          if (spr.get('ruletype') === 'P') {
+            var amount, newprice, oldprice = product.get('listPrice');
+            if (spr.get('afterdiscounts')) {
+              amount = amountAfterDiscounts * spr.get('percentage') / 100;
+            } else {
+              amount = amountBeforeDiscounts * spr.get('percentage') / 100;
+            }
+            if (!product.get('groupProduct')) {
+              amount = amount / relatedQuantity;
+            }
+            newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / relatedQty, 2);
+            callback(line, newprice);
+          } else { //ruletype = 'R'
+            var rangeCriteria = {};
+            if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+              rangeCriteria.remoteFilters = [];
+              rangeCriteria.remoteFilters.push({
+                columns: ['servicepricerule'],
+                operator: 'equals',
+                value: spr.get('id'),
+                isId: true
+              });
+              rangeCriteria.remoteFilters.push({
+                columns: [],
+                operator: 'filter',
+                value: 'ServicePriceRuleRange_AmountFilter',
+                params: [spr.get('afterdiscounts') ? rangeAmountAfterDiscounts : rangeAmountBeforeDiscounts]
+              });
+            } else {
+              rangeCriteria._whereClause = "where servicepricerule = '" + spr.get('id') + "' and (( amountUpTo >= " + (spr.get('afterdiscounts') ? rangeAmountAfterDiscounts : rangeAmountBeforeDiscounts) + ") or (amountUpTo is null))";
+              rangeCriteria._orderByClause = 'amountUpTo is null, amountUpTo';
+              rangeCriteria._limit = 1;
+            }
+            OB.Dal.find(OB.Model.ServicePriceRuleRange, rangeCriteria, function (sppr) {
+              var range, priceCriteria = {};
+              if (sppr && sppr.length > 0) {
+                range = sppr.at(0);
+                if (range.get('ruleType') === 'P') {
+                  var amount, newprice, oldprice = product.get('listPrice');
+                  if (range.get('afterdiscounts')) {
+                    amount = amountAfterDiscounts * range.get('percentage') / 100;
+                  } else {
+                    amount = amountBeforeDiscounts * range.get('percentage') / 100;
+                  }
+                  if (!product.get('groupProduct')) {
+                    amount = amount / relatedQuantity;
+                  }
+                  newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / relatedQty, 2);
+                  callback(line, newprice);
+                } else { //ruleType = 'F'
+                  if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+                    priceCriteria.remoteFilters = [];
+                    priceCriteria.remoteFilters.push({
+                      columns: ['product'],
+                      operator: 'equals',
+                      value: product.get('id'),
+                      isId: true
+                    });
+                    priceCriteria.remoteFilters.push({
+                      columns: ['priceList'],
+                      operator: 'equals',
+                      value: range.get('priceList'),
+                      isId: true
+                    });
+                  } else {
+                    priceCriteria.product = product.get('id');
+                    priceCriteria.priceList = range.get('priceList');
+                  }
+                  OB.Dal.find(OB.Model.ServicePriceRuleRangePrices, priceCriteria, function (price) {
+                    var oldprice = product.get('listPrice'),
+                        newprice;
+                    if (price && price.length > 0) {
+                      newprice = OB.Utilities.Number.roundJSNumber(oldprice + price.at(0).get('listPrice'), 2);
+                      callback(line, newprice);
+                    } else {
+                      errorCallback(line, 'OBPOS_ErrorPriceRuleRangePriceNotFound');
+                    }
+                  }, function () {
+                    errorCallback(line, 'OBPOS_ErrorGettingPriceRuleRangePrice');
+                  });
+                }
+              } else {
+                errorCallback(line, 'OBPOS_ErrorPriceRuleRangeNotFound');
+              }
+            }, function () {
+              errorCallback(line, 'OBPOS_ErrorGettingPriceRuleRange');
+            });
+          }
+        }, function () {
+          errorCallback(line, 'OBPOS_ErrorGettingPriceRule');
+        });
+      } else {
+        errorCallback(line, 'OBPOS_ErrorPriceRuleVersionNotFound');
+      }
+    }, function () {
+      errorCallback(line, 'OBPOS_ErrorGettingPriceRuleVersion');
+    });
+  }
+};

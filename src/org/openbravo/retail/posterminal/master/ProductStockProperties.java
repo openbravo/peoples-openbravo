@@ -23,6 +23,7 @@ public class ProductStockProperties extends ModelExtension {
   public List<HQLProperty> getHQLProperties(Object params) {
 
     List<HQLProperty> list = new ArrayList<HQLProperty>();
+    list.add(new HQLProperty("min(storagedetail.id)", "id"));
     list.add(new HQLProperty("storagedetail.product.id", "m_product_id"));
     list.add(new HQLProperty("storagedetail.product.searchKey", "searchKey"));
     list.add(new HQLProperty("locator.warehouse.id", "m_warehouse_id"));

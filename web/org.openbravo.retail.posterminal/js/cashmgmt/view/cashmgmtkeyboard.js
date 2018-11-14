@@ -16,6 +16,20 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
+  processesToListen: ['cashMngPaymentDone'],
+  processFinished: function (process, execution, processesInExec) {
+    if (processesInExec.models.length === 0) {
+      if (execution.get('hasPendigOp')) {
+        var commands = _.map(this.buttons, function (b) {
+          return b.command;
+        });
+        this.waterfall('onDisableButton', {
+          disabled: true,
+          commands: commands
+        });
+      }
+    }
+  },
   getPayment: function (id, key, iscash, allowopendrawer, name, identifier, type, rate, isocode, glItem, paymentMethod) {
     var me = this;
     var i;
@@ -78,9 +92,9 @@ enyo.kind({
   },
 
   init: function () {
-    var buttons = [];
+    this.buttons = [];
     this.inherited(arguments);
-    buttons.push({
+    this.buttons.push({
       command: 'opendrawer',
       i18nLabel: 'OBPOS_OpenDrawer',
       stateless: true,
@@ -101,7 +115,7 @@ enyo.kind({
       if (paymentMethod.paymentMethod.allowdeposits) {
         for (i = 0; i < OB.MobileApp.model.get('cashMgmtDepositEvents').length; i++) {
           if (OB.MobileApp.model.get('cashMgmtDepositEvents')[i].isocode === paymentMethod.isocode && paymentMethod.paymentMethod.paymentMethod === OB.MobileApp.model.get('cashMgmtDepositEvents')[i].paymentmethod) {
-            buttons.push({
+            this.buttons.push({
               idSufix: 'Deposit.' + paymentMethod.isocode,
               command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
               definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'deposit', paymentMethod.rate, paymentMethod.isocode, paymentMethod.paymentMethod.gLItemForDeposits, paymentMethod.paymentMethod.paymentMethod),
@@ -115,7 +129,7 @@ enyo.kind({
       if (paymentMethod.paymentMethod.allowdrops) {
         for (i = 0; i < OB.MobileApp.model.get('cashMgmtDropEvents').length; i++) {
           if (OB.MobileApp.model.get('cashMgmtDropEvents')[i].isocode === paymentMethod.isocode && paymentMethod.paymentMethod.paymentMethod === OB.MobileApp.model.get('cashMgmtDropEvents')[i].paymentmethod) {
-            buttons.push({
+            this.buttons.push({
               idSufix: 'Withdrawal.' + paymentMethod.isocode,
               command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
               definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'drop', paymentMethod.rate, paymentMethod.isocode, paymentMethod.paymentMethod.gLItemForDrops, paymentMethod.paymentMethod.paymentMethod),
@@ -132,11 +146,11 @@ enyo.kind({
       buttons: []
     }, function (args) {
       _.each(args.buttons, function (btn) {
-        buttons.push(btn);
+        args.context.buttons.push(btn);
       });
       args.context.addToolbar({
         name: 'cashMgmtToolbar',
-        buttons: buttons
+        buttons: args.context.buttons
       });
       args.context.showToolbar('cashMgmtToolbar');
     });
@@ -144,5 +158,10 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.keyMatcher = new RegExp('^([0-9]|\\' + OB.Format.defaultDecimalSymbol + ')$', 'g');
+    OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
+  },
+  destroyComponents: function () {
+    this.inherited(arguments);
+    OB.UTIL.ProcessController.unSubscribe(this.processesToListen, this);
   }
 });

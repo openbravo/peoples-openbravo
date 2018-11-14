@@ -22,26 +22,36 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
     this.initModels(function () {});
     this.loadModels(function () {});
   },
+  pendingToSaveHaveCashManagementProvider: function () {
+    var hasPayment = false;
+    _.each(this.depsdropstosave.models, function (drop) {
+      var payment = _.find(OB.POS.modelterminal.get('payments'), function (p) {
+        return p.payment.id === drop.get('paymentMethodId') && p.paymentMethod.cashManagementProvider;
+      });
+      if (!OB.UTIL.isNullOrUndefined(payment) || drop.get('allowOnlyOne')) {
+        hasPayment = true;
+      }
+    });
+    return hasPayment;
+  },
   initModels: function (initModelsCallback) {
     var me = this;
 
     this.depsdropstosave = new Backbone.Collection();
     this.depsdropstosave.on('paymentDone', function (model, p, callback, errorCallback) {
+      var execution = OB.UTIL.ProcessController.start('cashMngPaymentDone');
       // argument checks
       OB.UTIL.Debug.execute(function () {
         if (!me.payments) {
           OB.error("The 'payments' variable has not been initialized (value: " + me.payments + "'");
         }
       });
-      var isError = false;
 
-      me.payments.each(function (pay) {
-        if (p.id === pay.get('paymentmethod_id')) {
-          isError = (p.type === 'drop' && OB.DEC.sub(pay.get('total'), OB.DEC.mul(p.amount, p.rate)) < 0);
-        }
-      });
-
+      var isError = !OB.UTIL.isNullOrUndefined(_.find(me.payments.models, function (pay) {
+        return p.iscash && p.id === pay.get('paymentmethod_id') && p.type === 'drop' && OB.DEC.sub(pay.get('total'), OB.DEC.mul(p.amount, p.rate)) < 0;
+      }));
       if (isError) {
+        OB.UTIL.ProcessController.finish('cashMngPaymentDone', execution);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
         if (errorCallback) {
           errorCallback(OB.I18N.getLabel('OBPOS_MsgMoreThanAvailable'));
@@ -50,6 +60,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       }
 
       if (OB.DEC.mul(p.amount, p.rate) <= 0) {
+        OB.UTIL.ProcessController.finish('cashMngPaymentDone', execution);
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_amtGreaterThanZero'));
         return;
       }
@@ -99,10 +110,17 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       });
 
       asyncToSyncWrapper.then(function () {
+        // Check pending drop to save have cash management provider
+        execution.set('hasPendigOp', me.pendingToSaveHaveCashManagementProvider());
+        if (execution.get('hasPendigOp')) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgCloseOrDoneCashManagement'));
+        }
+        OB.UTIL.ProcessController.finish('cashMngPaymentDone', execution);
         if (callback) {
           callback();
         }
       }, function () {
+        OB.UTIL.ProcessController.finish('cashMngPaymentDone', execution);
         var errorMsg = 'Could not save payment information';
         if (errorCallback) {
           errorCallback(errorMsg);
@@ -400,7 +418,22 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                     resolve();
                   }, reject, pay);
                 } else {
-                  resolve();
+                  OB.UTIL.HookManager.executeHooks('OBPOS_AddPaymentToCashManagement', {
+                    context: me,
+                    pay: pay,
+                    paymentMethod: paymentMth
+                  }, function (args) {
+                    if (args.includePay) {
+                      OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmt, pay) {
+                        if (cashmgmt.length > 0) {
+                          pay.set('listdepositsdrops', cashmgmt.models);
+                        }
+                        resolve();
+                      }, reject, pay);
+                    } else {
+                      resolve();
+                    }
+                  });
                 }
               });
             }
