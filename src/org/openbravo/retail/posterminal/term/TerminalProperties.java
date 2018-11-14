@@ -45,6 +45,8 @@ public class TerminalProperties extends ModelExtension {
         "partnerAddress"));
     list.add(new HQLProperty("pos.organization.obposLayawayAnonymousbp",
         "layaway_anonymouscustomer"));
+    list.add(new HQLProperty("pos.organization.obposQuotationAnonymousbp",
+        "quotation_anonymouscustomer"));
     list.add(new HQLProperty("pos.organization.id", "organization"));
     list.add(new HQLProperty("pos.organization.name", getIdentifierAlias("organization")));
     list.add(new HQLProperty("pos.client.id", "client"));
@@ -82,6 +84,9 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
         "language_string"));
     list.add(new HQLProperty("pos.organization.obposReturnAnonymousbp", "returns_anonymouscustomer"));
+    list.add(new HQLProperty(
+        "CASE WHEN pos.organization.obretcoCustomerseq.id is not null THEN true ELSE false END",
+        "hasCustomerSequence"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);

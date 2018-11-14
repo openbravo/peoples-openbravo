@@ -1758,6 +1758,13 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
+
+    // Avoid closing the order before receipt is being calculated
+    if (this.owner.receipt.calculatingReceipt) {
+      OB.UTIL.showI18NError('OBPOS_ReceiptBeingPrepared');
+      return;
+    }
+
     if (!_.isNull(this.model.get('order').get('bp')) && _.isNull(this.model.get('order').get('bp').get('locId'))) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
         label: OB.I18N.getLabel('OBPOS_LblOk')
@@ -1879,6 +1886,13 @@ enyo.kind({
         negativeLines, me = this,
         myModel = this.owner.model,
         payments;
+
+    // Avoid closing the order before receipt is being calculated
+    if (this.owner.receipt.calculatingReceipt) {
+      OB.UTIL.showI18NError('OBPOS_ReceiptBeingPrepared');
+      return;
+    }
+
     if (!_.isNull(this.model.get('order').get('bp')) && _.isNull(myModel.get('order').get('bp').get('locId'))) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
         label: OB.I18N.getLabel('OBPOS_LblOk')

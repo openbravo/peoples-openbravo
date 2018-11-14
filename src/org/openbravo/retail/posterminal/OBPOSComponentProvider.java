@@ -112,6 +112,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/offlineprinter",
         "model/productbom",
         "model/taxcategorybom",
+        "model/orderassociationsfilter",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
@@ -165,6 +166,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/servicesfilter",
         "components/modalselectopenreceipts",
         "components/modalsplitlines",
+        "components/modalassociatetickets",
+        "components/modalremoveassociatedtickets",
         "components/openRelatedReceiptsModal",
 
         // Old Tickets
@@ -174,6 +177,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
         "components/modalrejectquotation",
+        "components/modalPriceModification",
         // Detection of change in context
         "components/modalcontextchanged",
         "components/modalproductcharacteristic",
@@ -286,6 +290,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "utils/unlinkDeviceOnLoad.js", ComponentResource.APP_OB3));
+    globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
+        + "utils/unlinkDeviceValidation.js", ComponentResource.APP_OB3));
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix
         + "/utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
 

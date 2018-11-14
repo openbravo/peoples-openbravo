@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -79,7 +80,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
         }
 
         if ((loaded != null && loaded.compareTo(updated) < 0)
-            || (user != null && userUpdated != null && (loaded.compareTo(userUpdated) < 0))) {
+            || (loaded != null && user != null && userUpdated != null && (loaded
+                .compareTo(userUpdated) < 0))) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -138,11 +140,17 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
     }
+    OBPOSApplications pos = OBDal.getInstance().get(OBPOSApplications.class,
+        jsonCustomer.get("posTerminal"));
     // BP search key (required)
     if (!jsonCustomer.has("searchKey") || "null".equals(jsonCustomer.getString("searchKey"))) {
       String errorMessage = "Business partner search key is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
+    } else if (pos.getOrganization().getObretcoCustomerseq() != null
+        && jsonCustomer.getString("searchKey").equals("***")) {
+      String newSk = FIN_Utility.getDocumentNo(true, pos.getOrganization().getObretcoCustomerseq());
+      customer.setSearchKey(newSk);
     } else {
       String possibleSK = jsonCustomer.getString("searchKey").trim(), finalSK = null, searchKeyValue = StringUtils
           .substring(possibleSK, 0, 35);
@@ -202,6 +210,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
     // Fixed birth date issue(-1 day) when converted to UTC from client time zone
     if (jsonCustomer.has("birthDay") && jsonCustomer.get("birthDay") != null
+        && jsonCustomer.get("birthDay") != JSONObject.NULL
         && !jsonCustomer.getString("birthDay").isEmpty()) {
       final long timezoneOffset;
       if (jsonCustomer.has("timezoneOffset")) {

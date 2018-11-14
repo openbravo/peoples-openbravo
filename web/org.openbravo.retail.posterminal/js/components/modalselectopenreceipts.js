@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -75,6 +75,7 @@ enyo.kind({
           orderModel = newOrder;
           orderModel.set('deferredOrder', true);
         }
+        orderModel.set('bp', me.owner.owner.owner.model.get('orderList').current.get('bp'));
         this.owner.owner.doAddProduct({
           targetOrder: orderModel,
           product: this.owner.owner.args.product,

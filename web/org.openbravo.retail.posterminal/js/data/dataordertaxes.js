@@ -49,7 +49,7 @@
                 if (OB.UTIL.isNullOrUndefined(productbom.get('bomprice'))) {
                   throw 'noBOMPrice';
                 }
-                return memo + OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity'));
+                return OB.DEC.add(memo, OB.DEC.mul(productbom.get('bomprice'), productbom.get('bomquantity')));
               }, 0);
               return {
                 'bomtaxcategory': bomtaxcategory,
@@ -161,7 +161,7 @@
           return;
         }
         receipt.set('net', receipt.get('lines').reduce(function (memo, line) {
-          return memo + line.get('discountedNet');
+          return OB.DEC.add(memo, line.get('discountedNet'));
         }, 0), {
           silent: true
         });
@@ -781,7 +781,7 @@
         });
 
         receipt.set('net', receipt.get('lines').reduce(function (memo, line) {
-          return memo + line.get('discountedNet');
+          return OB.DEC.add(memo, line.get('discountedNet'));
         }, 0));
 
       });

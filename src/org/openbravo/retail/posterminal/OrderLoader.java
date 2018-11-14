@@ -1591,8 +1591,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       orderline.setActive(true);
       orderline.setSalesOrder(order);
-      orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
-          pricePrecision, RoundingMode.HALF_UP));
+      BigDecimal lineNetAmount = BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
+          pricePrecision, RoundingMode.HALF_UP);
+      orderline.setLineNetAmount(lineNetAmount);
+      if (lineNetAmount.compareTo(BigDecimal.ZERO) < 0) {
+        orderline.setReturnline("Y");
+      }
 
       if (createShipment
           || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {

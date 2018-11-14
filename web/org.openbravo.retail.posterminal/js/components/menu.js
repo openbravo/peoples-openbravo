@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -284,8 +284,7 @@ enyo.kind({
       }
       return 'DN';
     }
-
-    if (isLayaway && OB.MobileApp.model.hasPermission('OBPOS_receipt.cancelLayaway', true) && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
+    if ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current && (this.model.get('orderList').current.get('payment') > 0 || this.model.get('orderList').current.get('gross') === 0)) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true)) {
       // Show if the current order is a layaway and has both the 'OBPOS_payments.cancelLayaway' property and some payment,
       // or is a layaway and doesn't have the 'OBPOS_payments.cancelLayaway' property
       this.show();
@@ -794,6 +793,61 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuCreateQuotationFromOrder',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.createquotationfromorder',
+  i18nLabel: 'OBPOS_CreateQuotationFromOrder',
+  events: {
+    onTabChange: ''
+  },
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (this.receipt.get('payments').length) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ExistingPayments'));
+      return;
+    }
+    if (_.find(this.receipt.get('lines').models, function (line) {
+      return OB.DEC.compare(line.get('qty')) === -1;
+    })) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_NegativeLinesQuotation'));
+      return;
+    }
+    this.receipt.createQuotationFromOrder();
+  },
+  updateVisibility: function (model) {
+    if (OB.MobileApp.model.hasPermission(this.permission) && !model.get('isQuotation') && model.get('isEditable') && (model.get('orderType') === 0 || model.get('orderType') === 2)) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
+  updateLabel: function (model) {
+    if (model.get('orderType') === 0 && this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CreateQuotationFromLayaway')) {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_CreateQuotationFromOrder'));
+    } else if (model.get('orderType') === 2 && this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CreateQuotationFromOrder')) {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_CreateQuotationFromLayaway'));
+    }
+  },
+  init: function (model) {
+    this.receipt = model.get('order');
+
+    this.updateVisibility(this.receipt);
+    this.updateLabel(this.receipt);
+
+    this.receipt.on('change:isQuotation change:isEditable change:orderType', function (model) {
+      this.updateVisibility(model);
+    }, this);
+
+    this.receipt.on('change:orderType', function (model) {
+      this.updateLabel(model);
+    }, this);
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuReactivateQuotation',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.reactivatequotation',
@@ -938,6 +992,7 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.hasPermission(this.permission)) {
+      this.model.get('orderList').saveCurrent();
       this.doMultiOrders();
     }
   },
