@@ -45,13 +45,9 @@
       <PatternLayout pattern="%d [%t] %-5p %c - %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy />
-        <SizeBasedTriggeringPolicy size="1GB" />
+        <SizeBasedTriggeringPolicy size="100MB" />
       </Policies>
-      <DefaultRolloverStrategy max="7">
-        <Delete basePath="${logDir}">
-          <IfLastModified age="7d" />
-        </Delete>
-      </DefaultRolloverStrategy>
+      <DefaultRolloverStrategy max="30"/>
     </RollingFile>
 
     <Console name="Console" target="SYSTEM_OUT">

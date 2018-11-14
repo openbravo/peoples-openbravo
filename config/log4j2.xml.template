@@ -38,7 +38,7 @@
 
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%-5r %-5p - %m%n"/>
+      <PatternLayout pattern="%-5r [%t] %-5p %c - %m%n"/>
     </Console>
 
     <OBRebuildAppender name="OBRebuildAppender"/>
