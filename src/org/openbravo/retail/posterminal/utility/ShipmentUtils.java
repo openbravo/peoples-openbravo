@@ -36,6 +36,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
@@ -71,13 +72,26 @@ public class ShipmentUtils {
   @Any
   private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
 
-  public ShipmentInOut createNewShipment(Order order, JSONObject jsonorder, JSONArray orderlines,
-      ArrayList<OrderLine> lineReferences, List<Locator> locatorList,
-      boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers) {
+  public ShipmentInOut createNewShipment(Order order, JSONObject jsonorder,
+      ArrayList<OrderLine> lineReferences, boolean useOrderDocumentNoForRelatedDocs,
+      List<DocumentNoHandler> docNoHandlers) {
+    final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
+    locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+    locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
+    locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
+    locators.setMaxResults(2);
+    List<Locator> locatorList = locators.list();
+
+    if (locatorList.isEmpty()) {
+      throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+          "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage().getLanguage()));
+    }
+
     final ShipmentInOut shipment = OBProvider.getInstance().get(ShipmentInOut.class);
     try {
       createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs, docNoHandlers);
       OBDal.getInstance().save(shipment);
+      final JSONArray orderlines = jsonorder.getJSONArray("lines");
       createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences, locatorList);
 
       // Stock manipulation

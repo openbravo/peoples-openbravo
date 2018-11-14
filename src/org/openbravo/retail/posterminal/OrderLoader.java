@@ -386,22 +386,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
 
         if (createShipment) {
-          OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
-          locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
-          locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
-          locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
-          locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
-          locators.setMaxResults(2);
-          List<Locator> locatorList = locators.list();
-
-          if (locatorList.isEmpty()) {
-            throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-                "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
-                    .getLanguage()));
-          }
-
-          shipment = su.createNewShipment(order, jsonorder, orderlines, lineReferences,
-              locatorList, useOrderDocumentNoForRelatedDocs, documentNoHandlers.get());
+          shipment = su.createNewShipment(order, jsonorder, lineReferences,
+              useOrderDocumentNoForRelatedDocs, documentNoHandlers.get());
         }
 
         if (log.isDebugEnabled()) {
