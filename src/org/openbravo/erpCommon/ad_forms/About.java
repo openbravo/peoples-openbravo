@@ -31,10 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.modules.ModuleTreeData;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -48,28 +45,6 @@ public class About extends HttpSecureAppServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
-    System.out.println("Clean cache");
-    WeldUtils.getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class).init();
-    if (false) {
-      OBContext.setAdminMode(true);
-      try {
-        ApplicationDictionaryCachedStructures adcs = WeldUtils
-            .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
-
-        adcs.init();
-        List<String> allTabs = OBDal.getInstance().getSession()
-            .createQuery("select id from ADTab where active = true order by id", String.class)
-            .list();
-
-        System.out.println("Init");
-        for (String tab : allTabs) {
-          adcs.getTab(tab);
-        }
-      } finally {
-        OBContext.restorePreviousMode();
-      }
-    }
-
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
