@@ -46,19 +46,25 @@ import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.InventoryCountProcess;
+import org.openbravo.materialmgmt.InvoiceFromGoodsShipmentUtil;
+import org.openbravo.materialmgmt.InvoiceGeneratorFromGoodsShipment;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ProcessGoods extends HttpSecureAppServlet {
+  private static final String GOODS_SHIPMENT_WINDOW = "169";
   private static final long serialVersionUID = 1L;
   private static final String M_Inout_Post_ID = "109";
   private static final String M_Inout_Table_ID = "319";
@@ -158,6 +164,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
     final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessGoods|Tab_ID",
         IsIDFilter.instance);
     final String strM_Inout_ID = vars.getGlobalVariable("inpKey", strWindowId + "|M_Inout_ID", "");
+    final boolean invoiceIfPossible = StringUtils.equals(
+        vars.getStringParameter("inpInvoiceIfPossible"), "Y");
 
     OBError myMessage = null;
     try {
@@ -208,13 +216,20 @@ public class ProcessGoods extends HttpSecureAppServlet {
       log4j.debug(myMessage.getMessage());
       vars.setMessage(strTabId, myMessage);
 
+      if (invoiceIfPossible && GOODS_SHIPMENT_WINDOW.equals(strWindowId)
+          && !"Error".equalsIgnoreCase(myMessage.getType())) {
+        myMessage = createInvoice(vars, goods);
+        log4j.debug(myMessage.getMessage());
+        vars.setMessage(strTabId, myMessage);
+      }
+
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
       if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
       }
       printPageClosePopUp(response, vars, strWindowPath);
 
-    } catch (ServletException ex) {
+    } catch (ServletException | ParseException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       if (!myMessage.isConnectionAvailable()) {
         bdErrorConnection(response);
@@ -223,6 +238,36 @@ public class ProcessGoods extends HttpSecureAppServlet {
         vars.setMessage(strTabId, myMessage);
       }
     }
+  }
+
+  private OBError createInvoice(final VariablesSecureApp vars, final ShipmentInOut goodShipment)
+      throws ParseException {
+    OBError myMessage;
+    final boolean processInvoice = StringUtils.equals(vars.getStringParameter("inpProcessInvoice"),
+        "Y");
+    final String invoiceDateStr = vars.getStringParameter("inpInvoiceDate");
+    final String priceListStr = vars.getStringParameter("inpPriceList");
+
+    final Date invoiceDate = OBDateUtils.getDate(invoiceDateStr);
+    final PriceList priceList = OBDal.getInstance().getProxy(PriceList.class, priceListStr);
+
+    final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(goodShipment.getId(),
+        invoiceDate, priceList).createInvoiceConsideringInvoiceTerms(processInvoice);
+    myMessage = getResultMessage(invoice);
+    return myMessage;
+  }
+
+  private OBError getResultMessage(Invoice invoice) {
+    OBError message = new OBError();
+    message.setType("Success");
+    message.setTitle("Success");
+    if (invoice != null) {
+      message.setMessage(String.format(OBMessageUtils.messageBD("NewInvoiceGenerated"),
+          invoice.getDocumentNo(), InvoiceFromGoodsShipmentUtil.getInvoiceStatus(invoice)));
+    } else {
+      message.setMessage(OBMessageUtils.messageBD("NoInvoiceGenerated"));
+    }
+    return message;
   }
 
   void printPageDocAction(HttpServletResponse response, VariablesSecureApp vars,
@@ -264,12 +309,12 @@ public class ProcessGoods extends HttpSecureAppServlet {
       OBContext.restorePreviousMode();
     }
 
+    ShipmentInOut shipmentInOut = (ShipmentInOut) OBDal.getInstance().getProxy(
+        ShipmentInOut.ENTITY_NAME, strM_Inout_ID);
     xmlDocument.setParameter("docstatus", strdocstatus);
     if (strWindowId.equals(Goods_Receipt_Window)) {
       // VOID action: Reverse goods receipt/shipment by default inherits the document date and
       // accounting date from the voided document
-      ShipmentInOut shipmentInOut = (ShipmentInOut) OBDal.getInstance().getProxy(
-          ShipmentInOut.ENTITY_NAME, strM_Inout_ID);
       String movementDate = OBDateUtils.formatDate(shipmentInOut.getMovementDate());
       String accountingDate = OBDateUtils.formatDate(shipmentInOut.getAccountingDate());
       xmlDocument.setParameter("voidedDocumentDate", movementDate);
@@ -298,6 +343,15 @@ public class ProcessGoods extends HttpSecureAppServlet {
     } else
       dact.append("var arrDocAction = null");
     xmlDocument.setParameter("array", dact.toString());
+
+    if (strWindowId.equals(GOODS_SHIPMENT_WINDOW)) {
+      xmlDocument.setParameter("invoiceDocumentDate",
+          OBDateUtils.formatDate(shipmentInOut.getMovementDate()));
+      final FieldProvider[] priceListsForSelector = getPriceListsForSelector(shipmentInOut);
+      xmlDocument.setParameter("selectedPriceList",
+          getSelectedPriceList(shipmentInOut, priceListsForSelector));
+      xmlDocument.setData("priceList", "liststructure", priceListsForSelector);
+    }
 
     out.println(xmlDocument.print());
     out.close();
@@ -439,7 +493,53 @@ public class ProcessGoods extends HttpSecureAppServlet {
     new InventoryCountProcess().processInventory(inv);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet to Process Goods Shipment and Goods Receipt";
   }
+
+  private FieldProvider[] getPriceListsForSelector(final ShipmentInOut shipment) {
+    final List<PriceList> priceLists = getSalesPriceList(shipment);
+    return getFieldProviderFromPriceLists(priceLists);
+  }
+
+  private List<PriceList> getSalesPriceList(final ShipmentInOut shipment) {
+    if (InvoiceFromGoodsShipmentUtil.shipmentLinesFromOrdersWithSamePriceList(shipment)) {
+      return InvoiceFromGoodsShipmentUtil.getPriceListFromOrder(shipment);
+    }
+    return getAvailableSalesPriceList(shipment);
+  }
+
+  private List<PriceList> getAvailableSalesPriceList(final ShipmentInOut shipment) {
+    String hql = "from PricingPriceList pl" //
+        + " where pl.client.id = :clientId" //
+        + " and Ad_Isorgincluded(:shipmentOrgId, pl.organization.id, :clientId) <> -1 "//
+        + " and pl.salesPriceList = true";
+
+    Query<PriceList> query = OBDal.getInstance().getSession().createQuery(hql, PriceList.class);
+    query.setParameter("clientId", shipment.getClient().getId());
+    query.setParameter("shipmentOrgId", shipment.getOrganization().getId());
+
+    return query.list();
+  }
+
+  private FieldProvider[] getFieldProviderFromPriceLists(final List<PriceList> priceLists) {
+    FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(priceLists);
+    for (int i = 0; i < data.length; i++) {
+      PriceList priceList = priceLists.get(i);
+      FieldProviderFactory.setField(data[i], "ID", priceList.getId());
+      FieldProviderFactory.setField(data[i], "NAME", priceList.getName());
+      FieldProviderFactory.setField(data[i], "DESCRIPTION", priceList.getName());
+    }
+    return data;
+  }
+
+  private String getSelectedPriceList(final ShipmentInOut shipment,
+      FieldProvider[] priceListDataForSelector) {
+    if (priceListDataForSelector.length == 1) {
+      return priceListDataForSelector[0].getField("ID");
+    }
+    return InvoiceFromGoodsShipmentUtil.getPriceListFromBusinessPartner(shipment);
+  }
+
 }

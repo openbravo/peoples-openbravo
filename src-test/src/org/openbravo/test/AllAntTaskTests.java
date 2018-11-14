@@ -73,6 +73,7 @@ import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.generalsetup.enterprise.organization.ADOrgPersistInfoTestSuite;
 import org.openbravo.test.inventoryStatus.InventoryStatusTest;
+import org.openbravo.test.materialMgmt.invoiceFromShipment.InvoiceFromShipmentTest;
 import org.openbravo.test.materialMgmt.iscompletelyinvoicedshipment.IsCompletelyInvoicedShipment;
 import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.DBModifiedTest;
@@ -313,7 +314,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ReferencedInventoryTestSuite.class,
 
     // AD_Org Persist Information
-    ADOrgPersistInfoTestSuite.class
+    ADOrgPersistInfoTestSuite.class,
+    
+    // Automatic Invoice from Goods Shipment
+    InvoiceFromShipmentTest.class
 
 })
 public class AllAntTaskTests {
