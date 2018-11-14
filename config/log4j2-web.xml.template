@@ -32,7 +32,6 @@
     </Root>
 
     <Logger name="reloadXml" level="error"/>
-
     <Logger name="org.hibernate" level="error"/>
 
     <!-- To debug a specific class/package: -->
@@ -44,8 +43,8 @@
                  filePattern="${logDir}/openbravo-%d{yyyyMMdd}-%i.log.gz">
       <PatternLayout pattern="%d [%t] %-5p %c - %m%n"/>
       <Policies>
-        <TimeBasedTriggeringPolicy />
         <SizeBasedTriggeringPolicy size="100MB" />
+        <TimeBasedTriggeringPolicy />
       </Policies>
       <DefaultRolloverStrategy max="30"/>
     </RollingFile>
