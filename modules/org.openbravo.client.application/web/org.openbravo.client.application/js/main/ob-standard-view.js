@@ -1750,7 +1750,7 @@ isc.OBStandardView.addProperties({
         // session attributes of the form
         contextInfo = this.getContextInfo(false, true, true);
         this.addPreferenceValues(contextInfo, tabViewPane);
-        if (!this.isOpenedByDirectLink() && tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
+        if (!this.isSubtabOpenedByDirectLink() && tabViewPane.showTabIf && !(tabViewPane.showTabIf(contextInfo))) {
           this.childTabSet.tabBar.members[i].hide();
           tabViewPane.hidden = true;
         } else {
@@ -1792,8 +1792,24 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  isSubtabOpenedByDirectLink: function () {
+    return this.isOpenedByDirectLink() && this.isSubTab(this.standardWindow.targetTabId);
+  },
+
   isOpenedByDirectLink: function () {
     return this.standardWindow.directTabInfo;
+  },
+
+  isSubTab: function (tabId) {
+    var view;
+    if (!tabId) {
+      return false;
+    }
+    view = this.standardWindow.getView(tabId);
+    if (!view) {
+      return false;
+    }
+    return view.parentView !== null && view.parentView !== undefined;
   },
 
   //This function returns true if it is a new record and it is being edited
