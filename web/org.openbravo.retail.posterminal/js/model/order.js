@@ -2938,7 +2938,6 @@
       var p = line.get('product'),
           lines = this.get('lines'),
           merged = false;
-      line.set('promotions', null);
       lines.forEach(function (l) {
         if (l === line) {
           return;
@@ -3110,6 +3109,7 @@
         disc.chunks = undefined;
       }
 
+      disc.obdiscAllowinnegativelines = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscAllowinnegativelines'))) ? rule.get('obdiscAllowinnegativelines') : false;
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.preserve = discount.preserve === true;
@@ -3330,7 +3330,6 @@
         this.mergeLines(line);
       }
 
-
       // set the undo action
       if (me.get('multipleUndo')) {
         var text = '',
@@ -3363,9 +3362,15 @@
           }
         });
       }
+
       this.adjustPayment();
       if (line.get('promotions')) {
-        line.unset('promotions');
+        if (line.get('qty') < 0) {
+          var promotions = _.filter(line.get('promotions'), function (promotion) {
+            return promotion.obdiscAllowinnegativelines;
+          });
+          line.set('promotions', promotions);
+        }
       }
       this.set('skipCalculateReceipt', false);
       this.calculateReceipt(function () {
