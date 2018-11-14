@@ -159,6 +159,9 @@
             });
             if (invoice && invoice.get('id')) {
               var printInvoice = function () {
+                  _.each(invoice.get('lines').models, function (invoiceLine) {
+                    invoiceLine.unset('product');
+                  });
                   receipt.trigger('print', invoice, {
                     offline: true
                   });

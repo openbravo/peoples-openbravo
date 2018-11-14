@@ -549,10 +549,11 @@
 
                   invoice = theReceipt.get('calculatedInvoice');
                   if (invoice && invoice.get('id')) {
-                    invoice.on('invoiceCalculated', function () {
-                      me.get('multiOrders').trigger('print', invoice, {
-                        offline: true
-                      });
+                    _.each(invoice.get('lines').models, function (invoiceLine) {
+                      invoiceLine.unset('product');
+                    });
+                    me.get('multiOrders').trigger('print', invoice, {
+                      offline: true
                     });
                   }
 

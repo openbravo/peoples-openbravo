@@ -6203,11 +6203,13 @@
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
           if (qtyToInvoice && (ol.get('obposCanbedelivered') || me.get('bp').get('invoiceTerms') === 'I')) {
-            lineToInvoice = new OB.Model.OrderLine(ol.attributes);
+            lineToInvoice = new OB.Model.OrderLine();
+            OB.UTIL.clone(ol, lineToInvoice);
             lineToInvoice.set('id', OB.UTIL.get_UUID());
             lineToInvoice.set('qty', qtyToInvoice);
             lineToInvoice.set('orderLineId', ol.get('id'));
             lineToInvoice.get('product').set('ignorePromotions', true);
+            lineToInvoice.get('product').unset('img');
             if (OB.DEC.abs(qtyAlreadyInvoiced) > 0) {
               lineToInvoice.get('promotions').forEach(function (p) {
                 if (OB.DEC.abs(qtyToInvoice) < OB.DEC.abs(qtyPendingToBeInvoiced)) {
