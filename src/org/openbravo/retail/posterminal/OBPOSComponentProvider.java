@@ -170,6 +170,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Old Tickets
         "components/modalpaidreceipts",
         "components/modalmultiorders",
+        "components/modal-pay-open-tickets",
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
@@ -261,14 +262,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
         "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
         "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
-        "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
+        "closecash/view/tabpostprintclose",
+        "closecash/components/cashup-modals",
         "closecash/components/approvalreason-modal",
 
         "closecash/model/daycash",
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
-
+        "components/modal-pay-open-tickets",
         // Payment providers
         "components/mockpayments",
 

@@ -217,8 +217,9 @@ enyo.kind({
       });
     }
 
-    function successCallback(data) {
+    function successCallback(data, criteria) {
       me.$.renderLoading.hide();
+      me.actionPrePrint(data, criteria);
       if (data && data.length > 0) {
         me.receiptList.reset(data.models);
         me.$[me.getNameOfReceiptsListItemPrinter()].$.tbody.show();
@@ -289,7 +290,7 @@ enyo.kind({
 
     OB.Dal.find(this.filterModel, criteria, function (data) {
       if (data) {
-        successCallback(data);
+        successCallback(data, criteria);
       } else {
         errorCallback();
       }
@@ -301,6 +302,9 @@ enyo.kind({
     this.model = model;
     this.receiptList = new Backbone.Collection();
     this.$[this.getNameOfReceiptsListItemPrinter()].setCollection(this.receiptList);
+  },
+  actionPrePrint: function () {
+
   }
 });
 
