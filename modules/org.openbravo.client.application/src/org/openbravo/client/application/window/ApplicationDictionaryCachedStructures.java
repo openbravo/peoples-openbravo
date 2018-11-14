@@ -19,11 +19,13 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -532,5 +534,11 @@ public class ApplicationDictionaryCachedStructures {
         .createQuery(
             "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
         .executeUpdate();
+  }
+
+  Collection<String> getCachedWindows() {
+    return windowMap.values().stream() //
+        .map(Window::toString) //
+        .collect(Collectors.toList());
   }
 }
