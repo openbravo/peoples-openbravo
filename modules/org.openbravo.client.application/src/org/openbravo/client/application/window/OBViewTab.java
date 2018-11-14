@@ -345,9 +345,6 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getViewForm() {
-    // force a load all the columns of the table
-    getTab().getTable().getADColumnList().size();
-
     final OBViewFormComponent viewFormComponent = createComponent(OBViewFormComponent.class);
     viewFormComponent.setParameters(getParameters());
     viewFormComponent.setParentProperty(getParentProperty());
@@ -356,9 +353,6 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getViewGrid() {
-    // force a load all the columns of the table
-    getTab().getTable().getADColumnList().size();
-
     // check at least one field is visible in grid view, does not stop the execution
     OBCriteria<Field> fieldCriteria = OBDal.getInstance().createCriteria(Field.class);
     fieldCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, getTab()));
