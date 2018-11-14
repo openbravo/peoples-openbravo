@@ -11,7 +11,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2017 Openbravo SLU 
+* All portions are Copyright (C) 2001-2018 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -84,6 +84,8 @@
       setWindowElementFocus('firstElement');
 
       applyVoidDateDisplayLogic();
+      
+      applyInvoiceIfPossibleDisplayLogic();
     }
 
     function onResizeDo() {}
@@ -92,7 +94,8 @@
       var frm = document.frmMain,
           purchaseInvoiceWindow = '183',
           goodsReceiptWindow = '184',
-          displayVoidDates = (frm.inpdocaction.value === 'RC');
+          displayVoidDates = (frm.inpdocaction.value === 'RC'),
+          goodsShipmentWindow = '169';
       if (inputValue(frm.inpdocaction) == null || inputValue(frm.inpdocaction) == "") {
         setWindowElementFocus(frm.inpdocaction);
         showJSMessage(1);
@@ -131,6 +134,15 @@
           return false;
         }
       }
+      
+      if (goodsShipmentWindow === frm.inpwindowId.value && ((inputValue(frm.inpInvoiceDate) == null || inputValue(frm.inpInvoiceDate) == "") || 
+        !isValidDate(frm.inpInvoiceDate.value, frm.inpInvoiceDate.getAttribute("displayformat")))) {
+    	  
+        setWindowElementFocus(frm.inpInvoiceDate);
+        showJSMessage('InvalidDateFormat');        
+        return false;
+      }      
+      
       setProcessingMode('popup', true);
       return true;
     }
@@ -164,6 +176,19 @@
       
       displayLogicElement('voidedDocumentDateRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId || goodsReceiptWindow === currentWindowId));
       displayLogicElement('voidedDocumentDateAcctRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId || goodsReceiptWindow === currentWindowId));
+    }
+    
+    function applyInvoiceIfPossibleDisplayLogic() {
+      var frm = document.frmMain,
+          goodsShipmentWindow = '169',
+          currentWindowId = frm.inpwindowId.value,
+          documentIsInDraftStatus = (frm.inpdocstatus.value === 'DR'),
+          isInvoiceIfPossibleChecked = frm.inpInvoiceIfPossible.checked;
+      
+      displayLogicElement('invoiceIfPossible', documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
+      displayLogicElement('processInvoice', isInvoiceIfPossibleChecked && documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
+      displayLogicElement('invoiceDateRow', isInvoiceIfPossibleChecked && documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
+      displayLogicElement('priceListRow', isInvoiceIfPossibleChecked && documentIsInDraftStatus && currentWindowId === goodsShipmentWindow);
     }
     </script>
 </head>
@@ -440,7 +465,78 @@
                   </table>
                 </td>
               </tr>
-
+              
+              <tr id="invoiceIfPossible">
+              	<td class="TitleCell"><span id="lblInvoiceIfPossible" class="LabelText">Invoice if possible</span></td>
+              	<td class="Radio_Check_ContentCell">
+              	  <span class="Checkbox_container_NOT_Focused">
+              	    <input type="checkbox" id="paramInvoiceIfPossible" name="inpInvoiceIfPossible" onchange="applyInvoiceIfPossibleDisplayLogic();" value="Y">
+              	  </span>
+              	</td>
+              </tr>
+              
+              <tr id="invoiceDateRow">
+                <td class="TitleCell"><span id="lblInvoiceDate" class="LabelText">Invoice Date</span></td>
+                <td class="TextBox_btn_ContentCell">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                    <tr>
+                      <td class="TextBox_ContentCell">
+                        <table style="border: 0px none; border-collapse: collapse;">
+                          <tr><td style="padding-top: 0px;">
+                            <input type="text" id="paramInvoiceDate" name="inpInvoiceDate" onchange="validateDateTextBox(this.id); logChanges(this);return true;" onblur="expandDateYear(this.id);" oncontextmenu="changeToEditingMode('oncontextmenu');" onpaste="changeToEditingMode('onpaste');" oncut="changeToEditingMode('oncut');" onkeypress="changeToEditingMode('onkeypress');" onkeydown="changeToEditingMode('onkeydown');" onkeyup="autoCompleteDate(this);" maxlength="10" value="" required="true" class="dojoValidateValid required TextBox_btn_OneCell_width" displayFormat="xx" saveFormat="yy">
+                          </td></tr>
+                        </table>
+                        <span id="paramInvoiceDateinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                          <table class="TextBox_MsgContainer_table">
+                            <tbody><tr class="TextBox_MsgContainer_tr"><td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td></tr>
+                            <tr><td class="invalid" colspan="2"><div name="invalidText" id="paramInvoiceDateinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td></tr>
+                          </tbody></table>
+                        </span>
+                        <span id="paramInvoiceDatemissingSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                          <table class="TextBox_MsgContainer_table">
+                            <tbody><tr class="TextBox_MsgContainer_tr">
+                              <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                            </tr>
+                            <tr>
+                              <td class="missing" colspan="2"><div name="missingText" id="paramInvoiceDatemissingSpanText" class="TextBox_MsgContainer_div2">* This value is required.</div></td>
+                            </tr>
+                            </tbody></table>
+                        </span>
+                      </td>
+                      <td id="calendarIconInvoiceDate" class="FieldButton_ContentCell">
+                        <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpInvoiceDate', document.frmMain.inpInvoiceDate.value, false);return false;">
+                          <table class="FieldButton"  onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+              <tr id="priceListRow">
+                <td class="TitleCell"><span class="LabelText">Price List</span></td>
+                <td class="Combo_ContentCell" colspan="2">
+                  <select name="inpPriceList" id="priceList" class="ComboKey Combo_TwoCells_width">
+                  </select>
+                </td>
+                <td></td>
+              </tr>
+              
+              <tr id="processInvoice">
+              	<td class="TitleCell"><span id="lblProcessInvoice" class="LabelText">Process Invoice</span></td>
+              	<td class="Radio_Check_ContentCell">
+              	  <span class="Checkbox_container_NOT_Focused">
+              	    <input type="checkbox" id="paramProcessInvoice" name="inpProcessInvoice" value="Y" checked>
+              	  </span>
+              	</td>
+              </tr>
+              
               <tr><td height="20px"></td></tr>
 
               <tr>

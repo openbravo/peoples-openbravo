@@ -58,9 +58,19 @@
   <PARAMETER id="documentAcctDate" name="documentAcctDate" attribute="value"/>
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
 
-	<PARAMETER id="docaction" name="docaction"/>
-	<SUBREPORT id="reportdocaction" name="reportdocaction" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected" withId="docaction"/>
-	</SUBREPORT>
-	<DISCARD id="discard"/>
+  <PARAMETER id="docaction" name="docaction"/>
+  <SUBREPORT id="reportdocaction" name="reportdocaction" report="org/openbravo/erpCommon/reference/List">
+	<ARGUMENT name="parameterListSelected" withId="docaction"/>
+  </SUBREPORT>
+  <DISCARD id="discard"/>
+
+  <PARAMETER id="paramInvoiceDate" name="invoiceDocumentDate" attribute="value"/>
+  <PARAMETER id="paramInvoiceDate" name="dateDisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramInvoiceDate" name="dateDisplayFormat" attribute="saveformat" replace="yy"/>
+  
+  <PARAMETER id="selectedPriceList" name="selectedPriceList"/>
+  <SUBREPORT id="priceList" name="priceList" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="selectedPriceList"/>
+  </SUBREPORT>
+  
 </REPORT>

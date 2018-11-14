@@ -256,7 +256,7 @@ public class LandedCostProcess {
         // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
         MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
         CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
-            referenceDate);
+            referenceDate, lcCostCurrency);
         cal.setNeedsPosting(Boolean.FALSE);
         cal.setUnitCost(Boolean.FALSE);
         cal.setCurrency(lcCostCurrency);

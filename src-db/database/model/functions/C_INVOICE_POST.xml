@@ -1767,8 +1767,8 @@ IF (NOT FINISH_PROCESS) THEN
     UPDATE C_Invoice i
     SET prepaymentamt = (
       SELECT COALESCE(SUM(fps.paidamt), 0)
-      FROM FIN_Payment_Schedule fps
-      WHERE fps.C_Order_ID = i.C_Order_ID
+      FROM FIN_Payment_Schedule fps 
+      WHERE EXISTS ( select 1  from c_invoiceline il , c_orderline ol where il.c_invoice_id=v_Record_ID and il.c_orderline_id=ol.c_orderline_id and fps.C_Order_ID =ol.c_order_id)  
     )
     WHERE i.C_Invoice_ID = v_Record_ID;
   END IF;--FINISH_PROCESS

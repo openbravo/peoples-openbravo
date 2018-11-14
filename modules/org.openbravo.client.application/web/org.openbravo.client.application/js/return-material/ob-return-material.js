@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -143,42 +143,45 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
       editedRecord = null,
       storageBin = record.storageBin,
       i;
-  //Cheking available stock
-  if (storageBin === null) {
+  //Checking available stock
+  if (storageBin === null && !record.hasOverIssueBin) {
     item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
     return false;
   }
-  // check value is positive and below available qty and pending qty
-  if (value === null || value < 0 || value > record.pending || value > record.availableQty) {
-    if (record.pending < record.availableQty) {
-      item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_MoreThanPending', [record.pending]));
-    } else {
-      item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_MoreThanAvailable', [record.availableQty]));
-    }
-    return false;
-  }
-  // check shipped total quantity for the order line is below pending qty.
-  var isUomManagementEnabled = OB.PropertyStore.get('UomManagement');
-  for (i = 0; i < selectedRecordsLength; i++) {
-    editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
-    if (editedRecord.orderLine === orderLine) {
-      if (isUomManagementEnabled === 'Y') {
-        if (record.returnedUOM === editedRecord.returnedUOM) {
-          pendingQty -= editedRecord.movementQuantity;
-        } else {
-          var movementQuantity = new BigDecimal(String(editedRecord.movementQuantity));
-          var rate = new BigDecimal(String(editedRecord.rate));
-          pendingQty -= (editedRecord.returnedUOM !== editedRecord.uOM) ? movementQuantity.multiply(
-          rate).toString() : movementQuantity.divide(rate).toString();
-        }
+  if (storageBin !== null && !record.hasOverIssueBin) {
+    // check value is positive and below available qty and pending qty. 
+    // This check it is only needed if there isn't any storage bin with Overissue inventory status in the RTVS Warehouse
+    if (value === null || value < 0 || value > record.pending || value > record.availableQty) {
+      if (record.pending < record.availableQty) {
+        item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_MoreThanPending', [record.pending]));
+      } else {
+        item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_MoreThanAvailable', [record.availableQty]));
       }
-      if (pendingQty < 0) {
+      return false;
+    }
+    // check shipped total quantity for the order line is below pending qty.
+    var isUomManagementEnabled = OB.PropertyStore.get('UomManagement');
+    for (i = 0; i < selectedRecordsLength; i++) {
+      editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
+      if (editedRecord.orderLine === orderLine) {
         if (isUomManagementEnabled === 'Y') {
-          item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShippedInUomManagement', []));
-        } else {
-          item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShipped', [record.pending]));
+          if (record.returnedUOM === editedRecord.returnedUOM) {
+            pendingQty -= editedRecord.movementQuantity;
+          } else {
+            var movementQuantity = new BigDecimal(String(editedRecord.movementQuantity));
+            var rate = new BigDecimal(String(editedRecord.rate));
+            pendingQty -= (editedRecord.returnedUOM !== editedRecord.uOM) ? movementQuantity.multiply(
+            rate).toString() : movementQuantity.divide(rate).toString();
+          }
         }
-        return false;
+        if (pendingQty < 0) {
+          if (isUomManagementEnabled === 'Y') {
+            item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShippedInUomManagement', []));
+          } else {
+            item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShipped', [record.pending]));
+          }
+          return false;
+        }
       }
     }
   }
@@ -200,34 +203,51 @@ OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
       editedRecord = null,
       isstocked = record.stocked,
       i;
+  //calculate already shipped qty on grid
+  var calculateAlreadyShippedQtyOnGrid = function () {
+      var isUomManagementEnabled = OB.PropertyStore.get('UomManagement');
+      for (i = 0; i < selectedRecords.length; i++) {
+        editedRecord = isc.addProperties({}, selectedRecords[i], grid.getEditedRecord(selectedRecords[i]));
+        if (editedRecord.orderLine === orderLine && selectedRecords[i].id !== record.id) {
+          if (isUomManagementEnabled === 'Y') {
+            if (record.returnedUOM === editedRecord.returnedUOM) {
+              shippedQty = shippedQty.add(new BigDecimal(String(editedRecord.movementQuantity)));
+            } else {
+              var movementQuantity = new BigDecimal(String(editedRecord.movementQuantity));
+              var rate = new BigDecimal(String(editedRecord.rate));
+              shippedQty = (editedRecord.returnedUOM !== editedRecord.uOM) ? shippedQty.add(movementQuantity.multiply(rate)) : shippedQty.add(movementQuantity.divide(rate));
+            }
+          }
+        }
+      }
+      pending = pending.subtract(shippedQty);
+      if (pending.compareTo(availableQty) < 0) {
+        record.movementQuantity = pending.toString();
+      } else {
+        record.movementQuantity = availableQty.toString();
+      }
+      };
   if (state) {
     // Checking available stock
     if (storageBin === null && isstocked) {
-      grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
-      return false;
-    }
-    // calculate already shipped qty on grid
-    var isUomManagementEnabled = OB.PropertyStore.get('UomManagement');
-    for (i = 0; i < selectedRecords.length; i++) {
-      editedRecord = isc.addProperties({}, selectedRecords[i], grid.getEditedRecord(selectedRecords[i]));
-      if (editedRecord.orderLine === orderLine && selectedRecords[i].id !== record.id) {
-        if (isUomManagementEnabled === 'Y') {
-          if (record.returnedUOM === editedRecord.returnedUOM) {
-            shippedQty = shippedQty.add(new BigDecimal(String(editedRecord.movementQuantity)));
+      // Check if exists any storage bin with overissue inventory status
+      var callback = function (response, data, request) {
+          if (data.overissueBin === '') {
+            grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_NotAvailableStock', [record.rMOrderNo]));
+            record.hasOverIssueBin = false;
+            return false;
           } else {
-            var movementQuantity = new BigDecimal(String(editedRecord.movementQuantity));
-            var rate = new BigDecimal(String(editedRecord.rate));
-            shippedQty = (editedRecord.returnedUOM !== editedRecord.uOM) ? shippedQty.add(movementQuantity.multiply(rate)) : shippedQty.add(movementQuantity.divide(rate));
+            calculateAlreadyShippedQtyOnGrid();
+            record.hasOverIssueBin = true;
+            record.storageBin = data.overissueBin;
+            record.storageBin$_identifier = data.storageBin$_identifier;
           }
-        }
-
-      }
-    }
-    pending = pending.subtract(shippedQty);
-    if (pending.compareTo(availableQty) < 0) {
-      record.movementQuantity = pending.toString();
+          };
+      OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.CheckExistsOverissueBinForRFCShipmentWH', {
+        warehouseId: grid.view.parentWindow.activeView.getContextInfo(false, true, true, true).inpmWarehouseId
+      }, {}, callback);
     } else {
-      record.movementQuantity = availableQty.toString();
+      calculateAlreadyShippedQtyOnGrid();
     }
   }
 };
