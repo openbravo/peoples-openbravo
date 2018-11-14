@@ -20,10 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -57,7 +53,6 @@ import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.retail.posterminal.InvoicePreProcessHook;
 import org.openbravo.service.json.JsonConstants;
 
 public class InvoiceUtils {
@@ -69,15 +64,10 @@ public class InvoiceUtils {
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, JSONArray> invoicelineserviceList;
 
-  @Inject
-  @Any
-  private Instance<InvoicePreProcessHook> invoicePreProcesses;
-
   public Invoice createNewInvoice(JSONObject jsoninvoice, Order order,
       boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers) {
     final Invoice invoice = OBProvider.getInstance().get(Invoice.class);
     try {
-      executeInvoicePreProcessHook(invoicePreProcesses, jsoninvoice);
 
       final ArrayList<OrderLine> invoicelineReferences = new ArrayList<OrderLine>();
       JSONArray invoicelines = jsoninvoice.getJSONArray("lines");
@@ -100,17 +90,6 @@ public class InvoiceUtils {
     }
 
     return invoice;
-  }
-
-  private void executeInvoicePreProcessHook(Instance<? extends Object> hooks, JSONObject jsoninvoice)
-      throws Exception {
-
-    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
-      Object proc = procIter.next();
-      if (proc instanceof InvoicePreProcessHook) {
-        ((InvoicePreProcessHook) proc).exec(jsoninvoice);
-      }
-    }
   }
 
   private void addDocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType docTypeTarget,
