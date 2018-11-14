@@ -260,21 +260,22 @@
                 OB.UTIL.clone(receipt, diffReceipt);
                 // create a clone of the receipt to be used when executing the final callback
                 if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
-                  if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && eventParams && eventParams.callback) {
-                    eventParams.callback({
-                      frozenReceipt: frozenReceipt,
-                      diffReceipt: diffReceipt,
-                      isCancelled: false
-                    });
-                  }
-                  // create a clone of the receipt to be used within the hook
-                  var receiptForPostSyncReceipt = new OB.Model.Order();
-                  OB.UTIL.clone(frozenReceipt, receiptForPostSyncReceipt);
-                  //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
-                  //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
-                  OB.trace('Execution Sync process.');
-
                   if (eventParams && !eventParams.ignoreSyncProcess) {
+                    if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true) && eventParams && eventParams.callback) {
+                      eventParams.callback({
+                        frozenReceipt: frozenReceipt,
+                        diffReceipt: diffReceipt,
+                        isCancelled: false
+                      });
+                    }
+                    // create a clone of the receipt to be used within the hook
+                    var receiptForPostSyncReceipt = new OB.Model.Order();
+                    OB.UTIL.clone(frozenReceipt, receiptForPostSyncReceipt);
+                    //If there are elements in the hook, we are forced to execute the callback only after the synchronization process
+                    //has been executed, to prevent race conditions with the callback processes (printing and deleting the receipt)
+                    OB.trace('Execution Sync process.');
+
+
                     OB.MobileApp.model.runSyncProcess(function () {
                       var successStep = function () {
                           OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
@@ -302,7 +303,8 @@
                           }, tx);
                         });
                       } else {
-                        successStep();
+                        serverMessageForQuotation(frozenReceipt);
+                        OB.debug("Ticket closed: runSyncProcess executed");
                       }
                     }, function () {
                       OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
@@ -315,6 +317,7 @@
                     if (eventParams && eventParams.callback) {
                       eventParams.callback({
                         frozenReceipt: frozenReceipt,
+                        diffReceipt: diffReceipt,
                         isCancelled: false
                       });
                     }
