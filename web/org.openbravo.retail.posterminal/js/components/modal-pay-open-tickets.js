@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/*global enyo, Backbone, _, OB */
 
 enyo.kind({
   name: 'OB.UI.ReceiptsForPayOpenTicketsList',
@@ -190,6 +190,23 @@ enyo.kind({
     return 'modalAdvancedFilterVerifiedReturns';
   },
   executeOnShow: function () {
+    var me = this;
+    if (!this.initialized) {
+      this.inherited(arguments);
+      this.getFilterSelectorTableHeader().clearFilter();
+    }
+    if (OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
+      _.each(me.model.get('orderList').models, function (iter) {
+        if (iter.get('lines') && iter.get('lines').length > 0) {
+          if ((iter.get('orderType') === 0 || iter.get('orderType') === 2) && !iter.get('isPaid') && !iter.get('isQuotation') && iter.get('gross') >= 0) {
+            if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
+              iter.set('checked', true);
+              me.$.body.$.receiptsForPayOpenTicketsList.receiptList.add(iter);
+            }
+          }
+        }
+      });
+    }
     if (!this.initialized) {
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
