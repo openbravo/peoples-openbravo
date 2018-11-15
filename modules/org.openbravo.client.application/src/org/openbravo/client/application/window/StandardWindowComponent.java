@@ -195,6 +195,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     return processViews;
   }
 
+  /** Returns the applicable System Grid Configuration if any. */
   public static Optional<GCSystem> getSystemGridConfig() {
     OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
     gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
@@ -203,6 +204,10 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     return Optional.ofNullable((GCSystem) gcSystemCriteria.uniqueResult());
   }
 
+  /**
+   * For a given window, it returns a Map being its key all the tab ids in that window and the
+   * values the applicable Tab Grid Configuration for each tab if any.
+   */
   public static Map<String, Optional<GCTab>> getTabsGridConfig(Window window) {
     // window comes from ADCS, we need to retrieve GC from DB as it might have changed
     OBQuery<GCTab> qGCTab = OBDal.getInstance().createQuery(GCTab.class,
