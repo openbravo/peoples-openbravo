@@ -378,7 +378,7 @@ hm.id AS hardwareid,
 hm.hardwareURL AS HardwareURL
 FROM Organization AS o,
 OBPOS_HARDWAREMNG AS hm
-WHERE hm.organization = o.id
+WHERE hm.organization = o
 AND hm.isautoregister= 'Y']]></HQLQUERY>
 <!--622D7B99C1494356A0C983BE4E6E8446-->  <ENTITY_ALIAS><![CDATA[hm]]></ENTITY_ALIAS>
 <!--622D7B99C1494356A0C983BE4E6E8446--></AD_TABLE>
