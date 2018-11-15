@@ -710,8 +710,8 @@ public class OBViewFieldHandler {
       }
 
       if (tab != null) {
-        JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(auditTab,
-            systemGridConfig, getTabGridConfig());
+        JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(systemGridConfig,
+            getTabGridConfig());
         try {
           if (gridConfiguration.has("canFilter")) {
             boolean canFilter = gridConfiguration.getBoolean("canFilter");

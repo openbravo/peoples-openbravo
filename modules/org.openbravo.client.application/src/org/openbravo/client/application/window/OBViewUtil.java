@@ -38,7 +38,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
-import org.openbravo.model.ad.ui.Tab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,25 +198,11 @@ public class OBViewUtil {
   /**
    * Returns the grid configuration based on the field and tab information
    * 
-   * @param tab
-   *          tab whose grid configuration is to be obtained.
    * @return the grid configuration
    */
-  public static JSONObject getGridConfigurationSettings(Tab tab, Optional<GCSystem> sysConf,
+  public static JSONObject getGridConfigurationSettings(Optional<GCSystem> sysConf,
       Optional<GCTab> tabConf) {
-    return getGridConfigurationSettings(null, tab, sysConf, tabConf);
-  }
-
-  /**
-   * Returns the grid configuration of a field
-   * 
-   * @param field
-   *          field whose grid configuration is to be obtained
-   * @return the grid configuration
-   */
-  public static JSONObject getGridConfigurationSettings(Field field, Optional<GCSystem> sysConf,
-      Optional<GCTab> tabConf) {
-    return getGridConfigurationSettings(field, field.getTab(), sysConf, tabConf);
+    return getGridConfigurationSettings(null, sysConf, tabConf);
   }
 
   /**
@@ -225,13 +210,10 @@ public class OBViewUtil {
    * 
    * @param field
    *          field whose grid configuration is to be obtained it can be null
-   * @param tab
-   *          tab whose grid configuration is to be obtained. If the field is not null, this
-   *          parameter will be the tab of the field
    * @return the grid configuration
    */
-  private static JSONObject getGridConfigurationSettings(Field field, Tab tab,
-      Optional<GCSystem> sysConf, Optional<GCTab> tabConf) {
+  public static JSONObject getGridConfigurationSettings(Field field, Optional<GCSystem> sysConf,
+      Optional<GCTab> tabConf) {
     GridConfigSettings settings = new GridConfigSettings(field);
 
     if (tabConf.isPresent()) {

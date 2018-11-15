@@ -119,8 +119,7 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       OBDal.getInstance().flush();
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
-      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(tab, getSystemGridConfig(),
-          getTabGridConfig(tab));
+      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(), getTabGridConfig(tab));
 
       assertThat("Grid configuration at tab level with filtering disabled:", tabConfig.toString(),
           containsString(CAN_FILTER_FALSE));
@@ -166,8 +165,7 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
 
-      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(tab, getSystemGridConfig(),
-          getTabGridConfig(tab));
+      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(), getTabGridConfig(tab));
 
       Field field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_TAB_CURRENCY_FIELD_ID);
       JSONObject systemConfig = OBViewUtil.getGridConfigurationSettings(field,
@@ -321,8 +319,7 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       OBDal.getInstance().flush();
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
-      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(tab, getSystemGridConfig(),
-          getTabGridConfig(tab));
+      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(), getTabGridConfig(tab));
 
       Field field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID);
       JSONObject fieldConfig = OBViewUtil.getGridConfigurationSettings(field,
