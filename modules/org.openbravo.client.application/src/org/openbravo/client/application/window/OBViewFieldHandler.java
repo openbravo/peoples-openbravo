@@ -2336,7 +2336,7 @@ public class OBViewFieldHandler {
     return (entity == null) ? false : entity.hasProperty("processed");
   }
 
-  public void setGCSettings(Optional<GCSystem> systemGridConfig,
+  void setGCSettings(Optional<GCSystem> systemGridConfig,
       Map<String, Optional<GCTab>> tabsGridConfig) {
     this.systemGridConfig = systemGridConfig;
     this.tabsGridConfig = tabsGridConfig;

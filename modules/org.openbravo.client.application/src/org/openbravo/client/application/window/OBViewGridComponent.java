@@ -462,7 +462,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType());
   }
 
-  public void setGCSettings(Optional<GCSystem> systemGridConfig,
+  void setGCSettings(Optional<GCSystem> systemGridConfig,
       Map<String, Optional<GCTab>> tabsGridConfig) {
     this.systemGridConfig = systemGridConfig;
     this.tabsGridConfig = tabsGridConfig;
