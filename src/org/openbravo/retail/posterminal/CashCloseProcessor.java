@@ -392,8 +392,11 @@ public class CashCloseProcessor {
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(accountTo) + 10);
     transaction.setGLItem(glItem);
     if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
-      transaction.setPaymentAmount(reconciliationTotal.multiply(conversionRate).abs()
-          .setScale(2, RoundingMode.HALF_EVEN));
+      transaction.setPaymentAmount(reconciliationTotal
+          .multiply(conversionRate)
+          .abs()
+          .setScale(accountTo.getCurrency().getStandardPrecision().intValue(),
+              RoundingMode.HALF_EVEN));
       transaction.setTransactionType("BPW");
     } else {
       transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
