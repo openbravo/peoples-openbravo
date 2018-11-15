@@ -235,19 +235,19 @@ public class OBViewFieldHandler {
     }
     List<OBViewFieldDefinition> auditFields = new ArrayList<OBViewFieldDefinition>();
     if (!hasCreatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
       auditFields.add(audit);
     }
     if (!hasCreatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement);
       auditFields.add(audit);
     }
     if (!hasUpdatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
       auditFields.add(audit);
     }
     if (!hasUpdatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement);
       auditFields.add(audit);
     }
 
@@ -647,7 +647,6 @@ public class OBViewFieldHandler {
     private String refType;
     private String refEntity;
     private Element element;
-    private Tab auditTab;
 
     public String getOnChangeFunction() {
       return null;
@@ -683,14 +682,9 @@ public class OBViewFieldHandler {
     }
 
     public OBViewFieldAudit(String type, Element element) {
-      this(type, element, null);
-    }
-
-    public OBViewFieldAudit(String type, Element element, Tab tab) {
       // force reload of element as if it was previously loaded but its children were not touched,
       // lazy initialization fails
       this.element = OBDal.getInstance().get(Element.class, element.getId());
-      this.auditTab = tab;
       name = type;
       if (type.endsWith("By")) {
         // User search
