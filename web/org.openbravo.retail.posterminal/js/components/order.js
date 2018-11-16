@@ -788,7 +788,7 @@ enyo.kind({
           servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
-      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable')) {
         return;
       }
       this.updating = true;
@@ -1111,7 +1111,7 @@ enyo.kind({
       var me = this,
           setPriceCallback, handleError, i;
 
-      if (this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y')) {
         return;
       }
 
