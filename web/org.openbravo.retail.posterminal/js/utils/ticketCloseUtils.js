@@ -158,14 +158,15 @@
               offline: true
             });
             if (invoice && invoice.get('id')) {
-              var printInvoice = function () {
-                  _.each(invoice.get('lines').models, function (invoiceLine) {
-                    invoiceLine.unset('product');
-                  });
-                  receipt.trigger('print', invoice, {
+              var invoiceToPrint = OB.UTIL.clone(invoice),
+                  printInvoice = function () {
+                  receipt.trigger('print', invoiceToPrint, {
                     offline: true
                   });
                   };
+              _.each(invoice.get('lines').models, function (invoiceLine) {
+                invoiceLine.unset('product');
+              });
               if (!OB.MobileApp.model.hasPermission('OBPOS_print.return_invoice', true)) {
                 var positiveLine = _.find(receipt.get('lines').models, function (line) {
                   return line.get('qty') >= 0;

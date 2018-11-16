@@ -541,18 +541,18 @@
               }, function (args) {
                 OB.UTIL.calculateCurrentCash();
                 _.each(model.get('multiOrders').get('multiOrdersList').models, function (theReceipt) {
-                  var invoice;
+                  var invoice = theReceipt.get('calculatedInvoice');
 
                   me.context.get('multiOrders').trigger('print', theReceipt, {
                     offline: true
                   });
 
-                  invoice = theReceipt.get('calculatedInvoice');
                   if (invoice && invoice.get('id')) {
+                    var invoiceToPrint = OB.UTIL.clone(invoice);
                     _.each(invoice.get('lines').models, function (invoiceLine) {
                       invoiceLine.unset('product');
                     });
-                    me.get('multiOrders').trigger('print', invoice, {
+                    me.get('multiOrders').trigger('print', invoiceToPrint, {
                       offline: true
                     });
                   }
