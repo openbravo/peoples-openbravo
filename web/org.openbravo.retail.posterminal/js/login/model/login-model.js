@@ -91,7 +91,7 @@
         properties: ['terminal'],
         loadFunction: function (terminalModel) {
           OB.info('[terminal] Loading... ' + this.properties);
-          var max, i, handleError;
+          var max, i, handleError, loadTerminalModel;
           var params = {};
           var currentDate = new Date();
           params.terminalTime = currentDate;
@@ -121,97 +121,111 @@
               me.attemptToLoginOffline();
             }
           };
-          new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
-            if (data.exception) {
-              handleError(data);
-            } else if (data[0]) {
-              var showTerminalModalError = function (errorMessage) {
-                  OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + errorMessage, [{
-                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                    isConfirmButton: true,
-                    action: function () {
-                      OB.UTIL.showLoggingOut(true);
-                      terminalModel.logout();
-                    }
-                  }], {
-                    onShowFunction: function (popup) {
-                      popup.$.headerCloseButton.hide();
-                    },
-                    autoDismiss: false
-                  });
-                  };
 
-              // load the OB.MobileApp.model              
-              for (i = 0, max = data.length; i < max; i++) {
-                if (Object.keys(data[i])[0] === "businesspartner") {
-                  terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]].id);
-                } else if (Object.keys(data[i])[0] === "pricelist" && _.isNull(data[i][Object.keys(data[i])[0]])) {
-                  showTerminalModalError(OB.I18N.getLabel('OBPOS_NoPriceList'));
-                  return;
-                } else {
-                  terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]]);
-                }
-              }
-
-              OB.DS.commonParams = {
-                client: terminalModel.get('terminal').client,
-                organization: terminalModel.get('terminal').organization,
-                pos: terminalModel.get('terminal').id,
-                terminalName: terminalModel.get('terminalName')
-              };
-
-              // update the local database with the document sequence received
-              OB.Dal.transaction(function (tx) {
-                OB.MobileApp.model.saveDocumentSequence(OB.MobileApp.model.get('terminal').lastDocumentNumber, OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber, OB.MobileApp.model.get('terminal').lastReturnDocumentNumber, function () {
-                  if (OB.MobileApp.model.orderList) {
-                    OB.MobileApp.model.orderList.synchronizeCurrentOrder();
-                  }
-                  OB.UTIL.HookManager.executeHooks('OBPOS_PostDocumentSequenceUpdated', {
-                    tx: tx
-                  }, function (args) {
-                    if (args && args.cancelOperation) {
-                      return;
-                    }
-                    OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
-                    terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
-                    terminalModel.set('useEmbededBarcode', terminalModel.get('terminal').terminalType.useembededbarcodescanner);
-                    if (!terminalModel.usermodel) {
-                      OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
-                    } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
-                      var error = OB.MobileApp.model.attributes.loadManifeststatus;
-                      OB.debug(error.reason + ' failed to load: ' + error.url);
-                      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), enyo.format("%s %s: %s", OB.I18N.getLabel('OBPOS_FailedAppCache'), error.type, error.message), [{
-                        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                        isConfirmButton: true
-                      }], {
-                        autoDismiss: false,
-                        onHideFunction: function (popup) {
-                          OB.UTIL.showLoading(true);
-                          terminalModel.set('terminalCorrectlyLoadedFromBackend', true);
-                          terminalModel.propertiesReady(me.properties);
-                        }
-                      });
-                    } else {
-                      terminalModel.set('terminalCorrectlyLoadedFromBackend', true);
-                      terminalModel.propertiesReady(me.properties);
-                    }
-                    OB.UTIL.HookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
-                      data: data[0].terminal.id
+          loadTerminalModel = function () {
+            new OB.DS.Request('org.openbravo.retail.posterminal.term.Terminal').exec(params, function (data) {
+              if (data.exception) {
+                handleError(data);
+              } else if (data[0]) {
+                var showTerminalModalError = function (errorMessage) {
+                    OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + errorMessage, [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      isConfirmButton: true,
+                      action: function () {
+                        OB.UTIL.showLoggingOut(true);
+                        terminalModel.logout();
+                      }
+                    }], {
+                      onShowFunction: function (popup) {
+                        popup.$.headerCloseButton.hide();
+                      },
+                      autoDismiss: false
                     });
-                  });
-                }, tx);
-              });
-            } else {
-              OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
-            }
-          }, function (data) {
-            // connection error.
-            OB.UTIL.Debug.execute(function () {
-              OB.error("Error while retrieving the terminal info ", data);
-            });
+                    };
 
-            handleError(data);
-          }, true, 5000);
+                // load the OB.MobileApp.model              
+                for (i = 0, max = data.length; i < max; i++) {
+                  if (Object.keys(data[i])[0] === "businesspartner") {
+                    terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]].id);
+                  } else if (Object.keys(data[i])[0] === "pricelist" && _.isNull(data[i][Object.keys(data[i])[0]])) {
+                    showTerminalModalError(OB.I18N.getLabel('OBPOS_NoPriceList'));
+                    return;
+                  } else {
+                    terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]]);
+                  }
+                }
+
+                OB.DS.commonParams = {
+                  client: terminalModel.get('terminal').client,
+                  organization: terminalModel.get('terminal').organization,
+                  pos: terminalModel.get('terminal').id,
+                  terminalName: terminalModel.get('terminalName')
+                };
+
+                // update the local database with the document sequence received
+                OB.Dal.transaction(function (tx) {
+                  OB.MobileApp.model.saveDocumentSequence(OB.MobileApp.model.get('terminal').lastDocumentNumber, OB.MobileApp.model.get('terminal').lastQuotationDocumentNumber, OB.MobileApp.model.get('terminal').lastReturnDocumentNumber, function () {
+                    if (OB.MobileApp.model.orderList) {
+                      OB.MobileApp.model.orderList.synchronizeCurrentOrder();
+                    }
+                    OB.UTIL.HookManager.executeHooks('OBPOS_PostDocumentSequenceUpdated', {
+                      tx: tx
+                    }, function (args) {
+                      if (args && args.cancelOperation) {
+                        return;
+                      }
+                      OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
+                      terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
+                      terminalModel.set('useEmbededBarcode', terminalModel.get('terminal').terminalType.useembededbarcodescanner);
+                      if (!terminalModel.usermodel) {
+                        OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
+                      } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
+                        var error = OB.MobileApp.model.attributes.loadManifeststatus;
+                        OB.debug(error.reason + ' failed to load: ' + error.url);
+                        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), enyo.format("%s %s: %s", OB.I18N.getLabel('OBPOS_FailedAppCache'), error.type, error.message), [{
+                          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                          isConfirmButton: true
+                        }], {
+                          autoDismiss: false,
+                          onHideFunction: function (popup) {
+                            OB.UTIL.showLoading(true);
+                            terminalModel.set('terminalCorrectlyLoadedFromBackend', true);
+                            terminalModel.propertiesReady(me.properties);
+                          }
+                        });
+                      } else {
+                        terminalModel.set('terminalCorrectlyLoadedFromBackend', true);
+                        terminalModel.propertiesReady(me.properties);
+                      }
+                      OB.UTIL.HookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
+                        data: data[0].terminal.id
+                      });
+                    });
+                  }, tx);
+                });
+              } else {
+                OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
+              }
+            }, function (data) {
+              // connection error.
+              OB.UTIL.Debug.execute(function () {
+                OB.error("Error while retrieving the terminal info ", data);
+              });
+
+              handleError(data);
+            }, true, 5000);
+          };
+
+          OB.Dal.find(OB.Model.CashUp, {
+            'isprocessed': 'N'
+          }, function (cashUps) {
+            if (cashUps.length === 1) {
+              params.cashUpId = cashUps.at(0).get('id');
+            }
+            loadTerminalModel();
+          }, function () {
+            loadTerminalModel();
+          });
         }
       });
 

@@ -75,7 +75,7 @@ public class Terminal extends JSONProcessSimple {
       OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
 
       // INITIAL VALIDATIONS
-      InitialValidations.validateTerminal(pOSTerminal);
+      InitialValidations.validateTerminal(pOSTerminal, jsonsent);
 
       // TO use terminalId in QueryTerminalProperty
       jsonsent.put("pos", pOSTerminal.getId());
