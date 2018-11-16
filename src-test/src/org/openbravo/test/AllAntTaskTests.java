@@ -120,6 +120,7 @@ import org.openbravo.test.system.TestInfrastructure;
 import org.openbravo.test.taxes.TaxesTest;
 import org.openbravo.test.views.GCSequenceNumberTests;
 import org.openbravo.test.views.SortingFilteringGridConfiguration;
+import org.openbravo.test.views.ViewGeneration;
 import org.openbravo.test.views.ViewGenerationWithDifferentConfigLevelTest;
 import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.DatasetExportTest;
@@ -294,7 +295,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ServicesTest3.class,
 
     // others
-    DocumentNumberGeneration.class,
+    DocumentNumberGeneration.class, //
+    ViewGeneration.class,
 
     // Cancel and Replace Tests
     CancelAndReplaceTest.class,
