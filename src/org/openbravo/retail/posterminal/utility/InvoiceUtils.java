@@ -572,6 +572,7 @@ public class InvoiceUtils {
         }
         psd.getPaymentDetails().setPrepayment(true);
       }
+      OBDal.getInstance().flush();
 
       // If the invoice haven't been completely paid, add the remaining payment
       final BigDecimal remainingAmt = gross.subtract(paymentsAmt);
@@ -664,21 +665,21 @@ public class InvoiceUtils {
             }
             // Now the PSD with the remaining quantity must be divided between the different PS
             // Invoices
-            BigDecimal pendingInPaymentTermsAmt = remainingAmt;
             for (FIN_PaymentSchedule invoicePS : invoice.getFINPaymentScheduleList()) {
-              if (invoicePS.getId().equals(paymentScheduleInvoice.getId())
-                  && remainingAmt.compareTo(gross) != 0) {
-                // The PS is paid, so is not taken into account by the payment terms
-                // Set the PS as fully paid (the remaining amount is now in the other PS)
-                paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-                final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount().subtract(
-                    remainingAmt);
-                paymentScheduleInvoice.setPaidAmount(amountToInvoice);
-                paymentScheduleInvoice.setAmount(amountToInvoice);
-                for (final FIN_PaymentScheduleDetail invoicePSD : paymentScheduleInvoice
-                    .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-                  invoicePSD.setAmount(amountToInvoice);
-                  OBDal.getInstance().save(invoicePSD);
+              if (invoicePS.getId().equals(paymentScheduleInvoice.getId())) {
+                if (remainingAmt.compareTo(gross) != 0) {
+                  // The PS is paid, so is not taken into account by the payment terms
+                  // Set the PS as fully paid (the remaining amount is now in the other PS)
+                  paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
+                  final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount().subtract(
+                      remainingAmt);
+                  paymentScheduleInvoice.setPaidAmount(amountToInvoice);
+                  paymentScheduleInvoice.setAmount(amountToInvoice);
+                  for (final FIN_PaymentScheduleDetail invoicePSD : paymentScheduleInvoice
+                      .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+                    invoicePSD.setAmount(amountToInvoice);
+                    OBDal.getInstance().save(invoicePSD);
+                  }
                 }
                 continue;
               }
@@ -693,8 +694,6 @@ public class InvoiceUtils {
                     order.getOrganization(), order.getBusinessPartner());
                 remainingPSD.setAmount(remainingPSD.getAmount().subtract(invoicePS.getAmount()));
               }
-              pendingInPaymentTermsAmt = pendingInPaymentTermsAmt
-                  .subtract(remainingPSD.getAmount());
             }
           } else {
             Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),

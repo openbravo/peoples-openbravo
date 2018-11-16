@@ -4758,12 +4758,13 @@
           processedPaymentsAmount = OB.DEC.Zero,
           reversedPaymentsAmount = OB.DEC.Zero,
           notModifiableAmount = OB.DEC.Zero,
-          isNegative = this.isNegative();
+          isNegative = this.isNegative(),
+          loadedFromBackend = this.get('isLayaway') || this.get('isPaid');
 
       sumCash = function () {
         if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
           // The default cash method
-          if (!isNegative) {
+          if (!isNegative || loadedFromBackend) {
             defaultCash = OB.DEC.add(defaultCash, p.get('origAmount'));
           } else {
             defaultCash = OB.DEC.sub(defaultCash, p.get('origAmount'));
@@ -4771,14 +4772,14 @@
           pcash = p;
         } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
           // Another cash method
-          if (!isNegative) {
+          if (!isNegative || loadedFromBackend) {
             nonDefaultCash = OB.DEC.add(nonDefaultCash, p.get('origAmount'));
           } else {
             nonDefaultCash = OB.DEC.sub(nonDefaultCash, p.get('origAmount'));
           }
           pcash = p;
         } else {
-          if (!isNegative) {
+          if (!isNegative || loadedFromBackend) {
             noCash = OB.DEC.add(noCash, p.get('origAmount'));
           } else {
             noCash = OB.DEC.sub(noCash, p.get('origAmount'));
