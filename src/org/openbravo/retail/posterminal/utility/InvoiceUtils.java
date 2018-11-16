@@ -671,7 +671,15 @@ public class InvoiceUtils {
                 // The PS is paid, so is not taken into account by the payment terms
                 // Set the PS as fully paid (the remaining amount is now in the other PS)
                 paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-                paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount());
+                final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount().subtract(
+                    remainingAmt);
+                paymentScheduleInvoice.setPaidAmount(amountToInvoice);
+                paymentScheduleInvoice.setAmount(amountToInvoice);
+                for (final FIN_PaymentScheduleDetail invoicePSD : paymentScheduleInvoice
+                    .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+                  invoicePSD.setAmount(amountToInvoice);
+                  OBDal.getInstance().save(invoicePSD);
+                }
                 continue;
               }
               int pendingSign = remainingAmt.signum();
