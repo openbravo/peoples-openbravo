@@ -44,8 +44,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.role.inheritance.access.AccessTypeInjector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class contains all the methods required to manage the Role Inheritance functionality. It is
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class RoleInheritanceManager {
 
-  private static final Logger log = LoggerFactory.getLogger(RoleInheritanceManager.class);
+  private static final Logger log = LogManager.getLogger();
   private static final int ACCESS_NOT_CHANGED = 0;
   private static final int ACCESS_UPDATED = 1;
   private static final int ACCESS_CREATED = 2;

@@ -31,7 +31,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -78,7 +79,7 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  * @author mtaal
  */
 public class DefaultJsonDataService implements JsonDataService {
-  private static final Logger log = Logger.getLogger(DefaultJsonDataService.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String ADD_FLAG = "_doingAdd";
   private static final int DEFAULT_ID_LENGTH = 32;

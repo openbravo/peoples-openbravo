@@ -24,14 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Contains information of all the warnings and errors detected during the WAD validation
  * 
  */
 class WADValidationResult {
-  private static final Logger log = Logger.getLogger(WADValidationResult.class);
+  private static final Logger log = LogManager.getLogger();
 
   /*
    * Whitelist of modules for which all validation problems will be ignored and not reported. So far

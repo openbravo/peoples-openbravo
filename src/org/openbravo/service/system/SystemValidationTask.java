@@ -26,7 +26,8 @@ import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.platform.ExcludeFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -43,7 +44,7 @@ import org.openbravo.model.ad.module.Module;
  * @author mtaal
  */
 public class SystemValidationTask extends DalInitializingTask {
-  private static final Logger log = Logger.getLogger("SystemValidation");
+  private static final Logger log = LogManager.getLogger("SystemValidation");
 
   private String type;
   private boolean failOnError = false;

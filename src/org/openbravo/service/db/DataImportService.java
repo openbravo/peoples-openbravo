@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.openbravo.base.exception.OBException;
@@ -67,7 +68,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author Martin Taal
  */
 public class DataImportService implements OBSingleton {
-  private static final Logger log = Logger.getLogger(DataImportService.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static DataImportService instance;
 

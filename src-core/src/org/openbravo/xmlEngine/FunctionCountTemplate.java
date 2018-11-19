@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionCountTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionCountTemplate = Logger.getLogger(FunctionCountTemplate.class);
+  static Logger log4jFunctionCountTemplate = LogManager.getLogger();
 
   public FunctionCountTemplate(String fieldName, FieldTemplate field, DecimalFormat format,
       DataTemplate dataTemplate) {

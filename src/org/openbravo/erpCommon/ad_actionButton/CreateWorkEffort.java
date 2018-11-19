@@ -26,7 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -46,7 +47,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class CreateWorkEffort implements org.openbravo.scheduling.Process {
 
-  private static final Logger log4j = Logger.getLogger(CreateWorkEffort.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {

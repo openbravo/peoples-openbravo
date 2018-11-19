@@ -21,7 +21,8 @@ package org.openbravo.costing;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
@@ -37,7 +38,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
 public class CostingRuleProcessActionHandler extends BaseProcessActionHandler {
-  private static final Logger log4j = Logger.getLogger(CostingRuleProcessActionHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String costingRuleTabId = "6868B706DA8340158DE353A6C252A564";
 
   @Override

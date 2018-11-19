@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2010-2011 Openbravo S.L.U.
+ * Copyright (C) 2010-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -17,11 +17,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 
@@ -33,31 +31,12 @@ import org.openbravo.database.ConnectionProvider;
 public class BuildTask {
 
   private static String propertiesFile;
-  private static Logger log;
+  private static Logger log = LogManager.getLogger();
 
   /**
    * This class starts a build of Openbravo. The kind of build is decided by this class logic
    */
   public static void main(String[] args) throws Exception {
-
-    final Properties props = new Properties();
-    final String level = Level.INFO.toString();
-    props.setProperty("log4j.rootCategory", level + ",A,O2");
-    props.setProperty("log4j.appender.A", "org.apache.log4j.ConsoleAppender");
-    props.setProperty("log4j.appender.A.layout", "org.apache.log4j.PatternLayout");
-    props.setProperty("log4j.appender.A.layout.ConversionPattern", "%-4r %-5p - %m%n");
-    // we don't want debug logging from Digester/Betwixt
-    props.setProperty("log4j.logger.org.apache.commons", "WARN");
-    props.setProperty("log4j.logger.org.hibernate", "WARN");
-
-    // Adding properties for log of Improved Upgrade Process
-    props.setProperty("log4j.appender.O2", "org.openbravo.utils.OBRebuildAppender");
-    props.setProperty("log4j.appender.O2.layout", "org.apache.log4j.PatternLayout");
-    props.setProperty("log4j.appender.O2.layout.ConversionPattern", "%-4r [%t] %-5p %c - %m%n");
-    LogManager.resetConfiguration();
-    PropertyConfigurator.configure(props);
-    log = Logger.getLogger(BuildTask.class);
-
     propertiesFile = args[0];
     String logFileName = args[1];
     Properties properties = new Properties();

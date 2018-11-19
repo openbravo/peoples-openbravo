@@ -31,7 +31,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.filter.NumberFilter;
 import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.utils.FormatUtilities;
@@ -52,7 +53,7 @@ public class VariablesBase {
   List<FileItem> items;
   private final String DEFAULT_FORMAT_NAME = "qtyEdition";
 
-  static Logger log4j = Logger.getLogger(VariablesBase.class);
+  static Logger log4j = LogManager.getLogger();
 
   private Map<String, Object> sessionAttributes = new HashMap<String, Object>();
 

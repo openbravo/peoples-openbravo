@@ -25,7 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Parameter;
@@ -42,7 +43,7 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.userinterface.selector.reference.FKSelectorUIDefinition;
 
 public class OBViewParameterHandler {
-  private static final Logger log = Logger.getLogger(OBViewParameterHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
   private static final int NUMBER_COLUMNS = 4;
   private BaseTemplateComponent paramWindow;

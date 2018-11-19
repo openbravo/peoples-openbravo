@@ -21,7 +21,8 @@ package org.openbravo.service.system;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 
@@ -35,7 +36,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
  * @author mtaal
  */
 public class RestartTomcat {
-  private static final Logger log = Logger.getLogger(RestartTomcat.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Method is called from the tomcat.restart tasks, this method again starts the tomcat.restart.do

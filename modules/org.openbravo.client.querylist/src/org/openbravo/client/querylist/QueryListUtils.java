@@ -21,7 +21,8 @@ package org.openbravo.client.querylist;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -39,7 +40,7 @@ import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
 
 class QueryListUtils {
-  private static final Logger log = Logger.getLogger(QueryListUtils.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static String getWidgetClassFields(WidgetClass widgetClass, IncludeIn includeIn) {
     try {

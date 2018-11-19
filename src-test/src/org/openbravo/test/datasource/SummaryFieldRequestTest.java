@@ -28,14 +28,14 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test cases for grid summaries
  */
 public class SummaryFieldRequestTest extends BaseDataSourceTestDal {
-  private static final Logger log = LoggerFactory.getLogger(SummaryFieldRequestTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Test that a single summary function can be requested properly

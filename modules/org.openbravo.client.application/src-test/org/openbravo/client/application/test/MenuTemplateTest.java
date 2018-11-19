@@ -27,8 +27,8 @@ import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.MainLayoutComponent;
 import org.openbravo.client.kernel.JSCompressor;
 import org.openbravo.client.kernel.JSLintChecker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests the generating of the menu through a template, menu is part of the MainLayoutComponent, so
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author mtaal
  */
 public class MenuTemplateTest extends WeldBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(MenuTemplateTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   private MainLayoutComponent mainLayoutComponent;

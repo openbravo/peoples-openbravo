@@ -28,7 +28,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -49,7 +50,7 @@ import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactor
 @ApplicationScoped
 public class ImportEntryArchiveManager {
 
-  private static final Logger log = Logger.getLogger(ImportEntryArchiveManager.class);
+  private static final Logger log = LogManager.getLogger();
 
   // TODO: make this a preference
   /**

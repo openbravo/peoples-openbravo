@@ -23,7 +23,8 @@ import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
@@ -37,7 +38,7 @@ import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
 
 public class ProductInfo {
-  static Logger log4jProductInfo = Logger.getLogger(ProductInfo.class);
+  static Logger log4jProductInfo = LogManager.getLogger();
 
   /**
    * Constructor

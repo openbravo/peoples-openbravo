@@ -19,7 +19,8 @@
 
 package org.openbravo.test.dal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -33,7 +34,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 
 public class SimpleDalReadTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(SimpleDalReadTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Read a couple of BPCategories.

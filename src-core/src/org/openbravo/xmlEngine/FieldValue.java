@@ -15,7 +15,8 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.utils.Replace;
 
 class FieldValue implements XmlComponentValue {
@@ -23,7 +24,7 @@ class FieldValue implements XmlComponentValue {
   private String fieldValue;
   private String previousFieldValue;
 
-  static Logger log4jFieldValue = Logger.getLogger(FieldValue.class);
+  static Logger log4jFieldValue = LogManager.getLogger();
 
   public FieldValue(FieldTemplate fieldTemplate, XmlDocument xmlDocument) {
     this.fieldTemplate = fieldTemplate;

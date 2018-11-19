@@ -41,12 +41,11 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ReservedGoodMovementActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(ReservedGoodMovementActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

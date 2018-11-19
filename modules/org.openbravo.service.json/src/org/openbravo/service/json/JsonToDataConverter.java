@@ -34,7 +34,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -117,7 +118,7 @@ import org.openbravo.utils.FormatUtilities;
  * @author mtaal
  */
 public class JsonToDataConverter {
-  private static final Logger log = Logger.getLogger(JsonToDataConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String DOT = ".";
 

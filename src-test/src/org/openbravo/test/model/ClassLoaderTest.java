@@ -27,7 +27,8 @@ import java.util.List;
 
 import javax.servlet.Servlet;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
@@ -43,7 +44,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 public class ClassLoaderTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(ClassLoaderTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static List<String> notFoundClasses = new ArrayList<String>();
   private static List<String> notServletClasses = new ArrayList<String>();
   private static boolean initialized = false;

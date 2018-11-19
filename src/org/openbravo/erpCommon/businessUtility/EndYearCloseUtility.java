@@ -27,7 +27,8 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -52,7 +53,7 @@ public class EndYearCloseUtility {
   private BigDecimal ExpenseAmtCr = new BigDecimal("0");
   private BigDecimal RevenueAmtDr = new BigDecimal("0");
   private BigDecimal RevenueAmtCr = new BigDecimal("0");
-  protected Logger log4j = Logger.getLogger(EndYearCloseUtility.class);
+  protected Logger log4j = LogManager.getLogger();
 
   public EndYearCloseUtility(Organization _organization, Year _year, ConnectionProvider _conn,
       Connection _con, VariablesSecureApp _vars) {

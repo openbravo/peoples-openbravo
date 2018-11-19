@@ -33,12 +33,11 @@ import org.openbravo.materialmgmt.ProductPriceUtils;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class RFCServiceReturnableActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(RFCServiceReturnableActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

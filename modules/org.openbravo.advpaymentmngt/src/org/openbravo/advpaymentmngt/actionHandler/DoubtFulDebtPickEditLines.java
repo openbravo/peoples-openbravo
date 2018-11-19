@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -48,7 +49,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DbUtility;
 
 public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
-  private static final Logger log = Logger.getLogger(DoubtFulDebtPickEditLines.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

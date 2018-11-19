@@ -24,7 +24,8 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
@@ -53,7 +54,7 @@ public class AcctServerProcess extends DalBaseProcess {
   private ProcessLogger logger;
   private ConnectionProvider connection;
 
-  static Logger log4j = Logger.getLogger(AcctServerProcess.class);
+  static Logger log4j = LogManager.getLogger();
 
   public void doExecute(ProcessBundle bundle) throws Exception {
 

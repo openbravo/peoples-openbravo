@@ -20,7 +20,8 @@ package org.openbravo.erpCommon.businessUtility;
 
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -32,7 +33,7 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Tab;
 
 class AuditTrailDeletedRecords {
-  private static final Logger log4j = Logger.getLogger(AuditTrailDeletedRecords.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Same as

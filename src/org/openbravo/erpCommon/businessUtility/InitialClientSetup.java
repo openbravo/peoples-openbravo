@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
@@ -58,7 +59,7 @@ import org.openbravo.utils.FormatUtilities;
  */
 
 public class InitialClientSetup {
-  private static final Logger log4j = Logger.getLogger(InitialClientSetup.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String NEW_LINE = "<br />\n";
   private static final String STRMESSAGEOK = "Success";
   private static final String STRMESSAGEERROR = "Error";

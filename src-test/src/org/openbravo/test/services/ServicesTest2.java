@@ -48,8 +48,8 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.services.data.ServiceTestData;
 import org.openbravo.test.services.data.ServiceTestData7;
 import org.openbravo.test.services.data.ServiceTestData8;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check modifications on quantities of a sales order lines with related service
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ServicesTest2 extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(ServicesTest2.class);
+  final static private Logger log = LogManager.getLogger();
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing

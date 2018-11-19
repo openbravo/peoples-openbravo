@@ -25,7 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
 import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
 import org.openbravo.base.model.domaintype.AbsoluteTimeDomainType;
@@ -51,7 +52,7 @@ import org.openbravo.base.validation.ValidationException;
  */
 // TODO: consider subclasses for different types of properties
 public class Property {
-  private static final Logger log = Logger.getLogger(Property.class);
+  private static final Logger log = LogManager.getLogger();
 
   private boolean oneToOne;
   private boolean oneToMany;

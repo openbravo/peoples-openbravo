@@ -63,13 +63,13 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class HQLDataSourceService extends ReadOnlyDataSourceService {
   public static final String PROPERTY_FIELD_SEPARATOR = "___";
 
-  private static final Logger log = LoggerFactory.getLogger(HQLDataSourceService.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String AND = " AND ";
   private static final String WHERE = " WHERE ";
   private static final String ORDERBY = " ORDER BY ";

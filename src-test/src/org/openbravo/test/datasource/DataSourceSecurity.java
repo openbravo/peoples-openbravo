@@ -51,8 +51,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test cases to ensure that mechanism of security DataSource access is working properly.
@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Parameterized.class)
 public class DataSourceSecurity extends BaseDataSourceTestDal {
-  private static final Logger log = LoggerFactory.getLogger(DataSourceSecurity.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String ASTERISK_ORG_ID = "0";
   private static final String CONTEXT_USER = "100";
   private static final String LANGUAGE_ID = "192";

@@ -58,11 +58,11 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.TransactionLast;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class CostAdjustmentUtils {
-  private static final Logger log4j = LoggerFactory.getLogger(CostAdjustmentUtils.class);
+  private static final Logger log4j = LogManager.getLogger();
   public static final String strCategoryCostAdj = "CAD";
   public static final String strTableCostAdj = "M_CostAdjustment";
   public static final String propADListPriority = org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER;

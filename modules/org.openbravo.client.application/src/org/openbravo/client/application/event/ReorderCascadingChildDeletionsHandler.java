@@ -23,7 +23,8 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -50,7 +51,7 @@ import org.openbravo.model.common.order.OrderTax;
  * @author shuehner
  */
 public class ReorderCascadingChildDeletionsHandler extends EntityPersistenceEventObserver {
-  private static final Logger log = Logger.getLogger(ReorderCascadingChildDeletionsHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String ORDER_TABLE_ID = "259";
   private static final String INVOICE_TABLE_ID = "318";

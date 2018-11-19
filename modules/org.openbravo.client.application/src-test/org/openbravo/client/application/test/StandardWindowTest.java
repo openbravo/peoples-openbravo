@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -35,8 +35,8 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests generation of the javascript for standard windows
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author iperdomo
  */
 public class StandardWindowTest extends WeldBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(StandardWindowTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String USER_INTERFACE_APP_MOD = "9BA0836A3CD74EE4AB48753A47211BCC";
 
   /**
@@ -71,7 +71,7 @@ public class StandardWindowTest extends WeldBaseTest {
       List<String> errors = new ArrayList<>();
       for (Window window : allWindows) {
         if (hasAtLeastOneActiveTab(window)) {
-          log.info("window {} of {}: {}", new Object[] { ++i, allWindows.size(), window.getName() });
+          log.info("window {} of {}: {}", ++i, allWindows.size(), window.getName());
           try {
             generateForWindow(window);
           } catch (Throwable t) {

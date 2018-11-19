@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.businessUtility;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.MultipartRequest;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.data.FieldProvider;
@@ -33,7 +34,7 @@ import org.openbravo.data.FieldProvider;
  */
 @SuppressWarnings("serial")
 public class COAData extends MultipartRequest implements FieldProvider {
-  private static final Logger log4j = Logger.getLogger(COAData.class);
+  private static final Logger log4j = LogManager.getLogger();
   String accountValue = "";
   String accountName = "";
   String accountDescription = "";

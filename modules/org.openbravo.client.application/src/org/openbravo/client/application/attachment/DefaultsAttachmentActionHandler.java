@@ -39,8 +39,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.ad.utility.Attachment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This ActionHandler is invoked when opening a Attachment window. It is in charge of computing
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultsAttachmentActionHandler extends BaseActionHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(DefaultsAttachmentActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   @Inject
   private ApplicationDictionaryCachedStructures adcs;
 

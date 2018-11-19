@@ -24,7 +24,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -41,7 +42,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 public class DelegateConnectionProvider implements ConnectionProvider {
   protected ConnectionProvider myPool;
-  protected Logger log4j = Logger.getLogger(this.getClass());
+  protected Logger log4j = LogManager.getLogger();
 
   public void init(CalloutServletConfig config) {
     myPool = getPool();

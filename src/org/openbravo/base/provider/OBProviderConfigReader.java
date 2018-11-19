@@ -22,7 +22,8 @@ package org.openbravo.base.provider;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -37,7 +38,7 @@ import org.openbravo.base.util.OBClassLoader;
  * @author mtaal
  */
 class OBProviderConfigReader {
-  private static final Logger log = Logger.getLogger(OBProviderConfigReader.class);
+  private static final Logger log = LogManager.getLogger();
 
   void read(String prefix, InputStream is) {
     try {

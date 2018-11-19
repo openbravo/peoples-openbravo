@@ -20,7 +20,8 @@
 package org.openbravo.erpCommon.utility;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
@@ -33,7 +34,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 public class InventoryStatusUtils {
 
-  private static final Logger log4j = Logger.getLogger(InventoryStatusUtils.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Changes the Inventory Status of the given Storage Bin

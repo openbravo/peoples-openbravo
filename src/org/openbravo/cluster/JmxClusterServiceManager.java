@@ -29,8 +29,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.ADClusterService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * An standard MBean that allows to display and manage some of the cluster services settings through
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
-  private static final Logger log = LoggerFactory.getLogger(JmxClusterServiceManager.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   private ClusterServiceManager clusterServiceManager;

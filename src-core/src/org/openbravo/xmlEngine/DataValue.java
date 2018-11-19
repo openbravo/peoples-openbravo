@@ -20,7 +20,8 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
 /**
@@ -50,7 +51,7 @@ class DataValue implements XmlComponentValue {
   int iArray;
   FieldProvider[][] dataArray = null;
 
-  static Logger log4jDataValue = Logger.getLogger(DataValue.class);
+  static Logger log4jDataValue = LogManager.getLogger();
 
   public DataValue(DataTemplate dataTemplate, XmlDocument xmlDocument) {
     this.dataTemplate = dataTemplate;

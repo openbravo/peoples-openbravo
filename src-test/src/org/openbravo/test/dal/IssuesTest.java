@@ -39,7 +39,8 @@ import java.util.Set;
 
 import javax.persistence.Tuple;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -181,7 +182,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 
 public class IssuesTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(IssuesTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * https://issues.openbravo.com/view.php?id=18688

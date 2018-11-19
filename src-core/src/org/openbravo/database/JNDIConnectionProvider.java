@@ -26,12 +26,13 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 
 public class JNDIConnectionProvider implements ConnectionProvider {
-  protected static Logger log4j = Logger.getLogger(JNDIConnectionProvider.class);
+  protected static Logger log4j = LogManager.getLogger();
   protected static Map<String, PoolInfo> pools = new HashMap<String, PoolInfo>();
   protected String defaultPoolName = "";
 

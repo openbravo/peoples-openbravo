@@ -31,8 +31,8 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * HttpServletCalloutInformationProvider provides the information that is used to populate the
@@ -47,7 +47,7 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
   private int current;
   private String currentElementName;
 
-  private final Logger log = LoggerFactory.getLogger(HttpServletCalloutInformationProvider.class);
+  private final Logger log = LogManager.getLogger();
 
   public HttpServletCalloutInformationProvider(ArrayList<NativeArray> calloutResult) {
     this.calloutResult = calloutResult;

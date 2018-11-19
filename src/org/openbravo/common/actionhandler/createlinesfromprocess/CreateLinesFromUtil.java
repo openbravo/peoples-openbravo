@@ -38,11 +38,11 @@ import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 class CreateLinesFromUtil {
-  private static final Logger log = LoggerFactory.getLogger(CreateLinesFromUtil.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String MESSAGE = "message";
   private static final String MESSAGE_SEVERITY = "severity";

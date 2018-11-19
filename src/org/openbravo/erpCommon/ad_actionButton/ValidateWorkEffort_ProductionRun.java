@@ -18,7 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -36,7 +37,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class ValidateWorkEffort_ProductionRun implements org.openbravo.scheduling.Process {
 
-  private static final Logger log4j = Logger.getLogger(ValidateWorkEffort_ProductionRun.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {

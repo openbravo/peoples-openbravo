@@ -20,7 +20,8 @@ package org.openbravo.advpaymentmngt;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -29,7 +30,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class APRMActionHandler extends BaseActionHandler {
-  private static final Logger log = Logger.getLogger(APRMActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String BANK_TRANSITORY_CALLOUT_RESPONSE = "bankTransitoryCalloutResponse";
 
   @Override

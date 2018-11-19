@@ -30,7 +30,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.Session;
 import org.hibernate.exception.GenericJDBCException;
@@ -61,7 +62,7 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class InventoryCountProcess implements Process {
-  private static final Logger log4j = Logger.getLogger(InventoryCountProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Inject
   @Any

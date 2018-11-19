@@ -18,7 +18,8 @@
  */
 package org.openbravo.client.myob;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.NonUniqueResultException;
@@ -32,7 +33,7 @@ import org.openbravo.dal.service.OBDao;
  * @author mtaal
  */
 public class URLWidgetProvider extends WidgetProvider {
-  private static final Logger log = Logger.getLogger(URLWidgetProvider.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String URLWIDGETCLASSNAME = "OBUrlWidget";
   private static final String SRC = "src";

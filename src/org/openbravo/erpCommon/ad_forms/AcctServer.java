@@ -36,7 +36,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
@@ -83,7 +84,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public abstract class AcctServer {
-  static Logger log4j = Logger.getLogger(AcctServer.class);
+  static Logger log4j = LogManager.getLogger();
 
   protected ConnectionProvider connectionProvider;
 

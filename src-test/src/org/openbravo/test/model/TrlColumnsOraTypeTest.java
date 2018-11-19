@@ -29,8 +29,8 @@ import java.util.List;
 import org.junit.Test;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Verifies Oracle types and length of TRL tables are equal to their counterpart in the base table.
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class TrlColumnsOraTypeTest extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(TrlColumnsOraTypeTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   final static int TABLE_NAME = 1;
   final static int COLUMN_NAME = 2;

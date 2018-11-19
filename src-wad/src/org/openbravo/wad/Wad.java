@@ -34,8 +34,8 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
@@ -66,7 +66,7 @@ public class Wad extends DefaultHandler {
   private static boolean generateAllClassic250Windows;
   private static boolean excludeCDI;
 
-  private static final Logger log4j = Logger.getLogger(Wad.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Main function, entrusted to launch the process of generation of sources. The list of arguments
@@ -99,7 +99,6 @@ public class Wad extends DefaultHandler {
    * @throws Exception
    */
   public static void main(String argv[]) throws Exception {
-    PropertyConfigurator.configure("log4j.lcf");
     String strWindowName;
     String module;
     String dirFin;

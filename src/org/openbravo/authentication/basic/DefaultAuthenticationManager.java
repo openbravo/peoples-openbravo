@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
@@ -47,7 +48,7 @@ import org.openbravo.service.web.BaseWebServiceServlet;
  */
 public class DefaultAuthenticationManager extends AuthenticationManager {
 
-  private static final Logger log4j = Logger.getLogger(DefaultAuthenticationManager.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public DefaultAuthenticationManager() {
   }

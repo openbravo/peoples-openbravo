@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -49,7 +50,7 @@ import org.openbravo.service.db.DbUtility;
  * 
  */
 public class RMInOutPickEditLines extends BaseProcessActionHandler {
-  private static Logger log = Logger.getLogger(RMInOutPickEditLines.class);
+  private static Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

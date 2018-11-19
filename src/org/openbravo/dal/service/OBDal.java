@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -65,7 +66,7 @@ import org.openbravo.model.common.enterprise.Organization;
 // TODO: re-check singleton pattern when a new factory/dependency injection
 // approach is implemented.
 public class OBDal implements OBNotSingleton {
-  private static final Logger log = Logger.getLogger(OBDal.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static OBDal instance;
 

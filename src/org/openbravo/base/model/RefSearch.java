@@ -19,7 +19,8 @@
 
 package org.openbravo.base.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.SearchDomainType;
 
@@ -31,7 +32,7 @@ import org.openbravo.base.model.domaintype.SearchDomainType;
  */
 
 public class RefSearch extends ModelObject {
-  private static final Logger log = Logger.getLogger(RefSearch.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String reference;
   private Reference referenceObject;

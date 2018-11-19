@@ -47,8 +47,8 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Handles personalization settings, stores them and retrieves them, taking into account priority
@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 @RequestScoped
 public class PersonalizationHandler {
-  private static final Logger log = LoggerFactory.getLogger(PersonalizationHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Returns all the personalization settings in an object keyed by tabid. The current client, org,

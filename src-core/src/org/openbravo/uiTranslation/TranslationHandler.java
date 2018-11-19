@@ -13,7 +13,8 @@ import java.util.HashMap;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -21,7 +22,7 @@ public class TranslationHandler {
 
   public static final int ADWINDOW = 1, MANWINDOW = 2, PROCESS = 3;
 
-  private static final Logger log4j = Logger.getLogger(TranslationHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
   private XmlDocument xmlDocument;
   private ConnectionProvider conn;
   private String moduleLang = "";

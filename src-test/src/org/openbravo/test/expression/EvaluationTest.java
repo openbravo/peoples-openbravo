@@ -27,7 +27,8 @@ import java.util.List;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.expression.Evaluator;
 import org.openbravo.dal.service.OBDal;
@@ -44,7 +45,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 
 public class EvaluationTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(EvaluationTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Tests the evaluation of a simple java script expression executed on a set of objects.

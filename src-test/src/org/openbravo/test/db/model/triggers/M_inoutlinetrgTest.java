@@ -46,12 +46,12 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class M_inoutlinetrgTest extends OBBaseTest {
 
-  private static Logger log = LoggerFactory.getLogger(M_inoutlinetrgTest.class);
+  private static Logger log = LogManager.getLogger();
   // User Openbravo
   private static String USER_ID = "100";
 

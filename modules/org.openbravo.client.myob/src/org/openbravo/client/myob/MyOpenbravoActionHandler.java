@@ -26,7 +26,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -54,7 +55,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 @ApplicationScoped
 public class MyOpenbravoActionHandler extends BaseActionHandler implements PortalAccessible {
-  private static final Logger log = Logger.getLogger(MyOpenbravoActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String WIDGET_MOVED = "WIDGET_MOVED";
   private static final String WIDGET_ADDED = "WIDGET_ADDED";
   private static final String WIDGET_REMOVED = "WIDGET_REMOVED";

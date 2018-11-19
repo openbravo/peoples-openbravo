@@ -31,15 +31,15 @@ import org.openbravo.materialmgmt.InvoiceGeneratorFromGoodsShipment;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Action handler to generate Invoice from Goods Shipment
  * 
  */
 public class InvoiceFromShipmentActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(InvoiceFromShipmentActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String TEXT = "text";
   private static final String TITLE = "title";

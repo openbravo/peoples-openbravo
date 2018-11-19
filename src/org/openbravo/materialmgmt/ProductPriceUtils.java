@@ -23,12 +23,12 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ProductPriceUtils {
 
-  private static final Logger log = LoggerFactory.getLogger(ProductPriceUtils.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Returns a warning message when a Return From Customer product is not Returnable or when the

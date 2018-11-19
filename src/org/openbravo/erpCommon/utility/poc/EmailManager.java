@@ -39,7 +39,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.email.EmailUtils;
@@ -47,7 +48,7 @@ import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.utils.FormatUtilities;
 
 public class EmailManager {
-  private static Logger log4j = Logger.getLogger(EmailManager.class);
+  private static Logger log4j = LogManager.getLogger();
   private static final Long DEFAULT_SMTP_TIMEOUT = TimeUnit.MINUTES.toMillis(10);
 
   /**

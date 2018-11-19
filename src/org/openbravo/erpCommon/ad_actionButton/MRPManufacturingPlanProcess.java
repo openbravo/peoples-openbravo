@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.query.Query;
@@ -38,7 +39,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class MRPManufacturingPlanProcess extends DalBaseProcess {
-  private static final Logger log4j = Logger.getLogger(MRPManufacturingPlanProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String NULL = null;
 
   @Override

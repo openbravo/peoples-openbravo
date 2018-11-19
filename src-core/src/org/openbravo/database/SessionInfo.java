@@ -24,7 +24,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class is used to maintain session information which will be used for audit purposes.
@@ -33,7 +34,7 @@ import org.apache.log4j.Logger;
 public class SessionInfo {
   private static final String JDBC_CONNECTION_POOL_CLASS_NAME = "org.openbravo.apachejdbcconnectionpool.JdbcExternalConnectionPool";
 
-  private static final Logger log4j = Logger.getLogger(SessionInfo.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public static final String IMPORT_ENTRY_PROCESS = "IE";
 

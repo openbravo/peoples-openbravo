@@ -29,7 +29,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -53,7 +54,7 @@ import net.sf.jasperreports.engine.JasperReport;
 
 public class ReportReconciliation extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static final Logger log = Logger.getLogger(ReportReconciliation.class);
+  private static final Logger log = LogManager.getLogger();
   final static String DETAIL = "DETAIL";
   final static String SUMMARY = "SUMMARY";
 

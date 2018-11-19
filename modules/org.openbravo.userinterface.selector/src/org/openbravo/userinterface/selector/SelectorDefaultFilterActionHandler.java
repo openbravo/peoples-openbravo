@@ -27,7 +27,8 @@ import java.util.Map.Entry;
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -53,7 +54,7 @@ import org.openbravo.model.ad.datamodel.Table;
  */
 @ApplicationScoped
 public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
-  private Logger log = Logger.getLogger(SelectorDefaultFilterActionHandler.class);
+  private Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

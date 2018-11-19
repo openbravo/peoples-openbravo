@@ -59,8 +59,8 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.taxes.data.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check taxes computation
@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Parameterized.class)
 public class TaxesTest extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(TaxesTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   // User Openbravo
   private final String USER_ID = "100";

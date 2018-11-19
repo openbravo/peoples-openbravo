@@ -21,7 +21,8 @@ package org.openbravo.client.application.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -42,7 +43,7 @@ import org.openbravo.dal.service.DataPoolChecker;
  */
 public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserver {
 
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       DataPoolSelection.class) };
 

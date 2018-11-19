@@ -29,7 +29,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -50,7 +51,7 @@ import org.openbravo.model.financialmgmt.calendar.Period;
 
 public class ResetAccounting {
   final static int FETCH_SIZE = 1000;
-  private static final Logger log4j = Logger.getLogger(ResetAccounting.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public static HashMap<String, Integer> delete(String adClientId, String adOrgId,
       List<String> tableIds, String strdatefrom, String strdateto) throws OBException {

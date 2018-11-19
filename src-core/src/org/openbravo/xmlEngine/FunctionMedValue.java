@@ -14,13 +14,14 @@ package org.openbravo.xmlEngine;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionMedValue extends FunctionValue {
   int count;
   BigDecimal sum;
 
-  static Logger log4jFunctionMedValue = Logger.getLogger(FunctionMedValue.class);
+  static Logger log4jFunctionMedValue = LogManager.getLogger();
 
   public FunctionMedValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);

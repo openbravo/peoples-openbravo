@@ -21,6 +21,8 @@ package org.openbravo.base.structure;
 
 import java.io.Serializable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.BaseOBObjectDef;
@@ -50,8 +52,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     OBNotSingleton, Serializable {
   public static final String ID = "id";
 
-  private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
-      .getLogger(BaseOBObject.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final long serialVersionUID = 1L;
 

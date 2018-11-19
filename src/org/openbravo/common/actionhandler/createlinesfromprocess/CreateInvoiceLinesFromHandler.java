@@ -29,8 +29,8 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Abstract class to be implemented by any process that creates invoice lines from any Openbravo
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *          Invoice lines will be created from an object whose class extends from the BaseOBObject
  */
 abstract class CreateInvoiceLinesFromHandler<T extends BaseOBObject> extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(CreateInvoiceLinesFromHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   protected abstract Class<T> getFromClass();
 

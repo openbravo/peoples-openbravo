@@ -20,12 +20,13 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class TemplateInfo {
-  private static Logger log4j = Logger.getLogger(TemplateInfo.class);
+  private static Logger log4j = LogManager.getLogger();
 
   private String _TemplateLocation;
   private String _TemplateFilename;

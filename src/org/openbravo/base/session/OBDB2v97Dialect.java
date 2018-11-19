@@ -21,7 +21,8 @@ package org.openbravo.base.session;
 
 import java.sql.Types;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.dialect.DB2Dialect;
 import org.hibernate.type.StandardBasicTypes;
 
@@ -33,7 +34,7 @@ import org.hibernate.type.StandardBasicTypes;
  */
 
 public class OBDB2v97Dialect extends DB2Dialect {
-  private static final Logger log = Logger.getLogger(OBDB2v97Dialect.class);
+  private static final Logger log = LogManager.getLogger();
 
   public OBDB2v97Dialect() {
     super();

@@ -45,7 +45,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * 
@@ -65,7 +66,7 @@ import org.apache.log4j.Logger;
  */
 class CSSMinimizer {
 
-  private static Logger log = Logger.getLogger(CSSMinimizer.class);
+  private static Logger log = LogManager.getLogger();
 
   /**
    * Minify CSS from a reader to a printstream.
@@ -167,7 +168,7 @@ class Selector {
   private Property[] properties = null;
   private Vector<Selector> subSelectors = null;
   private String selector;
-  private static final Logger log = Logger.getLogger(Selector.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Creates a new Selector using the supplied strings.
@@ -304,7 +305,7 @@ class Selector {
 class Property implements Comparable<Property> {
   protected String property;
   protected Part[] parts;
-  private static final Logger log = Logger.getLogger(Property.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Creates a new Property using the supplied strings. Parses out the values of the property

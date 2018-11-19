@@ -20,11 +20,12 @@ package org.openbravo.erpCommon.ad_forms;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_GLJournal extends DocLine {
-  static Logger log4jDocLine_GLJournal = Logger.getLogger(DocLine_GLJournal.class);
+  static Logger log4jDocLine_GLJournal = LogManager.getLogger();
 
   public DocLine_GLJournal(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);

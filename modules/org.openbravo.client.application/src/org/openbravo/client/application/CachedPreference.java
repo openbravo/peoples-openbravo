@@ -33,8 +33,8 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class is used to keep the value of some preferences in cache during the life cycle of a
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class CachedPreference implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private static final Logger log = LoggerFactory.getLogger(CachedPreference.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
   public static final String ALLOW_UNSECURED_DS_REQUEST = "OBSERDS_AllowUnsecuredDatasourceRequest";

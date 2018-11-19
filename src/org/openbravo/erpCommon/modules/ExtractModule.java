@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
@@ -45,7 +46,7 @@ import org.openbravo.service.db.DataExportService;
  */
 public class ExtractModule {
   private static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(ExtractModule.class);
+  static Logger log4j = LogManager.getLogger();
   private String relativeDir;
   private String modulesBaseDir;
   private String destDir;

@@ -27,7 +27,8 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.NativeQuery;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -36,7 +37,7 @@ import org.openbravo.exception.NoConnectionAvailableException;
 
 @SuppressWarnings("serial")
 class SQLExecutor_Query implements FieldProvider {
-  static Logger log4j = Logger.getLogger(SQLExecutor_Query.class);
+  static Logger log4j = LogManager.getLogger();
   Vector<String> data = new Vector<String>();
   Vector<String> type = new Vector<String>();
   Vector<String> name = new Vector<String>();

@@ -35,8 +35,8 @@ import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalSessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Initializes and provides the session factory to the rest of the application. There are subclasses
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public abstract class SessionFactoryController {
-  private static final Logger log = LoggerFactory.getLogger(SessionFactoryController.class);
+  private static final Logger log = LogManager.getLogger();
 
   // note the order by is really important otherwise the build of
   // uniqueconstraints (ModelProvider) can fail with strange errors.

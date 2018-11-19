@@ -25,7 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
@@ -55,7 +56,7 @@ public abstract class CostingAlgorithm {
   protected Currency costCurrency;
   protected TrxType trxType;
   protected CostingRule costingRule;
-  protected static Logger log4j = Logger.getLogger(CostingAlgorithm.class);
+  protected static Logger log4j = LogManager.getLogger();
 
   /**
    * Initializes the instance of the CostingAlgorith with the MaterialTransaction that is being to

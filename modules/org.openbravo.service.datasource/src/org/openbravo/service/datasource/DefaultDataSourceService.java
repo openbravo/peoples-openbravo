@@ -27,7 +27,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBSecurityException;
@@ -64,7 +65,7 @@ import org.openbravo.service.json.JsonConstants;
  * @author mtaal
  */
 public class DefaultDataSourceService extends BaseDataSourceService {
-  private static final Logger log4j = Logger.getLogger(DefaultDataSourceService.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Inject
   private CachedPreference cachedPreference;

@@ -49,15 +49,15 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.scheduling.ProcessBundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class FIN_TransactionProcess implements org.openbravo.scheduling.Process {
   /** Transaction type - Financial Account */
   public static final String TRXTYPE_BPDeposit = "BPD";
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
-  static Logger log4j = LoggerFactory.getLogger(FIN_TransactionProcess.class);
+  static Logger log4j = LogManager.getLogger();
 
   public void execute(ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();

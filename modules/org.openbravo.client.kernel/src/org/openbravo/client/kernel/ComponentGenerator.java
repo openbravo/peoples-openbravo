@@ -18,7 +18,8 @@
  */
 package org.openbravo.client.kernel;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 
 /**
@@ -30,7 +31,7 @@ import org.openbravo.dal.core.OBContext;
  * @author mtaal
  */
 public class ComponentGenerator {
-  private static final Logger log = Logger.getLogger(ComponentGenerator.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ComponentGenerator instance = new ComponentGenerator();
 

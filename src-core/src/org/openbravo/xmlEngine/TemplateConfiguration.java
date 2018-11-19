@@ -16,7 +16,8 @@ import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -48,7 +49,7 @@ class TemplateConfiguration extends DefaultHandler {
   String strUrlDefault;
   XmlTemplate subreport;
   String sectionSubreport;
-  static Logger log4jTemplateConfiguration = Logger.getLogger(TemplateConfiguration.class);
+  static Logger log4jTemplateConfiguration = LogManager.getLogger();
   StringBuffer buffer;
 
   public TemplateConfiguration(Vector<Object> hasDataTemplate, XmlEngine xmlEngine,

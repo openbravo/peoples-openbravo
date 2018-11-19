@@ -31,7 +31,8 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -64,7 +65,7 @@ public abstract class FIN_BankStatementImport {
   private FIN_FinancialAccount financialAccount;
   OBError myError = null;
   String filename = "";
-  private static Logger log4j = Logger.getLogger(FIN_BankStatementImport.class);
+  private static Logger log4j = LogManager.getLogger();
 
   public static final String DOCUMENT_BankStatementFile = "BSF";
 

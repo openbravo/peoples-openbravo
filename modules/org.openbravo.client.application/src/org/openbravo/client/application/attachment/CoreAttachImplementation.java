@@ -38,8 +38,8 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.Attachment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Default implementation of Attachment Management. This method saves the attached files in the
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 @ComponentProvider.Qualifier(AttachmentUtils.DEFAULT_METHOD)
 public class CoreAttachImplementation extends AttachImplementation {
-  private static final Logger log = LoggerFactory.getLogger(CoreAttachImplementation.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public void uploadFile(Attachment attachment, String dataType, Map<String, Object> parameters,

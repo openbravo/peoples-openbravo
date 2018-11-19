@@ -26,7 +26,8 @@ import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
@@ -42,7 +43,7 @@ import org.openbravo.utils.Replace;
 
 public class JasperProcess implements Process {
 
-  static Logger log4j = Logger.getLogger(JasperProcess.class);
+  static Logger log4j = LogManager.getLogger();
 
   private ConnectionProvider connection;
 

@@ -23,7 +23,8 @@ import java.io.ByteArrayOutputStream;
 
 import net.matthaynes.jsmin.JSMin;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 
 /**
@@ -34,7 +35,7 @@ import org.openbravo.base.provider.OBProvider;
  * @author iperdomo
  */
 public class JSCompressor {
-  private static final Logger log = Logger.getLogger(JSCompressor.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static JSCompressor instance;
 

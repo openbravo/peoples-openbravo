@@ -51,11 +51,11 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class CostAdjustmentProcess {
-  private static final Logger log = LoggerFactory.getLogger(CostAdjustmentProcess.class);
+  private static final Logger log = LogManager.getLogger();
   @Inject
   @Any
   private Instance<CostingAlgorithmAdjustmentImp> costAdjustmentAlgorithms;

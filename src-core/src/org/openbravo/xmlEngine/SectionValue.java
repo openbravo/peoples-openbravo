@@ -14,7 +14,8 @@ package org.openbravo.xmlEngine;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Each of the breaks in a DataValue
@@ -27,7 +28,7 @@ class SectionValue {
   XmlVectorValue vecFootValue;
   Vector<FunctionValue> vecFunctionValue;
   FieldValue breakFieldValue;
-  static Logger log4jSectionValue = Logger.getLogger(SectionValue.class);
+  static Logger log4jSectionValue = LogManager.getLogger();
 
   public SectionValue(SectionTemplate sectionTemplate, XmlDocument xmlDocument, DataValue dataValue) {
     this.sectionTemplate = sectionTemplate;

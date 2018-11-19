@@ -22,13 +22,14 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocCostAdjustmentTemplate {
   private static final long serialVersionUID = 1L;
-  private static final Logger log4jDocCostAdjustment = Logger.getLogger(DocCostAdjustment.class);
+  private static final Logger log4jDocCostAdjustment = LogManager.getLogger();
 
   /**
    * Constructor

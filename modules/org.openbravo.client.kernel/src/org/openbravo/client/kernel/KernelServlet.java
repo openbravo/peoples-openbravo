@@ -34,7 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBSecurityException;
@@ -50,8 +51,8 @@ import org.openbravo.service.web.WebServiceUtil;
  * @author mtaal
  */
 public class KernelServlet extends BaseKernelServlet {
-  // private static final Logger log = Logger.getLogger(DataSourceServlet.class);
-  private static final Logger log = Logger.getLogger(KernelServlet.class);
+  // private static final Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
 
   // this is needed to support logout deep in the code...
   // TODO: make it easier to get to the authentication manager from

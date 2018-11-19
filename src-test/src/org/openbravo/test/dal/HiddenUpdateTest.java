@@ -44,8 +44,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test for updates which can happen behind the scenes (but should not happen) if properties are
@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 
 public class HiddenUpdateTest extends OBBaseTest {
 
-  private static final Logger log = LoggerFactory.getLogger(HiddenUpdateTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Tests for hidden updates. Hidden updates can occur when a load/read of an entity also changes

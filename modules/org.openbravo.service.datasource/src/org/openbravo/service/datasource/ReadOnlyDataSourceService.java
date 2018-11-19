@@ -34,8 +34,8 @@ import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The SimpleDataSourceService provides a simple way of returning data in the correct format for a
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author mtaal
  */
 public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService {
-  private static final Logger log = LoggerFactory.getLogger(ReadOnlyDataSourceService.class);
+  private static final Logger log = LogManager.getLogger();
   private static final int MAX_PAGE_SIZE_INCREASE = 3;
   private static final String NEW_END_ROW = "_newEndRow";
 

@@ -72,8 +72,8 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.userinterface.selector.reference.FKMultiSelectorUIDefinition;
 import org.openbravo.utils.FileUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRDataSource;
 
@@ -83,7 +83,7 @@ import net.sf.jasperreports.engine.JRDataSource;
  * 
  */
 public class BaseReportActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(BaseReportActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String JASPER_PARAM_PROCESS = "jasper_process";
   protected static final String JASPER_REPORT_PARAMETERS = "JASPER_REPORT_PARAMETERS";
 

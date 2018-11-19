@@ -29,7 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.VariablesBase;
@@ -55,7 +56,7 @@ import org.openbravo.service.web.BaseWebServiceServlet;
  */
 public abstract class AuthenticationManager {
 
-  private static final Logger log4j = Logger.getLogger(AuthenticationManager.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
   private static final String AD_SESSION_ID_ATTR = "#AD_SESSION_ID";
   private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";

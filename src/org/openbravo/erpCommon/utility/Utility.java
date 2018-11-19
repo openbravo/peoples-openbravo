@@ -60,7 +60,8 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
@@ -102,7 +103,7 @@ import net.sf.jasperreports.engine.JasperReport;
  *         Utility class
  */
 public class Utility {
-  static Logger log4j = Logger.getLogger(Utility.class);
+  static Logger log4j = LogManager.getLogger();
 
   public static final String COMMUNITY_BRANDING_URL = "//butler.openbravo.com/heartbeat-server/org.openbravo.butler.communitybranding/CommunityBranding.html";
   public static final String STATIC_COMMUNITY_BRANDING_URL = "StaticCommunityBranding.html";

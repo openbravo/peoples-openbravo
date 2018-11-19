@@ -29,8 +29,12 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -110,12 +114,12 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
 
   @Test
   public void whenStatementFailsStackTraceIsLoggedHavingDebugLogLevel() throws Exception {
-    Logger sqlcLogger = Logger.getLogger(ErrorTextParserTestData.class);
+    Logger sqlcLogger = LogManager.getLogger(ErrorTextParserTestData.class);
     Level originalLogLevel = sqlcLogger.getLevel();
 
     try {
       setTestLogAppenderLevel(Level.DEBUG);
-      sqlcLogger.setLevel(Level.DEBUG);
+      setLoggerLevel(sqlcLogger, Level.DEBUG);
       setLogStackTraces(true);
 
       doErrorTextParserTest(1);
@@ -125,8 +129,16 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
           getTestLogAppender().getMessages(Level.ERROR),
           hasItem(containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK")));
     } finally {
-      sqlcLogger.setLevel(originalLogLevel);
+      setLoggerLevel(sqlcLogger, originalLogLevel);
     }
+  }
+
+  private void setLoggerLevel(Logger logger, Level level) {
+    LoggerContext context = LoggerContext.getContext(false);
+    Configuration config = context.getConfiguration();
+    LoggerConfig loggerConfig = config.getLoggerConfig(logger.getName());
+    loggerConfig.setLevel(level);
+    context.updateLoggers();
   }
 
   private void doErrorTextParserTest(int testCase) throws Exception {

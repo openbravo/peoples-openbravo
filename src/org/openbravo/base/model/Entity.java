@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.util.Check;
@@ -51,7 +52,7 @@ import org.openbravo.base.validation.PropertyValidator;
  */
 
 public class Entity {
-  private static final Logger log = Logger.getLogger(Entity.class);
+  private static final Logger log = LogManager.getLogger();
 
   private List<UniqueConstraint> uniqueConstraints = new ArrayList<UniqueConstraint>();
 

@@ -31,7 +31,8 @@ import javax.servlet.http.HttpServlet;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -47,7 +48,7 @@ import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 
 public class VersionUtility {
   protected static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(VersionUtility.class);
+  static Logger log4j = LogManager.getLogger();
 
   private static class Mod {
     String modId;

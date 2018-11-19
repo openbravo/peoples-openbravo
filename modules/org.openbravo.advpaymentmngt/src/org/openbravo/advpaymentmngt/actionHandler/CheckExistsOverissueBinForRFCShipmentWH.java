@@ -26,12 +26,11 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Locator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class CheckExistsOverissueBinForRFCShipmentWH extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(CheckExistsOverissueBinForRFCShipmentWH.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {

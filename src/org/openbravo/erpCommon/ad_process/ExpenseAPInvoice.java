@@ -29,7 +29,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -50,7 +51,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ExpenseAPInvoice extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final BigDecimal ZERO = BigDecimal.ZERO;
-  private static final Logger expenseAPInvoiceLog4j = Logger.getLogger(ExpenseAPInvoice.class);
+  private static final Logger expenseAPInvoiceLog4j = LogManager.getLogger();
 
   public void init(ServletConfig config) {
     super.init(config);

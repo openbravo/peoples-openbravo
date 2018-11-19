@@ -24,7 +24,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -48,7 +49,7 @@ public class AttributeSetInstanceValue {
   private String lockDescription = "";
   private String attSetInstanceId = "";
 
-  protected Logger log4j = Logger.getLogger(this.getClass());
+  protected Logger log4j = LogManager.getLogger();
 
   public AttributeSetInstanceValue() {
   }

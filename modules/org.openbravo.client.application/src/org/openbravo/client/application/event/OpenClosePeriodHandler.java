@@ -20,7 +20,8 @@ package org.openbravo.client.application.event;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -44,7 +45,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
 public class OpenClosePeriodHandler extends BaseActionHandler {
-  private static final Logger log4j = Logger.getLogger(OpenClosePeriodHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

@@ -39,8 +39,8 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.MessageTrl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test the {@link I18NComponent}, test that a translated label actually is used inside of the label
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 public class LabelTest extends WeldBaseTest {
 
-  private static final Logger log = LoggerFactory.getLogger(LabelTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any

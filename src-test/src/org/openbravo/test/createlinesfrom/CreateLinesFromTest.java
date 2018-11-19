@@ -50,8 +50,8 @@ import org.openbravo.test.createlinesfrom.data.CLFTestDataPO_02;
 import org.openbravo.test.createlinesfrom.data.CLFTestDataSO_01;
 import org.openbravo.test.createlinesfrom.data.CreateLinesFromTestData;
 import org.openbravo.test.createlinesfrom.data.InvoiceLineData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check Create Lines From Orders/Shipments/Receipts process
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class CreateLinesFromTest extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(CreateLinesFromTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   // User Openbravo
   private final String USER_ID = "100";

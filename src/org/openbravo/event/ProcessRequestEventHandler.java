@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -44,7 +45,7 @@ public class ProcessRequestEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProcessRequest.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

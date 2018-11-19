@@ -23,7 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
@@ -38,7 +39,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 public class DalComplexQueryRequisitionTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(DalComplexQueryRequisitionTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   // SELECT M_REQUISITIONLINE_ID, M_REQUISITIONLINE.NEEDBYDATE,
   // M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY AS QTYTOORDER,

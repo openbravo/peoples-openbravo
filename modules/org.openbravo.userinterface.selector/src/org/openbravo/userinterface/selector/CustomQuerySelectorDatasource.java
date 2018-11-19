@@ -36,7 +36,8 @@ import javax.persistence.Tuple;
 import javax.persistence.TupleElement;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -66,7 +67,7 @@ import org.openbravo.service.json.JsonUtils;
 
 public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
-  private static Logger log = Logger.getLogger(CustomQuerySelectorDatasource.class);
+  private static Logger log = LogManager.getLogger();
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   private static final String NEW_FILTER_CLAUSE = "\n AND ";
   private static final String NEW_OR_FILTER_CLAUSE = "\n OR ";

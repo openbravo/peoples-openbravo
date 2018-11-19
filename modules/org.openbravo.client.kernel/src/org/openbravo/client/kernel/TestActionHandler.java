@@ -22,7 +22,8 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 
 /**
@@ -33,7 +34,7 @@ import org.codehaus.jettison.json.JSONObject;
  */
 @ApplicationScoped
 public class TestActionHandler extends BaseActionHandler {
-  private static final Logger log = Logger.getLogger(TestActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     log.debug(">>>>>>>>>>>>>>> Received ActionHandler request ");

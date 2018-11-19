@@ -26,7 +26,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.weld.WeldUtils;
 
 /**
@@ -39,7 +40,7 @@ import org.openbravo.base.weld.WeldUtils;
  */
 public class AllowedCrossDomainsHandler {
 
-  private static final Logger log = Logger.getLogger(AllowedCrossDomainsHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static AllowedCrossDomainsHandler instance = new AllowedCrossDomainsHandler();
 

@@ -18,7 +18,8 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class Alert {
@@ -28,7 +29,7 @@ public class Alert {
   private String description;
   private String referencekeyId = "0";
 
-  private static Logger log4j = Logger.getLogger(Alert.class);
+  private static Logger log4j = LogManager.getLogger();
 
   public Alert() {
     this(0);

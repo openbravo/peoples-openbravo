@@ -37,7 +37,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.betwixt.io.BeanReader;
 import org.apache.commons.betwixt.io.BeanWriter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -91,7 +92,7 @@ public class TranslationManager {
   static final String CONTRIBUTORS_FILENAME = "CONTRIBUTORS";
   static final String XML_CONTRIB = "Contributors";
 
-  private static final Logger log4j = Logger.getLogger(TranslationManager.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Export all the trl tables that refers to tables with ad_module_id column or trl tables that

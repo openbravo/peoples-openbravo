@@ -27,13 +27,13 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.Utility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class GLItemSelectorFilterExpression implements FilterExpression {
   private static final String INPAD_ORG_ID_PARAM = "inpadOrgId";
   private static final String AD_ORG_ID_PARAM = "ad_org_id";
-  private static final Logger log = LoggerFactory.getLogger(GLItemSelectorFilterExpression.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public String getExpression(Map<String, String> requestMap) {

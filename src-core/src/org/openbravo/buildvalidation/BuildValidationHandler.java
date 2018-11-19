@@ -21,14 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 public class BuildValidationHandler {
-  private static final Logger log4j = Logger.getLogger(BuildValidationHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /** Prerequisite validations are ensured to be executed before the rest of other ones */
   private static final List<String> prerequisiteValidations = Collections.emptyList();
@@ -40,7 +40,7 @@ public class BuildValidationHandler {
   public static void main(String[] args) {
     basedir = new File(args[0]);
     module = null; // The module is not set so that all BuildValidations are always executed.
-    PropertyConfigurator.configure("log4j.lcf");
+
     propertiesFile = args[2];
     log4j.debug("basedir = " + basedir + ", propertiesFile = " + propertiesFile);
     List<String> classes = new ArrayList<String>();

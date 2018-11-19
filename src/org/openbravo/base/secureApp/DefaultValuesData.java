@@ -17,7 +17,8 @@ import java.sql.Statement;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
@@ -27,7 +28,7 @@ import org.openbravo.exception.PoolNotFoundException;
 @SuppressWarnings("serial")
 class DefaultValuesData implements FieldProvider {
   public String columnname;
-  static Logger log4j = Logger.getLogger(DefaultValuesData.class);
+  static Logger log4j = LogManager.getLogger();
 
   public String getField(String fieldName) {
     if (fieldName.equalsIgnoreCase("columnname"))

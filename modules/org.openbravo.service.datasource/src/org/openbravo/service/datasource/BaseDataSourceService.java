@@ -25,7 +25,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -48,7 +49,7 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  * @author mtaal
  */
 public abstract class BaseDataSourceService implements DataSourceService {
-  private static final Logger log = Logger.getLogger(BaseDataSourceService.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String name;
   private Template template;

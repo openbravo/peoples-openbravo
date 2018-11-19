@@ -21,7 +21,8 @@ package org.openbravo.client.kernel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -48,7 +49,7 @@ import org.openbravo.dal.service.OBDal;
  * @see Template#getOverridesTemplate()
  */
 public class TemplateResolver {
-  private static final Logger log = Logger.getLogger(TemplateResolver.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static TemplateResolver instance = new TemplateResolver();
 

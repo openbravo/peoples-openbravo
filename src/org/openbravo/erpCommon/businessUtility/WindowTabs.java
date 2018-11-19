@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.businessUtility;
 import java.util.Hashtable;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
@@ -34,7 +35,7 @@ import org.openbravo.erpCommon.utility.Utility;
  *         Class in charge of building the application's tabs for each window type.
  */
 public class WindowTabs {
-  static Logger log4j = Logger.getLogger(WindowTabs.class);
+  static Logger log4j = LogManager.getLogger();
   private VariablesSecureApp vars;
   private ConnectionProvider conn;
   private String className = "";

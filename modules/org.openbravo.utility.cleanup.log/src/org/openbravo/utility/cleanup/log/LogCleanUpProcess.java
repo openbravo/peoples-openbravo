@@ -43,8 +43,8 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This is the process that is invoked to perform the clean up of configured entities.
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class LogCleanUpProcess extends DalBaseProcess {
-  private static final Logger log = LoggerFactory.getLogger(LogCleanUpConfig.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {

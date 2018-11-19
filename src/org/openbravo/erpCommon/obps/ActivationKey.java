@@ -59,7 +59,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Order;
@@ -105,7 +106,7 @@ public class ActivationKey {
   private String errorMessage = "";
   private String messageType = "Error";
   private Properties instanceProperties;
-  private static final Logger log = Logger.getLogger(ActivationKey.class);
+  private static final Logger log = LogManager.getLogger();
   private String strPublicKey;
   private Long pendingTime;
   private boolean hasExpired = false;
@@ -134,7 +135,7 @@ public class ActivationKey {
   private Date initWsCountTime;
   private List<Date> exceededInLastDays;
 
-  private static final Logger log4j = Logger.getLogger(ActivationKey.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   private static final String TIER_1_PREMIUM_FEATURE = "T1P";
   private static final String TIER_2_PREMIUM_FEATURE = "T2P";

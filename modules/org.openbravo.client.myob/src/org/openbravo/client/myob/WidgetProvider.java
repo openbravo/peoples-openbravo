@@ -29,7 +29,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.query.Query;
@@ -66,7 +67,7 @@ import org.openbravo.service.json.JsonConstants;
  * @author mtaal
  */
 public abstract class WidgetProvider {
-  private static final Logger log = Logger.getLogger(WidgetProvider.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String WIDGETCLASSID = "widgetClassId";
   public static final String TITLE = "title";

@@ -53,12 +53,12 @@ import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
-  private static final Logger log = LoggerFactory.getLogger(ManageVariantsDS.class);
+  private static final Logger log = LogManager.getLogger();
   private static final int searchKeyLength = getSearchKeyColumnLength();
   private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
   private static final String ID_REFERENCE_ID = "13";

@@ -58,7 +58,8 @@ import org.apache.ddlutils.io.DataReader;
 import org.apache.ddlutils.io.DataToArraySink;
 import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -105,7 +106,7 @@ import org.w3c.dom.Node;
 @SuppressWarnings("serial")
 public class ImportModule implements Serializable {
   static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(ImportModule.class);
+  static Logger log4j = LogManager.getLogger();
   private String obDir;
   private Database db;
   private boolean installLocally = true;

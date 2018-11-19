@@ -22,7 +22,8 @@ package org.openbravo.base.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Table table in the application
@@ -32,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 
 public class Table extends ModelObject {
-  private static final Logger log = Logger.getLogger(Table.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Entity entity;
   private String dataOrigin;

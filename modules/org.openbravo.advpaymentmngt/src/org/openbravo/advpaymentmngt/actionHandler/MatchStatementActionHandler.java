@@ -34,11 +34,11 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class MatchStatementActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(MatchStatementActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String OK_ACTION = "OK";
 
   @Override

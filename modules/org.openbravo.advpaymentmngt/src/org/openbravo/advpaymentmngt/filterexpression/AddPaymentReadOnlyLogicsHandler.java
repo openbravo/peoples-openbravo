@@ -31,15 +31,14 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.ad.ui.Window;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @RequestScoped
 // Public class to allow extend the functionality, for example Add Payment popup opening from menu
 public abstract class AddPaymentReadOnlyLogicsHandler {
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(AddPaymentReadOnlyLogicsHandler.class);
+  private static final Logger logger = LogManager.getLogger();
 
   /**
    * boolean value to set document number read only logic

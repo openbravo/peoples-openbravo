@@ -20,7 +20,8 @@ package org.openbravo.client.application.window;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -49,7 +50,7 @@ import org.openbravo.portal.PortalAccessible;
  */
 public class ImagesActionHandler extends BaseActionHandler implements PortalAccessible {
 
-  private static final Logger log = Logger.getLogger(ImagesActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

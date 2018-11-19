@@ -58,8 +58,8 @@ import org.openbravo.service.datasource.CheckTreeOperationManager.ActionResponse
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The TreeDatasourceService is an abstract class that provides a simple way of returning data in
@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public abstract class TreeDatasourceService extends DefaultDataSourceService {
-  private static final Logger log = LoggerFactory.getLogger(TreeDatasourceService.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String JSON_PREFIX = "<SCRIPT>//'\"]]>>isc_JSONResponseStart>>";
   private static final String JSON_SUFFIX = "//isc_JSONResponseEnd";
   protected static final String ROOT_NODE_DB = "0";

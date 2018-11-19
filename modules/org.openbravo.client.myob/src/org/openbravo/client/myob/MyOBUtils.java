@@ -25,7 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -49,7 +50,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 @ApplicationScoped
 public class MyOBUtils {
-  private static Logger log = Logger.getLogger(MyOBUtils.class);
+  private static Logger log = LogManager.getLogger();
   private static String MENU_ITEM_IS_SEPARATOR = "isSeparator";
   private static String MENU_ITEM_TITLE = "title";
   private static String MENU_ITEM_CLICK = "click";

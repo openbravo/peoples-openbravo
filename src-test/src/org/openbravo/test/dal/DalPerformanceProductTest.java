@@ -19,7 +19,8 @@
 
 package org.openbravo.test.dal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -34,7 +35,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 
 public class DalPerformanceProductTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(DalPerformanceProductTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Tests a paged read of products and print of the identifier. The timing is reported in the log.

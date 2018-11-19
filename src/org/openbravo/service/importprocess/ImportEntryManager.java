@@ -40,7 +40,8 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -117,7 +118,7 @@ public class ImportEntryManager {
    * #setImportEntryErrorIndependent(String, Throwable)}.
    */
 
-  private static final Logger log = Logger.getLogger(ImportEntryManager.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ImportEntryManager instance;
 

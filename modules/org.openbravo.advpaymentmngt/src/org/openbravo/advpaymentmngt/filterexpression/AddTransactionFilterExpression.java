@@ -23,7 +23,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
@@ -36,7 +37,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 //Public class to allow extend the functionality, for example Add Payment popup opening from menu
 public class AddTransactionFilterExpression implements FilterExpression {
 
-  private static final Logger log = Logger.getLogger(AddTransactionFilterExpression.class);
+  private static final Logger log = LogManager.getLogger();
   private Map<String, String> requestMap;
 
   @Override

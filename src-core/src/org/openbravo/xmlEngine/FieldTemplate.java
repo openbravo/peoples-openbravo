@@ -14,7 +14,8 @@ package org.openbravo.xmlEngine;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FieldTemplate implements XmlComponentTemplate, IDComponent {
   private String fieldName;
@@ -23,7 +24,7 @@ class FieldTemplate implements XmlComponentTemplate, IDComponent {
   DecimalFormat formatSimple;
   Vector<ReplaceElement> vecReplace;
 
-  static Logger log4jFieldTemplate = Logger.getLogger(FieldTemplate.class);
+  static Logger log4jFieldTemplate = LogManager.getLogger();
 
   public FieldTemplate(String fieldName, DecimalFormat formatOutput, DecimalFormat formatSimple,
       Vector<ReplaceElement> vecReplace) { // ,

@@ -18,7 +18,8 @@
  */
 package org.openbravo.modulescript;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
@@ -38,7 +39,7 @@ import javax.servlet.ServletException;
  */
 
 public class UpdateBpPaymentLine extends ModuleScript {
-  private static final Logger log4j = Logger.getLogger(UpdateBpPaymentLine.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute() {

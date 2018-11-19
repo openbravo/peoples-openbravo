@@ -26,7 +26,8 @@ import static org.junit.Assume.assumeThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.junit.Test;
@@ -48,7 +49,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class SystemValidatorTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(SystemValidatorTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Performs module validation using the {@link ModuleValidator}.

@@ -24,12 +24,11 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class FundsTransferOnChangeDepositToActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(FundsTransferOnChangeDepositToActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {

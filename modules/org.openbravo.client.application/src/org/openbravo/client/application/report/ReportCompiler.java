@@ -31,8 +31,8 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.Replace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -46,7 +46,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
  * passed as parameters within the report design.
  */
 class ReportCompiler {
-  private static final Logger log = LoggerFactory.getLogger(ReportCompiler.class);
+  private static final Logger log = LogManager.getLogger();
 
   // connection provider used to retrieve the translated texts
   private ConnectionProvider connectionProvider;

@@ -41,8 +41,8 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Action handler to manage attachments.<br>
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AttachmentAH extends BaseActionHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(AttachmentAH.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   private AttachImplementationManager aim;

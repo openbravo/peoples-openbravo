@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 // examples for the types of postgres messages to be parsed by this class
 
@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  *         POSTGRESQL RDBMS.
  */
 class ErrorTextParserPOSTGRE extends ErrorTextParser {
-  private static final Logger log4j = LoggerFactory.getLogger(ErrorTextParserPOSTGRE.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Extracts the name of a constraint out of a postgresql generated error message about a

@@ -234,6 +234,7 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${build.wad.lib}">
       <include name="openbravo-wad.jar" />
     </fileset>
+    <pathelement path="${base.config}" />
   </path>
 
   <path id="project.class.path">
@@ -241,6 +242,7 @@ export.database: exports database structure and data to xml files.
       <include name="*/build/classes/" />
     </dirset>
     <pathelement path="${basedir}/src-util/modulescript/build/classes/" />
+    <pathelement path="${base.config}" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
@@ -275,6 +277,7 @@ export.database: exports database structure and data to xml files.
     </dirset>
     <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
     <pathelement path="${build.apply.module}" />
+    <pathelement path="${base.config}" />
     <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
@@ -305,6 +308,7 @@ export.database: exports database structure and data to xml files.
       <include name="*/build/classes/" />
     </dirset>
     <pathelement path="${basedir}/../../src-util/modulescript/build/classes/" />
+    <pathelement path="${base.config}" />
     <pathelement path="${build.apply.module}" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
@@ -606,7 +610,6 @@ export.database: exports database structure and data to xml files.
                   password="${bbdd.password}" 
                   stableDBdir="${stableDBdir}"
                   testDBdir="${basedir}"
-                  verbosity="${bbdd.verbosity}"
                   modules="${modules}"
     />    
   </target>
@@ -922,7 +925,7 @@ export.database: exports database structure and data to xml files.
     <taskdef name="configurationApp" classname="org.openbravo.configuration.ConfigurationApp">
       <classpath refid="project.class.path" />
     </taskdef>
-    <configurationApp/>
+    <configurationApp nonInteractive="${nonInteractive}" acceptLicense="${acceptLicense}"/>
     </target>
   
   <target name="package.core" depends="init, set.version.number">
@@ -994,7 +997,9 @@ export.database: exports database structure and data to xml files.
       <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
       <classpath>
         <pathelement path="${build.core.lib}/openbravo-core.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-1.2.16.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-1.2-api-2.11.1.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-api-2.11.1.jar" />
+        <pathelement path="${base.lib}/runtime/log4j-core-2.11.1.jar" />
         <pathelement path="${base.lib}/runtime/commons-pool-1.5.6.jar" />
         <pathelement path="${base.lib}/runtime/commons-dbcp-1.4.jar" />
         <pathelement path="${base.lib}/runtime/postgresql-42.2.2.jre7.jar" />

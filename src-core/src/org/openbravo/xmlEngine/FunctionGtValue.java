@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionGtValue extends FunctionEvaluationValue {
 
-  static Logger log4jFunctionGtValue = Logger.getLogger(FunctionGtValue.class);
+  static Logger log4jFunctionGtValue = LogManager.getLogger();
 
   public FunctionGtValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);

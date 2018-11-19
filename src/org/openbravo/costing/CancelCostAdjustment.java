@@ -40,11 +40,11 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class CancelCostAdjustment extends BaseActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(CancelCostAdjustment.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String strCategoryCostAdj = "CAD";
   private static final String strTableCostAdj = "M_CostAdjustment";
 

@@ -22,11 +22,12 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class Tree {
-  static Logger log4jTree = Logger.getLogger(Tree.class);
+  static Logger log4jTree = LogManager.getLogger();
 
   public static String getMembers(ConnectionProvider conn, String treeId, String parentNodeId)
       throws IOException, ServletException {

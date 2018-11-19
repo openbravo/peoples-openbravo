@@ -29,7 +29,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -75,7 +76,7 @@ import org.openbravo.utils.FormatUtilities;
  */
 public class OBViewTab extends BaseTemplateComponent {
 
-  private static final Logger log = Logger.getLogger(OBViewTab.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String DEFAULT_TEMPLATE_ID = "B5124C0A450D4D3A867AEAC7DF64D6F0";
   protected static final Map<String, String> TEMPLATE_MAP = new HashMap<String, String>();
 

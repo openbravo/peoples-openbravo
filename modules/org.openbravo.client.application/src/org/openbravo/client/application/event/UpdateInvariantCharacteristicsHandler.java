@@ -38,8 +38,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Process in charge of updating the product characteristics
@@ -55,8 +55,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
-  final static private Logger log = LoggerFactory
-      .getLogger(UpdateInvariantCharacteristicsHandler.class);
+  final static private Logger log = LogManager.getLogger();
   private static final String NO_SUBSET = "-1";
 
   @Override

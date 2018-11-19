@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.axis.utils.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.expression.OBScriptEngine;
@@ -59,7 +60,7 @@ import org.openbravo.model.ad.domain.Reference;
  */
 public class ParameterUtils {
 
-  private static Logger log = Logger.getLogger(ParameterUtils.class);
+  private static Logger log = LogManager.getLogger();
 
   public static void setParameterValue(ParameterValue parameterValue, JSONObject requestValue) {
     try {

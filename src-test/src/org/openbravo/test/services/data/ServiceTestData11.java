@@ -22,12 +22,12 @@ package org.openbravo.test.services.data;
 import java.math.BigDecimal;
 
 import org.openbravo.erpCommon.utility.OBDateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ServiceTestData11 extends ServiceTestData {
 
-  final static private Logger log = LoggerFactory.getLogger(ServiceTestData9.class);
+  final static private Logger log = LogManager.getLogger();
 
   @Override
   public void initialize() {

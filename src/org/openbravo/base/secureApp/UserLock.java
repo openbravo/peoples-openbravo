@@ -24,7 +24,8 @@ import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -38,7 +39,7 @@ import org.openbravo.model.ad.access.User;
  * 
  */
 public class UserLock {
-  private static Logger log4j = Logger.getLogger(UserLock.class);
+  private static Logger log4j = LogManager.getLogger();
 
   private static float delayInc;
   private static int delayMax;

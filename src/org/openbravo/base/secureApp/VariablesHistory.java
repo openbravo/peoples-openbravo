@@ -14,7 +14,8 @@ package org.openbravo.base.secureApp;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class VariablesHistory {
   private String currentHistoryIndex;
@@ -24,7 +25,7 @@ public class VariablesHistory {
   private String language;
   private String dbSessionID;
 
-  private static Logger log4j = Logger.getLogger(VariablesHistory.class);
+  private static Logger log4j = LogManager.getLogger();
 
   public VariablesHistory(HttpServletRequest request) {
     this.session = request.getSession(false);

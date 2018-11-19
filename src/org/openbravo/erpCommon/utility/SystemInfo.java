@@ -51,7 +51,8 @@ import java.util.zip.CRC32;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -73,7 +74,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class SystemInfo {
-  private static final Logger log4j = Logger.getLogger(SystemInfo.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String IN_CLUSTER_PROPERTY = "cluster";
   private static final String CLUSTER = "cluster";
   private static Map<Item, String> systemInfo;

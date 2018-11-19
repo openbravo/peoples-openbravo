@@ -28,11 +28,11 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public abstract class LandedCostDistributionAlgorithm {
-  private static final Logger log = LoggerFactory.getLogger(LandedCostDistributionAlgorithm.class);
+  private static final Logger log = LogManager.getLogger();
 
   public abstract void distributeAmount(LandedCostCost lcCost, boolean isMatchingAdjustment);
 

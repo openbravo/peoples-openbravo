@@ -24,7 +24,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
@@ -38,7 +39,7 @@ import org.openbravo.base.util.OBClassLoader;
  * @author iperdomo
  */
 public class Reference extends ModelObject {
-  private static final Logger log = Logger.getLogger(Reference.class);
+  private static final Logger log = LogManager.getLogger();
 
   // Ids of ReferenceTypes
   public static final String TABLE = "18";

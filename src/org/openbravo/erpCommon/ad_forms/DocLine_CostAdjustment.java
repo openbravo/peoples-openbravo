@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.costing.CostingServer;
 import org.openbravo.costing.CostingServer.TrxType;
@@ -31,8 +32,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class DocLine_CostAdjustment extends DocLine {
-  private static final Logger log4jDocLine_CostAdjustment = Logger
-      .getLogger(DocLine_CostAdjustment.class);
+  private static final Logger log4jDocLine_CostAdjustment = LogManager.getLogger();
 
   public DocLine_CostAdjustment(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);

@@ -39,8 +39,8 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The component responsible for generating the content of the function used to determine if the
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
 
-  private static final Logger log = LoggerFactory.getLogger(HeartBeatPopUpComponent.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String APRM_MIGRATION_TOOL_ID = "4BD3D4B262B048518FE62496EF09D549";
   private static final String COMPONENT_ID = "HeartbeatRegistration";
   private static final String TEMPLATE_ID = "EE5CEC203AEA4B039CCDAD0BE8E07E3C";

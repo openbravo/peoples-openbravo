@@ -31,8 +31,8 @@ import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Utility class with that allows to set a query timeout for hibernate queries, hibernate criterias
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class QueryTimeOutUtil implements OBSingleton {
 
-  private static Logger log = LoggerFactory.getLogger(QueryTimeOutUtil.class);
+  private static Logger log = LogManager.getLogger();
 
   private static QueryTimeOutUtil instance;
 

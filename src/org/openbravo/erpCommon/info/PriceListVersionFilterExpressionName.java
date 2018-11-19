@@ -29,7 +29,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
@@ -43,7 +44,7 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 
 public class PriceListVersionFilterExpressionName implements FilterExpression {
-  private Logger log = Logger.getLogger(PriceListVersionFilterExpressionName.class);
+  private Logger log = LogManager.getLogger();
   private Map<String, String> requestMap;
   private HttpSession httpSession;
   private String windowId;

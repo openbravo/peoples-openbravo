@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.junit.Ignore;
@@ -48,7 +49,7 @@ import org.openbravo.service.db.CallProcess;
  * 
  */
 public class ADOrgTreeTest extends Ad_isorgincludedTest {
-  private static final Logger log = Logger.getLogger(ADOrgTreeTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String ORGTYPE_ORGANIZATION = "0";
   private static final String CLIENT_0 = "0";

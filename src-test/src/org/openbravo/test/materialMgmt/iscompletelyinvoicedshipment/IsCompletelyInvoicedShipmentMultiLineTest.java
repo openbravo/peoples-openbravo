@@ -33,8 +33,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Create Sales Order with 2 Products, Create shipments against each order line, Create Sales
@@ -43,8 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class IsCompletelyInvoicedShipmentMultiLineTest extends OBBaseTest {
 
-  private static final Logger log = LoggerFactory
-      .getLogger(IsCompletelyInvoicedShipmentMultiLineTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Before
   public void setUpTestIsCompletelyInvoicedMultiLine() throws Exception {

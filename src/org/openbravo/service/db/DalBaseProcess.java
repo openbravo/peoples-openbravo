@@ -21,7 +21,8 @@ package org.openbravo.service.db;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -41,7 +42,7 @@ import org.openbravo.scheduling.ProcessContext;
  * @author mtaal
  */
 public abstract class DalBaseProcess implements Process {
-  private static final Logger log = Logger.getLogger(DalBaseProcess.class);
+  private static final Logger log = LogManager.getLogger();
   private boolean doCommit = true;
 
   public boolean isDoCommit() {

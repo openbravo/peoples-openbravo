@@ -37,15 +37,15 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.role.inheritance.RoleInheritanceManager.CalculationResult;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Handler for the Recalculate Permissions process which is intended to launch that process to one
  * or multiple roles
  */
 public class RecalculatePermissionsHandler extends BaseActionHandler {
-  final static private Logger log = LoggerFactory.getLogger(RecalculatePermissionsHandler.class);
+  final static private Logger log = LogManager.getLogger();
   @Inject
   private RoleInheritanceManager manager;
 

@@ -38,8 +38,8 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Builds a tree of organizations to compute the accessible organizations for the current
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class OrganizationStructureProvider implements OBNotSingleton {
-  final static Logger log = LoggerFactory.getLogger(OrganizationStructureProvider.class);
+  final static Logger log = LogManager.getLogger();
 
   private boolean isInitialized = false;
   private Map<String, OrgNode> orgNodes;

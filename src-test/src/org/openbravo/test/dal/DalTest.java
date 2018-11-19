@@ -39,8 +39,9 @@ import static org.junit.Assume.assumeThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Restrictions;
@@ -83,7 +84,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DalTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(DalTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();

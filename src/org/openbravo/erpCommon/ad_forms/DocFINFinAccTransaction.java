@@ -31,7 +31,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -73,8 +74,7 @@ public class DocFINFinAccTransaction extends AcctServer {
   BigDecimal generatedCredit = ZERO;
   boolean exceptionPosting = false;
 
-  private static final Logger docFINFinAccTransactionLog4j = Logger
-      .getLogger(DocFINFinAccTransaction.class);
+  private static final Logger docFINFinAccTransactionLog4j = LogManager.getLogger();
 
   String SeqNo = "0";
 

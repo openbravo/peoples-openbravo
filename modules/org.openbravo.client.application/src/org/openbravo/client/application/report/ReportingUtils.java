@@ -45,8 +45,8 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.ad.utility.FileType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -101,7 +101,7 @@ public class ReportingUtils {
 
   private static final float TEXT_CHAR_HEIGHT = 10;
   private static final float TEXT_CHAR_WIDTH = 10;
-  private static final Logger log = LoggerFactory.getLogger(ReportingUtils.class);
+  private static final Logger log = LogManager.getLogger();
   private static CompiledReportManager compiledReportManager = CompiledReportManager.getInstance();
 
   /**

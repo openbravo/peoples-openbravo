@@ -53,12 +53,11 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
-  private static final Logger logger = LoggerFactory
-      .getLogger(LinkToParentTreeDatasourceService.class);
+  private static final Logger logger = LogManager.getLogger();
   private static final String ID_SEPARATOR = "-";
 
   @Override
