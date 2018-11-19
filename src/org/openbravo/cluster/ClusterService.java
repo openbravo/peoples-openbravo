@@ -25,8 +25,8 @@ import java.util.Date;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class will be extended by those classes that implements a service which supports working in
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public abstract class ClusterService {
-  private static final Logger log = LoggerFactory.getLogger(ClusterService.class);
+  private static final Logger log = LogManager.getLogger();
   private static final Long DEFAULT_TIMEOUT = 10_000L;
   private static final Long MIN_THRESHOLD = 1_000L;
   private static final Long MAX_THRESHOLD = 5_000L;

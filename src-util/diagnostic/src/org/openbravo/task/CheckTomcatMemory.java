@@ -19,14 +19,15 @@
 
 package org.openbravo.task;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.openbravo.utils.PropertiesManager;
 import org.openbravo.utils.ServerConnection;
 
 public class CheckTomcatMemory extends Task {
-  static Logger log4j = Logger.getLogger(CheckTomcatMemory.class);
+  static Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute() throws BuildException {

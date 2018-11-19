@@ -24,7 +24,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -47,7 +48,7 @@ public class RescheduleProcess extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   private static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
-  private static final Logger log = Logger.getLogger(RescheduleProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)

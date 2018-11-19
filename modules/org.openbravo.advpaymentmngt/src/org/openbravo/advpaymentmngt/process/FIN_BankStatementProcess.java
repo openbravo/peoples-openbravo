@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.MatchTransactionDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -45,7 +46,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_BankStatementProcess implements org.openbravo.scheduling.Process {
 
-  private static final Logger log = Logger.getLogger(FIN_BankStatementProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {

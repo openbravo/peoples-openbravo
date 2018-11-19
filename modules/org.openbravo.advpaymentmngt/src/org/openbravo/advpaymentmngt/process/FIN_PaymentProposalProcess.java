@@ -25,7 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -53,11 +54,11 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
 
   public static final String COMINGFROM_PAYMENTPROPOSALPROCESS = "PAYMENT_PROPOSAL";
 
-  private static final Logger log = Logger.getLogger(FIN_PaymentProposalProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
-    final Logger log4j = Logger.getLogger(this.getClass());
+    final Logger log4j = LogManager.getLogger();
     dao = new AdvPaymentMngtDao();
     OBError message = null;
     try {

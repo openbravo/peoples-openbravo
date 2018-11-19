@@ -23,7 +23,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -43,7 +44,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
 public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
-  private static final Logger log4j = Logger.getLogger(CostingRuleProcessOnProcessHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {

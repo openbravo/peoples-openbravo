@@ -22,7 +22,8 @@ package org.openbravo.dal.core;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -39,7 +40,7 @@ import org.openbravo.dal.service.OBDal;
  */
 
 public class TriggerHandler {
-  private static final Logger log = Logger.getLogger(TriggerHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static TriggerHandler instance;
   private boolean isPostgreSQL = "POSTGRE".equals(OBPropertiesProvider.getInstance()

@@ -24,7 +24,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -45,7 +46,7 @@ import org.openbravo.service.datasource.DataSourceServiceProvider;
  * @author mtaal
  */
 public class DataSourceJavaScriptTest extends WeldBaseTest {
-  private static final Logger log = Logger.getLogger(DataSourceJavaScriptTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;

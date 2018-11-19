@@ -11,12 +11,13 @@
  */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.utils.Replace;
 
 class LabelValue implements XmlComponentValue {
 
-  static Logger log4j = Logger.getLogger(LabelValue.class);
+  static Logger log4j = LogManager.getLogger();
 
   String strValue = null;
   LabelTemplate labelTemplate;

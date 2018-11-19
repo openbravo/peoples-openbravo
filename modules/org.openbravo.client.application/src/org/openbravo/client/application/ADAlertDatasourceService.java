@@ -40,8 +40,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.UsedByLink;
 import org.openbravo.service.datasource.DefaultDataSourceService;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Datasource used by the Alert Management window
@@ -52,7 +52,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
   private static final String ALERT_RULE_TAB = "alertRule.tab.id";
   private static final int ALERT_RULE_ID = 0;
   private static final int ALERT_RULE_FILTERCLAUSE = 1;
-  private static final Logger log = LoggerFactory.getLogger(ADAlertDatasourceService.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public Entity getEntity() {

@@ -34,14 +34,14 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Helper class to develop Referenced Inventory related tests
  */
 public abstract class ReferencedInventoryTest extends WeldBaseTest {
-  protected static final Logger log = LoggerFactory.getLogger(ReferencedInventoryTest.class);
+  protected static final Logger log = LogManager.getLogger();
 
   // All tests creates a new product with 10 units
   protected static final BigDecimal RECEIVEDQTY_10 = new BigDecimal("10");

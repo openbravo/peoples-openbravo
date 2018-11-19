@@ -20,10 +20,11 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DocLine_FINReconciliation extends DocLineCashVATReady_PaymentTransactionReconciliation {
-  static Logger log4j = Logger.getLogger(DocLine_FINReconciliation.class);
+  static Logger log4j = LogManager.getLogger();
 
   String Line_ID = "";
   String PaymentAmount = "";

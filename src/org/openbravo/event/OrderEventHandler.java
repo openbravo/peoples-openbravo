@@ -25,7 +25,8 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
@@ -52,7 +53,7 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
   private static final String DO_NOT_SYNC_DATE_DELIVERED_PREFERENCE = "DoNotSyncDateDelivered";
   private static final String DO_NOT_SYNC_DATE_ORDERED_PREFERENCE = "DoNotSyncDateOrdered";
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Order.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

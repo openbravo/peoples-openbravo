@@ -15,7 +15,8 @@ import java.util.Hashtable;
 import java.util.Stack;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -53,7 +54,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   String prefix;
   String strCharacters = "";
 
-  static Logger log4jXmlTemplate = Logger.getLogger(XmlTemplate.class);
+  static Logger log4jXmlTemplate = LogManager.getLogger();
 
   public XmlTemplate(String strName, String fileConfiguration, String[] discard, XmlEngine xmlEngine) {
     this.strName = strName;

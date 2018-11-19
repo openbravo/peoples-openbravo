@@ -26,7 +26,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.GCField;
 import org.openbravo.client.application.GCSystem;
@@ -56,7 +57,7 @@ public class HelpWindow {
 
   private static final String COMPATIBILITY_MODULE = "677192D0C60F411384832241227360E3";
 
-  private static Logger log4j = Logger.getLogger(HelpWindow.class);
+  private static Logger log4j = LogManager.getLogger();
 
   public static String generateWindow(ConnectionProvider conn, XmlEngine xmlEngine,
       VariablesSecureApp vars, boolean discardEdit, String strKeyId) throws IOException,

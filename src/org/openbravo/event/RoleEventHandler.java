@@ -38,8 +38,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.common.enterprise.Organization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class RoleEventHandler extends EntityPersistenceEventObserver {
   private static final String InitialOrgSetup_CLASSNAME = "org.openbravo.erpCommon.businessUtility.InitialOrgSetup";
@@ -47,7 +47,7 @@ public class RoleEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Role.ENTITY_NAME) };
 
-  protected Logger logger = LoggerFactory.getLogger(RoleEventHandler.class);
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

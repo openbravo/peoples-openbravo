@@ -40,8 +40,8 @@ import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TreeNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Configures cached global menu (@see {@link GlobalMenu}) to adapt it to the current session's
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 @RequestScoped
 public class MenuManager {
-  private static final Logger log = LoggerFactory.getLogger(MenuManager.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static enum MenuEntryType {
     Window, Process, ProcessManual, Report, Form, External, Summary, View, ProcessDefinition

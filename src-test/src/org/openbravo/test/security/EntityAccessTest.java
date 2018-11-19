@@ -25,7 +25,8 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -59,7 +60,7 @@ import org.openbravo.model.common.order.Order;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EntityAccessTest extends CrossOrganizationReference {
 
-  private static final Logger log = Logger.getLogger(EntityAccessTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Creates test data, a {@link Currency}.

@@ -28,13 +28,14 @@ import java.util.Set;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class Fact {
-  static Logger log4jFact = Logger.getLogger(Fact.class);
+  static Logger log4jFact = LogManager.getLogger();
 
   /** Document */
   private AcctServer m_doc = null;

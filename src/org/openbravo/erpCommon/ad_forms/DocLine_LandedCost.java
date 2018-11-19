@@ -18,10 +18,11 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DocLine_LandedCost extends DocLine {
-  private static final Logger log4jDocLine_LandedCost = Logger.getLogger(DocLine_LandedCost.class);
+  private static final Logger log4jDocLine_LandedCost = LogManager.getLogger();
 
   public DocLine_LandedCost(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);

@@ -43,8 +43,8 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * 
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class GlobalMenu {
-  private static final Logger log = LoggerFactory.getLogger(GlobalMenu.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Map<String, List<MenuOption>> menuOptionsByLangAndTree = null;
 

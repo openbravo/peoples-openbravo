@@ -33,12 +33,11 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class IsCompletelyInvoicedShipmentOneLineTest extends OBBaseTest {
-  private static final Logger log = LoggerFactory
-      .getLogger(IsCompletelyInvoicedShipmentOneLineTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Before
   public void setUpTestIsCompletelyInvoicedOneLine() throws Exception {

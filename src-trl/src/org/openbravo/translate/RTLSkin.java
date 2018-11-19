@@ -29,7 +29,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author David Alsasua
@@ -43,7 +44,7 @@ public class RTLSkin {
   private static String srcDirLTRSkin = "";
   private static Vector<String> vImagesToFlip;
 
-  static Logger log4j = Logger.getLogger(Translate.class);
+  static Logger log4j = LogManager.getLogger();
 
   /**
    * Command Line method.

@@ -35,11 +35,11 @@ import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ReactivateLandedCost extends BaseActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(ReactivateLandedCost.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {

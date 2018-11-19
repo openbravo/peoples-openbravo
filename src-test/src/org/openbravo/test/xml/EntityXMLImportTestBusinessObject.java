@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -62,7 +63,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   // prefix is used to uniquely identify the payment terms used in this test case
   private static final String PREFIX = "" + System.currentTimeMillis();
 
-  private static final Logger log = Logger.getLogger(EntityXMLImportTestBusinessObject.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static int NO_OF_PT = 1;
   private static int NO_OF_PT_LINE = 1 + NO_OF_PT * NO_OF_PT;

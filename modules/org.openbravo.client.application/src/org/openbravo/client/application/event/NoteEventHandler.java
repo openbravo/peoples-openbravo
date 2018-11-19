@@ -39,8 +39,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowAccessData;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Checks if the Role has access to add notes for a particular tab
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @author shankar balachandran
  */
 public class NoteEventHandler extends EntityPersistenceEventObserver {
-  private static Logger log = LoggerFactory.getLogger(NoteEventHandler.class);
+  private static Logger log = LogManager.getLogger();
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Note.ENTITY_NAME) };
 
   @Override

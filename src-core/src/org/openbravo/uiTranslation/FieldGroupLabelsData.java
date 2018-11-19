@@ -19,14 +19,15 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 
 @SuppressWarnings("serial")
 class FieldGroupLabelsData implements FieldProvider {
-  static Logger log4j = Logger.getLogger(FieldGroupLabelsData.class);
+  static Logger log4j = LogManager.getLogger();
   public String tabname;
   public String fieldgroupid;
   public String fieldgroupname;

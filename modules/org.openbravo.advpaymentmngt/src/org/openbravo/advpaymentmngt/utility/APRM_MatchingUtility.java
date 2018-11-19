@@ -80,11 +80,11 @@ import org.openbravo.model.sales.SalesRegion;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class APRM_MatchingUtility {
-  private static final Logger log4j = LoggerFactory.getLogger(APRM_MatchingUtility.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Get reconciliation lines of a reconciliation that had been matched manually

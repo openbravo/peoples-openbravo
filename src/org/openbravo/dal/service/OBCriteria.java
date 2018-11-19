@@ -25,7 +25,8 @@ import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -60,7 +61,7 @@ import org.openbravo.service.db.QueryTimeOutUtil;
 public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   private static final long serialVersionUID = 1L;
 
-  private static final Logger log = Logger.getLogger(OBCriteria.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Entity entity;
 

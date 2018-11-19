@@ -45,15 +45,15 @@ import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.CallProcess;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class CopyFromOrdersProcess {
   @Inject
   @Any
   private Instance<CopyFromOrdersProcessImplementationInterface> copyFromOrdersProcessHooks;
 
-  private static final Logger log = LoggerFactory.getLogger(CopyFromOrdersProcess.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String EXPLODE_BOM_PROCESS = "DFC78024B1F54CBB95DC73425BA6687F";
 
   private Order processingOrder;

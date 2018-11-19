@@ -33,8 +33,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.AttachmentConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Event Handler on AttachmentConfig entity that manages the changes on the Attachment Method used
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * AttachmentUtils.
  */
 public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
-  private static final Logger logger = LoggerFactory.getLogger(AttachmentConfigEventHandler.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       AttachmentConfig.ENTITY_NAME) };

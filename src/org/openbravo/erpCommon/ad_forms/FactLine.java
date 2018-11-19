@@ -26,7 +26,8 @@ import java.sql.Statement;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -37,7 +38,7 @@ import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 
 public class FactLine {
-  static Logger log4jFactLine = Logger.getLogger(FactLine.class);
+  static Logger log4jFactLine = LogManager.getLogger();
 
   public final BigDecimal ZERO = new BigDecimal("0");
 

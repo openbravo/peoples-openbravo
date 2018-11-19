@@ -22,7 +22,8 @@ package org.openbravo.buildvalidation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ExecutionLimits;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
@@ -45,7 +46,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
  * 
  */
 public class RemoveCostingRuleProcessExecutions extends BuildValidation {
-  private static Logger log = Logger.getLogger(RemoveCostingRuleProcessExecutions.class);
+  private static Logger log = LogManager.getLogger();
 
   @Override
   public List<String> execute() {

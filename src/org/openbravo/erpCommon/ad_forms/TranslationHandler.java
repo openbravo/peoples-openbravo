@@ -17,7 +17,8 @@ package org.openbravo.erpCommon.ad_forms;
 import java.sql.Connection;
 import java.sql.Statement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -74,7 +75,7 @@ class TranslationHandler extends DefaultHandler {
 
   private String m_Translated = null;
 
-  static Logger log4j = Logger.getLogger(TranslationHandler.class);
+  static Logger log4j = LogManager.getLogger();
 
   /*************************************************************************/
 

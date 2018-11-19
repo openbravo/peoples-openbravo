@@ -19,7 +19,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.database.JNDIConnectionProvider;
@@ -32,7 +33,7 @@ import org.openbravo.exception.PoolNotFoundException;
  */
 public class ConnectionProviderContextListener implements ServletContextListener {
   public static final String POOL_ATTRIBUTE = "openbravoPool";
-  private static Logger log4j = Logger.getLogger(ConnectionProviderContextListener.class);
+  private static Logger log4j = LogManager.getLogger();
   private static ConnectionProvider pool;
 
   public void contextInitialized(ServletContextEvent event) {

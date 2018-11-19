@@ -24,7 +24,8 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -54,7 +55,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  * 
  */
 public class CostingBackground extends DalBaseProcess implements KillableProcess {
-  private static final Logger log4j = Logger.getLogger(CostingBackground.class);
+  private static final Logger log4j = LogManager.getLogger();
   public static final String AD_PROCESS_ID = "3F2B4AAC707B4CE7B98D2005CF7310B5";
   private ProcessLogger logger;
   public static final String TRANSACTION_COST_DATEACCT_INITIALIZED = "TransactionCostDateacctInitialized";

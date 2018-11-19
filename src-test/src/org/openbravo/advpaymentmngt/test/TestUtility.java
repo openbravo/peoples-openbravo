@@ -29,7 +29,8 @@ import java.util.List;
 
 import javax.persistence.PersistenceException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -75,7 +76,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class TestUtility extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(TestUtility.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static FIN_FinancialAccount insertFinancialAccount(String name, String description,
       Currency currency, String type, boolean isDefault, Location location,

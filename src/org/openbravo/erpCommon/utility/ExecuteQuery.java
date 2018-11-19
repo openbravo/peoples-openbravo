@@ -26,7 +26,8 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
@@ -38,7 +39,7 @@ import org.openbravo.database.ConnectionProvider;
  */
 public class ExecuteQuery {
 
-  private static final Logger log4j = Logger.getLogger(ExecuteQuery.class);
+  private static final Logger log4j = LogManager.getLogger();
   private ConnectionProvider pool;
   private Vector<String> parameters = new Vector<String>();
   private String sql;

@@ -26,7 +26,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -61,7 +62,7 @@ public class PaymentTest_11 extends OBBaseTest {
   // 4) Receive and process a payment against the invoice for the full amount
   // 5) Review payment info
 
-  private static final Logger log = Logger.getLogger(PaymentTest_10.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String MANUAL_EXECUTION = "M";
   private static final String CLEARED_ACCOUNT = "CLE";

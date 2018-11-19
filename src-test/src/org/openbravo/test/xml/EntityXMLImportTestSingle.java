@@ -26,7 +26,8 @@ import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -54,7 +55,7 @@ import org.openbravo.service.db.ImportResult;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EntityXMLImportTestSingle extends XMLBaseTest {
 
-  private static final Logger log = Logger.getLogger(EntityXMLImportTestSingle.class);
+  private static final Logger log = LogManager.getLogger();
 
   // non-final on purpose
   private static int DATA_SET_SIZE = 20;

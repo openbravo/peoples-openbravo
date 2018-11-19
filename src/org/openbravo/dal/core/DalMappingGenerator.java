@@ -30,7 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.type.YesNoType;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -50,7 +51,7 @@ import org.openbravo.base.util.Check;
  */
 
 public class DalMappingGenerator implements OBSingleton {
-  private static final Logger log = Logger.getLogger(DalMappingGenerator.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String HIBERNATE_FILE_PROPERTY = "hibernate.hbm.file";
   private static final String HIBERNATE_READ_FILE_PROPERTY = "hibernate.hbm.readFile";

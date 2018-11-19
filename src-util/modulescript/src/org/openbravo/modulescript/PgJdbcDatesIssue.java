@@ -23,7 +23,8 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 /**
@@ -34,7 +35,7 @@ import org.openbravo.database.ConnectionProvider;
  */
 public class PgJdbcDatesIssue extends ModuleScript {
 
-  private static final Logger log = Logger.getLogger(PgJdbcDatesIssue.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String CORE = "0";
   private static final OpenbravoVersion PR15Q4 = new OpenbravoVersion("3.0.27657");
   private static final OpenbravoVersion FIXED_VERSION = new OpenbravoVersion("3.0.28174");

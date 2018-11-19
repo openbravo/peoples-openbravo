@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
@@ -44,7 +45,7 @@ import org.openbravo.model.common.enterprise.Organization;
 
 public class DimensionDisplayUtility {
 
-  private static final Logger log4j = Logger.getLogger(DimensionDisplayUtility.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /** Accounting Dimensions **/
   public static final String DIM_Header = "H";

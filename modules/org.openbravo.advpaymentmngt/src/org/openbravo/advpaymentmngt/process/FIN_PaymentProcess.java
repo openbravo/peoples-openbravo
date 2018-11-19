@@ -64,14 +64,14 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.scheduling.ProcessBundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
 
   public BigDecimal ZERO = BigDecimal.ZERO;
-  static Logger log4j = LoggerFactory.getLogger(FIN_PaymentProcess.class);
+  static Logger log4j = LogManager.getLogger();
 
   public void execute(ProcessBundle bundle) throws Exception {
 

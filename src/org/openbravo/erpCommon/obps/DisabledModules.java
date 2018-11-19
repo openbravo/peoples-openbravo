@@ -22,7 +22,8 @@ package org.openbravo.erpCommon.obps;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -49,7 +50,7 @@ public class DisabledModules {
   private static List<String> disabledProcesses = new ArrayList<String>();
   private static List<String> disabledForms = new ArrayList<String>();
 
-  private static final Logger log4j = Logger.getLogger(DisabledModules.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Reloads information about disabled elements reading from database.

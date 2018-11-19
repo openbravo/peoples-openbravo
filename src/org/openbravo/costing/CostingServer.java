@@ -26,7 +26,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -68,7 +69,7 @@ import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 public class CostingServer {
   private MaterialTransaction transaction;
   private BigDecimal trxCost;
-  protected static Logger log4j = Logger.getLogger(CostingServer.class);
+  protected static Logger log4j = LogManager.getLogger();
   private CostingRule costingRule;
   private CostingAlgorithm costingAlgorithm;
   private Currency currency;

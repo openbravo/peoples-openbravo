@@ -29,7 +29,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -58,7 +59,7 @@ import org.openbravo.service.db.DbUtility;
 // TODO: revisit when looking at factory pattern and dependency injection
 // framework
 public class SessionHandler implements OBNotSingleton {
-  private static final Logger log = Logger.getLogger(SessionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ExternalConnectionPool externalConnectionPool;
 

@@ -41,13 +41,12 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.importprocess.ImportEntryManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ProductCharacteristicValueEventHandler extends EntityPersistenceEventObserver {
   private static final int IMPORT_ENTRY_SIZE = 100;
-  private static Logger logger = LoggerFactory
-      .getLogger(ProductCharacteristicValueEventHandler.class);
+  private static Logger logger = LogManager.getLogger();
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProductCharacteristicValue.ENTITY_NAME) };
   private static ThreadLocal<Set<String>> prodchvalueUpdated = new ThreadLocal<Set<String>>();

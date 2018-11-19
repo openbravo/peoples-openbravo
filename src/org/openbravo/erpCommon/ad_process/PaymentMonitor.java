@@ -10,7 +10,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -26,7 +27,7 @@ import org.openbravo.model.financialmgmt.payment.DebtPayment;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class PaymentMonitor {
-  private static final Logger log4j = Logger.getLogger(PaymentMonitor.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * Updates payment monitor information

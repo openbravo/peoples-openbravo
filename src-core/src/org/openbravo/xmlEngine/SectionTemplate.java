@@ -13,7 +13,8 @@ package org.openbravo.xmlEngine;
 
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Each of the breaks in a DataTemplate
@@ -27,7 +28,7 @@ class SectionTemplate implements IDComponent {
   Vector<Object> vecFunctionTemplate;
   FieldTemplate breakFieldTemplate;
 
-  static Logger log4jSectionTemplate = Logger.getLogger(SectionTemplate.class);
+  static Logger log4jSectionTemplate = LogManager.getLogger();
 
   public SectionTemplate(String id, DataTemplate dataTemplate) {
     name = id;

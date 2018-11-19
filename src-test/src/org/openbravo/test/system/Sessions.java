@@ -37,12 +37,12 @@ import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockHttpSession;
 import org.junit.Test;
 import org.openbravo.erpCommon.security.SessionListener;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /** Test cases covering Session management */
 public class Sessions {
-  private static final Logger log = LoggerFactory.getLogger(Sessions.class);
+  private static final Logger log = LogManager.getLogger();
   private static int NUMBER_OF_THREADS = 4;
   private static int NUMBER_OF_SESSIONS_PER_THREAD = 1_000;
 

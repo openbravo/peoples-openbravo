@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.advpaymentmngt.process.FIN_ExecutePayment;
@@ -69,7 +70,7 @@ public class PaymentTest_09 extends OBBaseTest {
   // 5) Execute payment
   // 6) Review payment info
 
-  private static final Logger log = Logger.getLogger(PaymentTest_09.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String MANUAL_EXECUTION = "M";
   private static final String AUTOMATIC_EXECUTION = "A";

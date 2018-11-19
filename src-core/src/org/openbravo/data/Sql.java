@@ -14,7 +14,8 @@ package org.openbravo.data;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class Sql {
   String sqlName;
@@ -35,7 +36,7 @@ class Sql {
   String strSequenceName = null;
   boolean boolOptional = false;
   boolean saveContextInfo = true;
-  static Logger log4j = Logger.getLogger(Sql.class); // log4j
+  static Logger log4j = LogManager.getLogger(); // log4j
 
   public Sql() {
     vecParameter = new Vector<Parameter>();

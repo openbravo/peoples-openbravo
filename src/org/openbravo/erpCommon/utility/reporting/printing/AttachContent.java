@@ -17,13 +17,14 @@
 package org.openbravo.erpCommon.utility.reporting.printing;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
 @SuppressWarnings("serial")
 class AttachContent implements FieldProvider {
 
-  static Logger log4j = Logger.getLogger(AttachContent.class);
+  static Logger log4j = LogManager.getLogger();
   public String docName;
   public String fileName;
   public FileItem fileItem;

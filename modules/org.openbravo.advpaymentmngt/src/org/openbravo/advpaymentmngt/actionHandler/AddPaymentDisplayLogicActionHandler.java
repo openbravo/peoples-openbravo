@@ -36,12 +36,11 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class AddPaymentDisplayLogicActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(AddPaymentDisplayLogicActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String data) {

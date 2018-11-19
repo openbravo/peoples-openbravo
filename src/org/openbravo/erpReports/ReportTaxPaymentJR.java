@@ -26,7 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
@@ -166,7 +167,7 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
 
 @SuppressWarnings("serial")
 class TypeReportPayment implements FieldProvider {
-  static Logger log4j = Logger.getLogger(TypeReportPayment.class);
+  static Logger log4j = LogManager.getLogger();
   // private String InitRecordNumber = "0";
   public String id;
   public String name;

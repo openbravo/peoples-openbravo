@@ -11,12 +11,13 @@
  */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionOrderValue extends FunctionValue {
   int order;
 
-  static Logger log4jFunctionOrderValue = Logger.getLogger(FunctionOrderValue.class);
+  static Logger log4jFunctionOrderValue = LogManager.getLogger();
 
   public FunctionOrderValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);

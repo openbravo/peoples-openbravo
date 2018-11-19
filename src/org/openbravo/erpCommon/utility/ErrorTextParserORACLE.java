@@ -24,7 +24,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
 //examples for the types of postgres messages to be parsed by this class
@@ -49,7 +50,7 @@ import org.openbravo.data.FieldProvider;
  *         ORACLE RDBMS.
  */
 class ErrorTextParserORACLE extends ErrorTextParser {
-  private static final Logger log4j = Logger.getLogger(ErrorTextParserORACLE.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   String[] getColumnNamesForConstraint(String constraintName) {
     try {

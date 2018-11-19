@@ -19,7 +19,8 @@
 
 package org.openbravo.base.validation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.util.Check;
 
@@ -32,7 +33,7 @@ import org.openbravo.base.util.Check;
 public class StringPropertyValidator extends BasePropertyValidator {
 
   private int fieldLength = -1;
-  private static final Logger log = Logger.getLogger(StringPropertyValidator.class);
+  private static final Logger log = LogManager.getLogger();
 
   static boolean isValidationRequired(Property p) {
     if (p.isPrimitive() && p.getPrimitiveType() == String.class) {

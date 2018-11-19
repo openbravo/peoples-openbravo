@@ -60,8 +60,8 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class generates and processes Invoice from Goods Shipment. Only goods shipment lines not
@@ -70,8 +70,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class InvoiceGeneratorFromGoodsShipment {
-  private static final Logger log = LoggerFactory
-      .getLogger(InvoiceGeneratorFromGoodsShipment.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String shipmentId;
   private Invoice invoice;

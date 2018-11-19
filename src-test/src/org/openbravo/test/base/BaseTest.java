@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -63,7 +64,7 @@ import junit.framework.TestResult;
 @Deprecated
 public class BaseTest extends TestCase {
 
-  private static final Logger log = Logger.getLogger(BaseTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private boolean errorOccured = false;
 

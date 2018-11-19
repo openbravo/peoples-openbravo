@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.junit.FixMethodOrder;
@@ -60,7 +61,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DalQueryTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(DalQueryTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Tests a left join with {@link ModelImplementation} as the main class.

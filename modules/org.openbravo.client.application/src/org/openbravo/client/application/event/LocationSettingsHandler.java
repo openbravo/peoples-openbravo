@@ -23,7 +23,8 @@ import java.text.SimpleDateFormat;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -42,7 +43,7 @@ import org.openbravo.model.common.geography.Country;
  */
 public class LocationSettingsHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Country.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

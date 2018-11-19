@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.utility;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -33,7 +34,7 @@ import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
  * Utilities to get AcctSchema
  */
 public class OBLedgerUtils {
-  private static Logger log4j = Logger.getLogger(OBLedgerUtils.class);
+  private static Logger log4j = LogManager.getLogger();
 
   /**
    * Returns the ledger id for the given organization id.

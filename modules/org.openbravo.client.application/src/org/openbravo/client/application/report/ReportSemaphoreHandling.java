@@ -26,8 +26,8 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * A class which can be used to limit the number of parallel processes running. If no semaphore is
@@ -58,7 +58,7 @@ public class ReportSemaphoreHandling implements OBSingleton {
   private static int DEFAULT_MAX_THREADS = 3;
   private static int maxThreads;
 
-  private static final Logger log = LoggerFactory.getLogger(ReportSemaphoreHandling.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ReportSemaphoreHandling instance;
   private Semaphore semaphore;

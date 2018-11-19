@@ -21,7 +21,8 @@ package org.openbravo.test.dal;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Ignore;
@@ -42,7 +43,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class DalPerformanceInventoryLineTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(DalPerformanceInventoryLineTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   // increase this number to make it a real performance test
   private static final int NO_HEADER = 50;

@@ -31,12 +31,11 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.ServicePriceUtils;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ServiceRelatedLinePriceActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(ServiceRelatedLinePriceActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String RFC_ORDERLINE_TAB_ID = "AF4090093D471431E040007F010048A5";
 
   @Override

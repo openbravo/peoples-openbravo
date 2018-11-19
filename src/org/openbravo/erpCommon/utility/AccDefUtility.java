@@ -22,7 +22,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -36,7 +37,7 @@ import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.financialmgmt.calendar.Year;
 
 public class AccDefUtility {
-  static Logger log4j = Logger.getLogger(AccDefUtility.class);
+  static Logger log4j = LogManager.getLogger();
 
   public static Calendar getCalendar(Organization organization) {
     if ("0".equals(organization.getId())) {

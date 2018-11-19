@@ -35,15 +35,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
 import org.openbravo.utils.CryptoUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /** Test cases for org.openbravo.utils.CryptoUtility */
 public class CryptoUtilities {
   private static final int THREAD_NUM = 8;
   private static final int LOOPS = 100;
 
-  private static Logger log = LoggerFactory.getLogger(CryptoUtilities.class);
+  private static Logger log = LogManager.getLogger();
 
   /** Covers concurrent utilization of encrypt/decrypt methods. See issue #36909 */
   @Test

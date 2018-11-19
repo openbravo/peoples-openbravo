@@ -23,7 +23,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.Parameter;
@@ -46,7 +47,7 @@ public class QueryListWidgetProvider extends WidgetProvider {
   public static final String WIDGETCLASS_PARAMETER = "WIDGET_CLASS";
 
   private static final String GRID_PROPERTIES_REFERENCE = "B36DF126DF5F4077A37F1E5B963AA636";
-  private static final Logger log = Logger.getLogger(QueryListWidgetProvider.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)

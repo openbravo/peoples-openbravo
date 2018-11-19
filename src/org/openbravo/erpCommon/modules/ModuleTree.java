@@ -20,7 +20,8 @@ package org.openbravo.erpCommon.modules;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_forms.ModuleManagement;
@@ -35,7 +36,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleTree extends GenericTree {
-  private final static Logger log4j = Logger.getLogger(ModuleTree.class);
+  private final static Logger log4j = LogManager.getLogger();
 
   /**
    * Constructor to generate a root tree

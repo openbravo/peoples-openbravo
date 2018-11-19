@@ -45,8 +45,8 @@ import org.openbravo.client.kernel.KernelInitializer;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.core.SQLFunctionRegister;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Base test for weld, provides access to the weld container.
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Arquillian.class)
 public class WeldBaseTest extends OBBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(WeldBaseTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static boolean initialized = false;
   private static JavaArchive archive = null;

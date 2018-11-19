@@ -44,8 +44,8 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.TableTree;
 import org.openbravo.service.datasource.DataSourceService;
 import org.openbravo.service.datasource.DataSourceServiceProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This event handler listens to events that are fired in all the tables with the flag isTree
@@ -63,7 +63,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
   private static final String TREENODE_STRUCTURE = "ADTree";
   private static final String LINKTOPARENT_STRUCTURE = "LinkToParent";
   private static final String CUSTOM_STRUCTURE = "Custom";
-  private static Logger logger = LoggerFactory.getLogger(TreeTablesEventHandler.class);
+  private static Logger logger = LogManager.getLogger();
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;

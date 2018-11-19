@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
@@ -55,7 +56,7 @@ import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 
 public class VariantAutomaticGenerationProcess implements Process {
-  private static final Logger log4j = Logger.getLogger(VariantAutomaticGenerationProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final int searchKeyLength = getSearchKeyColumnLength();
   private static final String SALES_PRICELIST = "SALES";
   private static final String PURCHASE_PRICELIST = "PURCHASE";

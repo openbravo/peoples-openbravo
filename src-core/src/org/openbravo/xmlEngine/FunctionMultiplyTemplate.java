@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionMultiplyTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionMultiplyTemplate = Logger.getLogger(FunctionMultiplyTemplate.class);
+  static Logger log4jFunctionMultiplyTemplate = LogManager.getLogger();
 
   public FunctionMultiplyTemplate(String fieldName, DecimalFormat formatOutput,
       DecimalFormat formatSimple, DataTemplate dataTemplate, XmlComponentTemplate arg1,

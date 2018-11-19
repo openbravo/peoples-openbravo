@@ -35,8 +35,8 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests generation of the javascript for standard windows
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author iperdomo
  */
 public class StandardWindowTest extends WeldBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(StandardWindowTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String USER_INTERFACE_APP_MOD = "9BA0836A3CD74EE4AB48753A47211BCC";
 
   /**

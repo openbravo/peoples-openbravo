@@ -25,7 +25,8 @@ import java.net.URLEncoder;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.SessionFactoryController;
@@ -50,7 +51,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class ActiveInstanceProcess implements Process {
 
-  private static final Logger log = Logger.getLogger(ActiveInstanceProcess.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String BUTLER_URL = "https://butler.openbravo.com:443/heartbeat-server/activate";
   private static final String EVALUATION_PURPOSE = "E";
   private static final String PRODUCTION_PURPOSE = "P";

@@ -25,7 +25,8 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.Check;
@@ -68,7 +69,7 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
     return exportDir;
   }
 
-  private static final Logger log = Logger.getLogger(ExportClientProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Executes the export process. The expected parameters in the bundle are clientId (denoting the

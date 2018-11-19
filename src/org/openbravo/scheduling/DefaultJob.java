@@ -18,7 +18,8 @@
  */
 package org.openbravo.scheduling;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
@@ -36,7 +37,7 @@ import org.quartz.JobExecutionException;
  */
 public class DefaultJob implements Job {
 
-  static Logger log = Logger.getLogger(DefaultJob.class);
+  static Logger log = LogManager.getLogger();
 
   private Process processInstance;
   private ProcessBundle bundle;

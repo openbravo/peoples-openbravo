@@ -28,7 +28,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.service.OBDal;
@@ -49,7 +50,7 @@ import org.openbravo.model.common.plm.Product;
  * 
  */
 public class PriceAdjustment {
-  private static final Logger log = Logger.getLogger(PriceAdjustment.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any

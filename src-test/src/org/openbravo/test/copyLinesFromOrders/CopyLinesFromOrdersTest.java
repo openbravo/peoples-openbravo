@@ -87,8 +87,8 @@ import org.openbravo.test.copyLinesFromOrders.data.JSONUtils;
 import org.openbravo.test.copyLinesFromOrders.data.OrderData;
 import org.openbravo.test.copyLinesFromOrders.data.OrderLineData;
 import org.openbravo.test.copyLinesFromOrders.data.UOMManagementUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check Copy Lines From Orders process
@@ -97,7 +97,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class CopyLinesFromOrdersTest extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(CopyLinesFromOrdersTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   // User Openbravo
   private final String USER_ID = "100";

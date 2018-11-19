@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -39,7 +40,7 @@ import org.openbravo.model.ad.system.SystemInformation;
  * 
  */
 public class ModuleUtiltiy {
-  protected static Logger log4j = Logger.getLogger(ModuleUtiltiy.class);
+  protected static Logger log4j = LogManager.getLogger();
   public final static String TEMPLATE_30 = "0138E7A89B5E4DC3932462252801FFBC";
   public final static String APRM_MODULE = "A918E3331C404B889D69AA9BFAFB23AC";
 

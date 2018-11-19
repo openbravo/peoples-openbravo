@@ -22,14 +22,14 @@ import org.openbravo.model.common.plm.ProductStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check the PLM-Status development
  */
 public class ProductStatusTest extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(ProductStatusTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   // User Openbravo
   private static final String USER_ID = "100";

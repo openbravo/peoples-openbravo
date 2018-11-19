@@ -27,8 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.OBContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The main purpose of the user context cache is to support session-less http requests without a
@@ -50,7 +50,7 @@ public class UserContextCache implements OBSingleton {
 
   private static UserContextCache instance;
 
-  private static final Logger log = LoggerFactory.getLogger(UserContextCache.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static synchronized UserContextCache getInstance() {
     if (instance == null) {

@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -49,7 +50,7 @@ import org.openbravo.service.db.DbUtility;
  * 
  */
 public class ManageReservationActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = Logger.getLogger(ManageReservationActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String strOrderLineTableId = "260";
   private static final String strReservationsTableId = "77264B07BB0E4FA483A07FB40C2E0FE0";
   private static final String strResStockTableId = "7BDAC914CA60418795E453BC0E8C89DC";

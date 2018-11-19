@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionMaxTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionMaxTemplate = Logger.getLogger(FunctionMaxTemplate.class);
+  static Logger log4jFunctionMaxTemplate = LogManager.getLogger();
 
   public FunctionMaxTemplate(String fieldName, DecimalFormat formatOutput,
       DecimalFormat formatSimple, DataTemplate dataTemplate, XmlComponentTemplate arg1,

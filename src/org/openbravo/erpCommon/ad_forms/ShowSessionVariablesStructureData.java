@@ -18,12 +18,13 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
 @SuppressWarnings("serial")
 class ShowSessionVariablesStructureData implements FieldProvider {
-  static Logger log4j = Logger.getLogger(ShowSessionVariablesStructureData.class);
+  static Logger log4j = LogManager.getLogger();
   boolean isPreference = false;
   boolean isAccounting = false;
   boolean isGlobal = false;

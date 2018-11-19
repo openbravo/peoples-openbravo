@@ -38,8 +38,8 @@ import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
 import org.openbravo.model.ad.ui.Tab;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Utility methods used in generating Openbravo view representations.
@@ -74,7 +74,7 @@ public class OBViewUtil {
     Hibernate.initialize(updatedByElement.getADElementTrlList());
   }
 
-  private static Logger log = LoggerFactory.getLogger(OBViewUtil.class);
+  private static Logger log = LogManager.getLogger();
 
   /**
    * Method for retrieving the label of a field on the basis of the current language of the user.

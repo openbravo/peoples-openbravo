@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
@@ -43,7 +44,7 @@ import org.openbravo.model.common.order.OrderlineServiceRelation;
 
 public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(ServiceOrderLineEventHandler.class);
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

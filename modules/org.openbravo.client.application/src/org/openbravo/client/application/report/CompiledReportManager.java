@@ -28,8 +28,8 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
@@ -39,7 +39,7 @@ import net.sf.jasperreports.engine.JasperReport;
  * cache, avoiding unnecessary compilations when the same report is generated multiple times.
  */
 class CompiledReportManager {
-  private static final Logger log = LoggerFactory.getLogger(CompiledReportManager.class);
+  private static final Logger log = LogManager.getLogger();
   private static CompiledReportManager instance = new CompiledReportManager();
 
   private ConcurrentHashMap<String, CompiledReport> compiledReports;

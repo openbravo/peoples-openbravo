@@ -25,7 +25,8 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
@@ -53,7 +54,7 @@ import org.openbravo.model.ad.ui.Window;
  */
 public class DefaultsProcessActionHandler extends BaseProcessActionHandler {
 
-  private static final Logger log = Logger.getLogger(DefaultsProcessActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
 
   @Override

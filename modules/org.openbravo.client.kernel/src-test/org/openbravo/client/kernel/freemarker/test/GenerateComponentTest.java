@@ -33,8 +33,8 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.DalContextListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test the generation of several kernel components.
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 public class GenerateComponentTest extends WeldBaseTest {
 
-  private static final Logger log = LoggerFactory.getLogger(GenerateComponentTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected boolean shouldMockServletContext() {

@@ -76,8 +76,8 @@ import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData6;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData7;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData8;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData9;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check Cancel and Replace development
@@ -85,7 +85,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class CancelAndReplaceTest extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(CancelAndReplaceTest.class);
+  final static private Logger log = LogManager.getLogger();
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing

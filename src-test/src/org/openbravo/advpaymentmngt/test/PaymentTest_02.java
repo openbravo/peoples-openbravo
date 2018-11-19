@@ -26,7 +26,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -57,7 +58,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 public class PaymentTest_02 extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(PaymentTest_02.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String MANUAL_EXECUTION = "M";
   private static final String CLEARED_ACCOUNT = "CLE";

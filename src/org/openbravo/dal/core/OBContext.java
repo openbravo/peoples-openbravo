@@ -37,7 +37,8 @@ import java.util.Stack;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
@@ -77,7 +78,7 @@ import org.openbravo.model.common.enterprise.Warehouse;
 // when using a factory/dependency injection approach.
 public class OBContext implements OBNotSingleton, Serializable {
   private static final long serialVersionUID = 1L;
-  private static final Logger log = Logger.getLogger(OBContext.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String CONTEXT_PARAM = "#OBContext";
 

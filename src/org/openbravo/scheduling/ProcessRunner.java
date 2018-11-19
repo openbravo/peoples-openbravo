@@ -26,7 +26,8 @@ import static org.openbravo.scheduling.Process.SUCCESS;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -37,7 +38,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
  */
 public class ProcessRunner {
 
-  static Logger log = Logger.getLogger(ProcessRunner.class);
+  static Logger log = LogManager.getLogger();
 
   private ProcessBundle bundle;
 

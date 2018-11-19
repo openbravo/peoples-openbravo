@@ -28,7 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -57,7 +58,7 @@ import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DbUtility;
 
 public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
-  private static final Logger log4j = Logger.getLogger(AssetLinearDepreciationMethodProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String LINEAR = "LI";
   private static final String TIME = "TI";
   private static final String PERCENTAGE = "PE";

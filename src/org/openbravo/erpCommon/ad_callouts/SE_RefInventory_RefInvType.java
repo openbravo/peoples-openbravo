@@ -25,8 +25,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Sets the proposed value from the sequence associated to the referenced inventory type. The
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SE_RefInventory_RefInvType extends SimpleCallout {
-  private static final Logger log = LoggerFactory.getLogger(SE_RefInventory_RefInvType.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {

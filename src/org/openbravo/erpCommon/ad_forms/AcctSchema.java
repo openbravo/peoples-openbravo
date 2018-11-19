@@ -21,13 +21,14 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 
 public final class AcctSchema implements Serializable {
   private static final long serialVersionUID = 1L;
-  static Logger log4jAcctSchema = Logger.getLogger(AcctSchema.class);
+  static Logger log4jAcctSchema = LogManager.getLogger();
 
   public AcctSchema(ConnectionProvider conn, String C_AcctSchema_ID) {
     m_C_AcctSchema_ID = "";

@@ -42,13 +42,13 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.project.Project;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @Dependent
 @Qualifier(CreateLinesFromProcessHook.CREATE_LINES_FROM_PROCESS_HOOK_QUALIFIER)
 class UpdateTax extends CreateLinesFromProcessHook {
-  private static final Logger log = LoggerFactory.getLogger(UpdateTax.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public int getOrder() {

@@ -31,7 +31,8 @@ import java.util.concurrent.ExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -117,7 +118,7 @@ public abstract class ImportEntryProcessor {
   private ImportEntryManager importEntryManager;
 
   public ImportEntryProcessor() {
-    log = Logger.getLogger(this.getClass());
+    log = LogManager.getLogger();
   }
 
   /**
@@ -274,7 +275,7 @@ public abstract class ImportEntryProcessor {
     private Map<String, OBContext> cachedOBContexts = new HashMap<>();
 
     public ImportEntryProcessRunnable() {
-      logger = Logger.getLogger(this.getClass());
+      logger = LogManager.getLogger();
     }
 
     @Override

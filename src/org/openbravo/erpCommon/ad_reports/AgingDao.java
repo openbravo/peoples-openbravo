@@ -38,7 +38,8 @@ import java.util.Set;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -55,7 +56,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 
 public class AgingDao {
-  private static Logger log4j = Logger.getLogger(AgingDao.class);
+  private static Logger log4j = LogManager.getLogger();
   private static String salesInvoiceTab = "263";
   private static String purchaseInvoiceTab = "290";
   private static String paymentInTab = "C4B6506838E14A349D6717D6856F1B56";

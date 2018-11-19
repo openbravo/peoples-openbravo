@@ -31,8 +31,8 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.db.DbUtility;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * 
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class KillProcess extends BaseProcessActionHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(KillProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

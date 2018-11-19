@@ -35,8 +35,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * JS - Java binding to use in JavaScript expressions.
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OBBindings {
 
-  private static final Logger log = LoggerFactory.getLogger(OBBindings.class);
+  private static final Logger log = LogManager.getLogger();
 
   private OBContext context;
   private Map<String, String> requestMap;

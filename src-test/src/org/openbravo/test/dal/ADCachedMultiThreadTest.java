@@ -45,8 +45,8 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.test.base.HiddenObjectHelper;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test cases to verify multiple ApplicationDictionaryCachedStructures behavior when working
@@ -64,7 +64,7 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
   private static final String BP_HEADER = "220";
   private static final String BP_CUSTOMER = "223";
 
-  private static Logger log = LoggerFactory.getLogger(ADCachedMultiThreadTest.class);
+  private static Logger log = LogManager.getLogger();
 
   /**
    * This test executes using cache:
@@ -154,8 +154,7 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
   @Test
   public void testPropertyColumn() throws Exception {
     // Expecting LazyInitializationException, disabling log not to display it
-    org.apache.log4j.Logger category = org.apache.log4j.Logger
-        .getLogger(LazyInitializationException.class);
+    org.apache.log4j.Logger category = org.apache.log4j.LogManager.getLogger();
     Level originalLevel = category.getLevel();
     category.setLevel(Level.FATAL);
 

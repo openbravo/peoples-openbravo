@@ -24,7 +24,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -56,7 +57,7 @@ public class CreateStandards implements org.openbravo.scheduling.Process {
   private static final String lotSearchKey = "LOT";
   private static final String serialNoSearchKey = "SNO";
   private static final String expirationDateSearchKey = "EXD";
-  private static final Logger log4j = Logger.getLogger(CreateStandards.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {

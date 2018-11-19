@@ -33,7 +33,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.database.ConnectionProvider;
@@ -47,7 +48,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   private static final int PING_TIMEOUT_SECS = 120;
 
-  private static final Logger log = Logger.getLogger(SessionListener.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static Set<String> sessionsInContext = Collections
       .newSetFromMap(new ConcurrentHashMap<String, Boolean>());

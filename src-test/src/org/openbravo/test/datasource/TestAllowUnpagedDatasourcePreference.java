@@ -29,7 +29,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
@@ -54,7 +55,7 @@ import org.openbravo.service.json.JsonConstants;
 @RunWith(Parameterized.class)
 public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal {
 
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
   private String preferenceValue;
 
   private static final String ROLE_SYSTEM = "0";

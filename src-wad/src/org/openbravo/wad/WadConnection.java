@@ -29,12 +29,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
 
 class WadConnection implements ConnectionProvider {
-  private static final Logger log4j = Logger.getLogger(WadConnection.class);
+  private static final Logger log4j = LogManager.getLogger();
   private Connection myPool;
   private String defaultPoolName = "";
   private String bbdd = "";

@@ -18,7 +18,8 @@
  */
 package org.openbravo.client.myob.widgetinform;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -35,7 +36,7 @@ import org.openbravo.model.ad.ui.Field;
  */
 public class WidgetInFormUIDefinition extends UIDefinition {
 
-  private static Logger widgetLog = Logger.getLogger(WidgetInFormUIDefinition.class);
+  private static Logger widgetLog = LogManager.getLogger();
 
   @Override
   public String getFormEditorType() {

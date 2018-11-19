@@ -25,7 +25,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
@@ -43,7 +44,7 @@ import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 
 public class DocProduction extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocProduction = Logger.getLogger(DocProduction.class);
+  static Logger log4jDocProduction = LogManager.getLogger();
 
   private String SeqNo = "0";
 

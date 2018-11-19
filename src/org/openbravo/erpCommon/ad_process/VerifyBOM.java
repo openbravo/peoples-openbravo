@@ -22,7 +22,8 @@ package org.openbravo.erpCommon.ad_process;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -36,7 +37,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class VerifyBOM extends DalBaseProcess {
 
-  static Logger log4j = Logger.getLogger(VerifyBOM.class);
+  static Logger log4j = LogManager.getLogger();
 
   public void doExecute(ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();

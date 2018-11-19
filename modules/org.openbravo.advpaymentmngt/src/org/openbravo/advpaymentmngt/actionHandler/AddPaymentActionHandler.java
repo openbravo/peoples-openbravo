@@ -77,11 +77,11 @@ import org.openbravo.model.project.Project;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class AddPaymentActionHandler extends BaseProcessActionHandler {
-  final private static Logger log = LoggerFactory.getLogger(AddPaymentActionHandler.class);
+  final private static Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

@@ -13,10 +13,11 @@ package org.openbravo.utils;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class FormatUtilities {
-  static Logger log4j = Logger.getLogger(FormatUtilities.class);
+  static Logger log4j = LogManager.getLogger();
 
   public static String truncate(String _s, int i) {
     String s = _s;

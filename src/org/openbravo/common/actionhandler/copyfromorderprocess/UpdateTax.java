@@ -41,13 +41,13 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @Dependent
 @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
 class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
-  private static final Logger log = LoggerFactory.getLogger(UpdateTax.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public int getOrder() {

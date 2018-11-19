@@ -25,7 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -63,7 +64,7 @@ import org.openbravo.model.ad.ui.Tab;
  */
 
 public class EntityAccessChecker implements OBNotSingleton {
-  private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Caches entities of the selectors with Search parent reference. Elements store

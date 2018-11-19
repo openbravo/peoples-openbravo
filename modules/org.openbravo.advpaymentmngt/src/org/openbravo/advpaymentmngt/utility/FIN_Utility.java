@@ -80,11 +80,11 @@ import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.utils.Replace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class FIN_Utility {
-  private static final Logger log4j = LoggerFactory.getLogger(FIN_Utility.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static AdvPaymentMngtDao dao;
 
   /**

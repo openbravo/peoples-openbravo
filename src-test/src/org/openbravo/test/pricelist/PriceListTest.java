@@ -72,8 +72,8 @@ import org.openbravo.test.pricelist.data.PriceListTestData6;
 import org.openbravo.test.pricelist.data.PriceListTestData7;
 import org.openbravo.test.pricelist.data.PriceListTestData8;
 import org.openbravo.test.pricelist.data.PriceListTestData9;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check Price Lists Generation
@@ -83,7 +83,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Parameterized.class)
 public class PriceListTest extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(PriceListTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   // User Openbravo
   private final String USER_ID = "100";

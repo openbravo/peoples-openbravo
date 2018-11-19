@@ -29,7 +29,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
@@ -66,7 +67,7 @@ public abstract class BaseComponent implements Component {
 
   private static String moduleVersionHash = null;
 
-  private static final Logger log4j = Logger.getLogger(BaseComponent.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Inject
   @Any

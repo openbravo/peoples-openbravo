@@ -30,7 +30,8 @@ import java.util.Set;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -75,7 +76,7 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class CostingUtils {
-  private static Logger log4j = Logger.getLogger(CostingUtils.class);
+  private static Logger log4j = LogManager.getLogger();
   public static final String propADListPriority = org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER;
   public static final String propADListValue = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
   public static final String propADListReference = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;

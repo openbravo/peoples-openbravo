@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.utils.Replace;
 
 class ParameterValue implements XmlComponentValue {
-  private static final Logger log4j = Logger.getLogger(ParameterValue.class);
+  private static final Logger log4j = LogManager.getLogger();
   String strValue = null;
   ParameterTemplate parameterTemplate;
   XmlComponentValue xmlComponentValue = null;

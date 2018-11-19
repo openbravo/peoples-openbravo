@@ -30,8 +30,8 @@ import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.userinterface.smartclient.SmartClientComponentProvider;
 import org.openbravo.userinterface.smartclient.TypesComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test the {@link TypesComponent} and its template.
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author mtaal
  */
 public class GenerateTypesJSTest extends WeldBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(GenerateTypesJSTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @ComponentProvider.Qualifier(SmartClientComponentProvider.QUALIFIER)

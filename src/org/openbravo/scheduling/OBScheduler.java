@@ -44,8 +44,8 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author awolski
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 public class OBScheduler {
   private static final OBScheduler INSTANCE = new OBScheduler();
 
-  private static Logger log = LoggerFactory.getLogger(OBScheduler.class);
+  private static Logger log = LogManager.getLogger();
 
   private static final String OB_GROUP = "OB_QUARTZ_GROUP";
 

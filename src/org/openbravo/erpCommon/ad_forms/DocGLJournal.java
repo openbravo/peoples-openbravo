@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -34,7 +35,7 @@ import org.openbravo.model.financialmgmt.gl.GLJournal;
 
 public class DocGLJournal extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocGLJournal = Logger.getLogger(DocGLJournal.class);
+  static Logger log4jDocGLJournal = LogManager.getLogger();
 
   private String SeqNo = "0";
   private String C_AcctSchema_ID;

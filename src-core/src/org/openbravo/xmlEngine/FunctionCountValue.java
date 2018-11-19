@@ -11,12 +11,13 @@
  */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionCountValue extends FunctionValue {
   int count;
 
-  static Logger log4jFunctionCountValue = Logger.getLogger(FunctionCountValue.class);
+  static Logger log4jFunctionCountValue = LogManager.getLogger();
 
   public FunctionCountValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);

@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.modules;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
@@ -37,7 +38,7 @@ import org.openbravo.database.CPStandAlone;
 public class ApplyModuleTask extends DalInitializingTask {
   // private String propertiesFile;
   private String obDir;
-  private static final Logger log4j = Logger.getLogger(ApplyModuleTask.class);
+  private static final Logger log4j = LogManager.getLogger();
   private Boolean forceRefData = false;
 
   public static void main(String[] args) {

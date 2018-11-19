@@ -21,7 +21,8 @@ package org.openbravo.client.application.window;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;
@@ -38,7 +39,7 @@ import org.openbravo.model.ad.ui.Window;
  * @author mtaal
  */
 public class StandardWindowComponent extends BaseTemplateComponent {
-  private static final Logger log = Logger.getLogger(StandardWindowComponent.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String DEFAULT_TEMPLATE_ID = "ADD5EF45333C458098286D0E639B3290";
 
   private Window window;

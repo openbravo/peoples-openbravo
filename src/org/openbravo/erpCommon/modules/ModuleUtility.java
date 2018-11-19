@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -49,7 +50,7 @@ import org.openbravo.model.ad.module.ModuleDependency;
  * 
  */
 class ModuleUtility {
-  protected static Logger log4j = Logger.getLogger(ModuleUtility.class);
+  protected static Logger log4j = LogManager.getLogger();
 
   /**
    * It receives an ArrayList<String> with modules IDs and returns the same list ordered taking into

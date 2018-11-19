@@ -31,7 +31,8 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -59,7 +60,7 @@ import org.quartz.JobExecutionException;
 
 public class AlertProcess implements Process {
 
-  private static final Logger log4j = Logger.getLogger(AlertProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   private static int counter = 0;
 

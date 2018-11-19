@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -54,7 +55,7 @@ import org.postgresql.util.PSQLException;
  * @author mtaal
  */
 public class JsonUtils {
-  private static final Logger log = Logger.getLogger(JsonUtils.class);
+  private static final Logger log = LogManager.getLogger();
 
   /** PG returns this SQL state when query time out occurs */
   private static final String PG_QUERY_CANCELED = "57014";

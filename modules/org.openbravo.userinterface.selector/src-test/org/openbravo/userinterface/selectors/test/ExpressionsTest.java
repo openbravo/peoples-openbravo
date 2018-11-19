@@ -27,7 +27,8 @@ import java.util.HashMap;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.client.application.OBBindings;
@@ -44,7 +45,7 @@ public class ExpressionsTest extends OBBaseTest {
   private ScriptEngineManager manager;
   private ScriptEngine engine;
   private Object result = null;
-  private Logger log = Logger.getLogger(ExpressionsTest.class);
+  private Logger log = LogManager.getLogger();
 
   private HashMap<String, String> expr = new HashMap<String, String>();
 

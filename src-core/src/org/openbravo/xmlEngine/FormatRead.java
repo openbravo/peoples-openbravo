@@ -15,14 +15,15 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 class FormatRead extends DefaultHandler {
   Hashtable<String, FormatCouple> hasFormats;
 
-  static Logger log4jFormatRead = Logger.getLogger(FormatRead.class);
+  static Logger log4jFormatRead = LogManager.getLogger();
 
   public FormatRead(Hashtable<String, FormatCouple> hasFormats) {
     this.hasFormats = hasFormats;

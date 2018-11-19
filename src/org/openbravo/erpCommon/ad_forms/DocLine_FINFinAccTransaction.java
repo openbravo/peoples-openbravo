@@ -21,15 +21,15 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
 
 public class DocLine_FINFinAccTransaction extends
     DocLineCashVATReady_PaymentTransactionReconciliation {
-  static Logger log4jDocLine_FINFinAccTransaction = Logger
-      .getLogger(DocLine_FINFinAccTransaction.class);
+  static Logger log4jDocLine_FINFinAccTransaction = LogManager.getLogger();
 
   String Line_ID = "";
   String PaymentAmount = "";

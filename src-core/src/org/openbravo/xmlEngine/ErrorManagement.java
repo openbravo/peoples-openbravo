@@ -20,11 +20,12 @@ package org.openbravo.xmlEngine;
  // comments of the error
  break;
  */
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class ErrorManagement {
 
-  static Logger log4jErrorManagement = Logger.getLogger(ErrorManagement.class);
+  static Logger log4jErrorManagement = LogManager.getLogger();
 
   public static void error(int i, String locationText) {
     error(i, locationText, null);

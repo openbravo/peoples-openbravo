@@ -44,7 +44,8 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
 import org.openbravo.base.exception.OBException;
@@ -65,7 +66,7 @@ import org.xml.sax.XMLReader;
 
 public class BaseWSTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(BaseWSTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String CONTEXT_PROPERTY = "context.url";
   private static String OB_URL = null;
   protected static final String LOGIN = "Openbravo";

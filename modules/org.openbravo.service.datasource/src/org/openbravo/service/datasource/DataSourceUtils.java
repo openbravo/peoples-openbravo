@@ -29,8 +29,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class contains utility methods for dataSource related classes
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DataSourceUtils {
 
-  private static final Logger log = LoggerFactory.getLogger(DataSourceUtils.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Returns a comma separated list of organization ids to filter the HQL. If an organization id is

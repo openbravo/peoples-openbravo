@@ -43,8 +43,8 @@ import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class implements the ability to transfer funds among financial accounts in a simple and
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FundsTransferActionHandler extends BaseProcessActionHandler {
   private static final String ERROR_IN_PROCESS = "Error in process";
-  private static final Logger log = LoggerFactory.getLogger(FundsTransferActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String BP_DEPOSIT = "BPD";
   private static final String BP_WITHDRAWAL = "BPW";
   private static final String BANK_FEE = "BF";

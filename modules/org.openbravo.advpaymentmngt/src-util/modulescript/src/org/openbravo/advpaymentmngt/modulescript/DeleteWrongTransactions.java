@@ -18,7 +18,8 @@
  */
 package org.openbravo.advpaymentmngt.modulescript;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.database.ConnectionProvider;

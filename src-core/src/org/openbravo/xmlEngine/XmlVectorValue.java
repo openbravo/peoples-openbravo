@@ -16,13 +16,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.uiTranslation.TranslationHandler;
 
 class XmlVectorValue extends Vector<Object> {
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jXmlVectorValue = Logger.getLogger(XmlVectorValue.class);
+  static Logger log4jXmlVectorValue = LogManager.getLogger();
   private HashMap<String, String> textMap;
   public TranslationHandler handler;
 

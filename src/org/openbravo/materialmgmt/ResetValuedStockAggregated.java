@@ -29,7 +29,8 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Projections;
@@ -52,7 +53,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class ResetValuedStockAggregated extends BaseProcessActionHandler {
 
-  private static final Logger log4j = Logger.getLogger(ResetValuedStockAggregated.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /*
    * Resets the values of the Aggregated Table for the selected Legal Entity

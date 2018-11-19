@@ -33,12 +33,11 @@ import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class AddPaymentDefaultValuesExpression implements FilterExpression {
-  private static final Logger log = LoggerFactory
-      .getLogger(AddPaymentDefaultValuesExpression.class);
+  private static final Logger log = LogManager.getLogger();
   @Inject
   @Any
   private Instance<AddPaymentDefaultValuesHandler> addPaymentFilterExpressionHandlers;

@@ -19,7 +19,8 @@
 
 package org.openbravo.base.model;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 
@@ -29,7 +30,7 @@ import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
  * @author mtaal
  */
 public class RefList extends ModelObject {
-  private static final Logger log = Logger.getLogger(RefList.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Reference reference;
 

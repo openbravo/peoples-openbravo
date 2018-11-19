@@ -34,12 +34,11 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.ElementTrl;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(AddPaymentReloadLabelsActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {

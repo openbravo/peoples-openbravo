@@ -19,7 +19,8 @@
 
 package org.openbravo.dal.core;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.Task;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -36,7 +37,7 @@ import org.openbravo.dal.service.OBDal;
  * @author mtaal
  */
 public class DalInitializingTask extends Task {
-  private static final Logger log = Logger.getLogger(DalInitializingTask.class);
+  private static final Logger log = LogManager.getLogger();
 
   protected String propertiesFile;
   protected String userId;

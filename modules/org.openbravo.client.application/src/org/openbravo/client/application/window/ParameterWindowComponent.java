@@ -41,8 +41,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.model.ad.ui.Window;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The component which takes care of creating a class for a specific paramter window.
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ParameterWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "FF80818132F916130132F9357DE10016";
-  private static final Logger log = LoggerFactory.getLogger(ParameterWindowComponent.class);
+  private static final Logger log = LogManager.getLogger();
 
   static final String BUTTON_LIST_REFERENCE_ID = "FF80818132F94B500132F9575619000A";
 

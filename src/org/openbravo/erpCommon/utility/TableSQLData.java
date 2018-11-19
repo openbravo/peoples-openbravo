@@ -20,7 +20,8 @@ package org.openbravo.erpCommon.utility;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 
 /**
@@ -29,7 +30,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
  *         Handler to manage all the process for the tab's query building.
  */
 public class TableSQLData {
-  private static Logger log4j = Logger.getLogger(TableSQLData.class);
+  private static Logger log4j = LogManager.getLogger();
 
   /**
    * Defines how many rows will be shown at maximum in any datagrid inside the scrollable area. If

@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
@@ -62,7 +63,7 @@ public class FIN_ExecutePayment {
   private HashMap<String, String> parameters = new HashMap<String, String>();
   private HashMap<String, String> internalParameters = new HashMap<String, String>();
   private PaymentRun paymentRun;
-  private static final Logger log = Logger.getLogger(FIN_ExecutePayment.class);
+  private static final Logger log = LogManager.getLogger();
 
   public void init(String sourceType, PaymentExecutionProcess _executionProcess,
       List<FIN_Payment> payments, HashMap<String, String> _parameters, Organization organization)

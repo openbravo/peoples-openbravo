@@ -22,7 +22,8 @@ package org.openbravo.client.application.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -42,7 +43,7 @@ public class BusinessPartnerBankAccountHandler extends EntityPersistenceEventObs
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       BankAccount.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

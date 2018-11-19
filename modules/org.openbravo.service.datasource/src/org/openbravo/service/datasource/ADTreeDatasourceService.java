@@ -60,11 +60,11 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ADTreeDatasourceService extends TreeDatasourceService {
-  private static final Logger logger = LoggerFactory.getLogger(ADTreeDatasourceService.class);
+  private static final Logger logger = LogManager.getLogger();
   private static final String AD_MENU_TABLE_ID = "116";
   private static final String AD_ORG_TABLE_ID = "155";
   private static final int PARENT_ID = 1;

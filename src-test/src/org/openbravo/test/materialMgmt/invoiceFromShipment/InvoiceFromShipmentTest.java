@@ -58,8 +58,8 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test class for Automatic Invoice From Goods Shipment test cases
@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class InvoiceFromShipmentTest extends WeldBaseTest {
 
-  private static final Logger log = LoggerFactory.getLogger(InvoiceFromShipmentTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String CLIENT_ID = "4028E6C72959682B01295A070852010D"; // QA Testing
   private static final String ORG_ID = "357947E87C284935AD1D783CF6F099A1"; // Spain

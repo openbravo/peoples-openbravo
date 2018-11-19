@@ -29,7 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -56,7 +57,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * @author Martin Taal
  */
 public class DataSetService implements OBSingleton {
-  private static final Logger log = Logger.getLogger(DataSetService.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static DataSetService instance;
 

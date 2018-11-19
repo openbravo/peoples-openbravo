@@ -33,7 +33,8 @@ import java.util.Set;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -73,8 +74,7 @@ public class DocFINReconciliation extends AcctServer {
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
 
-  private static final Logger docFINReconciliationLog4j = Logger
-      .getLogger(DocFINReconciliation.class);
+  private static final Logger docFINReconciliationLog4j = LogManager.getLogger();
 
   String SeqNo = "0";
 

@@ -20,7 +20,8 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -34,7 +35,7 @@ import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 
 public class SubsetValueEventHandler extends EntityPersistenceEventObserver {
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       CharacteristicSubsetValue.class) };
   private static ThreadLocal<String> chsubsetvalueUpdated = new ThreadLocal<String>();

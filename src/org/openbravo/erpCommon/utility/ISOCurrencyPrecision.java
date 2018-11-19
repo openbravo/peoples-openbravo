@@ -28,7 +28,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.ad_callouts.SL_Currency_StdPrecision;
 import org.w3c.dom.Document;
@@ -47,7 +48,7 @@ import org.xml.sax.SAXException;
  * @author jorge-garcia
  */
 public class ISOCurrencyPrecision {
-  private static Logger log4j = Logger.getLogger(ISOCurrencyPrecision.class);
+  private static Logger log4j = LogManager.getLogger();
   private static final int DEFAULT_CURRENCY_STANDARD_PRECISION = 2;
   private static final String CURRENCY_TAG_NAME = "CcyNtry";
   private static final String CURRENCY_ISO_CODE_TAG_NAME = "Ccy";

@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Checks Openbravo is deployed on a supported Server version, in case it is not, an error message
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class ServerVersionChecker implements ServletContextListener {
   private static final int MINIMUM_TOMCAT_VERSION = 7;
 
-  private static final Logger log = LoggerFactory.getLogger(ServerVersionChecker.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static String serverName;
   private static String serverVersion;

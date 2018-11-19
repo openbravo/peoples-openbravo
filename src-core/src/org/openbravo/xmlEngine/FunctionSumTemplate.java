@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionSumTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionSumTemplate = Logger.getLogger(FunctionSumTemplate.class);
+  static Logger log4jFunctionSumTemplate = LogManager.getLogger();
 
   public FunctionSumTemplate(String fieldName, FieldTemplate field, DecimalFormat formatOutput,
       DecimalFormat formatSimple, DataTemplate dataTemplate) {

@@ -21,7 +21,8 @@ package org.openbravo.dal.core;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.tuple.Instantiator;
 import org.openbravo.base.model.Entity;
@@ -43,7 +44,7 @@ import org.openbravo.base.util.Check;
 // hibernate DynamicMapInstantiator for ideas on how to accomplish this.
 public class OBInstantiator implements Instantiator {
   private static final long serialVersionUID = 1L;
-  private static final Logger log = Logger.getLogger(OBInstantiator.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String entityName;
   private Class<?> mappedClass;

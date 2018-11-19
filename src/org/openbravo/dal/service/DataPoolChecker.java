@@ -28,14 +28,14 @@ import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.database.ExternalConnectionPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Helper class used to determine if a report should use the read-only pool to retrieve data
  */
 public class DataPoolChecker implements OBSingleton {
-  private static final Logger log = LoggerFactory.getLogger(DataPoolChecker.class);
+  private static final Logger log = LogManager.getLogger();
   private static final int REPORT_ID = 0;
   private static final int DATA_POOL = 1;
 

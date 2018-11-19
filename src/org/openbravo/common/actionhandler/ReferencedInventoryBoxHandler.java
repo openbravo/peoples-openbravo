@@ -33,15 +33,15 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Action handler for boxing storage details into a Referenced Inventory
  *
  */
 public class ReferencedInventoryBoxHandler extends BaseProcessActionHandler {
-  private static final Logger logger = LoggerFactory.getLogger(ReferencedInventoryBoxHandler.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private static final String PARAM_GRID = "stock";
   private static final String PARAM_GRID_SELECTION = "_selection";

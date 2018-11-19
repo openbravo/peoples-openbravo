@@ -20,12 +20,13 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine {
-  static Logger log4jDocLine = Logger.getLogger(DocLine.class);
+  static Logger log4jDocLine = LogManager.getLogger();
 
   public BigDecimal ZERO = BigDecimal.ZERO;
 

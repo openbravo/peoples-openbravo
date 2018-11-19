@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
@@ -37,7 +38,7 @@ import org.apache.tools.ant.ProjectHelper;
  * 
  */
 public class AntExecutor {
-  private static final Logger logger = Logger.getLogger(AntExecutor.class);
+  private static final Logger logger = LogManager.getLogger();
 
   private Project project;
   private String baseDir;
