@@ -20,7 +20,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -53,7 +54,7 @@ import org.openbravo.retail.posterminal.utility.OBPOSPrintTemplateReader;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
-  public static final Logger log = Logger.getLogger(LoginUtilsServlet.class);
+  public static final Logger log = LogManager.getLogger();
   private static final long serialVersionUID = 1L;
 
   private String[] getClientOrgIds(String terminalName) {

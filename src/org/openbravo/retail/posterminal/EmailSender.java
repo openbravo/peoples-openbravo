@@ -6,7 +6,8 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -19,7 +20,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.utils.FormatUtilities;
 
 public class EmailSender implements Runnable {
-  private static final Logger log4j = Logger.getLogger(EmailSender.class);
+  private static final Logger log4j = LogManager.getLogger();
   Thread runner;
   JSONObject jsonorder;
   String orderId;

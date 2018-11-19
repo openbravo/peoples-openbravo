@@ -22,13 +22,13 @@ import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.PrintTemplate;
 import org.openbravo.retail.posterminal.PrintTemplateSubrep;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @Qualifier(Terminal.terminalPropertyExtension)
 public class TerminalProperties extends ModelExtension {
 
-  private static Logger log = LoggerFactory.getLogger(TerminalProperties.class);
+  private static Logger log = LogManager.getLogger();
 
   @Override
   public List<HQLProperty> getHQLProperties(final Object params) {

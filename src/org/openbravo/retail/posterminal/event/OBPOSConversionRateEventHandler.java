@@ -35,14 +35,14 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.OBPOSConversionRate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class OBPOSConversionRateEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       OBPOSConversionRate.ENTITY_NAME) };
 
-  protected Logger logger = LoggerFactory.getLogger(OBPOSConversionRateEventHandler.class);
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

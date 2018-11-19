@@ -16,12 +16,11 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.retail.posterminal.POSConstants;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ProductCharacteristicActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory
-      .getLogger(ProductCharacteristicActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {

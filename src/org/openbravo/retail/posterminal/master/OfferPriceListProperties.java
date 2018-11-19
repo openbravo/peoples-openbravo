@@ -12,7 +12,8 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -24,7 +25,7 @@ import org.openbravo.mobile.core.model.ModelExtension;
 @Qualifier(OfferPriceList.discFilterPriceListPropertyExtension)
 public class OfferPriceListProperties extends ModelExtension {
 
-  public static final Logger log = Logger.getLogger(OfferPriceListProperties.class);
+  public static final Logger log = LogManager.getLogger();
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {

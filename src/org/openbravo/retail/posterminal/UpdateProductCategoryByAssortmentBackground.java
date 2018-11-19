@@ -32,12 +32,11 @@ import org.openbravo.retail.config.OBRETCOProductcategory;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class UpdateProductCategoryByAssortmentBackground extends DalBaseProcess {
-  private static final Logger log = LoggerFactory
-      .getLogger(UpdateProductCategoryByAssortmentBackground.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {

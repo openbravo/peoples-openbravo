@@ -19,7 +19,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -54,7 +55,7 @@ import org.openbravo.service.json.JsonConstants;
 
 public class Terminal extends JSONProcessSimple {
   public static final String terminalPropertyExtension = "OBPOS_TerminalExtension";
-  private static final Logger log = Logger.getLogger(Terminal.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any

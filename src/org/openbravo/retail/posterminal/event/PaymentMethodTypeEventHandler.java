@@ -11,7 +11,8 @@ package org.openbravo.retail.posterminal.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -35,7 +36,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       TerminalTypePaymentMethod.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {

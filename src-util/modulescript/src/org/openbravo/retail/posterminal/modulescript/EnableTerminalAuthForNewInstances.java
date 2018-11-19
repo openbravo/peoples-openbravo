@@ -18,7 +18,8 @@
  */
 package org.openbravo.retail.posterminal.modulescript;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 import org.openbravo.modulescript.ModuleScriptExecutionLimits;
@@ -41,7 +42,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
  */
 public class EnableTerminalAuthForNewInstances extends ModuleScript {
 
-  private static final Logger log4j = Logger.getLogger(EnableTerminalAuthForNewInstances.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
   
   @Override
