@@ -35,7 +35,6 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
@@ -99,7 +98,6 @@ public class Wad extends DefaultHandler {
    * @throws Exception
    */
   public static void main(String argv[]) throws Exception {
-    PropertyConfigurator.configure("log4j.lcf");
     String strWindowName;
     String module;
     String dirFin;

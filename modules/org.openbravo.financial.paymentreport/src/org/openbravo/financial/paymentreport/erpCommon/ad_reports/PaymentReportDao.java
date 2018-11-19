@@ -35,7 +35,8 @@ import java.util.Vector;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.LockOptions;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -56,7 +57,6 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.List;
@@ -83,7 +83,7 @@ import org.openbravo.utils.Replace;
 public class PaymentReportDao {
 
   private static final long milisecDayConv = (1000 * 60 * 60 * 24);
-  static Logger log4j = Logger.getLogger(Utility.class);
+  static Logger log4j = LogManager.getLogger();
   private java.util.List<String> bpList;
   private java.util.List<String> bpCategoryList;
   private java.util.List<String> projectList;

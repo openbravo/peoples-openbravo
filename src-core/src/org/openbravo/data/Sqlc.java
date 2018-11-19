@@ -34,8 +34,8 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.utils.DirFilter;
 import org.xml.sax.Attributes;
@@ -90,7 +90,7 @@ public class Sqlc extends DefaultHandler {
   private static boolean queryWithOptionalParameterWithoutType = false;
   private static boolean queryWithOptionalParameterTypeArgument = false;
 
-  static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
+  static Logger log4j = LogManager.getLogger(); // log4j
   private static boolean includeQueryTimeOut;
   private boolean sessionInfoImported;
 
@@ -114,7 +114,6 @@ public class Sqlc extends DefaultHandler {
   }
 
   public static void main(String argv[]) throws Exception {
-    PropertyConfigurator.configure("log4j.lcf");
     String dirIni;
     String dirFin;
     boolean boolFilter;
@@ -770,7 +769,8 @@ public class Sqlc extends DefaultHandler {
     out1.append("\n");
     out1.append("import java.sql.*;\n");
     out1.append("\n");
-    out1.append("import org.apache.log4j.Logger;\n");
+    out1.append("import org.apache.logging.log4j.Logger;\n");
+    out1.append("import org.apache.logging.log4j.LogManager;\n");
     out1.append("\n");
     out1.append("import javax.servlet.ServletException;\n");
     out1.append("\n");
@@ -811,7 +811,7 @@ public class Sqlc extends DefaultHandler {
       out3.append(" ");
     }
     out3.append("class " + sqlcName + " implements FieldProvider {\n");
-    out3.append("static Logger log4j = Logger.getLogger(" + sqlcName + ".class);\n");
+    out3.append("static Logger log4j = LogManager.getLogger();\n");
     try {
       // Display column headings
       if (log4j.isDebugEnabled())

@@ -31,7 +31,6 @@ import java.util.Vector;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
@@ -44,10 +43,6 @@ class WadUtility {
 
   // small cache to store mapping of <subRef + "-" + parentRef,classname>
   private static Map<String, String> referenceClassnameCache = new HashMap<String, String>();
-
-  public WadUtility() {
-    PropertyConfigurator.configure("log4j.lcf");
-  }
 
   public static String getSQLWadContext(String code, Vector<Object> vecParameters) {
     if (code == null || code.trim().equals(""))

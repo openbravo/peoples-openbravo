@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
-import org.apache.tools.ant.listener.Log4jListener;
 
 /**
  * The AntExecutor class allows to execute ant tasks in a given build.xml file.
@@ -147,9 +146,6 @@ public class AntExecutor {
       logger1.setErrorPrintStream(ps);
       logger1.setMessageOutputLevel(Project.MSG_INFO);
       project.addBuildListener(logger1);
-
-      Log4jListener listener = new Log4jListener();
-      project.addBuildListener(listener);
     } catch (FileNotFoundException e) {
       logger.error("Error assigning rebuild log file.", e);
     }
@@ -186,10 +182,6 @@ public class AntExecutor {
     project.addBuildListener(logger1);
     err = ps2;
     log = ps1;
-
-    // force log4j to also print to this response
-    // OBLogAppender.setOutputStream(ps1);
-    org.openbravo.utils.OBLogAppender.setProject(project);
   }
 
   /**

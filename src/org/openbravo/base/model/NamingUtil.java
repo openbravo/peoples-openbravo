@@ -22,7 +22,8 @@ package org.openbravo.base.model;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 
 /**
@@ -34,7 +35,7 @@ import org.openbravo.base.exception.OBException;
  */
 
 public class NamingUtil {
-  private static final Logger log = org.apache.log4j.Logger.getLogger(NamingUtil.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final char[] ILLEGAL_ENTITY_NAME_CHARS = new char[] { '.', ',', ' ', '/', '\\' };
 

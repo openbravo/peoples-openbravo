@@ -43,7 +43,6 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.SessionInfo;
@@ -117,8 +116,6 @@ public class Translate extends DefaultHandler {
    *          where: 0- Openbravo.properties path. 1- Path where are the files to translate.
    */
   public static void main(String argv[]) throws Exception {
-    PropertyConfigurator.configure("log4j.lcf");
-
     if (argv.length != 2) {
       log.error("Usage: Translate Openbravo.properties [clean|remove|sourceDir]");
       log.error("Received: " + Arrays.asList(argv));

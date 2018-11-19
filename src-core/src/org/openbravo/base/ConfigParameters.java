@@ -15,17 +15,15 @@ package org.openbravo.base;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Application parameters stored in web.xml as init parameters.
@@ -54,7 +52,7 @@ public class ConfigParameters {
   private final String poolFileName;
   public final String strTextDividedByZero;
 
-  private static final Logger log4j = Logger.getLogger(ConfigParameters.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public final String loginServlet;
   public final String strServletSinIdentificar;
@@ -86,7 +84,6 @@ public class ConfigParameters {
     strContext = extractContext(getActualPathContext());
 
     strBaseConfigPath = getResolvedParameter(context, "BaseConfigPath");
-    configureLog4j(context, strBaseConfigPath);
 
     log4j.debug("context: " + strContext);
     log4j.debug("************************prefix: " + prefix);
@@ -164,33 +161,6 @@ public class ConfigParameters {
     } catch (java.security.AccessControlException err) {
       log4j.warn(err.getMessage());
       return "en_US";
-    }
-  }
-
-  private void configureLog4j(ServletContext context, String _strBaseConfigPath) {
-    String file = getResolvedParameter(context, "log4j-init-file");
-
-    // if the log4j-init-file is not set, then no point in trying
-    if (file != null) {
-      try {
-        // Configure using resource url.. That way we don't need to
-        // worry about
-        // the real path
-        InputStream resource = context.getResourceAsStream("/" + _strBaseConfigPath + "/" + file);
-        if (resource != null) {
-          Properties config = new Properties();
-          config.load(resource);
-          resource.close();
-          config.setProperty("application_context", getApplicationContext());
-          config.setProperty("actual_path_context", getActualPathContext());
-          PropertyConfigurator.configure(config);
-        }
-      } catch (MalformedURLException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace(); // To change body of catch statement use
-        // File | Settings | File Templates.
-      }
     }
   }
 

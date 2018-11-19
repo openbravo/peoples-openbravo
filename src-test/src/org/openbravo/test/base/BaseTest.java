@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -168,11 +167,6 @@ public class BaseTest extends TestCase {
    */
   @Override
   protected void setUp() throws Exception {
-
-    if (this.getClass().getResource("/log4j.lcf") != null) {
-      PropertyConfigurator.configure(this.getClass().getResource("/log4j.lcf"));
-    }
-
     initializeDalLayer();
     // clear the session otherwise it keeps the old model
     setTestUserContext();

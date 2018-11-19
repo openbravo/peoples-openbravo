@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -71,7 +71,7 @@ public class StandardWindowTest extends WeldBaseTest {
       List<String> errors = new ArrayList<>();
       for (Window window : allWindows) {
         if (hasAtLeastOneActiveTab(window)) {
-          log.info("window {} of {}: {}", new Object[] { ++i, allWindows.size(), window.getName() });
+          log.info("window {} of {}: {}", ++i, allWindows.size(), window.getName());
           try {
             generateForWindow(window);
           } catch (Throwable t) {
