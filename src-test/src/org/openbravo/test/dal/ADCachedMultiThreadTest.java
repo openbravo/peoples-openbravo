@@ -33,7 +33,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.query.Query;
 import org.junit.Test;
@@ -45,8 +50,6 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.test.base.HiddenObjectHelper;
 import org.openbravo.test.base.OBBaseTest;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test cases to verify multiple ApplicationDictionaryCachedStructures behavior when working
@@ -154,9 +157,9 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
   @Test
   public void testPropertyColumn() throws Exception {
     // Expecting LazyInitializationException, disabling log not to display it
-    org.apache.log4j.Logger category = org.apache.log4j.LogManager.getLogger();
+    Logger category = LogManager.getLogger();
     Level originalLevel = category.getLevel();
-    category.setLevel(Level.FATAL);
+    setLoggerLevel(category, Level.FATAL);
 
     log.debug(" session id: {}",
         Integer.toString(System.identityHashCode(OBDal.getInstance().getSession())));
@@ -202,7 +205,23 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
       }
     }
     assertFalse("There are propeties that failed", failed);
-    category.setLevel(originalLevel);
+    setLoggerLevel(category, originalLevel);
+  }
+
+  private void setLoggerLevel(Logger logger, Level level) {
+    final LoggerContext context = LoggerContext.getContext(false);
+    final Configuration config = context.getConfiguration();
+
+    LoggerConfig loggerConfig = config.getLoggerConfig(logger.getName());
+
+    LoggerConfig specificConfig = loggerConfig;
+    String loggerName = logger.getName();
+    if (!loggerConfig.getName().equals(loggerName)) {
+      specificConfig = new LoggerConfig(loggerName, level, true);
+      specificConfig.setParent(loggerConfig);
+      config.addLogger(loggerName, specificConfig);
+    }
+    specificConfig.setLevel(level);
   }
 
   private void executeTestMultiCalls(boolean cache) throws Exception {
