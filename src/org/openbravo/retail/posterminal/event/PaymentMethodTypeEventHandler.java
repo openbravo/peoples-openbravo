@@ -11,15 +11,20 @@ package org.openbravo.retail.posterminal.event;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.TerminalTypePaymentMethod;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -31,7 +36,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       TerminalTypePaymentMethod.ENTITY_NAME) };
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -42,6 +47,9 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
     if (!isValidEvent(event)) {
       return;
     }
+
+    validateActiveOrRemovePaymentMethod((TerminalTypePaymentMethod) event.getTargetInstance(),
+        false);
 
     Boolean leaveascredit = (Boolean) event.getTargetInstance().get("leaveascredit");
     Entity appPaymentTypeEntity = ModelProvider.getInstance().getEntity(
@@ -96,5 +104,30 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
       }
     }
 
+  }
+
+  public void onDelete(@Observes EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    validateActiveOrRemovePaymentMethod((TerminalTypePaymentMethod) event.getTargetInstance(), true);
+  }
+
+  private void validateActiveOrRemovePaymentMethod(TerminalTypePaymentMethod paymentMethod,
+      boolean removePayment) {
+    if (!paymentMethod.isActive() || removePayment) {
+      String whereclause = " as e join e.cashUp as cashup "
+          + "where cashup.isProcessed is false and e.paymentType.active is true "
+          + "and e.paymentType.paymentMethod=:paymentMethod ";
+      OBQuery<OBPOSPaymentMethodCashup> queryCashupPayment = OBDal.getInstance().createQuery(
+          OBPOSPaymentMethodCashup.class, whereclause);
+      queryCashupPayment.setMaxResult(1);
+      queryCashupPayment.setNamedParameter("paymentMethod", paymentMethod);
+      if (queryCashupPayment.count() > 0) {
+        throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+            (removePayment == true) ? "OBPOS_PaymentMethodRemove" : "OBPOS_PaymentMethodDeactive",
+            OBContext.getOBContext().getLanguage().getLanguage()));
+      }
+    }
   }
 }

@@ -35,7 +35,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -60,7 +61,7 @@ public class CashUpReport extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
 
-  public static final Logger log = Logger.getLogger(CashUpReport.class);
+  public static final Logger log = LogManager.getLogger();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,

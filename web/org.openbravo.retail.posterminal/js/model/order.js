@@ -2964,7 +2964,6 @@
       var p = line.get('product'),
           lines = this.get('lines'),
           merged = false;
-      line.set('promotions', null);
       lines.forEach(function (l) {
         if (l === line) {
           return;
@@ -3182,6 +3181,7 @@
       disc._idx = discount._idx || rule.get('_idx');
 
       disc.obdiscApplyafter = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscApplyafter'))) ? rule.get('obdiscApplyafter') : false;
+      disc.obdiscAllowinnegativelines = (!OB.UTIL.isNullOrUndefined(rule.get('obdiscAllowinnegativelines'))) ? rule.get('obdiscAllowinnegativelines') : false;
 
       var unitsConsumed = 0;
       var unitsConsumedByNoCascadeRules = 0;
@@ -3358,7 +3358,6 @@
         this.mergeLines(line);
       }
 
-
       // set the undo action
       if (me.get('multipleUndo')) {
         var text = '',
@@ -3391,9 +3390,15 @@
           }
         });
       }
+
       this.adjustPayment();
       if (line.get('promotions')) {
-        line.unset('promotions');
+        if (line.get('qty') < 0) {
+          var promotions = _.filter(line.get('promotions'), function (promotion) {
+            return promotion.obdiscAllowinnegativelines;
+          });
+          line.set('promotions', promotions);
+        }
       }
       this.set('skipCalculateReceipt', false);
       this.calculateReceipt(function () {
@@ -3969,6 +3974,24 @@
           } else if (data && data.orderCancelled) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
             return;
+          } else if (data && data.notDeliveredDeferredServices && data.notDeliveredDeferredServices.length) {
+            var components = [];
+            components.push({
+              content: OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'),
+              style: 'text-align: left; padding-left: 10px; padding-right: 10px;'
+            });
+            components.push({
+              content: OB.I18N.getLabel('OBPOS_RelatedOrders'),
+              style: 'text-align: left; padding-left: 30px; padding-right: 10px;'
+            });
+            _.each(data.notDeliveredDeferredServices, function (documentNo) {
+              components.push({
+                content: OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + documentNo,
+                style: 'text-align: left; padding-left: 60px; padding-right: 10px;'
+              });
+            });
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), components);
+            return;
           } else {
             OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelAndReplace', {
               context: context
@@ -4150,8 +4173,23 @@
           } else if (data && data.orderCancelled) {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderCanceledError'));
             return;
-          } else if (data && data.hasDeferredServices) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'));
+          } else if (data && data.notDeliveredDeferredServices && data.notDeliveredDeferredServices.length) {
+            var components = [];
+            components.push({
+              content: OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'),
+              style: 'text-align: left; padding-left: 10px; padding-right: 10px;'
+            });
+            components.push({
+              content: OB.I18N.getLabel('OBPOS_RelatedOrders'),
+              style: 'text-align: left; padding-left: 30px; padding-right: 10px;'
+            });
+            _.each(data.notDeliveredDeferredServices, function (documentNo) {
+              components.push({
+                content: OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + documentNo,
+                style: 'text-align: left; padding-left: 60px; padding-right: 10px;'
+              });
+            });
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), components);
             return;
           } else {
             OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
@@ -4194,6 +4232,23 @@
         this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
         this.save();
       }
+    },
+
+    setQuotationProperties: function () {
+      this.set('isQuotation', true);
+      this.set('generateInvoice', false);
+      this.set('orderType', 0);
+      this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
+      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
+      this.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
+      this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
+      this.set('documentNo', nextQuotationno.documentNo);
+    },
+
+    createQuotationFromOrder: function () {
+      this.setQuotationProperties();
+      this.trigger('scan');
+      this.save();
     },
 
     createOrderFromQuotation: function (updatePrices, callback) {
@@ -5688,7 +5743,7 @@
       function removeReceiptFromDatabase(receipt, callback) {
         var orderList = OB.MobileApp.model.orderList;
         if (receipt.get('id')) {
-          if (receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
+          if (OB.MobileApp.model.orderList && receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
             orderList.saveCurrent();
             OB.Dal.remove(orderList.current, null, null);
             orderList.deleteCurrent();
@@ -6496,15 +6551,7 @@
     addNewQuotation: function () {
       this.saveCurrent();
       this.current = this.newOrder();
-      this.current.set('isQuotation', true);
-      this.current.set('generateInvoice', false);
-      this.current.set('orderType', 0);
-      this.current.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
-      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-      this.current.set('quotationnoPrefix', OB.MobileApp.model.get('terminal').quotationDocNoPrefix);
-      this.current.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
-      this.current.set('documentNo', nextQuotationno.documentNo);
-
+      this.current.setQuotationProperties();
       this.unshift(this.current);
       this.loadCurrent();
     },

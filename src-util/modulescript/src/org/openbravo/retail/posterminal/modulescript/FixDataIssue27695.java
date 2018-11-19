@@ -9,7 +9,8 @@
 package org.openbravo.retail.posterminal.modulescript;
 
 import org.openbravo.database.ConnectionProvider;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.modulescript.ModuleScript;
 import org.openbravo.modulescript.ModuleScriptExecutionLimits;
@@ -21,7 +22,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
  */
 public class FixDataIssue27695 extends ModuleScript {
 
-  private static final Logger log4j = Logger.getLogger(FixDataIssue27695.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
   @Override
   public void execute() {

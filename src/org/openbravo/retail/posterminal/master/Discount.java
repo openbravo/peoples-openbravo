@@ -11,9 +11,13 @@ package org.openbravo.retail.posterminal.master;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
@@ -28,11 +32,34 @@ import org.openbravo.service.json.JsonUtils;
 
 public class Discount extends ProcessHQLQuery {
 
-  public static final Logger log = Logger.getLogger(Discount.class);
+  public static final Logger log = LogManager.getLogger();
 
   @Override
   protected boolean isAdminMode() {
     return true;
+  }
+
+  @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+
+      // Optional filtering by a list of m_offer_id
+      // Used for this class and whom inherit this class
+      if (jsonsent.has("parameters")
+          && jsonsent.getJSONObject("parameters").has("filterPromotionList")
+          && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("undefined")
+          && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("null")) {
+        JSONArray filterPromotionList = jsonsent.getJSONObject("parameters").getJSONArray(
+            "filterPromotionList");
+        paramValues.put("filterPromotionList", filterPromotionList);
+      }
+
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   protected String getPromotionsHQL(JSONObject jsonsent) throws JSONException {
@@ -75,6 +102,15 @@ public class Discount extends ProcessHQLQuery {
       hql += ""; // Incremental Refresh
     } else {
       hql += "AND ((p.$incrementalUpdateCriteria)) "; // Full Refresh
+    }
+
+    // Optional filtering by a list of m_offer_id
+    // Used for this class and whom inherit this class
+    if (jsonsent.has("parameters")
+        && jsonsent.getJSONObject("parameters").has("filterPromotionList")
+        && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("undefined")
+        && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("null")) {
+      hql += "AND p.id IN (:filterPromotionList) ";
     }
 
     if (!multiPrices) {
@@ -147,6 +183,18 @@ public class Discount extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     JSONObject today = new JSONObject();
     JSONObject value = new JSONObject();
+    JSONArray filterPromotionList = new JSONArray();
+
+    // Optional filtering by a list of m_offer_id
+    // Used for this class and whom inherit this class
+    if (jsonsent.has("parameters")
+        && jsonsent.getJSONObject("parameters").has("filterPromotionList")
+        && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("undefined")
+        && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("null")) {
+      filterPromotionList = jsonsent.getJSONObject("parameters")
+          .getJSONArray("filterPromotionList");
+      today.put("filterPromotionList", filterPromotionList);
+    }
 
     value.put("type", "DATE");
     Calendar now = Calendar.getInstance();

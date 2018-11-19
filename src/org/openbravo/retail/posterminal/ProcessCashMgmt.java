@@ -18,7 +18,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -45,7 +46,7 @@ import org.openbravo.service.json.JsonConstants;
 public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
 
-  private static final Logger log = Logger.getLogger(ProcessCashMgmt.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any

@@ -524,9 +524,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
         var amount = receipt.getPaymentStatus().overpayment;
+        var scrimShowing = enyo.$.scrim.showing;
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
+          scrimShowing: scrimShowing,
           action: function () {
             me.openDrawer = openDrawer;
             callback(true);
@@ -645,9 +647,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (overpayment > 0) {
         var symbol = OB.MobileApp.model.get('terminal').symbol,
             symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+        var scrimShowing = enyo.$.scrim.showing;
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(overpayment, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
+          scrimShowing: scrimShowing,
           action: function () {
             me.openDrawer = openDrawer;
             triggerPaymentAccepted(orders, 0);
@@ -769,9 +773,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
         var amount = receipt.getPaymentStatus().overpayment;
+        var scrimShowing = enyo.$.scrim.showing;
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
+          scrimShowing: scrimShowing,
           action: function () {
             finishVoidLayaway();
           }
@@ -1019,9 +1025,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
         var amount = receipt.getPaymentStatus().overpayment;
+        var scrimShowing = enyo.$.scrim.showing;
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
+          scrimShowing: scrimShowing,
           action: function () {
             finishCancelLayaway();
           }

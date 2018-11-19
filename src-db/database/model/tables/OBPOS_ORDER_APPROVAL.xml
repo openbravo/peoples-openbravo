@@ -64,6 +64,10 @@
       <index name="OBPOS_ORDERAPPR_ORDER_IDX" unique="false">
         <index-column name="C_ORDER_ID"/>
       </index>
+      <index name="OBPOS_ORDERAPPR_USER" unique="false">
+        <index-column name="AD_USER_ID"/>
+        <whereClause><![CDATA[AD_USER_ID IS NOT NULL]]></whereClause>
+      </index>
       <check name="OBPOS_ORDERAPPR_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

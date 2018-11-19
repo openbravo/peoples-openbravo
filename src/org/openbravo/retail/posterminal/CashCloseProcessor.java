@@ -18,7 +18,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -47,7 +48,7 @@ import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {
 
-  private static final Logger logger = Logger.getLogger(CashCloseProcessor.class);
+  private static final Logger logger = LogManager.getLogger();
 
   @Inject
   @Any
@@ -392,8 +393,11 @@ public class CashCloseProcessor {
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(accountTo) + 10);
     transaction.setGLItem(glItem);
     if (reconciliationTotal.compareTo(BigDecimal.ZERO) < 0) {
-      transaction.setPaymentAmount(reconciliationTotal.multiply(conversionRate).abs()
-          .setScale(2, RoundingMode.HALF_EVEN));
+      transaction.setPaymentAmount(reconciliationTotal
+          .multiply(conversionRate)
+          .abs()
+          .setScale(accountTo.getCurrency().getStandardPrecision().intValue(),
+              RoundingMode.HALF_EVEN));
       transaction.setTransactionType("BPW");
     } else {
       transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,

@@ -161,7 +161,7 @@
             line.set('promotionCandidates', []);
           });
           _.each(receipt.get('lines').models, function (line) {
-            if (line.get('splitline') || (line.get('gross') > 0 && line.get('priceIncludesTax')) || (line.get('net') > 0 && !line.get('priceIncludesTax'))) {
+            if (OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))) {
               // Clean the promotions only if the line is not a return
               line.set('promotions', []);
               line.set('promotionCandidates', []);
@@ -226,12 +226,11 @@
         line.unset('noDiscountCandidates', {
           silent: true
         });
-        if (line.get('qty') > 0) {
+        if (line.get('qty') > 0 || (line.get('qty') < 0 && promotion.rule.get('obdiscAllowinnegativelines'))) {
           rule.addManual(receipt, line, promotion);
         } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions'));
         }
-
       });
 
       receipt.setUndo('AddDiscount', {

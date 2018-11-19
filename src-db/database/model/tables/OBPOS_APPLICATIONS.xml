@@ -169,6 +169,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DOCUMENTNO_PADDING" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[7]]></default>
+        <onCreateDefault><![CDATA[7]]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

@@ -15,7 +15,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
@@ -41,7 +42,7 @@ import org.openbravo.service.json.JsonToDataConverter;
 public class ProcessCashClose extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
 
-  private static final Logger log = Logger.getLogger(ProcessCashClose.class);
+  private static final Logger log = LogManager.getLogger();
   JSONObject jsonResponse = new JSONObject();
 
   protected String getImportQualifier() {

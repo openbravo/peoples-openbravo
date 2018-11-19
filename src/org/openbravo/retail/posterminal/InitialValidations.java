@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,6 +15,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
@@ -24,8 +25,25 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.common.enterprise.DocumentType;
 
 public class InitialValidations {
+
+  public static void validateTerminal(OBPOSApplications posTerminal, JSONObject jsonsent)
+      throws JSONException {
+
+    validateTerminal(posTerminal);
+
+    // Check POS Cache Cash up is processed
+    final JSONObject jsonCashUp = jsonsent.getJSONObject("parameters").optJSONObject("cashUpId");
+    if (jsonCashUp != null && jsonCashUp.has("value")) {
+      OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class,
+          jsonCashUp.optString("value"));
+      if (appCashup != null && appCashup.isProcessed()) {
+        throw new JSONException("OBPOS_CashupCacheAlreadyProcessed");
+      }
+    }
+  }
 
   public static void validateTerminal(OBPOSApplications posTerminal) throws JSONException {
 
@@ -69,6 +87,19 @@ public class InitialValidations {
       throw new JSONException("OBPOS_NotAllowSlaveAndMaster");
     }
 
+    DocumentType documentType = posTerminal.getObposTerminaltype().getDocumentType(), returnDocumentType = posTerminal
+        .getObposTerminaltype().getDocumentTypeForReturns();
+    if (documentType.getDocumentTypeForInvoice() == null) {
+      throw new JSONException("OBPOS_DocTypeInvoiceNotConfigured");
+    } else if (documentType.getDocumentTypeForShipment() == null) {
+      throw new JSONException("OBPOS_DocTypeShipmentNotConfigured");
+    }
+    if (returnDocumentType.getDocumentTypeForInvoice() == null) {
+      throw new JSONException("OBPOS_DocTypeReturnInvoiceNotConfigured");
+    } else if (returnDocumentType.getDocumentTypeForShipment() == null) {
+      throw new JSONException("OBPOS_DocTypeReturnShipmentNotConfigured");
+    }
+
     String whereclausePM = " as e where e.obposApplications=:terminal and e.financialAccount is not null "
         + "and not exists (select 1 from FinancialMgmtFinAccPaymentMethod as pmacc where "
         + "pmacc.paymentMethod = e.paymentMethod.paymentMethod and pmacc.account = e.financialAccount"
@@ -90,6 +121,17 @@ public class InitialValidations {
       throw new JSONException("OBPOS_CMEVAccountIsUsedInPayMethod");
     }
 
+    String whereclauseRCDR = " as e where e.obposApplications=:terminal and e.financialAccount is not null and exists "
+        + "(select 1 from FIN_Reconciliation as finrc where "
+        + "finrc.account = e.financialAccount and finrc.documentStatus = 'DR')";
+    OBQuery<OBPOSAppPayment> queryReconcilliation = OBDal.getInstance().createQuery(
+        OBPOSAppPayment.class, whereclauseRCDR);
+    queryReconcilliation.setMaxResult(1);
+    queryReconcilliation.setNamedParameter("terminal", posTerminal);
+    if (queryReconcilliation.count() > 0) {
+      throw new JSONException("OBPOS_FINAccountReconcileDraft");
+    }
+
     String whereclauseLAC = " as e where e.obposApplications=:terminal and ((e.financialAccount is null "
         + "and e.paymentMethod.leaveascredit = false) or (e.financialAccount is not null and e.paymentMethod.leaveascredit = true))";
     OBQuery<OBPOSAppPayment> queryLeaveAsCredit = OBDal.getInstance().createQuery(
@@ -97,6 +139,13 @@ public class InitialValidations {
     queryLeaveAsCredit.setNamedParameter("terminal", posTerminal);
     if (queryLeaveAsCredit.list().size() > 0) {
       throw new JSONException("OBPOS_LeaveAsCreditNotConfigured");
+    }
+
+    for (OBPOSAppPayment obposAppPayment : posTerminal.getOBPOSAppPaymentList()) {
+      if (!obposAppPayment.getFinancialAccount().getCurrency()
+          .equals(obposAppPayment.getPaymentMethod().getCurrency())) {
+        throw new JSONException("OBPOS_FinAcctCurrDiffWithPayMethodCurr");
+      }
     }
 
     if (posTerminal.getMasterterminal() != null) {

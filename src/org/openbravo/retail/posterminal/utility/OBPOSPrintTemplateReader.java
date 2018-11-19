@@ -14,7 +14,8 @@ import java.io.IOException;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -28,7 +29,7 @@ import org.openbravo.retail.posterminal.PrintTemplateSubrep;
  * @author mdj
  */
 public class OBPOSPrintTemplateReader {
-  private static final Logger log = Logger.getLogger(OBPOSPrintTemplateReader.class);
+  private static final Logger log = LogManager.getLogger();
   String printTemplateIdentifier = null;
   private static OBPOSPrintTemplateReader instance = new OBPOSPrintTemplateReader();
 
