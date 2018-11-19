@@ -339,7 +339,7 @@ OB.APRM.AddPayment.glitemsOnLoadGrid = function (grid) {
 OB.APRM.AddPayment.creditOnLoadGrid = function (grid) {
   grid.isReady = true;
   if (grid.obaprmAllRecordsSelectedByUser) {
-	delete grid.obaprmAllRecordsSelectedByUser;
+    delete grid.obaprmAllRecordsSelectedByUser;
   }
   OB.APRM.AddPayment.updateCreditTotal(this.view.theForm);
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
