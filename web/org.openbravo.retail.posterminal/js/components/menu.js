@@ -328,7 +328,7 @@ enyo.kind({
     var receipt = model.get('order'),
         me = this;
 
-    receipt.on('change:isLayaway change:isPaid', function (model) {
+    receipt.on('change:isLayaway change:isPaid change:orderType change:documentType', function (model) {
       this.updateLabel(model);
       this.displayLogic();
     }, this);
