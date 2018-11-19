@@ -13,7 +13,8 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -37,7 +38,7 @@ import org.openbravo.service.importprocess.ImportProcessUtils;
  */
 public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
 
-  private static final Logger log = Logger.getLogger(POSImportEntryProcessor.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final Entity IMPORT_ENTRY_ENTITY = ModelProvider.getInstance().getEntity(
       ImportEntry.ENTITY_NAME);

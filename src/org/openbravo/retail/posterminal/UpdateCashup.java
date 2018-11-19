@@ -13,7 +13,8 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -35,7 +36,7 @@ import org.openbravo.service.json.JsonToDataConverter;
 
 public class UpdateCashup {
 
-  private static final Logger log = Logger.getLogger(ImportEntryManager.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Get and update a cashup. If cashup not exist it's created, otherwise update the cashup data

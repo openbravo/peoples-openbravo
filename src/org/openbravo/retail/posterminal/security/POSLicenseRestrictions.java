@@ -28,8 +28,8 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -49,7 +49,7 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
   private LoadingCache<String, Integer> countCache;
 
   private static final String CACHE_KEY = "count";
-  private static final Logger log = LoggerFactory.getLogger(POSLicenseRestrictions.class);
+  private static final Logger log = LogManager.getLogger();
 
   public POSLicenseRestrictions() {
     // initializing cache, keep last count for 10 minutes

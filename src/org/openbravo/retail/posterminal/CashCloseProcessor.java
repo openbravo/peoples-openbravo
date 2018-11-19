@@ -18,7 +18,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -47,7 +48,7 @@ import org.openbravo.service.json.JsonConstants;
 
 public class CashCloseProcessor {
 
-  private static final Logger logger = Logger.getLogger(CashCloseProcessor.class);
+  private static final Logger logger = LogManager.getLogger();
 
   @Inject
   @Any

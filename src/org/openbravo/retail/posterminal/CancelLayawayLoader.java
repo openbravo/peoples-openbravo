@@ -11,7 +11,8 @@ package org.openbravo.retail.posterminal;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -36,7 +37,7 @@ import org.openbravo.service.json.JsonConstants;
 @DataSynchronization(entity = "OBPOS_CancelLayaway")
 public class CancelLayawayLoader extends OrderLoader {
 
-  private static final Logger log = Logger.getLogger(CancelLayawayLoader.class);
+  private static final Logger log = LogManager.getLogger();
 
   public JSONObject saveRecord(JSONObject json) throws Exception {
 

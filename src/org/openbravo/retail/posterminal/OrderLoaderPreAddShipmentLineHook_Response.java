@@ -9,13 +9,13 @@
 
 package org.openbravo.retail.posterminal;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook.OrderLoaderPreAddShipmentLineHook_Actions;
 
 public class OrderLoaderPreAddShipmentLineHook_Response {
-  private static final Logger log = Logger
-      .getLogger(OrderLoaderPreAddShipmentLineHook_Response.class);
+  private static final Logger log = LogManager.getLogger();
 
   private boolean isValid;
   private boolean cancelExecution;
