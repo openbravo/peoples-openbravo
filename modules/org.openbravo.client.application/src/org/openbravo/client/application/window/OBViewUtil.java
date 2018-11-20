@@ -21,6 +21,8 @@ package org.openbravo.client.application.window;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
@@ -38,8 +40,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Utility methods used in generating Openbravo view representations.
@@ -218,8 +218,9 @@ public class OBViewUtil {
 
     if (tabConf.isPresent()) {
       if (field != null && field.getId() != null) {
-        // field list is cached in memory, so can be reused for all fields without the need of reach
-        // DB again
+        // Grid Configurations at field level for this tab configuration
+        // (tabConf.getOBUIAPPGCFieldList) gets cached on Hibernate's first level cache so they can
+        // be reused for all fields without the need of reach DB again
         Optional<GCField> fieldConf = tabConf.get().getOBUIAPPGCFieldList() //
             .stream() //
             .filter(fieldGC -> fieldGC.getField().getId().equals(field.getId())) //

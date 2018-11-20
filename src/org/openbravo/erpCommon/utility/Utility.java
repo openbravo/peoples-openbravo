@@ -1682,8 +1682,8 @@ public class Utility {
   /**
    * Returns the URL for a tab
    * 
-   * @param tabId
-   *          Id for the tab to obtain the url for
+   * @param tab
+   *          The tab to obtain the url for
    * @param type
    *          "R" -&gt; Relation, "E" -&gt; Edition, "X" -&gt; Excel
    * @param completeURL
@@ -1723,6 +1723,18 @@ public class Utility {
     }
   }
 
+  /**
+   * Returns the URL for a tab
+   *
+   * @param tabId
+   *          Id for the tab to obtain the url for
+   * @param type
+   *          "R" -&gt; Relation, "E" -&gt; Edition, "X" -&gt; Excel
+   * @param completeURL
+   *          if true returns the complete ULR including server name and context, if not, it return
+   *          URL relative to base context
+   * @return the URL for a tab.
+   */
   public static String getTabURL(String tabId, String type, boolean completeURL) {
     OBContext.setAdminMode();
     try {
