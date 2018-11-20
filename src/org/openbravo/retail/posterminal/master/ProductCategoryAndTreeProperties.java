@@ -32,6 +32,7 @@ public class ProductCategoryAndTreeProperties extends ModelExtension {
     }
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
     list.add(new HQLProperty("pCat.id", "id"));
+    list.add(new HQLProperty("pCat.organization.id", "organization"));
     list.add(new HQLProperty("pCat.searchKey", "searchKey"));
     list.add(new HQLProperty(nameTrl, "name"));
     list.add(new HQLProperty(nameTrl, "_identifier"));
