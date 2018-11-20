@@ -4,15 +4,15 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -58,7 +58,7 @@ import org.quartz.SchedulerException;
 
 /**
  * Provides utility like services.
- * 
+ *
  * @author Martin Taal
  */
 public class SystemService implements OBSingleton {
@@ -78,7 +78,7 @@ public class SystemService implements OBSingleton {
 
   /**
    * Returns true if for a certain class there are objects which have changed.
-   * 
+   *
    * @param clzs
    *          the type of objects which are checked
    * @param afterDate
@@ -102,7 +102,7 @@ public class SystemService implements OBSingleton {
   /**
    * Validates a specific module, checks the javapackage, dependency on core etc. The database
    * changes of the module are not checked. This is a separate task.
-   * 
+   *
    * @param module
    *          the module to validate
    * @param database
@@ -117,7 +117,7 @@ public class SystemService implements OBSingleton {
 
   /**
    * Validates the database for a specific module.
-   * 
+   *
    * @param module
    *          the module to validate
    * @param database
@@ -134,7 +134,7 @@ public class SystemService implements OBSingleton {
 
   /**
    * Prints the validation result grouped by validation type to the log.
-   * 
+   *
    * @param log
    *          the log to which the validation result is printed
    * @param result
@@ -172,9 +172,50 @@ public class SystemService implements OBSingleton {
   }
 
   /**
+   * Prints the validation result grouped by validation type to the log.
+   *
+   * @param log
+   *          the log to which the validation result is printed
+   * @param result
+   *          the validation result containing both errors and warning
+   * @return the errors are returned as a string
+   * @deprecated use {@link #logValidationResult(Logger, SystemValidationResult)}
+   */
+  @Deprecated
+  public String logValidationResult(org.apache.log4j.Logger log, SystemValidationResult result) {
+    for (SystemValidationType validationType : result.getWarnings().keySet()) {
+      log.warn("\n");
+      log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.warn("Warnings for Validation type: " + validationType);
+      log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      final List<String> warnings = result.getWarnings().get(validationType);
+      for (String warning : warnings) {
+        log.warn(warning);
+      }
+    }
+
+    final StringBuilder sb = new StringBuilder();
+    for (SystemValidationType validationType : result.getErrors().keySet()) {
+      sb.append("\n");
+      sb.append("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      sb.append("\nErrors for Validation type: " + validationType);
+      sb.append("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      final List<String> errors = result.getErrors().get(validationType);
+      for (String err : errors) {
+        sb.append("\n");
+        sb.append(err);
+      }
+    }
+    if (sb.length() > 0) {
+      log.error(sb.toString());
+    }
+    return sb.toString();
+  }
+
+  /**
    * This process deletes a client from the database. During its execution, the Scheduler is
    * stopped, and all sessions active for other users are cancelled
-   * 
+   *
    * @param client
    *          The client to be deleted
    */
@@ -258,7 +299,7 @@ public class SystemService implements OBSingleton {
   /**
    * Callend after killConnectionsAndSafeMode, it disables the restriction to log only with the
    * System Administrator role
-   * 
+   *
    * @param con
    *          Connection used to make the queries
    */
@@ -282,7 +323,7 @@ public class SystemService implements OBSingleton {
   /**
    * Kills the active sessions for the current user and sets the System Admin role as the only one
    * available
-   * 
+   *
    * @param con
    *          the Connection used to execute the queries
    */
@@ -315,7 +356,7 @@ public class SystemService implements OBSingleton {
 
   /**
    * Returns a dbsourcemanager Platform object
-   * 
+   *
    * @return A Platform object built following the configuration set in the Openbravo.properties
    *         file
    */
