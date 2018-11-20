@@ -22,7 +22,7 @@ function prepareToSendCallback(callback) {
       var negativeLines = _.filter(order.get('lines').models, function (line) {
         return line.get('qty') < 0;
       }).length;
-      if (negativeLines === order.get('lines').models.length) {
+      if (negativeLines === order.get('lines').models.length || (negativeLines > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) {
         order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
           applyPromotions: false,
           saveOrder: false
