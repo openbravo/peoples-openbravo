@@ -74,7 +74,7 @@ public class OBViewUtil {
     Hibernate.initialize(updatedByElement.getADElementTrlList());
   }
 
-  private static Logger log = LoggerFactory.getLogger(OBViewUtil.class);
+  private static Logger log = LogManager.getLogger();
 
   /**
    * Method for retrieving the label of a field on the basis of the current language of the user.
