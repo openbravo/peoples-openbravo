@@ -4886,7 +4886,8 @@
     },
 
     addPayment: function (payment, callback) {
-      var payments, total, i, max, p, order, paymentSign, finalCallback, precision;
+      var me = this,
+          payments, total, i, max, p, order, paymentSign, finalCallback, precision;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && OB.DEC.abs(this.getPrePaymentQty()) >= OB.DEC.abs(this.getTotal()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
@@ -4929,7 +4930,7 @@
         OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
           paymentToAdd: payment,
           payments: payments,
-          receipt: this
+          receipt: me
         }, function (args) {
           var executeFinalCallback = function (saveChanges) {
               if (saveChanges && !payment.get('changePayment')) {
@@ -7486,7 +7487,8 @@
       }
     },
     addPayment: function (payment, callback) {
-      var i, max, p, order, payments, total, finalCallback, precision;
+      var me = this,
+          i, max, p, order, payments, total, finalCallback, precision;
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
@@ -7517,7 +7519,7 @@
         OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
           paymentToAdd: payment,
           payments: payments,
-          receipt: this
+          receipt: me
         }, function (args) {
           var executeFinalCallback = function () {
               OB.UTIL.HookManager.executeHooks('OBPOS_postAddPayment', {
