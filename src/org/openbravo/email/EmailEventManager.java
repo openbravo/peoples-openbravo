@@ -30,7 +30,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.poc.EmailInfo;
@@ -48,7 +49,7 @@ import org.openbravo.model.common.enterprise.Organization;
 @ApplicationScoped
 public class EmailEventManager {
 
-  private static final Logger log = Logger.getLogger(EmailEventManager.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any

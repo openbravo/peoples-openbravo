@@ -13,11 +13,12 @@ package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionMedTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionMedTemplate = Logger.getLogger(FunctionMedTemplate.class);
+  static Logger log4jFunctionMedTemplate = LogManager.getLogger();
 
   public FunctionMedTemplate(String fieldName, FieldTemplate field, DecimalFormat formatOutput,
       DecimalFormat formatSimple, DataTemplate dataTemplate) {

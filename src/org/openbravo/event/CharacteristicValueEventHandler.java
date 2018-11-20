@@ -23,7 +23,8 @@ import java.util.HashMap;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
@@ -45,7 +46,7 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       CharacteristicValue.ENTITY_NAME) };
   private static ThreadLocal<String> chvalueUpdated = new ThreadLocal<String>();

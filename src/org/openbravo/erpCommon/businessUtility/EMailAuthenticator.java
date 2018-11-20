@@ -19,10 +19,11 @@ package org.openbravo.erpCommon.businessUtility;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class EMailAuthenticator extends Authenticator {
-  static Logger log4j = Logger.getLogger(EMailAuthenticator.class);
+  static Logger log4j = LogManager.getLogger();
 
   private PasswordAuthentication m_pass;
 

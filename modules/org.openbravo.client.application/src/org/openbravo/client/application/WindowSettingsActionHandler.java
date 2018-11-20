@@ -53,8 +53,8 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Computes different settings which may be user/role specific for a certain window.
@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class WindowSettingsActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(WindowSettingsActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   public static final String EXTRA_CALLBACKS = "extraCallbacks";
 
   @Inject

@@ -29,7 +29,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.query.Query;
@@ -68,7 +69,7 @@ import org.openbravo.service.db.DbUtility;
 
 public class CostingRuleProcess implements Process {
   private ProcessLogger logger;
-  private static final Logger log4j = Logger.getLogger(CostingRuleProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {

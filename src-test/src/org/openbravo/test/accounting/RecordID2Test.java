@@ -48,8 +48,8 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check RecordID2-DateBalanced functionality (Open balances Project)
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class RecordID2Test extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(RecordID2Test.class);
+  final static private Logger log = LogManager.getLogger();
   private static final String TABLE_INVOICE = "318";
   private static final String TABLE_TRANSACTION = "4D8C3B3C31D1410DA046140C9F024D17";
   private static final String TABLE_PAYMENT = "D1A97202E832470285C9B1EB026D54E2";

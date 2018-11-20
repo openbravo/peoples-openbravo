@@ -43,12 +43,12 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class TestComboDatasource extends BaseDataSourceTestDal {
 
-  private static final Logger log = LoggerFactory.getLogger(TestComboDatasource.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Test to fetch values from ComboTableDatasoureService using set parameters. Based on field

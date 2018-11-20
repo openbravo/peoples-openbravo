@@ -39,8 +39,8 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.PoolInterceptorProvider;
 import org.openbravo.jmx.MBeanRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * JdbcExternalConnectionPool manages all the functionality of the Apache JDBC Connection Pool. This
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * connection from a pool, close the different pools and other actions.
  */
 public class JdbcExternalConnectionPool extends ExternalConnectionPool {
-  final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
+  final static private Logger log = LogManager.getLogger();
 
   private Map<String, DataSource> availableDataSources = null;
   private DataSource defaultDataSource = null;

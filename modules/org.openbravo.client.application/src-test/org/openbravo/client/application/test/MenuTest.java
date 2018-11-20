@@ -26,8 +26,8 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.MenuManager;
 import org.openbravo.client.application.MenuManager.MenuOption;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests the reading of the menu in memory
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @author iperdomo
  */
 public class MenuTest extends WeldBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(MenuTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   private MenuManager menuManager;

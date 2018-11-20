@@ -35,7 +35,8 @@ import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
 import org.apache.ddlutils.platform.ExcludeFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -62,7 +63,7 @@ import org.quartz.SchedulerException;
  */
 public class SystemService implements OBSingleton {
   private static SystemService instance;
-  private static final Logger log4j = Logger.getLogger(SystemService.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public static synchronized SystemService getInstance() {
     if (instance == null) {

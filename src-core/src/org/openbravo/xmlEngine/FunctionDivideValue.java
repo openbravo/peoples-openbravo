@@ -14,11 +14,12 @@ package org.openbravo.xmlEngine;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class FunctionDivideValue extends FunctionEvaluationValue {
 
-  static Logger log4jFunctionDivideValue = Logger.getLogger(FunctionDivideValue.class);
+  static Logger log4jFunctionDivideValue = LogManager.getLogger();
 
   public FunctionDivideValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
     super(functionTemplate, xmlDocument);

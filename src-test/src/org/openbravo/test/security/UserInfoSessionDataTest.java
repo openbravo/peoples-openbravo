@@ -48,15 +48,15 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * These tests ensure that the information that is displayed in the user profile widget is updated
  * properly when roles, organization accesses or warehouses are activated/deactivated.
  */
 public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
-  private static Logger log = LoggerFactory.getLogger(UserInfoSessionDataTest.class);
+  private static Logger log = LogManager.getLogger();
 
   private static final String USER_INFO_START = "OB.User.userInfo = ";
   private static final String USER_INFO_FINISH = "};";

@@ -25,7 +25,8 @@ import java.io.InputStream;
 
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Module;
 
@@ -35,7 +36,7 @@ import org.openbravo.base.model.Module;
  * @author Martin Taal
  */
 public class OBConfigFileProvider implements OBSingleton {
-  private final Logger log = Logger.getLogger(OBConfigFileProvider.class);
+  private final Logger log = LogManager.getLogger();
 
   private static final String CUSTOM_POSTFIX = "-" + OBProvider.CONFIG_FILE_NAME;
 

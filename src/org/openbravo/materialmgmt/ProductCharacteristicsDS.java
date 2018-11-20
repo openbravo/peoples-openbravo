@@ -56,8 +56,8 @@ import org.openbravo.userinterface.selector.CustomQuerySelectorDatasource;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorConstants;
 import org.openbravo.userinterface.selector.SelectorField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Manual datasource that creates a tree of characteristics with their values. Intended to be used
@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ProductCharacteristicsDS extends DefaultDataSourceService {
-  final static Logger log = LoggerFactory.getLogger(ProductCharacteristicsDS.class);
+  final static Logger log = LogManager.getLogger();
 
   final static int CHAR_ID = 0;
   final static int CHAR_NAME = 1;

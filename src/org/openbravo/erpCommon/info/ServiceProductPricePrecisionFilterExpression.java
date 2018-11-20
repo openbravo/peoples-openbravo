@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.info;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.FilterExpression;
@@ -29,7 +30,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.OrderLine;
 
 public class ServiceProductPricePrecisionFilterExpression implements FilterExpression {
-  private Logger log = Logger.getLogger(ServiceProductPricePrecisionFilterExpression.class);
+  private Logger log = LogManager.getLogger();
 
   @Override
   public String getExpression(Map<String, String> requestMap) {

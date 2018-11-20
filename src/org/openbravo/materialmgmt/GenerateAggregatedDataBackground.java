@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -40,7 +41,7 @@ import org.openbravo.service.db.DalBaseProcess;
 
 public class GenerateAggregatedDataBackground extends DalBaseProcess {
 
-  private static final Logger log4j = Logger.getLogger(GenerateAggregatedDataBackground.class);
+  private static final Logger log4j = LogManager.getLogger();
   private ProcessLogger logger;
 
   @Override

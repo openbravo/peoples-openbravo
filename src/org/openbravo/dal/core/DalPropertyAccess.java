@@ -33,8 +33,8 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Describes access to a particular DAL entity property in terms of getting and setting its value.
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("rawtypes")
 class DalPropertyAccess implements PropertyAccess {
 
-  private static final Logger log = LoggerFactory.getLogger(DalPropertyAccess.class);
+  private static final Logger log = LogManager.getLogger();
 
   private final PropertyAccessStrategy strategy;
   private final GetterMethod getter;

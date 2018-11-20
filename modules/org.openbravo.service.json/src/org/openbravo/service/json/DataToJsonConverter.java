@@ -47,8 +47,8 @@ import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Is responsible for converting Openbravo business objects ({@link BaseOBObject} to a json
@@ -89,7 +89,7 @@ public class DataToJsonConverter {
   // BaseOBObjects from which to infer the entity
   private Entity entity;
 
-  private static final Logger log = LoggerFactory.getLogger(DataToJsonConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Convert a list of Maps with key value pairs to a list of {@link JSONObject}.

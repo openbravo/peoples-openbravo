@@ -36,8 +36,8 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test case for LinkToParent tree Datasource
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LinkToParentTreeDataSourceTest extends BaseDataSourceTestDal {
 
-  private static final Logger log = LoggerFactory.getLogger(LinkToParentTreeDataSourceTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static final int STATUS_OK = 0;
   private static final int NUMBER_OF_COST_ADJUSTMENT_LINES = 2;
 

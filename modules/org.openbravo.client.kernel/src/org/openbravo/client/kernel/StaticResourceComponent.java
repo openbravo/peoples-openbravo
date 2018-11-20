@@ -30,7 +30,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
@@ -45,7 +46,7 @@ import org.openbravo.service.web.WebServiceUtil;
  * @author iperdomo
  */
 public class StaticResourceComponent extends BaseComponent {
-  private static final Logger log = Logger.getLogger(StaticResourceComponent.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static final String GEN_TARGET_LOCATION = "/web/js/gen";
 

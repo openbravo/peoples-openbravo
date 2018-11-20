@@ -41,8 +41,8 @@ import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The implementation of the combo table reference datasource.
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class ComboTableDatasourceService extends BaseDataSourceService {
-  private static final Logger log = LoggerFactory.getLogger(ComboTableDatasourceService.class);
+  private static final Logger log = LogManager.getLogger();
 
   /*
    * (non-Javadoc)

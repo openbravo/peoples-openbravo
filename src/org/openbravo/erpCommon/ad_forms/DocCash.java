@@ -22,7 +22,8 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -68,7 +69,7 @@ public class DocCash extends AcctServer {
     return serialVersionUID;
   }
 
-  static Logger log4jDocCash = Logger.getLogger(DocCash.class);
+  static Logger log4jDocCash = LogManager.getLogger();
 
   private String SeqNo = "0";
 

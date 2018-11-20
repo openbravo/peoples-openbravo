@@ -23,7 +23,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -94,7 +95,7 @@ public class ProcessBundle {
 
   private GroupInfo groupInfo;
 
-  static Logger log = Logger.getLogger(ProcessBundle.class);
+  static Logger log = LogManager.getLogger();
 
   /**
    * Creates a new ProcessBundle for the given processId and application security variables.

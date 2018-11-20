@@ -13,10 +13,11 @@ package org.openbravo.base;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class HttpBaseUtils {
-  public static Logger log4j = Logger.getLogger(HttpBaseUtils.class);
+  public static Logger log4j = LogManager.getLogger();
 
   /** Creates a new instance of LoginUtils */
   private HttpBaseUtils() {

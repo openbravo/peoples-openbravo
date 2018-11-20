@@ -33,8 +33,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Action Handler to manage the Copy From Orders process
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CopyFromOrdersActionHandler extends BaseProcessActionHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(CopyFromOrdersActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String MESSAGE = "message";
   private static final String MESSAGE_SEVERITY = "severity";

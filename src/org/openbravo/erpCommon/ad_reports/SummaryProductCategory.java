@@ -12,12 +12,12 @@ package org.openbravo.erpCommon.ad_reports;
 import java.math.BigDecimal;
 
 import org.openbravo.data.FieldProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @SuppressWarnings("serial")
 public class SummaryProductCategory implements FieldProvider {
-  static Logger log4j = LoggerFactory.getLogger(SummaryProductCategory.class);
+  static Logger log4j = LogManager.getLogger();
 
   public String category;
   public BigDecimal cost;

@@ -20,7 +20,8 @@ package org.openbravo.email;
  */
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -37,7 +38,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 
 public class EmailUtils {
-  static Logger log4j = Logger.getLogger(EmailUtils.class);
+  static Logger log4j = LogManager.getLogger();
 
   /*
    * Retrieves the email configuration of the Organization

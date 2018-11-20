@@ -26,7 +26,8 @@ import java.util.Date;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -40,8 +41,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 
 public class SE_Payment_MultiCurrency extends SimpleCallout {
 
-  private static final Logger sePaymentMultiCurrencyLog4j = Logger
-      .getLogger(SE_Payment_MultiCurrency.class);
+  private static final Logger sePaymentMultiCurrencyLog4j = LogManager.getLogger();
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {

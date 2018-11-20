@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Base for tests performing requests to a live Openbravo instance. Allows to work with DAL, in case
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class BaseDataSourceTestDal extends OBBaseTest {
-  private static Logger log = LoggerFactory.getLogger(BaseDataSourceTestDal.class);
+  private static Logger log = LogManager.getLogger();
   private static String OB_URL = null;
   protected static final String LOGIN = "Openbravo";
   protected static final String PWD = "openbravo";

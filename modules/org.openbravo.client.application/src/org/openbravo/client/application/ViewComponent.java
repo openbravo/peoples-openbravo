@@ -54,8 +54,8 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Reads the view and generates it.
@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 @RequestScoped
 public class ViewComponent extends BaseComponent {
-  private static Logger log = LoggerFactory.getLogger(ViewComponent.class);
+  private static Logger log = LogManager.getLogger();
 
   @Inject
   private StandardWindowComponent standardWindowComponent;

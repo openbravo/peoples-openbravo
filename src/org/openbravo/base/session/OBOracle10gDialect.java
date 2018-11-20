@@ -21,7 +21,8 @@ package org.openbravo.base.session;
 
 import java.sql.Types;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
@@ -34,7 +35,7 @@ import org.hibernate.type.StandardBasicTypes;
  */
 
 public class OBOracle10gDialect extends Oracle10gDialect {
-  private static final Logger log = Logger.getLogger(OBOracle10gDialect.class);
+  private static final Logger log = LogManager.getLogger();
 
   public OBOracle10gDialect() {
     super();

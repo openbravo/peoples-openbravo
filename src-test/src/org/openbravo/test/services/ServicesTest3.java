@@ -51,8 +51,8 @@ import org.openbravo.test.services.data.ServiceTestData;
 import org.openbravo.test.services.data.ServiceTestData10;
 import org.openbravo.test.services.data.ServiceTestData11;
 import org.openbravo.test.services.data.ServiceTestData9;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check ServicePriceUtils.getServiceAmount method. All possible errors are properly
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ServicesTest3 extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(ServicesTest3.class);
+  final static private Logger log = LogManager.getLogger();
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing

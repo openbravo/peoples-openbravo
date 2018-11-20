@@ -47,8 +47,8 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.ResetAccounting;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check taxes computation
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Parameterized.class)
 public class PostDocumentTest extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(PostDocumentTest.class);
+  final static private Logger log = LogManager.getLogger();
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing

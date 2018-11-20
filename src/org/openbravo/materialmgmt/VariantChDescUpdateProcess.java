@@ -19,7 +19,8 @@
 package org.openbravo.materialmgmt;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.QueryTimeoutException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -37,7 +38,7 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class VariantChDescUpdateProcess extends DalBaseProcess {
-  private static final Logger log4j = Logger.getLogger(VariantChDescUpdateProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   public static final String AD_PROCESS_ID = "58591E3E0F7648E4A09058E037CE49FC";
 
   @Override

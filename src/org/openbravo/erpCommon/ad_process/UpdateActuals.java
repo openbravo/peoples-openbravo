@@ -23,7 +23,8 @@ import static org.openbravo.erpCommon.utility.StringCollectionUtils.commaSeparat
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -35,7 +36,7 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class UpdateActuals extends DalBaseProcess {
-  private static final Logger log4j = Logger.getLogger(UpdateActuals.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {

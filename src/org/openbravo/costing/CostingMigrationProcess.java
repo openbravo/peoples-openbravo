@@ -30,7 +30,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -85,7 +86,7 @@ import org.openbravo.service.db.DbUtility;
 
 public class CostingMigrationProcess implements Process {
   private ProcessLogger logger;
-  private static final Logger log4j = Logger.getLogger(CostingMigrationProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static CostingAlgorithm averageAlgorithm = null;
   private static final String alertRuleName = "Products with transactions without available cost on date.";
   private static final String pareto = "75F83D534E764C7C8781FFA6C08E87ED";

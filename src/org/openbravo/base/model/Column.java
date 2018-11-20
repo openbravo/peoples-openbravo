@@ -22,7 +22,8 @@ package org.openbravo.base.model;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.domaintype.ButtonDomainType;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
@@ -41,7 +42,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
  */
 
 public class Column extends ModelObject {
-  private static final Logger log = Logger.getLogger(Column.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Property property;
   private String columnName;

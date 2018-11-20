@@ -29,7 +29,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -55,7 +56,7 @@ import org.openbravo.service.db.QueryTimeOutUtil;
  */
 
 public class OBQuery<E extends BaseOBObject> {
-  private static final Logger log = Logger.getLogger(OBQuery.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String FROM_SPACED = " from ";
   private static final String FROM_BRACKET = "(from ";

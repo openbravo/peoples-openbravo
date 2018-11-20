@@ -20,13 +20,14 @@ package org.openbravo.reference;
 
 import java.lang.reflect.Constructor;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.reference.ui.UIReference;
 
 public class Reference {
-  private static final Logger log = Logger.getLogger(Reference.class);
+  private static final Logger log = LogManager.getLogger();
 
   @SuppressWarnings("unchecked")
   public static UIReference getUIReference(String referenceId, String subreferenceID) {

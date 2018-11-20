@@ -25,7 +25,8 @@ import java.util.regex.Matcher;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
@@ -47,7 +48,7 @@ public class Report implements Serializable {
 
   public OutputTypeEnum outputType = OutputTypeEnum.DEFAULT;
 
-  private static Logger log4j = Logger.getLogger(Report.class);
+  private static Logger log4j = LogManager.getLogger();
 
   private DocumentType _DocumentType;
   private String _DocumentId; // Order Id, invoice id, etc.

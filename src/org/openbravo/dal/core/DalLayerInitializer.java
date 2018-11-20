@@ -21,7 +21,8 @@ package org.openbravo.dal.core;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.dialect.function.SQLFunction;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -41,7 +42,7 @@ import org.openbravo.database.ExternalConnectionPool;
  */
 
 public class DalLayerInitializer implements OBSingleton {
-  private static final Logger log = Logger.getLogger(DalLayerInitializer.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static DalLayerInitializer instance;
 

@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.HttpsUtils;
@@ -36,7 +37,7 @@ import org.openbravo.services.webservice.WebService3ImplServiceLocator;
  */
 @SuppressWarnings("serial")
 public class MaturityLevel implements Serializable {
-  private final Logger log4j = Logger.getLogger(MaturityLevel.class);
+  private final Logger log4j = LogManager.getLogger();
   private String[][] levels;
   public final static int CS_MATURITY = 500;
   public final static int QA_APPR_MATURITY = 200;

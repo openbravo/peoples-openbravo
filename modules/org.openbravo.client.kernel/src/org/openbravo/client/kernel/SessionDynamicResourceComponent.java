@@ -26,8 +26,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.openbravo.model.ad.module.Module;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class generates other components called session dynamic resources. This kind of resources
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SessionDynamicResourceComponent extends BaseComponent {
 
-  private static final Logger log = LoggerFactory.getLogger(SessionDynamicResourceComponent.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any

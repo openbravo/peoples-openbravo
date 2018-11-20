@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -48,7 +49,7 @@ import org.openbravo.model.common.enterprise.Organization;
  * 
  */
 public class Preferences {
-  private static final Logger log4j = Logger.getLogger(Preferences.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String SYSTEM = "0";
   public static final String YES = "Y";
   public static final String NO = "N";

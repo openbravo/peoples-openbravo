@@ -25,7 +25,8 @@ import java.util.List;
 
 import javax.persistence.PersistenceException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -49,7 +50,7 @@ import org.openbravo.test.base.OBBaseTest;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TableNameTest extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(TableNameTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Creates a test module to work with it in later tests

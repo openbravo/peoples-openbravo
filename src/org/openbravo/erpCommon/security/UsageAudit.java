@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.security;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
@@ -33,7 +34,7 @@ import org.openbravo.database.SessionInfo;
  * 
  */
 public class UsageAudit {
-  private static final Logger log4j = Logger.getLogger(UsageAudit.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   private static final String SESSION_ID_ATTR = "#AD_SESSION_ID";
 

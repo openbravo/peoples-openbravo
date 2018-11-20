@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -47,7 +48,7 @@ import org.openbravo.model.common.enterprise.Organization;
 public class BaseXMLEntityConverter implements OBNotSingleton {
   // This class should translate the
 
-  private static final Logger log = Logger.getLogger(EntityXMLConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static BaseXMLEntityConverter newInstance() {
     return OBProvider.getInstance().get(BaseXMLEntityConverter.class);

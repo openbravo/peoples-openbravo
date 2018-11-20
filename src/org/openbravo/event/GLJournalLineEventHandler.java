@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -32,7 +33,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.financialmgmt.gl.GLJournalLine;
 
 public class GLJournalLineEventHandler extends EntityPersistenceEventObserver {
-  protected Logger logger = Logger.getLogger(this.getClass());
+  protected Logger logger = LogManager.getLogger();
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       GLJournalLine.ENTITY_NAME) };
 

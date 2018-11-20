@@ -32,7 +32,8 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
@@ -56,7 +57,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author mtaal
  */
 public class EntityExcelXMLConverter implements OBNotSingleton {
-  private static final Logger log = Logger.getLogger(EntityExcelXMLConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static EntityExcelXMLConverter newInstance() {
     return OBProvider.getInstance().get(EntityExcelXMLConverter.class);

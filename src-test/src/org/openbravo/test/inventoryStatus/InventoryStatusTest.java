@@ -57,13 +57,13 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class InventoryStatusTest extends WeldBaseTest {
 
-  final static private Logger log = LoggerFactory.getLogger(InventoryStatusTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   // Client QA Testing
   private static final String CLIENT_ID = "4028E6C72959682B01295A070852010D";

@@ -30,7 +30,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -68,7 +69,7 @@ import org.openbravo.service.json.JsonUtils;
 
 public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceService {
 
-  private static Logger log4j = Logger.getLogger(StockReservationPickAndEditDataSource.class);
+  private static Logger log4j = LogManager.getLogger();
   private static final String AD_TABLE_ID = "7BDAC914CA60418795E453BC0E8C89DC";
 
   String ol = null;

@@ -21,10 +21,11 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class SL_StatusFieldDefaults extends SimpleCallout {
-  private static Logger logger = Logger.getLogger(SL_StatusFieldDefaults.class);
+  private static Logger logger = LogManager.getLogger();
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {

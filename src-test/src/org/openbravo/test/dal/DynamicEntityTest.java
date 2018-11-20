@@ -23,7 +23,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -47,7 +48,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DynamicEntityTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(DynamicEntityTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Create a record for the {@link Category} in the database using a {@link DynamicOBObject}.

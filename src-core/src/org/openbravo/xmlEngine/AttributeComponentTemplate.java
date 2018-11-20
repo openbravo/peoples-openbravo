@@ -13,7 +13,8 @@ package org.openbravo.xmlEngine;
 
 import java.util.Enumeration;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Class that store the information of the attributes of the configuration file
@@ -27,8 +28,7 @@ class AttributeComponentTemplate implements XmlComponentTemplate, IDComponent {
   private String strBooleanAttribute;
   private XmlComponentTemplate xmlComponentBooleanWithId;
 
-  static Logger log4jAttributeComponentTemplate = Logger
-      .getLogger(AttributeComponentTemplate.class);
+  static Logger log4jAttributeComponentTemplate = LogManager.getLogger();
 
   public AttributeComponentTemplate(FunctionTemplate functionTemplate, String attributeName,
       String strReplace, String strBooleanAttribute, XmlComponentTemplate xmlComponentBooleanWithId) {

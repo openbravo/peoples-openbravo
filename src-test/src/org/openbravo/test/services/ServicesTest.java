@@ -54,8 +54,8 @@ import org.openbravo.test.services.data.ServiceTestData3;
 import org.openbravo.test.services.data.ServiceTestData4;
 import org.openbravo.test.services.data.ServiceTestData5;
 import org.openbravo.test.services.data.ServiceTestData6;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check service Price computation
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class ServicesTest extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(ServicesTest.class);
+  final static private Logger log = LogManager.getLogger();
   // User Openbravo
   private final String USER_ID = "100";
   // Client QA Testing

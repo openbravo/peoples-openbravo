@@ -30,7 +30,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
@@ -64,7 +65,7 @@ import org.openbravo.test.base.OBBaseTest;
  */
 
 public class JsonConversionTest extends OBBaseTest {
-  private static final Logger log = Logger.getLogger(JsonConversionTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Read one BaseOBObject and convert to json and back to the object again.

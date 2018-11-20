@@ -32,7 +32,8 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
@@ -99,7 +100,7 @@ import com.google.common.base.Charsets;
  *         Initial Client Setup Utility class
  */
 public class InitialSetupUtility {
-  private static final Logger log4j = Logger.getLogger(InitialSetupUtility.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /**
    * 

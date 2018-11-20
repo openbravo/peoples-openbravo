@@ -34,7 +34,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
@@ -69,7 +70,7 @@ import org.openbravo.database.ConnectionProviderImpl;
  */
 
 public class ModelProvider implements OBSingleton {
-  private static final Logger log = Logger.getLogger(ModelProvider.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ModelProvider instance;
   private List<Entity> model = null;

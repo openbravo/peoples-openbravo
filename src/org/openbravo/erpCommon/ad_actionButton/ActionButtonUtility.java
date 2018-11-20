@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -34,7 +35,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 
 public class ActionButtonUtility {
-  static Logger log4j = Logger.getLogger(ActionButtonUtility.class);
+  static Logger log4j = LogManager.getLogger();
 
   public static FieldProvider[] docAction(ConnectionProvider conn, VariablesSecureApp vars,
       String strDocAction, String strReference, String strDocStatus, String strProcessing,

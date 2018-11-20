@@ -32,7 +32,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -72,7 +73,7 @@ import org.openbravo.model.common.enterprise.Organization;
 public class StaxXMLEntityConverter extends BaseXMLEntityConverter implements OBNotSingleton {
   // This class should translate the
 
-  private static final Logger log = Logger.getLogger(EntityXMLConverter.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static StaxXMLEntityConverter newInstance() {
     return OBProvider.getInstance().get(StaxXMLEntityConverter.class);

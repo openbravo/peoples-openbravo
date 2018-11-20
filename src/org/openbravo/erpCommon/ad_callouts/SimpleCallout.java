@@ -25,7 +25,8 @@ import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -61,7 +62,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 public abstract class SimpleCallout extends DelegateConnectionProvider {
 
-  private static Logger log = Logger.getLogger(SimpleCallout.class);
+  private static Logger log = LogManager.getLogger();
 
   /**
    * Overwrite this method to implement a new servlet callout based in <code>SimlpleCallout</code>

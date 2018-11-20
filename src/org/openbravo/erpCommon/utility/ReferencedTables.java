@@ -22,11 +22,12 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 class ReferencedTables {
-  static Logger log4j = Logger.getLogger(ReferencedTables.class);
+  static Logger log4j = LogManager.getLogger();
   private ConnectionProvider conn;
   private String adTableId;
   private String keyName;

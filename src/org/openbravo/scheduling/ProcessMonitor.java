@@ -48,8 +48,8 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerListener;
 import org.quartz.Trigger;
 import org.quartz.TriggerListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author awolski
@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener {
 
-  static final Logger log = LoggerFactory.getLogger(ProcessMonitor.class);
+  static final Logger log = LogManager.getLogger();
 
   public static final String KEY = "org.openbravo.scheduling.ProcessMonitor.KEY";
 

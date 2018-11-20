@@ -45,11 +45,11 @@ import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ManageVariants extends BaseProcessActionHandler {
-  final static private Logger log = LoggerFactory.getLogger(ManageVariants.class);
+  final static private Logger log = LogManager.getLogger();
   private static final String SALES_PRICELIST = "SALES";
   private static final String PURCHASE_PRICELIST = "PURCHASE";
 

@@ -41,7 +41,8 @@ import javax.persistence.Tuple;
 import javax.persistence.TupleElement;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -72,7 +73,7 @@ import org.openbravo.scheduling.ProcessLogger;
 
 public class HeartbeatProcess implements Process {
 
-  private static Logger log = Logger.getLogger(HeartbeatProcess.class);
+  private static Logger log = LogManager.getLogger();
 
   private static final String HEARTBEAT_URL = "https://butler.openbravo.com:443/heartbeat-server/heartbeat";
 

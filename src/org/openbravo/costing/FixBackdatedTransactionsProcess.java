@@ -42,12 +42,11 @@ import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
-  private static final Logger log4j = LoggerFactory
-      .getLogger(FixBackdatedTransactionsProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static CostAdjustment costAdjHeader = null;
 
   @Override

@@ -52,8 +52,8 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class caches some AD structures used by the Form Initialization component. Basically, it
@@ -63,8 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class ApplicationDictionaryCachedStructures {
-  private static final Logger log = LoggerFactory
-      .getLogger(ApplicationDictionaryCachedStructures.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Map<String, Window> windowMap;
   private Map<String, Tab> tabMap;

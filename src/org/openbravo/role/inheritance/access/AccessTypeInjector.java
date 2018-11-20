@@ -36,8 +36,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.role.inheritance.RoleInheritanceManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * An AccessTypeInjector is used by {@link RoleInheritanceManager} to retrieve the access types that
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public abstract class AccessTypeInjector implements Comparable<AccessTypeInjector> {
 
-  private static final Logger log = LoggerFactory.getLogger(AccessTypeInjector.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Returns the name of the inheritable class.

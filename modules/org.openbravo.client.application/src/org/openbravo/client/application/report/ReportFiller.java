@@ -25,8 +25,8 @@ import java.util.Map;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -38,7 +38,7 @@ import net.sf.jasperreports.engine.JasperReport;
  * This class is used to fill the data of the reports.
  */
 class ReportFiller {
-  private static final Logger log = LoggerFactory.getLogger(ReportFiller.class);
+  private static final Logger log = LogManager.getLogger();
 
   // main report file path
   private String templatePath;

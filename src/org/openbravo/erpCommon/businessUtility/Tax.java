@@ -23,11 +23,12 @@ import java.util.StringTokenizer;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class Tax {
-  static Logger log4jTax = Logger.getLogger(Tax.class);
+  static Logger log4jTax = LogManager.getLogger();
 
   public static String get(ConnectionProvider conn, String M_Product_ID, String shipDate,
       String AD_Org_ID, String M_Warehouse_ID, String billC_BPartner_Location_ID,

@@ -30,8 +30,8 @@ import java.util.List;
 import org.junit.Test;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to warranty standard database indexes from child to parent columns are present.
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class IndexesTest extends OBBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(IndexesTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   /**
    * Verifies in subtabs that their tables have a index to for the FK column linking to their parent

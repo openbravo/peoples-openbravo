@@ -58,11 +58,11 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.TransactionLast;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class CostAdjustmentUtils {
-  private static final Logger log4j = LoggerFactory.getLogger(CostAdjustmentUtils.class);
+  private static final Logger log4j = LogManager.getLogger();
   public static final String strCategoryCostAdj = "CAD";
   public static final String strTableCostAdj = "M_CostAdjustment";
   public static final String propADListPriority = org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER;
@@ -127,16 +127,35 @@ public class CostAdjustmentUtils {
 
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
+      Date accountingDate, Currency currency) {
+    Long lineNo = getNewLineNo(costAdjustmentHeader);
+    return insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted, isSource,
+        accountingDate, lineNo, currency);
+  }
+
+  public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
+      CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate, Long lineNo) {
+    return insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted, isSource,
+        accountingDate, lineNo, null);
+  }
+
+  public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
+      CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
+      Date accountingDate, Long lineNo, Currency currency) {
     Long stdPrecission = transaction.getCurrency().getStandardPrecision();
+    Currency adjustmentCurrency = currency;
+    if (adjustmentCurrency == null) {
+      adjustmentCurrency = transaction.getCurrency();
+    }
 
     CostAdjustmentLine costAdjustmentLine = getExistingCostAdjustmentLine(transaction,
-        costAdjustmentHeader, isSource, accountingDate);
+        costAdjustmentHeader, isSource, accountingDate, adjustmentCurrency);
     if (costAdjustmentLine == null) {
       costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
       costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
       costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
-      costAdjustmentLine.setCurrency(transaction.getCurrency());
+      costAdjustmentLine.setCurrency(adjustmentCurrency);
       costAdjustmentLine.setInventoryTransaction(transaction);
       costAdjustmentLine.setSource(isSource);
       costAdjustmentLine.setAccountingDate(accountingDate);
@@ -157,7 +176,7 @@ public class CostAdjustmentUtils {
   }
 
   private static CostAdjustmentLine getExistingCostAdjustmentLine(MaterialTransaction transaction,
-      CostAdjustment costAdjustmentHeader, boolean isSource, Date accountingDate) {
+      CostAdjustment costAdjustmentHeader, boolean isSource, Date accountingDate, Currency currency) {
     StringBuilder hql = new StringBuilder("");
     hql.append(" costAdjustment.id = :costAdjustmentId ");
     hql.append(" and inventoryTransaction.id = :transactionId ");
@@ -170,7 +189,7 @@ public class CostAdjustmentUtils {
         hql.toString());
     obc.setNamedParameter("costAdjustmentId", costAdjustmentHeader.getId());
     obc.setNamedParameter("transactionId", transaction.getId());
-    obc.setNamedParameter("currencyId", transaction.getCurrency().getId());
+    obc.setNamedParameter("currencyId", currency.getId());
     obc.setNamedParameter("isSource", isSource);
     obc.setNamedParameter("accountingDate", accountingDate);
 

@@ -47,12 +47,12 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.test.base.HiddenObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /** HttpServletRequest mock to be used to test components requiring requests */
 public class HttpServletRequestMock implements HttpServletRequest {
-  private static final Logger log = LoggerFactory.getLogger(HttpServletRequestMock.class);
+  private static final Logger log = LogManager.getLogger();
 
   private HttpSession session;
 

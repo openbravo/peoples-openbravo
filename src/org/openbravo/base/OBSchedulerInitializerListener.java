@@ -17,7 +17,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.scheduling.OBScheduler;
 import org.quartz.Scheduler;
@@ -39,7 +40,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
 
   private Scheduler scheduler = null;
 
-  static Logger log = Logger.getLogger(OBSchedulerInitializerListener.class);
+  static Logger log = LogManager.getLogger();
 
   public void contextInitialized(ServletContextEvent sce) {
 

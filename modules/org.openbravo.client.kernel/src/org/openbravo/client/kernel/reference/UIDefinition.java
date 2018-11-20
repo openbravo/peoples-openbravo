@@ -31,7 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -73,7 +74,7 @@ public abstract class UIDefinition {
   private Reference reference;
   private DomainType domainType;
   private JSONObject gridConfigurationSettings;
-  protected static final Logger log = Logger.getLogger(UIDefinition.class);
+  protected static final Logger log = LogManager.getLogger();
 
   /**
    * Unique name used to identify the type.

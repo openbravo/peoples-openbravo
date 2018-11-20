@@ -22,12 +22,13 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public final class Account implements Serializable {
   private static final long serialVersionUID = 1L;
-  static Logger log4jAccount = Logger.getLogger(Account.class);
+  static Logger log4jAccount = LogManager.getLogger();
 
   public Account() {
     C_ValidCombination_ID = "";

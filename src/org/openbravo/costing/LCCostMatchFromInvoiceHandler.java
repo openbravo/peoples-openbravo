@@ -42,11 +42,11 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.service.db.DbUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(LCCostMatchFromInvoiceHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {

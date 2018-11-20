@@ -22,7 +22,8 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.StaticResourceComponent;
@@ -45,7 +46,7 @@ import org.openbravo.portal.PortalAccessible;
  */
 @ApplicationScoped
 public class StorePropertyActionHandler extends BaseActionHandler implements PortalAccessible {
-  private static final Logger log = Logger.getLogger(StorePropertyActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     OBContext.setAdminMode();

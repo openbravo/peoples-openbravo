@@ -39,15 +39,15 @@ import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Test the result of evaluating JavaScript expressions configuring {@link OBBindings} as the Java
  * binding to be used by the engine in the execution of the scripts.
  */
 public class OBBindingsTest extends OBBaseTest {
-  private static final Logger log = LoggerFactory.getLogger(OBBindingsTest.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String DEFAULT = "DEFAULT";
   private static final String YES = "Y";
   private ScriptEngine engine;

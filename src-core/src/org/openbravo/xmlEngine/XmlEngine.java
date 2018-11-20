@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2018 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.database.ConnectionProvider;
 import org.xml.sax.InputSource;
@@ -58,8 +58,8 @@ public class XmlEngine extends HttpServlet {
 
   static public String strTextDividedByZero;
 
-  static Logger log4jXmlEngine = Logger.getLogger(XmlEngine.class);
-  static Logger log4jReloadXml = Logger.getLogger("reloadXml");
+  static Logger log4jXmlEngine = LogManager.getLogger();
+  static Logger log4jReloadXml = LogManager.getLogger("reloadXml");
 
   ConnectionProvider connProvider;
 
@@ -68,7 +68,6 @@ public class XmlEngine extends HttpServlet {
   }
 
   public XmlEngine() {
-    // init();
   }
 
   public void init(ServletConfig config) throws ServletException {
@@ -76,7 +75,6 @@ public class XmlEngine extends HttpServlet {
       log4jXmlEngine.debug("XmlEngine v0.846-2");
     super.init(config);
     configXMLEngine = config;
-    configureLog4j(getInitParameter("fileConfigurationLog4j"));
     strBaseLocation = getInitParameter("BaseLocation");
     strDriverDefault = getInitParameter("driver");
     strUrlDefault = getInitParameter("URL");
@@ -543,17 +541,8 @@ public class XmlEngine extends HttpServlet {
     closeConnections();
   }
 
-  static void configureLog4j(String file) {
-    if (file != null) {
-      PropertyConfigurator.configure(file);
-    } else {
-      PropertyConfigurator.configure("log4j.lcf");
-    }
-  }
-
   public static void main(String argv[]) {
     int i;
-    configureLog4j(null);
     String strFile;
     if (argv.length < 1) {
       log4jXmlEngine.error("Usage: java XmlEngine [driver URL] file");

@@ -26,7 +26,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -52,7 +53,7 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 
 public class FinancialUtils {
-  private static final Logger log4j = Logger.getLogger(FinancialUtils.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public static final String PRECISION_STANDARD = "A";
   public static final String PRECISION_COSTING = "C";

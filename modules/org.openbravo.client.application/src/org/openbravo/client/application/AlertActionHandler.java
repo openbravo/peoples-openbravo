@@ -35,7 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.query.Query;
@@ -62,7 +63,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 @ApplicationScoped
 public class AlertActionHandler extends BaseActionHandler implements PortalAccessible {
-  private static final Logger log4j = Logger.getLogger(AlertActionHandler.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   /*
    * (non-Javadoc)

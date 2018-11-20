@@ -24,7 +24,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
@@ -53,7 +54,7 @@ import org.w3c.dom.NodeList;
 
 public class LoginUtils {
 
-  public static Logger log4j = Logger.getLogger(LoginUtils.class);
+  public static Logger log4j = LogManager.getLogger();
 
   /** Creates a new instance of LoginUtils */
   private LoginUtils() {

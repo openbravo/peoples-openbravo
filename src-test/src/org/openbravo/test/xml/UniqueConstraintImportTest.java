@@ -24,7 +24,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -55,7 +56,7 @@ import org.openbravo.service.db.ImportResult;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UniqueConstraintImportTest extends XMLBaseTest {
 
-  private static final Logger log = Logger.getLogger(UniqueConstraintImportTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Builds the testdata, {@link CountryTrl} objects for a specific {@link Country}.

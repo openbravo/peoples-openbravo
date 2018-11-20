@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -37,7 +36,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.betwixt.io.BeanReader;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.openbravo.base.AntExecutor;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -57,6 +60,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.module.ModuleLog;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.service.system.RestartTomcat;
+import org.openbravo.utils.OBRebuildAppender;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.xml.sax.InputSource;
 
@@ -425,15 +429,7 @@ public class ApplyModules extends HttpSecureAppServlet {
     PreparedStatement ps4 = null;
     AntExecutor ant = null;
     try {
-      // We first shutdown the background process, so that it doesn't interfere
-      // with the rebuild process
-
-      Properties props = new Properties();
-      props.setProperty("log4j.appender.DB", "org.openbravo.utils.OBRebuildAppender");
-      props.setProperty("log4j.appender.DB.Basedir", vars.getSessionValue("#sourcePath"));
-      props.setProperty("log4j.rootCategory", "INFO,DB");
-      PropertyConfigurator.configure(props);
-
+      setupRebuildAppender();
       String sourcePath = vars.getSessionValue("#sourcePath");
       ant = new AntExecutor(sourcePath);
 
@@ -467,9 +463,6 @@ public class ApplyModules extends HttpSecureAppServlet {
     } finally {
       vars.setSessionValue("ApplyModules|BuildRunning", "");
       try {
-        Properties props = new Properties();
-        props.setProperty("log4j.rootCategory", "INFO,R");
-        PropertyConfigurator.configure(props);
         if (ant != null)
           ant.closeLogFile();
         releasePreparedStatement(ps3);
@@ -478,6 +471,18 @@ public class ApplyModules extends HttpSecureAppServlet {
       }
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void setupRebuildAppender() {
+    final LoggerContext context = LoggerContext.getContext(false);
+    final Configuration config = context.getConfiguration();
+
+    LoggerConfig rootLoggerConfig = config.getRootLogger();
+    rootLoggerConfig.addAppender(OBRebuildAppender.createAppender("OBRebuildAppender", null, null),
+        Level.WARN, null);
+
+    context.updateLoggers();
+    log4j = LogManager.getLogger();
   }
 
   /**

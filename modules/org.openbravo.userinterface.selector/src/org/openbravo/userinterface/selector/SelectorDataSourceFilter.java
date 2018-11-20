@@ -30,7 +30,8 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
@@ -64,7 +65,7 @@ import org.openbravo.service.json.JsonUtils;
  */
 public class SelectorDataSourceFilter implements DataSourceFilter {
 
-  private static Logger log = Logger.getLogger(SelectorDataSourceFilter.class);
+  private static Logger log = LogManager.getLogger();
   private String dateFormat = null;
   private DateFormat systemDateFormat = null;
   private TextMatching textMatching = TextMatching.exact;

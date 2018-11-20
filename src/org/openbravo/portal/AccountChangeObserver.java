@@ -22,7 +22,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
@@ -45,7 +46,7 @@ import org.openbravo.model.ad.access.User;
 public class AccountChangeObserver extends EntityPersistenceEventObserver {
   private final static Entity userEntity = ModelProvider.getInstance().getEntity(User.ENTITY_NAME);
   private final static Entity[] entities = { userEntity };
-  private final static Logger log = Logger.getLogger(AccountChangeObserver.class);
+  private final static Logger log = LogManager.getLogger();
   public static final String EVT_ACCOUNT_CANCELLED = "accountCancelled";
 
   @Inject

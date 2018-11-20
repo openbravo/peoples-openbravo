@@ -22,7 +22,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Abstract class that represents an external connection pool
@@ -30,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class ExternalConnectionPool {
 
-  static Logger log = Logger.getLogger(ExternalConnectionPool.class);
+  static Logger log = LogManager.getLogger();
   public static final String DEFAULT_POOL = "DEFAULT";
   public static final String READONLY_POOL = "RO";
 

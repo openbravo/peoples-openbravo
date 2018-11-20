@@ -31,7 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -78,7 +79,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class AddTransaction extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private AdvPaymentMngtDao dao;
-  private static final Logger log = Logger.getLogger(AddTransaction.class);
+  private static final Logger log = LogManager.getLogger();
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

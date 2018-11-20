@@ -23,7 +23,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
@@ -37,7 +38,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class ImportClientProcess implements org.openbravo.scheduling.Process {
 
-  private static final Logger log = Logger.getLogger(ExportClientProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Executes the import process. The expected parameters in the bundle are clientId (denoting the

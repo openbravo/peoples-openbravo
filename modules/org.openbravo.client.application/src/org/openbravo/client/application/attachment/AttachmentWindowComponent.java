@@ -38,15 +38,15 @@ import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The component which takes care of creating a class for a tab's Attachment popup.
  */
 public class AttachmentWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "01E447F740584E02BA4612F6BDFB900D";
-  private static final Logger log = LoggerFactory.getLogger(AttachmentWindowComponent.class);
+  private static final Logger log = LogManager.getLogger();
 
   private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();

@@ -21,13 +21,14 @@ package org.openbravo.modulescript;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 
 public class UpdateMTransactionCostingStatus extends ModuleScript {
   
-  private static final Logger log4j = Logger.getLogger(UpdateMTransactionCostingStatus.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public void execute() {
     try {

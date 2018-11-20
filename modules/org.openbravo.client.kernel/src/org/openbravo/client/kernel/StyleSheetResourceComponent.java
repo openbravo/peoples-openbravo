@@ -31,7 +31,8 @@ import javax.servlet.ServletContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.model.ad.module.Module;
@@ -43,7 +44,7 @@ import org.openbravo.model.ad.module.Module;
  * @author iperdomo
  */
 public class StyleSheetResourceComponent extends BaseComponent {
-  private static final Logger log = Logger.getLogger(StyleSheetResourceComponent.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String IMGURLHOLDER = "__URLHOLDER__";
 
   protected static final String CSS = "CSS";

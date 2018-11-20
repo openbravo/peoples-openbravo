@@ -38,7 +38,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 
 import com.sun.mail.smtp.SMTPMessage;
@@ -48,7 +49,7 @@ import com.sun.mail.smtp.SMTPMessage;
  */
 @Deprecated
 public class EMail {
-  static Logger log4j = Logger.getLogger(EMail.class);
+  static Logger log4j = LogManager.getLogger();
   private String g_from;
   private ArrayList<InternetAddress> g_to;
   private ArrayList<InternetAddress> g_cc;

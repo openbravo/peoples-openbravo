@@ -25,7 +25,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
@@ -50,7 +51,7 @@ import org.openbravo.utils.CryptoSHA1BASE64;
  */
 public class GrantPortalAccessProcess extends BaseProcessActionHandler {
 
-  private static final Logger log = Logger.getLogger(GrantPortalAccessProcess.class);
+  private static final Logger log = LogManager.getLogger();
   public static final String EVT_NEW_USER = "newUser";
   private static final int PASSWORD_LENGHT = 6;
 

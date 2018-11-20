@@ -46,11 +46,11 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.pricing.pricelist.ServicePriceRule;
 import org.openbravo.model.pricing.pricelist.ServicePriceRuleRange;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class ServicePriceUtils {
-  private static final Logger log = LoggerFactory.getLogger(ServicePriceUtils.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String PERCENTAGE = "P";
   public static final String UNIQUE_QUANTITY = "UQ";
 

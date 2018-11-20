@@ -32,6 +32,7 @@
     <fileset dir="${base.lib}">
       <include name="**/*.jar" />
     </fileset>
+    <pathelement path="${base.config}" />
   </path>
 
   <condition property="module.not.provided">

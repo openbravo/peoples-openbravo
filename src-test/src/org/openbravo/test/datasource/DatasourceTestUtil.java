@@ -31,8 +31,8 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import junit.framework.TestCase;
 
@@ -43,7 +43,7 @@ import junit.framework.TestCase;
  *
  */
 public class DatasourceTestUtil {
-  private static final Logger log = LoggerFactory.getLogger(DatasourceTestUtil.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String CONTEXT_PROPERTY = "context.url";
 
   /** Creates a connection to a given URL without processing it. */

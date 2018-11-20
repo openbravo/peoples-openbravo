@@ -31,8 +31,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.ad.alert.Alert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author gorkaion
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class AlertManagementActionHandler extends BaseActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(AlertManagementActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String MOVE_TO_STATUS = "moveToStatus";
 
   /*

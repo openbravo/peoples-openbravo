@@ -29,7 +29,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
@@ -59,7 +60,7 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 
 public class CashVATUtil {
 
-  private static Logger log4j = Logger.getLogger(CashVATUtil.class);
+  private static Logger log4j = LogManager.getLogger();
 
   public static final BigDecimal _100 = new BigDecimal("100");
   /* Defaulted a big value to avoid precision issues */

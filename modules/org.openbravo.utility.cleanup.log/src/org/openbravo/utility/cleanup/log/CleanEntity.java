@@ -32,8 +32,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.scheduling.ProcessLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Default implementation to clean up an entity.
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class CleanEntity {
   protected static final String SYSTEM = "0";
 
-  private static final Logger log = LoggerFactory.getLogger(CleanEntity.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Clean logs for an entity

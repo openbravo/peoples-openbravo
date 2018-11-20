@@ -29,15 +29,15 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.service.db.DalBaseProcess;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author mdejuana
  * 
  */
 public class PriceDifferenceBackground extends DalBaseProcess {
-  private static final Logger log4j = LoggerFactory.getLogger(PriceDifferenceBackground.class);
+  private static final Logger log4j = LogManager.getLogger();
   public static final String AD_PROCESS_ID = "BA574D8A4CF54AFF8B7BC2E6FACA161E";
   private ProcessLogger logger;
 

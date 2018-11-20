@@ -22,12 +22,13 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 
 public class SystemStatusListener implements ServletContextListener {
-  private static final Logger logger = Logger.getLogger(SystemStatusListener.class);
+  private static final Logger logger = LogManager.getLogger();
 
   @Override
   public void contextDestroyed(ServletContextEvent arg0) {

@@ -20,7 +20,8 @@ package org.openbravo.erpCommon.utility;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
@@ -31,7 +32,7 @@ import org.openbravo.database.ConnectionProvider;
  *         windows.
  */
 class WindowTreeChecks {
-  static Logger log4j = Logger.getLogger(WindowTreeChecks.class);
+  static Logger log4j = LogManager.getLogger();
 
   /**
    * Checks the common options to decide if the change can be made.

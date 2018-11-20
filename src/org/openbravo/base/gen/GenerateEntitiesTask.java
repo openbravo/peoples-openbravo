@@ -30,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.Task;
 import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
@@ -50,7 +51,7 @@ import freemarker.template.TemplateException;
  * @author Stefan Huehner
  */
 public class GenerateEntitiesTask extends Task {
-  private static final Logger log = Logger.getLogger(GenerateEntitiesTask.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String basePath;
   private String srcGenPath;

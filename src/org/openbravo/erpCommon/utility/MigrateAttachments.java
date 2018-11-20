@@ -28,8 +28,8 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.application.attachment.CoreAttachImplementation;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.utils.FileUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Migration of attachments based on the new attachment model
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class MigrateAttachments extends Task {
 
-  private static Logger log = LoggerFactory.getLogger(MigrateAttachments.class);
+  private static Logger log = LogManager.getLogger();
 
   @Override
   public void execute() {

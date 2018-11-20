@@ -20,11 +20,12 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_Invoice extends DocLine {
-  static Logger log4jDocLine_Invoice = Logger.getLogger(DocLine_Invoice.class);
+  static Logger log4jDocLine_Invoice = LogManager.getLogger();
 
   public DocLine_Invoice(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);

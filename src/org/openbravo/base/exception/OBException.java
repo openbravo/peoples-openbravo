@@ -20,7 +20,8 @@
 package org.openbravo.base.exception;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.service.db.DbUtility;
 
 /**
@@ -99,7 +100,7 @@ public class OBException extends RuntimeException {
    * @return the class-specific Logger
    */
   protected Logger getLogger() {
-    return Logger.getLogger(this.getClass());
+    return LogManager.getLogger();
   }
 
   /**

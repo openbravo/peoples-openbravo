@@ -20,7 +20,8 @@ package org.openbravo.erpCommon.utility;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -40,7 +41,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
 public class OBMessageUtils {
-  static Logger log4j = Logger.getLogger(OBMessageUtils.class);
+  static Logger log4j = LogManager.getLogger();
 
   public static String messageBD(String strCode, boolean escape) {
     return messageBD(strCode, true, escape);

@@ -70,8 +70,8 @@ import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Class that centralizes the Attachment Management. Any action to manage an attachment in Openbravo
@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AttachImplementationManager {
 
-  private static final Logger log = LoggerFactory.getLogger(AttachImplementationManager.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
   public static final String REFERENCE_LIST = "17";

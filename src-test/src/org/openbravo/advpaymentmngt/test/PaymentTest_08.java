@@ -25,7 +25,8 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -61,7 +62,7 @@ public class PaymentTest_08 extends OBBaseTest {
   // 3) Invoice the order partially using an automatic receipt payment method
   // 4)Review payment info
 
-  private static final Logger log = Logger.getLogger(PaymentTest_08.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final String MANUAL_EXECUTION = "M";
   private static final String AUTOMATIC_EXECUTION = "A";

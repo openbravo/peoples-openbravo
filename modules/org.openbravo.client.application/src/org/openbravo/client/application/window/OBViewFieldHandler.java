@@ -32,7 +32,8 @@ import java.util.Set;
 import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.expression.OBScriptEngine;
@@ -66,7 +67,7 @@ import org.openbravo.model.ad.ui.Tab;
 
 public class OBViewFieldHandler {
 
-  private static Logger log = Logger.getLogger(OBViewFieldHandler.class);
+  private static Logger log = LogManager.getLogger();
 
   private String parentProperty;
 

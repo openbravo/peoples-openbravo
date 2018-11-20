@@ -22,7 +22,8 @@ import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
@@ -42,7 +43,7 @@ import org.openbravo.service.db.DalBaseProcess;
  */
 public abstract class ProcedureProcess extends DalBaseProcess {
 
-  static Logger log = Logger.getLogger(ProcedureProcess.class);
+  static Logger log = LogManager.getLogger();
 
   /**
    * The sql procedure call to execute.

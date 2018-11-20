@@ -22,7 +22,8 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -35,7 +36,7 @@ import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
  *         This one is the class in charge of the report of accounting
  */
 public class AccountTree {
-  private static Logger log4j = Logger.getLogger(AccountTree.class);
+  private static Logger log4j = LogManager.getLogger();
   private VariablesSecureApp vars;
   private ConnectionProvider conn;
   private AccountTreeData[] accountsFacts;

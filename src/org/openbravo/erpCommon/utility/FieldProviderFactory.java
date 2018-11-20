@@ -22,7 +22,8 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 
 /**
@@ -47,7 +48,7 @@ public class FieldProviderFactory implements FieldProvider {
 
   private Object object;
   private HashMap<String, String> properties;
-  private static Logger log4j = Logger.getLogger(FieldProviderFactory.class);
+  private static Logger log4j = LogManager.getLogger();
 
   /**
    * Initializes a new FieldProviderFactory for the object

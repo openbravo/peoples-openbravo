@@ -44,7 +44,7 @@ import org.openbravo.base.provider.OBSingleton;
 // TODO: Support id's with multiple values
 public class ModelXMLConverter implements OBSingleton {
   // private static final Logger log =
-  // Logger.getLogger(DalToXMLConverter.class);
+  // LogManager.getLogger();
 
   private static ModelXMLConverter instance = new ModelXMLConverter();
 

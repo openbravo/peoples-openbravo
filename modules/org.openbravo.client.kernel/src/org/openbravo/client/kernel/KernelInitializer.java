@@ -33,8 +33,8 @@ import org.openbravo.client.kernel.event.PersistenceEventOBInterceptor;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.PoolInterceptorProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Class responsible for initializing the kernel layer. Can be used in a servlet as well as a
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class KernelInitializer {
 
-  final static private Logger log = LoggerFactory.getLogger(KernelInitializer.class);
+  final static private Logger log = LogManager.getLogger();
 
   @Inject
   private PersistenceEventOBInterceptor persistenceEventOBInterceptor;

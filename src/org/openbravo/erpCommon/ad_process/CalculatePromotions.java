@@ -22,7 +22,8 @@ package org.openbravo.erpCommon.ad_process;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -33,7 +34,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
 
 public class CalculatePromotions extends DalBaseProcess {
-  final private static Logger log = Logger.getLogger(CalculatePromotions.class);
+  final private static Logger log = LogManager.getLogger();
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {

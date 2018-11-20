@@ -14,7 +14,8 @@ package org.openbravo.xmlEngine;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.uiTranslation.TranslationHandler;
 
@@ -42,7 +43,7 @@ public class XmlDocument implements XmlComponentValue {
   public boolean ignoreTranslation = false;
   // it store pairs of XmlComponentTemplate (key), XmlComponentValue (value)
 
-  static Logger log4jXmlDocument = Logger.getLogger(XmlDocument.class);
+  static Logger log4jXmlDocument = LogManager.getLogger();
 
   public XmlDocument(XmlTemplate xmlTemplate, XmlDocument parentXmlDocument) {
     this.xmlTemplate = xmlTemplate;

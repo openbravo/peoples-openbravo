@@ -26,7 +26,8 @@ import static org.junit.Assert.fail;
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -51,7 +52,7 @@ import org.openbravo.model.common.geography.Region;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WSUpdateTest extends BaseWSTest {
 
-  private static final Logger log = Logger.getLogger(WSUpdateTest.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static String cityId = null;
 

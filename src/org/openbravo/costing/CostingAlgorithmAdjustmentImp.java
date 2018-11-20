@@ -54,12 +54,12 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 @Dependent
 public abstract class CostingAlgorithmAdjustmentImp {
-  private static final Logger log4j = LoggerFactory.getLogger(CostingAlgorithmAdjustmentImp.class);
+  private static final Logger log4j = LogManager.getLogger();
   protected String strCostAdjLineId;
   protected String strCostAdjId;
   protected String strTransactionId;

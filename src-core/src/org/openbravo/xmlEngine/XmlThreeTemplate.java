@@ -11,7 +11,8 @@
  */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * class for represent the structure of the value of an attribute. It is used because part of the
@@ -27,7 +28,7 @@ class XmlThreeTemplate implements XmlComponentTemplate {
   protected XmlThreeTemplate xmlEnd = null;
   protected boolean isEndXmlThreeTemplate = false;
   protected String stringEnd;
-  static Logger log4jXmlThreeTemplate = Logger.getLogger(XmlThreeTemplate.class);
+  static Logger log4jXmlThreeTemplate = LogManager.getLogger();
 
   public XmlThreeTemplate() {
   }

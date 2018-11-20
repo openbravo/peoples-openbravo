@@ -18,10 +18,11 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DocLine_Amortization extends DocLine {
-  static Logger log4jDocLine_Amortization = Logger.getLogger(DocLine_Amortization.class);
+  static Logger log4jDocLine_Amortization = LogManager.getLogger();
 
   public String Amount;
 

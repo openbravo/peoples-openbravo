@@ -30,7 +30,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Criterion;
@@ -99,7 +100,7 @@ public class SelectorComponent extends BaseTemplateComponent {
   private static OutSelectorField IdentifierOutField;
   private String transformedColumnName = null;
 
-  private static Logger log = Logger.getLogger(SelectorComponent.class);
+  private static Logger log = LogManager.getLogger();
 
   static {
     IdOutField = new OutSelectorField();

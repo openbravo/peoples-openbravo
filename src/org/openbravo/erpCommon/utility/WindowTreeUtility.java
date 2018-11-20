@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.utility;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -33,7 +34,7 @@ import org.openbravo.utils.Replace;
  *         Utility class for the window tree type.
  */
 class WindowTreeUtility {
-  static Logger log4j = Logger.getLogger(WindowTreeUtility.class);
+  static Logger log4j = LogManager.getLogger();
 
   /**
    * Gets the tree type.

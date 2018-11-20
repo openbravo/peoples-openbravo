@@ -2,14 +2,15 @@ package org.openbravo.advpaymentmngt.filterexpression;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.RequestContext;
 
 public class BusinessPartnerVendorFilterExpression implements FilterExpression {
-  private Logger log = Logger.getLogger(BusinessPartnerVendorFilterExpression.class);
+  private Logger log = LogManager.getLogger();
   private Map<String, String> requestMap;
   private String windowId;
   private String financialAccountWindowId = "94EAA455D2644E04AB25D93BE5157B6D";

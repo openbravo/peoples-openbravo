@@ -29,7 +29,8 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
 import org.hibernate.Transaction;
@@ -59,7 +60,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 
 public class OBInterceptor extends EmptyInterceptor {
-  private static final Logger log = Logger.getLogger(OBInterceptor.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final long serialVersionUID = 1L;
 

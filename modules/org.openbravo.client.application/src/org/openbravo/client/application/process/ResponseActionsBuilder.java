@@ -21,15 +21,15 @@ package org.openbravo.client.application.process;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class is a helper that can be used to build the standard response actions of a
  * {@link BaseProcessActionHandler} in an easy way.
  */
 public class ResponseActionsBuilder {
-  private static final Logger log = LoggerFactory.getLogger(ResponseActionsBuilder.class);
+  private static final Logger log = LogManager.getLogger();
 
   private JSONArray responseActions;
   private JSONObject retryExecutionMsg;

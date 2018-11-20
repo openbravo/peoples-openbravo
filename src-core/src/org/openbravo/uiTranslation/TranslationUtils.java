@@ -18,12 +18,13 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 class TranslationUtils {
 
-  private static final Logger log4j = Logger.getLogger(TranslationUtils.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public static final int TAB = 0, FORM = 1, PROCESS = 2;
 

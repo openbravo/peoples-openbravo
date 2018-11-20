@@ -38,7 +38,8 @@ import javax.persistence.Tuple;
 import javax.persistence.TupleElement;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -89,7 +90,7 @@ import org.openbravo.service.json.JsonUtils;
  */
 public class QueryListDataSource extends ReadOnlyDataSourceService implements PortalAccessible {
   private static final String OPTIONAL_FILTERS = "@optional_filters@";
-  private static final Logger log = Logger.getLogger(QueryListDataSource.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String OPERATOR = "$OPERATOR";
 
   @Override

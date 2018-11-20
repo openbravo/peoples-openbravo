@@ -30,6 +30,7 @@ import org.openbravo.test.datasource.FKDropDownDatasource;
 import org.openbravo.test.datasource.FetchDSNoActiveEntityObjects;
 import org.openbravo.test.datasource.HQLDataSourceTest;
 import org.openbravo.test.datasource.LinkToParentTreeDataSourceTest;
+import org.openbravo.test.datasource.LogDatasourceTest;
 import org.openbravo.test.datasource.NonIdForeignKeyFilters;
 import org.openbravo.test.datasource.OrganizationSelectorDataSourceTest;
 import org.openbravo.test.datasource.OtherDatasourceRequests;
@@ -81,6 +82,7 @@ DataSourceWhereParameter.class, //
     JSONWebServices.class, //
     FICTest.class, //
     HQLDataSourceTest.class, //
+    LogDatasourceTest.class, //
     TestAllowUnpagedDatasourcePreference.class, //
     TestNoteDatasource.class, //
     WebServicesWithNoActiveFilterTest.class, //

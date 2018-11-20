@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -39,7 +40,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_DoubtfulDebtProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
-  private static final Logger log4j = Logger.getLogger(FIN_DoubtfulDebtProcess.class);
+  private static final Logger log4j = LogManager.getLogger();
 
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();

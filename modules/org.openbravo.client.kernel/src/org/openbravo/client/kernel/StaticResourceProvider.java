@@ -28,8 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This class is used as a cache for the static resources (js and css) used in the application. It
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class StaticResourceProvider implements StaticResourceProviderMBean {
-  private static final Logger log = LoggerFactory.getLogger(StaticResourceProvider.class);
+  private static final Logger log = LogManager.getLogger();
 
   private String genTargetLocation;
   private ConcurrentHashMap<String, String> staticResources = new ConcurrentHashMap<>();

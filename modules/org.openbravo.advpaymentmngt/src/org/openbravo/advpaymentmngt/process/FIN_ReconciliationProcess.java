@@ -20,7 +20,8 @@ package org.openbravo.advpaymentmngt.process;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -42,7 +43,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Process {
   private static AdvPaymentMngtDao dao;
-  private static final Logger log = Logger.getLogger(FIN_ReconciliationProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();

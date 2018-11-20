@@ -16,7 +16,8 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.VariablesBase;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -34,7 +35,7 @@ import org.quartz.SchedulerException;
  * 
  */
 public class VariablesSecureApp extends VariablesBase {
-  private static final Logger log4j = Logger.getLogger(VariablesSecureApp.class);
+  private static final Logger log4j = LogManager.getLogger();
   private String user;
   private String role;
   private String language;

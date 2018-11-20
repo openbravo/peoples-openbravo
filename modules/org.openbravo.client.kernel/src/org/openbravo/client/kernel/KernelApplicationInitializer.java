@@ -24,7 +24,8 @@ import java.util.Date;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.application.report.JmxReportCache;
 import org.openbravo.client.application.window.JmxApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
@@ -42,7 +43,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 @ApplicationScoped
 public class KernelApplicationInitializer implements ApplicationInitializer {
-  private static final Logger log4j = Logger.getLogger(KernelApplicationInitializer.class);
+  private static final Logger log4j = LogManager.getLogger();
   private static final String sqlDateTimeFormat = "DD-MM-YYYY HH24:MI:SS";
   private static final String javaDateTimeFormat = "dd-MM-yyyy HH:mm:ss";
   private static final long THRESHOLD = 5000; // 5 seconds

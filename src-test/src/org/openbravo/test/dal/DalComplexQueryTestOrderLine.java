@@ -23,7 +23,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.junit.Test;
@@ -40,7 +41,7 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
-  private static final Logger log = Logger.getLogger(DalComplexQueryTestOrderLine.class);
+  private static final Logger log = LogManager.getLogger();
 
   // SELECT C_ORDERLINE.C_ORDERLINE_ID AS ID, C_ORDER.C_ORDER_ID AS C_ORDER_ID, C_ORDER.DOCUMENTNO
   // AS DOCUMENTNO, C_ORDER.DATEORDERED AS DATEORDERED,

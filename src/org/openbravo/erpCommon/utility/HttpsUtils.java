@@ -33,7 +33,8 @@ import java.security.KeyStoreException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -41,7 +42,7 @@ import org.openbravo.utils.FormatUtilities;
 
 public class HttpsUtils {
 
-  private static Logger log4j = Logger.getLogger(HttpsUtils.class);
+  private static Logger log4j = LogManager.getLogger();
 
   static String sendSecure(HttpsURLConnection conn, String data) throws IOException {
     String result = null;

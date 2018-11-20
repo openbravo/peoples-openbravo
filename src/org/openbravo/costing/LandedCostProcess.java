@@ -61,11 +61,11 @@ import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class LandedCostProcess {
-  private static final Logger log = LoggerFactory.getLogger(LandedCostProcess.class);
+  private static final Logger log = LogManager.getLogger();
   @Inject
   @Any
   private Instance<LandedCostProcessCheck> landedCostProcessChecks;
@@ -256,7 +256,7 @@ public class LandedCostProcess {
         // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
         MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
         CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
-            referenceDate);
+            referenceDate, lcCostCurrency);
         cal.setNeedsPosting(Boolean.FALSE);
         cal.setUnitCost(Boolean.FALSE);
         cal.setCurrency(lcCostCurrency);

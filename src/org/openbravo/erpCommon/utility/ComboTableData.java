@@ -29,7 +29,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -53,7 +54,7 @@ import org.openbravo.service.db.DalConnectionProvider;
  *         application.
  */
 public class ComboTableData {
-  private static Logger log4j = Logger.getLogger(ComboTableData.class);
+  private static Logger log4j = LogManager.getLogger();
 
   public static final String CLIENT_LIST_PARAM_HOLDER = "__CLIENT_LIST__";
   public static final String ORG_LIST_PARAM_HOLDER = "__ORG_LIST__";

@@ -52,12 +52,12 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class TabAttachments extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static Logger log = LoggerFactory.getLogger(TabAttachments.class);
+  private static Logger log = LogManager.getLogger();
 
   @Override
   public void init(ServletConfig config) {

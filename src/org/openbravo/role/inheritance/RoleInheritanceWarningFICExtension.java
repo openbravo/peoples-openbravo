@@ -39,8 +39,8 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.model.ad.ui.Tab;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This FICExtension is used to show a warning message to the user when editing an access which
@@ -50,8 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class RoleInheritanceWarningFICExtension implements FICExtension {
-  private static final Logger log = LoggerFactory
-      .getLogger(RoleInheritanceWarningFICExtension.class);
+  private static final Logger log = LogManager.getLogger();
   private final static String EDIT_MODE = "EDIT";
   private final static String NEW_MODE = "NEW";
   @Inject

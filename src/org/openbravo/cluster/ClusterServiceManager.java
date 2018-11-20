@@ -42,8 +42,8 @@ import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.model.ad.system.ADClusterService;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Class in charge of registering the node that should handle a particular service when working in a
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class ClusterServiceManager {
-  private static final Logger log = LoggerFactory.getLogger(ClusterServiceManager.class);
+  private static final Logger log = LogManager.getLogger();
   private static final String UNKNOWN = "Unknown";
   private static boolean isCluster = OBPropertiesProvider.getInstance().getBooleanProperty(
       "cluster");

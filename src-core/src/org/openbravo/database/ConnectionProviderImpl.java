@@ -29,12 +29,13 @@ import org.apache.commons.pool.KeyedObjectPoolFactory;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.commons.pool.impl.StackKeyedObjectPoolFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 
 public class ConnectionProviderImpl implements ConnectionProvider {
-  static Logger log4j = Logger.getLogger(ConnectionProviderImpl.class);
+  static Logger log4j = LogManager.getLogger();
   String defaultPoolName = "";
   String bbdd = "";
   String rdbms = "";
