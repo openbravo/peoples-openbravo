@@ -2469,8 +2469,14 @@
           OB.POS.hwserver.getWeight(function (data) {
             if (data.exception) {
               OB.UTIL.showConfirmation.display('', data.exception.message);
+              if (callback) {
+                callback(false, null);
+              }
             } else if (data.result === 0) {
               OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
+              if (callback) {
+                callback(false, null);
+              }
             } else {
               line = me.createLine(p, options.isVerifiedReturn ? -data.result : data.result, options, attrs);
               execPostAddProductToOrderHook();
