@@ -36,7 +36,6 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -60,7 +59,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
       String strcProjectId = vars.getStringParameter("inpcProjectId");
       printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
-          strcProjectId, "html");
+          strcProjectId, "html", request);
     } else if (vars.commandIn("EDIT_PDF")) {
       if (log4j.isDebugEnabled()) {
         log4j.debug("WE EDIT THE PDF");
@@ -71,7 +70,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
       String strcProjectId = vars.getStringParameter("inpcProjectId");
       printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
-          strcProjectId, "pdf");
+          strcProjectId, "pdf", request);
     } else {
       pageErrorPopUp(response);
     }
@@ -154,7 +153,8 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
 
   private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId,
-      String strcProjectId, String strOutput) throws IOException, ServletException {
+      String strcProjectId, String strOutput, HttpServletRequest request) throws IOException,
+      ServletException {
 
     InoutEditionData[] data = null;
     int limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
@@ -176,16 +176,15 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
         readOnlyCP, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), strdateFrom,
         strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, pgLimit, oraLimit);
 
-    if (data == null) {
+    if (data == null || data.length == 0) {
       discard[0] = "selEliminar";
     }
 
     if (limit > 0 && data.length > limit) {
       String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage());
       msgbody = msgbody.replace("@limit@", String.valueOf(limit));
-      advisePopUp(response, "WARNING",
-          Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()), msgbody,
-          vars.getSessionValue("#Theme"));
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ReportsLimitHeader", vars.getLanguage()), msgbody);
       return;
     }
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEditionJR.jrxml";
@@ -193,22 +192,6 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
 
-  }
-
-  private void advisePopUp(HttpServletResponse response, String strTipo, String strTitulo,
-      String strTexto, String myTheme) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/AdvisePopUp").createXmlDocument();
-    xmlDocument.setParameter("theme", myTheme);
-    xmlDocument.setParameter("PopupTitle",
-        OBMessageUtils.getI18NMessage("OBUIAPP_" + strTipo, null));
-    xmlDocument.setParameter("ParamTipo", strTipo.toUpperCase());
-    xmlDocument.setParameter("ParamTitulo", strTitulo);
-    xmlDocument.setParameter("ParamTexto", strTexto);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   public String getServletInfo() {
