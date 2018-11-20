@@ -4190,6 +4190,7 @@
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
           line.set('id', idMap[line.get('id')]);
+          line.unset('invoicedQuantity');
         });
 
         // The lines must be iterated a second time after finishing the first loop, to ensure that
