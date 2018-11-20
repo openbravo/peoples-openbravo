@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -31,7 +32,7 @@ import org.openbravo.retail.posterminal.POSUtils;
 @Qualifier(Product.productPropertyExtension)
 public class ProductProperties extends ModelExtension {
 
-  private static final Logger log = Logger.getLogger(ProductProperties.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {

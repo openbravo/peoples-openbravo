@@ -12,7 +12,8 @@ import java.util.HashSet;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -30,7 +31,7 @@ import org.openbravo.model.common.order.OrderLine;
 @Qualifier(POSConstants.APP_NAME)
 public class POSDataSynchronizationErrorHandler extends DataSynchronizationErrorHandler {
 
-  private static final Logger log = Logger.getLogger(DataSynchronizationProcess.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public void handleError(Throwable t, Entity entity, JSONObject result, JSONObject jsonRecord) {

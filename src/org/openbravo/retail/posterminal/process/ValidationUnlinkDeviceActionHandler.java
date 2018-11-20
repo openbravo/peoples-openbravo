@@ -10,7 +10,8 @@ package org.openbravo.retail.posterminal.process;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -21,7 +22,7 @@ import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 
 public class ValidationUnlinkDeviceActionHandler extends BaseActionHandler {
-  public static final Logger log = Logger.getLogger(ValidationUnlinkDeviceActionHandler.class);
+  public static final Logger log = LogManager.getLogger();
 
         @Override protected JSONObject execute(Map<String, Object> parameters,String content){
           try {

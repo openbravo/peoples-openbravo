@@ -169,6 +169,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DOCUMENTNO_PADDING" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[7]]></default>
+        <onCreateDefault><![CDATA[7]]></onCreateDefault>
+      </column>
       <column name="TERMINAL_LASTHWMVERSION" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
         <default/>
         <onCreateDefault/>

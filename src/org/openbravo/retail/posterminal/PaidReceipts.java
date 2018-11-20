@@ -25,7 +25,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -48,7 +49,7 @@ import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
-  public static final Logger log = Logger.getLogger(PaidReceipts.class);
+  public static final Logger log = LogManager.getLogger();
 
   public static final String paidReceiptsPropertyExtension = "PRExtension";
   public static final String paidReceiptsLinesPropertyExtension = "PRExtensionLines";
