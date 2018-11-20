@@ -19,11 +19,11 @@
 
 package org.openbravo.email;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -87,7 +87,7 @@ public class EmailEventManager {
 
     try {
       boolean sent = false;
-      for (EmailEventContentGenerator gen : getEmailGenerators(event, data)) {
+      for (EmailEventContentGenerator gen : getValidEmailGenerators(event, data)) {
         sent = true;
         log.debug("sending email for event " + event + " with generator " + gen);
 
@@ -100,19 +100,15 @@ public class EmailEventManager {
             .build();
 
         if (gen.isAsynchronous()) {
-          Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-              try {
-                EmailManager.sendEmail(mailConfig, email);
-              } catch (Exception e) {
-                log.error(e.getMessage(), e);
-              }
-            }
-          });
+          Thread thread = new Thread(() -> sendEmailOrCatchError(mailConfig, email));
           thread.start();
         } else {
           EmailManager.sendEmail(mailConfig, email);
+        }
+
+        if (gen.preventsOthersExecution()) {
+          // prevent following execution, stop chain
+          break;
         }
       }
       if (!sent) {
@@ -125,35 +121,21 @@ public class EmailEventManager {
     }
   }
 
-  private List<EmailEventContentGenerator> getEmailGenerators(String event, Object data) {
-    // find valid events
-    List<EmailEventContentGenerator> validGenerators = new ArrayList<EmailEventContentGenerator>();
-    Iterator<EmailEventContentGenerator> i = emailGenerators.iterator();
-    while (i.hasNext()) {
-      EmailEventContentGenerator gen = i.next();
-      if (gen.isValidEvent(event, data)) {
-        validGenerators.add(gen);
-      }
+  private void sendEmailOrCatchError(EmailServerConfiguration config, EmailInfo email) {
+    try {
+      EmailManager.sendEmail(config, email);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
     }
-
-    // sort them by priority
-    Collections.sort(validGenerators, new Comparator<EmailEventContentGenerator>() {
-      @Override
-      public int compare(EmailEventContentGenerator o1, EmailEventContentGenerator o2) {
-        return o1.getPriority() - o2.getPriority();
-      }
-    });
-
-    // if some of them prevents following execution, stop chain
-    List<EmailEventContentGenerator> generators = new ArrayList<EmailEventContentGenerator>();
-    for (EmailEventContentGenerator gen : validGenerators) {
-      generators.add(gen);
-      if (gen.preventsOthersExecution()) {
-        break;
-      }
-    }
-
-    return generators;
   }
 
+  private List<EmailEventContentGenerator> getValidEmailGenerators(String event, Object data) {
+    return StreamSupport
+        .stream(Spliterators.spliteratorUnknownSize(emailGenerators.iterator(), 0), false)
+        // find valid events
+        .filter(gen -> gen.isValidEvent(event, data))
+        // sort them by priority
+        .sorted(Comparator.comparing(EmailEventContentGenerator::getPriority))
+        .collect(Collectors.toList());
+  }
 }
