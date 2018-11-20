@@ -161,7 +161,7 @@
         and 1=1
         and o.em_obpos_app_cashup_id = ?
         and ol.qtydelivered = ol.qtyordered
-        and ((ol.qtyordered <> 0 and ol.em_obpos_isdeleted = 'N') or (ol.qtyordered = 0 and ol.em_obpos_isdeleted = 'Y'))
+        and (ol.qtyordered <> 0 and ol.em_obpos_isdeleted = 'N')
         and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
         and not exists (select 1 from c_orderline ol2 where ol2.qtyinvoiced <> 0 and ol2.c_order_id = o.c_order_id)
         and o.em_obpos_notinvoiceoncashup = 'N'
@@ -212,7 +212,7 @@
         and tt.c_doctype_id = dt.c_doctype_id
         and o.em_obpos_app_cashup_id = ?
         and ol.qtydelivered = ol.qtyordered
-        and ((ol.qtyordered <> 0 and ol.em_obpos_isdeleted = 'N') or (ol.qtyordered = 0 and ol.em_obpos_isdeleted = 'Y'))
+        and (ol.qtyordered <> 0 and ol.em_obpos_isdeleted = 'N')
         and o.c_doctype_id in (tt.c_doctype_id, tt.c_doctyperet_id)
         and not exists (select 1 from c_orderline ol2 where ol2.qtyinvoiced <> 0 and ol2.c_order_id = o.c_order_id)
         and o.em_obpos_notinvoiceoncashup = 'N'
