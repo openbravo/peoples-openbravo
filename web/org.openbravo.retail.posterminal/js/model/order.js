@@ -6195,15 +6195,24 @@
         } else if (this.get('bp').get('invoiceTerms') === 'O') {
           if (this.get('deliver')) {
             receiptShouldBeInvoiced = true;
-          } else if (this.get('doCancelAndReplace')) {
-
+          } else if (this.get('iscancelled') || this.get('replacedorder')) {
+            var notDeliveredLine = _.find(this.get('lines').models, function (line) {
+              return line.get('obposQtytodeliver') !== line.get('qty');
+            });
+            // If the ticket is delivered but some line is pending to be invoiced, generate the invoice for them
+            if (_.isUndefined(notDeliveredLine)) {
+              var deliveredNotInvoicedLine = _.find(this.get('lines').models, function (line) {
+                return line.get('obposQtytodeliver') !== line.get('invoicedQuantity');
+              });
+              receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
+            }
           }
         } else if (this.get('bp').get('invoiceTerms') === 'D') {
           receiptShouldBeShipped = this.get('payOnCredit') || this.get('completeTicket');
           if (receiptShouldBeShipped) {
             if (this.get('generateShipment')) {
               receiptShouldBeInvoiced = true;
-            } else if (this.get('iscancelled')) {
+            } else if (this.get('iscancelled') || this.get('replacedorder')) {
               var deliveredNotInvoicedLine = _.find(this.get('lines').models, function (line) {
                 return line.getDeliveredQuantity() === line.get('qty') && line.getDeliveredQuantity() !== line.get('invoicedQuantity');
               });
