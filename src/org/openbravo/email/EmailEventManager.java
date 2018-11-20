@@ -91,11 +91,13 @@ public class EmailEventManager {
         sent = true;
         log.debug("sending email for event " + event + " with generator " + gen);
 
-        final EmailInfo email = new EmailInfo.Builder().setSubject(gen.getSubject(data, event))
-          .setContent(gen.getBody(data, event))
-          .setContentType(gen.getContentType())
-          .setAttachments(gen.getAttachments(data, event))
-          .build();
+        final EmailInfo email = new EmailInfo.Builder() //
+            .setSubject(gen.getSubject(data, event)) //
+            .setRecipientTO(recipient) //
+            .setContent(gen.getBody(data, event)) //
+            .setContentType(gen.getContentType()) //
+            .setAttachments(gen.getAttachments(data, event)) //
+            .build();
 
         if (gen.isAsynchronous()) {
           Thread thread = new Thread(new Runnable() {
