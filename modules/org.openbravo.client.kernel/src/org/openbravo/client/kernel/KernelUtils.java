@@ -77,7 +77,7 @@ public class KernelUtils {
     return instance;
   }
 
-  public KernelUtils() {
+  private KernelUtils() {
     if (SessionFactoryController.isRunningInWebContainer()) {
       // allow running outside Web container for tests
       adcs = WeldUtils
