@@ -6291,8 +6291,8 @@
 
         if (invoice.get('lines').length) {
           if (invoice.get('lines').length !== me.get('lines').length) {
-            me.isCalculateReceiptLocked = false;
-            me.isCalculateGrossLocked = false;
+            invoice.isCalculateReceiptLocked = false;
+            invoice.isCalculateGrossLocked = false;
             invoice.set('skipApplyPromotions', true);
             invoice.set('ignoreCheckIfIsActiveOrder', true);
             invoice.set('forceCalculateTaxes', true);
