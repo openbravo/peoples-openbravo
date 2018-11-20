@@ -452,6 +452,15 @@ public class InvoiceUtils {
       throws JSONException {
     final JSONObject jsonResponse = new JSONObject();
 
+    if (invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) == 0
+        || order.getFINPaymentScheduleList().size() == 0) {
+      invoice.setPaymentComplete(Boolean.TRUE);
+      OBDal.getInstance().save(invoice);
+      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+
+      return jsonResponse;
+    }
+
     FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
     FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
         FIN_PaymentSchedule.class);
