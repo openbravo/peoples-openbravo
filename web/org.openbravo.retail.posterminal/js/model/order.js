@@ -6195,12 +6195,19 @@
         } else if (this.get('bp').get('invoiceTerms') === 'O') {
           if (this.get('deliver')) {
             receiptShouldBeInvoiced = true;
+          } else if (this.get('doCancelAndReplace')) {
+
           }
         } else if (this.get('bp').get('invoiceTerms') === 'D') {
           receiptShouldBeShipped = this.get('payOnCredit') || this.get('completeTicket');
           if (receiptShouldBeShipped) {
             if (this.get('generateShipment')) {
               receiptShouldBeInvoiced = true;
+            } else if (this.get('iscancelled')) {
+              var deliveredNotInvoicedLine = _.find(this.get('lines').models, function (line) {
+                return line.getDeliveredQuantity() === line.get('qty') && line.getDeliveredQuantity() !== line.get('invoicedQuantity');
+              });
+              receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
             }
           }
         }
@@ -6231,6 +6238,8 @@
               } else {
                 qtyToInvoice = qtyPendingToDeliver;
               }
+            } else if (qtyPendingToBeInvoiced) {
+              qtyToInvoice = qtyPendingToBeInvoiced;
             } else {
               qtyToInvoice = 0;
             }
