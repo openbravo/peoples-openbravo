@@ -32,6 +32,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.ViewComponent;
@@ -40,13 +42,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
-import org.openbravo.test.taxes.TaxesTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Checks all views can be generated */
 public class ViewGeneration extends WeldBaseTest {
-  final static private Logger log = LoggerFactory.getLogger(TaxesTest.class);
+  final static private Logger log = LogManager.getLogger();
 
   @Inject
   private ApplicationDictionaryCachedStructures adcs;
