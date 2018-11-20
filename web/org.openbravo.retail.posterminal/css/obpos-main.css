@@ -1164,3 +1164,17 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   width:250px; 
   padding-left: 20px;
 }
+
+.payOpenTicketsIsLayaway{
+	font-weight: bold;
+	color: lightblue;
+	float: right;
+	text-align:right;
+}
+
+.payOpenTicketsIsReceipt{
+	font-weight: bold;
+    color: rgb(108, 179, 63);
+    float: right;
+    text-align:right;
+}

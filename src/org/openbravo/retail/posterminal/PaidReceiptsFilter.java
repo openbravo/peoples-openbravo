@@ -67,6 +67,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     String orderTypeFilter = getOrderTypeFilter(jsonsent);
     String orderTypeHql;
     boolean isVerifiedReturns = false;
+    boolean isPayOpenTicket = false;
 
     switch (orderTypeFilter) {
     case "RET":
@@ -82,6 +83,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       orderTypeHql = "and ord.documentType.return = false and ord.documentType.sOSubType <> 'OB' and ord.obposIslayaway = false and cancelledorder is null";
       isVerifiedReturns = true;
       break;
+    case "payOpenTickets":
+      orderTypeHql = "and ord.grandtotal>0 and ord.documentType.sOSubType <> 'OB' and ord.documentStatus <> 'CL'";
     default:
       orderTypeHql = "";
     }
@@ -96,7 +99,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     hqlPaidReceipts
         .append(" and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
     hqlPaidReceipts.append(" and ord.documentStatus <> 'CA' ");
-    if (!isVerifiedReturns) {
+    if (!isVerifiedReturns && !isPayOpenTicket) {
       // verified returns is already filtering by delivered = true
       hqlPaidReceipts.append(" and (ord.documentStatus <> 'CL' or ord.delivered = true) ");
     }

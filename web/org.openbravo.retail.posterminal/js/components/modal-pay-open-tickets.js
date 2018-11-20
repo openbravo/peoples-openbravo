@@ -35,10 +35,17 @@ enyo.kind({
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.inherited(arguments);
     this.model = model;
-    this.setDefaultFilters([{
-      value: 'LAY',
-      columns: ['orderType']
-    }]);
+    if (this.model === model) {
+      this.setDefaultFilters([{
+        value: 'payOpenTickets',
+        columns: ['orderType']
+      }]);
+    } else {
+      this.setDefaultFilters([{
+        value: 'LAY',
+        columns: ['orderType']
+      }]);
+    }
   },
   actionPrePrint: function (data, criteria) {
     var totalData = [],
@@ -47,7 +54,7 @@ enyo.kind({
 
     totalData = totalData.concat(this.model.get('orderList').models);
     totalData.forEach(function (order) {
-      if (order.attributes.lines.length === 0) {
+      if (order.attributes.lines.length === 0 || order.attributes.gross < 0 || order.get('isPaid') || order.get('isQuotation') || order.getOrderType() === 3) {
         popedElements.push(order);
       }
     });
@@ -240,7 +247,6 @@ enyo.kind({
       style: 'display: inline',
       name: 'topLine'
     }, {
-      style: 'font-weight: bold; color: lightblue; float: right; text-align:right; ',
       name: 'isLayaway'
     }, {
       style: 'color: #888888;',
@@ -262,6 +268,21 @@ enyo.kind({
       this.addClass('active');
     } else {
       this.removeClass('active');
+    }
+
+    switch (this.model.get('orderType')) {
+    case 'ORD':
+      this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblAssignReceipt'));
+      this.$.isLayaway.setClasses("payOpenTicketsIsReceipt");
+      break;
+
+    case 'LAY':
+      this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+      this.$.isLayaway.setClasses("payOpenTicketsIsLayaway");
+      break;
+
+    default:
+      break;
     }
     if (this.model.get('orderType') === 'LAY') {
       this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
