@@ -24,8 +24,7 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -33,7 +32,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocPayment extends AcctServer {
   private static final long serialVersionUID = 1L;
-  private static Logger docPaymentLog4j = LogManager.getLogger();
+  private static Logger docPaymentLog4j = Logger.getLogger(DocPayment.class);
 
   private String SeqNo = "0";
   private String SettlementType = "";

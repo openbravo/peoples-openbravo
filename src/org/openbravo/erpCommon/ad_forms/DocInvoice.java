@@ -27,8 +27,7 @@ import java.util.HashMap;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
@@ -50,7 +49,7 @@ import org.openbravo.model.financialmgmt.calendar.Period;
 
 public class DocInvoice extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocInvoice = LogManager.getLogger();
+  static Logger log4jDocInvoice = Logger.getLogger(DocInvoice.class);
 
   DocTax[] m_taxes = null;
   DocLine_FinPaymentSchedule[] m_payments = null;
