@@ -394,8 +394,8 @@ enyo.kind({
           return e;
         }
       })),
-        addOrdersToOrderList, i, j, wrongOrder, cancellingOrders = [],
-        firstCheck = true;
+        addOrdersToOrderList, i, j, wrongOrder, firstCheck = true,
+        cancellingOrdersToCheck = me.owner.owner.model.get('orderList').models;
 
     if (checkedMultiOrders.length === 0) {
       return true;
@@ -436,18 +436,22 @@ enyo.kind({
           break;
         }
       } else {
-        var cancellingOrdersToCheck;
-
-        if (firstCheck) {
-          cancellingOrdersToCheck = me.owner.owner.model.get('orderList').models;
-          firstCheck = false;
-        } else {
-          cancellingOrdersToCheck = cancellingOrders;
-        }
         //Check if there's an order that is being canceled/replaced
+        var cancellingOrders = [];
         for (j = 0; j < cancellingOrdersToCheck.length; j++) {
           var order = cancellingOrdersToCheck[j];
-          if (order.get('canceledorder')) {
+          if (firstCheck) {
+            if (order.get('canceledorder')) {
+              if (order.get('canceledorder').id === iter.id) {
+                wrongOrder = {
+                  docNo: iter.get('documentNo'),
+                  error: 'cancellingOrder'
+                };
+                break;
+              }
+              cancellingOrders.push(order);
+            }
+          } else {
             if (order.get('canceledorder').id === iter.id) {
               wrongOrder = {
                 docNo: iter.get('documentNo'),
@@ -455,11 +459,14 @@ enyo.kind({
               };
               break;
             }
-            cancellingOrders.push(order);
           }
         }
         if (wrongOrder) {
           break;
+        }
+        if (firstCheck) {
+          firstCheck = false;
+          cancellingOrdersToCheck = cancellingOrders;
         }
       }
     }
