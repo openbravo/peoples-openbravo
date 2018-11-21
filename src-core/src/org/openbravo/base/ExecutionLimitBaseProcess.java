@@ -14,15 +14,16 @@ package org.openbravo.base;
 import java.io.File;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 public abstract class ExecutionLimitBaseProcess {
 
-  protected static final Logger log4j = LogManager.getLogger();
+  // Do not update to log4j2. It may cause problems when upgrading from a version already compiled
+  // log4j 1.x Logger
+  protected static final Logger log4j = Logger.getLogger(ExecutionLimitBaseProcess.class);
 
   private ConnectionProvider cp;
 
