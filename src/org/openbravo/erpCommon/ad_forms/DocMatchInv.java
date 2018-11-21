@@ -25,8 +25,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
@@ -51,7 +50,7 @@ import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 public class DocMatchInv extends AcctServer {
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocMatchInv = LogManager.getLogger();
+  static Logger log4jDocMatchInv = Logger.getLogger(DocMatchInv.class);
 
   /** AD_Table_ID */
   private String SeqNo = "0";

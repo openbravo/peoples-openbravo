@@ -23,8 +23,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
@@ -43,7 +42,7 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class DocMovement extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocMovement = LogManager.getLogger();
+  static Logger log4jDocMovement = Logger.getLogger(DocMovement.class);
 
   private String SeqNo = "0";
 

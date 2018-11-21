@@ -29,6 +29,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.provider.OBProvider;
@@ -42,8 +44,6 @@ import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.model.ad.system.ADClusterService;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Class in charge of registering the node that should handle a particular service when working in a
@@ -323,12 +323,13 @@ public class ClusterServiceManager {
               serviceName);
         }
         manager.lastPing = now;
+      } catch (Exception ex) {
+        log.warn("Node {} could not complete register/update task of service {}", manager.nodeId,
+            serviceName, ex);
+      } finally {
         OBDal.getInstance().commitAndClose();
         // force the service to go to the database to see the changes (if any)
         clusterService.setUseCache(false);
-      } catch (Exception ex) {
-        log.warn("Node {} could not complete register/update task of service {}", manager.nodeId,
-            serviceName);
       }
     }
 
