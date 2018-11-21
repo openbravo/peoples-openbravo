@@ -31,7 +31,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
-import org.openbravo.service.importprocess.ImportEntryManager;
 import org.openbravo.service.json.JsonToDataConverter;
 
 public class UpdateCashup {

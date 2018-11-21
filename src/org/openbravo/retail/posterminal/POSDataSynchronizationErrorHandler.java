@@ -24,7 +24,6 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationErrorHandler;
-import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.model.common.order.OrderLine;
 
 @ApplicationScoped
