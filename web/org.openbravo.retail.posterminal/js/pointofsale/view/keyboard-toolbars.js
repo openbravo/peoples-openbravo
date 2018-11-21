@@ -516,65 +516,64 @@ enyo.kind({
       keyboard: this.keyboard
     });
 
-    this.owner.owner.addCommand('cashdelivery', {
-      action: function (keyboard, txt) {
-        var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status,
-            exactpayment = allpayments[status] || exactdefault,
-            amount = me.model.getPending(),
-            altexactamount = me.receipt.get('exactpayment'),
-            pendingPrepayment, total = me.model.getTotal();
-        if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-          total = OB.DEC.add(total, me.model.get('multiOrders').get('existingPayment') ? me.model.get('multiOrders').get('existingPayment') : 0);
-        }
-        pendingPrepayment = OB.DEC.sub(OB.DEC.add(me.model.getPending(), me.model.getPrepaymentAmount()), total);
-        // check if alternate exact amount must be applied based on the payment method selected.
-        if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
-          amount = altexactamount[exactpayment.payment.searchKey];
-        }
-
-        if (pendingPrepayment > 0 && pendingPrepayment < amount) {
-          amount = pendingPrepayment;
-        }
-        if (exactpayment.rate && exactpayment.rate !== '1') {
-          amount = OB.DEC.div(amount, exactpayment.rate);
-        }
-        if (status && !allpayments[status]) {
+    var payDeliveryOrExact = function (keyboard, txt, payPrepayment) {
+        var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status;
+        if (status && !allpayments[status] && !providerGroups[status]) {
           // Is not a payment, so continue with the default path...
-          keyboard.execCommand(status, amount);
+          keyboard.execCommand(status, null);
         } else {
           me.bubble('onClearPaymentSelect');
-          // It is a payment...
-          if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
-            me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
+          var amount = me.model.getPending(),
+              pendingPrepayment, setAmountIfPrepayment = function () {
+              if (payPrepayment && pendingPrepayment > 0 && pendingPrepayment < amount) {
+                amount = pendingPrepayment;
+              }
+              };
+          if (payPrepayment) {
+            var total = me.model.getTotal();
+            if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+              total = OB.DEC.add(total, me.model.get('multiOrders').get('existingPayment') ? me.model.get('multiOrders').get('existingPayment') : 0);
+            }
+            pendingPrepayment = OB.DEC.sub(OB.DEC.add(me.model.getPending(), me.model.getPrepaymentAmount()), total);
+          }
+          if (providerGroups[status]) {
+            // It is selected  a provider group
+            setAmountIfPrepayment();
+            me.payAmountWithProviderGroup(amount, providerGroups[status]);
+          } else {
+            var exactpayment = allpayments[status] || exactdefault;
+            if (exactpayment.providerGroup) {
+              // The exact payment belongs to a provider group so call the provider group payment
+              setAmountIfPrepayment();
+              me.payAmountWithProviderGroup(amount, providerGroups[exactpayment.providerGroup.id]);
+            } else {
+              // It is a regular payment
+              var altexactamount = me.receipt.get('exactpayment'); // NOT FOUND
+              // check if alternate exact amount must be applied based on the payment method selected.
+              if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
+                amount = altexactamount[exactpayment.payment.searchKey];
+              }
+              setAmountIfPrepayment();
+              if (exactpayment.rate && exactpayment.rate !== '1') {
+                amount = OB.DEC.mul(amount, exactpayment.mulrate, exactpayment.obposPosprecision);
+              }
+              if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
+                me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
+              }
+            }
           }
         }
+        };
+
+    this.owner.owner.addCommand('cashdelivery', {
+      action: function (keyboard, txt) {
+        payDeliveryOrExact(keyboard, txt, true);
       }
     });
 
     this.owner.owner.addCommand('cashexact', {
       action: function (keyboard, txt) {
-        var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status;
-        if (status && !allpayments[status]) {
-          // Is not a payment, so continue with the default path...
-          keyboard.execCommand(status, null);
-        } else {
-          me.bubble('onClearPaymentSelect');
-          // It is a payment...
-          var exactpayment = allpayments[status] || exactdefault,
-              amount = me.model.getPending(),
-              altexactamount = me.receipt.get('exactpayment');
-          // check if alternate exact amount must be applied based on the payment method selected.
-          if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
-            amount = altexactamount[exactpayment.payment.searchKey];
-          }
-          if (exactpayment.rate && exactpayment.rate !== '1') {
-            amount = OB.DEC.mul(amount, exactpayment.mulrate, exactpayment.obposPosprecision);
-          }
-
-          if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
-            me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
-          }
-        }
+        payDeliveryOrExact(keyboard, txt, false);
       }
     });
   },
