@@ -35,7 +35,7 @@ enyo.kind({
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.inherited(arguments);
     this.model = model;
-    if (this.model === model) {
+    if (this.model !== model) {
       this.setDefaultFilters([{
         value: 'payOpenTickets',
         columns: ['orderType']
