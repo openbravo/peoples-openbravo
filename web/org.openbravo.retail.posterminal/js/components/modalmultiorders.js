@@ -440,10 +440,10 @@ enyo.kind({
 
         if (firstCheck) {
           cancellingOrdersToCheck = me.owner.owner.model.get('orderList').models;
+          firstCheck = false;
         } else {
           cancellingOrdersToCheck = cancellingOrders;
         }
-        firstCheck = false;
         //Check if there's an order that is being canceled/replaced
         for (j = 0; j < cancellingOrdersToCheck.length; j++) {
           var order = cancellingOrdersToCheck[j];
