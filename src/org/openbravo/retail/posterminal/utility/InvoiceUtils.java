@@ -136,6 +136,12 @@ public class InvoiceUtils {
     boolean deliveredQtyEqualsToMovementQty = movementQtyTotal.compareTo(orderLine
         .getOrderedQuantity()) == 0;
 
+    if (jsonInvoiceLine.has("description")
+        && StringUtils.length(jsonInvoiceLine.getString("description")) > 255) {
+      jsonInvoiceLine.put("description",
+          StringUtils.substring(jsonInvoiceLine.getString("description"), 0, 255));
+    }
+
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(InvoiceLineOffer.class);
     final InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
     Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);

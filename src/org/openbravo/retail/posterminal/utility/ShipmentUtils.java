@@ -20,6 +20,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -401,6 +402,12 @@ public class ShipmentUtils {
       BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance, int i)
       throws JSONException {
     String orderOrganizationId = jsonorder.getString("organization");
+
+    if (jsonOrderLine.has("description")
+        && StringUtils.length(jsonOrderLine.getString("description")) > 255) {
+      jsonOrderLine.put("description",
+          StringUtils.substring(jsonOrderLine.getString("description"), 0, 255));
+    }
 
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
     JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
