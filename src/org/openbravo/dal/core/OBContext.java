@@ -681,8 +681,7 @@ public class OBContext implements OBNotSingleton {
   private List<String> getOrganizations(Client client) {
     final Query qry = SessionHandler.getInstance().createQuery(
         "select o.id from " + Organization.class.getName() + " o where " + "o."
-            + Organization.PROPERTY_CLIENT + "=:client and o." + Organization.PROPERTY_ACTIVE
-            + "='Y'");
+            + Organization.PROPERTY_CLIENT + "=:client");
     qry.setParameter("client", client);
     organizationList = qry.list();
     return organizationList;
