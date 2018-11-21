@@ -405,6 +405,9 @@ public class UpdateCashup {
     OBPOSAppTermStatHist terminalStatusHistory = null;
     Long transitionsToOnline;
     Long numberOfLogClientErrors;
+    Long averageLatency;
+    Long averageUploadBandwidth;
+    Long averageDownloadBandwidth;
 
     // Terminal Status History record
     OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
@@ -426,6 +429,9 @@ public class UpdateCashup {
         terminalStatusHistory.setPOSTerminal(posTerminal);
         terminalStatusHistory.setTransitiontoonline(0L);
         terminalStatusHistory.setErrorswhileimporting(0L);
+        terminalStatusHistory.setAveragelatency(0L);
+        terminalStatusHistory.setAverageuploadbandwidth(0L);
+        terminalStatusHistory.setAveragedownloadbandwidth(0L);
         terminalStatusHistory.setLogclienterrors(0L);
         terminalStatusHistory.setNewOBObject(true);
         OBDal.getInstance().save(terminalStatusHistory);
@@ -444,6 +450,25 @@ public class UpdateCashup {
     if (jsonCashup.has("logclientErrors") && !jsonCashup.isNull("logclientErrors")) {
       numberOfLogClientErrors = jsonCashup.getLong("logclientErrors");
       terminalStatusHistory.setLogclienterrors(numberOfLogClientErrors);
+    }
+
+    // Get average latency from json
+    if (jsonCashup.has("averageLatency") && !jsonCashup.isNull("averageLatency")) {
+      averageLatency = jsonCashup.getLong("averageLatency");
+      terminalStatusHistory.setAveragelatency(averageLatency);
+    }
+
+    // Get average upload bandwidth from json
+    if (jsonCashup.has("averageUploadBandwidth") && !jsonCashup.isNull("averageUploadBandwidth")) {
+      averageUploadBandwidth = jsonCashup.getLong("averageUploadBandwidth");
+      terminalStatusHistory.setAverageuploadbandwidth(averageUploadBandwidth);
+    }
+
+    // Get average download bandwidth from json
+    if (jsonCashup.has("averageDownloadBandwidth")
+        && !jsonCashup.isNull("averageDownloadBandwidth")) {
+      averageDownloadBandwidth = jsonCashup.getLong("averageDownloadBandwidth");
+      terminalStatusHistory.setAveragedownloadbandwidth(averageDownloadBandwidth);
     }
 
   }
