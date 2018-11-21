@@ -884,98 +884,87 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                     function cancelAndNew() {
                       if (OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew', true)) {
-                        // Check if the not delivered lines are enough to create a ticket
-                        // A ticket cannot be created only with a service that is related to a product and not deferred
-                        var linesForNewTicket = !cloneOrderForNew.get('hasServices') || (_.find(cloneOrderForNew.get('lines').models, function (line) {
-                          return line.get('deliveredQuantity') < line.get('qty') && (!line.get('relatedLines') || _.find(line.get('relatedLines'), function (relatedLine) {
-                            return relatedLine.deferred;
-                          }) || _.find(cloneOrderForNew.get('lines').models, function (relatedLine) {
-                            return relatedLine.get('deliveredQuantity') < relatedLine.get('qty');
-                          }));
-                        }));
-                        if (linesForNewTicket) {
-                          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
-                            label: OB.I18N.getLabel('OBPOS_LblOk'),
-                            action: function () {
-                              orderList.addNewOrder();
-                              var linesMap = {},
-                                  order = orderList.modelorder,
-                                  addRelatedLines, addLineToTicket;
+                        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
+                          label: OB.I18N.getLabel('OBPOS_LblOk'),
+                          action: function () {
+                            orderList.addNewOrder();
+                            var linesMap = {},
+                                order = orderList.modelorder,
+                                addRelatedLines, addLineToTicket;
 
-                              var finalCallback = function () {
-                                  order.unset('preventServicesUpdate');
-                                  order.get('lines').trigger('updateRelations');
-                                  };
+                            var finalCallback = function () {
+                                order.unset('preventServicesUpdate');
+                                order.get('lines').trigger('updateRelations');
+                                };
 
-                              addRelatedLines = function (index) {
-                                if (index === order.get('lines').length) {
-                                  finalCallback();
-                                  return;
-                                }
-                                var line = order.get('lines').at(index),
-                                    oldLine = linesMap[line.id];
-                                if (oldLine.get('relatedLines')) {
-                                  line.set('relatedLines', []);
-                                  _.each(oldLine.get('relatedLines'), function (relatedLine) {
-                                    var newRelatedLine = _.clone(relatedLine);
-                                    // If the service is not a deferred service, the related line, documentNo
-                                    // and orderId must be updated. If it is, is must be marked as deferred
-                                    if (!newRelatedLine.otherTicket) {
-                                      var i, keys = _.keys(linesMap);
-                                      newRelatedLine.orderDocumentNo = order.get('documentNo');
-                                      newRelatedLine.orderId = order.id;
-                                      for (i = 0; i < keys.length; i++) {
-                                        var key = keys[i];
-                                        if (newRelatedLine.orderlineId === linesMap[key].id) {
-                                          newRelatedLine.orderlineId = key;
-                                          break;
-                                        }
+                            addRelatedLines = function (index) {
+                              if (index === order.get('lines').length) {
+                                finalCallback();
+                                return;
+                              }
+                              var line = order.get('lines').at(index),
+                                  oldLine = linesMap[line.id];
+                              if (oldLine.get('relatedLines')) {
+                                line.set('relatedLines', []);
+                                _.each(oldLine.get('relatedLines'), function (relatedLine) {
+                                  var newRelatedLine = _.clone(relatedLine);
+                                  // If the service is not a deferred service, the related line, documentNo
+                                  // and orderId must be updated. If it is, is must be marked as deferred
+                                  if (!newRelatedLine.otherTicket) {
+                                    var i, keys = _.keys(linesMap);
+                                    newRelatedLine.orderDocumentNo = order.get('documentNo');
+                                    newRelatedLine.orderId = order.id;
+                                    for (i = 0; i < keys.length; i++) {
+                                      var key = keys[i];
+                                      if (newRelatedLine.orderlineId === linesMap[key].id) {
+                                        newRelatedLine.orderlineId = key;
+                                        break;
                                       }
                                     }
-                                    line.get('relatedLines').push(newRelatedLine);
-                                  });
-                                }
-                                // Hook to allow any needed relation from an external module
-                                OB.UTIL.HookManager.executeHooks('OBPOS_CancelAndNewAddLineRelation', {
-                                  order: order,
-                                  cloneOrderForNew: cloneOrderForNew,
-                                  line: line,
-                                  oldLine: oldLine,
-                                  linesMap: linesMap
-                                }, function (args) {
-                                  addRelatedLines(index + 1);
-                                });
-                              };
-
-                              addLineToTicket = function (idx) {
-                                if (idx === cloneOrderForNew.get('lines').length) {
-                                  addRelatedLines(0);
-                                } else {
-                                  var line = cloneOrderForNew.get('lines').at(idx);
-                                  order.addProduct(line.get('product'), -line.get('qty'), {
-                                    isSilentAddProduct: true
-                                  }, undefined, function (success, orderline) {
-                                    if (success) {
-                                      linesMap[order.get('lines').at(order.get('lines').length - 1).id] = line;
-                                    }
-                                    addLineToTicket(idx + 1);
-                                  });
-                                }
-                              };
-
-                              if (cloneOrderForNew.get('isLayaway')) {
-                                OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
-                                  permission: null,
-                                  orderType: 2
+                                  }
+                                  line.get('relatedLines').push(newRelatedLine);
                                 });
                               }
-                              order.set('bp', cloneOrderForNew.get('bp'));
-                              addLineToTicket(0);
+                              // Hook to allow any needed relation from an external module
+                              OB.UTIL.HookManager.executeHooks('OBPOS_CancelAndNewAddLineRelation', {
+                                order: order,
+                                cloneOrderForNew: cloneOrderForNew,
+                                line: line,
+                                oldLine: oldLine,
+                                linesMap: linesMap
+                              }, function (args) {
+                                addRelatedLines(index + 1);
+                              });
+                            };
+
+                            addLineToTicket = function (idx) {
+                              if (idx === cloneOrderForNew.get('lines').length) {
+                                addRelatedLines(0);
+                              } else {
+                                var line = cloneOrderForNew.get('lines').at(idx);
+                                order.addProduct(line.get('product'), -line.get('qty'), {
+                                  isSilentAddProduct: true
+                                }, undefined, function (success, orderline) {
+                                  if (success) {
+                                    linesMap[order.get('lines').at(order.get('lines').length - 1).id] = line;
+                                  }
+                                  addLineToTicket(idx + 1);
+                                });
+                              }
+                            };
+
+                            if (cloneOrderForNew.get('isLayaway')) {
+                              OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
+                                permission: null,
+                                orderType: 2
+                              });
                             }
-                          }, {
-                            label: OB.I18N.getLabel('OBPOS_Cancel')
-                          }]);
-                        }
+                            order.set('bp', cloneOrderForNew.get('bp'));
+                            addLineToTicket(0);
+                          }
+                        }, {
+                          label: OB.I18N.getLabel('OBPOS_Cancel')
+                        }]);
                       }
                     }
 
