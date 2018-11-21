@@ -325,7 +325,7 @@ public class ClusterServiceManager {
         manager.lastPing = now;
       } catch (Exception ex) {
         log.warn("Node {} could not complete register/update task of service {}", manager.nodeId,
-            serviceName);
+            serviceName, ex);
       } finally {
         OBDal.getInstance().commitAndClose();
         // force the service to go to the database to see the changes (if any)
