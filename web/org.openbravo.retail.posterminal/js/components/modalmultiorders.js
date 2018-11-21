@@ -445,7 +445,7 @@ enyo.kind({
         }
         firstCheck = false;
         //Check if there's an order that is being canceled/replaced
-        for (j = 0; j < cancellingOrdersToCheck.length; i++) {
+        for (j = 0; j < cancellingOrdersToCheck.length; j++) {
           var order = cancellingOrdersToCheck[j];
           if (order.get('canceledorder')) {
             if (order.get('canceledorder').id === iter.id) {
