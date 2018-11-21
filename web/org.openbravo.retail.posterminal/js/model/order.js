@@ -7118,7 +7118,7 @@
     checkForDuplicateReceipts: function (model, callback, errorCallback, calledFrom) {
 
       function openReceiptPermissionError(orderType) {
-        if (calledFrom === 'orderSelector') {
+        if (calledFrom === 'orderSelector' || calledFrom === 'return') {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
         } else {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType]));
@@ -7151,7 +7151,7 @@
       }
 
       var orderTypeMsg, i, showErrorMessage = function (errorMsg) {
-          if (fromSelector) {
+          if (calledFrom === 'orderSelector' || calledFrom === 'return') {
             OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
               popup: 'OB_UI_MessageDialog',
               args: {
