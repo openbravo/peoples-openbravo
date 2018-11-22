@@ -77,7 +77,8 @@ public class KernelUtils {
     return instance;
   }
 
-  private KernelUtils() {
+  /** Note this constructor should not be generally used, use instead {@link #getInstance()} */
+  public KernelUtils() {
     if (SessionFactoryController.isRunningInWebContainer()) {
       // allow running outside Web container for tests
       adcs = WeldUtils
