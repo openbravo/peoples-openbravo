@@ -29,7 +29,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.QueryTimeoutException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.GenericJDBCException;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -241,16 +240,7 @@ public class VariantAutomaticGenerationProcess implements Process {
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(ge.getSQLException().getMessage());
-      bundle.setResult(msg);
-      OBDal.getInstance().rollbackAndClose();
-      // Oracle wraps the exception into a QueryTimeoutException
-    } catch (QueryTimeoutException qte) {
-      log4j.error("Exception processing variant generation", qte);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
-      msg.setMessage(qte.getSQLException().getMessage().split("\n")[0]);
+      msg.setMessage(ge.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } catch (final Exception e) {
