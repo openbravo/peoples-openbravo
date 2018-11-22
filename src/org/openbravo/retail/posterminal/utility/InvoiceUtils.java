@@ -591,7 +591,7 @@ public class InvoiceUtils {
 
       // If the invoice haven't been completely paid, add the remaining payment
       final BigDecimal remainingAmt = gross.subtract(paymentsAmt);
-      if (remainingAmt.compareTo(BigDecimal.ZERO) == 1) {
+      if (remainingAmt.compareTo(BigDecimal.ZERO) != 0) {
         final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
             .createCriteria(FIN_PaymentScheduleDetail.class);
         remainingPSDCriteria.add(Restrictions.eq(
