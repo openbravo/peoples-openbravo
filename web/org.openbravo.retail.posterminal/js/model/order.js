@@ -4906,7 +4906,7 @@
           currentDate.setMinutes(0);
           currentDate.setSeconds(0);
           currentDate.setMilliseconds(0);
-          if (!OB.UTIL.isNullOrUndefined(usedPaymentMethod.availableReverseDelay) && (currentDate.getTime() - usedPaymentMethod.availableReverseDelay * 86400000) <= (new Date(payment.get('paymentDate')).getTime())) {
+          if (!OB.UTIL.isNullOrUndefined(usedPaymentMethod.availableReverseDelay) && (currentDate.getTime() <= (new Date(payment.get('paymentDate')).getTime() + (usedPaymentMethod.availableReverseDelay * 86400000)))) {
             reversePaymentConfirmed();
           } else {
             OB.UTIL.Approval.requestApproval(
