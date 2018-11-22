@@ -73,7 +73,7 @@
         if (!(order.has('isQuotation') && order.get('isQuotation')) && !order.get('isPaid') && !(order.get('isLayaway') && !order.get('voidLayaway'))) {
           _.each(order.get('lines').models, function (line) {
             if (order.get('priceIncludesTax')) {
-              gross = line.get('gross');
+              gross = line.get('lineGrossAmount');
             } else {
               gross = line.get('discountedGross');
             }

@@ -856,6 +856,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                         payment.set('paid', OB.DEC.mul(payment.get('paid'), -1));
                       });
                     }
+                    receipt.adjustPrices();
                     OB.UTIL.cashUpReport(receipt, function (cashUp) {
                       var cancelLayawayModel = new OB.Model.CancelLayaway(),
                           cancelLayawayObj;
