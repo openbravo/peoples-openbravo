@@ -105,7 +105,7 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
 
   @Override
   protected ExecutionLimits getBuildValidationLimits() {
-    return new ExecutionLimits(CORE_MODULE_ID, null, new OpenbravoVersion(3, 0, 34825));
+    return new ExecutionLimits(CORE_MODULE_ID, null, new OpenbravoVersion(3, 0, 34826));
   }
 
 }

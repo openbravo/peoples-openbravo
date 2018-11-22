@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -58,7 +59,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
       String strcProjectId = vars.getStringParameter("inpcProjectId");
       printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
-          strcProjectId, "html");
+          strcProjectId, "html", request);
     } else if (vars.commandIn("EDIT_PDF")) {
       if (log4j.isDebugEnabled()) {
         log4j.debug("WE EDIT THE PDF");
@@ -69,7 +70,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
       String strcProjectId = vars.getStringParameter("inpcProjectId");
       printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
-          strcProjectId, "pdf");
+          strcProjectId, "pdf", request);
     } else {
       pageErrorPopUp(response);
     }
@@ -152,26 +153,45 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
 
   private void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId,
-      String strcProjectId, String strOutput) throws IOException, ServletException {
+      String strcProjectId, String strOutput, HttpServletRequest request) throws IOException,
+      ServletException {
+
+    InoutEditionData[] data = null;
+    int limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
 
-    InoutEditionData[] data = null;
+    String pgLimit = null, oraLimit = null;
+    if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
+      oraLimit = String.valueOf(limit + 1);
+    } else {
+      pgLimit = String.valueOf(limit + 1);
+    }
     String discard[] = { "discard" };
-    ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     data = InoutEditionData.select(readOnlyCP, vars.getLanguage(), Utility.getContext(readOnlyCP,
         vars, "#AccessibleOrgTree", "ReportMaterialTransactionEditionJR"), Utility.getContext(
         readOnlyCP, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), strdateFrom,
-        strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId);
+        strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, pgLimit, oraLimit);
 
-    if (data.length < 1) {
+    if (data == null || data.length == 0) {
       discard[0] = "selEliminar";
+    }
+
+    if (limit > 0 && data.length > limit) {
+      String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage());
+      msgbody = msgbody.replace("@limit@", String.valueOf(limit));
+      advisePopUp(request, response, "WARNING",
+          Utility.messageBD(this, "ReportsLimitHeader", vars.getLanguage()), msgbody);
+      return;
     }
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEditionJR.jrxml";
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
+
   }
 
   public String getServletInfo() {
