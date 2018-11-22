@@ -11,35 +11,35 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.window;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
-import org.hibernate.criterion.Order;
+import org.hibernate.collection.internal.PersistentBag;
+import org.hibernate.engine.spi.EntityKey;
+import org.hibernate.internal.SessionImpl;
+import org.hibernate.persister.entity.EntityPersister;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.GCField;
 import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
-import org.openbravo.model.ad.ui.Tab;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Utility methods used in generating Openbravo view representations.
@@ -146,8 +146,11 @@ public class OBViewUtil {
       String primaryPropertyName, String secondaryPropertyName) {
     if (OBContext.hasTranslationInstalled()) {
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-      for (Object o : trlObjects) {
-        final BaseOBObject trlObject = (BaseOBObject) o;
+
+      List<BaseOBObject> initializedTrlObjects;
+      initializedTrlObjects = getInitializedTrlObjects(owner, trlObjects);
+
+      for (BaseOBObject trlObject : initializedTrlObjects) {
         final String trlLanguageId = (String) ((BaseOBObject) trlObject
             .get(FieldTrl.PROPERTY_LANGUAGE)).getId();
         if (trlLanguageId.equals(userLanguageId)) {
@@ -166,26 +169,40 @@ public class OBViewUtil {
     return (String) owner.get(secondaryPropertyName);
   }
 
-  /**
-   * Returns the grid configuration based on the field and tab information
-   * 
-   * @param tab
-   *          tab whose grid configuration is to be obtained.
-   * @return the grid configuration
-   */
-  public static JSONObject getGridConfigurationSettings(Tab tab) {
-    return getGridConfigurationSettings(null, tab);
+  @SuppressWarnings("unchecked")
+  private static List<BaseOBObject> getInitializedTrlObjects(BaseOBObject owner, List<?> trlObjects) {
+    List<BaseOBObject> initializedTrlObjects;
+    // owner could have been loaded in a different DAL session via ADCS, as we are not caching trl
+    // entries in ADCS, so we need to handle this case
+    if (!Hibernate.isInitialized(trlObjects) && !OBDal.getInstance().getSession().contains(owner)) {
+      // check if there is already a different instance for the same entry in current DAL session
+      SessionImpl si = ((SessionImpl) OBDal.getInstance().getSession());
+      EntityPersister p = si.getEntityPersister(owner.getEntityName(), owner);
+      BaseOBObject ownerInSession = (BaseOBObject) si.getPersistenceContext().getEntity(
+          new EntityKey((String) owner.getId(), p));
+
+      if (ownerInSession == null) {
+        // there is no a different instance in this session, just load it
+        ownerInSession = OBDal.getInstance().get(owner.getEntityName(), owner.getId());
+      }
+
+      String propName = ((PersistentBag) trlObjects).getRole();
+      propName = propName.substring(propName.indexOf('.') + 1);
+      initializedTrlObjects = (List<BaseOBObject>) ownerInSession.get(propName);
+    } else {
+      initializedTrlObjects = (List<BaseOBObject>) trlObjects;
+    }
+    return initializedTrlObjects;
   }
 
   /**
-   * Returns the grid configuration of a field
+   * Returns the grid configuration based on the field and tab information
    * 
-   * @param field
-   *          field whose grid configuration is to be obtained
    * @return the grid configuration
    */
-  public static JSONObject getGridConfigurationSettings(Field field) {
-    return getGridConfigurationSettings(field, field.getTab());
+  public static JSONObject getGridConfigurationSettings(Optional<GCSystem> sysConf,
+      Optional<GCTab> tabConf) {
+    return getGridConfigurationSettings(null, sysConf, tabConf);
   }
 
   /**
@@ -193,73 +210,37 @@ public class OBViewUtil {
    * 
    * @param field
    *          field whose grid configuration is to be obtained it can be null
-   * @param tab
-   *          tab whose grid configuration is to be obtained. If the field is not null, this
-   *          parameter will be the tab of the field
    * @return the grid configuration
    */
-  private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
+  public static JSONObject getGridConfigurationSettings(Field field, Optional<GCSystem> sysConf,
+      Optional<GCTab> tabConf) {
     GridConfigSettings settings = new GridConfigSettings(field);
-    int gcTabIndex = 0;
-    GCTab tabConf = null;
-    if (tab.getOBUIAPPGCTabList().size() > 1) {
-      Collections.sort(tab.getOBUIAPPGCTabList(), new GCTabComparator());
-      gcTabIndex = tab.getOBUIAPPGCTabList().size() - 1;
-      tabConf = tab.getOBUIAPPGCTabList().get(gcTabIndex);
-    } else {
-      for (GCTab t : tab.getOBUIAPPGCTabList()) {
-        tabConf = t;
-        break;
-      }
-    }
 
-    if (tabConf != null && field != null && field.getId() != null) {
-      GCField fieldConf = null;
-      for (GCField fc : tabConf.getOBUIAPPGCFieldList()) {
-        // field list is cached in memory, so can be reused for all fields without the need of reach
-        // DB again
-        if (fc.getField().getId().equals(field.getId())) {
-          fieldConf = fc;
-          break;
+    if (tabConf.isPresent()) {
+      if (field != null && field.getId() != null) {
+        // Grid Configurations at field level for this tab configuration
+        // (tabConf.getOBUIAPPGCFieldList) gets cached on Hibernate's first level cache so they can
+        // be reused for all fields without the need of reach DB again
+        Optional<GCField> fieldConf = tabConf.get().getOBUIAPPGCFieldList() //
+            .stream() //
+            .filter(fieldGC -> fieldGC.getField().getId().equals(field.getId())) //
+            .findFirst();
+        if (fieldConf.isPresent()) {
+          settings.processConfig(fieldConf.get());
         }
       }
 
-      // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
-      if (fieldConf != null) {
-        settings.processConfig(fieldConf);
+      if (settings.shouldContinueProcessing()) {
+        // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
+        settings.processConfig(tabConf.get());
       }
     }
 
-    if (tabConf != null && settings.shouldContinueProcessing()) {
-      // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-      settings.processConfig(tabConf);
-    }
-
-    if (settings.shouldContinueProcessing()) {
-      // Trying to get parameters from "Grid Configuration (System)" window
-      OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
-      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
-      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
-      gcSystemCriteria.setMaxResults(1);
-      List<GCSystem> sysConfs = gcSystemCriteria.list();
-
-      if (!sysConfs.isEmpty()) {
-        settings.processConfig(sysConfs.get(0));
-      }
+    if (settings.shouldContinueProcessing() && sysConf.isPresent()) {
+      settings.processConfig(sysConf.get());
     }
 
     return settings.processJSONResult();
-  }
-
-  private static class GCTabComparator implements Comparator<GCTab> {
-    @Override
-    public int compare(GCTab o1, GCTab o2) {
-      if (o1.getSeqno().compareTo(o2.getSeqno()) != 0) {
-        return o1.getSeqno().compareTo(o2.getSeqno());
-      } else {
-        return o1.getId().compareTo(o2.getId());
-      }
-    }
   }
 
   private static class GridConfigSettings {

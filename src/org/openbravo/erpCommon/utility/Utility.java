@@ -1682,8 +1682,8 @@ public class Utility {
   /**
    * Returns the URL for a tab
    * 
-   * @param tabId
-   *          Id for the tab to obtain the url for
+   * @param tab
+   *          The tab to obtain the url for
    * @param type
    *          "R" -&gt; Relation, "E" -&gt; Edition, "X" -&gt; Excel
    * @param completeURL
@@ -1691,15 +1691,9 @@ public class Utility {
    *          URL relative to base context
    * @return the URL for a tab.
    */
-  public static String getTabURL(String tabId, String type, boolean completeURL) {
+  public static String getTabURL(Tab tab, String type, boolean completeURL) {
     OBContext.setAdminMode();
     try {
-      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      if (tab == null) {
-        log4j.error("Error trying to obtain URL for unknown tab:" + tabId);
-        return "";
-      }
-
       String url = (completeURL ? HttpBaseServlet.strDireccion : "") + "/";
       if (!"0".equals(tab.getWindow().getModule().getId())) {
         url += tab.getWindow().getModule().getJavaPackage();
@@ -1722,8 +1716,35 @@ public class Utility {
 
       return url;
     } catch (Exception e) {
-      log4j.error(e.getMessage());
+      log4j.error("Could not get URL for tab " + tab.getId(), e);
       return "";
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the URL for a tab
+   *
+   * @param tabId
+   *          Id for the tab to obtain the url for
+   * @param type
+   *          "R" -&gt; Relation, "E" -&gt; Edition, "X" -&gt; Excel
+   * @param completeURL
+   *          if true returns the complete ULR including server name and context, if not, it return
+   *          URL relative to base context
+   * @return the URL for a tab.
+   */
+  public static String getTabURL(String tabId, String type, boolean completeURL) {
+    OBContext.setAdminMode();
+    try {
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      if (tab == null) {
+        log4j.error("Error trying to obtain URL for unknown tab:" + tabId);
+        return "";
+      }
+
+      return getTabURL(tab, type, completeURL);
     } finally {
       OBContext.restorePreviousMode();
     }

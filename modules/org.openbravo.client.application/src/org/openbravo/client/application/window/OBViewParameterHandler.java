@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.FieldGroup;
@@ -257,24 +258,28 @@ public class OBViewParameterHandler {
     }
 
     public String getTabView() {
-      Window window;
+      String tabId = OBDal
+          .getInstance()
+          .getSession()
+          .createQuery(
+              "select t.id from OBUIAPP_Parameter p join p.referenceSearchKey r join r.oBUIAPPRefWindowList rw join rw.window w join w.aDTabList t where p.id=:param",
+              String.class) //
+          .setParameter("param", parameter.getId()) //
+          .setMaxResults(1) //
+          .uniqueResult();
 
-      if (parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().size() == 0
-          || parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow() == null) {
+      if (tabId == null) {
+        log.error("Window definition for parameter " + parameter + " has no tabs");
         return null;
-      } else {
-        window = parameter.getReferenceSearchKey().getOBUIAPPRefWindowList().get(0).getWindow();
       }
 
-      if (window.getADTabList().isEmpty()) {
-        log.error("Window definition " + window.getName() + " has no tabs");
-        return null;
-      }
-
-      Tab tab = window.getADTabList().get(0);
+      // parameters are not cached in ADCS
+      Tab tab = paramWindow.getADCS().getTab(tabId);
 
       final OBViewTab tabComponent = paramWindow.createComponent(OBViewTab.class);
       tabComponent.setTab(tab);
+      tabComponent.setGCSettings(StandardWindowComponent.getSystemGridConfig(),
+          StandardWindowComponent.getTabsGridConfig(tab.getWindow()));
       return tabComponent.generate();
     }
 

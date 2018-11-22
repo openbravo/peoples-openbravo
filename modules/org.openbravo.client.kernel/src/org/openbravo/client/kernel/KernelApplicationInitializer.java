@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.client.application.report.JmxReportCache;
+import org.openbravo.client.application.window.JmxApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -56,6 +57,9 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
 
   @Inject
   private ApplicationDictionaryCachedStructures adCachedStructures;
+
+  @Inject
+  private JmxApplicationDictionaryCachedStructures adcsJmx;
 
   public void initialize() {
     checkDatabaseAndTomcatDateTime();
@@ -101,6 +105,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   private void registerMBeans() {
     MBeanRegistry.registerMBean(KernelConstants.RESOURCE_COMPONENT_ID, resourceProvider);
     MBeanRegistry.registerMBean(JmxReportCache.MBEAN_NAME, reportCache);
+    MBeanRegistry.registerMBean(JmxApplicationDictionaryCachedStructures.MBEAN_NAME, adcsJmx);
   }
 
   private void setModulesAsNotInDevelopment() {

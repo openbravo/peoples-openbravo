@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +43,8 @@ import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.OBViewUtil;
@@ -559,9 +562,13 @@ public abstract class UIDefinition {
    * 
    * @param field
    *          the field for which the information should be computed.
+   * @param systemGC
+   * @param tabGC
    */
-  public void establishGridConfigurationSettings(Field field) {
-    this.gridConfigurationSettings = OBViewUtil.getGridConfigurationSettings(field);
+  public void establishGridConfigurationSettings(Field field, Optional<GCSystem> systemGC,
+      Optional<GCTab> tabGC) {
+    this.gridConfigurationSettings = OBViewUtil
+        .getGridConfigurationSettings(field, systemGC, tabGC);
   }
 
   // note can make sense to also enable hover of values for enums
