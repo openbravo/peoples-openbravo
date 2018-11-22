@@ -194,7 +194,7 @@
             frozenReceipt.setQuantitiesToDeliver();
 
             frozenReceipt.set('paymentMethodKind', null);
-            if (frozenReceipt.get('payments').length === 1 && (frozenReceipt.get('orderType') === 0 || frozenReceipt.get('orderType') === 1 || (frozenReceipt.get('orderType') === 2 && frozenReceipt.getPayment() >= frozenReceipt.getTotal())) && !frozenReceipt.get('isQuotation') && !frozenReceipt.get('paidOnCredit')) {
+            if (frozenReceipt.get('payments').length === 1 && frozenReceipt.get('completeTicket') && frozenReceipt.isFullyPaid()) {
               var payment = frozenReceipt.get('payments').models[0];
               frozenReceipt.set('paymentMethodKind', payment.get('kind'));
             }
