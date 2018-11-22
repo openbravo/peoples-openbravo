@@ -78,5 +78,6 @@
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_ERRORS_POSTERMINAL">
         <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
+      <check name="OBPOS_ERRORS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
