@@ -83,7 +83,7 @@ function setPaymentsToReceipts(orderList, paymentList, changePayments, callback,
     }
   } else {
     var amountToPay = !_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway')) ? order.get('amountToLayaway') : OB.DEC.sub(order.get('gross'), order.get('payment'));
-    if (OB.DEC.compare(amountToPay) > 0) {
+    if (OB.DEC.compare(amountToPay) > 0 && !_.isUndefined(payment)) {
       var paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
       paymentLine = new OB.Model.PaymentLine();
       OB.UTIL.clone(payment, paymentLine);
