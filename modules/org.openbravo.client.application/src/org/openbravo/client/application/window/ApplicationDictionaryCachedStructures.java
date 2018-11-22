@@ -19,11 +19,13 @@
 package org.openbravo.client.application.window;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -45,6 +47,7 @@ import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.userinterface.selector.Selector;
@@ -203,6 +206,11 @@ public class ApplicationDictionaryCachedStructures {
       }
 
       Window window = OBDal.getInstance().get(Window.class, windowId);
+      if (window == null) {
+        return;
+      }
+
+      initializeDALObject(window.getModule());
       for (Tab tab : window.getADTabList()) {
         initializeTab(tab);
       }
@@ -230,6 +238,8 @@ public class ApplicationDictionaryCachedStructures {
     getFieldsOfTab(tab);
     initializeDALObject(tab.getTable());
     getColumnsOfTable(tab.getTable().getId());
+    initializeProcess(tab.getProcess());
+    initializeDALObject(tab.getTableTree());
 
     if (useCache()) {
       tabMap.put(tabId, tab);
@@ -244,6 +254,7 @@ public class ApplicationDictionaryCachedStructures {
     Table table = OBDal.getInstance().get(Table.class, tableId);
     initializeDALObject(table);
     initializeDALObject(table.getADColumnList());
+    initializeDALObject(table.getObserdsDatasource());
     if (useCache()) {
       tableMap.put(tableId, table);
     }
@@ -262,10 +273,11 @@ public class ApplicationDictionaryCachedStructures {
     String tableId = tab.getTable().getId();
     List<Field> fields = tab.getADFieldList();
     for (Field f : fields) {
+      initializeDALObject(f.getFieldGroup());
+
       if (f.getColumn() == null) {
         continue;
       }
-      initializeDALObject(f.getColumn());
       initializeColumn(f.getColumn());
 
       // Property fields can link to columns in a different table than tab's one, in this case
@@ -296,6 +308,7 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   private void initializeColumn(Column c) {
+    initializeDALObject(c);
     initializeDALObject(c.getValidation());
     if (c.getValidation() != null) {
       initializeDALObject(c.getValidation().getValidationCode());
@@ -315,12 +328,31 @@ public class ApplicationDictionaryCachedStructures {
     if (c.getReferenceSearchKey() != null) {
       initializeReference(c.getReferenceSearchKey());
     }
+
+    initializeDALObject(c.getOBUIAPPProcess());
+    initializeProcess(c.getProcess());
+
+  }
+
+  private void initializeProcess(Process p) {
+    if (p == null) {
+      return;
+    }
+    initializeDALObject(p);
+    initializeDALObject(p.getModule());
+    initializeDALObject(p.getADModelImplementationList());
+    p.getADModelImplementationList().stream()
+        //
+        .filter(ModelImplementation::isDefault)
+        .forEach(m -> initializeDALObject(m.getADModelImplementationMappingList()));
+
   }
 
   private void initializeReference(Reference reference) {
     initializeDALObject(reference.getADReferencedTableList());
     for (ReferencedTable t : reference.getADReferencedTableList()) {
       initializeDALObject(t);
+      initializeDALObject(t.getDisplayedColumn().getTable());
     }
 
     initializeDALObject(reference.getOBUISELSelectorList());
@@ -342,6 +374,13 @@ public class ApplicationDictionaryCachedStructures {
       initializeDALObject(list);
     }
     initializeDALObject(reference.getOBUIAPPRefWindowList());
+
+    for (ReferencedTree refTree : reference.getADReferencedTreeList()) {
+      initializeDALObject(refTree);
+      for (ReferencedTreeField refTreeField : refTree.getADReferencedTreeFieldList()) {
+        initializeDALObject(refTreeField);
+      }
+    }
   }
 
   public List<AuxiliaryInput> getAuxiliarInputList(String tabId) {
@@ -494,5 +533,11 @@ public class ApplicationDictionaryCachedStructures {
         .createQuery(
             "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
         .executeUpdate();
+  }
+
+  Collection<String> getCachedWindows() {
+    return windowMap.values().stream() //
+        .map(Window::toString) //
+        .collect(Collectors.toList());
   }
 }

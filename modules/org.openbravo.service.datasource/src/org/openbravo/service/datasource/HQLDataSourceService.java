@@ -43,6 +43,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
@@ -84,9 +85,13 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   @Inject
   @Any
   private Instance<HqlInserter> hqlInserters;
+
   @Inject
   @Any
   private Instance<HqlQueryTransformer> hqlQueryTransformers;
+
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
 
   @Override
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
@@ -96,7 +101,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     List<DataSourceProperty> dataSourceProperties = new ArrayList<>();
     String tableId = (String) parameters.get("tableId");
     if (tableId != null) {
-      Table table = OBDal.getInstance().get(Table.class, tableId);
+      Table table = adcs.getTable(tableId);
       Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
       for (Column column : table.getADColumnList()) {
         final DataSourceProperty dsProperty = new DataSourceProperty();

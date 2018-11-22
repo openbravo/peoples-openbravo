@@ -17,36 +17,34 @@
  ************************************************************************
  */
 
-package org.openbravo.test.base;
+package org.openbravo.client.application.window;
 
-/** Some constants to be used in tests */
-public class TestConstants {
+import java.util.Collection;
 
-  public static class Orgs {
-    public static final String MAIN = "0";
-    public static final String FB_GROUP = "19404EAD144C49A0AF37D54377CF452D";
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-    public static final String US = "2E60544D37534C0B89E765FE29BC0B43";
-    public static final String US_EST = "7BABA5FF80494CAFA54DEBD22EC46F01";
-    public static final String US_WEST = "BAE22373FEBE4CCCA24517E23F0C8A48";
+/** Exposes {@link ApplicationDictionaryCachedStructures} as a JMX Bean. */
+@ApplicationScoped
+public class JmxApplicationDictionaryCachedStructures implements
+    JmxApplicationDictionaryCachedStructuresMBean {
+  public static final String MBEAN_NAME = "ApplicationDictionaryCachedStructures";
 
-    public static final String ESP = "B843C30461EA4501935CB1D125C9C25A";
-    public static final String ESP_SUR = "DC206C91AA6A4897B44DA897936E0EC3";
-    public static final String ESP_NORTE = "E443A31992CB4635AFCAEABE7183CE85";
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
+
+  @Override
+  public void resetCache() {
+    adcs.init();
   }
 
-  public static class Roles {
-    public static final String ESP_ADMIN = "F3196A30B53A42778727B2852FF90C24";
+  @Override
+  public boolean isEnabled() {
+    return adcs.useCache();
   }
 
-  public static class Tables {
-    public static final String C_ORDER = "259";
-  }
-
-  public static class Windows {
-    public static final String SALES_ORDER = "143";
-  }
-
-  private TestConstants() {
+  @Override
+  public Collection<String> getCachedWindows() {
+    return adcs.getCachedWindows();
   }
 }

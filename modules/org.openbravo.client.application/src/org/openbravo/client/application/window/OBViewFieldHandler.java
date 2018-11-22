@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.script.ScriptException;
@@ -42,6 +43,8 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.FKSearchUIDefinition;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
@@ -86,6 +89,9 @@ public class OBViewFieldHandler {
   private List<String> storedInSessionProperties = new ArrayList<String>();
 
   private List<Field> ignoredFields = new ArrayList<Field>();
+
+  private Optional<GCSystem> systemGridConfig;
+  private Map<String, Optional<GCTab>> tabsGridConfig;
 
   public Tab getTab() {
     return tab;
@@ -230,19 +236,19 @@ public class OBViewFieldHandler {
     }
     List<OBViewFieldDefinition> auditFields = new ArrayList<OBViewFieldDefinition>();
     if (!hasCreatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
       auditFields.add(audit);
     }
     if (!hasCreatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement);
       auditFields.add(audit);
     }
     if (!hasUpdatedField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
       auditFields.add(audit);
     }
     if (!hasUpdatedByField) {
-      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement, tab);
+      OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement);
       auditFields.add(audit);
     }
 
@@ -642,8 +648,6 @@ public class OBViewFieldHandler {
     private String refType;
     private String refEntity;
     private Element element;
-    private Tab auditTab;
-    JSONObject gridConfiguration;
 
     public String getOnChangeFunction() {
       return null;
@@ -679,14 +683,9 @@ public class OBViewFieldHandler {
     }
 
     public OBViewFieldAudit(String type, Element element) {
-      this(type, element, null);
-    }
-
-    public OBViewFieldAudit(String type, Element element, Tab tab) {
       // force reload of element as if it was previously loaded but its children were not touched,
       // lazy initialization fails
       this.element = OBDal.getInstance().get(Element.class, element.getId());
-      this.auditTab = tab;
       name = type;
       if (type.endsWith("By")) {
         // User search
@@ -700,28 +699,25 @@ public class OBViewFieldHandler {
     }
 
     public String getGridFieldProperties() {
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       if (SEARCH_REFERENCE.equals(refType)) {
         result.append(", fkField: true");
       }
-      if (this.gridConfiguration != null) {
-        Boolean canSort = null;
-        Boolean canFilter = null;
+
+      if (tab != null) {
+        JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(systemGridConfig,
+            getTabGridConfig());
         try {
-          if (this.gridConfiguration.has("canFilter")) {
-            canFilter = (Boolean) this.gridConfiguration.get("canFilter");
+          if (gridConfiguration.has("canFilter")) {
+            boolean canFilter = gridConfiguration.getBoolean("canFilter");
+            result.append(", canFilter: ").append(canFilter);
           }
-          if (this.gridConfiguration.has("canSort")) {
-            canSort = (Boolean) this.gridConfiguration.get("canSort");
+          if (gridConfiguration.has("canSort")) {
+            boolean canSort = gridConfiguration.getBoolean("canSort");
+            result.append(", canSort: ").append(canSort);
           }
         } catch (JSONException e) {
           log.error("Error while getting the grid field properties of an audit field", e);
-        }
-        if (canSort != null) {
-          result.append(", canSort: " + canSort.toString());
-        }
-        if (canFilter != null) {
-          result.append(", canFilter: " + canFilter.toString());
         }
       }
       result.append(", showHover: true");
@@ -790,12 +786,7 @@ public class OBViewFieldHandler {
 
     @Override
     public String getFieldProperties() {
-      if (tab != null) {
-        gridConfiguration = OBViewUtil.getGridConfigurationSettings(auditTab);
-        return "";
-      } else {
-        return "";
-      }
+      return "";
     }
 
     @Override
@@ -1181,6 +1172,10 @@ public class OBViewFieldHandler {
     }
   }
 
+  private Optional<GCTab> getTabGridConfig() {
+    return tabsGridConfig.get(tab.getId());
+  }
+
   public class OBViewField implements OBViewFieldDefinition {
     private Field field;
     private Property property;
@@ -1345,7 +1340,8 @@ public class OBViewFieldHandler {
 
     public String getFieldProperties() {
       // First obtain the gridConfigurationSettings which will be used in other places
-      getUIDefinition().establishGridConfigurationSettings(field);
+      getUIDefinition().establishGridConfigurationSettings(field, systemGridConfig,
+          getTabGridConfig());
 
       if (getClientClass().length() > 0) {
         return "editorType: 'OBClientClassCanvasItem', ";
@@ -2333,6 +2329,12 @@ public class OBViewFieldHandler {
     final Entity entity = ModelProvider.getInstance().getEntityByTableId(
         getTab().getTable().getId());
     return (entity == null) ? false : entity.hasProperty("processed");
+  }
+
+  void setGCSettings(Optional<GCSystem> systemGridConfig,
+      Map<String, Optional<GCTab>> tabsGridConfig) {
+    this.systemGridConfig = systemGridConfig;
+    this.tabsGridConfig = tabsGridConfig;
   }
 
 }

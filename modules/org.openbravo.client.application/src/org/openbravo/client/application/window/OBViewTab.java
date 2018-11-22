@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -40,6 +41,8 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
+import org.openbravo.client.application.GCSystem;
+import org.openbravo.client.application.GCTab;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
@@ -61,7 +64,6 @@ import org.openbravo.model.ad.domain.ModelImplementationMapping;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.service.datasource.DataSourceComponent;
 import org.openbravo.service.datasource.DataSourceConstants;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -107,6 +109,8 @@ public class OBViewTab extends BaseTemplateComponent {
   @Inject
   @ComponentProvider.Qualifier(DataSourceConstants.DS_COMPONENT_TYPE)
   private ComponentProvider dsComponentProvider;
+  private Map<String, Optional<GCTab>> tabsGridConfig;
+  private Optional<GCSystem> systemGridConfig;
 
   public String getDataSourceJavaScript() {
     final String dsId = getDataSourceId();
@@ -195,7 +199,7 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getMapping250() {
-    return Utility.getTabURL(tab.getId(), "none", false);
+    return Utility.getTabURL(tab, "none", false);
   }
 
   public List<ButtonField> getButtonFields() {
@@ -218,6 +222,13 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     return buttonFields;
+  }
+
+  public void setGCSettings(Optional<GCSystem> systemGridConfig,
+      Map<String, Optional<GCTab>> tabsGridConfig) {
+    fieldHandler.setGCSettings(systemGridConfig, tabsGridConfig);
+    this.systemGridConfig = systemGridConfig;
+    this.tabsGridConfig = tabsGridConfig;
   }
 
   public List<ButtonField> getAllButtonFields() {
@@ -335,9 +346,6 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getViewForm() {
-    // force a load all the columns of the table
-    getTab().getTable().getADColumnList().size();
-
     final OBViewFormComponent viewFormComponent = createComponent(OBViewFormComponent.class);
     viewFormComponent.setParameters(getParameters());
     viewFormComponent.setParentProperty(getParentProperty());
@@ -346,9 +354,6 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getViewGrid() {
-    // force a load all the columns of the table
-    getTab().getTable().getADColumnList().size();
-
     // check at least one field is visible in grid view, does not stop the execution
     OBCriteria<Field> fieldCriteria = OBDal.getInstance().createCriteria(Field.class);
     fieldCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, getTab()));
@@ -364,6 +369,7 @@ public class OBViewTab extends BaseTemplateComponent {
     viewGridComponent.setViewTab(this);
     viewGridComponent.setApplyTransactionalFilter(isRootTab()
         && this.tab.getWindow().getWindowType().equals("T"));
+    viewGridComponent.setGCSettings(systemGridConfig, tabsGridConfig);
     return viewGridComponent.generate();
   }
 
@@ -464,18 +470,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public String getTabTitle() {
     if (tabTitle == null) {
-      if (OBContext.hasTranslationInstalled()) {
-        final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-        for (TabTrl tabTrl : tab.getADTabTrlList()) {
-          final String trlLanguageId = tabTrl.getLanguage().getId();
-          if (trlLanguageId.equals(userLanguageId)) {
-            tabTitle = tabTrl.getName();
-          }
-        }
-      }
-      if (tabTitle == null) {
-        tabTitle = tab.getName();
-      }
+      tabTitle = OBViewUtil.getLabel(tab, tab.getADTabTrlList(), Tab.PROPERTY_NAME);
     }
     return tabTitle;
   }
@@ -821,7 +816,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
         if (manualProcessMapping == null) {
           // Standard UI process
-          url = Utility.getTabURL(fld.getTab().getId(), "E", false);
+          url = Utility.getTabURL(fld.getTab(), "E", false);
           command = "BUTTON" + FormatUtilities.replace(column.getDBColumnName())
               + column.getProcess().getId();
         } else {
@@ -836,7 +831,7 @@ public class OBViewTab extends BaseTemplateComponent {
         String colName = column.getDBColumnName();
         if ("Posted".equalsIgnoreCase(colName) || "CreateFrom".equalsIgnoreCase(colName)) {
           command = "BUTTON" + colName;
-          url = Utility.getTabURL(fld.getTab().getId(), "E", false);
+          url = Utility.getTabURL(fld.getTab(), "E", false);
         }
       }
 
@@ -1150,4 +1145,5 @@ public class OBViewTab extends BaseTemplateComponent {
     }
 
   }
+
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.OBViewParameterHandler;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
@@ -56,9 +55,6 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
 
   @Inject
   private OBViewParameterHandler paramHandler;
-
-  @Inject
-  private ApplicationDictionaryCachedStructures adcs;
 
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);

@@ -24,12 +24,15 @@ import static org.hibernate.criterion.Restrictions.not;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
+import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.test.base.OBBaseTest;
 
 public class GridConfigurationTest extends OBBaseTest {
@@ -53,5 +56,13 @@ public class GridConfigurationTest extends OBBaseTest {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  protected static Optional<GCSystem> getSystemGridConfig() {
+    return StandardWindowComponent.getSystemGridConfig();
+  }
+
+  protected static Optional<GCTab> getTabGridConfig(Tab tab) {
+    return StandardWindowComponent.getTabsGridConfig(tab.getWindow()).get(tab.getId());
   }
 }
