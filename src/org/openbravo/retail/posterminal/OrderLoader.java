@@ -1332,7 +1332,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
             pricePrecision, RoundingMode.HALF_UP);
-        BigDecimal tempWriteoffAmt = writeoffAmt;
+        BigDecimal tempWriteoffAmt = payment.has("reversedPaymentId") ? BigDecimal.ZERO
+            : writeoffAmt;
         if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0
             && writeoffAmt.abs().compareTo(amount.abs()) == 1) {
           // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
