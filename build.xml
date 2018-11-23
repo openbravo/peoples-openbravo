@@ -245,7 +245,11 @@ export.database: exports database structure and data to xml files.
     <pathelement path="${base.config}" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
+    <fileset dir="${base.lib}/build">
+      <include name="*.jar" />
+    </fileset>
     <fileset dir="${base.lib}">
+      <exclude name="build/*" />
       <include name="**/*.jar" />
     </fileset>
     <fileset dir="${build.core.lib}">
