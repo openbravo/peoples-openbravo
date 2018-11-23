@@ -685,7 +685,7 @@ enyo.kind({
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
-    this.order.on('change:gross', function (model) {
+    this.order.on('change:isNegative', function (model) {
       if (model.get('doCancelAndReplace')) {
         // Render the payments because it's possible that the amount must be shown with another
         // sign (depends on the gross and the isNegative properties)

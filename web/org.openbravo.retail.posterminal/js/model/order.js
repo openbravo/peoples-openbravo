@@ -987,9 +987,9 @@
       } else {
         isNegative = processedPaymentsAmount > gross;
       }
-      this.set('isNegative', isNegative, {
-        silent: true
-      });
+      if (!this.has('isNegative') || this.get('isNegative') !== isNegative) {
+        this.set('isNegative', isNegative);
+      }
 
       _.each(this.get('payments').models, function (payment) {
         if (!payment.get('isPrePayment')) {
