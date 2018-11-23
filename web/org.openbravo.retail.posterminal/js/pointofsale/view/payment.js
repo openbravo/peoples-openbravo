@@ -356,9 +356,7 @@ enyo.kind({
       // If the business partner has been changed to the or from the anonymous customer, calculate the prepayment amount
       var calculateprepayments = OB.MobileApp.model.get('terminal').terminalType.calculateprepayments,
           anonymousBP = OB.MobileApp.model.get('terminal').businessPartner,
-          isClearWithProcessActive = OB.UTIL.ProcessController.getProcessesInExec().find(function (process) {
-          return process.get('searchkey') === 'clearWith';
-        });
+          isClearWithProcessActive = OB.UTIL.ProcessController.isProcessActive('clearWith');
       if (calculateprepayments && !isClearWithProcessActive && OB.MobileApp.model.get('lastPaneShown') === 'payment' && (model.get('bp').id === anonymousBP || OB.UTIL.isNullOrUndefined(model.previousAttributes().bp) || model.previousAttributes().bp.id === anonymousBP)) {
         model.getPrepaymentAmount(function () {
           me.updatePending();
