@@ -491,34 +491,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         multiorders.get('frozenPayments').add(auxP);
       });
 
-      function prepareToSendCallback(callback) {
-        return function (order) {
-          var auxReceipt = new OB.Model.Order();
-          OB.UTIL.clone(order, auxReceipt);
-
-          if (order.get('orderType') !== 2 && order.get('orderType') !== 3) {
-            var negativeLines = _.filter(order.get('lines').models, function (line) {
-              return line.get('qty') < 0;
-            }).length;
-            if (negativeLines === order.get('lines').models.length || (negativeLines > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) {
-              order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
-                applyPromotions: false,
-                saveOrder: false
-              });
-            } else {
-              order.setOrderType('', OB.DEC.Zero, {
-                applyPromotions: false,
-                saveOrder: false
-              });
-            }
-          }
-          order.set('orderDate', new Date());
-          if (callback instanceof Function) {
-            callback();
-          }
-        };
-      }
-
       function updateAmountToLayaway(order, amount) {
         var amountToLayaway = order.get('amountToLayaway');
         if (!OB.UTIL.isNullOrUndefined(amountToLayaway)) {
@@ -576,12 +548,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           } else {
             // No more payments to add, finish the process
-            order.prepareToSend(prepareToSendCallback(function () {
-              if (callback instanceof Function) {
-                // Process finished
-                callback();
-              }
-            }));
+            if (callback instanceof Function) {
+              // Process finished
+              callback();
+            }
           }
         } else {
           var amountToPay;
@@ -614,16 +584,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               paymentLine.set('amount', amountToPayForeign);
 
               addPaymentLine(paymentLine, payment, function () {
-                order.prepareToSend(prepareToSendCallback(function () {
-                  setPaymentsToReceipts(orderList, paymentList, changePayments, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
-                }));
+                setPaymentsToReceipts(orderList, paymentList, changePayments, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
               });
             }
           } else {
             // This order is already paid, go to the next order
-            order.prepareToSend(prepareToSendCallback(function () {
-              setPaymentsToReceipts(orderList, paymentList, changePayments, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
-            }));
+            setPaymentsToReceipts(orderList, paymentList, changePayments, orderListIndex + 1, paymentListIndex, considerPrepaymentAmount, callback);
           }
         }
       };
@@ -856,7 +822,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                         payment.set('paid', OB.DEC.mul(payment.get('paid'), -1));
                       });
                     }
-                    receipt.adjustPrices();
                     OB.UTIL.cashUpReport(receipt, function (cashUp) {
                       var cancelLayawayModel = new OB.Model.CancelLayaway(),
                           cancelLayawayObj;
