@@ -453,6 +453,7 @@ enyo.kind({
   },
   deleteCurrentOrder: function (inSender, inEvent) {
     var me = this;
+    inEvent.status = true;
     this.leftToolbarDisabled(inSender, inEvent);
     var receipt = this.model.get('order');
     receipt.deleteOrder(this, function () {
