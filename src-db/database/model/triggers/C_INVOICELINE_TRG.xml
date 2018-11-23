@@ -25,24 +25,12 @@
   v_UOM_ID   varchar2(32);
  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
  v_count NUMBER;
- v_C_INVOICE_ID C_Invoice.C_Invoice_ID%TYPE;
  v_Issotrx C_Invoice.Issotrx%TYPE;
     
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-
-  IF INSERTING THEN
-    v_C_INVOICE_ID:=:NEW.C_INVOICE_ID;
-  ELSE
-    v_C_INVOICE_ID:=:OLD.C_INVOICE_ID;
-  END IF;
-
-  SELECT Issotrx
-  INTO v_Issotrx
-  FROM C_INVOICE
-  WHERE C_INVOICE_ID=v_C_INVOICE_ID;
 
 IF (UPDATING) THEN
   IF NOT(COALESCE(:old.QtyInvoiced,0) <> COALESCE(:NEW.QtyInvoiced,0)
@@ -54,6 +42,12 @@ IF (UPDATING) THEN
   THEN
     RETURN;
   END IF;
+  
+  SELECT Issotrx
+  INTO v_Issotrx
+  FROM C_INVOICE
+  WHERE C_INVOICE_ID=:OLD.C_INVOICE_ID;
+  
   IF(v_Issotrx = 'N') THEN
     SELECT COUNT(1) INTO v_Count
     FROM M_MATCHINV WHERE C_INVOICELINE_ID=:OLD.C_InvoiceLine_ID;
