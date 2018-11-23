@@ -158,6 +158,10 @@ enyo.kind({
         hasPayments = false,
         isMultiOrders = this.model.isValidMultiOrderState();
 
+    if (this.disabled) {
+      return true;
+    }
+
     if (isMultiOrders) {
       this.doRemoveMultiOrders();
       return true;
