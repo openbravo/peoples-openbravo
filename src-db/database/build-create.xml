@@ -35,7 +35,11 @@ create.database: creates the database from scratch.
       <include name="**/*.jar" />
     </fileset>
     <pathelement path="${build}" />
+    <fileset dir="${base.lib}/build">
+      <include name="*.jar" />
+    </fileset>
     <fileset dir="${base.lib}">
+      <exclude name="build/*" />
       <include name="**/*.jar" />
     </fileset>
     <pathelement path="${base.config}" />

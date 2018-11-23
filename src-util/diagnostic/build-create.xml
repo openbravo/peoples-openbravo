@@ -20,7 +20,11 @@
 <project name="openbravo-diagnostics-build" basedir="." default="build">
 
   <path id="diagnostic.class.path">
+    <fileset dir="../../lib/build">
+      <include name="*.jar" />
+    </fileset>
     <fileset dir="../../lib/">
+      <exclude name="build/*" />
       <include name="**/*.jar" />
     </fileset>
   </path>

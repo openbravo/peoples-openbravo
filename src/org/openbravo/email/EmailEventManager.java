@@ -100,8 +100,13 @@ public class EmailEventManager {
             .build();
 
         if (gen.isAsynchronous()) {
-          Thread thread = new Thread(() -> sendEmailOrCatchError(mailConfig, email));
-          thread.start();
+          new Thread(() -> {
+            try {
+              EmailManager.sendEmail(mailConfig, email);
+            } catch (Exception e) {
+              log.error("Failed to send email for event {} with generator {}.", event, gen, e);
+            }
+          }).start();
         } else {
           EmailManager.sendEmail(mailConfig, email);
         }
@@ -116,25 +121,15 @@ public class EmailEventManager {
       }
       return sent;
     } catch (Exception e) {
-      log.error(e.getMessage(), e);
+      log.error("Failed to send email for event {}.", event, e);
       throw new EmailEventException(e);
-    }
-  }
-
-  private void sendEmailOrCatchError(EmailServerConfiguration config, EmailInfo email) {
-    try {
-      EmailManager.sendEmail(config, email);
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
     }
   }
 
   private List<EmailEventContentGenerator> getValidEmailGenerators(String event, Object data) {
     return StreamSupport
         .stream(Spliterators.spliteratorUnknownSize(emailGenerators.iterator(), 0), false)
-        // find valid events
         .filter(gen -> gen.isValidEvent(event, data))
-        // sort them by priority
         .sorted(Comparator.comparing(EmailEventContentGenerator::getPriority))
         .collect(Collectors.toList());
   }
