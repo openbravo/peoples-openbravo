@@ -306,7 +306,7 @@
         args.template = me.templatecanceledreceipt;
       } else if (receipt.get('cancelLayaway')) {
         args.template = me.templatecanceledlayaway;
-      } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
+      } else if ((receipt.get('generateInvoice') && !receipt.get('forceReceiptTemplate')) && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1 || hasNegativeLines) {
           args.template = me.templatereturninvoice;
         } else if (receipt.get('isQuotation')) {
