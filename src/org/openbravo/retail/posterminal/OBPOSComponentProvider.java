@@ -131,6 +131,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/cashUpReportUtils",
         "utils/cashManagementUtils",
         "utils/ticketCloseUtils",
+        "utils/prepaymentUtils",
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",
@@ -207,8 +208,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/servicepriceruleversion",
 
         "model/obpos-supervisor-model",
-
-        "model/prepayment-algorithm",
 
         // Point of sale
         "pointofsale/model/pointofsale-print",
