@@ -7535,7 +7535,10 @@
       total = OB.DEC.abs(this.getTotal());
       precision = this.getPrecision(payment);
       order = this;
-      this.unset('prepaymentChangeMode');
+      if (this.get('prepaymentChangeMode')) {
+        this.unset('prepaymentChangeMode');
+        this.adjustPayment();
+      }
       OB.UTIL.PrepaymentUtils.managePrepaymentChange(this, payment, payments, function () {
         OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
           paymentToAdd: payment,
@@ -7622,7 +7625,10 @@
           return;
         }
       });
-      this.unset('prepaymentChangeMode');
+      if (this.get('prepaymentChangeMode')) {
+        this.unset('prepaymentChangeMode');
+        this.adjustPayment();
+      }
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePaymentMultiOrder', {
         paymentToRem: payment,
         payments: payments,
