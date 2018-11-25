@@ -4750,7 +4750,7 @@
     },
     adjustPayment: function () {
       var me = this,
-          i, max, p, sumCash, pcash, precision, multiCurrencyDifference, payments = this.get('payments'),
+          i, max, p, sumCash, setOrigAmount, pcash, precision, multiCurrencyDifference, isNegative, payments = this.get('payments'),
           total = this.get('prepaymentChangeMode') ? this.get('obposPrepaymentamt') : this.getTotal(),
           noCash = OB.DEC.Zero,
           defaultCash = OB.DEC.Zero,
@@ -4760,12 +4760,33 @@
           processedPaymentsAmount = OB.DEC.Zero,
           reversedPaymentsAmount = OB.DEC.Zero,
           notModifiableAmount = OB.DEC.Zero,
-          isNegative = this.isNegative(),
           loadedFromBackend = this.get('isLayaway') || this.get('isPaid');
 
+      setOrigAmount = function (payment) {
+        precision = me.getPrecision(payment);
+        if (payment.get('rate') && payment.get('rate') !== '1') {
+          payment.set('origAmount', OB.DEC.div(payment.get('amount'), payment.get('mulrate')));
+          //Here we are trying to know if the current payment is making the pending to pay 0.
+          //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
+          //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
+          //and finally we transform this difference to the foreign amount
+          //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
+          //in the default currency is satisfied
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(payment), OB.DEC.abs(payment.get('amount'), precision), precision)) === OB.DEC.Zero) {
+            multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(payment);
+            if (OB.DEC.abs(payment.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
+              payment.set('origAmount', payment.get('changePayment') ? OB.DEC.mul(multiCurrencyDifference, -1) : multiCurrencyDifference);
+            }
+          }
+        } else {
+          payment.set('origAmount', payment.get('amount'));
+        }
+        payment.set('paid', payment.get('origAmount'));
+      };
+
       _.each(payments.models, function (payment) {
-        if (payment.get('isPrepayment')) {
-          precision = me.getPrecision(payment);
+        if (payment.get('isPrePayment')) {
+          setOrigAmount(payment);
           processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, payment.get('origAmount'), precision);
         }
       })
@@ -4814,25 +4835,7 @@
         if (p.get('isPrePayment')) {
           continue;
         }
-        precision = this.getPrecision(p);
-        if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
-          //Here we are trying to know if the current payment is making the pending to pay 0.
-          //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
-          //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
-          //and finally we transform this difference to the foreign amount
-          //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
-          //in the default currency is satisfied
-          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount'), precision), precision)) === OB.DEC.Zero) {
-            multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
-            if (OB.DEC.abs(p.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
-              p.set('origAmount', p.get('changePayment') ? OB.DEC.mul(multiCurrencyDifference, -1) : multiCurrencyDifference);
-            }
-          }
-        } else {
-          p.set('origAmount', p.get('amount'));
-        }
-        p.set('paid', p.get('origAmount'));
+        setOrigAmount(p);
         // When doing a reverse payment in a negative ticket, the payments introduced to pay again the same quantity
         // must be set to negative (Web POS creates payments in positive by default).
         // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
