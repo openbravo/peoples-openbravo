@@ -7656,6 +7656,9 @@
     getTotal: function () {
       return this.get('total');
     },
+    getGross: function () {
+      return this.getTotal();
+    },
     getChange: function () {
       return this.get('change');
     },
