@@ -41,7 +41,6 @@
               receipt: receipt,
               deliveryChange: OB.DEC.sub(newPaidAmount, prepaymentAmount),
               callback: function () {
-                receipt.adjustPayment();
                 if (callback instanceof Function) {
                   callback(receipt);
                 }

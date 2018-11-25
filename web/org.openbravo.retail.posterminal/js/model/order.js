@@ -928,7 +928,28 @@
     },
 
     isNegative: function () {
-      return OB.UTIL.isNullOrUndefined(this.get('isNegative')) ? this.getPaymentStatus().isNegative : this.get('isNegative');
+      var isNegative;
+      if (OB.UTIL.isNullOrUndefined(this.get('isNegative'))) {
+        var processedPaymentsAmount = OB.DEC.Zero,
+            loadedFromBackend = this.get('isLayaway') || this.get('isPaid');
+        if (loadedFromBackend) {
+          isNegative = OB.DEC.compare(this.getGross()) === -1;
+        } else {
+          _.each(this.get('payments').models, function (payment) {
+            if (payment.get('isPrePayment')) {
+              processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, payment.get('origAmount'));
+            }
+          });
+          processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, this.getNettingPayment());
+          isNegative = processedPaymentsAmount > this.getGross();
+          this.set('isNegative', isNegative, {
+            silent: true
+          });
+        }
+      } else {
+        isNegative = this.get('isNegative');
+      }
+      return isNegative;
     },
 
     getPrepaymentAmount: function (callback) {
@@ -968,7 +989,8 @@
           loadedFromBackend = this.get('isLayaway') || this.get('isPaid'),
           processedPaymentsAmount = OB.DEC.Zero,
           paymentsAmount = OB.DEC.Zero,
-          remainingToPay, isNegative, done, pending, pendingAmt, overpayment;
+          isNegative = this.isNegative(),
+          remainingToPay, done, pending, pendingAmt, overpayment;
 
       isReturn = this.get('orderType') === 1 || (!_.find(this.get('lines').models, function (line) {
         return OB.DEC.compare(line.get('qty')) !== -1;
@@ -977,22 +999,7 @@
       _.each(this.get('payments').models, function (payment) {
         if (payment.get('isPrePayment')) {
           processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, payment.get('origAmount'));
-        }
-      });
-
-      processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, nettingPayment);
-
-      if (loadedFromBackend) {
-        isNegative = OB.DEC.compare(gross) === -1;
-      } else {
-        isNegative = processedPaymentsAmount > gross;
-      }
-      if (!this.has('isNegative') || this.get('isNegative') !== isNegative) {
-        this.set('isNegative', isNegative);
-      }
-
-      _.each(this.get('payments').models, function (payment) {
-        if (!payment.get('isPrePayment')) {
+        } else {
           if (loadedFromBackend || !isNegative || payment.get('isReversePayment')) {
             paymentsAmount = OB.DEC.add(paymentsAmount, payment.get('origAmount'));
           } else {
@@ -1003,6 +1010,8 @@
           }
         }
       });
+
+      processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, nettingPayment);
 
       remainingToPay = OB.DEC.sub(gross, OB.DEC.add(processedPaymentsAmount, paymentsAmount));
 
@@ -1261,7 +1270,6 @@
           var setQuantity = function () {
               // sets the new quantity
               line.set('qty', qty);
-              me.adjustPayment();
               };
           // sets the undo action
           if (this.get('multipleUndo')) {
@@ -1389,9 +1397,7 @@
               }
             }
           }
-          me.adjustPayment();
         }
-        me.save();
       });
     },
 
@@ -1455,7 +1461,6 @@
               me.set('hasServices', true);
             }
           }
-          me.adjustPayment();
           me.unset('preventServicesUpdate');
           me.unset('deleting');
           me.get('lines').trigger('updateRelations');
@@ -3419,7 +3424,6 @@
             });
           }
         });
-        me.adjustPayment();
         return newline;
       }
 
@@ -3473,7 +3477,6 @@
         });
       }
 
-      this.adjustPayment();
       if (line.get('promotions')) {
         if (line.get('qty') < 0) {
           var promotions = _.filter(line.get('promotions'), function (promotion) {
@@ -3483,9 +3486,7 @@
         }
       }
       this.set('skipCalculateReceipt', false);
-      this.calculateReceipt(function () {
-        me.save();
-      });
+      this.calculateReceipt();
     },
 
     checkReturnableProducts: function (selectedModels, model, callback) {
@@ -4429,7 +4430,6 @@
                     me.unset('skipCalculateReceipt');
                     me.calculateReceipt(function () {
                       me.getPrepaymentAmount(function () {
-                        me.adjustPayment();
                         me.set('isEditable', false);
                         me.unset('preventServicesUpdate');
                         OB.MobileApp.model.unset('preventOrderSave');
@@ -4749,7 +4749,8 @@
       }
     },
     adjustPayment: function () {
-      var i, max, p, sumCash, pcash, precision, multiCurrencyDifference, payments = this.get('payments'),
+      var me = this,
+          i, max, p, sumCash, pcash, precision, multiCurrencyDifference, payments = this.get('payments'),
           total = this.get('prepaymentChangeMode') ? this.get('obposPrepaymentamt') : this.getTotal(),
           noCash = OB.DEC.Zero,
           defaultCash = OB.DEC.Zero,
@@ -4761,6 +4762,26 @@
           notModifiableAmount = OB.DEC.Zero,
           isNegative = this.isNegative(),
           loadedFromBackend = this.get('isLayaway') || this.get('isPaid');
+
+      _.each(payments.models, function (payment) {
+        if (payment.get('isPrepayment')) {
+          precision = me.getPrecision(payment);
+          processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, payment.get('origAmount'), precision);
+        }
+      })
+
+      // Add the netting amount (for CL) to the processed payments amount
+      processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, this.getNettingPayment(), precision);
+
+      // Set the 'isNegative' value
+      if (loadedFromBackend) {
+        isNegative = OB.DEC.compare(this.getGross()) === -1;
+      } else {
+        isNegative = processedPaymentsAmount > this.getGross();
+      }
+      if (OB.UTIL.isNullOrUndefined(this.get('isNegative')) || this.get('isNegative') !== isNegative) {
+        this.set('isNegative', isNegative);
+      }
 
       sumCash = function () {
         if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
@@ -4790,6 +4811,9 @@
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
+        if (p.get('isPrePayment')) {
+          continue;
+        }
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
@@ -4812,29 +4836,25 @@
         // When doing a reverse payment in a negative ticket, the payments introduced to pay again the same quantity
         // must be set to negative (Web POS creates payments in positive by default).
         // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
-        if (!p.get('isPrePayment') && this.getGross() < 0 && this.get('isPaid') && !p.get('reversedPaymentId') && !p.get('signChanged')) {
+        if (isNegative && loadedFromBackend && !p.get('reversedPaymentId') && !p.get('signChanged')) {
           p.set('signChanged', true);
           p.set('amount', -p.get('amount'));
           p.set('origAmount', -p.get('origAmount'));
           p.set('paid', -p.get('paid'));
         }
-        if (p.get('isPrePayment')) {
-          processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, p.get('origAmount'));
-        } else if (p.get('isReversePayment')) {
+        if (p.get('isReversePayment')) {
           reversedPaymentsAmount = OB.DEC.add(reversedPaymentsAmount, p.get('origAmount'));
         } else {
           sumCash();
         }
       }
 
-      // Sum the total amount of the payments that cannot generate change or over payment, plus the netting amount (for CL)
-      notModifiableAmount = OB.DEC.add(OB.DEC.add(processedPaymentsAmount, reversedPaymentsAmount, precision), this.getNettingPayment(), precision);
+      // Sum the total amount of the payments that cannot generate change or over payment
+      notModifiableAmount = OB.DEC.add(processedPaymentsAmount, this.getNettingPayment(), precision);
 
       totalCash = OB.DEC.add(defaultCash, nonDefaultCash, precision);
       totalPaid = OB.DEC.add(notModifiableAmount, OB.DEC.add(noCash, totalCash, precision), precision);
 
-      // Calculation of the change....
-      //FIXME
       if (pcash) {
         var payment;
         if (isNegative) {
