@@ -4195,17 +4195,19 @@
         });
 
         // The lines must be iterated a second time after finishing the first loop, to ensure that
-        // all lines are included in the idMap map
-        me.get('lines').each(function (line) {
-          if (line.get('relatedLines')) {
-            line.get('relatedLines').forEach(function (rl) {
-              rl.orderId = me.get('id');
-              if (idMap[rl.orderlineId]) {
-                rl.orderlineId = idMap[rl.orderlineId];
-              }
-            });
-          }
-        });
+        // all lines are included in the idMap map when updating the service relations
+        if (me.get('hasServices')) {
+          me.get('lines').each(function (line) {
+            if (line.get('relatedLines')) {
+              line.get('relatedLines').forEach(function (rl) {
+                rl.orderId = me.get('id');
+                if (idMap[rl.orderlineId]) {
+                  rl.orderlineId = idMap[rl.orderlineId];
+                }
+              });
+            }
+          });
+        }
 
         me.set('replacedorder_documentNo', me.get('documentNo'));
         me.set('replacedorder', me.get('id'));
