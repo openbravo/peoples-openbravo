@@ -4772,8 +4772,8 @@
           //and finally we transform this difference to the foreign amount
           //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
           //in the default currency is satisfied
-          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(payment), OB.DEC.abs(payment.get('amount'), precision), precision)) === OB.DEC.Zero) {
-            multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(payment);
+          if (OB.DEC.compare(OB.DEC.sub(me.getDifferenceRemovingSpecificPayment(payment), OB.DEC.abs(payment.get('amount'), precision), precision)) === OB.DEC.Zero) {
+            multiCurrencyDifference = me.getDifferenceBetweenPaymentsAndTotal(payment);
             if (OB.DEC.abs(payment.get('origAmount')) !== OB.DEC.abs(multiCurrencyDifference)) {
               payment.set('origAmount', payment.get('changePayment') ? OB.DEC.mul(multiCurrencyDifference, -1) : multiCurrencyDifference);
             }
