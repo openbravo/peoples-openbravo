@@ -308,22 +308,26 @@
                 }
 
                 OB.trace('Execution Sync process.');
-                OB.MobileApp.model.runSyncProcess(function () {
-                  // in synchronized mode do the doc sequence update in the success
-                  if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-                    OB.Dal.transaction(function (tx) {
-                      OB.UTIL.calculateCurrentCash(null, tx);
-                      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
-                        syncSuccessCallback();
-                      }, tx);
-                    });
-                  } else {
-                    serverMessageForQuotation(frozenReceipt);
-                  }
-                  OB.debug("Ticket closed: runSyncProcess executed");
-                }, function () {
-                  syncErrorCallback();
-                });
+                if (eventParams && !eventParams.ignoreSyncProcess) {
+                  OB.MobileApp.model.runSyncProcess(function () {
+                    // in synchronized mode do the doc sequence update in the success
+                    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                      OB.Dal.transaction(function (tx) {
+                        OB.UTIL.calculateCurrentCash(null, tx);
+                        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
+                          syncSuccessCallback();
+                        }, tx);
+                      });
+                    } else {
+                      serverMessageForQuotation(frozenReceipt);
+                    }
+                    OB.debug("Ticket closed: runSyncProcess executed");
+                  }, function () {
+                    syncErrorCallback();
+                  });
+                } else {
+                  serverMessageForQuotation(frozenReceipt);
+                }
                 };
 
             var executePreSyncReceipt = function (tx) {
