@@ -4789,7 +4789,7 @@
           setOrigAmount(payment);
           processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, payment.get('origAmount'), precision);
         }
-      })
+      });
 
       // Add the netting amount (for CL) to the processed payments amount
       processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, this.getNettingPayment(), precision);
