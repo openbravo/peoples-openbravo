@@ -4853,7 +4853,7 @@
       }
 
       // Sum the total amount of the payments that cannot generate change or over payment
-      notModifiableAmount = OB.DEC.add(processedPaymentsAmount, this.getNettingPayment(), precision);
+      notModifiableAmount = OB.DEC.add(processedPaymentsAmount, reversedPaymentsAmount, precision);
 
       totalCash = OB.DEC.add(defaultCash, nonDefaultCash, precision);
       totalPaid = OB.DEC.add(notModifiableAmount, OB.DEC.add(noCash, totalCash, precision), precision);
