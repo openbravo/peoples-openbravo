@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.test.dal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -37,6 +38,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
@@ -63,6 +66,26 @@ public class OBContextTest extends OBBaseTest {
   public void testLanguageInContext() {
     OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, "en_US");
     assertTrue(OBContext.getOBContext().getLanguage().getId().equals("192"));
+  }
+
+  /**
+   * Tests that inactive readable organizations are included in the list of readable organization by
+   * the role.
+   */
+  @Test
+  public void testReadableDeactivatedOrg() {
+    try {
+      Organization deactivatedOrg = OBDal.getInstance().get(Organization.class, TEST_US_ORG_ID);
+      deactivatedOrg.setActive(false);
+      OBDal.getInstance().flush();
+
+      OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, "en_US");
+      assertThat(Arrays.asList(OBContext.getOBContext().getReadableOrganizations()),
+          hasItem(TEST_US_ORG_ID));
+    } finally {
+      // Do not persist change in organization active flag
+      OBDal.getInstance().rollbackAndClose();
+    }
   }
 
   /**
