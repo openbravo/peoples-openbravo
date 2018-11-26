@@ -291,7 +291,7 @@ enyo.kind({
       var discountAmount = _.reduce(line.promotions, function (memo, promo) {
         return memo + promo.amt;
       }, 0),
-          currentLinePrice = OB.DEC.sub(line.gross, OB.DEC.div(discountAmount, line.qty));
+          currentLinePrice = OB.DEC.div(OB.DEC.sub(line.gross, discountAmount), line.qty);
       totalAmountSelected = OB.DEC.add(totalAmountSelected, OB.DEC.sub(line.gross, discountAmount));
       if (currentLinePrice < minimumSelected) {
         minimumSelected = currentLinePrice;

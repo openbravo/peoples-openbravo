@@ -1164,3 +1164,42 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   width:250px; 
   padding-left: 20px;
 }
+
+.modal-invoices-list-invoices-line {
+  border-bottom: 1px solid #cccccc;
+  text-align: left; 
+  padding-left: 70px; 
+  height: 58px;
+}
+
+/*Modal print invoices footer*/
+
+.modalInvoices__footer {
+  display: flex;
+  border-top: 1px solid #cccccc;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.modalInvoices__footer--4 > .modalInvoices__footer--button {
+   width: 126px;
+}
+
+.modalInvoices__footer--5 > .modalInvoices__footer--button {
+   width: 112px;
+}
+
+.modalInvoices__footer--6 > .modalInvoices__footer--button {
+   width: 98px;
+}
+
+.modalInvoices__footer--button {
+   width: 140px;
+   text-overflow: ellipsis;
+   overflow: hidden;
+   white-space: nowrap;
+}
+
+.modalInvoices__footer--buttoncancel {
+}

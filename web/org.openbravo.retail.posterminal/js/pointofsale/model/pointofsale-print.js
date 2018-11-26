@@ -277,7 +277,9 @@
 
       var hasNegativeLines = _.filter(receipt.get('lines').models, function (line) {
         return line.get('qty') < 0;
-      }).length === receipt.get('lines').size() ? true : false;
+      }).length;
+
+      hasNegativeLines = (hasNegativeLines === receipt.get('lines').size() || (hasNegativeLines > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) ? true : false;
 
       var linesToRemove = [];
       receipt.get('lines').forEach(function (line) {
@@ -304,7 +306,7 @@
         args.template = me.templatecanceledreceipt;
       } else if (receipt.get('cancelLayaway')) {
         args.template = me.templatecanceledlayaway;
-      } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
+      } else if ((receipt.get('generateInvoice') && !receipt.get('forceReceiptTemplate')) && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1 || hasNegativeLines) {
           args.template = me.templatereturninvoice;
         } else if (receipt.get('isQuotation')) {

@@ -14,7 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -34,7 +35,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 
 public class AttributesUtils {
 
-  private static final Logger log = Logger.getLogger(AttributesUtils.class);
+  private static final Logger log = LogManager.getLogger();
 
   public static AttributeSetInstance fetchAttributeSetValue(String attributeValue,
       String productId, String posTerminalOrganizationId) {

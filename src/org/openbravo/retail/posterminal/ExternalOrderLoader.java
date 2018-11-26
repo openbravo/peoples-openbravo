@@ -28,7 +28,8 @@ import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -81,7 +82,7 @@ public class ExternalOrderLoader extends OrderLoader {
 
   public static final String APP_NAME = "External";
 
-  private static final Logger log = Logger.getLogger(ExternalOrderLoader.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
   private static ThreadLocal<Throwable> exception = new ThreadLocal<Throwable>();

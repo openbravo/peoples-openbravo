@@ -13,7 +13,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.ConfigParameters;
@@ -34,7 +35,7 @@ import org.openbravo.service.db.DalBaseProcess;
 
 public class GenerateProductImages extends DalBaseProcess {
 
-  private static final Logger log4j = Logger.getLogger(GenerateProductImages.class);
+  private static final Logger log4j = LogManager.getLogger();
   private boolean generateAllImages;
 
   public void doExecute(ProcessBundle bundle) throws Exception {

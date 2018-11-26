@@ -18,7 +18,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -34,7 +35,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQueryValidated;
 public class BPartnerFilter extends ProcessHQLQueryValidated {
 
   public static final String bPartnerFilterPropertyExtension = "OBPOS_BPartnerFilterExtension";
-  public static final Logger log = Logger.getLogger(BPartnerFilter.class);
+  public static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any

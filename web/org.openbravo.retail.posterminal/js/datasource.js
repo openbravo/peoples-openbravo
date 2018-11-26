@@ -365,6 +365,50 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback, devi
   }
 };
 
+OB.DS.HWServer.prototype.status = function (callback) {
+  this._status(callback);
+};
+
+OB.DS.HWServer.prototype._status = function (callback) {
+  if (this.activeurl) {
+    var me = this;
+    var ajaxRequest = new enyo.Ajax({
+      url: me.activeurl + '/status.json',
+      cacheBust: false,
+      method: 'GET',
+      handleAs: 'json',
+      timeout: 5000,
+      contentType: 'application/json;charset=utf-8',
+      success: function (inSender, inResponse) {
+        if (callback) {
+          callback(inResponse);
+        }
+      },
+      fail: function (inSender, inResponse) {
+        // prevent more than one entry.
+        if (this.failed) {
+          return;
+        }
+        this.failed = true;
+        if (callback) {
+          callback({
+            exception: {
+              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+            }
+          });
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+        }
+      }
+    });
+    ajaxRequest.go().response('success').error('fail');
+  } else {
+    if (callback) {
+      callback();
+    }
+  }
+};
+
 OB.DS.HWServer.prototype._template = function (templatedata, params) {
   return params ? _.template(templatedata, params) : templatedata;
 };

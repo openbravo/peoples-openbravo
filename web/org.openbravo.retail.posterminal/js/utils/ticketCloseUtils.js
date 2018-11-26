@@ -70,7 +70,7 @@
         var negativeLines = _.filter(receipt.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
-        if (negativeLines === receipt.get('lines').models.length) {
+        if (negativeLines === receipt.get('lines').models.length || (negativeLines > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) {
           receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
             applyPromotions: false,
             saveOrder: false

@@ -807,7 +807,7 @@ enyo.kind({
         var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
-        if (negativeLinesLength > 0 && negativeLinesLength === this.order.get('lines').models.length) {
+        if ((negativeLinesLength > 0 && negativeLinesLength === this.order.get('lines').models.length) || (negativeLinesLength > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) {
           //isReturn
           this.order.setDocumentNo(true, false);
         } else {

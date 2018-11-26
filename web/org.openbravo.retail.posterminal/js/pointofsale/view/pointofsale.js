@@ -178,6 +178,9 @@ enyo.kind({
       kind: 'OB.UI.ModalMultiOrders',
       name: 'modalMultiOrders'
     }, {
+      kind: 'OB.UI.ModalInvoices',
+      name: 'modalInvoices'
+    }, {
       kind: 'OB.UI.ModalCreateOrderFromQuotation',
       name: 'modalCreateOrderFromQuotation'
     }, {
@@ -376,7 +379,7 @@ enyo.kind({
     }]
   }],
   classModel: new Backbone.Model(),
-  printReceipt: function () {
+  printReceipt: function (inSender, inEvent) {
     if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
@@ -389,21 +392,24 @@ enyo.kind({
               return;
             }
             receipt.trigger('print', receipt, {
-              forcePrint: true
+              forcePrint: true,
+              callback: inEvent.callback
             });
           });
 
           return;
         }
         receipt.trigger('print', receipt, {
-          forcePrint: true
+          forcePrint: true,
+          callback: inEvent.callback
         });
         return;
       }
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         _.each(this.model.get('multiOrders').get('multiOrdersList').models, function (order) {
           this.model.get('multiOrders').trigger('print', order, {
-            forcePrint: true
+            forcePrint: true,
+            callback: inEvent.callback
           });
         }, this);
       }
@@ -453,6 +459,7 @@ enyo.kind({
   },
   deleteCurrentOrder: function (inSender, inEvent) {
     var me = this;
+    inEvent.status = true;
     this.leftToolbarDisabled(inSender, inEvent);
     var receipt = this.model.get('order');
     receipt.deleteOrder(this, function () {

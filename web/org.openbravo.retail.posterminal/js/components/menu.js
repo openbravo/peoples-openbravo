@@ -618,7 +618,8 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_print.receipt',
   events: {
-    onPrintReceipt: ''
+    onPrintReceipt: '',
+    onShowPopup: ''
   },
   i18nLabel: 'OBPOS_LblPrintReceipt',
   tap: function () {
@@ -627,8 +628,18 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doPrintReceipt();
+      if (this.receipt.get('isPaid') && !this.receipt.get('isQuotation')) {
+        this.doShowPopup({
+          popup: 'modalInvoices'
+        });
+      } else {
+        this.doPrintReceipt();
+      }
     }
+  },
+  init: function (model) {
+    this.receipt = model.get('order');
+    this.adjustVisibilityBasedOnPermissions();
   }
 });
 
