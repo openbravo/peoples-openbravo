@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2018 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,7 @@ package org.openbravo.service.json;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -152,14 +152,12 @@ public class DataEntityQueryService {
     }
     obq.setFilterOnActive(isFilterOnActive());
 
-    if (log.isDebugEnabled()) {
-      String params = "";
-      Map<String, Object> namedParams = queryBuilder.getNamedParameters();
-      for (String paramName : namedParams.keySet()) {
-        params += "  -" + paramName + ": " + namedParams.get(paramName) + "\n";
-      }
-      log.debug("Setting params:\n" + params);
-    }
+    log.debug("Setting params:\n{}", ()->
+      queryBuilder.getNamedParameters().entrySet().stream()
+        .map(e -> "  -" + e.getKey() + ": " + e.getValue())
+        .collect(Collectors.joining("\n"))
+    );
+
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
     return obq;
