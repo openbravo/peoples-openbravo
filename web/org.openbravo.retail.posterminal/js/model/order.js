@@ -4423,7 +4423,6 @@
                     me.set('documentNo', me.get('documentNo') + '*R*');
                     me.unset('generateInvoice');
                     me.set('nettingPayment', OB.DEC.sub(me.getPayment(), me.getGross()));
-                    me.set('payment', OB.DEC.abs(me.getNettingPayment()));
                     me.get('payments').reset();
                     me.set('forceCalculateTaxes', true);
                     me.unset('id');
