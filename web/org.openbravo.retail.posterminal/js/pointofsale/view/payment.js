@@ -1494,7 +1494,7 @@ enyo.kind({
       }
     }, this);
 
-    this.model.get('order').on('change:isNegative', function (model) {
+    this.model.get('order').on('change:isNegative change:doCancelAndReplace', function (model) {
       if (model.get('doCancelAndReplace')) {
         // Render the payments because it's possible that the amount must be shown with another
         // sign (depends on the gross and the isNegative properties)
