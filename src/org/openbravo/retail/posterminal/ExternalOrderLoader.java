@@ -1271,6 +1271,23 @@ public class ExternalOrderLoader extends OrderLoader {
     return null;
   }
 
+  public JSONObject importOrder(JSONObject messageIn) throws ServletException {
+    JSONObject transformedMns;
+    JSONObject ret = new JSONObject();
+    this.setRunInSynchronizedMode(true);
+    try {
+      transformedMns = this.transformMessage(messageIn);
+      ret = this.exec(transformedMns);
+    } catch (JSONException e) {
+      // Won't happen
+      ret.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+      ret.put("result", "-1");
+      ret.put("message", e.getMessage());
+    } finally {
+      return ret;
+    }
+  }
+
   public class SetOrderIDHook implements OrderLoaderHook {
     @Override
     public void exec(JSONObject jsonorder, Order order, ShipmentInOut shipment, Invoice invoice)
