@@ -81,7 +81,7 @@ public class SortingFilteringGridConfiguration extends GridConfigurationTest {
 
   @AfterClass
   public static void cleanUp() {
-    if (coreWasInDevelopment) {
+    if (Boolean.TRUE.equals(coreWasInDevelopment)) {
       return;
     }
     OBContext.setAdminMode(true);
