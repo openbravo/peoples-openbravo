@@ -40,7 +40,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.baseGrossUnitPrice", "unitPrice"));
         add(new HQLProperty("ordLine.grossUnitPrice", "grossUnitPrice"));
         add(new HQLProperty("ordLine.grossListPrice", "grossListPrice"));
-        add(new HQLProperty("ordLine.lineGrossAmount", "linegrossamount"));
+        add(new HQLProperty("ordLine.lineGrossAmount", "lineGrossAmount"));
         add(new HQLProperty("ordLine.lineNetAmount", "linenetamount"));
         add(new HQLProperty("ordLine.discount", "discountPercentage"));
         add(new HQLProperty("ordLine.id", "lineId"));
@@ -51,12 +51,14 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.description", "description"));
         add(new HQLProperty("ordLine.obposSerialNumber", "obposSerialNumber"));
         add(new HQLProperty("ordLine.obposEpccode", "obposEpccode"));
+        add(new HQLProperty("ordLine.deliveredQuantity", "deliveredQuantity"));
         add(new HQLProperty(
-            "(select coalesce(sum(iol.movementQuantity),0) from MaterialMgmtShipmentInOutLine iol where iol.salesOrderLine.id =ordLine.id)",
-            "deliveredQuantity"));
+            "(select coalesce(sum(iol.movementQuantity), 0) from MaterialMgmtShipmentInOutLine iol where iol.salesOrderLine.id = ordLine.id)",
+            "shippedQuantity"));
+        add(new HQLProperty("ordLine.invoicedQuantity", "invoicedQuantity"));
         // Only used for returns
         add(new HQLProperty(
-            "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =ordLine.id))",
+            "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)), 0) from OrderLine where goodsShipmentLine.salesOrderLine.id = ordLine.id))",
             "remainingQuantity"));
         add(new HQLProperty("coalesce(ordLine.product.overdueReturnDays, 999999999999)",
             "overdueReturnDays"));
@@ -64,6 +66,8 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.product.returnable", "returnable"));
         add(new HQLProperty("returnReason.id", "returnReason"));
         add(new HQLProperty("returnReason.name", "returnReasonName"));
+        add(new HQLProperty("ordLine.obposCanbedelivered", "obposCanbedelivered"));
+        add(new HQLProperty("ordLine.obposIspaid", "obposIspaid"));
         add(new HQLProperty("ordLine.goodsShipmentLine.id", "goodsShipmentLine"));
         add(new HQLProperty(
             "(select case when line.attributeSetValue is not null then (m_getjsondescription(line.attributeSetValue.id, 'Y', '"

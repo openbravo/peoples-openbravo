@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -31,16 +31,18 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
-        add(new HQLProperty("olsr.orderlineRelated.id", "orderlineId"));
-        add(new HQLProperty("olsr.orderlineRelated.product.name", "productName"));
-        add(new HQLProperty("olsr.orderlineRelated.salesOrder.documentNo", "orderDocumentNo"));
-        add(new HQLProperty("olsr.orderlineRelated.salesOrder.id", "orderId"));
-        add(new HQLProperty("olsr.orderlineRelated.orderedQuantity", "qty"));
+        add(new HQLProperty("rpl.id", "orderlineId"));
+        add(new HQLProperty("rp.name", "productName"));
+        add(new HQLProperty("rpl.salesOrder.documentNo", "orderDocumentNo"));
+        add(new HQLProperty("rpl.salesOrder.id", "orderId"));
+        add(new HQLProperty("rpl.orderedQuantity", "qty"));
+        add(new HQLProperty("rpl.baseGrossUnitPrice * rpl.orderedQuantity", "gross"));
+        add(new HQLProperty("rpl.standardPrice * rpl.orderedQuantity", "net"));
         add(new HQLProperty(
-            "olsr.orderlineRelated.baseGrossUnitPrice*olsr.orderlineRelated.orderedQuantity",
-            "gross"));
-        add(new HQLProperty(
-            "olsr.orderlineRelated.standardPrice*olsr.orderlineRelated.orderedQuantity", "net"));
+            "(CASE WHEN rsl.salesOrder.id != rpl.salesOrder.id THEN true ELSE false END)",
+            "deferred"));
+        add(new HQLProperty("rpl.obposCanbedelivered", "obposCanbedelivered"));
+        add(new HQLProperty("rpl.obposIspaid", "obposIspaid"));
       }
     };
 

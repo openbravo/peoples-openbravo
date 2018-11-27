@@ -583,19 +583,15 @@ public class ExternalOrderLoader extends OrderLoader {
     final String step = orderJson.getString("step");
     if ("create".equals(step)) {
       orderJson.put("payment", -1);
-      orderJson.put("generateInvoice", false);
-      orderJson.put("generateShipment", false);
-      orderJson.put("deliver", false);
       orderJson.put("isLayaway", false);
     } else if ("pay".equals(step)) {
       orderJson.put("payment", -1);
-      orderJson.put("generateInvoice", false);
-      orderJson.put("generateShipment", false);
-      orderJson.put("deliver", false);
       orderJson.put("isLayaway", true);
     } else if ("ship".equals(step)) {
       orderJson.put("payment", orderJson.getDouble("grossAmount"));
+      orderJson.put("generateExternalInvoice", true);
       orderJson.put("generateShipment", true);
+      orderJson.put("deliver", true);
       orderJson.put("isLayaway", true);
     } else if ("all".equals(step)) {
       copyPropertyValue(orderJson, "grossAmount", "payment");
@@ -775,6 +771,14 @@ public class ExternalOrderLoader extends OrderLoader {
         paid = paid.add(origAmount);
       }
       orderJson.put("payment", paid.doubleValue());
+      BigDecimal gross = BigDecimal.valueOf(orderJson.getDouble("gross")).abs();
+      boolean fullyPaid = BigDecimal.ZERO.compareTo(gross) != 0
+          && gross.compareTo(BigDecimal.valueOf(orderJson.getDouble("payment")).abs()) != 1;
+      if (fullyPaid) {
+        orderJson.put("completeTicket", true);
+      }
+    } else {
+      orderJson.put("completeTicket", true);
     }
   }
 

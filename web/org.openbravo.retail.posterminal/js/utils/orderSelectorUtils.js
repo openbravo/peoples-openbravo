@@ -13,7 +13,7 @@
 
   OB.UTIL.OrderSelectorUtils = {};
 
-  OB.UTIL.OrderSelectorUtils.addToListOfReceipts = function (model, orderList, context, originServer, fromSelector) {
+  OB.UTIL.OrderSelectorUtils.addToListOfReceipts = function (model, orderList, context, originServer, calledFrom) {
     if (OB.UTIL.isNullOrUndefined(this.listOfReceipts)) {
       this.listOfReceipts = [];
     }
@@ -23,20 +23,20 @@
         orderList: orderList,
         context: context,
         originServer: originServer,
-        fromSelector: fromSelector
+        calledFrom: calledFrom
       };
       this.listOfReceipts.push(receipt);
     }
   };
 
-  OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context, originServer, fromSelector) {
+  OB.UTIL.OrderSelectorUtils.checkOrderAndLoad = function (model, orderList, context, originServer, calledFrom) {
     var me = this,
-        continueAfterPaidReceipt, checkListCallback, errorCallback, orderLoaded, loadOrder, loadOrders, loadOrdersProcess, recursiveCallback, recursiveIdx, currentModel, currentOrderList, currentContext, currentOriginServer, currentFromSelector;
+        continueAfterPaidReceipt, checkListCallback, errorCallback, orderLoaded, loadOrder, loadOrders, loadOrdersProcess, recursiveCallback, recursiveIdx, currentModel, currentOrderList, currentContext, currentOriginServer, currentCalledFrom;
 
     checkListCallback = function () {
       if (me.listOfReceipts && me.listOfReceipts.length > 0) {
         var currentReceipt = me.listOfReceipts.shift();
-        loadOrdersProcess(currentReceipt.model, currentReceipt.orderList, currentReceipt.context, currentReceipt.originServer, currentReceipt.fromSelector);
+        loadOrdersProcess(currentReceipt.model, currentReceipt.orderList, currentReceipt.context, currentReceipt.originServer, currentReceipt.calledFrom);
       } else {
         me.loadingReceipt = false;
       }
@@ -165,12 +165,12 @@
       });
     };
 
-    loadOrdersProcess = function (model, orderList, context, originServer, fromSelector) {
+    loadOrdersProcess = function (model, orderList, context, originServer, calledFrom) {
       currentModel = model;
       currentOrderList = orderList;
       currentContext = context;
       currentOriginServer = originServer;
-      currentFromSelector = fromSelector;
+      currentCalledFrom = calledFrom;
       orderList.checkForDuplicateReceipts(model, function (order) {
         if (OB.MobileApp.model.get('terminal').terminalType.openrelatedreceipts && model.get('businessPartner') !== OB.MobileApp.model.get('terminal').businessPartner) {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.SearchRelatedReceipts');
@@ -218,15 +218,24 @@
         }
       }, function () {
         checkListCallback();
-      }, fromSelector);
+      }, calledFrom);
     };
 
     if (me.loadingReceipt) {
-      OB.UTIL.OrderSelectorUtils.addToListOfReceipts(model, orderList, context, originServer, fromSelector);
+      OB.UTIL.OrderSelectorUtils.addToListOfReceipts(model, orderList, context, originServer, calledFrom);
       return;
     }
     me.loadingReceipt = true;
-    loadOrdersProcess(model, orderList, context, originServer, fromSelector);
+    if (calledFrom === 'return') {
+      currentModel = model;
+      currentOrderList = orderList;
+      currentContext = context;
+      currentOriginServer = originServer;
+      currentCalledFrom = calledFrom;
+      orderLoaded([model]);
+    } else {
+      loadOrdersProcess(model, orderList, context, originServer, calledFrom);
+    }
   };
 
 }());

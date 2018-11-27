@@ -158,32 +158,56 @@ enyo.kind({
       });
     }
 
-    if (this.model.get('deliveredQuantity')) {
-      this.createComponent({
-        style: 'display: block;',
-        components: [{
-          content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('deliveredQuantity'),
-          attributes: {
-            style: 'float: left; width: 100%; clear: left;'
-          }
-        }, {
-          style: 'clear: both;'
-        }]
-      });
-    }
-
-    if (this.owner.owner.owner.owner.order.get('iscancelled') && (!this.model.get('deliveredQuantity') || this.model.get('deliveredQuantity') !== this.model.get('qty'))) {
-      this.createComponent({
-        style: 'display: block;',
-        components: [{
-          content: '-- ' + OB.I18N.getLabel('OBPOS_Cancelled'),
-          attributes: {
-            style: 'float: left; width: 100%; clear: left;'
-          }
-        }, {
-          style: 'clear: both;'
-        }]
-      });
+    if (this.owner.owner.owner.owner.order.get('iscancelled')) {
+      if (this.model.get('shippedQuantity')) {
+        this.createComponent({
+          style: 'display: block;',
+          components: [{
+            content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('shippedQuantity'),
+            attributes: {
+              style: 'float: left; width: 100%; clear: left;'
+            }
+          }, {
+            style: 'clear: both;'
+          }]
+        });
+      } else {
+        this.createComponent({
+          style: 'display: block;',
+          components: [{
+            content: '-- ' + OB.I18N.getLabel('OBPOS_Cancelled'),
+            attributes: {
+              style: 'float: left; width: 100%; clear: left;'
+            }
+          }, {
+            style: 'clear: both;'
+          }]
+        });
+      }
+    } else {
+      if (this.model.get('deliveredQuantity')) {
+        this.createComponent({
+          style: 'display: block;',
+          components: [{
+            content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('deliveredQuantity'),
+            attributes: {
+              style: 'float: left; width: 100%; clear: left;'
+            }
+          }, {
+            style: 'clear: both;'
+          }]
+        });
+      } else if (!this.model.get('obposCanbedelivered')) {
+        this.createComponent({
+          style: 'display: block;',
+          components: [{
+            content: '-- ' + OB.I18N.getLabel('OBPOS_NotDeliverLine'),
+            classes: 'orderline-canbedelivered'
+          }, {
+            style: 'clear: both;'
+          }]
+        });
+      }
     }
 
     if (this.model.get('promotions')) {
@@ -422,12 +446,14 @@ enyo.kind({
   }
 });
 
-
 enyo.kind({
   kind: 'OB.UI.SelectButton',
   name: 'OB.UI.RenderPaymentLine',
   classes: 'btnselect-orderline',
   style: 'border-bottom: 0px',
+  handlers: {
+    onRenderPaymentLine: 'renderPaymentLine'
+  },
   tap: function () {
     return this;
   },
@@ -457,9 +483,8 @@ enyo.kind({
   selected: function () {
     return this;
   },
-  initComponents: function () {
+  renderPaymentLine: function (inSender, inEvent) {
     var paymentDate;
-    this.inherited(arguments);
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
       this.$.amount.setContent(this.model.printAmount());
@@ -491,6 +516,10 @@ enyo.kind({
     } else {
       this.$.foreignAmount.setContent('');
     }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.renderPaymentLine();
   }
 });
 enyo.kind({

@@ -87,7 +87,7 @@ enyo.kind({
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
       return true;
     }
-    if (this.model.get('leftColumnViewManager').isOrder() && this.receipt.get('isPaid') && !this.receipt.get('doCancelAndReplace') && this.receipt.getPrePaymentQty() === OB.DEC.sub(this.receipt.getTotal(), this.receipt.getCredit()) && !this.receipt.isNewReversed()) {
+    if (this.model.get('leftColumnViewManager').isOrder() && this.receipt.get('isPaid') && OB.DEC.abs(this.receipt.getPrePaymentQty()) >= OB.DEC.abs(this.receipt.getTotal()) && !this.receipt.isNewReversed()) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
       return true;
     }
@@ -166,9 +166,10 @@ enyo.kind({
 
     if (OB.DEC.compare(amount) > 0) {
       var provider, receiptToPay = this.getReceiptToPay(),
-          me = this;
+          me = this,
+          paymentStatus = receiptToPay.getPaymentStatus();
 
-      if (!receiptToPay.getPaymentStatus().isNegative) {
+      if (!paymentStatus.isNegative) {
         provider = paymentMethod.paymentProvider;
       } else {
         provider = paymentMethod.refundProvider;
@@ -190,15 +191,15 @@ enyo.kind({
           }
         });
       } else {
-        // Calculate total amount to pay with selected PaymentMethod  
-        var amountToPay = _.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) ? amount : -amount;
+        // Calculate total amount to pay with selected PaymentMethod
+        var amountToPay = paymentStatus.isNegative ? -amount : amount;
         if (receiptToPay.get("payments").length > 0) {
           receiptToPay.get("payments").each(function (item) {
             if (item.get("kind") === key) {
-              if (_.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) || (!_.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) && item.get('isPrePayment'))) {
-                amountToPay += item.get("amount");
+              if (!paymentStatus.isNegative || item.get('isPrePayment')) {
+                amountToPay = OB.DEC.add(amountToPay, item.get("amount"));
               } else {
-                amountToPay -= item.get("amount");
+                amountToPay = OB.DEC.sub(amountToPay, item.get("amount"));
               }
             }
           });
@@ -515,22 +516,35 @@ enyo.kind({
       keyboard: this.keyboard
     });
 
-    this.owner.owner.addCommand('cashexact', {
-      action: function (keyboard, txt) {
+    var payDeliveryOrExact = function (keyboard, txt, payPrepayment) {
         var status = keyboard.status.indexOf('paymentMethodCategory.showitems.') === 0 && me.currentPayment ? me.currentPayment.payment.searchKey : keyboard.status;
         if (status && !allpayments[status] && !providerGroups[status]) {
           // Is not a payment, so continue with the default path...
           keyboard.execCommand(status, null);
         } else {
           me.bubble('onClearPaymentSelect');
-          var amount = me.model.getPending();
+          var amount = me.model.getPending(),
+              pendingPrepayment, setAmountIfPrepayment = function () {
+              if (payPrepayment && pendingPrepayment > 0 && pendingPrepayment < amount) {
+                amount = pendingPrepayment;
+              }
+              };
+          if (payPrepayment) {
+            var total = me.model.getTotal();
+            if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+              total = OB.DEC.add(total, me.model.get('multiOrders').get('existingPayment') ? me.model.get('multiOrders').get('existingPayment') : 0);
+            }
+            pendingPrepayment = OB.DEC.sub(OB.DEC.add(me.model.getPending(), me.model.getPrepaymentAmount()), total);
+          }
           if (providerGroups[status]) {
             // It is selected  a provider group
+            setAmountIfPrepayment();
             me.payAmountWithProviderGroup(amount, providerGroups[status]);
           } else {
             var exactpayment = allpayments[status] || exactdefault;
             if (exactpayment.providerGroup) {
               // The exact payment belongs to a provider group so call the provider group payment
+              setAmountIfPrepayment();
               me.payAmountWithProviderGroup(amount, providerGroups[exactpayment.providerGroup.id]);
             } else {
               // It is a regular payment
@@ -539,16 +553,27 @@ enyo.kind({
               if (altexactamount && altexactamount[exactpayment.payment.searchKey]) {
                 amount = altexactamount[exactpayment.payment.searchKey];
               }
+              setAmountIfPrepayment();
               if (exactpayment.rate && exactpayment.rate !== '1') {
                 amount = OB.DEC.mul(amount, exactpayment.mulrate, exactpayment.obposPosprecision);
               }
-
               if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
                 me.pay(amount, exactpayment.payment.searchKey, exactpayment.payment._identifier, exactpayment.paymentMethod, exactpayment.rate, exactpayment.mulrate, exactpayment.isocode);
               }
             }
           }
         }
+        };
+
+    this.owner.owner.addCommand('cashdelivery', {
+      action: function (keyboard, txt) {
+        payDeliveryOrExact(keyboard, txt, true);
+      }
+    });
+
+    this.owner.owner.addCommand('cashexact', {
+      action: function (keyboard, txt) {
+        payDeliveryOrExact(keyboard, txt, false);
       }
     });
   },

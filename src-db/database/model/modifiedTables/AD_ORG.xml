@@ -69,10 +69,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="EM_OBPOS_LAYAWAY_PARTPAID" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
-      </column>
       <column name="EM_OBPOS_CANC_RPT_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -93,9 +89,25 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_PREPAYMENT_ALGORITHM" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="EM_OBPOS_QUOTATION_ANONYMOUSBP" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="EM_OBPOS_PREPAYMENT_PERC" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[100]]></default>
+        <onCreateDefault><![CDATA['100']]></onCreateDefault>
+      </column>
+      <column name="EM_OBPOS_PREPAYMENT_PERC_LIMIT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[100]]></default>
+        <onCreateDefault><![CDATA['100']]></onCreateDefault>
+      </column>
+      <column name="EM_OBPOS_PREPAY_PERC_LAY_LIMIT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault><![CDATA['0']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CANCRCPTEMP">
         <reference local="EM_OBPOS_CANC_RPT_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
