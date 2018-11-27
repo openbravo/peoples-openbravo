@@ -329,7 +329,7 @@ enyo.kind({
     var selectedMultiOrders = [],
         me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
-        checkedMultiOrders = _.compact(this.parent.parent.parent.$.body.$.listMultiOrders.multiOrdersList.map(function (e) {
+        checkedMultiOrders = _.compact(this.parent.parent.parent.$.body.$.receiptsForPayOpenTicketsList.receiptList.map(function (e) {
         if (e.get('checked')) {
           return e;
         }
@@ -342,6 +342,19 @@ enyo.kind({
     }
 
     addOrdersToOrderList = _.after(checkedMultiOrders.length, function () {
+      var i = 0,
+          receipt, wrongDocNo = null;
+      for (i = 0; i < selectedMultiOrders.length; i++) {
+        receipt = selectedMultiOrders[i];
+        if (receipt.getPayment() >= receipt.getGross()) {
+          wrongDocNo = receipt.get('documentNo');
+          break;
+        }
+      }
+      if (wrongDocNo) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_PaidOrder', [wrongOrder.docNo]));
+        return;
+      }
       OB.UTIL.StockUtils.checkOrderLinesStock(selectedMultiOrders, function (hasStock) {
         if (hasStock) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
