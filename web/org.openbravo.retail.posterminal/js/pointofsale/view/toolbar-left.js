@@ -280,7 +280,6 @@ enyo.kind({
         isReceiptHasbeenpaidEqualToN: undefined,
         isToolbarEnabled: undefined,
         isDisabledRequest: undefined,
-        isCreditAndNotPartialCredit: undefined,
         isLocallyGeneratedPayments: undefined
       };
 
@@ -314,15 +313,11 @@ enyo.kind({
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
-      hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
+      hasBeenPaid = receipt.get('isPaid') && ((receipt.isNegative() && receipt.getPrePaymentQty() <= receipt.getTotal()) || (!receipt.isNegative() && receipt.getPrePaymentQty() >= receipt.getTotal()));
       requirements.isLocallyGeneratedPayments = !OB.UTIL.isNullOrUndefined(receipt.get('payments').find(function (payment) {
         return !payment.get('isPrePayment');
       }));
       if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || (!requirements.isReceiptLinesLengthGreaterThanZero && !requirements.isLocallyGeneratedPayments) || !requirements.isReceiptHasbeenpaidEqualToN) {
-        return false;
-      }
-      requirements.isCreditAndNotPartialCredit = receipt.get('paidOnCredit') && !receipt.get('paidPartiallyOnCredit');
-      if (requirements.isCreditAndNotPartialCredit) {
         return false;
       }
       // All requirements are met
@@ -358,7 +353,7 @@ enyo.kind({
     // view of which requirements haven't been met if the button is disabled.
     // The enabling/disabling flow MUST go through this point to ensure that all requests are logged
     var msg = enyo.format("Pay button is %s", (newIsDisabledState ? 'disabled' : 'enabled'));
-    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN && !requirements.isCreditAndNotPartialCredit) {
+    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN) {
       msg += " and should be enabled";
       OB.error(msg, requirements);
       OB.UTIL.Debug.execute(function () {
@@ -429,7 +424,7 @@ enyo.kind({
       }
       return;
     }
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid')) {
+    if (!this.model.get('order').get('isEditable') && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid') && this.model.get('order').get('orderType') !== 3) {
       return true;
     }
     receipt.trigger('updatePending');
@@ -471,7 +466,7 @@ enyo.kind({
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_quotationsOrdersWithAnonimousCust'));
         return;
       }
-      if (!OB.MobileApp.model.get('isMultiOrderState') && receipt.getPaymentStatus().isNegative) {
+      if (!OB.MobileApp.model.get('isMultiOrderState') && receipt.isNegative()) {
         var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
           return !payment.paymentMethod.refundable;
         }).length === paymentModels.length;
@@ -489,8 +484,10 @@ enyo.kind({
       OB.UTIL.StockUtils.checkOrderLinesStock([receipt], function (hasStock) {
         if (hasStock) {
           me.model.on('showPaymentTab', function (event) {
-            me.model.off('showPaymentTab');
-            me.showPaymentTab();
+            me.model.get('order').getPrepaymentAmount(function () {
+              me.model.off('showPaymentTab');
+              me.showPaymentTab();
+            });
           });
 
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
@@ -568,9 +565,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    this.model.get('order').on('change:isEditable change:isLayaway', function (newValue) {
+    this.model.get('order').on('change:isEditable change:isLayaway change:orderType', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false && !newValue.get('isLayaway') && !newValue.get('isPaid')) {
+        if (!newValue.get('isEditable') && !newValue.get('isLayaway') && !newValue.get('isPaid') && newValue.get('orderType') !== 3) {
           this.tabPanel = null;
           this.disabledChanged(true);
           return;

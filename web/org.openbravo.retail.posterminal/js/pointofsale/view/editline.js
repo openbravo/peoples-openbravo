@@ -193,6 +193,27 @@ enyo.kind({
         this.$.propertyValue.setContent(OB.MobileApp.model.get('warehouses')[0].warehousename);
       }
     }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 70,
+    name: 'deliverableLine',
+    I18NLabel: 'OBPOS_LineDeliverable',
+    render: function (line) {
+      if (this.owner.owner.hideDeliveryLabel) {
+        this.hide();
+      } else {
+        this.show();
+        if (this.owner.owner.hideDeliveryButton) {
+          this.$.propertyValue.setContent(OB.I18N.getLabel('OBPOS_lblMultiSelectValues'));
+        } else if (line && line.get('obposCanbedelivered')) {
+          this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
+          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
+        } else {
+          this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblNo'));
+          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
+        }
+      }
+    }
   }],
   actionButtons: [{
     kind: 'OB.UI.SmallButton',
@@ -446,6 +467,41 @@ enyo.kind({
         }
       });
     }
+  }, {
+    kind: 'OB.UI.SmallButton',
+    name: 'canDeliver',
+    classes: 'btnlink-orange',
+    content: '-',
+    tap: function (inSender, inEvent) {
+      var me = this,
+          deliveredLines = _.filter(this.owner.owner.selectedModels, function (line) {
+          return line.get('deliveredQuantity');
+        });
+      if (!deliveredLines.length) {
+        OB.UTIL.Approval.requestApproval(
+        me.owner.owner.model, 'OBPOS_approval.canBeDelivered', function (approved, supervisor, approvalType) {
+          if (approved) {
+            _.each(me.owner.owner.selectedModels, function (line) {
+              if (line.get('obposCanbedelivered')) {
+                line.set('obposCanbedelivered', false);
+              } else {
+                line.set('obposCanbedelivered', true);
+              }
+            });
+            me.owner.owner.render();
+            me.owner.owner.model.get('order').getPrepaymentAmount(function () {
+              me.owner.owner.model.get('order').save();
+            });
+          }
+        });
+      } else {
+        var linesNames = [OB.I18N.getLabel('OBPOS_NotAllowUndeliverable')];
+        _.each(deliveredLines, function (line) {
+          linesNames.push(OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + line.get('product').get('_identifier'));
+        });
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), linesNames);
+      }
+    }
   }],
   published: {
     receipt: null
@@ -501,6 +557,41 @@ enyo.kind({
       if (this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
         this.$.actionButtonsContainer.$.returnLine.hide();
       }
+    }
+    if (this.selectedModels && this.selectedModels.length > 0 && (this.selectedModels[0] instanceof OB.Model.OrderLine)) {
+      var selectedServices = _.filter(this.selectedModels, function (line) {
+        return line.get('product').get('productType') === 'S';
+      });
+      this.hideDeliveryButton = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || selectedServices.length ? true : false;
+      this.hideDeliveryLabel = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || selectedServices.length === this.selectedModels.length ? true : false;
+      if (this.selectedModels.length > 1) {
+        var selectedLinesToDeliver = _.filter(this.selectedModels, function (line) {
+          return line.get('obposCanbedelivered');
+        });
+        this.hideDeliveryButton = this.hideDeliveryButton ? true : selectedLinesToDeliver.length && selectedLinesToDeliver.length < this.selectedModels.length;
+        if (this.hideDeliveryButton) {
+          this.$.actionButtonsContainer.$.canDeliver.hide();
+        } else {
+          this.$.actionButtonsContainer.$.canDeliver.show();
+          if (!selectedLinesToDeliver.length) {
+            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
+          } else {
+            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
+          }
+        }
+      } else if (this.selectedModels.length === 1) {
+        if (this.hideDeliveryButton) {
+          this.$.actionButtonsContainer.$.canDeliver.hide();
+        } else {
+          this.$.actionButtonsContainer.$.canDeliver.show();
+          if (this.selectedModels[0].get('obposCanbedelivered')) {
+            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
+          } else {
+            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
+          }
+        }
+      }
+      this.render();
     }
     if (line) {
       if (line && !this.isLineInSelection(line)) {
@@ -699,6 +790,7 @@ enyo.kind({
     }
     this.$.linePropertiesContainer.$.discountedAmountLine.multiSelection = inEvent.models.length > 1;
     this.selectedListener(this.selectedModels.length > 0 ? this.selectedModels[0] : undefined);
+
     this.render();
   },
   isLineInSelection: function (line) {
@@ -971,6 +1063,7 @@ enyo.kind({
       }
       this.$.linePropertiesContainer.$.discountedAmountLine.render(orderLine);
       this.$.linePropertiesContainer.$.warehouseLine.render(orderLine);
+      this.$.linePropertiesContainer.$.deliverableLine.render(orderLine);
       orderLine.get('product').set('standardPrice', priceTotal);
       orderLine.set('price', priceTotal);
       if (!orderLine.get('priceIncludesTax')) {

@@ -55,7 +55,7 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
 
   private static List<String> POSTTYPEOFDATA = Arrays.asList("Order", "BusinessPartner",
       "BusinessPartnerLocation", "OBPOS_App_Cashup", "FIN_Finacc_Transaction",
-      "OBPOS_RejectQuotation", "OBPOS_VoidLayaway",
+      "OBPOS_RejectQuotation", "OBPOS_VoidLayaway", "OBPOS_Invoice",
       SynchronizedServerProcessCaller.SYNCHRONIZED_DATA_TYPE);
 
   @Override

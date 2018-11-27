@@ -375,59 +375,6 @@ enyo.kind({
   showing: false,
   content: '',
 
-  changeOrderTypeDocumentNo: function (model) {
-    if (model.get('orderType') === 1) {
-      this.addStyles('width: 50%; color: #f8941d;');
-      if (model.get('isPaid') !== true) {
-        this.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
-        this.show();
-      }
-    } else if (model.get('orderType') === 2 && !model.get('replacedorder')) {
-      this.addStyles('width: 60%; color: lightblue;');
-      this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
-      this.show();
-      //We have to ensure that there is not another handler showing this div
-    } else if (model.get('orderType') === 2 && model.get('replacedorder')) {
-      this.addStyles('width: 90%; color: #5353C5; line-height:30px');
-      this.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
-      this.show();
-      //We have to ensure that there is not another handler showing this div
-    } else if (model.get('orderType') === 3) {
-      this.addStyles('width: 60%; color: lightblue;');
-      if (model.get('cancelLayaway')) {
-        this.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
-      } else {
-        this.setContent(OB.I18N.getLabel('OBPOS_VoidLayaway'));
-      }
-      this.show();
-      //We have to ensure that there is not another handler showing this div
-    } else if (model.get('isLayaway')) {
-      this.addStyles('width: 50%; color: lightblue;');
-      this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-      this.show();
-      //We have to ensure that there is not another handler showing this div
-    } else if (this.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.content === OB.I18N.getLabel('OBPOS_VoidLayaway') || this.content === OB.I18N.getLabel('OBPOS_CancelLayaway') || (this.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
-      this.hide();
-    }
-  },
-
-  changeIsQuotation: function (model) {
-    if (model.get('isQuotation')) {
-      this.addStyles('width: 100%; color: #f8941d;');
-      if (model.get('hasbeenpaid') === 'Y') {
-        this.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
-      } else {
-        this.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
-      }
-      this.show();
-    } else {
-      // We have to ensure that there is not another handler showing this div
-      if (this.content === OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation') || this.content === OB.I18N.getLabel('OBPOS_QuotationDraft')) {
-        this.hide();
-      }
-    }
-  },
-
   changeHasbeenpaid: function (model) {
     if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !model.get('obposIsDeleted') && this.content && (this.content === OB.I18N.getLabel('OBPOS_QuotationNew') || this.content === OB.I18N.getLabel('OBPOS_QuotationDraft'))) {
       this.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
@@ -436,54 +383,77 @@ enyo.kind({
     }
   },
 
-  changeIsPaidPaidOnCreditIsQuotationDocumentNoPaidPartiallyOnCredit: function (model) {
-    if (model.get('isPaid') === true && !model.get('isQuotation')) {
-      this.addStyles('width: 50%; color: #f8941d;');
-      if (model.get('iscancelled')) {
-        this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
-      } else if (model.get('paidOnCredit')) {
-        if (model.get('paidPartiallyOnCredit')) {
-          this.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]));
-        } else {
-          this.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
-        }
-      } else if (model.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
-        this.setContent(OB.I18N.getLabel('OBPOS_paidReturn'));
+  setQuotationLabel: function (model) {
+    this.addStyles('width: 100%; color: #f8941d;');
+    if (model.get('hasbeenpaid') === 'Y') {
+      this.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
+    } else {
+      this.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
+    }
+    this.show();
+  },
+
+  setPaidLabel: function (model) {
+    this.addStyles('width: 50%; color: #f8941d;');
+    if (model.get('iscancelled')) {
+      this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+    } else if (model.get('paidOnCredit')) {
+      if (model.get('paidPartiallyOnCredit')) {
+        this.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]));
       } else {
-        this.setContent(OB.I18N.getLabel('OBPOS_paid'));
+        this.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
       }
-      this.show();
-      //We have to ensure that there is not another handler showing this div
-    } else if (this.content === OB.I18N.getLabel('OBPOS_paid') || this.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]) || (this.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder')) || this.content === OB.I18N.getLabel('OBPOS_Cancelled')) {
-      this.hide();
+    } else if (model.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
+      this.setContent(OB.I18N.getLabel('OBPOS_paidReturn'));
+    } else {
+      this.setContent(OB.I18N.getLabel('OBPOS_paid'));
     }
+    this.show();
   },
 
-  changeIsLayaway: function (model) {
-    if (model.get('isLayaway') === true) {
-      this.addStyles('width: 50%; color: lightblue;');
+  setLayawayLabel: function (model) {
+    this.addStyles('width: 50%; color: lightblue;');
+    if (model.get('iscancelled')) {
+      this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+    } else {
       this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-      this.show();
-      //We have to ensure that there is not another handler showing this div
-    } else if (this.content === OB.I18N.getLabel('OBPOS_LblLayaway')) {
-      this.hide();
     }
+    this.show();
   },
 
-  changeReplacedorder: function (model) {
-    if (model.get('replacedorder')) {
+  setCancelAndReplaceLabel: function (model) {
+    if (model.get('orderType') === 2) {
+      this.addStyles('width: 90%; color: lightblue; line-height:30px');
+      this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway') + ': ' + OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
+    } else {
       this.addStyles('width: 90%; color: #5353C5; line-height:30px');
       this.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
-      this.show();
-    } else if (model.get('orderType') === 2) {
-      this.addStyles('width: 60%; color: lightblue;');
-      this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
-      this.show();
-    } else if (this.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1) {
-      this.hide();
     }
-  }
+    this.show();
+  },
 
+  setCancelLayawayLabel: function (model) {
+    if (model.get('fromLayaway')) {
+      this.addStyles('width: 60%; color: lightblue;');
+      this.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
+    } else {
+      this.addStyles('width: 60%; color: #5353C5;');
+      this.setContent(OB.I18N.getLabel('OBPOS_CancelOrder'));
+    }
+    this.show();
+  },
+
+  setToBeReturnedLabel: function (model) {
+    this.addStyles('width: 50%; color: #f8941d;');
+    this.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
+    this.show();
+  },
+
+  setToBeLaidawayLabel: function (model) {
+    this.addStyles('width: 60%; color: lightblue;');
+    this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
+    this.show();
+  }
 });
 
 enyo.kind({
@@ -492,7 +462,8 @@ enyo.kind({
     order: null
   },
   events: {
-    onReceiptLineSelected: ''
+    onReceiptLineSelected: '',
+    onRenderPaymentLine: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
@@ -714,25 +685,19 @@ enyo.kind({
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
-    this.order.on('change:iscancelled', function () {
-      this.order.get('lines').trigger('reset');
-    }, this);
-    this.order.on('change:cancelLayaway change:voidLayaway', function (model) {
-      if (model.get('cancelLayaway') || model.get('voidLayaway')) {
-        this.$.listPaymentLines.hide();
-        this.$.paymentBreakdown.hide();
+    this.order.on('change:isNegative', function (model) {
+      if (model.get('doCancelAndReplace')) {
+        // Render the payments because it's possible that the amount must be shown with another
+        // sign (depends on the gross and the isNegative properties)
+        this.$.listPaymentLines.waterfall('onRenderPaymentLine');
       }
     }, this);
     this.order.on('change:gross change:net', function (model) {
-      if (model.get('orderType') !== 3) {
-        this.$.totalReceiptLine.renderTotal(model.getTotal());
-        this.$.totalTaxLine.renderTax(OB.DEC.sub(model.getTotal(), model.getNet()));
-      }
+      this.$.totalReceiptLine.renderTotal(model.getTotal());
+      this.$.totalTaxLine.renderTax(OB.DEC.sub(model.getTotal(), model.getNet()));
     }, this);
     this.order.on('paintTaxes', function () {
-      if (this.order.get('orderType') !== 3) {
-        this.setTaxes();
-      }
+      this.setTaxes();
     }, this);
     this.order.on('change:priceIncludesTax ', function (model) {
       if (this.order.get('priceIncludesTax')) {
@@ -744,9 +709,6 @@ enyo.kind({
     this.order.on('change:qty', function (model) {
       this.$.totalReceiptLine.renderQty(model.getQty());
     }, this);
-    this.order.on('change:orderType change:documentNo', function (model) {
-      this.$.divText.changeOrderTypeDocumentNo(model);
-    }, this);
     this.order.on('change:generateInvoice', function (model) {
       if (model.get('generateInvoice')) {
         this.$.divbtninvoice.show();
@@ -754,56 +716,59 @@ enyo.kind({
         this.$.divbtninvoice.hide();
       }
     }, this);
-    this.order.on('change:isQuotation', function (model) {
-      this.$.divText.changeIsQuotation(model);
-      if (model.get('isQuotation')) {
-        this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'));
-      } else {
-        this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
-      }
-    }, this);
     this.order.on('change:hasbeenpaid', function (model) {
       this.$.divText.changeHasbeenpaid(model);
     }, this);
-    this.order.on('change:isPaid change:paidOnCredit change:isQuotation change:documentNo change:paidPartiallyOnCredit change:iscancelled', function (model) {
-      this.$.divText.changeIsPaidPaidOnCreditIsQuotationDocumentNoPaidPartiallyOnCredit(model);
-      if (model.get('isPaid') === true && !model.get('isQuotation')) {
-        this.$.listPaymentLines.show();
-        this.$.paymentBreakdown.show();
-        //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]) || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder')) || this.$.divText.content === OB.I18N.getLabel('OBPOS_Cancelled')) {
-        this.$.listPaymentLines.hide();
-        this.$.paymentBreakdown.hide();
+    this.order.on('change:isPaid change:isLayaway change:isQuotation change:documentNo change:orderType change:doCancelAndReplace change:cancelLayaway change:replacedorder_documentNo change:paidOnCredit change:paidPartiallyOnCredit change:fromLayaway change:documentType change:iscancelled', function (model) {
+      // Unified the logic to show/hide the 'divText', the 'listPaymentLines' and the 'paymentBreakdown' panels
+      if (model.get('doCancelAndReplace')) {
+        // Set the label for C&R
+        this.$.divText.setCancelAndReplaceLabel(model);
+      } else if (model.get('cancelLayaway')) {
+        // Set the label for CL
+        this.$.divText.setCancelLayawayLabel(model);
+      } else if (model.get('isQuotation')) {
+        // Set the label for quotations
+        this.$.divText.setQuotationLabel(model);
+      } else if (model.get('isLayaway')) {
+        // Set the label for layaways
+        this.$.divText.setLayawayLabel(model);
+      } else if (model.get('isPaid')) {
+        // Set the label for paid receipts (also on credit and canceled)
+        this.$.divText.setPaidLabel(model);
+      } else {
+        if (model.get('orderType') === 1) {
+          // Set the label for draft returns
+          this.$.divText.setToBeReturnedLabel(model);
+        } else if (model.get('orderType') === 2) {
+          // Set the label for draft layaways
+          this.$.divText.setToBeLaidawayLabel(model);
+        } else {
+          this.$.divText.hide();
+        }
       }
-    }, this);
-    this.order.on('change:isLayaway', function (model) {
-      this.$.divText.changeIsLayaway(model);
-      if (model.get('isLayaway') === true) {
-        this.$.listPaymentLines.show();
-        this.$.paymentBreakdown.show();
-        //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_LblLayaway')) {
-        this.$.listPaymentLines.hide();
-        this.$.paymentBreakdown.hide();
-      }
-    }, this);
-    this.order.on('change:replacedorder', function (model) {
-      this.$.divText.changeReplacedorder(model);
-      if (model.get('replacedorder')) {
-        this.$.listPaymentLines.show();
-        this.$.paymentBreakdown.show();
-      } else if (model.get('orderType') === 2) {
-        this.$.listPaymentLines.hide();
-        this.$.paymentBreakdown.hide();
-      } else if (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1) {
-        this.$.listPaymentLines.hide();
-        this.$.paymentBreakdown.hide();
-      }
-    }, this);
 
+      // Set the 'New receipt'/'New quotation' labels when converting to a quotation or receipt
+      if (!_.isUndefined(model.changed.isQuotation)) {
+        if (model.get('isQuotation')) {
+          this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'));
+        } else {
+          this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
+        }
+      }
+
+      // Show the payment list only in synchronized tickets and in C&R
+      if (model.get('isLayaway') || model.get('isPaid') || model.get('doCancelAndReplace')) {
+        this.$.listPaymentLines.show();
+        this.$.paymentBreakdown.show();
+      } else {
+        this.$.listPaymentLines.hide();
+        this.$.paymentBreakdown.hide();
+      }
+    }, this);
     // Change Document No based on return lines
     this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
-      if (this.order.get('isEditable') && !this.order.get('isModified') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
+      if (this.order.get('isEditable') && !this.order.get('isModified') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace') && !this.order.get('cancelLayaway')) {
         var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
@@ -823,7 +788,7 @@ enyo.kind({
           servicesToApprove = '',
           line, k, oldUndo = this.order.get('undo');
 
-      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable')) {
         return;
       }
       this.updating = true;
@@ -1146,7 +1111,7 @@ enyo.kind({
       var me = this,
           setPriceCallback, handleError, i;
 
-      if (this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable')) {
+      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y')) {
         return;
       }
 
@@ -1242,10 +1207,32 @@ enyo.kind({
       });
     }, this);
     this.orderList.on('reset add remove amountToLayaway', function () {
-      this.total = _.reduce(this.orderList.models, function (memo, order) {
-        return memo + ((!_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway'))) ? order.get('amountToLayaway') : order.getPending());
-      }, 0);
+      var total = OB.DEC.Zero,
+          prepayment = OB.DEC.Zero,
+          prepaymentLimit = OB.DEC.Zero,
+          existingPayment = OB.DEC.Zero,
+          amountToLayaway = OB.DEC.Zero;
+      _.each(this.orderList.models, function (order) {
+        if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
+          total = OB.DEC.add(total, order.getPending());
+        } else {
+          total = OB.DEC.add(total, order.get('amountToLayaway'));
+          amountToLayaway = OB.DEC.add(amountToLayaway, order.get('amountToLayaway'));
+        }
+        prepayment = OB.DEC.add(prepayment, order.get('obposPrepaymentamt'));
+        prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('obposPrepaymentlimitamt'));
+        existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
+      });
+      this.total = total;
+      this.prepayment = prepayment;
+      this.prepaymentLimit = prepaymentLimit;
+      this.amountToLayaway = amountToLayaway;
+      this.existingPayment = existingPayment;
       this.multiOrders.set('total', this.total);
+      this.multiOrders.set('obposPrepaymentamt', this.prepayment);
+      this.multiOrders.set('obposPrepaymentlimitamt', this.prepaymentLimit);
+      this.multiOrders.set('amountToLayaway', this.amountToLayaway);
+      this.multiOrders.set('existingPayment', this.existingPayment);
       this.$.totalMultiReceiptLine.renderTotal(this.total);
       this.listMultiOrders.reset(this.orderList.models);
       if (model.get('leftColumnViewManager').isMultiOrder()) {

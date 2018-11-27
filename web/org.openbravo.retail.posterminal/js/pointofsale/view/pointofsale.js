@@ -38,6 +38,7 @@ enyo.kind({
     onDeleteLine: 'deleteLine',
     onEditLine: 'editLine',
     onReturnLine: 'returnLine',
+    onDeliveryPayment: 'deliveryPayment',
     onExactPayment: 'exactPayment',
     onRemovePayment: 'removePayment',
     onReversePayment: 'reversePayment',
@@ -197,13 +198,16 @@ enyo.kind({
       name: 'receiptPropertiesDialog'
     }, {
       kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
-      name: "receiptLinesPropertiesDialog"
+      name: 'receiptLinesPropertiesDialog'
+    }, {
+      kind: 'OB.UI.ModalDeliveryChange',
+      name: 'modalDeliveryChange'
     }, {
       kind: 'OB.UI.ModalPayment',
-      name: "modalpayment"
+      name: 'modalpayment'
     }, {
       kind: 'OB.UI.ModalPaymentVoid',
-      name: "modalpaymentvoid"
+      name: 'modalpaymentvoid'
     }, {
       kind: 'OB.UI.ModalProviderGroup',
       name: 'modalprovidergroup'
@@ -242,16 +246,16 @@ enyo.kind({
       name: 'modalNotValidValueForDiscount'
     }, {
       kind: 'OB.UI.ModalSalesRepresentative',
-      name: "modalsalesrepresentative"
+      name: 'modalsalesrepresentative'
     }, {
       kind: 'OB.UI.ModalMultiOrdersLayaway',
-      name: "modalmultiorderslayaway"
+      name: 'modalmultiorderslayaway'
     }, {
       kind: 'OB.UI.ModalProductCharacteristic',
-      name: "modalproductcharacteristic"
+      name: 'modalproductcharacteristic'
     }, {
       kind: 'OB.UI.ModalProductBrand',
-      name: "modalproductbrand"
+      name: 'modalproductbrand'
     }, {
       kind: 'OB.UI.ModalCategoryTree',
       name: 'modalcategorytree'
@@ -383,7 +387,7 @@ enyo.kind({
     if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
-        if (receipt.get("isPaid")) {
+        if (receipt.get('isPaid')) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PrePrintPaidReceipt', {
             context: this,
             receipt: this.model.get('order')
@@ -516,6 +520,8 @@ enyo.kind({
               if (currentLine[0].get('promotions')) {
                 relatedLine.promotions = currentLine[0].get('promotions').slice();
               }
+              relatedLine.obposCanbedelivered = currentLine[0].get('obposCanbedelivered');
+              relatedLine.obposIspaid = currentLine[0].get('obposIspaid');
             });
 
             // Select open ticket or create a new one
@@ -715,18 +721,8 @@ enyo.kind({
   },
   receiptToInvoice: function () {
     if (this.model.get('leftColumnViewManager').isOrder()) {
-      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
-        if (!this.model.get('order').get('hasbeenpaid')) {
-          this.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-        }
-        return true;
-      }
       this.model.get('order').setOrderInvoice();
-      return true;
-    }
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
+    } else {
       this.model.get('multiOrders').toInvoice(true);
     }
   },
@@ -776,15 +772,11 @@ enyo.kind({
     return true;
   },
   showDivText: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('cancelLayaway')) {
+    if (!this.model.get('order').get('isEditable')) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });
       return true;
-    }
-    //Void Layaway must block keyboard actions
-    if (inEvent.orderType === 3) {
-      this.$.multiColumn.$.rightPanel.$.keyboard.setStatus('');
     }
     this.model.get('order').setOrderType(inEvent.permission, inEvent.orderType, {
       applyPromotions: false
@@ -795,19 +787,9 @@ enyo.kind({
 
   cancelReceiptToInvoice: function (inSender, inEvent) {
     if (this.model.get('leftColumnViewManager').isOrder()) {
-      if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
-        this.doShowPopup({
-          popup: 'modalNotEditableOrder'
-        });
-        return true;
-      }
       this.model.get('order').resetOrderInvoice();
-      return true;
-    }
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-        this.model.get('multiOrders').toInvoice(false);
-      }
+    } else {
+      this.model.get('multiOrders').toInvoice(false);
     }
   },
   checkedLine: function (inSender, inEvent) {
@@ -1021,6 +1003,9 @@ enyo.kind({
     } else {
       this.model.get('order').returnLine(inEvent.line);
     }
+  },
+  deliveryPayment: function (inSender, inEvent) {
+    this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashdelivery');
   },
   exactPayment: function (inSender, inEvent) {
     this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashexact');
@@ -1308,11 +1293,10 @@ enyo.kind({
     var me = this;
     me.model.get('multiOrders').get('multiOrdersList').reset();
     _.each(inEvent.value, function (iter) {
-      //iter.set('isMultiOrder', true);
       iter.set('belongsToMultiOrder', true);
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });
-    this.model.get('leftColumnViewManager').setMultiOrderMode();
+    me.model.get('leftColumnViewManager').setMultiOrderMode();
     OB.UTIL.HookManager.executeHooks('OBPOS_hookPostMultiOrder', {
       context: me,
       multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
@@ -1326,7 +1310,6 @@ enyo.kind({
         inEvent.callback();
       }
     });
-    return true;
   },
   removeOrderAndExitMultiOrder: function (model) {
     model.deleteMultiOrderList();

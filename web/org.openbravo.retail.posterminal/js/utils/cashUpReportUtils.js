@@ -45,7 +45,7 @@
   }
 
   function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
-    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, replacedOrder, amount, precision, netSales = OB.DEC.Zero,
+    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, amount, precision, netSales = OB.DEC.Zero,
         grossSales = OB.DEC.Zero,
         netReturns = OB.DEC.Zero,
         grossReturns = OB.DEC.Zero,
@@ -70,37 +70,32 @@
       order = receipt[j];
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {
-        _.each(order.get('lines').models, function (line) {
-          if (order.get('isPaid')) {
-            return;
-          }
-          if (order.get('priceIncludesTax')) {
-            gross = line.get('lineGrossAmount');
-          } else {
-            gross = line.get('discountedGross');
-          }
-          //Sales order: Positive line
-          if (!(order.has('isQuotation') && order.get('isQuotation'))) {
-            replacedOrder = (order.get('replacedorder') && line.get('remainingQuantity'));
-            if (orderType !== 3 && !order.get('isLayaway') && !replacedOrder) {
-              if (line.get('qty') > 0) {
-                netSales = OB.DEC.add(netSales, line.get('net'));
-                grossSales = OB.DEC.add(grossSales, gross);
-              } else if (line.get('qty') < 0) {
-                netReturns = OB.DEC.add(netReturns, -line.get('net'));
-                grossReturns = OB.DEC.add(grossReturns, -gross);
-              }
-            } else if (orderType === 3) {
-              if (line.get('qty') > 0) {
-                netSales = OB.DEC.add(netSales, -line.get('net'));
-                grossSales = OB.DEC.add(grossSales, -gross);
-              } else {
-                netReturns = OB.DEC.add(netReturns, line.get('net'));
-                grossReturns = OB.DEC.add(grossReturns, gross);
-              }
+        if (!(order.has('isQuotation') && order.get('isQuotation')) && !order.get('isPaid') && !(order.get('isLayaway') && !order.get('voidLayaway'))) {
+          _.each(order.get('lines').models, function (line) {
+            if (order.get('priceIncludesTax')) {
+              gross = line.get('lineGrossAmount');
+            } else {
+              gross = line.get('discountedGross');
             }
-          }
-        });
+            if (order.get('cancelLayaway')) {
+              // Cancel Layaway
+              netSales = OB.DEC.add(netSales, line.get('net'));
+              grossSales = OB.DEC.add(grossSales, gross);
+            } else if (order.get('voidLayaway')) {
+              // Void Layaway
+              netSales = OB.DEC.add(netSales, -line.get('net'));
+              grossSales = OB.DEC.add(grossSales, -gross);
+            } else if (line.get('qty') > 0) {
+              // Sales order: Positive line
+              netSales = OB.DEC.add(netSales, line.get('net'));
+              grossSales = OB.DEC.add(grossSales, gross);
+            } else if (line.get('qty') < 0) {
+              // Return from customer or Sales with return: Negative line
+              netReturns = OB.DEC.add(netReturns, -line.get('net'));
+              grossReturns = OB.DEC.add(grossReturns, -gross);
+            }
+          });
+        }
         cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), netSales));
         cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), grossSales));
         cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), netReturns));
@@ -113,7 +108,7 @@
         order.get('lines').each(function (line, taxIndex) {
           var taxLines, taxLine;
           taxLines = line.get('taxLines');
-          if (orderType === 1 || line.get('qty') < 0) {
+          if (orderType === 1 || (line.get('qty') < 0 && !order.get('cancelLayaway') && !order.get('voidLayaway'))) {
             taxOrderType = '1';
           } else {
             taxOrderType = '0';
@@ -121,16 +116,10 @@
 
           _.each(taxLines, function (taxLine) {
             if (!(order.has('isQuotation') && order.get('isQuotation'))) {
-              if (line.get('qty') > 0 && orderType !== 3 && !order.get('isLayaway')) {
+              if (order.get('cancelLayaway') || (line.get('qty') > 0 && !order.get('isLayaway'))) {
                 taxAmount = taxLine.amount;
-              } else if (line.get('qty') < 0 && orderType !== 3 && !order.get('isLayaway')) {
+              } else if (order.get('voidLayaway') || (line.get('qty') < 0 && !order.get('isLayaway'))) {
                 taxAmount = -taxLine.amount;
-              } else if (orderType === 3) {
-                if (line.get('qty') > 0) {
-                  taxAmount = -taxLine.amount;
-                } else {
-                  taxAmount = taxLine.amount;
-                }
               }
             }
 
@@ -186,10 +175,8 @@
             }
             precision = OB.MobileApp.model.paymentnames[auxPay.get('searchKey')].obposPosprecision;
             amount = _.isNumber(payment.get('amountRounded')) ? payment.get('amountRounded') : payment.get('amount');
-            if (payment.get('amount') < 0) {
+            if (amount < 0) {
               auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), amount, precision));
-            } else if (orderType === 3) { // void layaway 
-              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), amount, precision));
             } else {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), amount, precision));
             }
