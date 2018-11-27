@@ -35,7 +35,7 @@ enyo.kind({
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.inherited(arguments);
     this.model = model;
-    if (this.model !== model) {
+    if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.setDefaultFilters([{
         value: 'payOpenTickets',
         columns: ['orderType']
@@ -329,33 +329,19 @@ enyo.kind({
     var selectedMultiOrders = [],
         me = this,
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts'),
-        checkedMultiOrders = _.compact(this.parent.parent.parent.$.body.$.receiptsForPayOpenTicketsList.receiptList.map(function (e) {
+        checkedMultiOrders = _.compact(this.parent.parent.parent.$.body.$.listMultiOrders.multiOrdersList.map(function (e) {
         if (e.get('checked')) {
           return e;
         }
       })),
-        addOrdersToOrderList;
+        addOrdersToOrderList, i, j, wrongOrder, firstCheck = true,
+        cancellingOrdersToCheck = me.owner.owner.model.get('orderList').models;
 
     if (checkedMultiOrders.length === 0) {
       return true;
     }
 
-    function newReversalOrder() {
-      var i;
-      for (i = 0; i < selectedMultiOrders.length; i++) {
-        if (selectedMultiOrders[i].isNewReversed()) {
-          return selectedMultiOrders[i].get('documentNo');
-        }
-      }
-      return false;
-    }
-
     addOrdersToOrderList = _.after(checkedMultiOrders.length, function () {
-      var reversalOrder = newReversalOrder();
-      if (reversalOrder) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReversePaymentPending', [reversalOrder]));
-        return;
-      }
       OB.UTIL.StockUtils.checkOrderLinesStock(selectedMultiOrders, function (hasStock) {
         if (hasStock) {
           OB.UTIL.HookManager.executeHooks('OBPOS_PreMultiOrderHook', {
@@ -376,13 +362,73 @@ enyo.kind({
     });
 
     OB.UTIL.showLoading(true);
-    me.owner.owner.model.deleteMultiOrderList();
+    this.doHideThisPopup();
+    // Check if the selected orders are payable by the 'Pay Open Tickets' flow
+    for (i = 0; i < checkedMultiOrders.length; i++) {
+      var iter = checkedMultiOrders[i];
+      if (_.indexOf(this.owner.owner.model.get('orderList').models, iter) !== -1) {
+        // Check if there's an order with a reverse payment
+        if (iter.isNewReversed()) {
+          wrongOrder = {
+            docNo: iter.get('documentNo'),
+            problem: 'reversePayment'
+          };
+          break;
+        }
+      } else {
+        //Check if there's an order that is being canceled/replaced
+        var cancellingOrders = [];
+        for (j = 0; j < cancellingOrdersToCheck.length; j++) {
+          var order = cancellingOrdersToCheck[j];
+          if (firstCheck) {
+            if (order.get('canceledorder')) {
+              if (order.get('canceledorder').id === iter.id) {
+                wrongOrder = {
+                  docNo: iter.get('documentNo'),
+                  error: 'cancellingOrder'
+                };
+                break;
+              }
+              cancellingOrders.push(order);
+            }
+          } else {
+            if (order.get('canceledorder').id === iter.id) {
+              wrongOrder = {
+                docNo: iter.get('documentNo'),
+                error: 'cancellingOrder'
+              };
+              break;
+            }
+          }
+        }
+        if (wrongOrder) {
+          break;
+        }
+        if (firstCheck) {
+          firstCheck = false;
+          cancellingOrdersToCheck = cancellingOrders;
+        }
+      }
+    }
+    // Stop if there's any order that cannot be paid using 'Pay Open Tickets'
+    if (wrongOrder) {
+      if (wrongOrder.error === 'reversePayment') {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ReversePaymentPending', [wrongOrder.docNo]));
+      } else if (wrongOrder.error === 'cancellingOrder') {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancellingOrder', [wrongOrder.docNo]));
+      }
+      OB.UTIL.showLoading(false);
+      return;
+    }
+    this.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
-        iter.set('checked', true);
-        iter.save();
-        selectedMultiOrders.push(iter);
-        addOrdersToOrderList();
+        iter.getPrepaymentAmount(function () {
+          iter.set('checked', true);
+          iter.save();
+          selectedMultiOrders.push(iter);
+          addOrdersToOrderList();
+        });
       } else {
         process.exec({
           orderid: iter.id
@@ -394,9 +440,11 @@ enyo.kind({
               order.set('checked', iter.get('checked'));
               OB.DATA.OrderTaxes(order);
               order.set('belongsToMultiOrder', true);
-              order.calculateReceipt(function () {
-                selectedMultiOrders.push(order);
-                addOrdersToOrderList();
+              order.getPrepaymentAmount(function () {
+                order.calculateReceipt(function () {
+                  selectedMultiOrders.push(order);
+                  addOrdersToOrderList();
+                });
               });
             });
           } else {
@@ -406,7 +454,6 @@ enyo.kind({
         });
       }
     });
-    me.doHideThisPopup();
   },
   cancelAction: function () {
     this.doHideThisPopup();
