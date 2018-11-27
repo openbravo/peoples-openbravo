@@ -74,13 +74,6 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
       String strcBpartnetId = vars.getRequestGlobalVariable("inpcBPartnerId",
           "ReportOrderNotInvoiceJR|bpartner");
       String strCOrgId = vars.getRequestGlobalVariable("inpOrg", "ReportOrderNotInvoiceJR|Org");
-      if (!StringUtils.isEmpty(strCOrgId)) {
-        StringBuilder orgIdBuilder = new StringBuilder("(");
-        orgIdBuilder.append(Utility.getInStrSet(OBContext.getOBContext()
-            .getOrganizationStructureProvider().getChildTree(strCOrgId, true)));
-        orgIdBuilder.append(")");
-        strCOrgId = orgIdBuilder.toString();
-      }
       String strInvoiceRule = vars.getRequestGlobalVariable("inpInvoiceRule",
           "ReportOrderNotInvoiceJR|invoiceRule");
       String strDetail = vars.getStringParameter("inpDetail", "0");
@@ -210,11 +203,18 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     ReportOrderNotInvoiceData[] data = null;
     String strConvRateErrorMsg = "";
     OBError myMessage = new OBError();
+    String strTreeOrgId = "";
+    if (!StringUtils.isEmpty(strCOrgId)) {
+      strTreeOrgId = "("
+          + Utility.getInStrSet(OBContext.getOBContext().getOrganizationStructureProvider()
+              .getChildTree(strCOrgId, true)) + ")";
+    }
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     try {
-      data = ReportOrderNotInvoiceData.select(readOnlyCP, strCurrencyId, Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOrderNotInvoiceJR"),
+      data = ReportOrderNotInvoiceData.select(readOnlyCP, strCurrencyId,
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOrderNotInvoiceJR"),
           Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOrderNotInvoiceJR"),
-          strcBpartnetId, strCOrgId, strInvoiceRule, strdateFrom,
+          strcBpartnetId, strTreeOrgId, strInvoiceRule, strdateFrom,
           DateTimeData.nDaysAfter(readOnlyCP, strdateTo, "1"), vars.getLanguage());
     } catch (ServletException ex) {
       myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
