@@ -121,7 +121,7 @@
 	<Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'1'"/>
 	<Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_ORG_ID IN (" text="'1'"/>
 	<Parameter name="cBpartnerId" optional="true" after="1=1">AND C.C_BPARTNER_ID = ?</Parameter>
-	<Parameter name="cOrgId" optional="true" after="1=1">AND C.AD_ORG_ID = ?</Parameter>
+	<Parameter name="cOrgId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C.AD_ORG_ID IN ]]></Parameter>
 	<Parameter name="invoiceRule" optional="true" after="1=1">AND C.INVOICERULE = ?</Parameter>
 	<Parameter name="dateFrom" optional="true" after="1=1"><![CDATA[ AND C.DATEORDERED >= to_date(?) ]]></Parameter>
 	<Parameter name="dateTo" optional="true" after="1=1"><![CDATA[ AND C.DATEORDERED < to_date(?) ]]></Parameter>

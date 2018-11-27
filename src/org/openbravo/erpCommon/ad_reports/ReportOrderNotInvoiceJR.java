@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -73,6 +74,13 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
       String strcBpartnetId = vars.getRequestGlobalVariable("inpcBPartnerId",
           "ReportOrderNotInvoiceJR|bpartner");
       String strCOrgId = vars.getRequestGlobalVariable("inpOrg", "ReportOrderNotInvoiceJR|Org");
+      if (!StringUtils.isEmpty(strCOrgId)) {
+        StringBuilder orgIdBuilder = new StringBuilder("(");
+        orgIdBuilder.append(Utility.getInStrSet(OBContext.getOBContext()
+            .getOrganizationStructureProvider().getChildTree(strCOrgId, true)));
+        orgIdBuilder.append(")");
+        strCOrgId = orgIdBuilder.toString();
+      }
       String strInvoiceRule = vars.getRequestGlobalVariable("inpInvoiceRule",
           "ReportOrderNotInvoiceJR|invoiceRule");
       String strDetail = vars.getStringParameter("inpDetail", "0");
