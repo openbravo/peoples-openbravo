@@ -31,7 +31,8 @@ public class ProductPriceRuleVersionEventHandler extends EntityPersistenceEventO
 
   private void linkProduct(EntityNewEvent event, ServicePriceRuleVersion pcprv) {
     final Product product = pcprv.getRelatedProductCategory() != null ? pcprv
-        .getRelatedProductCategory().getProduct() : pcprv.getRelatedProduct().getProduct();
+        .getRelatedProductCategory().getProduct() : (pcprv.getRelatedProduct() != null ? pcprv
+        .getRelatedProduct().getProduct() : null);
 
     if (product != null) {
       final Entity priceRuleVersionEntity = ModelProvider.getInstance().getEntity(
