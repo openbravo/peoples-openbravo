@@ -73,7 +73,7 @@ enyo.kind({
           break;
 
         case "businessPartner":
-          if (order.attributes.client !== remoteFilters.value) {
+          if ((remoteFilters.value) !== '' && (order.attributes.bp.id !== remoteFilters.value)) {
             popedElements.push(order);
           }
           break;
@@ -86,7 +86,7 @@ enyo.kind({
           stringOrderDate = stringOrderDate.replace(/T.*/, '');
           orderDate = new Date(stringOrderDate);
 
-          if (filterDate.getTime() < orderDate.getTime()) {
+          if (filterDate.getTime() > orderDate.getTime()) {
             popedElements.push(order);
           }
           break;
@@ -99,7 +99,7 @@ enyo.kind({
           stringOrderDate = stringOrderDate.replace(/T.*/, '');
           orderDate = new Date(stringOrderDate);
 
-          if (filterDate.getTime() > orderDate.getTime()) {
+          if (filterDate.getTime() < orderDate.getTime()) {
             popedElements.push(order);
           }
           break;
