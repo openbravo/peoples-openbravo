@@ -174,6 +174,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalpaidreceipts",
         "components/modalmultiorders",
         "components/modal-pay-open-tickets",
+        "components/modalinvoices",
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
@@ -273,7 +274,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
-        "components/modal-pay-open-tickets",
+
         // Payment providers
         "components/mockpayments",
 

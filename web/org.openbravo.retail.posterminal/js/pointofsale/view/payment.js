@@ -1885,7 +1885,7 @@ enyo.kind({
     var receipt = this.owner.receipt,
         negativeLines, me = this,
         myModel = this.owner.model,
-        payments;
+        payments, isMultiOrder = myModel.get('leftColumnViewManager').isOrder() ? false : true;
 
     // Avoid closing the order before receipt is being calculated
     if (this.owner.receipt.calculatingReceipt) {
@@ -1942,7 +1942,13 @@ enyo.kind({
     }
     this.setDisabled(true);
     enyo.$.scrim.show();
-    receipt.trigger('paymentDone', me.allowOpenDrawer);
+    if (isMultiOrder) {
+      this.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
+      OB.UTIL.setScanningFocus(false);
+      this.owner.model.get('multiOrders').set('openDrawer', false);
+    } else {
+      receipt.trigger('paymentDone', me.allowOpenDrawer);
+    }
   }
 });
 

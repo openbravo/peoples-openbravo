@@ -24,7 +24,10 @@ OB.UTIL.sendLastTerminalStatusValues = function (callback) {
     terminalLastlogindate: OB.UTIL.localStorage.getItem("lastLogInDate"),
     terminalLastloginuser: OB.UTIL.localStorage.getItem("lastUserIdLogin"),
     terminalLasttimeinoffline: OB.UTIL.localStorage.getItem("lastTransitionToOffline"),
-    terminalLasttimeinonline: OB.UTIL.localStorage.getItem("lastTransitionToOnline")
+    terminalLasttimeinonline: OB.UTIL.localStorage.getItem("lastTransitionToOnline"),
+    terminalLasthwmversion: OB.UTIL.localStorage.getItem("hardwareManagerVersion"),
+    terminalLasthwmrevision: OB.UTIL.localStorage.getItem("hardwareManagerRevision"),
+    terminalLasthwmjavainfo: OB.UTIL.localStorage.getItem("hardwareManagerJavaInfo")
   }, function (data, message) {
     if (callback instanceof Function) {
       callback();

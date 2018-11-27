@@ -22,7 +22,7 @@ function prepareToSendCallback(callback) {
       var negativeLines = _.filter(order.get('lines').models, function (line) {
         return line.get('qty') < 0;
       }).length;
-      if (negativeLines === order.get('lines').models.length) {
+      if (negativeLines === order.get('lines').models.length || (negativeLines > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) {
         order.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
           applyPromotions: false,
           saveOrder: false
@@ -83,7 +83,7 @@ function setPaymentsToReceipts(orderList, paymentList, changePayments, callback,
     }
   } else {
     var amountToPay = !_.isUndefined(order.get('amountToLayaway')) && !_.isNull(order.get('amountToLayaway')) ? order.get('amountToLayaway') : OB.DEC.sub(order.get('gross'), order.get('payment'));
-    if (OB.DEC.compare(amountToPay) > 0) {
+    if (OB.DEC.compare(amountToPay) > 0 && !_.isUndefined(payment)) {
       var paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
       paymentLine = new OB.Model.PaymentLine();
       OB.UTIL.clone(payment, paymentLine);
@@ -1092,16 +1092,39 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             });
             me.loadUnpaidOrders(function () {
               me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
-
-              // Now that templates has been initialized, print welcome message
-              OB.POS.hwserver.print(me.printReceipt.templatewelcome, {}, function (data) {
+              // Now, get the hardware manager status
+              OB.POS.hwserver.status(function (data) {
                 if (data && data.exception) {
-                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+                  OB.UTIL.showError(data.exception.message);
                   callback();
                 } else {
-                  callback();
+                  // Save hardware manager information
+                  if (data && data.version) {
+                    // Max database string size: 10
+                    var hwmVersion = data.version.length > 10 ? data.version.substring(0, 9) : data.version;
+                    OB.UTIL.localStorage.setItem('hardwareManagerVersion', hwmVersion);
+                  }
+                  if (data && data.revision) {
+                    // Max database string size: 15
+                    var hwmRevision = data.revision.length > 15 ? data.version.substring(0, 14) : data.revision;
+                    OB.UTIL.localStorage.setItem('hardwareManagerRevision', hwmRevision);
+                  }
+                  if (data && data.javaInfo) {
+                    // Max database string size: 300
+                    var hwmJavaInfo = data.javaInfo.length > 300 ? data.javaInfo.substring(0, 296).concat('...') : data.javaInfo;
+                    OB.UTIL.localStorage.setItem('hardwareManagerJavaInfo', data.javaInfo);
+                  }
+                  // Now that templates has been initialized, print welcome message
+                  OB.POS.hwserver.print(me.printReceipt.templatewelcome, {}, function (data) {
+                    if (data && data.exception) {
+                      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+                      callback();
+                    } else {
+                      callback();
+                    }
+                  }, OB.DS.HWServer.DISPLAY);
                 }
-              }, OB.DS.HWServer.DISPLAY);
+              });
             });
           });
         }
