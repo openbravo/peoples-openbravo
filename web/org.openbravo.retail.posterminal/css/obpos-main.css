@@ -600,6 +600,7 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit > div > div.or
 }
 
 .order-total-label {
+  font-weight:bold;
   float: left;
   width: calc(100% - 275px);  /* The same than calc(100% - 65px - 2 * 105px); */
 }
@@ -689,6 +690,7 @@ li.selected > button.btnselect-orderline.btnselect-orderline-edit > div > div.or
 
   .order-total-gross {
     width: 160px;
+    font-weight: bold;
   }
 
   .order-tax-label {
