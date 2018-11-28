@@ -718,6 +718,7 @@ enyo.kind({
     });
   },
   searchAction: function (inSender, inEvent) {
+    var execution = OB.UTIL.ProcessController.start('searchCustomerAddress');
     var me = this,
         criteria = {},
         filter = inEvent.locName;
@@ -776,6 +777,7 @@ enyo.kind({
       criteria.remoteFilters = remoteCriteria;
     }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
+    OB.UTIL.ProcessController.finish('searchCustomerAddress', execution);
     return true;
   },
   bpsList: null,

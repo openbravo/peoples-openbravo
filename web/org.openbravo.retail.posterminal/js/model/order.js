@@ -1142,6 +1142,7 @@
 
     clearWith: function (_order) {
       var execution = OB.UTIL.ProcessController.start('clearWith');
+
       // verify that the clearWith is not used for any other purpose than to update and fire the events of the UI receipt
       OB.UTIL.Debug.execute(function () {
         var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
@@ -4910,30 +4911,36 @@
     },
 
     addPayment: function (payment, callback) {
+      var execution = OB.UTIL.ProcessController.start('addPayment');
       var me = this,
           payments, total, i, max, p, order, paymentSign, finalCallback, precision;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && OB.DEC.abs(this.getPrePaymentQty()) >= OB.DEC.abs(this.getTotal()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
       if (this.stopAddingPayments) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
       if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0 && !payment.get('forceAddPayment')) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
 
       order = this;
       if (order.get('orderType') === 3 && order.getGross() === 0) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgVoidLayawayPaymentError'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
 
@@ -4978,6 +4985,7 @@
               reverseCallback();
             }
             executeFinalCallback(false);
+            OB.UTIL.ProcessController.finish('addPayment', execution);
             return;
           }
           // search for an existing payment only if is not a reverser payment.
@@ -4997,6 +5005,7 @@
                   }
                   payment.set('date', new Date());
                   executeFinalCallback(true);
+                  OB.UTIL.ProcessController.finish('addPayment', execution);
                   return;
                 }
               }
@@ -5011,6 +5020,7 @@
                   }
                   payment.set('date', new Date());
                   executeFinalCallback(true);
+                  OB.UTIL.ProcessController.finish('addPayment', execution);
                   return;
                 }
               }
@@ -5038,6 +5048,7 @@
             payment.get('reversedPayment').set('isReversed', true);
           }
           executeFinalCallback(true);
+          OB.UTIL.ProcessController.finish('addPayment', execution);
           return;
         }); // call with callback, no args
       });
@@ -7100,6 +7111,7 @@
       }
     },
     loadCurrent: function (isNew) {
+      OB.MobileApp.model.set('terminalLogContext', this.current.get('documentNo'));
       // Check if the current order to be loaded should be deleted
       if (this.current.get('obposIsDeleted') && this.current.get('id')) {
         var deletedOrderDocNo = this.current.get('documentNo');
