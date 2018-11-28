@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -232,6 +232,13 @@ public abstract class ImportEntryProcessor {
    * the same records in the same import thread, in this way preventing DB (dead)locks.
    */
   protected abstract String getProcessSelectionKey(ImportEntry importEntry);
+
+  /**
+   * Declares if the import entry will later on be archived after it has been processed
+   */
+  protected boolean enableArchive() {
+    return true;
+  }
 
   /**
    * The default implementation of the ImportEntryProcessRunnable. It performs the following

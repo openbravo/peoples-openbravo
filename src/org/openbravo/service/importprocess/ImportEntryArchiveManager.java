@@ -20,6 +20,8 @@ package org.openbravo.service.importprocess;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,6 +40,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.service.importprocess.ImportEntryManager.DaemonThreadFactory;
+import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryProcessorSelector;
 
 /**
  * Class responsible for moving {@link ImportEntry} objects to the {@link ImportEntryArchive} table.
@@ -78,6 +81,12 @@ public class ImportEntryArchiveManager {
 
   private boolean isShutDown = false;
 
+  @Inject
+  @Any
+  private Instance<ImportEntryProcessor> entryProcessors;
+
+  private Map<String, ImportEntryProcessor> importEntryProcessors = new ConcurrentHashMap<String, ImportEntryProcessor>();
+
   public ImportEntryArchiveManager() {
     instance = this;
   }
@@ -96,6 +105,21 @@ public class ImportEntryArchiveManager {
     log.debug("Shutting down Import Entry Archive Framework");
     executorService.shutdownNow();
     executorService = null;
+  }
+
+  private ImportEntryProcessor getImportEntryProcessor(String qualifier) {
+    ImportEntryProcessor importEntryProcessor = importEntryProcessors.get(qualifier);
+    if (importEntryProcessor == null) {
+      importEntryProcessor = entryProcessors.select(new ImportEntryProcessorSelector(qualifier))
+          .get();
+      if (importEntryProcessor != null) {
+        importEntryProcessors.put(qualifier, importEntryProcessor);
+      } else {
+        // caller should handle it
+        return null;
+      }
+    }
+    return importEntryProcessor;
   }
 
   private static class ImportEntryArchiveThread implements Runnable {
@@ -177,20 +201,26 @@ public class ImportEntryArchiveManager {
               dataProcessed = true;
               lastCreated = importEntry.getCreationDate();
 
-              ImportEntryArchive archiveEntry = createArchiveEntry(importEntry);
-
               if (manager.isShutDown) {
                 return;
               }
+              ImportEntryProcessor importEntryProcessor = ImportEntryArchiveManager.getInstance()
+                  .getImportEntryProcessor(importEntry.getTypeofdata());
+              if (importEntryProcessor == null || importEntryProcessor.enableArchive()) {
 
-              for (ImportEntryArchivePreProcessor processor : manager.archiveEntryPreProcessors) {
-                processor.beforeArchive(importEntry, archiveEntry);
+                ImportEntryArchive archiveEntry = createArchiveEntry(importEntry);
+
+                for (ImportEntryArchivePreProcessor processor : manager.archiveEntryPreProcessors) {
+                  processor.beforeArchive(importEntry, archiveEntry);
+                }
+
+                log.debug("Processed one entry");
+                OBDal.getInstance().save(archiveEntry);
+              } else {
+                log.debug("Skipped one entry of type " + importEntry.getTypeofdata());
               }
 
-              log.debug("Processed one entry");
-
               OBDal.getInstance().remove(importEntry);
-              OBDal.getInstance().save(archiveEntry);
             }
             // commit in batches of 1000 records
             OBDal.getInstance().commitAndClose();
