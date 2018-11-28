@@ -18,16 +18,12 @@
  */
 package org.openbravo.buildvalidation;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.openbravo.base.ExecutionLimits;
 import org.openbravo.modulescript.OpenbravoVersion;
@@ -48,7 +44,7 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
   @Override
   public List<String> execute() {
     try {
-      String sourcePath = getSourcePathFromProperties(getOpenbravoPropertiesFile());
+      String sourcePath = getSourcePath();
       copyFromTemplateFile(sourcePath + CONFIG_DIR + LOG4J_CONF_FILE);
       copyFromTemplateFile(sourcePath + CONFIG_DIR + LOG4J_WEB_CONF_FILE);
       copyFromTemplateFile(sourcePath + TEST_SRC_DIR + LOG4J_TEST_CONF_FILE);
@@ -71,36 +67,25 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
   }
 
   /**
-   * Starting from the location of this class, navigates backwards through the file hierarchy until
-   * the config/Openbravo.properties is found
+   * Get the source path using the user.dir System Property. Navigates two folders backwards and
+   * checks the config directory is available to ensure the directory is an Openbravo instance,
+   * throwing an exception otherwise
    * 
-   * @return a File descriptor of Openbravo.properties
-   * @throws FileNotFoundException
-   *           if Openbravo.properties cannot be found
+   * @return String the source path
+   * @throws NoSuchFileException
+   *           when the source path directory is not valid
    */
-  private File getOpenbravoPropertiesFile() throws FileNotFoundException {
-    final URL url = this.getClass().getResource(getClass().getSimpleName() + ".class");
-    File f = new File(url.getPath());
-    File propertiesFile;
-    while (f.getParentFile() != null && f.getParentFile().exists()) {
-      f = f.getParentFile();
-      final File configDirectory = new File(f, "config");
-      if (configDirectory.exists()) {
-        propertiesFile = new File(configDirectory, "Openbravo.properties");
-        if (propertiesFile.exists()) {
-          return propertiesFile;
-        }
-      }
+  private String getSourcePath() throws NoSuchFileException {
+    String userDir = System.getProperty("user.dir");
+    Path sourcePath = Paths.get(userDir, "/../..").normalize();
+
+    Path configDir = sourcePath.resolve("config");
+    if (Files.exists(configDir)) {
+      return sourcePath.toString();
     }
 
-    throw new FileNotFoundException("Openbravo.properties file not found");
-  }
-
-  private String getSourcePathFromProperties(File openbravoProperties) throws Exception {
-    Properties properties = new Properties();
-    properties.load(new FileReader(openbravoProperties));
-
-    return properties.getProperty("source.path");
+    throw new NoSuchFileException("Source path directory is not valid. Cannot find "
+        + configDir.toString());
   }
 
   @Override
