@@ -19,7 +19,9 @@ enyo.kind({
       return;
     }
     this.inherited(arguments);
-    this.doShowReceiptProperties();
+    this.doShowReceiptProperties({
+      model: this.order
+    });
   },
   attributes: {
     style: 'padding: 13px 0px 15px 10px; font-weight: bold; color: #6CB33F; float: left; calc(100% - 50px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;'
