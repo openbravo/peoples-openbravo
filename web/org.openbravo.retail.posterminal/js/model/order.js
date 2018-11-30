@@ -4702,7 +4702,7 @@
 
     removePayment: function (payment, cancellationCallback, removeCallback) {
       var payments = this.get('payments'),
-          max, i, p;
+          max, i, p, me = this;
       if (this.get('isBeingClosed')) {
         var error = new Error();
         OB.error('The receipt is being save, you cannot remove payments.');
@@ -4722,6 +4722,11 @@
           return true;
         }
         payments.remove(payment);
+        if (!me.get('deletedPayments')) {
+          me.set('deletedPayments', [payment]);
+        } else {
+          me.get('deletedPayments').push(payment);
+        }
         // Remove isReversed attribute from payment reversed by removed payment
         if (payment.get('reversedPaymentId')) {
           for (i = 0, max = payments.length; i < max; i++) {
