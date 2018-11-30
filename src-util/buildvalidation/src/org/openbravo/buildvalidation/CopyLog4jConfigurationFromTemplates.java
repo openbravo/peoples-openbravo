@@ -49,7 +49,8 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
       copyFromTemplateFile(sourcePath + CONFIG_DIR + LOG4J_WEB_CONF_FILE);
       copyFromTemplateFile(sourcePath + TEST_SRC_DIR + LOG4J_TEST_CONF_FILE);
     } catch (Exception e) {
-      return handleError(e);
+      System.out
+          .println("Copy log4j config from templates failed: Log4j may not be properly configured. Please check your configuration files manually.");
     }
 
     return new ArrayList<>();
@@ -84,8 +85,8 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
       return sourcePath.toString();
     }
 
-    throw new NoSuchFileException("Source path directory is not valid. Cannot find "
-        + configDir.toString());
+    System.out.println(String.format("Config folder not found: %s", configDir.toString()));
+    throw new NoSuchFileException(configDir.toString());
   }
 
   @Override
