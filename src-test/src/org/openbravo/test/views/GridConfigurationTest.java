@@ -41,7 +41,8 @@ public class GridConfigurationTest extends OBBaseTest {
    * Standard Grid Configuration IDs
    */
   private static final List<String> CORE_DEFAULT_GRID_CONFIGS = Arrays.asList(
-      "4701BC23719C41FAA422305FCDBBAF85", "FDA9AFD8D7504E18A220EFC01F5D28D3");
+      "4701BC23719C41FAA422305FCDBBAF85", "FDA9AFD8D7504E18A220EFC01F5D28D3",
+      "1AD989605ACA4F5FB6C11B2E7AC88867");
 
   /**
    * @return the current number of grid configurations defined in the system.
