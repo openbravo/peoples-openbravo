@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2017 Openbravo S.L.U.
+ * Copyright (C) 2016-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -486,6 +486,7 @@ enyo.kind({
     return true;
   },
   searchAction: function (inSender, inEvent) {
+    var execution = OB.UTIL.ProcessController.start('searchCustomer');
     var me = this;
 
     if (OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerButton', true)) {
@@ -677,7 +678,7 @@ enyo.kind({
       }
       OB.Dal.query(OB.Model.BPartnerFilter, select + orderby, params, successCallbackBPs, errorCallback, null, null, limit);
     }
-
+    OB.UTIL.ProcessController.finish('searchCustomer', execution);
     return true;
   },
   bpsList: null,

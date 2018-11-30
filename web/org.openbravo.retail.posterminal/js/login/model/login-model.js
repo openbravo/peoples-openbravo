@@ -354,6 +354,17 @@
         }
       });
 
+      // move terminal log model to the end of models to sync since has less priority
+      var i, indexTerminalLogModel = -1;
+      for (i = 0; i < this.get('dataSyncModels').length; i++) {
+        if (this.get('dataSyncModels')[i].name === "OBMOBC_TerminalLog") {
+          indexTerminalLogModel = i;
+        }
+      }
+      if (indexTerminalLogModel !== -1) {
+        this.get('dataSyncModels').push(this.get('dataSyncModels').splice(indexTerminalLogModel, 1)[0]);
+      }
+
       this.on('ready', function () {
         OB.debug("next process: 'retail.pointofsale' window");
         if (this.get('terminal').currencyFormat) {
@@ -475,7 +486,6 @@
         OB.UTIL.HookManager.executeHooks('OBPOS_PreSynchData', {}, function () {
           OB.debug('runSyncProcess: synchronize all models');
           OB.MobileApp.model.syncAllModels(function () {
-            OB.info('runSyncProcess: synchronization successfully done');
             executeCallbacks(true, me.get('syncProcessCallbacks'), function () {
               me.pendingSyncProcess = false;
             });
@@ -558,7 +568,7 @@
     },
 
     postSyncProcessActions: function () {
-      if (OB.MobileApp.model.get('context').user && _.isUndefined(OB.MobileApp.model.get('context').user.isSalesRepresentative)) {
+      if (OB.MobileApp.model.get('context') && OB.MobileApp.model.get('context').user && _.isUndefined(OB.MobileApp.model.get('context').user.isSalesRepresentative)) {
         OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
           if (!salesrepresentative) {
             OB.MobileApp.model.get('context').user.isSalesRepresentative = false;

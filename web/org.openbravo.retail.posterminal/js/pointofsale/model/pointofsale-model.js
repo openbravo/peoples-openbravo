@@ -430,7 +430,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             receipt.trigger('paymentCancel');
             callback(false);
           }
-        }]);
+        }], {
+          autoDismiss: false,
+          hideCloseButton: true
+        });
       }
 
       function callbackPaymentAmountDistinctThanReceipt() {
@@ -659,7 +662,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           action: function () {
             paymentstatus.trigger('paymentCancel');
           }
-        }]);
+        }], {
+          autoDismiss: false,
+          hideCloseButton: true
+        });
       } else {
         me.openDrawer = openDrawer;
         triggerPaymentAccepted(orders, 0);

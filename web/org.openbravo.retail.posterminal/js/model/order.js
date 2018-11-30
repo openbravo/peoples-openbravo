@@ -1142,6 +1142,7 @@
 
     clearWith: function (_order) {
       var execution = OB.UTIL.ProcessController.start('clearWith');
+
       // verify that the clearWith is not used for any other purpose than to update and fire the events of the UI receipt
       OB.UTIL.Debug.execute(function () {
         var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
@@ -2468,8 +2469,14 @@
           OB.POS.hwserver.getWeight(function (data) {
             if (data.exception) {
               OB.UTIL.showConfirmation.display('', data.exception.message);
+              if (callback) {
+                callback(false, null);
+              }
             } else if (data.result === 0) {
               OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
+              if (callback) {
+                callback(false, null);
+              }
             } else {
               line = me.createLine(p, options.isVerifiedReturn ? -data.result : data.result, options, attrs);
               execPostAddProductToOrderHook();
@@ -4910,30 +4917,36 @@
     },
 
     addPayment: function (payment, callback) {
+      var execution = OB.UTIL.ProcessController.start('addPayment');
       var me = this,
           payments, total, i, max, p, order, paymentSign, finalCallback, precision;
 
       if (this.get('isPaid') && !payment.get('isReversePayment') && OB.DEC.abs(this.getPrePaymentQty()) >= OB.DEC.abs(this.getTotal()) && !this.isNewReversed()) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
       if (this.stopAddingPayments) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
       if (!payment.get('isReversePayment') && this.getPending() <= 0 && payment.get('amount') > 0 && !payment.get('forceAddPayment')) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
 
       order = this;
       if (order.get('orderType') === 3 && order.getGross() === 0) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgVoidLayawayPaymentError'));
+        OB.UTIL.ProcessController.finish('addPayment', execution);
         return;
       }
 
@@ -4978,6 +4991,7 @@
               reverseCallback();
             }
             executeFinalCallback(false);
+            OB.UTIL.ProcessController.finish('addPayment', execution);
             return;
           }
           // search for an existing payment only if is not a reverser payment.
@@ -4997,6 +5011,7 @@
                   }
                   payment.set('date', new Date());
                   executeFinalCallback(true);
+                  OB.UTIL.ProcessController.finish('addPayment', execution);
                   return;
                 }
               }
@@ -5011,6 +5026,7 @@
                   }
                   payment.set('date', new Date());
                   executeFinalCallback(true);
+                  OB.UTIL.ProcessController.finish('addPayment', execution);
                   return;
                 }
               }
@@ -5038,6 +5054,7 @@
             payment.get('reversedPayment').set('isReversed', true);
           }
           executeFinalCallback(true);
+          OB.UTIL.ProcessController.finish('addPayment', execution);
           return;
         }); // call with callback, no args
       });
@@ -5049,7 +5066,7 @@
 
     removePayment: function (payment, cancellationCallback, removeCallback) {
       var payments = this.get('payments'),
-          max, i, p;
+          max, i, p, me = this;
       if (this.get('isBeingClosed')) {
         var error = new Error();
         OB.error('The receipt is being save, you cannot remove payments.');
@@ -5073,6 +5090,11 @@
           return true;
         }
         payments.remove(payment);
+        if (!me.get('deletedPayments')) {
+          me.set('deletedPayments', [payment]);
+        } else {
+          me.get('deletedPayments').push(payment);
+        }
         // Remove isReversed attribute from payment reversed by removed payment
         if (payment.get('reversedPaymentId')) {
           for (i = 0, max = payments.length; i < max; i++) {
@@ -7100,6 +7122,7 @@
       }
     },
     loadCurrent: function (isNew) {
+      OB.MobileApp.model.set('terminalLogContext', this.current.get('documentNo'));
       // Check if the current order to be loaded should be deleted
       if (this.current.get('obposIsDeleted') && this.current.get('id')) {
         var deletedOrderDocNo = this.current.get('documentNo');
