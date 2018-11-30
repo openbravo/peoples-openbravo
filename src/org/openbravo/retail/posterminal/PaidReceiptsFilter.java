@@ -146,6 +146,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       }
     } catch (JSONException e) {
       // Do nothing
+      System.out.print(e);
     }
     w.write(data);
     return;
