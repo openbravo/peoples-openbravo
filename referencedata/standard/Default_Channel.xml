@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" defaultValues="true">
+  <MarketingChannel id="288314214C1A49DDB5E48FF5C15870AA" identifier="Brick and mortar">
+    <id>288314214C1A49DDB5E48FF5C15870AA</id>
+    <active>true</active>
+    <creationDate transient="true">2018-12-02T16:55:50.120Z</creationDate>
+    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <updated transient="true">2018-12-02T16:55:50.120Z</updated>
+    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
+    <name>Brick and mortar</name>
+    <description xsi:nil="true"/>
+  </MarketingChannel>
+</ob:Openbravo>
