@@ -1,0 +1,2930 @@
+<?xml version="1.0" encoding="UTF-8"?><ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ADList id="00FB956ECD46483F8C15D67D2362EF83" identifier="Cancel Layaway">
+    <id>00FB956ECD46483F8C15D67D2362EF83</id>
+    <active>true</active>
+    <searchKey>OBPOS_CancelLayaway</searchKey>
+    <name>Cancel Layaway</name>
+    <description xsi:nil="true"/>
+    <reference id="20A228A295C844C68B4451622057A893" entity-name="ADReference" identifier="Types of data to be synchronized in Web POS"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="0100536D88584294B637376CAC46215B" identifier="Web POS maximum allowed price using keyboard">
+    <id>0100536D88584294B637376CAC46215B</id>
+    <active>true</active>
+    <searchKey>OBPOS_maxPriceUsingKeyboard</searchKey>
+    <name>Web POS maximum allowed price using keyboard</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="022E081EA35E47B8AF1A796CB8BB0812" identifier="Verified Returns Selector Disable Order Date To Filtering">
+    <id>022E081EA35E47B8AF1A796CB8BB0812</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_orderDateTo_f</searchKey>
+    <name>Verified Returns Selector Disable Order Date To Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="03B1A187797F4E978A947BCD284BBDB9" identifier="Web POS create customer location button">
+    <id>03B1A187797F4E978A947BCD284BBDB9</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.createCustomerLocationButton</searchKey>
+    <name>Web POS create customer location button</name>
+    <description>It enables the create new location button, in assign customer address popup</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="043B9CA543D8481D852EC96C0E46B747" identifier="Confirm return dialog">
+    <id>043B9CA543D8481D852EC96C0E46B747</id>
+    <active>true</active>
+    <searchKey>OB.UI.MockPayment</searchKey>
+    <name>Confirm return dialog</name>
+    <description xsi:nil="true"/>
+    <reference id="A8BB7B5A513E4A76A98F51FEF33676B2" entity-name="ADReference" identifier="Refund Provider"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="05D1C7ECD15E4CA087D1A8113FEA20FB" identifier="Web POS Time Allowed Drawer Sales">
+    <id>05D1C7ECD15E4CA087D1A8113FEA20FB</id>
+    <active>true</active>
+    <searchKey>OBPOS_timeAllowedDrawerSales</searchKey>
+    <name>Web POS Time Allowed Drawer Sales</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="06B304ECFBEF440590FA8787FC6AF1F4" identifier="Entity Selector BPartnerFilter Disable Tax ID Filtering">
+    <id>06B304ECFBEF440590FA8787FC6AF1F4</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_taxID_f</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Tax ID Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="06D35F806B4A40E6A6EC1B2D97CA1BE1" identifier="Entity Selector BPartnerFilter Disable BP Category Filtering">
+    <id>06D35F806B4A40E6A6EC1B2D97CA1BE1</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_bpCategory_f</searchKey>
+    <name>Entity Selector BPartnerFilter Disable BP Category Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="0929FF0DDFA645B5A039D14B5EC31D19" identifier="Open Receipt Selector Disable Total Amount To Filtering">
+    <id>0929FF0DDFA645B5A039D14B5EC31D19</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_totalamountTo_f</searchKey>
+    <name>Open Receipt Selector Disable Total Amount To Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="0A5196910CFB410CA0A7A2AB48CBACE0" identifier="Verified Returns Selector Disable Total Amount From Sorting">
+    <id>0A5196910CFB410CA0A7A2AB48CBACE0</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_totalamountFrom_s</searchKey>
+    <name>Verified Returns Selector Disable Total Amount From Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="0B6C98A2908C432BA051524A25C82FA8" identifier="Open Receipt Selector Disable Order Date To Filtering">
+    <id>0B6C98A2908C432BA051524A25C82FA8</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_orderDateTo_f</searchKey>
+    <name>Open Receipt Selector Disable Order Date To Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="0C9AEB6029D143C6A6F54775DDA4001C" identifier="Verified Returns Selector Disable Document Number Filtering">
+    <id>0C9AEB6029D143C6A6F54775DDA4001C</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_documentNo_f</searchKey>
+    <name>Verified Returns Selector Disable Document Number Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="0F4A0906DB114F8C839DC14D2F691337" identifier="Search for all words in the same order">
+    <id>0F4A0906DB114F8C839DC14D2F691337</id>
+    <active>true</active>
+    <searchKey>Sameorder</searchKey>
+    <name>Search for all words in the same order</name>
+    <description xsi:nil="true"/>
+    <reference id="32F0EE53F18B48DE949759131B972039" entity-name="ADReference" identifier="Product Search Filter Types"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="100EB6B59DAB49DC9994B8D41124A579" identifier="Web POS action void layaway">
+    <id>100EB6B59DAB49DC9994B8D41124A579</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.voidLayaway</searchKey>
+    <name>Web POS action void layaway</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="10D9809A9F0B4D658129903E56601EA0" identifier="Open Receipt Selector Disable Document Number Sorting">
+    <id>10D9809A9F0B4D658129903E56601EA0</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_documentNo_s</searchKey>
+    <name>Open Receipt Selector Disable Document Number Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="10EB6CD674F94EB084BDE5994F34BEA8" identifier="Web POS Service Return Approval">
+    <id>10EB6CD674F94EB084BDE5994F34BEA8</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.returnService</searchKey>
+    <name>Web POS Service Return Approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="11B1176D06FE4754A425F9DE79CF1EB9" identifier="Verified Returns Selector Disable Order Date From Sorting">
+    <id>11B1176D06FE4754A425F9DE79CF1EB9</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_orderDateFrom_s</searchKey>
+    <name>Verified Returns Selector Disable Order Date From Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="1455C9DD10BC4C62ADEA89E370CA2FEF" identifier="WEB POS Open Discounts From Keyboard ">
+    <id>1455C9DD10BC4C62ADEA89E370CA2FEF</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.discountkeyboard</searchKey>
+    <name>WEB POS Open Discounts From Keyboard </name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="146CD71739FA446A8F7CB84E2DC03D43" identifier="Layaway">
+    <id>146CD71739FA446A8F7CB84E2DC03D43</id>
+    <active>true</active>
+    <searchKey>Layaway</searchKey>
+    <name>Layaway</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="1603AE5947124766AC682A0CA683C4E5" identifier="Cancel layaway action only if payments">
+    <id>1603AE5947124766AC682A0CA683C4E5</id>
+    <active>true</active>
+    <searchKey>OBPOS_payments.cancelLayaway</searchKey>
+    <name>Cancel layaway action only if payments</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="164867782A554774ACB4106BC9BB301F" identifier="Web POS Cash Management window approval">
+    <id>164867782A554774ACB4106BC9BB301F</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.cashmgmt</searchKey>
+    <name>Web POS Cash Management window approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="1752E11DCD7A42BA89518ABF77E81CD2" identifier="Entity Selector BPartnerFilter Disable City Name Sorting">
+    <id>1752E11DCD7A42BA89518ABF77E81CD2</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_cityName_s</searchKey>
+    <name>Entity Selector BPartnerFilter Disable City Name Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="177CD85D5DE9401CB3493BA05909E70B" identifier="Is Order Cancelled">
+    <id>177CD85D5DE9401CB3493BA05909E70B</id>
+    <active>true</active>
+    <searchKey>OBPOS_IsOrderCancelled</searchKey>
+    <name>Is Order Cancelled</name>
+    <description xsi:nil="true"/>
+    <reference id="20A228A295C844C68B4451622057A893" entity-name="ADReference" identifier="Types of data to be synchronized in Web POS"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="17C09B4292F348ADAD162FE6DF0B2ECD" identifier="Confirm payment dialog">
+    <id>17C09B4292F348ADAD162FE6DF0B2ECD</id>
+    <active>true</active>
+    <searchKey>OB.UI.MockPayment</searchKey>
+    <name>Confirm payment dialog</name>
+    <description xsi:nil="true"/>
+    <reference id="FC7059F88CBB4EAB8162A4D3B8089C00" entity-name="ADReference" identifier="Payment Provider"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="17E59222BB6647B389A6D005F24025D8" identifier="WEB POS always create new receipt after pay a receipt">
+    <id>17E59222BB6647B389A6D005F24025D8</id>
+    <active>true</active>
+    <searchKey>OBPOS_alwaysCreateNewReceiptAfterPayReceipt</searchKey>
+    <name>WEB POS always create new receipt after pay a receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="17EE67AD7A2D4741A53E4340F5329D4C" identifier="Web POS Use Modal instead of dropdown in Sales Reprentative">
+    <id>17EE67AD7A2D4741A53E4340F5329D4C</id>
+    <active>true</active>
+    <searchKey>OBPOS_SR.comboOrModal</searchKey>
+    <name>Web POS Use Modal instead of dropdown in Sales Reprentative</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="17F8B5A3C7C7408D8365934B83806C79" identifier="Mandatory Acceptance">
+    <id>17F8B5A3C7C7408D8365934B83806C79</id>
+    <active>true</active>
+    <searchKey>MA</searchKey>
+    <name>Mandatory Acceptance</name>
+    <description xsi:nil="true"/>
+    <reference id="D1AF83D12C92458788CCE972F0C0730F" entity-name="ADReference" identifier="Services Proposal Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="197E9EFB64F24FF2AD16A676FC40A1A3" identifier="Entity Selector BPartnerFilter Disable Postal Code Filtering">
+    <id>197E9EFB64F24FF2AD16A676FC40A1A3</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_postalCode_f</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Postal Code Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="19DD35003E8D4AD69D027497E9875B01" identifier="Cash Up">
+    <id>19DD35003E8D4AD69D027497E9875B01</id>
+    <active>true</active>
+    <searchKey>OBPOS_App_Cashup</searchKey>
+    <name>Cash Up</name>
+    <description xsi:nil="true"/>
+    <reference id="20A228A295C844C68B4451622057A893" entity-name="ADReference" identifier="Types of data to be synchronized in Web POS"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>50</sequenceNumber>
+  </ADList>
+  <ADList id="1AF2B1200CFE48A1B6686994CAC6278D" identifier="Open Receipt Selector Disable Total Amount From Sorting">
+    <id>1AF2B1200CFE48A1B6686994CAC6278D</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_totalamountFrom_s</searchKey>
+    <name>Open Receipt Selector Disable Total Amount From Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="1B4D744135A74E31B09B12258EA35358" identifier="Entity Selector BPartnerFilter Disable Phone Sorting">
+    <id>1B4D744135A74E31B09B12258EA35358</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_phone_s</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Phone Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="1C47151F141F4DD1AF1A18E85F15F4A4" identifier="Business partner">
+    <id>1C47151F141F4DD1AF1A18E85F15F4A4</id>
+    <active>true</active>
+    <searchKey>BusinessPartner</searchKey>
+    <name>Business partner</name>
+    <description xsi:nil="true"/>
+    <reference id="20A228A295C844C68B4451622057A893" entity-name="ADReference" identifier="Types of data to be synchronized in Web POS"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>10</sequenceNumber>
+  </ADList>
+  <ADList id="1CF9CCE5303A4C03823360F39F2739F8" identifier="WebPOS Show Popup on EAN Not Found">
+    <id>1CF9CCE5303A4C03823360F39F2739F8</id>
+    <active>true</active>
+    <searchKey>OBPOS_showPopupEANNotFound</searchKey>
+    <name>WebPOS Show Popup on EAN Not Found</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="1E62E5FDAAF24C5DB8878B8E0786C47D" identifier="Web POS Save Removed Tickets">
+    <id>1E62E5FDAAF24C5DB8878B8E0786C47D</id>
+    <active>true</active>
+    <searchKey>OBPOS_remove_ticket</searchKey>
+    <name>Web POS Save Removed Tickets</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2076E11B7C3D44CFA6C32EF1A3475EAC" identifier="Web POS Open drawer from menu">
+    <id>2076E11B7C3D44CFA6C32EF1A3475EAC</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.opendrawerfrommenu</searchKey>
+    <name>Web POS Open drawer from menu</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="21F479EBB63A4D53A1C2754D0EE4C7A1" identifier="Web POS Quotation: Editable Firm Check">
+    <id>21F479EBB63A4D53A1C2754D0EE4C7A1</id>
+    <active>true</active>
+    <searchKey>OBPOS_quotation.editableFirmCheck</searchKey>
+    <name>Web POS Quotation: Editable Firm Check</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2306F5CAB63A4150B89C1931EFAA7BB1" identifier="Not imported due to errors">
+    <id>2306F5CAB63A4150B89C1931EFAA7BB1</id>
+    <active>true</active>
+    <searchKey>N</searchKey>
+    <name>Not imported due to errors</name>
+    <description xsi:nil="true"/>
+    <reference id="AF0F6F326155451B9B0060DF965E5E91" entity-name="ADReference" identifier="Order status"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="24B3DBF9935F4E628F425E52A340BAC2" identifier="Web POS assign to receipt button">
+    <id>24B3DBF9935F4E628F425E52A340BAC2</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.assignToReceiptAddress</searchKey>
+    <name>Web POS assign to receipt button</name>
+    <description>It enables the assign to receipt button, in assign customer address popup</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="25F8B366396D41FA95C0B2151B7E75AD" identifier="Entity Selector BPartnerFilter Disable Postal Code Sorting">
+    <id>25F8B366396D41FA95C0B2151B7E75AD</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_postalCode_s</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Postal Code Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="269605A6306D4C7BA1A00C3FB3886886" identifier="Verified Returns Selector Disable Business Partner Sorting">
+    <id>269605A6306D4C7BA1A00C3FB3886886</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_businessPartnerName_s</searchKey>
+    <name>Verified Returns Selector Disable Business Partner Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="27E4ACBEAC7D42EB92F963084BC9FBCD" identifier="Final Mandatory Proposal">
+    <id>27E4ACBEAC7D42EB92F963084BC9FBCD</id>
+    <active>true</active>
+    <searchKey>FMA</searchKey>
+    <name>Final Mandatory Proposal</name>
+    <description xsi:nil="true"/>
+    <reference id="D1AF83D12C92458788CCE972F0C0730F" entity-name="ADReference" identifier="Services Proposal Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="29A2A33C0E1644B5B55F38F07C64CF85" identifier="Standard">
+    <id>29A2A33C0E1644B5B55F38F07C64CF85</id>
+    <active>true</active>
+    <searchKey>STD</searchKey>
+    <name>Standard</name>
+    <description xsi:nil="true"/>
+    <reference id="32F0EE53F18B48DE949759131B972039" entity-name="ADReference" identifier="Product Search Filter Types"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="29DA29BD576344F59D93C9C3706ADA40" identifier="Verified Returns Selector Disable Order Date To Sorting">
+    <id>29DA29BD576344F59D93C9C3706ADA40</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_orderDateTo_s</searchKey>
+    <name>Verified Returns Selector Disable Order Date To Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2A7EBB62B86C475687EF8F453A251CB1" identifier="Web POS Show Action Button Delete">
+    <id>2A7EBB62B86C475687EF8F453A251CB1</id>
+    <active>true</active>
+    <searchKey>OBPOS_ActionButtonDelete</searchKey>
+    <name>Web POS Show Action Button Delete</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2AA75A6A6C8F433BBA095364F12B63B5" identifier="Open Receipt Selector Disable Total Amount To Sorting">
+    <id>2AA75A6A6C8F433BBA095364F12B63B5</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_totalamountTo_s</searchKey>
+    <name>Open Receipt Selector Disable Total Amount To Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2C15961C145144CFBC37A281678297A7" identifier="Entity Selector BPartnerFilter Disable Tax ID Sorting">
+    <id>2C15961C145144CFBC37A281678297A7</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_taxID_s</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Tax ID Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2C9A4AFF7E5C41DC8A6BBC7569CCD49A" identifier="Open Receipt Selector Disable Order Type Sorting">
+    <id>2C9A4AFF7E5C41DC8A6BBC7569CCD49A</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_orderType_s</searchKey>
+    <name>Open Receipt Selector Disable Order Type Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2CA7BAB67A38404A8E72556527E8C914" identifier="Web POS window Point of Sale">
+    <id>2CA7BAB67A38404A8E72556527E8C914</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.pointofsale</searchKey>
+    <name>Web POS window Point of Sale</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2D5507B656C647A3A9EA131D0E9E9785" identifier="Scan">
+    <id>2D5507B656C647A3A9EA131D0E9E9785</id>
+    <active>true</active>
+    <searchKey>scan</searchKey>
+    <name>Scan</name>
+    <description>Scan tab</description>
+    <reference id="358AD6F66FB94E2DAD0D237F877525F1" entity-name="ADReference" identifier="Web POS default tab"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>0</sequenceNumber>
+  </ADList>
+  <ADList id="2DA2B97529764AFFBF59FE11779FA635" identifier="Verified Returns Selector Disable Order Date From Filtering">
+    <id>2DA2B97529764AFFBF59FE11779FA635</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_orderDateFrom_f</searchKey>
+    <name>Verified Returns Selector Disable Order Date From Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2F9B68257FFC416698B4BE8F1969EB72" identifier="Web POS Show Action Button Return">
+    <id>2F9B68257FFC416698B4BE8F1969EB72</id>
+    <active>true</active>
+    <searchKey>OBPOS_ReturnLine</searchKey>
+    <name>Web POS Show Action Button Return</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="2FB32FEF1AE643FDBB00480260ED5160" identifier="Web POS Reverse Payment Approval">
+    <id>2FB32FEF1AE643FDBB00480260ED5160</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.reversePayment</searchKey>
+    <name>Web POS Reverse Payment Approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="301E1F174C8C4F1890123885B3F683A3" identifier="Web POS Cash Up Differences Approval">
+    <id>301E1F174C8C4F1890123885B3F683A3</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.cashupdifferences</searchKey>
+    <name>Web POS Cash Up Differences Approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="332013E31D67427EA1A6AF1C949FDBAE" identifier="Web POS Discretionary Discount Approval">
+    <id>332013E31D67427EA1A6AF1C949FDBAE</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.discounts</searchKey>
+    <name>Web POS Discretionary Discount Approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="33275D9D69974A789B4932236E33F93E" identifier="Open Receipt Selector Disable Total Amount From Filtering">
+    <id>33275D9D69974A789B4932236E33F93E</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_totalamountFrom_f</searchKey>
+    <name>Open Receipt Selector Disable Total Amount From Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="334727A9ECFD4C299577E6A9BCE89E13" identifier="Web POS Maximum time which the terminal can be offline">
+    <id>334727A9ECFD4C299577E6A9BCE89E13</id>
+    <active>true</active>
+    <searchKey>OBPOS_MaxTimeInOffline</searchKey>
+    <name>Web POS Maximum time which the terminal can be offline</name>
+    <description>Define maximum time terminal could be offline until conection is required</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="36E733BAC3614AA4BC6BA1783A7E1AA8" identifier="Void layaway action only if no payments">
+    <id>36E733BAC3614AA4BC6BA1783A7E1AA8</id>
+    <active>true</active>
+    <searchKey>OBPOS_payments.voidLayaway</searchKey>
+    <name>Void layaway action only if no payments</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="38BBDAA851F8442F824E80451D217E5B" identifier="Web POS action Receipt properties">
+    <id>38BBDAA851F8442F824E80451D217E5B</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.properties</searchKey>
+    <name>Web POS action Receipt properties</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="39C3978260574693AA0D14E766182CA8" identifier="Closed Invoice">
+    <id>39C3978260574693AA0D14E766182CA8</id>
+    <active>true</active>
+    <searchKey>ClosedInvoice</searchKey>
+    <name>Closed Invoice</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="39E615E00A7049298B5BEE45D7C63403" identifier="Allow layaways with negative lines">
+    <id>39E615E00A7049298B5BEE45D7C63403</id>
+    <active>true</active>
+    <searchKey>OBPOS_AllowLayawaysNegativeLines</searchKey>
+    <name>Allow layaways with negative lines</name>
+    <description>Allow creating layaways with negative lines</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="3AACBA31D4034ADA983CC1D5C51985D3" identifier="Filter User Images only on TerminalAccess">
+    <id>3AACBA31D4034ADA983CC1D5C51985D3</id>
+    <active>true</active>
+    <searchKey>OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS</searchKey>
+    <name>Filter User Images only on TerminalAccess</name>
+    <description>Filter which user images to show on the basis of the existing terminal access records</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>10</sequenceNumber>
+  </ADList>
+  <ADList id="3E5BC9B9EA0041FBBA3C116AD65FF480" identifier="Web POS Enable Multi Order menu entry">
+    <id>3E5BC9B9EA0041FBBA3C116AD65FF480</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.multiorders</searchKey>
+    <name>Web POS Enable Multi Order menu entry</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="3E5D8A1EC6924C3B8D90067812EA30DC" identifier="Web POS Open Drawer approval Cash Up">
+    <id>3E5D8A1EC6924C3B8D90067812EA30DC</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.opendrawer.cashup</searchKey>
+    <name>Web POS Open Drawer approval Cash Up</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="3E5E6BB979584AE5844F4C90A0C3735D" identifier="Web POS action Cancel Layaway">
+    <id>3E5E6BB979584AE5844F4C90A0C3735D</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.cancelLayaway</searchKey>
+    <name>Web POS action Cancel Layaway</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="3E6C6E4355654D3999AD5AA93A0D6047" identifier="Cross Channel">
+    <id>3E6C6E4355654D3999AD5AA93A0D6047</id>
+    <active>true</active>
+    <searchKey>cross_channel</searchKey>
+    <name>Cross Channel</name>
+    <description xsi:nil="true"/>
+    <reference id="3EE17009109C44FA88FE7CF9E6EE7AB5" entity-name="ADReference" identifier="Warehouse types list"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="4004936F73E8457289328DE66E496355" identifier="Return">
+    <id>4004936F73E8457289328DE66E496355</id>
+    <active>true</active>
+    <searchKey>RET</searchKey>
+    <name>Return</name>
+    <description xsi:nil="true"/>
+    <reference id="1CFCF0C9BA35496FBEE9043168AF3662" entity-name="ADReference" identifier="POS Order Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>10</sequenceNumber>
+  </ADList>
+  <ADList id="4018A8FFF52C41628FFD6A0C282895E2" identifier="Web POS action Cancel and Replace">
+    <id>4018A8FFF52C41628FFD6A0C282895E2</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.cancelreplace</searchKey>
+    <name>Web POS action Cancel and Replace</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="4059AE4B2AB14824AF5CFABD6FD21A95" identifier="Web POS Disable New BP Button Before Searching">
+    <id>4059AE4B2AB14824AF5CFABD6FD21A95</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.disableNewBPButton</searchKey>
+    <name>Web POS Disable New BP Button Before Searching</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="42405B5464FA47D986AE0EE1E9F2457E" identifier="Open Receipt Selector Disable Order Date From Sorting">
+    <id>42405B5464FA47D986AE0EE1E9F2457E</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_orderDateFrom_s</searchKey>
+    <name>Open Receipt Selector Disable Order Date From Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="42C150FD9B1F4B0EBC8E7C340289307A" identifier="Entity Selector BPartnerFilter Apply Restrictions to UI">
+    <id>42C150FD9B1F4B0EBC8E7C340289307A</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_apply_UI_restrictions</searchKey>
+    <name>Entity Selector BPartnerFilter Apply Restrictions to UI</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="43DE997E6818426F8E6D2FB333FBA5CF" identifier="Web POS Ticket Integrity Check">
+    <id>43DE997E6818426F8E6D2FB333FBA5CF</id>
+    <active>true</active>
+    <searchKey>OBPOS_TicketIntegrityCheck</searchKey>
+    <name>Web POS Ticket Integrity Check</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="44AA7E2293634294A77435B08DC8FC19" identifier="WebPOS Disable Browse Tab">
+    <id>44AA7E2293634294A77435B08DC8FC19</id>
+    <active>true</active>
+    <searchKey>OBPOS_disableBrowseTab</searchKey>
+    <name>WebPOS Disable Browse Tab</name>
+    <description>If set it will deactivate Browse Tab Button on WebPOS</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="46646E707C5047A8A19441005E0750E9" identifier="Web POS set Price approval">
+    <id>46646E707C5047A8A19441005E0750E9</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.setPrice</searchKey>
+    <name>Web POS set Price approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="480300CF74B444C78F8AB31E172442E0" identifier="Return">
+    <id>480300CF74B444C78F8AB31E172442E0</id>
+    <active>true</active>
+    <searchKey>Return</searchKey>
+    <name>Return</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="48C9644667AB4358B9E1AB066891F949" identifier="External Order">
+    <id>48C9644667AB4358B9E1AB066891F949</id>
+    <active>true</active>
+    <searchKey>OBPOS_ExternalOrder</searchKey>
+    <name>External Order</name>
+    <description>External Order</description>
+    <reference id="11F86B630ECB4A57B28927193F8AB99D" entity-name="ADReference" identifier="Type of Import Data"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="48F0025323C640709F79351713321978" identifier="Do not allow to edit anonymous customer">
+    <id>48F0025323C640709F79351713321978</id>
+    <active>true</active>
+    <searchKey>OBPOS_NotAllowEditAnonymousCustomer</searchKey>
+    <name>Do not allow to edit anonymous customer</name>
+    <description>Do not allow to edit anonymous customer</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="493014FCAC2B49349FEE42F56673DDA7" identifier="Layaway">
+    <id>493014FCAC2B49349FEE42F56673DDA7</id>
+    <active>true</active>
+    <searchKey>LAY</searchKey>
+    <name>Layaway</name>
+    <description xsi:nil="true"/>
+    <reference id="1CFCF0C9BA35496FBEE9043168AF3662" entity-name="ADReference" identifier="POS Order Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>20</sequenceNumber>
+  </ADList>
+  <ADList id="4CD0F405F7DF46AEA432182090AEC9A9" identifier="Web POS Enable Multi Price List">
+    <id>4CD0F405F7DF46AEA432182090AEC9A9</id>
+    <active>true</active>
+    <searchKey>OBPOS_EnableMultiPriceList</searchKey>
+    <name>Web POS Enable Multi Price List</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="4CE4785B44FE4274A6256B948A345767" identifier="Web POS action Print receipt">
+    <id>4CE4785B44FE4274A6256B948A345767</id>
+    <active>true</active>
+    <searchKey>OBPOS_print.receipt</searchKey>
+    <name>Web POS action Print receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="4D825220AB954A3C99ACE786C19BAF22" identifier="Entity Selector BPartnerFilter Disable City Name Filtering">
+    <id>4D825220AB954A3C99ACE786C19BAF22</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_cityName_f</searchKey>
+    <name>Entity Selector BPartnerFilter Disable City Name Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="4F232254B6E34276938B86A5C1EAA064" identifier="Quotations are not Firm by default">
+    <id>4F232254B6E34276938B86A5C1EAA064</id>
+    <active>true</active>
+    <searchKey>OBPOS_quotation.defaultNotFirm</searchKey>
+    <name>Quotations are not Firm by default</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="4F4BE9F7D3284BCF9AF7E7F90ECEE01F" identifier="Web POS Select Printer">
+    <id>4F4BE9F7D3284BCF9AF7E7F90ECEE01F</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.selectprinter</searchKey>
+    <name>Web POS Select Printer</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="515ACA4E1E594C958F5F659BA94973F2" identifier="Hide cashup information to cashier">
+    <id>515ACA4E1E594C958F5F659BA94973F2</id>
+    <active>true</active>
+    <searchKey>OBPOS_HideCashUpInfoToCashier</searchKey>
+    <name>Hide cashup information to cashier</name>
+    <description>Property to hide/show the expected amounts of the cashup to the cashier.</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="51D681F4E41D44F6A1F9987BA0DA2B93" identifier="Block screen when processing ticket on slow devices">
+    <id>51D681F4E41D44F6A1F9987BA0DA2B93</id>
+    <active>true</active>
+    <searchKey>OBPOS_processingBlockScreenOnSlowDevices</searchKey>
+    <name>Block screen when processing ticket on slow devices</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="52F8D3A1F21B430598A451C5213F2311" identifier="Print Return order once instead twice in Web Pos ">
+    <id>52F8D3A1F21B430598A451C5213F2311</id>
+    <active>true</active>
+    <searchKey>OBPOS_print.once</searchKey>
+    <name>Print Return order once instead twice in Web Pos </name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="5339D7095E8A4553BDACC1547358221D" identifier="Web POS window Cash Up Partial">
+    <id>5339D7095E8A4553BDACC1547358221D</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.cashuppartial</searchKey>
+    <name>Web POS window Cash Up Partial</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="5548479CBE0A4A168868AA7A7ABC7C92" identifier="WebPOS Allow Price Modification in Verified Returns">
+    <id>5548479CBE0A4A168868AA7A7ABC7C92</id>
+    <active>true</active>
+    <searchKey>OBPOS_ModifyPriceVerifiedReturns</searchKey>
+    <name>WebPOS Allow Price Modification in Verified Returns</name>
+    <description>Allow Price Modification in Verified Returns. It will allow only to return less amount</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="55D40DCFE3FE49C39AAB6E0607094A6C" identifier="Web POS window Cash Management">
+    <id>55D40DCFE3FE49C39AAB6E0607094A6C</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.cashmanagement</searchKey>
+    <name>Web POS window Cash Management</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="56E9EAA1759B416C86AA801E363AA5A8" identifier="Web POS Session">
+    <id>56E9EAA1759B416C86AA801E363AA5A8</id>
+    <active>true</active>
+    <searchKey>OBPOS_POS</searchKey>
+    <name>Web POS Session</name>
+    <description xsi:nil="true"/>
+    <reference id="86086D70DDBC42B09E2BEB51D25C159F" entity-name="ADReference" identifier="Session Login Status"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="572B0821C2454AF3BBD08643DB663964" identifier="Entity Selector BPartnerFilter Disable Email Sorting">
+    <id>572B0821C2454AF3BBD08643DB663964</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_email_s</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Email Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="57786C212D874EA09FE2EEA2D0A4ED58" identifier="Enable Remote for Discounts by Business Partner">
+    <id>57786C212D874EA09FE2EEA2D0A4ED58</id>
+    <active>true</active>
+    <searchKey>OBPOS_remote.discount.bp</searchKey>
+    <name>Enable Remote for Discounts by Business Partner</name>
+    <description>It actives feature to retrieve discounts by business partners from server instead of saving in local storage</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="57F1001CF7734FE3AF23EFB2405E9EA8" identifier="Web POS Delete Line Approval">
+    <id>57F1001CF7734FE3AF23EFB2405E9EA8</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.deleteLine</searchKey>
+    <name>Web POS Delete Line Approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="5B9E4C7ED1684FF08BA961B47070EE13" identifier="Web POS Show Action Button Remove Discount">
+    <id>5B9E4C7ED1684FF08BA961B47070EE13</id>
+    <active>true</active>
+    <searchKey>OBPOS_ActionButtonRemoveDiscount</searchKey>
+    <name>Web POS Show Action Button Remove Discount</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="5BFDB9123CEF4190976681EE980DD912" identifier="Web POS Print suspended order">
+    <id>5BFDB9123CEF4190976681EE980DD912</id>
+    <active>true</active>
+    <searchKey>OBPOS_print.suspended</searchKey>
+    <name>Web POS Print suspended order</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="5E157E81B93144D697DE4E55E4D7CEA3" identifier="Mandatory Proposal">
+    <id>5E157E81B93144D697DE4E55E4D7CEA3</id>
+    <active>true</active>
+    <searchKey>MP</searchKey>
+    <name>Mandatory Proposal</name>
+    <description xsi:nil="true"/>
+    <reference id="D1AF83D12C92458788CCE972F0C0730F" entity-name="ADReference" identifier="Services Proposal Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="5F1CC3741DD04E1C893D22EA72802DB8" identifier="Web POS Session Timeout">
+    <id>5F1CC3741DD04E1C893D22EA72802DB8</id>
+    <active>true</active>
+    <searchKey>OBPOS_SessionTimeout</searchKey>
+    <name>Web POS Session Timeout</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="616FE26EB8B44AF7B4AFE90854C2A743" identifier="Good Bye">
+    <id>616FE26EB8B44AF7B4AFE90854C2A743</id>
+    <active>true</active>
+    <searchKey>GoodBye</searchKey>
+    <name>Good Bye</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="63B3FF41B8EF459A85D1541B16EC0573" identifier="Web POS action Open Receipt">
+    <id>63B3FF41B8EF459A85D1541B16EC0573</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.menuReceiptSelector</searchKey>
+    <name>Web POS action Open Receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="65761E931D4643BD8C59B38482E3ED58" identifier="Web POS Show Standard Price on Search and Browse ">
+    <id>65761E931D4643BD8C59B38482E3ED58</id>
+    <active>true</active>
+    <searchKey>OBPOS_ShowStandardPriceOnSearchAndBrowse</searchKey>
+    <name>Web POS Show Standard Price on Search and Browse </name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="6602A06C570044EE99A3C3C4117F0340" identifier="Search">
+    <id>6602A06C570044EE99A3C3C4117F0340</id>
+    <active>true</active>
+    <searchKey>searchCharacteristic</searchKey>
+    <name>Search</name>
+    <description>Search Tab</description>
+    <reference id="358AD6F66FB94E2DAD0D237F877525F1" entity-name="ADReference" identifier="Web POS default tab"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>2</sequenceNumber>
+  </ADList>
+  <ADList id="669E5F0B57E54CDA9F734A186059DDB2" identifier="Open Receipt Selector Disable Order Date To Sorting">
+    <id>669E5F0B57E54CDA9F734A186059DDB2</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_orderDateTo_s</searchKey>
+    <name>Open Receipt Selector Disable Order Date To Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="66BE161D3E9142AC956965BD390A22A4" identifier="WebPOS Select Current Receipts on Pay Open Tickets">
+    <id>66BE161D3E9142AC956965BD390A22A4</id>
+    <active>true</active>
+    <searchKey>OBPOS_SelectCurrentTicketsOnPaidOpen</searchKey>
+    <name>WebPOS Select Current Receipts on Pay Open Tickets</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="6771D0C343FE494B8C999945C6458CAB" identifier="Web POS Show Action Button Check Stock">
+    <id>6771D0C343FE494B8C999945C6458CAB</id>
+    <active>true</active>
+    <searchKey>OBPOS_ActionButtonCheckStock</searchKey>
+    <name>Web POS Show Action Button Check Stock</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="69866AA7260440C0A81D4ADF7BC84EBC" identifier="Web POS Product Images from server instead of cache">
+    <id>69866AA7260440C0A81D4ADF7BC84EBC</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.productImages</searchKey>
+    <name>Web POS Product Images from server instead of cache</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="6A8FCA5AC0A94CFDBAE26E49BBDE2DD3" identifier="Enable Remote for Customer">
+    <id>6A8FCA5AC0A94CFDBAE26E49BBDE2DD3</id>
+    <active>true</active>
+    <searchKey>OBPOS_remote.customer</searchKey>
+    <name>Enable Remote for Customer</name>
+    <description>It actives feature to retrieve cutomers from server instead of saving in local storage</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="6B645CF460204242BA6C7D3C45E0F679" identifier="Web POS edit customer button">
+    <id>6B645CF460204242BA6C7D3C45E0F679</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.editCustomerButton</searchKey>
+    <name>Web POS edit customer button</name>
+    <description>It enables the edit customer button, in assign customer address popup</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="6D008416C2FB407AB17447928FC36BAB" identifier="Web POS action Disable / Enable RFID Reader">
+    <id>6D008416C2FB407AB17447928FC36BAB</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.disableEnableRFIDReader</searchKey>
+    <name>Web POS action Disable / Enable RFID Reader</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="6D8272633AB24DC29FB1CDC17F4CF7BF" identifier="Web POS Quotation rejections">
+    <id>6D8272633AB24DC29FB1CDC17F4CF7BF</id>
+    <active>true</active>
+    <searchKey>OBPOS_quotation.rejections</searchKey>
+    <name>Web POS Quotation rejections</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="6E2B450BFCC94F6E9228DFBD7A67F005" identifier="Web POS Back Office">
+    <id>6E2B450BFCC94F6E9228DFBD7A67F005</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.backoffice</searchKey>
+    <name>Web POS Back Office</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="71C3E0A595884C0CA5E60436FAD4C285" identifier="Web POS Remove Receipts Approval">
+    <id>71C3E0A595884C0CA5E60436FAD4C285</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.removereceipts</searchKey>
+    <name>Web POS Remove Receipts Approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="72580DACE9084B2989B374FDEB4FD037" identifier="WebPOS Disable Search Tab">
+    <id>72580DACE9084B2989B374FDEB4FD037</id>
+    <active>true</active>
+    <searchKey>OBPOS_disableSearchTab</searchKey>
+    <name>WebPOS Disable Search Tab</name>
+    <description>If set it will deactivate Search Tab Button on WebPOS</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="73D3D4A835914AA7B5CF4E197658FF1E" identifier="BusinessPartnerLocation">
+    <id>73D3D4A835914AA7B5CF4E197658FF1E</id>
+    <active>true</active>
+    <searchKey>BusinessPartnerLocation</searchKey>
+    <name>BusinessPartnerLocation</name>
+    <description xsi:nil="true"/>
+    <reference id="20A228A295C844C68B4451622057A893" entity-name="ADReference" identifier="Types of data to be synchronized in Web POS"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>20</sequenceNumber>
+  </ADList>
+  <ADList id="7442BA400CBE49B1ADF1ECA37DE13A57" identifier="Is Order Cancelled">
+    <id>7442BA400CBE49B1ADF1ECA37DE13A57</id>
+    <active>true</active>
+    <searchKey>OBPOS_IsOrderCancelled</searchKey>
+    <name>Is Order Cancelled</name>
+    <description xsi:nil="true"/>
+    <reference id="11F86B630ECB4A57B28927193F8AB99D" entity-name="ADReference" identifier="Type of Import Data"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="7606D419855B4A898FDD58DF99307CB5" identifier="Open Receipt Selector Apply UI Restrictions">
+    <id>7606D419855B4A898FDD58DF99307CB5</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_apply_UI_restrictions</searchKey>
+    <name>Open Receipt Selector Apply UI Restrictions</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="781A00A4F3F84A34BB745EC246A9554B" identifier="Use Order Document Number for Related Docs">
+    <id>781A00A4F3F84A34BB745EC246A9554B</id>
+    <active>true</active>
+    <searchKey>OBPOS_UseOrderDocumentNoForRelatedDocs</searchKey>
+    <name>Use Order Document Number for Related Docs</name>
+    <description>Use the order document number for shipment/payment docs generated when submitting an order</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="7B216FE08B8D456B9F979F883D780D98" identifier="Web POS Returns Approval">
+    <id>7B216FE08B8D456B9F979F883D780D98</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.returns</searchKey>
+    <name>Web POS Returns Approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="7C7E824DA59547FEB5A5B57A21C0C776" identifier="Web POS Sessions will expire">
+    <id>7C7E824DA59547FEB5A5B57A21C0C776</id>
+    <active>true</active>
+    <searchKey>OBPOS_SessionExpiration</searchKey>
+    <name>Web POS Sessions will expire</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="7E1C5D59E1D4460FBF2F169801F572CF" identifier="Print ticket">
+    <id>7E1C5D59E1D4460FBF2F169801F572CF</id>
+    <active>true</active>
+    <searchKey>PrintTicket</searchKey>
+    <name>Print ticket</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="7F5090BE8BBE47ADBA645E0E4B6B01B3" identifier="Web POS window Cash Up">
+    <id>7F5090BE8BBE47ADBA645E0E4B6B01B3</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.cashup</searchKey>
+    <name>Web POS window Cash Up</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="81DAA930A05B4110B37D6B0DBEE34217" identifier="Web POS assign to receipt invoicing button">
+    <id>81DAA930A05B4110B37D6B0DBEE34217</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.assignToReceiptInvoicingAddress</searchKey>
+    <name>Web POS assign to receipt invoicing button</name>
+    <description>It enables the assign to receipt (invoicing) button, in assign customer address popup</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="833457B6FB074CB08E9E6745D3F1D7E0" identifier="Web POS Approval Services Deferred Sell ">
+    <id>833457B6FB074CB08E9E6745D3F1D7E0</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.deferred_sell_max_days</searchKey>
+    <name>Web POS Approval Services Deferred Sell </name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="8868413E7CBB44FB82FBF2539019C011" identifier="Check Drawer Status">
+    <id>8868413E7CBB44FB82FBF2539019C011</id>
+    <active>true</active>
+    <searchKey>checkdrawerstatus</searchKey>
+    <name>Check Drawer Status</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="88917BAF70ED44C4803EAD048ABA5412" identifier="Closed Receipt">
+    <id>88917BAF70ED44C4803EAD048ABA5412</id>
+    <active>true</active>
+    <searchKey>ClosedReceipt</searchKey>
+    <name>Closed Receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="89723B4B34E540ADA083D49339787F18" identifier="Web POS Hide entry menu for C&amp;R if not payments">
+    <id>89723B4B34E540ADA083D49339787F18</id>
+    <active>true</active>
+    <searchKey>OBPOS_payments.hideCancelAndReplace</searchKey>
+    <name>Web POS Hide entry menu for C&amp;R if not payments</name>
+    <description>Web POS Hide entry menu for C&amp;R if not payments</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="898DA3A00DD64A45A8478F78249EF521" identifier="Browse">
+    <id>898DA3A00DD64A45A8478F78249EF521</id>
+    <active>true</active>
+    <searchKey>catalog</searchKey>
+    <name>Browse</name>
+    <description>Browse tab</description>
+    <reference id="358AD6F66FB94E2DAD0D237F877525F1" entity-name="ADReference" identifier="Web POS default tab"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>1</sequenceNumber>
+  </ADList>
+  <ADList id="8A407C2203D94449AB6C552D664A2CAE" identifier="Use contains in Receipt search">
+    <id>8A407C2203D94449AB6C552D664A2CAE</id>
+    <active>true</active>
+    <searchKey>OBPOS_remote.order_usesContains</searchKey>
+    <name>Use contains in Receipt search</name>
+    <description>Searching Receipts, use contains when filtering</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="8A9DDD8D41B94395A1D68E6B3E31595E" identifier="Cash Up Report">
+    <id>8A9DDD8D41B94395A1D68E6B3E31595E</id>
+    <active>true</active>
+    <searchKey>CashUp</searchKey>
+    <name>Cash Up Report</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="8B09C6407209497281F6C58B30EBC4C6" identifier="Open Receipt Selector Disable Order Date From Filtering">
+    <id>8B09C6407209497281F6C58B30EBC4C6</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_orderDateFrom_f</searchKey>
+    <name>Open Receipt Selector Disable Order Date From Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="8CA80355EF064A0EAD578CB8AB07C9FC" identifier="Return Invoice">
+    <id>8CA80355EF064A0EAD578CB8AB07C9FC</id>
+    <active>true</active>
+    <searchKey>ReturnInvoice</searchKey>
+    <name>Return Invoice</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="8CC8CC29591845A79A46FFDA47D7276C" identifier="Web POS Allow sell on credit while offline">
+    <id>8CC8CC29591845A79A46FFDA47D7276C</id>
+    <active>true</active>
+    <searchKey>OBPOS_AllowSellOnCreditWhileOffline</searchKey>
+    <name>Web POS Allow sell on credit while offline</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="8E1B421B6291460AA2991AF919E635DD" identifier="Enable Remote for Order">
+    <id>8E1B421B6291460AA2991AF919E635DD</id>
+    <active>true</active>
+    <searchKey>OBPOS_remote.order</searchKey>
+    <name>Enable Remote for Order</name>
+    <description>It actives feature to retrieve orders from server instead of saving in local storage</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="8E594CEE611248C69312FAB49DE88FF2" identifier="Cancel and Replace orders with deliveries">
+    <id>8E594CEE611248C69312FAB49DE88FF2</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.CancelAndReplaceOrdersWithDeliveries</searchKey>
+    <name>Cancel and Replace orders with deliveries</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="8EC7AA4924CE41E1BB7AC2A30A3EE058" identifier="Confirm return dialog">
+    <id>8EC7AA4924CE41E1BB7AC2A30A3EE058</id>
+    <active>true</active>
+    <searchKey>OB.UI.MockPayment</searchKey>
+    <name>Confirm return dialog</name>
+    <description xsi:nil="true"/>
+    <reference id="BDB5235D4E7A42BDA5D91987F11C8AB1" entity-name="ADReference" identifier="Cash Management Provider"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9622025366CB4D3B9227A3F2D3465088" identifier="Web POS create customer button">
+    <id>9622025366CB4D3B9227A3F2D3465088</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.createCustomerButton</searchKey>
+    <name>Web POS create customer button</name>
+    <description>It enables the create new customer button, in assign customer popup</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="968EBA05731F4129AA90818AABDFFFF4" identifier="WebPOS Split Change in Different Payment Details">
+    <id>968EBA05731F4129AA90818AABDFFFF4</id>
+    <active>true</active>
+    <searchKey>OBPOS_SplitChange</searchKey>
+    <name>WebPOS Split Change in Different Payment Details</name>
+    <description>WebPOS Split Change in Different Payment Details for the same Payment Method</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="96AE58CAE56B41A491D3BC29D3EE935D" identifier="Disable Lock Screen shortcut - Web POS">
+    <id>96AE58CAE56B41A491D3BC29D3EE935D</id>
+    <active>true</active>
+    <searchKey>OBPOS_DisableLockShortcut</searchKey>
+    <name>Disable Lock Screen shortcut - Web POS</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="97580E92FDAB425D8C1626660F5CBA0E" identifier="Optional Proposal">
+    <id>97580E92FDAB425D8C1626660F5CBA0E</id>
+    <active>true</active>
+    <searchKey>OP</searchKey>
+    <name>Optional Proposal</name>
+    <description xsi:nil="true"/>
+    <reference id="D1AF83D12C92458788CCE972F0C0730F" entity-name="ADReference" identifier="Services Proposal Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9963B3AAB6B24511B2C4BB65ED571CF6" identifier="Web POS action Credit Sales ">
+    <id>9963B3AAB6B24511B2C4BB65ED571CF6</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.creditsales</searchKey>
+    <name>Web POS action Credit Sales </name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9A000A73E266414D857CAED9FFCD724E" identifier="Web POS action Print cash up">
+    <id>9A000A73E266414D857CAED9FFCD724E</id>
+    <active>true</active>
+    <searchKey>OBPOS_print.cashup</searchKey>
+    <name>Web POS action Print cash up</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9AE82D0B11CC48E6A47B8C36A8ECBA95" identifier="Cancel and Replace orders totally paid and delivered">
+    <id>9AE82D0B11CC48E6A47B8C36A8ECBA95</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.CancelReplacePaidOrders</searchKey>
+    <name>Cancel and Replace orders totally paid and delivered</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9B0F6D9C154645ECABF867852CE6001B" identifier="Welcome">
+    <id>9B0F6D9C154645ECABF867852CE6001B</id>
+    <active>true</active>
+    <searchKey>Welcome</searchKey>
+    <name>Welcome</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9B90EB274FB74AE493D34BA658B97385" identifier="Web POS customer advanced filters window">
+    <id>9B90EB274FB74AE493D34BA658B97385</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.customer_advanced_filters</searchKey>
+    <name>Web POS customer advanced filters window</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9E857A3EE6B1410D90F605C0DB2DCA19" identifier="WebPOS Disable Edit Tab">
+    <id>9E857A3EE6B1410D90F605C0DB2DCA19</id>
+    <active>true</active>
+    <searchKey>OBPOS_disableEditTab</searchKey>
+    <name>WebPOS Disable Edit Tab</name>
+    <description>If set it will deactivate Edit Tab Button on WebPOS</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9ED6892B8C8F4507A9F0C53648566E9A" identifier="POS Terminal">
+    <id>9ED6892B8C8F4507A9F0C53648566E9A</id>
+    <active>true</active>
+    <searchKey>OBPOS_Main</searchKey>
+    <name>POS Terminal</name>
+    <description xsi:nil="true"/>
+    <reference id="808852664FCF4615A2A901308737F81F" entity-name="ADReference" identifier="OBCLKER_Component Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9F2C8CD57AF2416EBB657CA3BA13FC60" identifier="Open Drawer">
+    <id>9F2C8CD57AF2416EBB657CA3BA13FC60</id>
+    <active>true</active>
+    <searchKey>opendrawer</searchKey>
+    <name>Open Drawer</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="9FFF98812ED94D3C9DBBE1AE88512AB3" identifier="Reject Quotation">
+    <id>9FFF98812ED94D3C9DBBE1AE88512AB3</id>
+    <active>true</active>
+    <searchKey>OBPOS_RejectQuotation</searchKey>
+    <name>Reject Quotation</name>
+    <description>Reject Quotation</description>
+    <reference id="11F86B630ECB4A57B28927193F8AB99D" entity-name="ADReference" identifier="Type of Import Data"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>80</sequenceNumber>
+  </ADList>
+  <ADList id="A06311536F614382933760D677505C4A" identifier=" Web POS Open Drawer approval Menu">
+    <id>A06311536F614382933760D677505C4A</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.opendrawer.menu</searchKey>
+    <name> Web POS Open Drawer approval Menu</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="A51D4084DB954277B294B74E625D77F9" identifier="Web POS Cash Up Partial window approval">
+    <id>A51D4084DB954277B294B74E625D77F9</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.cashuppartial</searchKey>
+    <name>Web POS Cash Up Partial window approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="A5F249E306CE412E9DC8A8B960B50479" identifier="Standard Payment Provider">
+    <id>A5F249E306CE412E9DC8A8B960B50479</id>
+    <active>true</active>
+    <searchKey>OBPOS_StandardProvider</searchKey>
+    <name>Standard Payment Provider</name>
+    <description>Standard Payment Provider for Web POS</description>
+    <reference id="37DE5E87C5024B6F95F1CFCC747EAE60" entity-name="ADReference" identifier="Provider"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="A5F30AF2D3584946BA6C7D5BBB6507CB" identifier="Enable Remote for Product">
+    <id>A5F30AF2D3584946BA6C7D5BBB6507CB</id>
+    <active>true</active>
+    <searchKey>OBPOS_remote.product</searchKey>
+    <name>Enable Remote for Product</name>
+    <description>It actives feature to retrieve products from server instead of saving in local storage</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="A6B6E80AAE4F4571A82E723673121066" identifier="Allow to select a warehouse for a specific line order">
+    <id>A6B6E80AAE4F4571A82E723673121066</id>
+    <active>true</active>
+    <searchKey>OBPOS_warehouseselectionforline</searchKey>
+    <name>Allow to select a warehouse for a specific line order</name>
+    <description>Allow to select a warehouse for a specific line order</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="A98A3EF055104086B944F0E558A70665" identifier="Web POS Remove Receipts Approval in Cash Up">
+    <id>A98A3EF055104086B944F0E558A70665</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.cashupremovereceipts</searchKey>
+    <name>Web POS Remove Receipts Approval in Cash Up</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="AA6EA3648E2A49198F8F4996A3273FE6" identifier="Void Layaway">
+    <id>AA6EA3648E2A49198F8F4996A3273FE6</id>
+    <active>true</active>
+    <searchKey>OBPOS_VoidLayaway</searchKey>
+    <name>Void Layaway</name>
+    <description>Void Layaway</description>
+    <reference id="11F86B630ECB4A57B28927193F8AB99D" entity-name="ADReference" identifier="Type of Import Data"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>90</sequenceNumber>
+  </ADList>
+  <ADList id="AAA9F81A601C4BD09955AA2CF5B66B82" identifier="Web POS action Print cash management">
+    <id>AAA9F81A601C4BD09955AA2CF5B66B82</id>
+    <active>true</active>
+    <searchKey>OBPOS_print.cashmanagement</searchKey>
+    <name>Web POS action Print cash management</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="ABDDE1A281FC440C8F7FAD9F5C580F7D" identifier="Quotation">
+    <id>ABDDE1A281FC440C8F7FAD9F5C580F7D</id>
+    <active>true</active>
+    <searchKey>Quotation</searchKey>
+    <name>Quotation</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="AC340E3F059542B6A207D3329644A5DB" identifier="Web POS action Change price">
+    <id>AC340E3F059542B6A207D3329644A5DB</id>
+    <active>true</active>
+    <searchKey>OBPOS_order.changePrice</searchKey>
+    <name>Web POS action Change price</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="AC626DB1C31D4D90A9D0CA5DEA4A6F1B" identifier="Web POS Ask for attributes when creating a quotation">
+    <id>AC626DB1C31D4D90A9D0CA5DEA4A6F1B</id>
+    <active>true</active>
+    <searchKey>OBPOS_AskForAttributesWhenCreatingQuotation</searchKey>
+    <name>Web POS Ask for attributes when creating a quotation</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="ACEC7E55D37548C2A9DDE7668B1173AF" identifier="Entity Selector BPartnerFilter Disable Email Filtering">
+    <id>ACEC7E55D37548C2A9DDE7668B1173AF</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_email_f</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Email Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="AE7B45C93A004EDB863106119A5C26E6" identifier="Verified Returns Selector Disable Business Partner Filtering">
+    <id>AE7B45C93A004EDB863106119A5C26E6</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_businessPartnerName_f</searchKey>
+    <name>Verified Returns Selector Disable Business Partner Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B214428A591F420A8EBA666DD53D4603" identifier="Entity Selector BPartnerFilter Disable Location Filtering">
+    <id>B214428A591F420A8EBA666DD53D4603</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_locName_f</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Location Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B29AC2A276314801850A185298AE74A1" identifier="Web POS Offline session time expiration">
+    <id>B29AC2A276314801850A185298AE74A1</id>
+    <active>true</active>
+    <searchKey>OBPOS_offlineSessionTimeExpiration</searchKey>
+    <name>Web POS Offline session time expiration</name>
+    <description>Time an offline session is valid in Web POS</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B32C16345D9B46C499CC88A26E6C24D6" identifier="Split Lines in Shipments when Returning">
+    <id>B32C16345D9B46C499CC88A26E6C24D6</id>
+    <active>true</active>
+    <searchKey>OBPOS_SplitLinesInShipments</searchKey>
+    <name>Split Lines in Shipments when Returning</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B3598BA231A34012B8604C7977CB93E1" identifier="Web POS Time Allowed Drawer Count">
+    <id>B3598BA231A34012B8604C7977CB93E1</id>
+    <active>true</active>
+    <searchKey>OBPOS_timeAllowedDrawerCount</searchKey>
+    <name>Web POS Time Allowed Drawer Count</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B4174D094E3B44AFBED8907690E8ECED" identifier="Web POS Cancel Layaway and New">
+    <id>B4174D094E3B44AFBED8907690E8ECED</id>
+    <active>true</active>
+    <searchKey>OBPOS_cancelLayawayAndNew</searchKey>
+    <name>Web POS Cancel Layaway and New</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B59A2B4A83D1486E976A1D64B3CA4D86" identifier="Open Receipt Selector Disable Business Partner Sorting">
+    <id>B59A2B4A83D1486E976A1D64B3CA4D86</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_businessPartnerName_s</searchKey>
+    <name>Open Receipt Selector Disable Business Partner Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B61E83AAAA4A481E955AF143A888D02C" identifier="Openbravo POS">
+    <id>B61E83AAAA4A481E955AF143A888D02C</id>
+    <active>true</active>
+    <searchKey>OBPOS</searchKey>
+    <name>Openbravo POS</name>
+    <description xsi:nil="true"/>
+    <reference id="4AC94F5D5A654C04AD75E3A402D2D1F6" entity-name="ADReference" identifier="Applications"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B86B3D56B4CD4A40A7E068766248EC88" identifier="Canceled Layaway">
+    <id>B86B3D56B4CD4A40A7E068766248EC88</id>
+    <active>true</active>
+    <searchKey>CanceledLayaway</searchKey>
+    <name>Canceled Layaway</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B899E490F2D54147A41448A94D8F1F5E" identifier="Enable Reverse Payments">
+    <id>B899E490F2D54147A41448A94D8F1F5E</id>
+    <active>true</active>
+    <searchKey>OBPOS_EnableReversePayments</searchKey>
+    <name>Enable Reverse Payments</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B8EE16DE59074E2A95734882695F7130" identifier="Cancel Layaway">
+    <id>B8EE16DE59074E2A95734882695F7130</id>
+    <active>true</active>
+    <searchKey>OBPOS_CancelLayaway</searchKey>
+    <name>Cancel Layaway</name>
+    <description xsi:nil="true"/>
+    <reference id="11F86B630ECB4A57B28927193F8AB99D" entity-name="ADReference" identifier="Type of Import Data"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B9716B5A4BD7425E8583B4D3B93FC1C4" identifier="Searching in WebPOS limit value for Products">
+    <id>B9716B5A4BD7425E8583B4D3B93FC1C4</id>
+    <active>true</active>
+    <searchKey>OBPOS_productLimit</searchKey>
+    <name>Searching in WebPOS limit value for Products</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="B9788555D6DF47158F2A4FB6F58C2DD5" identifier="Cancel and Replace Layaways without Payments and Deliveries">
+    <id>B9788555D6DF47158F2A4FB6F58C2DD5</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.CancelReplaceLayaways</searchKey>
+    <name>Cancel and Replace Layaways without Payments and Deliveries</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="BBB23FD0695C45EABDCA376AB6FB0912" identifier="Hide Product Images in Web POS">
+    <id>BBB23FD0695C45EABDCA376AB6FB0912</id>
+    <active>true</active>
+    <searchKey>OBPOS_HideProductImages</searchKey>
+    <name>Hide Product Images in Web POS</name>
+    <description>If customer is not using product images, this preference will hide default image allowing to give more space to the product information</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="BCA0E4E29ACD49F49E3A097DBB4674A9" identifier="Verified Returns Selector Disable Document Number Sorting">
+    <id>BCA0E4E29ACD49F49E3A097DBB4674A9</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_documentNo_s</searchKey>
+    <name>Verified Returns Selector Disable Document Number Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="BCC67BC484CD4A78BF7B7CE09387066D" identifier="Open Receipt Selector Disable Business Partner Filtering">
+    <id>BCC67BC484CD4A78BF7B7CE09387066D</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_businessPartner_f</searchKey>
+    <name>Open Receipt Selector Disable Business Partner Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="BD9723A5C2524C46B7EAA40468ED9FC3" identifier="Web POS Check Stock of Lines that are not Sold Without Stock">
+    <id>BD9723A5C2524C46B7EAA40468ED9FC3</id>
+    <active>true</active>
+    <searchKey>OBPOS_CheckStockForNotSaleWithoutStock</searchKey>
+    <name>Web POS Check Stock of Lines that are not Sold Without Stock</name>
+    <description>Check the stock of the lines that are not allowed to be sold without stock when introducing the line or doing a modification on it</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="BE088B0A69A641C08F77C7967F714927" identifier="Entity Selector BPartnerFilter Disable Location Sorting">
+    <id>BE088B0A69A641C08F77C7967F714927</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_locName_s</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Location Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="BE430354A3284789B217653213E1EDC7" identifier="Web POS Show Action Button Description">
+    <id>BE430354A3284789B217653213E1EDC7</id>
+    <active>true</active>
+    <searchKey>OBPOS_ActionButtonDescription</searchKey>
+    <name>Web POS Show Action Button Description</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="BE6B715C83BC4A21ABF0BF913ECB30E0" identifier="Display Total">
+    <id>BE6B715C83BC4A21ABF0BF913ECB30E0</id>
+    <active>true</active>
+    <searchKey>displaytotal</searchKey>
+    <name>Display Total</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="BFE70DE60D1F49A89265E01A5083FCDB" identifier="Web POS payment Cash">
+    <id>BFE70DE60D1F49A89265E01A5083FCDB</id>
+    <active>true</active>
+    <searchKey>OBPOS_payment.cash</searchKey>
+    <name>Web POS payment Cash</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C16417466CB2451E90AA63FBBC0812EB" identifier="Open Receipt Selector Disable Document Number Filtering">
+    <id>C16417466CB2451E90AA63FBBC0812EB</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_documentNo_f</searchKey>
+    <name>Open Receipt Selector Disable Document Number Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C3041EEF3F3645248A13754B196F3D72" identifier="Entity Selector BPartnerFilter Disable BP Category Sorting">
+    <id>C3041EEF3F3645248A13754B196F3D72</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_bpCategory_s</searchKey>
+    <name>Entity Selector BPartnerFilter Disable BP Category Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C53C8C617332457D9B747A32AEB91EFF" identifier="External Order Loader Wait for Processing (seconds)">
+    <id>C53C8C617332457D9B747A32AEB91EFF</id>
+    <active>true</active>
+    <searchKey>OBPOS_ExternalOrderLoaderWaitForProcessingTime</searchKey>
+    <name>External Order Loader Wait for Processing (seconds)</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C5D8283E95204B4EAC715761C14CB2D3" identifier="Do not allow Sales with return">
+    <id>C5D8283E95204B4EAC715761C14CB2D3</id>
+    <active>true</active>
+    <searchKey>OBPOS_NotAllowSalesWithReturn</searchKey>
+    <name>Do not allow Sales with return</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C7AEA9FED5F842FBAFAA303F7CE11404" identifier="Web POS Open Paid Receipts">
+    <id>C7AEA9FED5F842FBAFAA303F7CE11404</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.paidReceipts</searchKey>
+    <name>Web POS Open Paid Receipts</name>
+    <description>Web POS Open Paid Receipts</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C90AEFC4F3E0474BB2DABA68484FC58F" identifier="Web POS action Apply discount">
+    <id>C90AEFC4F3E0474BB2DABA68484FC58F</id>
+    <active>true</active>
+    <searchKey>OBPOS_order.discount</searchKey>
+    <name>Web POS action Apply discount</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C90D0A44373041B99ECFCF1437E8DE2B" identifier="Web POS Sales Representative in Receipt properties window">
+    <id>C90D0A44373041B99ECFCF1437E8DE2B</id>
+    <active>true</active>
+    <searchKey>OBPOS_salesRepresentative.receipt</searchKey>
+    <name>Web POS Sales Representative in Receipt properties window</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C91C1DB973704216B4D6948FE124EC7C" identifier="Web POS Cash Up window approval">
+    <id>C91C1DB973704216B4D6948FE124EC7C</id>
+    <active>true</active>
+    <searchKey>OBPOS_approval.cashup</searchKey>
+    <name>Web POS Cash Up window approval</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="C91D45BFBBEE486F996CC6FCAAA78D38" identifier="Hide Product Characteristics from search tab">
+    <id>C91D45BFBBEE486F996CC6FCAAA78D38</id>
+    <active>true</active>
+    <searchKey>OBPOS_HideProductCharacteristics</searchKey>
+    <name>Hide Product Characteristics from search tab</name>
+    <description>If customer is not using product characteristics, this preference allow to hide filters based on characteristics, giving to the customer more space to show product details</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="CAC449AB8E684C9E8AC0923C4616E262" identifier="Web POS Show Action Button Split">
+    <id>CAC449AB8E684C9E8AC0923C4616E262</id>
+    <active>true</active>
+    <searchKey>OBPOS_ActionButtonSplit</searchKey>
+    <name>Web POS Show Action Button Split</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="CB85FFDE7BF34019BD97F0A2CC2CED54" identifier="Cash Management">
+    <id>CB85FFDE7BF34019BD97F0A2CC2CED54</id>
+    <active>true</active>
+    <searchKey>CashManagement</searchKey>
+    <name>Cash Management</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="CD7B0D1B4E1A4FBDB6BBA0C277A8D81E" identifier="Quotation">
+    <id>CD7B0D1B4E1A4FBDB6BBA0C277A8D81E</id>
+    <active>true</active>
+    <searchKey>QT</searchKey>
+    <name>Quotation</name>
+    <description xsi:nil="true"/>
+    <reference id="1CFCF0C9BA35496FBEE9043168AF3662" entity-name="ADReference" identifier="POS Order Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>30</sequenceNumber>
+  </ADList>
+  <ADList id="CE0B6F39F4C74D0E864D77D7D827D573" identifier="Web POS Open Layaways">
+    <id>CE0B6F39F4C74D0E864D77D7D827D573</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.layaways</searchKey>
+    <name>Web POS Open Layaways</name>
+    <description>Web POS Open Layaways</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="CE2500B2C5B64954A0E5B5698EE1AB7D" identifier="Allow to change the Customer in Verified Returns">
+    <id>CE2500B2C5B64954A0E5B5698EE1AB7D</id>
+    <active>true</active>
+    <searchKey>OBPOS_AllowChangeCustomerVerifiedReturns</searchKey>
+    <name>Allow to change the Customer in Verified Returns</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D04470BAB6564D5F9F3B83FA98D9B075" identifier="Verified Returns Selector Disable Total Amount To Filtering">
+    <id>D04470BAB6564D5F9F3B83FA98D9B075</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_totalamountTo_f</searchKey>
+    <name>Verified Returns Selector Disable Total Amount To Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D147A9E1243844A4817534C6BFEFA1CA" identifier="Receipt">
+    <id>D147A9E1243844A4817534C6BFEFA1CA</id>
+    <active>true</active>
+    <searchKey>ORD</searchKey>
+    <name>Receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="1CFCF0C9BA35496FBEE9043168AF3662" entity-name="ADReference" identifier="POS Order Type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>40</sequenceNumber>
+  </ADList>
+  <ADList id="D225C0A7CC4C482695D955CBE039C3E9" identifier="Web POS payment Voucher">
+    <id>D225C0A7CC4C482695D955CBE039C3E9</id>
+    <active>true</active>
+    <searchKey>OBPOS_payment.voucher</searchKey>
+    <name>Web POS payment Voucher</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D23840F192554E2BB01473C944E8AF5D" identifier="Invoice">
+    <id>D23840F192554E2BB01473C944E8AF5D</id>
+    <active>true</active>
+    <searchKey>Invoice</searchKey>
+    <name>Invoice</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D52DAD3CB2834FA4940C7C1C8403C56A" identifier="Web POS action Invoice receipt">
+    <id>D52DAD3CB2834FA4940C7C1C8403C56A</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.invoice</searchKey>
+    <name>Web POS action Invoice receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D56514BAA9CD492D8EEA8B01956AEA60" identifier="Web POS payment Card">
+    <id>D56514BAA9CD492D8EEA8B01956AEA60</id>
+    <active>true</active>
+    <searchKey>OBPOS_payment.card</searchKey>
+    <name>Web POS payment Card</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D5E9BE9E259F4E47BCEA88BBAA16ADAB" identifier="Web POS Show Action Button Show Related Services">
+    <id>D5E9BE9E259F4E47BCEA88BBAA16ADAB</id>
+    <active>true</active>
+    <searchKey>OBPOS_ActionButtonShowRelatedServices</searchKey>
+    <name>Web POS Show Action Button Show Related Services</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D74F4CDDFE3F4CA58386CEF429FA496C" identifier="Web POS Allow products not to have a price in main pricelist">
+    <id>D74F4CDDFE3F4CA58386CEF429FA496C</id>
+    <active>true</active>
+    <searchKey>OBPOS_allowProductsNoPriceInMainPricelist</searchKey>
+    <name>Web POS Allow products not to have a price in main pricelist</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D7E5D22E0D33475C95E2AB7A54ED4BE1" identifier="Web POS action reactivate quotation">
+    <id>D7E5D22E0D33475C95E2AB7A54ED4BE1</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.reactivatequotation</searchKey>
+    <name>Web POS action reactivate quotation</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D7E6CD2A8FC248C5B83551715D5D3670" identifier="Web POS action Return receipt">
+    <id>D7E6CD2A8FC248C5B83551715D5D3670</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.return</searchKey>
+    <name>Web POS action Return receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="D9B8049B24244F21A552D69CC01160B8" identifier="Web POS Enable support for product attributes">
+    <id>D9B8049B24244F21A552D69CC01160B8</id>
+    <active>true</active>
+    <searchKey>OBPOS_EnableSupportForProductAttributes</searchKey>
+    <name>Web POS Enable support for product attributes</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="DBE1607D49324DDAB132CDE9C9BC5769" identifier="Web POS payment Empty">
+    <id>DBE1607D49324DDAB132CDE9C9BC5769</id>
+    <active>true</active>
+    <searchKey>OBPOS_org.openbravo.retail.posterminal.PaymentProcessorEmpty</searchKey>
+    <name>Web POS payment Empty</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="DC7DFA0A33DC4D0A961B3B02494A9135" identifier="Imported correctly">
+    <id>DC7DFA0A33DC4D0A961B3B02494A9135</id>
+    <active>true</active>
+    <searchKey>Y</searchKey>
+    <name>Imported correctly</name>
+    <description xsi:nil="true"/>
+    <reference id="AF0F6F326155451B9B0060DF965E5E91" entity-name="ADReference" identifier="Order status"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="DE04E58FD05F4ED68C56F21A0705EB01" identifier="WEB POS Filter Always BusinessPartner by Address">
+    <id>DE04E58FD05F4ED68C56F21A0705EB01</id>
+    <active>true</active>
+    <searchKey>OBPOS_FilterAlwaysBPByAddress</searchKey>
+    <name>WEB POS Filter Always BusinessPartner by Address</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="DF011AFC86114D3A86A7849687EEB925" identifier="Web POS action Receipt this Layaway">
+    <id>DF011AFC86114D3A86A7849687EEB925</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.receiptLayaway</searchKey>
+    <name>Web POS action Receipt this Layaway</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="DF1ED00437A441A68E3C491D2230F721" identifier="Cashup Data">
+    <id>DF1ED00437A441A68E3C491D2230F721</id>
+    <active>true</active>
+    <searchKey>OBPOS_App_Cashup</searchKey>
+    <name>Cashup Data</name>
+    <description>Cashup Data</description>
+    <reference id="11F86B630ECB4A57B28927193F8AB99D" entity-name="ADReference" identifier="Type of Import Data"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>60</sequenceNumber>
+  </ADList>
+  <ADList id="E040AF7F52904DDB874D5ECF516E3C3C" identifier="Failed">
+    <id>E040AF7F52904DDB874D5ECF516E3C3C</id>
+    <active>true</active>
+    <searchKey>Failed</searchKey>
+    <name>Failed</name>
+    <description xsi:nil="true"/>
+    <reference id="6E6A751F4AB24EC391AA9A6DD6B1F624" entity-name="ADReference" identifier="Email Status"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>20</sequenceNumber>
+  </ADList>
+  <ADList id="E0A3E2D101214B52A4A4B77BCB6DB4E3" identifier="Terminal Authentication enabled">
+    <id>E0A3E2D101214B52A4A4B77BCB6DB4E3</id>
+    <active>true</active>
+    <searchKey>OBPOS_TerminalAuthentication</searchKey>
+    <name>Terminal Authentication enabled</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E1BC025C2FDB43239AB0700F8EC9AFBD" identifier="Cashup Count Differences">
+    <id>E1BC025C2FDB43239AB0700F8EC9AFBD</id>
+    <active>true</active>
+    <searchKey>OBPOS_CashupCountDiff</searchKey>
+    <name>Cashup Count Differences</name>
+    <description xsi:nil="true"/>
+    <reference id="6176112D123148AA8B8BDD5FFF007AED" entity-name="ADReference" identifier="Cash up Approval type"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E222375BA18C43D5B47DDFD3CF25AB09" identifier="Web POS Use Service Workers for Offline Support">
+    <id>E222375BA18C43D5B47DDFD3CF25AB09</id>
+    <active>true</active>
+    <searchKey>OBPOS_UseServiceWorkersForOffline</searchKey>
+    <name>Web POS Use Service Workers for Offline Support</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E264BD69AF814464AE4B266FA315D9F5" identifier="Mock Provider">
+    <id>E264BD69AF814464AE4B266FA315D9F5</id>
+    <active>true</active>
+    <searchKey>OBPOS_MockProvider</searchKey>
+    <name>Mock Provider</name>
+    <description>Mock Provider is intended only for testing purposes</description>
+    <reference id="37DE5E87C5024B6F95F1CFCC747EAE60" entity-name="ADReference" identifier="Provider"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E33AB5ACF6A540599AAF51709005434B" identifier="Use contains in Remote Customer search">
+    <id>E33AB5ACF6A540599AAF51709005434B</id>
+    <active>true</active>
+    <searchKey>OBPOS_remote.customer_usesContains</searchKey>
+    <name>Use contains in Remote Customer search</name>
+    <description>Searching Customers remotely, use contains instead of startsWith when filtering</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E35C5C7370AA45CC99FD66633E73D34D" identifier="Web POS action customers window">
+    <id>E35C5C7370AA45CC99FD66633E73D34D</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.customers</searchKey>
+    <name>Web POS action customers window</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E436F6A51D7D4FF19E09FC6568E44844" identifier="Web POS Close Drawer Before Continue">
+    <id>E436F6A51D7D4FF19E09FC6568E44844</id>
+    <active>true</active>
+    <searchKey>OBPOS_closeDrawerBeforeContinue</searchKey>
+    <name>Web POS Close Drawer Before Continue</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E53EE08A990E4ED99FEB794FF1F4E94C" identifier="Web POS action layaway the receipt">
+    <id>E53EE08A990E4ED99FEB794FF1F4E94C</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.layawayReceipt</searchKey>
+    <name>Web POS action layaway the receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E74F58F60D6743A48C52B2B232DD80BE" identifier="Searching in WebPOS limit value for Orders">
+    <id>E74F58F60D6743A48C52B2B232DD80BE</id>
+    <active>true</active>
+    <searchKey>OBPOS_orderLimit</searchKey>
+    <name>Searching in WebPOS limit value for Orders</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E78C4336458248C8893316B66D53A284" identifier="WEB POS Show BusinessPartner Birth Information">
+    <id>E78C4336458248C8893316B66D53A284</id>
+    <active>true</active>
+    <searchKey>OBPOS_ShowBusinessPartnerBirthInfo</searchKey>
+    <name>WEB POS Show BusinessPartner Birth Information</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E83A9A3F11E14A14B671BFDB7AA4DF36" identifier="Web POS assign to receipt shipping button">
+    <id>E83A9A3F11E14A14B671BFDB7AA4DF36</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.assignToReceiptShippingAddress</searchKey>
+    <name>Web POS assign to receipt shipping button</name>
+    <description>It enables the assign to receipt (shipping) button, in assign customer address popup</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E88F2F3FE4FB4A449F29694A4282912C" identifier="Web POS action create sales order from quotation">
+    <id>E88F2F3FE4FB4A449F29694A4282912C</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.createorderfromquotation</searchKey>
+    <name>Web POS action create sales order from quotation</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E8911FE2FC984322B01499AFDB695A24" identifier="Web POS restrict invoice if no tax ID">
+    <id>E8911FE2FC984322B01499AFDB695A24</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.restricttaxidinvoice</searchKey>
+    <name>Web POS restrict invoice if no tax ID</name>
+    <description>Web POS allow invoice to business partner without tax ID</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="E99D946D06DB4600BC2CAF9B9389BF9D" identifier="Web POS action create new quotation">
+    <id>E99D946D06DB4600BC2CAF9B9389BF9D</id>
+    <active>true</active>
+    <searchKey>OBPOS_receipt.quotation</searchKey>
+    <name>Web POS action create new quotation</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="EB2D92B0B29443A1A5A326B7F9764D33" identifier="Entity Selector BPartnerFilter Disable Phone Filtering">
+    <id>EB2D92B0B29443A1A5A326B7F9764D33</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_BPartnerFilter_phone_f</searchKey>
+    <name>Entity Selector BPartnerFilter Disable Phone Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="ECB457E872EF4912AB31DEBE1EB29638" identifier="Hide Product Images in search and browse tabs">
+    <id>ECB457E872EF4912AB31DEBE1EB29638</id>
+    <active>true</active>
+    <searchKey>OBPOS_HideProductImagesInSearchAndBrowse</searchKey>
+    <name>Hide Product Images in search and browse tabs</name>
+    <description>If customer is not using product images, this preference will hide default image allowing to give more space to the product information</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="EFE1AEED066449BDB918FA635A45161D" identifier="Display Receipt">
+    <id>EFE1AEED066449BDB918FA635A45161D</id>
+    <active>true</active>
+    <searchKey>displayreceipt</searchKey>
+    <name>Display Receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F0583BBD061544CE864C58A2EEE3BA9D" identifier="Sent">
+    <id>F0583BBD061544CE864C58A2EEE3BA9D</id>
+    <active>true</active>
+    <searchKey>Sent</searchKey>
+    <name>Sent</name>
+    <description xsi:nil="true"/>
+    <reference id="6E6A751F4AB24EC391AA9A6DD6B1F624" entity-name="ADReference" identifier="Email Status"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>10</sequenceNumber>
+  </ADList>
+  <ADList id="F193D432B87541D3AF1B49BF2D56F6A9" identifier="Use contains in Remote Product search">
+    <id>F193D432B87541D3AF1B49BF2D56F6A9</id>
+    <active>true</active>
+    <searchKey>OBPOS_remote.product_usesContains</searchKey>
+    <name>Use contains in Remote Product search</name>
+    <description>Searching Products remotely, use contains instead of startsWith when filtering</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F2EAAD42DCD548679F5FF6BE78A1F081" identifier="Verified Returns Selector Apply UI Restrictions">
+    <id>F2EAAD42DCD548679F5FF6BE78A1F081</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_apply_UI_restrictions</searchKey>
+    <name>Verified Returns Selector Apply UI Restrictions</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F321DADB514347BDB953B473B8E4520F" identifier="Web POS edit customer location button">
+    <id>F321DADB514347BDB953B473B8E4520F</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.editCustomerLocationButton</searchKey>
+    <name>Web POS edit customer location button</name>
+    <description>It enables the edit location button, in assign customer address popup</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F361E0B95E0F42A6A9C18A81F96D0868" identifier="Web POS action Advanced Discounts">
+    <id>F361E0B95E0F42A6A9C18A81F96D0868</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.advDiscounts</searchKey>
+    <name>Web POS action Advanced Discounts</name>
+    <description>This property allows the user to apply different discounts to each line of the ticket</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F4973A8B7EB645FCB3B69405C762EAAB" identifier="Canceled Receipt">
+    <id>F4973A8B7EB645FCB3B69405C762EAAB</id>
+    <active>true</active>
+    <searchKey>CanceledReceipt</searchKey>
+    <name>Canceled Receipt</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F5666C1301BF468CB4B5F5FBC04166CA" identifier="Web POS action print quotation">
+    <id>F5666C1301BF468CB4B5F5FBC04166CA</id>
+    <active>true</active>
+    <searchKey>OBPOS_print.quotation</searchKey>
+    <name>Web POS action print quotation</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F6A2647BBC5F4733B9C869EEAA5C9505" identifier="Cash Management Movement">
+    <id>F6A2647BBC5F4733B9C869EEAA5C9505</id>
+    <active>true</active>
+    <searchKey>FIN_Finacc_Transaction</searchKey>
+    <name>Cash Management Movement</name>
+    <description xsi:nil="true"/>
+    <reference id="20A228A295C844C68B4451622057A893" entity-name="ADReference" identifier="Types of data to be synchronized in Web POS"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>40</sequenceNumber>
+  </ADList>
+  <ADList id="F6A388F9B07F4F8BACF468704E14ABF6" identifier="Web POS Open Quotations">
+    <id>F6A388F9B07F4F8BACF468704E14ABF6</id>
+    <active>true</active>
+    <searchKey>OBPOS_retail.quotations</searchKey>
+    <name>Web POS Open Quotations</name>
+    <description>Web POS Open Quotations</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F7C07D5448BD4B8E860F383239C6F10D" identifier="Print Line">
+    <id>F7C07D5448BD4B8E860F383239C6F10D</id>
+    <active>true</active>
+    <searchKey>printline</searchKey>
+    <name>Print Line</name>
+    <description xsi:nil="true"/>
+    <reference id="A64C98EEC3DA45A4B784A3E28B4FAC3E" entity-name="ADReference" identifier="OBPOS_PrintTemplates"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F8E32DAE6E714880B1F0E1084E0391A3" identifier="Web POS Execute Generic Products Query">
+    <id>F8E32DAE6E714880B1F0E1084E0391A3</id>
+    <active>true</active>
+    <searchKey>OBPOS_ExecuteGenericProductQuery</searchKey>
+    <name>Web POS Execute Generic Products Query</name>
+    <description>When this property is set to 'N', queries for generic products will not be executed in Product class.</description>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="F94589DEAD824A818DB123D1FFB7B4E6" identifier="Web POS maximum allowed quantity using keyboard">
+    <id>F94589DEAD824A818DB123D1FFB7B4E6</id>
+    <active>true</active>
+    <searchKey>OBPOS_maxQtyUsingKeyboard</searchKey>
+    <name>Web POS maximum allowed quantity using keyboard</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="FC15A6017C7344AE9BCCE582012ACA38" identifier="Open Receipt Selector Disable Order Type Filtering">
+    <id>FC15A6017C7344AE9BCCE582012ACA38</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_OrderFilter_orderType_f</searchKey>
+    <name>Open Receipt Selector Disable Order Type Filtering</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="FCD486B0FA6B4207832D48A3A6FB2476" identifier="Verified Returns Selector Disable Total Amount To Sorting">
+    <id>FCD486B0FA6B4207832D48A3A6FB2476</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_totalamountTo_s</searchKey>
+    <name>Verified Returns Selector Disable Total Amount To Sorting</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="FCF7307F8BDA4AB38CE16BC6C8992277" identifier="Verified Returns Selector Disable Total Amount From Filterin">
+    <id>FCF7307F8BDA4AB38CE16BC6C8992277</id>
+    <active>true</active>
+    <searchKey>OBPOS_EntitySelector_VReturnsFilter_totalamountFrom_f</searchKey>
+    <name>Verified Returns Selector Disable Total Amount From Filterin</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+  <ADList id="FE0B6537E02D427E80B47D8D277485CC" identifier="Order">
+    <id>FE0B6537E02D427E80B47D8D277485CC</id>
+    <active>true</active>
+    <searchKey>Order</searchKey>
+    <name>Order</name>
+    <description xsi:nil="true"/>
+    <reference id="20A228A295C844C68B4451622057A893" entity-name="ADReference" identifier="Types of data to be synchronized in Web POS"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber>30</sequenceNumber>
+  </ADList>
+  <ADList id="FE60F650F56D41CF9C02394FFE2D5689" identifier="Searching in WebPOS limit value for Customers">
+    <id>FE60F650F56D41CF9C02394FFE2D5689</id>
+    <active>true</active>
+    <searchKey>OBPOS_customerLimit</searchKey>
+    <name>Searching in WebPOS limit value for Customers</name>
+    <description xsi:nil="true"/>
+    <reference id="A26BA480E2014707B47257024C3CBFF7" entity-name="ADReference" identifier="Property Configuration"/>
+    <validFromDate xsi:nil="true"/>
+    <validToDate xsi:nil="true"/>
+    <module id="FF808181326CC34901326D53DBCF0018" entity-name="ADModule" identifier="Web POS - 1.2.5700 - English (USA)"/>
+    <sequenceNumber xsi:nil="true"/>
+  </ADList>
+</ob:Openbravo>
