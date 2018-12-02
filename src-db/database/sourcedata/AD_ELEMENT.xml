@@ -3988,10 +3988,10 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--551-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--551-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--551-->  <COLUMNNAME><![CDATA[C_Channel_ID]]></COLUMNNAME>
-<!--551-->  <NAME><![CDATA[Marketing Channel]]></NAME>
+<!--551-->  <NAME><![CDATA[Channel]]></NAME>
 <!--551-->  <PRINTNAME><![CDATA[Channel]]></PRINTNAME>
-<!--551-->  <DESCRIPTION><![CDATA[Sales Channel]]></DESCRIPTION>
-<!--551-->  <HELP><![CDATA[The Sales Channel identifies a channel (or method) of sales generation.]]></HELP>
+<!--551-->  <DESCRIPTION><![CDATA[Channel]]></DESCRIPTION>
+<!--551-->  <HELP><![CDATA[Identifies a method of sales generation.]]></HELP>
 <!--551-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--551-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--551--></AD_ELEMENT>
