@@ -1919,7 +1919,7 @@ Please note that you will not be able to create new entities in this window if y
 <!--275-->  <TABLENAME><![CDATA[C_Channel]]></TABLENAME>
 <!--275-->  <CLASSNAME><![CDATA[Channel]]></CLASSNAME>
 <!--275-->  <ISVIEW><![CDATA[N]]></ISVIEW>
-<!--275-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--275-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
 <!--275-->  <AD_WINDOW_ID><![CDATA[150]]></AD_WINDOW_ID>
 <!--275-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--275-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
