@@ -126,6 +126,7 @@ public class ProductProperties extends ModelExtension {
               trlName = "product.name";
             }
             add(new HQLProperty("product.id", "id"));
+            add(new HQLProperty("product.organization.id", "organization"));
             add(new HQLProperty("product.searchKey", "searchkey"));
             add(new HQLProperty(trlName, "_identifier"));
             add(new HQLProperty("product.productCategory.id", "productCategory"));
