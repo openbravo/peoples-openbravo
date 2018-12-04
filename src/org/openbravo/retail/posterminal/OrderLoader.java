@@ -1362,9 +1362,16 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             }
           }
         }
-        processPayments(paymentSchedule, order, paymentType, payment, tempWriteoffAmt, jsonorder,
-            account);
-        writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
+        if (paymentType.getPaymentMethod().getOverpaymentLimit() == null
+            || writeoffAmt.compareTo(new BigDecimal(paymentType.getPaymentMethod()
+                .getOverpaymentLimit())) <= 0) {
+          processPayments(paymentSchedule, order, paymentType, payment, tempWriteoffAmt, jsonorder,
+              account);
+          writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
+        } else {
+          processPayments(paymentSchedule, order, paymentType, payment, BigDecimal.ZERO, jsonorder,
+              account);
+        }
       }
     }
     if (payOnCredit || (!paidReceipt && hasPrepayment)) {
