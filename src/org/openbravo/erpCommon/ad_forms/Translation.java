@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -21,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -85,13 +84,6 @@ public class Translation extends HttpSecureAppServlet {
   @Deprecated
   public static void setConnectionProvicer(ConnectionProvider conn) {
     cp = conn;
-  }
-
-  @Deprecated
-  public static void setLog4j(Logger logger) {
-    // Note: This method does not do anything anymore, however is kept to keep the API stable.
-    // Logging of the import/export code is not always done using the same static logger as the rest
-    // of the openbravo code instead of using the callers logger like before.
   }
 
   /**

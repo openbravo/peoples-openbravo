@@ -22,7 +22,8 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -30,21 +31,6 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocCash extends AcctServer {
   private static final long serialVersionUID = 1L;
-
-  /**
-   * @return the log4jDocCash
-   */
-  public static Logger getLog4jDocCash() {
-    return log4jDocCash;
-  }
-
-  /**
-   * @param log4jDocCash
-   *          the log4jDocCash to set
-   */
-  public static void setLog4jDocCash(Logger log4jDocCash) {
-    DocCash.log4jDocCash = log4jDocCash;
-  }
 
   /**
    * @return the seqNo
@@ -68,7 +54,7 @@ public class DocCash extends AcctServer {
     return serialVersionUID;
   }
 
-  static Logger log4jDocCash = Logger.getLogger(DocCash.class);
+  private static final Logger log4jDocCash = LogManager.getLogger();
 
   private String SeqNo = "0";
 

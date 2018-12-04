@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
@@ -41,7 +42,7 @@ import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 public class DocLCCost extends AcctServer {
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocLCCost = Logger.getLogger(DocLCCost.class);
+  private static final Logger log4jDocLCCost = LogManager.getLogger();
 
   /** AD_Table_ID */
   private String SeqNo = "0";
@@ -290,21 +291,6 @@ public class DocLCCost extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
-
-  /**
-   * @return the log4jDocLCCost
-   */
-  public static Logger getlog4jDocLCCost() {
-    return log4jDocLCCost;
-  }
-
-  /**
-   * @param log4jDocLCCost
-   *          the log4jDocLCCost to set
-   */
-  public static void setlog4jDocLCCost(Logger log4jDocLCCost) {
-    DocLCCost.log4jDocLCCost = log4jDocLCCost;
-  }
 
   /**
    * @return the seqNo

@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -35,7 +36,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 public class DocCostAdjustment extends AcctServer {
 
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocCostAdjustment = Logger.getLogger(DocCostAdjustment.class);
+  private static final Logger log4jDocCostAdjustment = LogManager.getLogger();
 
   /** AD_Table_ID */
   private String SeqNo = "0";
@@ -363,21 +364,6 @@ public class DocCostAdjustment extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
-
-  /**
-   * @return the log4jDocCostAdjustment
-   */
-  public static Logger getlog4jDocCostAdjustment() {
-    return log4jDocCostAdjustment;
-  }
-
-  /**
-   * @param log4jDocCostAdjustment
-   *          the log4jDocCostAdjustment to set
-   */
-  public static void setlog4jDocCostAdjustment(Logger log4jDocCostAdjustment) {
-    DocCostAdjustment.log4jDocCostAdjustment = log4jDocCostAdjustment;
-  }
 
   /**
    * @return the seqNo

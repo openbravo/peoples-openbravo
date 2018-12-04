@@ -24,7 +24,8 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -32,24 +33,9 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocDPManagement extends AcctServer {
   private static final long serialVersionUID = 1L;
-  private static Logger docDPManagementLog4j = Logger.getLogger(DocDPManagement.class);
+  private static final Logger docDPManagementLog4j = LogManager.getLogger();
 
   private String SeqNo = "0";
-
-  /**
-   * @return the docDPManagementLog4j
-   */
-  public static Logger getLog4j() {
-    return docDPManagementLog4j;
-  }
-
-  /**
-   * @param docDPManagementLog4j
-   *          the docDPManagementLog4j to set
-   */
-  public static void setLog4j(Logger docDPManagementLog4j) {
-    DocDPManagement.docDPManagementLog4j = docDPManagementLog4j;
-  }
 
   /**
    * @return the seqNo

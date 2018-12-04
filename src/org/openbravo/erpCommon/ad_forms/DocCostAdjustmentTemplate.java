@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,14 +22,11 @@ import java.sql.Connection;
 
 import javax.servlet.ServletException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 
 public abstract class DocCostAdjustmentTemplate {
   private static final long serialVersionUID = 1L;
-  private static final Logger log4jDocCostAdjustment = LogManager.getLogger();
 
   /**
    * Constructor
@@ -58,10 +55,6 @@ public abstract class DocCostAdjustmentTemplate {
    */
   public abstract Fact createFact(DocCostAdjustment docCostAdjustment, AcctSchema as,
       ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
-
-  public static Logger getLog4jdoccostadjustment() {
-    return log4jDocCostAdjustment;
-  }
 
   public static long getSerialversionuid() {
     return serialVersionUID;

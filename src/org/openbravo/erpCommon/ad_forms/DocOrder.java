@@ -22,14 +22,15 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocOrder extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocOrder = Logger.getLogger(DocOrder.class);
+  private static final Logger log4jDocOrder = LogManager.getLogger();
 
   /** Contained Optional Tax Lines */
   private DocTax[] m_taxes = null;
@@ -208,21 +209,6 @@ public class DocOrder extends AcctServer {
     Fact fact = new Fact(this, as, Fact.POST_Actual);
     return fact;
   } // createFact
-
-  /**
-   * @return the log4jDocOrder
-   */
-  public static Logger getLog4jDocOrder() {
-    return log4jDocOrder;
-  }
-
-  /**
-   * @param log4jDocOrder
-   *          the log4jDocOrder to set
-   */
-  public static void setLog4jDocOrder(Logger log4jDocOrder) {
-    DocOrder.log4jDocOrder = log4jDocOrder;
-  }
 
   /**
    * @return the m_taxes
