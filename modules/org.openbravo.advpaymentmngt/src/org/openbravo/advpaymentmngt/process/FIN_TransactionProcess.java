@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.LockOptions;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -49,8 +51,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.scheduling.ProcessBundle;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class FIN_TransactionProcess implements org.openbravo.scheduling.Process {
   /** Transaction type - Financial Account */
@@ -115,10 +115,6 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           msg = OBMessageUtils.messageBD("PeriodNotAvailable");
           throw new OBException(msg);
         }
-
-        final FIN_FinancialAccount financialAccount = lockFinAccount(transaction.getAccount());
-        financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
-            transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
         transaction.setProcessed(true);
         FIN_Payment payment = transaction.getFinPayment();
         if (payment != null) {
@@ -127,8 +123,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           }
           AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
           if (StringUtils.equals(payment.getStatus(), dao.PAYMENT_STATUS_AWAITING_EXECUTION)
-              && dao.isAutomatedExecutionPayment(financialAccount, payment.getPaymentMethod(),
-                  payment.isReceipt())) {
+              && dao.isAutomatedExecutionPayment(transaction.getAccount(),
+                  payment.getPaymentMethod(), payment.isReceipt())) {
             msg = OBMessageUtils.messageBD("APRM_AutomaticExecutionProcess");
             throw new OBException(msg);
           }
@@ -176,8 +172,10 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             && getConversionRateDocument(transaction).size() == 0) {
           insertConversionRateDocument(transaction);
         }
+        final FIN_FinancialAccount financialAccount = lockFinAccount(transaction.getAccount());
+        financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
+            transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
         transaction.setAprmProcessed("R");
-        OBDal.getInstance().save(financialAccount);
         OBDal.getInstance().save(transaction);
 
       } else if (strAction.equals("R") && transaction.isProcessed()) {
@@ -221,10 +219,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           OBContext.restorePreviousMode();
         }
         transaction.setProcessed(false);
-        final FIN_FinancialAccount financialAccount = lockFinAccount(transaction.getAccount());
-        financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
-            .subtract(transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
-        OBDal.getInstance().save(financialAccount);
+
         OBDal.getInstance().save(transaction);
         if (payment != null) {
           Boolean invoicePaidold = false;
@@ -247,6 +242,9 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           transaction.setStatus(transaction.getDepositAmount().compareTo(
               transaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
         }
+        final FIN_FinancialAccount financialAccount = lockFinAccount(transaction.getAccount());
+        financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
+            .subtract(transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
         transaction.setAprmProcessed("P");
         OBDal.getInstance().save(transaction);
       }
@@ -381,5 +379,4 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
     OBDal.getInstance().getSession().evict(account);
     return query.uniqueResult();
   }
-
 }
