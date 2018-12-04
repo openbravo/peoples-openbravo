@@ -142,11 +142,11 @@
         <onCreateDefault><![CDATA[N]]></onCreateDefault>
       </column>
       <column name="C_CHANNEL_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-	<onCreateDefault><![CDATA['288314214C1A49DDB5E48FF5C15870AA']]></onCreateDefault>
+        <default><![CDATA[293AB6FFE1B74DD89071AEB8B308403B]]></default>
+        <onCreateDefault/>
       </column>
       <column name="APPLICATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-	<default><![CDATA[WEBPOS]]></default>
+        <default><![CDATA[OBPOS]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
