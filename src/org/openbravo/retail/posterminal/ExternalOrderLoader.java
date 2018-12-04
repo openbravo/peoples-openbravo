@@ -1278,14 +1278,16 @@ public class ExternalOrderLoader extends OrderLoader {
     try {
       transformedMns = this.transformMessage(messageIn);
       ret = this.exec(transformedMns);
-    } catch (JSONException e) {
-      // Won't happen
-      ret.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-      ret.put("result", "-1");
-      ret.put("message", e.getMessage());
-    } finally {
-      return ret;
+    } catch (Exception e) {
+      try {
+        ret.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        ret.put("result", "-1");
+        ret.put("message", e.getMessage());
+      } catch (JSONException e1) {
+        // wont happen
+      }
     }
+    return ret;
   }
 
   public class SetOrderIDHook implements OrderLoaderHook {
