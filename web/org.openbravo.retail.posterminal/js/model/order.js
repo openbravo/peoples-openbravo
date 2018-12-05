@@ -6078,6 +6078,7 @@
         } else {
           orderList.deleteCurrent();
         }
+        enyo.$.scrim.hide();
         if (callback && callback instanceof Function) {
           callback();
         }
