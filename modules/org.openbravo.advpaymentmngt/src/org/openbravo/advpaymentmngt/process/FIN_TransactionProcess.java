@@ -22,6 +22,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.LockOptions;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -169,12 +172,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             && getConversionRateDocument(transaction).size() == 0) {
           insertConversionRateDocument(transaction);
         }
-
-        String financialAccountId = OBDal.getInstance().lockForNoKeyUpdate(
-            transaction.getAccount().getEntity(), transaction.getAccount().getId());
-        FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            financialAccountId);
-
+        final FIN_FinancialAccount financialAccount = lockFinAccount(transaction.getAccount());
         financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
             transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
         transaction.setAprmProcessed("R");
@@ -244,11 +242,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           transaction.setStatus(transaction.getDepositAmount().compareTo(
               transaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
         }
-        String financialAccountId = OBDal.getInstance().lockForNoKeyUpdate(
-            transaction.getAccount().getEntity(), transaction.getAccount().getId());
-        FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            financialAccountId);
-
+        final FIN_FinancialAccount financialAccount = lockFinAccount(transaction.getAccount());
         financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
             .subtract(transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
         transaction.setAprmProcessed("P");
@@ -373,4 +367,15 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
     return confirmation;
   }
 
+  private static FIN_FinancialAccount lockFinAccount(FIN_FinancialAccount account) {
+    StringBuilder queryStr = new StringBuilder(
+        "select a from FIN_Financial_Account a where id = :id");
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(queryStr.toString());
+    query.setParameter("id", account.getId());
+    query.setMaxResults(1);
+    query.setLockOptions(LockOptions.UPGRADE);
+    OBDal.getInstance().getSession().evict(account);
+    return (FIN_FinancialAccount) query.uniqueResult();
+  }
 }
