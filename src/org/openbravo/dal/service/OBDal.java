@@ -21,8 +21,6 @@ package org.openbravo.dal.service;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -736,40 +734,19 @@ public class OBDal implements OBNotSingleton {
    *          the type to create the query for
    * @param id
    *          identifier of the record
-   * @return id
    */
-  public String lockForNoKeyUpdate(Entity entity, String id) {
-    final String RDBMS = new DalConnectionProvider(false).getRDBMS();
-    String strSQL;
-    if ("ORACLE".equals(RDBMS)) {
-      strSQL = "SELECT * FROM " + entity.getTableName() + " WHERE " + entity.getTableName()
-          + "_id =? FOR UPDATE";
-    } else {
-      strSQL = "SELECT * FROM " + entity.getTableName() + " WHERE " + entity.getTableName()
-          + "_id =? FOR NO KEY UPDATE";
+  public void lockForNoKeyUpdate(Entity entity, String id) {
+    if (entity.getIdProperties().size() != 1) {
+      throw new IllegalArgumentException("Expected entity with a single ID. " + entity + " has "
+          + entity.getIdProperties().size());
     }
-    PreparedStatement sqlQuery = null;
-    ResultSet rs = null;
-    try {
-      sqlQuery = new DalConnectionProvider(false).getPreparedStatement(strSQL);
-      sqlQuery.setString(1, id);
-      sqlQuery.execute();
-      sqlQuery.setMaxRows(1);
-      rs = sqlQuery.getResultSet();
-      while (rs.next()) {
-        return rs.getString(1);
-      }
-    } catch (Exception e) {
-      log.error("Error when executing query", e);
-    } finally {
-      try {
-        if (sqlQuery != null) {
-          sqlQuery.close();
-        }
-      } catch (Exception e) {
-        log.error("Error when closing statement", e);
-      }
-    }
-    return null;
+
+    String rdbms = new DalConnectionProvider(false).getRDBMS();
+    String lockType = "ORACLE".equals(rdbms) ? "UPDATE" : "NO KEY UPDATE";
+
+    String sql = "SELECT 1 FROM " + entity.getTableName() + " WHERE "
+        + entity.getIdProperties().get(0).getColumnName() + " = :id FOR " + lockType;
+
+    getSession().createNativeQuery(sql).setParameter("id", id).list();
   }
 }
