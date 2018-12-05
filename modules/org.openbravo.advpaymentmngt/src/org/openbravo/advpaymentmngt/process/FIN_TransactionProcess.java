@@ -169,9 +169,12 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             && getConversionRateDocument(transaction).size() == 0) {
           insertConversionRateDocument(transaction);
         }
-        FIN_FinancialAccount financialAccount = transaction.getAccount();
-        OBDal.getInstance().lockForNoKeyUpdate(transaction.getAccount().getEntity(),
-            financialAccount.getId());
+
+        String financialAccountId = OBDal.getInstance().lockForNoKeyUpdate(
+            transaction.getAccount().getEntity(), transaction.getAccount().getId());
+        FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+            financialAccountId);
+
         financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
             transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
         transaction.setAprmProcessed("R");
@@ -241,9 +244,11 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           transaction.setStatus(transaction.getDepositAmount().compareTo(
               transaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
         }
-        FIN_FinancialAccount financialAccount = transaction.getAccount();
-        OBDal.getInstance().lockForNoKeyUpdate(transaction.getAccount().getEntity(),
-            financialAccount.getId());
+        String financialAccountId = OBDal.getInstance().lockForNoKeyUpdate(
+            transaction.getAccount().getEntity(), transaction.getAccount().getId());
+        FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+            financialAccountId);
+
         financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
             .subtract(transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
         transaction.setAprmProcessed("P");
