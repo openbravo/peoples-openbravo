@@ -1605,14 +1605,21 @@
       }
 
       function deleteApproval() {
-        OB.UTIL.Approval.requestApproval(pointofsale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-          if (approved) {
-            selectedModels.forEach(function (line, idx) {
-              line.set('deleteApproved', true);
-            });
-            preDeleteLine();
-          }
+        var approvalNeeded = _.find(selectedModels, function (line) {
+          return !line.get('forceDeleteLine');
         });
+        if (approvalNeeded) {
+          OB.UTIL.Approval.requestApproval(pointofsale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              selectedModels.forEach(function (line, idx) {
+                line.set('deleteApproved', true);
+              });
+              preDeleteLine();
+            }
+          });
+        } else {
+          preDeleteLine();
+        }
       }
 
       function checkStock(idx) {
@@ -3419,14 +3426,10 @@
             // Instead of using 'me' as order, is necessary to use 'OB.MobileApp.model.receipt' to avoid references to not active orders
             // This happens while adding a deferred sale to a paid receipt
             var order = OB.MobileApp.model.receipt;
-            OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
-              if (approved) {
-                if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
-                  OB.UTIL.RfidController.removeEpcLine(newline);
-                }
-                order.deleteLinesFromOrder([newline], function () {
-                  order.set('undo', null);
-                });
+            order.deleteLinesFromOrder([newline], function () {
+              order.set('undo', null);
+              if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
+                OB.UTIL.RfidController.removeEpcLine(newline);
               }
             });
           }
@@ -6078,6 +6081,7 @@
         } else {
           orderList.deleteCurrent();
         }
+        enyo.$.scrim.hide();
         if (callback && callback instanceof Function) {
           callback();
         }
