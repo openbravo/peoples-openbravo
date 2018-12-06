@@ -4263,9 +4263,9 @@
         splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length, me.get('documentNo').length).split('-');
         if (splittedDocNo.length > 1) {
           var nextNumber = parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
-          newDocNo = me.get('documentNo').substring(0, me.get('documentNo').lastIndexOf('-')) + '-' + nextNumber;
+          newDocNo = me.get('documentNo').substring(0, me.get('documentNo').lastIndexOf('-')) + OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator + nextNumber;
         } else {
-          newDocNo = me.get('documentNo') + '-1';
+          newDocNo = me.get('documentNo') + OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator + '1';
         }
         me.set('documentNo', newDocNo);
         me.set('posTerminal', OB.MobileApp.model.get('terminal').id);

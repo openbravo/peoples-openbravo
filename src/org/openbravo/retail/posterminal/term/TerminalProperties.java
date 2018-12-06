@@ -11,6 +11,8 @@ package org.openbravo.retail.posterminal.term;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -22,8 +24,6 @@ import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.PrintTemplate;
 import org.openbravo.retail.posterminal.PrintTemplateSubrep;
 import org.openbravo.service.json.JsonConstants;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 @Qualifier(Terminal.terminalPropertyExtension)
 public class TerminalProperties extends ModelExtension {
@@ -87,6 +87,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("org.obposPrepaymentPerc", "obposPrepaymentPerc"));
     list.add(new HQLProperty("org.obposPrepaymentPercLimit", "obposPrepaymentPercLimit"));
     list.add(new HQLProperty("org.obposPrepayPercLayLimit", "obposPrepayPercLayLimit"));
+    list.add(new HQLProperty("org.obposSeparatorCR", "cancelAndReplaceSeparator"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);
