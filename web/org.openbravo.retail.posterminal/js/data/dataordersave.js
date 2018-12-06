@@ -272,7 +272,7 @@
 
                 syncSuccessCallback = function () {
                   // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                  receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.
+                  receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
                   if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
                     OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                       receipt: receiptForPostSyncReceipt,
@@ -303,7 +303,7 @@
 
                 if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                   // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                  receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.  
+                  receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.  
                   closeParamCallback();
                 }
 
