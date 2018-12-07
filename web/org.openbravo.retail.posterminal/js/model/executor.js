@@ -337,9 +337,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       // Keep only manual discounts in promotions array of the line
       var keepManual = [],
           i;
-      for (i = 0; i < line.get('promotions').length; i++) {
-        if (line.get('promotions')[i].manual) {
-          keepManual.push(line.get('promotions')[i]);
+      if (line.get('promotions')) {
+        for (i = 0; i < line.get('promotions').length; i++) {
+          if (line.get('promotions')[i].manual) {
+            keepManual.push(line.get('promotions')[i]);
+          }
         }
       }
       line.set('promotions', keepManual.length > 0 ? keepManual : null);
