@@ -124,9 +124,11 @@ enyo.kind({
         totalData.splice(totalData.indexOf(popedElement), 1);
       });
     });
-    totalData.forEach(function (model) {
-      model.set('checked', false);
-    });
+    if (!OB.MobileApp.model.hasPermission('OBPOS_SelectCurrentTicketsOnPaidOpen', true)) {
+      totalData.forEach(function (model) {
+        model.set('checked', false);
+      });
+    }
     totalData = totalData.concat(data.models);
     data.models = totalData;
     data.length = totalData.length;
