@@ -21,8 +21,6 @@ package org.openbravo.dal.service;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +50,6 @@ import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * The OBDal class offers the main external access to the Data Access Layer. The variety of data
@@ -727,49 +724,5 @@ public class OBDal implements OBNotSingleton {
     }
     final Entity e = ModelProvider.getInstance().getEntity(entityName);
     OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
-  }
-
-  /**
-   * Creates a lock for no key update
-   * 
-   * @param entity
-   *          the type to create the query for
-   * @param id
-   *          identifier of the record
-   * @return id
-   */
-  public String lockForNoKeyUpdate(Entity entity, String id) {
-    final String RDBMS = new DalConnectionProvider(false).getRDBMS();
-    String strSQL;
-    if ("ORACLE".equals(RDBMS)) {
-      strSQL = "SELECT * FROM " + entity.getTableName() + " WHERE " + entity.getTableName()
-          + "_id =? FOR UPDATE";
-    } else {
-      strSQL = "SELECT * FROM " + entity.getTableName() + " WHERE " + entity.getTableName()
-          + "_id =? FOR NO KEY UPDATE";
-    }
-    PreparedStatement sqlQuery = null;
-    ResultSet rs = null;
-    try {
-      sqlQuery = new DalConnectionProvider(false).getPreparedStatement(strSQL);
-      sqlQuery.setString(1, id);
-      sqlQuery.execute();
-      sqlQuery.setMaxRows(1);
-      rs = sqlQuery.getResultSet();
-      while (rs.next()) {
-        return rs.getString(1);
-      }
-    } catch (Exception e) {
-      log.error("Error when executing query", e);
-    } finally {
-      try {
-        if (sqlQuery != null) {
-          sqlQuery.close();
-        }
-      } catch (Exception e) {
-        log.error("Error when closing statement", e);
-      }
-    }
-    return null;
   }
 }
