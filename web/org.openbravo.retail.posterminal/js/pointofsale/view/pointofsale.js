@@ -462,13 +462,16 @@ enyo.kind({
     return true;
   },
   deleteCurrentOrder: function (inSender, inEvent) {
-    var me = this;
+    var me = this,
+        receipt = this.model.get('order');
+
+    enyo.$.scrim.show();
     inEvent.status = true;
     this.leftToolbarDisabled(inSender, inEvent);
-    var receipt = this.model.get('order');
     receipt.deleteOrder(this, function () {
       inEvent.status = false;
       me.leftToolbarDisabled(inSender, inEvent);
+      enyo.$.scrim.hide();
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
         OB.MobileApp.model.runSyncProcess();
       }

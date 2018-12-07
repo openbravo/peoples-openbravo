@@ -173,8 +173,6 @@ enyo.kind({
       return false;
     }
 
-    enyo.$.scrim.show();
-
     // deletion without warning is allowed if the ticket has been processed
     if (this.hasClass('paidticket')) {
       this.doDeleteOrder();
