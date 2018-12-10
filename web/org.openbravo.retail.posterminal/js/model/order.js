@@ -4161,7 +4161,8 @@
       var documentseq, documentseqstr, idMap = {},
           me = this,
           i, splittedDocNo = [],
-          terminalDocNoPrefix, newDocNo = '';
+          terminalDocNoPrefix, newDocNo = '',
+          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator;
 
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
@@ -4260,12 +4261,12 @@
         me.set('negativeDocNo', me.get('documentNo') + '*R*');
         newDocNo = '';
         terminalDocNoPrefix = OB.MobileApp.model.attributes.terminal.docNoPrefix;
-        splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length, me.get('documentNo').length).split('-');
+        splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length, me.get('documentNo').length).split(cancelAndReplaceSeparator);
         if (splittedDocNo.length > 1) {
           var nextNumber = parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
-          newDocNo = me.get('documentNo').substring(0, me.get('documentNo').lastIndexOf('-')) + OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator + nextNumber;
+          newDocNo = me.get('documentNo').substring(0, me.get('documentNo').lastIndexOf(cancelAndReplaceSeparator)) + cancelAndReplaceSeparator + nextNumber;
         } else {
-          newDocNo = me.get('documentNo') + OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator + '1';
+          newDocNo = me.get('documentNo') + cancelAndReplaceSeparator + '1';
         }
         me.set('documentNo', newDocNo);
         me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
