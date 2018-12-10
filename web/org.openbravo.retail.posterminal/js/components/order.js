@@ -484,6 +484,11 @@ enyo.kind({
           minimumSelected = Infinity,
           maximumSelected = 0,
           uniqueQuantityServiceToBeDeleted, asPerProductServiceToBeDeleted;
+
+      if (line.get('obposIsDeleted')) {
+        return;
+      }
+
       if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
         _.each(line.get('relatedLines'), function (line2) {
           if (!line2.deferred && !line.get('originalOrderLineId')) {
