@@ -496,9 +496,12 @@ public class InvoiceUtils {
           FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
       paymentScheduleCriteria.add(Restrictions
           .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-      if (jsoninvoice.optBoolean("doCancelAndReplace", false)) {
+      if (gross.compareTo(BigDecimal.ZERO) != -1) {
         paymentScheduleCriteria.addOrder(org.hibernate.criterion.Order
             .asc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
+      } else {
+        paymentScheduleCriteria.addOrder(org.hibernate.criterion.Order
+            .desc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
       }
       final List<FIN_PaymentScheduleDetail> paymentScheduleList = paymentScheduleCriteria.list();
       // The reversal payments must be added to the same invoice to which are assigned the reversed
