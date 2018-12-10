@@ -43,6 +43,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -729,25 +730,33 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * Creates a lock for no key update
+   * Retrieves an object from the database getting a lock "for no key update" for the indicated
+   * object. Note that the object entering in the method is evicted and a new object is created.
+   * Before calling this method, is a must check if changes have been made to the object previously.
+   * In this case a flush must be done.
    * 
-   * @param entity
+   * @param object
    *          the type to create the query for
-   * @param id
-   *          identifier of the record
+   * @return the new object getting a lock "for no key update"
    */
-  public void lockForNoKeyUpdate(Entity entity, String id) {
-    if (entity.getIdProperties().size() != 1) {
-      throw new IllegalArgumentException("Expected entity with a single ID. " + entity + " has "
-          + entity.getIdProperties().size());
-    }
+  @SuppressWarnings("unchecked")
+  public <T extends BaseOBObject> T getObjectLockForNoKeyUpdate(T object) {
+    Entity entity = object.getEntity();
+
+    Check.isTrue(entity.getIdProperties().size() == 1, "Expected entity with a single ID. "
+        + entity + " has " + entity.getIdProperties().size());
 
     String rdbms = new DalConnectionProvider(false).getRDBMS();
     String lockType = "ORACLE".equals(rdbms) ? "UPDATE" : "NO KEY UPDATE";
 
-    String sql = "SELECT 1 FROM " + entity.getTableName() + " WHERE "
-        + entity.getIdProperties().get(0).getColumnName() + " = :id FOR " + lockType;
+    String sql = "SELECT " + entity.getIdProperties().get(0).getColumnName() + " FROM "
+        + entity.getTableName() + " WHERE " + entity.getIdProperties().get(0).getColumnName()
+        + " = :id FOR " + lockType;
 
-    getSession().createNativeQuery(sql).setParameter("id", id).list();
+    Session session = getSession();
+    session.evict(object);
+    session.createNativeQuery(sql).setParameter(BaseOBObject.ID, object.getId()).uniqueResult();
+    return OBDal.getInstance().get((Class<T>) entity.getMappingClass(), object.getId());
+
   }
 }
