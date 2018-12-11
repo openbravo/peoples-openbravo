@@ -240,6 +240,8 @@ enyo.kind({
         property: inEvent.orderby.sortName ? inEvent.orderby.sortName : inEvent.orderby.name,
         sorting: inEvent.orderby.direction
       }];
+    } else if (inEvent.orderByClause) {
+      criteria._orderByClause = inEvent.orderByClause;
     } else {
       criteria._orderByClause = 'orderDateFrom desc, documentNo desc';
     }
