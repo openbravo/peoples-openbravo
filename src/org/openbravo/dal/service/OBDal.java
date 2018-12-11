@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.persistence.LockModeType;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
@@ -730,16 +732,24 @@ public class OBDal implements OBNotSingleton {
   }
 
   /**
-   * Retrieves an object from the database getting a lock "for no key update" for the indicated
-   * object. Note that the object entering in the method is evicted and a new object is created.
-   * Before calling this method, is a must check if changes have been made to the object previously.
-   * In this case a flush must be done.
+   * Creates a WRITE lock in database for the DAL persistence instance {@code object} parameter and
+   * returns a new instance representing the same database object.
+   * <p>
+   * Note the original instance that is passed as parameter is evicted from Hibernate's 1st level.
+   * Therefore, any state not persisted before invoking this method will be ignored, after invoking
+   * this method the parameter instance shouldn't be used anymore using instead the returned one.
+   * <p>
+   * Whereas this is similar to JPA's {@link LockModeType#PESSIMISTIC_WRITE}, it decreases lock
+   * level in PostgreSQL implemented by Hibernate from {@code FOR UPDATE} to
+   * {@code FOR NO KEY UPDATE} allowing insertions of children records while a lock on its parent is
+   * acquired by a different transaction. This is a workaround until Hibernate issue HHH-13135 is
+   * fixed. Unlike locks acquired by Hibernate, the ones created by this method are only present in
+   * Database and cannot be detected by Hibernate (eg. {@link Session#getCurrentLockMode(Object)}.
    * 
    * @param object
-   *          the type to create the query for
-   * @return the new object getting a lock "for no key update"
+   *          DAL instance to acquire a database lock for.
+   * @return A new DAL instance that represents the same database object than the parameter.
    */
-  @SuppressWarnings("unchecked")
   public <T extends BaseOBObject> T getObjectLockForNoKeyUpdate(T object) {
     Entity entity = object.getEntity();
 
@@ -756,7 +766,10 @@ public class OBDal implements OBNotSingleton {
     Session session = getSession();
     session.evict(object);
     session.createNativeQuery(sql).setParameter(BaseOBObject.ID, object.getId()).uniqueResult();
-    return OBDal.getInstance().get((Class<T>) entity.getMappingClass(), object.getId());
 
+    @SuppressWarnings("unchecked")
+    T newInstance = OBDal.getInstance().get((Class<T>) entity.getMappingClass(), object.getId());
+
+    return newInstance;
   }
 }
