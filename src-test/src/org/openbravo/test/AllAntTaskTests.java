@@ -50,6 +50,7 @@ import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
+import org.openbravo.test.dal.DalLockingTest;
 import org.openbravo.test.dal.DalPerformanceInventoryLineTest;
 import org.openbravo.test.dal.DalPerformanceProductTest;
 import org.openbravo.test.dal.DalPerformanceProxyTest;
@@ -151,6 +152,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     DalPerformanceProxyTest.class, //
     DalQueryTest.class, //
     DalTest.class, //
+    DalLockingTest.class, //
     CentralBrokerTest.class, //
     DalUtilTest.class, //
     IssuesTest.class, //
@@ -317,7 +319,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // AD_Org Persist Information
     ADOrgPersistInfoTestSuite.class,
-    
+
     // Automatic Invoice from Goods Shipment
     InvoiceFromShipmentTest.class
 
