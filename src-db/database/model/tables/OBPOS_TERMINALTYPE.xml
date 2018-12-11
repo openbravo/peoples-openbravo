@@ -141,8 +141,19 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA[N]]></onCreateDefault>
       </column>
+      <column name="C_CHANNEL_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[293AB6FFE1B74DD89071AEB8B308403B]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="APPLICATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[OBPOS]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
         <reference local="C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_CHANNEL" name="OBPOS_TERMINALTYPE_C_CHANNEL">
+        <reference local="C_CHANNEL_ID" foreign="C_CHANNEL_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_TERMINALTYPE_PAYTYPE">
         <reference local="OBPOS_APP_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
