@@ -128,7 +128,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         extraFilter = "not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or ";
       }
 
-      String hqlUser = "select distinct user.name, user.username, user.id "
+      String hqlUser = "select distinct user.name, user.username, user.id, user.firstName, user.lastName "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, "
           + "ADFormAccess formAccess, OBPOS_Applications terminal "
           + "where user.active = true and "
@@ -177,6 +177,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         item.put("name", qryUserObjectItem[0]);
         item.put("userName", qryUserObjectItem[1]);
         item.put("userId", qryUserObjectItem[2]);
+        item.put("firstName", qryUserObjectItem[3]);
+        item.put("lastName", qryUserObjectItem[4]);
 
         // Get the image for the current user
         String hqlImage = "select image.mimetype, image.bindaryData "
