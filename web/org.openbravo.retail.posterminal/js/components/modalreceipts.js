@@ -93,8 +93,14 @@ enyo.kind({
         name: 'bp'
       }]
     }, {
-      style: 'float: right; font-weight: bold; text-align: right;',
-      name: 'total'
+      name: 'lineTotalContainer',
+      style: 'float: right;',
+      components: [{
+        style: ' font-weight: bold; text-align: right;',
+        name: 'total'
+      }, {
+        style: 'clear: both;'
+      }]
     }, {
       style: 'clear: both;'
     }]
