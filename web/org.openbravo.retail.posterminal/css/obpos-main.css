@@ -1201,6 +1201,20 @@ li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderli
   height: 58px;
 }
 
+.payOpenTicketsIsLayaway{
+  font-weight: bold;
+  color: lightblue;
+  float: right;
+  text-align:right;
+}
+
+.payOpenTicketsIsReceipt{
+  font-weight: bold;
+  color: rgb(108, 179, 63);
+  float: right;
+  text-align:right;
+}
+
 /*Modal print invoices footer*/
 
 .modalInvoices__footer {

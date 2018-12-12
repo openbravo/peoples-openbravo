@@ -175,7 +175,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Old Tickets
         "components/modalpaidreceipts",
-        "components/modalmultiorders",
+        "components/modal-pay-open-tickets",
         "components/modalinvoices",
         // Quotations
         "components/modalcreateorderfromquotation",

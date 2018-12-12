@@ -1605,14 +1605,21 @@
       }
 
       function deleteApproval() {
-        OB.UTIL.Approval.requestApproval(pointofsale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-          if (approved) {
-            selectedModels.forEach(function (line, idx) {
-              line.set('deleteApproved', true);
-            });
-            preDeleteLine();
-          }
+        var approvalNeeded = _.find(selectedModels, function (line) {
+          return !line.get('forceDeleteLine');
         });
+        if (approvalNeeded) {
+          OB.UTIL.Approval.requestApproval(pointofsale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+            if (approved) {
+              selectedModels.forEach(function (line, idx) {
+                line.set('deleteApproved', true);
+              });
+              preDeleteLine();
+            }
+          });
+        } else {
+          preDeleteLine();
+        }
       }
 
       function checkStock(idx) {
@@ -3419,14 +3426,10 @@
             // Instead of using 'me' as order, is necessary to use 'OB.MobileApp.model.receipt' to avoid references to not active orders
             // This happens while adding a deferred sale to a paid receipt
             var order = OB.MobileApp.model.receipt;
-            OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
-              if (approved) {
-                if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
-                  OB.UTIL.RfidController.removeEpcLine(newline);
-                }
-                order.deleteLinesFromOrder([newline], function () {
-                  order.set('undo', null);
-                });
+            order.deleteLinesFromOrder([newline], function () {
+              order.set('undo', null);
+              if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
+                OB.UTIL.RfidController.removeEpcLine(newline);
               }
             });
           }
@@ -4158,7 +4161,8 @@
       var documentseq, documentseqstr, idMap = {},
           me = this,
           i, splittedDocNo = [],
-          terminalDocNoPrefix, newDocNo = '';
+          terminalDocNoPrefix, newDocNo = '',
+          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator;
 
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
@@ -4257,12 +4261,12 @@
         me.set('negativeDocNo', me.get('documentNo') + '*R*');
         newDocNo = '';
         terminalDocNoPrefix = OB.MobileApp.model.attributes.terminal.docNoPrefix;
-        splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length, me.get('documentNo').length).split('-');
+        splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length, me.get('documentNo').length).split(cancelAndReplaceSeparator);
         if (splittedDocNo.length > 1) {
           var nextNumber = parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
-          newDocNo = me.get('documentNo').substring(0, me.get('documentNo').lastIndexOf('-')) + '-' + nextNumber;
+          newDocNo = me.get('documentNo').substring(0, me.get('documentNo').lastIndexOf(cancelAndReplaceSeparator)) + cancelAndReplaceSeparator + nextNumber;
         } else {
-          newDocNo = me.get('documentNo') + '-1';
+          newDocNo = me.get('documentNo') + cancelAndReplaceSeparator + '1';
         }
         me.set('documentNo', newDocNo);
         me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
@@ -5066,7 +5070,7 @@
 
     removePayment: function (payment, cancellationCallback, removeCallback) {
       var payments = this.get('payments'),
-          max, i, p;
+          max, i, p, me = this;
       if (this.get('isBeingClosed')) {
         var error = new Error();
         OB.error('The receipt is being save, you cannot remove payments.');
@@ -5090,6 +5094,11 @@
           return true;
         }
         payments.remove(payment);
+        if (!me.get('deletedPayments')) {
+          me.set('deletedPayments', [payment]);
+        } else {
+          me.get('deletedPayments').push(payment);
+        }
         // Remove isReversed attribute from payment reversed by removed payment
         if (payment.get('reversedPaymentId')) {
           for (i = 0, max = payments.length; i < max; i++) {

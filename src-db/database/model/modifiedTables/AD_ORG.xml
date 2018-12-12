@@ -109,6 +109,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA['0']]></onCreateDefault>
       </column>
+      <column name="EM_OBPOS_SEPARATOR_CR" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[-]]></default>
+        <onCreateDefault><![CDATA['-']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_CANCRCPTEMP">
         <reference local="EM_OBPOS_CANC_RPT_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>

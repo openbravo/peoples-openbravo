@@ -432,10 +432,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }], {
           autoDismiss: false,
-          onHideFunction: function () {
-            receipt.trigger('paymentCancel');
-            callback(false);
-          }
+          hideCloseButton: true
         });
       }
 
@@ -667,9 +664,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }], {
           autoDismiss: false,
-          onHideFunction: function () {
-            paymentstatus.trigger('paymentCancel');
-          }
+          hideCloseButton: true
         });
       } else {
         me.openDrawer = openDrawer;

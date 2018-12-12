@@ -270,19 +270,16 @@
                   }
                 };
 
-                syncSuccessCallback = function () {
-                  // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                  receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.
+                syncSuccessCallback = function (callback) {
                   if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
                     OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                       receipt: receiptForPostSyncReceipt,
                       syncSuccess: true
                     }, function () {
-                      serverMessageForQuotation(frozenReceipt);
-                      closeParamCallback();
+                      callback();
                     });
                   } else {
-                    closeParamCallback();
+                    callback();
                   }
                 };
 
@@ -303,7 +300,7 @@
 
                 if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                   // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                  receipt.trigger('integrityOk'); // Is important for module print last receipt. This module listen trigger.  
+                  receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.  
                   closeParamCallback();
                 }
 
@@ -314,11 +311,18 @@
                     OB.Dal.transaction(function (tx) {
                       OB.UTIL.calculateCurrentCash(null, tx);
                       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(frozenReceipt.get('documentnoSuffix'), frozenReceipt.get('quotationnoSuffix'), frozenReceipt.get('returnnoSuffix'), function () {
-                        syncSuccessCallback();
+                        // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                        receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
+                        syncSuccessCallback(function () {
+                          serverMessageForQuotation(frozenReceipt);
+                          closeParamCallback();
+                        });
                       }, tx);
                     });
                   } else {
-                    serverMessageForQuotation(frozenReceipt);
+                    syncSuccessCallback(function () {
+                      serverMessageForQuotation(frozenReceipt);
+                    });
                   }
                   OB.debug("Ticket closed: runSyncProcess executed");
                 }, function () {
