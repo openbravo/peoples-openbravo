@@ -1181,7 +1181,10 @@ enyo.kind({
   },
   showModalReceiptProperties: function (inSender, inEvent) {
     this.doShowPopup({
-      popup: 'receiptPropertiesDialog'
+      popup: 'receiptPropertiesDialog',
+      args: {
+        model: inEvent.model
+      }
     });
     return true;
   },

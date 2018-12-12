@@ -85,7 +85,8 @@ enyo.kind({
     style: 'clear: both;'
   }],
   initComponents: function () {
-    var me = this;
+    var me = this,
+        order = this.owner.owner.owner.owner.order;
 
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
@@ -158,7 +159,7 @@ enyo.kind({
       });
     }
 
-    if (this.owner.owner.owner.owner.order.get('iscancelled')) {
+    if (order.get('iscancelled')) {
       if (this.model.get('shippedQuantity')) {
         this.createComponent({
           style: 'display: block;',
@@ -270,7 +271,8 @@ enyo.kind({
       });
     }
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderOrderLine', {
-      orderline: this
+      orderline: this,
+      order: order
     });
   },
   keyupHandler: function (inSender, inEvent) {

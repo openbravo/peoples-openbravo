@@ -565,7 +565,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           } else {
             amountToPay = OB.DEC.sub(order.get('gross'), order.get('payment'));
           }
-          if (OB.DEC.compare(amountToPay) > 0 && !_.isUndefined(payment)) {
+          if (OB.DEC.compare(amountToPay) > 0) {
             var paymentMethod = OB.MobileApp.model.paymentnames[payment.get('kind')];
             paymentLine = new OB.Model.PaymentLine();
             OB.UTIL.clone(payment, paymentLine);

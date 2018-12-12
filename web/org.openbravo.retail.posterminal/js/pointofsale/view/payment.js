@@ -2251,7 +2251,7 @@ enyo.kind({
     var receipt = this.owner.receipt,
         negativeLines, me = this,
         myModel = this.owner.model,
-        payments, paymentStatus, prepaymentLayawayLimitAmount, receiptHasPrepaymentAmount, pendingPrepayment, hasPayments, allowApproval, isMultiOrder = myModel.get('leftColumnViewManager').isOrder() ? false : true;
+        payments, paymentStatus, prepaymentLayawayLimitAmount, receiptHasPrepaymentAmount, pendingPrepayment, hasPayments, allowApproval;
     var continueExecuting = function (receipt, negativeLines, me, myModel, payments) {
         // Avoid closing the order before receipt is being calculated
         if (receipt.calculatingReceipt) {
@@ -2308,13 +2308,7 @@ enyo.kind({
         }
         me.setDisabled(true);
         enyo.$.scrim.show();
-        if (isMultiOrder) {
-          me.owner.model.get('multiOrders').trigger('paymentDone', this.allowOpenDrawer);
-          OB.UTIL.setScanningFocus(false);
-          me.owner.model.get('multiOrders').set('openDrawer', false);
-        } else {
-          receipt.trigger('paymentDone', me.allowOpenDrawer);
-        }
+        receipt.trigger('paymentDone', me.allowOpenDrawer);
         };
 
     paymentStatus = receipt.getPaymentStatus();
