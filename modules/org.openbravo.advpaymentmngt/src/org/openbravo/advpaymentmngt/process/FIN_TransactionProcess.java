@@ -172,7 +172,6 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
 
         FIN_FinancialAccount financialAccount = OBDal.getInstance().getObjectLockForNoKeyUpdate(
             transaction.getAccount());
-
         financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
             transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
         transaction.setAprmProcessed("R");
