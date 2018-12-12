@@ -270,8 +270,8 @@
                   }
                 };
 
-                syncSuccessCallback = function (callback) {
-                  if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
+                syncSuccessCallback = function (callback, eventParams) {
+                  if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt') && eventParams && !eventParams.ignoreSyncProcess) {
                     OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                       receipt: receiptForPostSyncReceipt,
                       syncSuccess: true
@@ -316,13 +316,13 @@
                         syncSuccessCallback(function () {
                           serverMessageForQuotation(frozenReceipt);
                           closeParamCallback();
-                        });
+                        }, eventParams);
                       }, tx);
                     });
                   } else {
                     syncSuccessCallback(function () {
                       serverMessageForQuotation(frozenReceipt);
-                    });
+                    }, eventParams);
                   }
                   OB.debug("Ticket closed: runSyncProcess executed");
                 }, function () {
