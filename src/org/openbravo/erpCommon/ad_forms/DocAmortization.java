@@ -24,7 +24,8 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -32,7 +33,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class DocAmortization extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocAmortization = Logger.getLogger(DocAmortization.class);
+  private static final Logger log4jDocAmortization = LogManager.getLogger();
 
   private String SeqNo = "0";
   /** Account Type - Asset */
@@ -63,21 +64,6 @@ public class DocAmortization extends AcctServer {
   public DocAmortization(String AD_Client_ID, String AD_Org_ID,
       ConnectionProvider connectionProvider) {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
-  }
-
-  /**
-   * @return the log4jDocAmortization
-   */
-  public static Logger getLog4jDocAmortization() {
-    return log4jDocAmortization;
-  }
-
-  /**
-   * @param log4jDocAmortization
-   *          the log4jDocAmortization to set
-   */
-  public static void setLog4jDocAmortization(Logger log4jDocAmortization) {
-    DocAmortization.log4jDocAmortization = log4jDocAmortization;
   }
 
   /**

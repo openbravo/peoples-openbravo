@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.persistence.LockModeType;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.ObjectNotFoundException;
@@ -43,6 +45,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -51,6 +54,7 @@ import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * The OBDal class offers the main external access to the Data Access Layer. The variety of data
@@ -725,5 +729,47 @@ public class OBDal implements OBNotSingleton {
     }
     final Entity e = ModelProvider.getInstance().getEntity(entityName);
     OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
+  }
+
+  /**
+   * Creates a WRITE lock in database for the DAL persistence instance {@code object} parameter and
+   * returns a new instance representing the same database object.
+   * <p>
+   * Note the original instance that is passed as parameter is evicted from Hibernate's 1st level.
+   * Therefore, any state not persisted before invoking this method will be ignored, after invoking
+   * this method the parameter instance shouldn't be used anymore using instead the returned one.
+   * <p>
+   * Whereas this is similar to JPA's {@link LockModeType#PESSIMISTIC_WRITE}, it decreases lock
+   * level in PostgreSQL implemented by Hibernate from {@code FOR UPDATE} to
+   * {@code FOR NO KEY UPDATE} allowing insertions of children records while a lock on its parent is
+   * acquired by a different transaction. This is a workaround until Hibernate issue HHH-13135 is
+   * fixed. Unlike locks acquired by Hibernate, the ones created by this method are only present in
+   * Database and cannot be detected by Hibernate (eg. {@link Session#getCurrentLockMode(Object)}.
+   * 
+   * @param object
+   *          DAL instance to acquire a database lock for.
+   * @return A new DAL instance that represents the same database object than the parameter.
+   */
+  public <T extends BaseOBObject> T getObjectLockForNoKeyUpdate(T object) {
+    Entity entity = object.getEntity();
+
+    Check.isTrue(entity.getIdProperties().size() == 1, "Expected entity with a single ID. "
+        + entity + " has " + entity.getIdProperties().size());
+
+    String rdbms = new DalConnectionProvider(false).getRDBMS();
+    String lockType = "ORACLE".equals(rdbms) ? "UPDATE" : "NO KEY UPDATE";
+
+    String sql = "SELECT " + entity.getIdProperties().get(0).getColumnName() + " FROM "
+        + entity.getTableName() + " WHERE " + entity.getIdProperties().get(0).getColumnName()
+        + " = :id FOR " + lockType;
+
+    Session session = getSession();
+    session.evict(object);
+    session.createNativeQuery(sql).setParameter(BaseOBObject.ID, object.getId()).uniqueResult();
+
+    @SuppressWarnings("unchecked")
+    T newInstance = OBDal.getInstance().get((Class<T>) entity.getMappingClass(), object.getId());
+
+    return newInstance;
   }
 }

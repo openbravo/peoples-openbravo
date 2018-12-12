@@ -24,7 +24,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
@@ -41,8 +42,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalConsumptionLine;
 
 public class DocInternalConsumption extends AcctServer {
   private static final long serialVersionUID = 1L;
-  private static Logger log4jDocInternalConsumption = Logger
-      .getLogger(DocInternalConsumption.class);
+  private static final Logger log4jDocInternalConsumption = LogManager.getLogger();
 
   private String SeqNo = "0";
 
@@ -250,21 +250,6 @@ public class DocInternalConsumption extends AcctServer {
   @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     return true;
-  }
-
-  /**
-   * @return the log4jDocInternalConsumption
-   */
-  public static Logger getLog4jDocInternalConsumption() {
-    return log4jDocInternalConsumption;
-  }
-
-  /**
-   * @param log4jDocInternalConsumption
-   *          the log4jDocInternalConsumption to set
-   */
-  public static void setLog4jDocInternalConsumption(Logger log4jDocInternalConsumption) {
-    DocInternalConsumption.log4jDocInternalConsumption = log4jDocInternalConsumption;
   }
 
   /**

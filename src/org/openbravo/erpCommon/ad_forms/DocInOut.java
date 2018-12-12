@@ -26,7 +26,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -50,7 +51,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 public class DocInOut extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocInOut = Logger.getLogger(DocInOut.class);
+  private static final Logger log4jDocInOut = LogManager.getLogger();
 
   /** AD_Table_ID */
   private String SeqNo = "0";
@@ -452,21 +453,6 @@ public class DocInOut extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
-
-  /**
-   * @return the log4jDocInOut
-   */
-  public static Logger getLog4jDocInOut() {
-    return log4jDocInOut;
-  }
-
-  /**
-   * @param log4jDocInOut
-   *          the log4jDocInOut to set
-   */
-  public static void setLog4jDocInOut(Logger log4jDocInOut) {
-    DocInOut.log4jDocInOut = log4jDocInOut;
-  }
 
   /**
    * @return the seqNo

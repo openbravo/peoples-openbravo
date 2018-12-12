@@ -28,7 +28,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -64,20 +64,18 @@ IF(v_Sequence_ID IS NULL) THEN -- No Sequence Number
   DBMS_OUTPUT.PUT_LINE('[AD_Sequence_DocType: not found - C_DocType_ID=' || p_DocType_ID || ']') ;
   RETURN;
 END IF;
--- Get the numbers
-SELECT s.CurrentNext, s.Prefix, s.Suffix
-INTO v_NextNo, v_Prefix, v_Suffix
-FROM AD_Sequence s
-WHERE s.AD_Sequence_ID = v_Sequence_ID  AND s.IsActive='Y'  AND s.IsTableID='N'  AND s.IsAutoSequence='Y'  FOR UPDATE OF CurrentNext;
-
   IF p_Update_Next='Y' THEN
     UPDATE AD_Sequence
       SET CurrentNext=CurrentNext + IncrementNo
     WHERE AD_Sequence_ID=v_Sequence_ID;
   END IF;
-  p_DocumentNo:=COALESCE(v_Prefix, '') || v_NextNo || COALESCE(v_Suffix, '') ;
 
--- DBMS_OUTPUT.PUT_LINE(p_DocumentNo);
+  SELECT s.CurrentNext - (CASE WHEN p_Update_Next='Y' THEN IncrementNo ELSE 0 END), s.Prefix, s.Suffix
+  INTO v_NextNo, v_Prefix, v_Suffix
+  FROM AD_Sequence s
+  WHERE s.AD_Sequence_ID = v_Sequence_ID  AND s.IsActive='Y'  AND s.IsTableID='N'  AND s.IsAutoSequence='Y';
+
+  p_DocumentNo:=COALESCE(v_Prefix, '') || v_NextNo || COALESCE(v_Suffix, '') ;
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@DocumentTypeSequenceNotFound@') ;

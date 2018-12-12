@@ -11,18 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class DocLine_LCCost extends DocLine {
-  private static final Logger log4jDocLine_LCCost = LogManager.getLogger();
 
   public DocLine_LCCost(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
@@ -78,7 +74,4 @@ public class DocLine_LCCost extends DocLine {
     return "Servlet for the accounting";
   } // end of getServletInfo() method
 
-  public static Logger getLog4jdoclineLccost() {
-    return log4jDocLine_LCCost;
-  }
 }

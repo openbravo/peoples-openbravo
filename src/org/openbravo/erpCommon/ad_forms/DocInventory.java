@@ -23,7 +23,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
@@ -40,7 +41,7 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 
 public class DocInventory extends AcctServer {
   private static final long serialVersionUID = 1L;
-  static Logger log4jDocInventory = Logger.getLogger(DocInventory.class);
+  private static final Logger log4jDocInventory = LogManager.getLogger();
 
   private String SeqNo = "0";
 
@@ -261,21 +262,6 @@ public class DocInventory extends AcctServer {
     SeqNo = "0";
     return fact;
   } // createFact
-
-  /**
-   * @return the log4jDocInventory
-   */
-  public static Logger getLog4jDocInventory() {
-    return log4jDocInventory;
-  }
-
-  /**
-   * @param log4jDocInventory
-   *          the log4jDocInventory to set
-   */
-  public static void setLog4jDocInventory(Logger log4jDocInventory) {
-    DocInventory.log4jDocInventory = log4jDocInventory;
-  }
 
   /**
    * @return the seqNo

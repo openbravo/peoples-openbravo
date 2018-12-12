@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
@@ -41,8 +43,6 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 @Dependent
 @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
@@ -78,7 +78,10 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
    * @throws ServletException
    */
   private String getCurrentTaxId(final Product product, final Order processingOrder) {
-    String bpLocationId = getMaxBusinessPartnerLocationId(processingOrder.getBusinessPartner());
+    String bpBillToLocationId = (processingOrder.getInvoiceAddress() != null) ? processingOrder
+        .getInvoiceAddress().getId() : getMaxBusinessPartnerLocationId(processingOrder
+        .getBusinessPartner());
+    String bpLocationId = processingOrder.getPartnerAddress().getId();
     String orderWarehouseId = processingOrder.getWarehouse() != null ? processingOrder
         .getWarehouse().getId() : "";
     String orderProjectId = processingOrder.getProject() != null ? processingOrder.getProject()
@@ -89,8 +92,8 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
     String taxID;
     try {
       taxID = Tax.get(new DalConnectionProvider(), product.getId(), strDatePromised,
-          processingOrder.getOrganization().getId(), orderWarehouseId, bpLocationId, bpLocationId,
-          orderProjectId, processingOrder.isSalesTransaction());
+          processingOrder.getOrganization().getId(), orderWarehouseId, bpBillToLocationId,
+          bpLocationId, orderProjectId, processingOrder.isSalesTransaction());
     } catch (IOException | ServletException e) {
       log.error("Error in CopyFromOrdersProcess while retrieving the TaxID for a Product", e);
       throw new OBException(e);
