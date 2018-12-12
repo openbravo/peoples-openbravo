@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2018 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,6 @@ import java.util.StringTokenizer;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
@@ -59,6 +56,9 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
 
 public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -677,7 +677,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     }
 
     ReportInvoiceCustomerDimensionalAnalysesJRData[] data = null;
-    ReportInvoiceCustomerDimensionalAnalysesJRData dataXLS = null;
+    ReportInvoiceCustomerDimensionalAnalysesJRData[] dataXLS = null;
     String[] strShownArray = { "", "", "", "", "", "", "", "", "", "" };
     if (localStrShown.startsWith("(")) {
       localStrShown = localStrShown.substring(1, localStrShown.length() - 1);
@@ -703,9 +703,6 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           vars.getLanguage(), "");
     }
 
-    // Checking report limit first
-    StringBuffer levelsconcat = new StringBuffer();
-    levelsconcat.append("''");
     String[] strLevelLabel = { "", "", "", "", "", "", "", "", "", "" };
     String[] strTextShow = { "", "", "", "", "", "", "", "", "", "" };
     int intOrder = 0;
@@ -716,21 +713,15 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         strTextShow[i] = "C_BP_GROUP.NAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[0].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("C_BP_GROUP.C_BP_GROUP_ID");
       } else if (StringUtils.equals(strShownArray[i], "2")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char( '"
             + vars.getLanguage() + "'))";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[1].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("C_BPARTNER.C_BPARTNER_ID");
       } else if (StringUtils.equals(strShownArray[i], "3")) {
         strTextShow[i] = "M_PRODUCT_CATEGORY.NAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[2].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID");
       } else if (StringUtils.equals(strShownArray[i], "4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char( '"
             + vars.getLanguage()
@@ -739,46 +730,32 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         intOrder++;
         intProductLevel = i + 1;
         strLevelLabel[i] = dimensionLabel[3].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("M_PRODUCT.M_PRODUCT_ID");
       } else if (StringUtils.equals(strShownArray[i], "5")) {
         strTextShow[i] = "C_INVOICE.DOCUMENTNO";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[4].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("C_INVOICE.C_INVOICE_ID");
       } else if (StringUtils.equals(strShownArray[i], "6")) {
         strTextShow[i] = "AD_USER.FIRSTNAME||' '||' '||AD_USER.LASTNAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[5].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("AD_USER.AD_USER_ID");
       } else if (StringUtils.equals(strShownArray[i], "8")) {
         strTextShow[i] = "AD_ORG.NAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[6].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("AD_ORG.AD_ORG_ID");
       } else if (StringUtils.equals(strShownArray[i], "9")) {
         strTextShow[i] = "CASE WHEN AD_USER.AD_USER_ID IS NOT NULL THEN AD_COLUMN_IDENTIFIER(to_char('Ad_User'), to_char( AD_USER.AD_USER_ID), to_char( '"
             + vars.getLanguage() + "')) ELSE '' END";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[7].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("AD_USER.AD_USER_ID");
       } else if (StringUtils.equals(strShownArray[i], "10")) {
         strTextShow[i] = "C_PROJECT.NAME";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[8].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("C_PROJECT.C_PROJECT_ID");
       } else if (StringUtils.equals(strShownArray[i], "11")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner_Location'), to_char( M_INOUT.C_BPARTNER_LOCATION_ID), to_char( '"
             + vars.getLanguage() + "'))";
         intOrder++;
         strLevelLabel[i] = dimensionLabel[9].name;
-        levelsconcat.append(" || ");
-        levelsconcat.append("M_INOUT.C_BPARTNER_LOCATION_ID");
       } else {
         strTextShow[i] = "''";
         discard[i] = "display:none;";
@@ -831,102 +808,40 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     }
     strOrderby = strHaving + strOrderby;
 
-    int limit = 0;
-    int mycount = 0;
-    try {
-      limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
-      if (limit > 0) {
-        mycount = Integer
-            .parseInt((StringUtils.equals(strComparative, "Y")) ? ReportInvoiceCustomerDimensionalAnalysesJRData
-                .selectCount(readOnlyCP, levelsconcat.toString(), Tree.getMembers(readOnlyCP,
-                    TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
-                    .getContext(readOnlyCP, vars, "#User_Client",
-                        "ReportInvoiceCustomerDimensionalAnalysesJR"), strPartnerGroup,
-                    strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
-                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
-                        .equals(strVoid, "Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(
-                        readOnlyCP, strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(
-                        readOnlyCP, strDateToRef, "1"), localStrDateFromRef2, DateTimeData
-                        .nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), localStrDateFromRef3,
-                    DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef3, "1"))
-                : ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparativeCount(
-                    readOnlyCP, levelsconcat.toString(), Tree.getMembers(readOnlyCP,
-                        TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
-                        .getContext(readOnlyCP, vars, "#User_Client",
-                            "ReportInvoiceCustomerDimensionalAnalysesJR"), strPartnerGroup,
-                    strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
-                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
-                        .equals(strVoid, "Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(
-                        readOnlyCP, strDateTo, "1")));
-      }
-    } catch (NumberFormatException e) {
+    int limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+    String pgLimit = null, oraLimit = null;
+    if (StringUtils.equalsIgnoreCase(readOnlyCP.getRDBMS(), "ORACLE")) {
+      oraLimit = String.valueOf(limit + 1);
+    } else {
+      pgLimit = String.valueOf(limit + 1);
     }
 
-    if (limit > 0 && mycount > limit) {
-      String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimitBody", vars.getLanguage());
-      msgbody = msgbody.replace("@rows@", Integer.toString(mycount));
-      msgbody = msgbody.replace("@limit@", Integer.toString(limit));
-      advisePopUp(request, response, "ERROR",
-          Utility.messageBD(readOnlyCP, "ReportsLimitHeader", vars.getLanguage()), msgbody);
-    } else {
-      // Checks if there is a conversion rate for each of the transactions of the report
-      String strConvRateErrorMsg = "";
-      OBError myMessage = null;
-      myMessage = new OBError();
-      if (StringUtils.equals(strOutput, "xls")) {
-        try {
-          dataXLS = ReportInvoiceCustomerDimensionalAnalysesJRData.selectXLS(readOnlyCP,
-              strCurrencyId, vars.getLanguage(), Tree.getMembers(readOnlyCP,
-                  TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
-                  .getContext(readOnlyCP, vars, "#User_Client",
-                      "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
-                  .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-              productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
-              strcProjectId, strProducttype, strcDocTypeId, StringUtils.equals(strVoid, "Y") ? ""
-                  : "VO");
+    // Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    if (StringUtils.equals(strOutput, "xls")) {
+      try {
+        dataXLS = ReportInvoiceCustomerDimensionalAnalysesJRData.selectXLS(readOnlyCP,
+            strCurrencyId, vars.getLanguage(), Tree.getMembers(readOnlyCP,
+                TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                .getContext(readOnlyCP, vars, "#User_Client",
+                    "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+                .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+            productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
+            strcProjectId, strProducttype, strcDocTypeId, StringUtils.equals(strVoid, "Y") ? ""
+                : "VO", pgLimit, oraLimit);
 
-        } catch (ServletException ex) {
-          myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
-        }
-      } else {
-        if (StringUtils.equals(strComparative, "Y")) {
-          try {
-            if (multiComparative2) {
-              if (multiComparative3) {
-                // Multi-comparative B: 1 base date, 3 reference dates
-                data = ReportInvoiceCustomerDimensionalAnalysesJRData.select3(readOnlyCP,
-                    strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
-                    strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
-                    strTextShow[9], Tree.getMembers(readOnlyCP,
-                        TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
-                        .getContext(readOnlyCP, vars, "#User_Client",
-                            "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
-                    DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
-                    strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
-                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
-                        .equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(
-                        readOnlyCP, strDateToRef, "1"), localStrDateFromRef2, DateTimeData
-                        .nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), localStrDateFromRef3,
-                    DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef3, "1"), strOrderby);
-              } else {
-                // Multi-comparative A: 1 base date, 2 reference dates
-                data = ReportInvoiceCustomerDimensionalAnalysesJRData.select2(readOnlyCP,
-                    strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
-                    strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
-                    strTextShow[9], Tree.getMembers(readOnlyCP,
-                        TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
-                        .getContext(readOnlyCP, vars, "#User_Client",
-                            "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
-                    DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup,
-                    strcBpartnerId, productCategoryGroup, strmProductId, strsalesrepId,
-                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, StringUtils
-                        .equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(
-                        readOnlyCP, strDateToRef, "1"), localStrDateFromRef2, DateTimeData
-                        .nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), strOrderby);
-              }
-            } else {
-              // Regular comparative: 1 base date, 1 reference date
-              data = ReportInvoiceCustomerDimensionalAnalysesJRData.select(readOnlyCP,
+      } catch (ServletException ex) {
+        myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
+      }
+    } else {
+      if (StringUtils.equals(strComparative, "Y")) {
+        try {
+          if (multiComparative2) {
+            if (multiComparative3) {
+              // Multi-comparative B: 1 base date, 3 reference dates
+              data = ReportInvoiceCustomerDimensionalAnalysesJRData.select3(readOnlyCP,
                   strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
                   strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
                   strTextShow[9], Tree.getMembers(readOnlyCP,
@@ -937,183 +852,222 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                   productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
                   strcProjectId, strProducttype, strcDocTypeId,
                   StringUtils.equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData
-                      .nDaysAfter(readOnlyCP, strDateToRef, "1"), strOrderby);
+                      .nDaysAfter(readOnlyCP, strDateToRef, "1"), localStrDateFromRef2,
+                  DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef2, "1"),
+                  localStrDateFromRef3, DateTimeData
+                      .nDaysAfter(readOnlyCP, localStrDateToRef3, "1"), strOrderby, pgLimit,
+                  oraLimit);
+            } else {
+              // Multi-comparative A: 1 base date, 2 reference dates
+              data = ReportInvoiceCustomerDimensionalAnalysesJRData.select2(readOnlyCP,
+                  strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
+                  strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
+                  strTextShow[9], Tree.getMembers(readOnlyCP,
+                      TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                      .getContext(readOnlyCP, vars, "#User_Client",
+                          "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+                      .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+                  productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
+                  strcProjectId, strProducttype, strcDocTypeId,
+                  StringUtils.equals(strVoid, "Y") ? "" : "VO", strDateFromRef, DateTimeData
+                      .nDaysAfter(readOnlyCP, strDateToRef, "1"), localStrDateFromRef2,
+                  DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef2, "1"), strOrderby,
+                  pgLimit, oraLimit);
             }
-          } catch (ServletException ex) {
-            myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(),
-                ex.getMessage());
-          }
-        } else {
-          try {
-            data = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparative(readOnlyCP,
-                strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
-                strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
-                strTextShow[9], Tree.getMembers(readOnlyCP,
-                    TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
-                    .getContext(readOnlyCP, vars, "#User_Client",
-                        "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+          } else {
+            // Regular comparative: 1 base date, 1 reference date
+            data = ReportInvoiceCustomerDimensionalAnalysesJRData.select(readOnlyCP, strCurrencyId,
+                strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
+                strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
+                Tree.getMembers(readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()),
+                    localStrOrg), Utility.getContext(readOnlyCP, vars, "#User_Client",
+                    "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                     .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
                 productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
                 strcProjectId, strProducttype, strcDocTypeId, StringUtils.equals(strVoid, "Y") ? ""
-                    : "VO", strOrderby);
-          } catch (ServletException ex) {
-            myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(),
-                ex.getMessage());
+                    : "VO", strDateFromRef, DateTimeData.nDaysAfter(readOnlyCP, strDateToRef, "1"),
+                strOrderby, pgLimit, oraLimit);
           }
+        } catch (ServletException ex) {
+          myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
+        }
+      } else {
+        try {
+          data = ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparative(readOnlyCP,
+              strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
+              strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
+              strTextShow[9], Tree.getMembers(readOnlyCP,
+                  TreeData.getTreeOrg(readOnlyCP, vars.getClient()), localStrOrg), Utility
+                  .getContext(readOnlyCP, vars, "#User_Client",
+                      "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+                  .nDaysAfter(readOnlyCP, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
+              productCategoryGroup, strmProductId, strsalesrepId, strPartnerSalesrepId,
+              strcProjectId, strProducttype, strcDocTypeId, StringUtils.equals(strVoid, "Y") ? ""
+                  : "VO", strOrderby, pgLimit, oraLimit);
+        } catch (ServletException ex) {
+          myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());
         }
       }
+    }
 
-      strConvRateErrorMsg = myMessage.getMessage();
-      // If a conversion rate is missing for a certain transaction, an error message window pops-up.
-      if (StringUtils.isNotEmpty(strConvRateErrorMsg)) {
-        advisePopUp(request, response, "ERROR",
-            Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()),
-            strConvRateErrorMsg);
-      } else {
-        // Otherwise, the report is launched
+    strConvRateErrorMsg = myMessage.getMessage();
+    // If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if (StringUtils.isNotEmpty(strConvRateErrorMsg)) {
+      advisePopUp(request, response, "ERROR",
+          Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()),
+          strConvRateErrorMsg);
+    } else {
+      // Otherwise, the report is launched
 
-        // Passing secondary filters Organization tree and businees partner group and product group
-        Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, strOrg);
-        String strOrgName = organization.getName();
-        String strPartnerGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(
-            readOnlyCP, strPartnerGroup);
-        String strProductGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData
-            .selectProductCategory(readOnlyCP, strProductCategory);
+      // Passing secondary filters Organization tree and businees partner group and product group
+      Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, strOrg);
+      String strOrgName = organization.getName();
+      String strPartnerGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData.selectBpgroup(
+          readOnlyCP, strPartnerGroup);
+      String strProductGroupName = ReportInvoiceCustomerDimensionalAnalysesJRData
+          .selectProductCategory(readOnlyCP, strProductCategory);
 
-        if (StringUtils.equals(strOutput, "xls")) {
+      if (StringUtils.equals(strOutput, "xls")) {
+        if (limit > 0 && dataXLS.length > limit) {
+          String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage());
+          msgbody = msgbody.replace("@limit@", String.valueOf(limit));
+          advisePopUp(request, response, "WARNING",
+              Utility.messageBD(this, "ReportsLimitHeader", vars.getLanguage()), msgbody);
+          return;
+        }
+        if (dataXLS == null || dataXLS.length == 0) {
+          advisePopUp(request, response, "WARNING",
+              Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+              Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
+        } else {
+          /*
+           * int rowLimit = 65532; ScrollableFieldProvider limitedData = new
+           * LimitRowsScrollableFieldProviderFilter( dataXLS, rowLimit);
+           */
+          String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesXLS.jrxml";
+
+          HashMap<String, Object> parameters = new HashMap<String, Object>();
+
+          String strLanguage = vars.getLanguage();
+          String strBaseDesign = getBaseDesignPath(strLanguage);
+
+          JasperReport jasperReportLines;
           try {
-            if (!dataXLS.hasData()) {
-              advisePopUp(request, response, "WARNING",
-                  Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
-                  Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
-            } else {
-              /*
-               * int rowLimit = 65532; ScrollableFieldProvider limitedData = new
-               * LimitRowsScrollableFieldProviderFilter( dataXLS, rowLimit);
-               */
-              String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesXLS.jrxml";
+            jasperReportLines = ReportingUtils
+                .compileReport(strBaseDesign
+                    + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount.jrxml");
+          } catch (JRException e) {
+            log4j.error("Error compiling report ", e);
+            throw new ServletException(e.getMessage());
+          }
 
-              HashMap<String, Object> parameters = new HashMap<String, Object>();
+          parameters.put("USER_CLIENT", Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "ReportInvoiceCustomerDimensionalAnalysesJR"));
+          String strDateFormat;
+          strDateFormat = vars.getJavaDateFormat();
+          parameters.put("strDateFormat", strDateFormat);
+          parameters.put("BASE_DESIGN", strBaseDesign);
+          parameters.put("ORGANIZATION", strOrgName);
+          parameters.put("BPGROUP", strPartnerGroupName);
+          parameters.put("PRODUCTGROUP", strProductGroupName);
+          parameters.put("C_CURRENCY_ID", strCurrencyId);
+          parameters.put("AD_ORG_ID", Tree.getMembers(readOnlyCP,
+              TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
+          parameters.put("DateFrom", strDateFrom);
+          parameters.put("DateTo", DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
+          parameters.put("C_BP_GROUP_ID", strPartnerGroup);
+          parameters.put("C_BPARTNER_ID", strcBpartnerId);
+          parameters.put("M_PRODUCT_CATEGORY_ID", productCategoryGroup);
+          parameters.put("M_PRODUCT_ID", strmProductId);
+          parameters.put("SALESREP_ID", strsalesrepId);
+          parameters.put("PARTNER_SALESREP_ID", strPartnerSalesrepId);
+          parameters.put("C_PROJECT_ID", strcProjectId);
+          parameters.put("PRODUCTTYPE", strProducttype);
+          parameters.put("C_DOCTYPE_ID", strcDocTypeId);
+          parameters.put("DOCSTATUS", StringUtils.equals(strVoid, "Y") ? "" : "VO");
+          parameters.put("LANGUAGE", vars.getLanguage());
+          parameters.put("SR_LINES", jasperReportLines);
 
-              String strLanguage = vars.getLanguage();
-              String strBaseDesign = getBaseDesignPath(strLanguage);
-
-              JasperReport jasperReportLines;
-              try {
-                jasperReportLines = ReportingUtils
-                    .compileReport(strBaseDesign
-                        + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount.jrxml");
-              } catch (JRException e) {
-                log4j.error("Error compiling report ", e);
-                throw new ServletException(e.getMessage());
-              }
-
-              parameters.put("USER_CLIENT", Utility.getContext(readOnlyCP, vars, "#User_Client",
-                  "ReportInvoiceCustomerDimensionalAnalysesJR"));
-              String strDateFormat;
-              strDateFormat = vars.getJavaDateFormat();
-              parameters.put("strDateFormat", strDateFormat);
-              parameters.put("BASE_DESIGN", strBaseDesign);
-              parameters.put("ORGANIZATION", strOrgName);
-              parameters.put("BPGROUP", strPartnerGroupName);
-              parameters.put("PRODUCTGROUP", strProductGroupName);
-              parameters.put("C_CURRENCY_ID", strCurrencyId);
-              parameters.put("AD_ORG_ID", Tree.getMembers(readOnlyCP,
-                  TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
-              parameters.put("DateFrom", strDateFrom);
-              parameters.put("DateTo", DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
-              parameters.put("C_BP_GROUP_ID", strPartnerGroup);
-              parameters.put("C_BPARTNER_ID", strcBpartnerId);
-              parameters.put("M_PRODUCT_CATEGORY_ID", productCategoryGroup);
-              parameters.put("M_PRODUCT_ID", strmProductId);
-              parameters.put("SALESREP_ID", strsalesrepId);
-              parameters.put("PARTNER_SALESREP_ID", strPartnerSalesrepId);
-              parameters.put("C_PROJECT_ID", strcProjectId);
-              parameters.put("PRODUCTTYPE", strProducttype);
-              parameters.put("C_DOCTYPE_ID", strcDocTypeId);
-              parameters.put("DOCSTATUS", StringUtils.equals(strVoid, "Y") ? "" : "VO");
-              parameters.put("LANGUAGE", vars.getLanguage());
-              parameters.put("SR_LINES", jasperReportLines);
-
-              renderJR(vars, response, strReportName, null, "xls", parameters, dataXLS, null);
-            }
-          } finally {
-            if (dataXLS != null) {
-              dataXLS.close();
-            }
+          renderJR(vars, response, strReportName, null, "xls", parameters, dataXLS, null);
+        }
+      } else {
+        if (limit > 0 && data.length > limit) {
+          String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage());
+          msgbody = msgbody.replace("@limit@", String.valueOf(limit));
+          advisePopUp(request, response, "WARNING",
+              Utility.messageBD(this, "ReportsLimitHeader", vars.getLanguage()), msgbody);
+          return;
+        }
+        String strReportPath;
+        if (StringUtils.equals(strComparative, "Y")) {
+          strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesComparativeJR.jrxml";
+          if (multiComparative2) {
+            strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesMultiComparativeJR.jrxml";
+          }
+          if (multiComparative3) {
+            strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesMultiComparativeExtendedJR.jrxml";
           }
         } else {
-          String strReportPath;
-          if (StringUtils.equals(strComparative, "Y")) {
-            strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesComparativeJR.jrxml";
-            if (multiComparative2) {
-              strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesMultiComparativeJR.jrxml";
-            }
-            if (multiComparative3) {
-              strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesMultiComparativeExtendedJR.jrxml";
-            }
-          } else {
-            strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesNoComparativeJR.jrxml";
+          strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalysesNoComparativeJR.jrxml";
+        }
+        if (data == null || data.length == 0) {
+          advisePopUp(request, response, "WARNING",
+              Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
+              Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
+        } else {
+          String strLanguage = vars.getLanguage();
+          String strBaseDesign = getBaseDesignPath(strLanguage);
+
+          JasperReport jasperReportLines;
+          try {
+            jasperReportLines = ReportingUtils
+                .compileReport(strBaseDesign
+                    + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount.jrxml");
+          } catch (JRException e) {
+            log4j.error("Error compiling report ", e);
+            throw new ServletException(e.getMessage());
           }
-          if (data == null || data.length == 0) {
-            advisePopUp(request, response, "WARNING",
-                Utility.messageBD(readOnlyCP, "ProcessStatus-W", vars.getLanguage()),
-                Utility.messageBD(readOnlyCP, "NoDataFound", vars.getLanguage()));
-          } else {
-            String strLanguage = vars.getLanguage();
-            String strBaseDesign = getBaseDesignPath(strLanguage);
 
-            JasperReport jasperReportLines;
-            try {
-              jasperReportLines = ReportingUtils
-                  .compileReport(strBaseDesign
-                      + "/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerDimensionalAnalyses_srpt_doctypecount.jrxml");
-            } catch (JRException e) {
-              log4j.error("Error compiling report ", e);
-              throw new ServletException(e.getMessage());
-            }
+          HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-            HashMap<String, Object> parameters = new HashMap<String, Object>();
+          parameters.put("BASE_DESIGN", strBaseDesign);
+          parameters.put("USER_CLIENT", Utility.getContext(readOnlyCP, vars, "#User_Client",
+              "ReportInvoiceCustomerDimensionalAnalysesJR"));
+          parameters.put("ORGANIZATION", strOrgName);
+          parameters.put("BPGROUP", strPartnerGroupName);
+          parameters.put("PRODUCTGROUP", strProductGroupName);
+          parameters.put("C_CURRENCY_ID", strCurrencyId);
+          parameters.put("AD_ORG_ID", Tree.getMembers(readOnlyCP,
+              TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
+          parameters.put("DateFrom", strDateFrom);
+          parameters.put("DateTo", DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
+          parameters.put("C_BP_GROUP_ID", strPartnerGroup);
+          parameters.put("C_BPARTNER_ID", strcBpartnerId);
+          parameters.put("M_PRODUCT_CATEGORY_ID", productCategoryGroup);
+          parameters.put("M_PRODUCT_ID", strmProductId);
+          parameters.put("SALESREP_ID", strsalesrepId);
+          parameters.put("PARTNER_SALESREP_ID", strPartnerSalesrepId);
+          parameters.put("C_PROJECT_ID", strcProjectId);
+          parameters.put("PRODUCTTYPE", strProducttype);
+          parameters.put("C_DOCTYPE_ID", strcDocTypeId);
+          parameters.put("DOCSTATUS", StringUtils.equals(strVoid, "Y") ? "" : "VO");
+          parameters.put("LANGUAGE", vars.getLanguage());
+          parameters.put("SR_LINES", jasperReportLines);
 
-            parameters.put("BASE_DESIGN", strBaseDesign);
-            parameters.put("USER_CLIENT", Utility.getContext(readOnlyCP, vars, "#User_Client",
-                "ReportInvoiceCustomerDimensionalAnalysesJR"));
-            parameters.put("ORGANIZATION", strOrgName);
-            parameters.put("BPGROUP", strPartnerGroupName);
-            parameters.put("PRODUCTGROUP", strProductGroupName);
-            parameters.put("C_CURRENCY_ID", strCurrencyId);
-            parameters.put("AD_ORG_ID", Tree.getMembers(readOnlyCP,
-                TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
-            parameters.put("DateFrom", strDateFrom);
-            parameters.put("DateTo", DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"));
-            parameters.put("C_BP_GROUP_ID", strPartnerGroup);
-            parameters.put("C_BPARTNER_ID", strcBpartnerId);
-            parameters.put("M_PRODUCT_CATEGORY_ID", productCategoryGroup);
-            parameters.put("M_PRODUCT_ID", strmProductId);
-            parameters.put("SALESREP_ID", strsalesrepId);
-            parameters.put("PARTNER_SALESREP_ID", strPartnerSalesrepId);
-            parameters.put("C_PROJECT_ID", strcProjectId);
-            parameters.put("PRODUCTTYPE", strProducttype);
-            parameters.put("C_DOCTYPE_ID", strcDocTypeId);
-            parameters.put("DOCSTATUS", StringUtils.equals(strVoid, "Y") ? "" : "VO");
-            parameters.put("LANGUAGE", vars.getLanguage());
-            parameters.put("SR_LINES", jasperReportLines);
-
-            parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
-            parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
-            parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
-            parameters.put("LEVEL4_LABEL", strLevelLabel[3]);
-            parameters.put("LEVEL5_LABEL", strLevelLabel[4]);
-            parameters.put("LEVEL6_LABEL", strLevelLabel[5]);
-            parameters.put("LEVEL7_LABEL", strLevelLabel[6]);
-            parameters.put("LEVEL8_LABEL", strLevelLabel[7]);
-            parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
-            parameters.put("LEVEL10_LABEL", strLevelLabel[9]);
-            parameters.put("DIMENSIONS", intOrder);
-            parameters.put("REPORT_SUBTITLE", strSubTitle);
-            parameters.put("PRODUCT_LEVEL", intProductLevel);
-            renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
-          }
+          parameters.put("LEVEL1_LABEL", strLevelLabel[0]);
+          parameters.put("LEVEL2_LABEL", strLevelLabel[1]);
+          parameters.put("LEVEL3_LABEL", strLevelLabel[2]);
+          parameters.put("LEVEL4_LABEL", strLevelLabel[3]);
+          parameters.put("LEVEL5_LABEL", strLevelLabel[4]);
+          parameters.put("LEVEL6_LABEL", strLevelLabel[5]);
+          parameters.put("LEVEL7_LABEL", strLevelLabel[6]);
+          parameters.put("LEVEL8_LABEL", strLevelLabel[7]);
+          parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
+          parameters.put("LEVEL10_LABEL", strLevelLabel[9]);
+          parameters.put("DIMENSIONS", intOrder);
+          parameters.put("REPORT_SUBTITLE", strSubTitle);
+          parameters.put("PRODUCT_LEVEL", intProductLevel);
+          renderJR(vars, response, strReportPath, strOutput, parameters, data, null);
         }
       }
     }
