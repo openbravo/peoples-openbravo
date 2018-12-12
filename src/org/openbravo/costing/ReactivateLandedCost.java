@@ -22,6 +22,9 @@ package org.openbravo.costing;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -29,14 +32,13 @@ import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class ReactivateLandedCost extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -50,12 +52,23 @@ public class ReactivateLandedCost extends BaseActionHandler {
       String lcId = jsonData.getString("inpmLandedcostId");
       LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, lcId);
       doChecks(landedCost);
+      landedCost.setProcessNow(true);
+      if (SessionHandler.isSessionHandlerPresent()) {
+        SessionHandler.getInstance().commitAndStart();
+      }
       JSONObject message = doReactivateLandedCost(landedCost);
+      landedCost = OBDal.getInstance().get(LandedCost.class, lcId);
+      landedCost.setProcessNow(false);
       result.put("message", message);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log.error(e.getMessage(), e);
       try {
+        JSONObject jsonContent = new JSONObject(data);
+        final String strLandedCostId = jsonContent.getString("inpmLandedcostId");
+        final LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
+        landedCost.setProcessNow(false);
+
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         errorMessage = new JSONObject();
@@ -75,6 +88,13 @@ public class ReactivateLandedCost extends BaseActionHandler {
     String strLCostId = localLandedCost.getId();
     JSONObject message = null;
 
+    if (StringUtils.equals(localLandedCost.getDocumentStatus(), "DR")
+        || !localLandedCost.isProcessed()) {
+      message = new JSONObject();
+      message.put("severity", "error");
+      message.put("title", OBMessageUtils.messageBD("DocumentProcessed"));
+      return message;
+    }
     // Cancel cost adjustment only if exists
     if (localLandedCost.getCostAdjustment() != null) {
       message = CancelCostAdjustment.doCancelCostAdjustment(localLandedCost.getCostAdjustment());
@@ -154,6 +174,10 @@ public class ReactivateLandedCost extends BaseActionHandler {
       String errorMsg = OBMessageUtils.messageBD("DocumentPosted");
       log.error("Document Posted");
       throw new OBException(errorMsg);
+    }
+    // lock Landed Cost
+    if (landedCost.isProcessNow()) {
+      throw new OBException(OBMessageUtils.parseTranslation("@OtherProcessActive@"));
     }
     for (LandedCostCost lcc : landedCost.getLandedCostCostList()) {
       if ("Y".equals(lcc.getPosted())) {
