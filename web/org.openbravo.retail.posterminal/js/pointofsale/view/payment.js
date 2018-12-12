@@ -441,7 +441,7 @@ enyo.kind({
         }
       }
       this.$.layawayaction.setLocalDisabled(disable);
-      if (receiptHasPrepaymentAmount && pendingPrepayment <= 0) {
+      if ((receiptHasPrepaymentAmount && pendingPrepayment <= 0) || this.model.get('leftColumnViewManager').isMultiOrder()) {
         this.$.layawayaction.hide();
       } else {
         this.$.layawayaction.show();
