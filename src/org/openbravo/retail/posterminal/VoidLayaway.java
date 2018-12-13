@@ -71,10 +71,12 @@ public class VoidLayaway {
         orderLineTax.setTaxableAmount(BigDecimal.ZERO);
         orderLineTax.setTaxAmount(BigDecimal.ZERO);
       }
-      FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
-      paymentSchedule.setAmount(BigDecimal.ZERO);
-      paymentSchedule.setPaidAmount(BigDecimal.ZERO);
-      paymentSchedule.setOutstandingAmount(BigDecimal.ZERO);
+      if (!order.getFINPaymentScheduleList().isEmpty()) {
+        FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
+        paymentSchedule.setAmount(BigDecimal.ZERO);
+        paymentSchedule.setPaidAmount(BigDecimal.ZERO);
+        paymentSchedule.setOutstandingAmount(BigDecimal.ZERO);
+      }
 
       OBDal.getInstance().flush();
       TriggerHandler.getInstance().enable();
