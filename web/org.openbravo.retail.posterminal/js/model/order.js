@@ -2256,27 +2256,42 @@
                 callback(false);
               }
             } else {
-              OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_NotEnoughStock'), OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]), [{
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                action: function () {
-                  if (callback) {
-                    callback(true);
-                  }
-                }
-              }, {
-                label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                action: function () {
-                  navigateToStockScreen(warehouse);
-                  if (callback) {
-                    callback(false);
-                  }
-                }
-              }], {
-                onHideFunction: function () {
-                  navigateToStockScreen(warehouse);
-                  if (callback) {
-                    callback(false);
+              OB.UTIL.showLoading(false);
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OBPOSPointOfSale_UI_Modals_ModalStockDiscontinued',
+                args: {
+                  header: OB.I18N.getLabel('OBPOS_NotEnoughStock'),
+                  message: OB.I18N.getLabel('OBPOS_DiscontinuedWithoutStock', [p.get('_identifier'), productStatus.name, warehouse.warehouseqty, warehouse.warehousename, allLinesQty]),
+                  product: p,
+                  buttons: [{
+                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                    action: function () {
+                      if (callback) {
+                        callback(true);
+                      }
+                    }
+                  }, {
+                    label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                    action: function () {
+                      navigateToStockScreen(warehouse);
+                      if (callback) {
+                        callback(false);
+                      }
+                    }
+                  }],
+                  options: {
+                    onHideFunction: function () {
+                      navigateToStockScreen(warehouse);
+                      if (callback) {
+                        callback(false);
+                      }
+                    }
+                  },
+                  acceptLine: function (accept, newAttrs) {
+                    if (accept && newAttrs) {
+                      attrs = Object.assign(attrs, newAttrs);
+                    }
+                    callback(accept);
                   }
                 }
               });
