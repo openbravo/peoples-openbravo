@@ -29,11 +29,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +69,7 @@ public class DalLockingTest extends OBBaseTest {
 
   @BeforeClass
   public static void createTestEnvironment() {
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       AlertRule newAlertRule = OBProvider.getInstance().get(AlertRule.class);
       newAlertRule.setName(DalLockingTest.class.getName() + " - Testing Alert Rule");
@@ -101,10 +103,10 @@ public class DalLockingTest extends OBBaseTest {
 
   @Test
   public void objectShouldBeLockedInDB() throws InterruptedException, ExecutionException {
-    List<Callable<Void>> threads = Arrays.asList(
-        //
-        getDalCallable(this::acquireLock, "T1", 0, 200),
-        getDalCallable(this::acquireLock, "T2", 100, 0));
+    CountDownLatch latch = new CountDownLatch(1);
+    List<Callable<Void>> threads = Arrays.asList( //
+        doWithDAL(() -> acquireLock(latch), "T1", 200), //
+        doWithDAL(this::acquireLock, "T2", latch));
 
     executeAndGetResults(threads);
     assertThat(
@@ -115,14 +117,15 @@ public class DalLockingTest extends OBBaseTest {
   @Test
   public void lockedObjectShouldAllowChildrenCreation() throws InterruptedException,
       ExecutionException {
+    CountDownLatch latch = new CountDownLatch(1);
     List<Callable<Void>> threads = Arrays.asList( //
-        getDalCallable(this::acquireLock, "T1", 0, 200), //
-        getDalCallable(() -> {
+        doWithDAL(() -> acquireLock(latch), "T1", 200), //
+        doWithDAL(() -> {
           AlertRecipient recipient = OBProvider.getInstance().get(AlertRecipient.class);
           recipient.setRole(OBContext.getOBContext().getRole());
           recipient.setAlertRule(getTestingAlertRule());
           OBDal.getInstance().save(recipient);
-        }, "T2", 100, 0));
+        }, "T2", latch));
 
     executeAndGetResults(threads);
     assertThat(
@@ -134,21 +137,21 @@ public class DalLockingTest extends OBBaseTest {
   public void lockedInstanceGetsRefreshedFromDB() throws InterruptedException, ExecutionException {
     StringBuilder originalName = new StringBuilder();
     StringBuilder lockedName = new StringBuilder();
+    CountDownLatch gotRule = new CountDownLatch(1);
+    CountDownLatch ruleModified = new CountDownLatch(1);
     List<Callable<Void>> threads = Arrays.asList( //
-        getDalCallable(() -> {
+        doWithDAL(() -> {
           AlertRule ar = getTestingAlertRule();
           originalName.append(ar.getName());
-
-          try {
-            TimeUnit.MILLISECONDS.sleep(200);
-          } catch (InterruptedException e) {
-          }
-
+          gotRule.countDown();
+          waitUnitl(ruleModified);
           lockedName.append(OBDal.getInstance().getObjectLockForNoKeyUpdate(ar).getName());
-        }, "T1", 0, 0), //
-        getDalCallable(() -> {
+        }, "T1", 0), //
+        doWithDAL(() -> {
           getTestingAlertRule().setName("Modified");
-        }, "T2", 100, 0));
+          OBDal.getInstance().commitAndClose();
+          ruleModified.countDown();
+        }, "T2", gotRule));
 
     executeAndGetResults(threads);
 
@@ -176,12 +179,20 @@ public class DalLockingTest extends OBBaseTest {
     }
   }
 
-  private Callable<Void> getDalCallable(Runnable r, String name, long waitBefore, long waitAfter) {
+  private Callable<Void> doWithDAL(Runnable r, String name, CountDownLatch waitFor) {
+    return doWithDAL(r, name, waitFor, 0);
+  }
+
+  private Callable<Void> doWithDAL(Runnable r, String name, long waitAfter) {
+    return doWithDAL(r, name, null, waitAfter);
+  }
+
+  private Callable<Void> doWithDAL(Runnable r, String name, CountDownLatch waitEvent, long waitAfter) {
     return () -> {
       boolean errorOccurred = false;
       try {
-        OBContext.setAdminMode();
-        TimeUnit.MILLISECONDS.sleep(waitBefore);
+        OBContext.setAdminMode(true);
+        waitUnitl(waitEvent);
         r.run();
         TimeUnit.MILLISECONDS.sleep(waitAfter);
         return null;
@@ -213,11 +224,32 @@ public class DalLockingTest extends OBBaseTest {
   }
 
   private AlertRule acquireLock() {
-    return OBDal.getInstance().getObjectLockForNoKeyUpdate(
+    return acquireLock(null);
+  }
+
+  private AlertRule acquireLock(CountDownLatch latch) {
+    AlertRule lockedRule = OBDal.getInstance().getObjectLockForNoKeyUpdate(
         OBDal.getInstance().getProxy(AlertRule.class, testingRuleId));
+    if (latch != null) {
+      latch.countDown();
+    }
+    return lockedRule;
   }
 
   private static AlertRule getTestingAlertRule() {
     return OBDal.getInstance().get(AlertRule.class, testingRuleId);
+  }
+
+  private void waitUnitl(CountDownLatch event) {
+    if (event == null) {
+      return;
+    }
+    try {
+      if (!event.await(10L, TimeUnit.SECONDS)) {
+        throw new OBException(new TimeoutException());
+      }
+    } catch (InterruptedException e) {
+      throw new OBException(e);
+    }
   }
 }
