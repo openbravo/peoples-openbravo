@@ -18,6 +18,7 @@
  */
 package org.openbravo.service.json;
 
+import static java.util.stream.Collectors.toList;
 import static org.openbravo.userinterface.selector.SelectorConstants.includeOrgFilter;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -253,13 +255,17 @@ public class DefaultJsonDataService implements JsonDataService {
 
           // If the request is done from a P&E window, then we should adapt the page size to include
           // all selected records into the response
-          if (isPickAndEdit && shouldIncreasePageSize(parameters, bobs, startRowStr, endRowStr)) {
-            String newEndRow = Integer.toString(Integer.parseInt(endRowStr)
-                + JsonConstants.PAE_DATA_PAGE_SIZE);
-            parameters.put(JsonConstants.ENDROW_PARAMETER, newEndRow);
-            log.debug("The amount of selected records is higher than the page size, increasing page size to "
-                + newEndRow);
-            return fetch(parameters, filterOnReadableOrganizations);
+          if (isPickAndEdit) {
+            if (shouldIncreasePageSize(parameters, bobs, startRowStr, endRowStr)) {
+              String newEndRow = Integer.toString(Integer.parseInt(endRowStr)
+                  + JsonConstants.PAE_DATA_PAGE_SIZE);
+              parameters.put(JsonConstants.ENDROW_PARAMETER, newEndRow);
+              log.debug("The amount of selected records is higher than the page size, increasing page size to "
+                  + newEndRow);
+              return fetch(parameters, filterOnReadableOrganizations);
+            }
+
+            bobs = getFixedPNESelection(queryService, bobs);
           }
         }
 
@@ -272,7 +278,7 @@ public class DefaultJsonDataService implements JsonDataService {
           count = bobs.size() + startRow;
           // computedMaxResults is one too much, if we got one to much then correct
           // the result and up the count so that the grid knows that there are more
-          if (bobs.size() == computedMaxResults) {
+          if (bobs.size() >= computedMaxResults) {
             bobs = bobs.subList(0, bobs.size() - 1);
             count++;
           }
@@ -315,6 +321,85 @@ public class DefaultJsonDataService implements JsonDataService {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
     }
+  }
+
+  /**
+   * Fixes selected records for P&E datasource requests ensuring all selected records are placed on
+   * top of not selected ones. If the complete selection was not initially fetched in current page,
+   * an additional query to retrieve it will be executed.
+   */
+  private List<BaseOBObject> getFixedPNESelection(DataEntityQueryService queryService,
+      List<BaseOBObject> bobs) {
+    JSONObject criteria = queryService.getQueryBuilder().getCriteria();
+    Set<String> selectedIds = DataSourceUtils.getSelectedRecordsFromCriteria(criteria);
+    if (selectedIds.isEmpty()) {
+      return bobs;
+    }
+
+    List<BaseOBObject> selected = new ArrayList<>(bobs.size());
+    List<BaseOBObject> unselected = new ArrayList<>(bobs.size());
+
+    for (BaseOBObject row : bobs) {
+      if (selectedIds.contains(row.getId())) {
+        selected.add(row);
+      } else {
+        unselected.add(row);
+      }
+    }
+
+    int selectionInCurrentPage = selected.size();
+    boolean completeSelectionInCurrentPage = selectionInCurrentPage == selectedIds.size();
+    if (completeSelectionInCurrentPage) {
+      selected.addAll(unselected);
+      return selected;
+    }
+
+    log.debug("P&E doesn't contain all selection, querying again to get it {}", criteria);
+
+    List<BaseOBObject> gridRows = bobs;
+    try {
+      selected = getAllSelectedRecords(queryService, criteria);
+      int idsOutOfCurrentPage = selected.size() - selectionInCurrentPage;
+      selected.addAll(unselected);
+
+      if (queryService.getFirstResult() > 0 && idsOutOfCurrentPage > 0) {
+        // fix pagination to prevent selection appearing in all pages
+        log.trace("Skipping {} rows for {}", idsOutOfCurrentPage, criteria);
+        gridRows = selected.stream().skip(idsOutOfCurrentPage).collect(toList());
+      } else {
+        gridRows = selected;
+      }
+    } catch (JSONException e) {
+      log.error("failed selecting ids {}", criteria, e);
+    }
+
+    return gridRows;
+  }
+
+  /** Note side effect: criteria gets modified */
+  private List<BaseOBObject> getAllSelectedRecords(DataEntityQueryService queryService,
+      JSONObject criteria) throws JSONException {
+    JSONArray criteriaFields = criteria.getJSONArray("criteria");
+    JSONArray crieriaIdFields = new JSONArray();
+    for (int i = 0; i < criteriaFields.length(); i++) {
+      JSONObject field = criteriaFields.getJSONObject(i);
+      if (field.has("fieldName") && "id".equals(field.getString("fieldName"))
+          && field.has("operator") && "equals".equals(field.getString("operator"))) {
+        crieriaIdFields.put(field);
+      }
+    }
+    log.trace("Old criteria {}", criteria);
+    criteria.put("criteria", crieriaIdFields);
+
+    log.trace("New criteria {}", criteria);
+
+    Integer originalFirstResult = queryService.getFirstResult();
+    queryService.setCriteria(criteria);
+    queryService.setFirstResult(0);
+    queryService.setMaxResults(JsonConstants.PAE_MAX_PAGE_SIZE);
+    List<BaseOBObject> rows = queryService.list();
+    queryService.setFirstResult(originalFirstResult);
+    return rows;
   }
 
   /**

@@ -1948,6 +1948,10 @@ public class AdvancedQueryBuilder {
 
   public void setCriteria(JSONObject criteria) {
     this.criteria = criteria;
+    whereClause = null;
+    aliasIndex = 0;
+    orNesting = 0;
+    typedParameters = new ArrayList<>();
   }
 
   public boolean isJoinAssociatedEntities() {
