@@ -43,11 +43,9 @@ import org.openbravo.erpCommon.businessUtility.TreeData;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -457,7 +455,6 @@ public class CreateFrom extends HttpSecureAppServlet {
     XmlDocument xmlDocument;
     String strPO = vars.getStringParameter("inpPurchaseOrder");
     String strInvoice = vars.getStringParameter("inpInvoice");
-    ShipmentInOut shipment = OBDal.getInstance().get(ShipmentInOut.class, strKey);
     final String strLocator = vars.getStringParameter("inpmLocatorId");
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     if (vars.commandIn("FIND_PO"))
@@ -550,26 +547,32 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportInvoice", "liststructure", new CreateFromShipmentData[0]);
       xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromShipmentData[0]);
     } else {
-      String narturalOrgTreeList = StringCollectionUtils.commaSeparated(OBContext.getOBContext()
-          .getOrganizationStructureProvider().getNaturalTree(shipment.getOrganization().getId()));
       if (isSOTrx.equals("Y")) {
-        xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData
-            .selectFromInvoiceTrxCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner));
-        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromShipmentData
-            .selectFromPOSOTrxCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner));
+        xmlDocument.setData(
+            "reportInvoice",
+            "liststructure",
+            CreateFromShipmentData.selectFromInvoiceTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportPurchaseOrder",
+            "liststructure",
+            CreateFromShipmentData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
       } else {
-        xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData
-            .selectFromInvoiceCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner));
-        xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromShipmentData
-            .selectFromPOCombo(this, vars.getLanguage(),
-                Utility.getContext(this, vars, "#User_Client", strWindowId), narturalOrgTreeList,
-                strBPartner));
+        xmlDocument.setData(
+            "reportInvoice",
+            "liststructure",
+            CreateFromShipmentData.selectFromInvoiceCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
+        xmlDocument.setData(
+            "reportPurchaseOrder",
+            "liststructure",
+            CreateFromShipmentData.selectFromPOCombo(this, vars.getLanguage(),
+                Utility.getContext(this, vars, "#User_Client", strWindowId),
+                Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
       }
     }
 
