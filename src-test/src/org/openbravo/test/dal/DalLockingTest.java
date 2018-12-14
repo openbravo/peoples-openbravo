@@ -106,7 +106,7 @@ public class DalLockingTest extends OBBaseTest {
     CountDownLatch latch = new CountDownLatch(1);
     List<Callable<Void>> threads = Arrays.asList( //
         doWithDAL(() -> acquireLock(latch), "T1", 200), //
-        doWithDAL(this::acquireLock, "T2", latch));
+        doWithDAL(this::acquireLock, "T2", latch, 10));
 
     executeAndGetResults(threads);
     assertThat(
@@ -202,12 +202,14 @@ public class DalLockingTest extends OBBaseTest {
         errorOccurred = true;
         throw new OBException(e);
       } finally {
+        synchronized (executionOrder) {
+          log.info("Completed thread {}", name);
+          executionOrder.add(name);
+        }
         if (!errorOccurred) {
           OBDal.getInstance().commitAndClose();
         }
         OBContext.restorePreviousMode();
-        log.info("Completed thread {}", name);
-        executionOrder.add(name);
       }
     };
   }
