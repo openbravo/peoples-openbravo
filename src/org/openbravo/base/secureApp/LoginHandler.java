@@ -514,12 +514,17 @@ public class LoginHandler extends HttpBaseServlet {
 
     // Show the message in the login window, return a JSON object with the info to print the message
     try {
+      boolean loginHasError = "Error".equals(msgType);
       JSONObject jsonMsg = new JSONObject();
       jsonMsg.put("showMessage", true);
-      jsonMsg.put("target", "Error".equals(msgType) ? null : action);
+      jsonMsg.put("target", loginHasError ? null : action);
       jsonMsg.put("messageType", msgType);
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);
+
+      if(loginHasError) {
+        vars.clearSession(false);
+      }
 
       response.setContentType("application/json;charset=UTF-8");
       final PrintWriter out = response.getWriter();
