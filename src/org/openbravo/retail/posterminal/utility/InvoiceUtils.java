@@ -73,8 +73,13 @@ public class InvoiceUtils {
       JSONArray invoicelines = jsoninvoice.getJSONArray("lines");
 
       for (int i = 0; i < invoicelines.length(); i++) {
-        invoicelineReferences.add(OBDal.getInstance().get(OrderLine.class,
-            invoicelines.getJSONObject(i).getString("orderLineId")));
+        String invoiceLineId = null;
+        if (invoicelines.getJSONObject(i).has("orderLineId")) {
+          invoiceLineId = invoicelines.getJSONObject(i).getString("orderLineId");
+        } else {
+          invoiceLineId = invoicelines.getJSONObject(i).getString("id");
+        }
+        invoicelineReferences.add(OBDal.getInstance().get(OrderLine.class, invoiceLineId));
       }
 
       // Invoice header
@@ -85,8 +90,8 @@ public class InvoiceUtils {
       createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
 
       updateAuditInfo(invoice, jsoninvoice);
-    } catch (Exception e) {
-      throw new OBException("Error when creating the invoice: " + e);
+    } catch (JSONException e) {
+      // won't happen
     }
 
     return invoice;
