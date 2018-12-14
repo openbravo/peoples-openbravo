@@ -271,7 +271,7 @@
                 };
 
                 syncSuccessCallback = function (callback, eventParams) {
-                  if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt') && eventParams && !eventParams.ignoreSyncProcess) {
+                  if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt') && (!eventParams || (eventParams && !eventParams.ignoreSyncProcess))) {
                     OB.UTIL.HookManager.executeHooks('OBPOS_PostSyncReceipt', {
                       receipt: receiptForPostSyncReceipt,
                       syncSuccess: true
