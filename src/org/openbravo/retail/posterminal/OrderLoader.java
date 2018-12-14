@@ -255,7 +255,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       boolean wasPaidOnCredit = false;
       boolean moveShipmentLinesInCanelAndReplace = false;
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
-      JSONArray orderlines = jsonorder.getJSONArray("lines");
+      JSONArray orderlines = new JSONArray(jsonorder.getJSONArray("lines").toString());
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && validateOrder(jsonorder)
@@ -290,7 +290,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
 
       if (jsonorder.has("deletedLines")) {
-        mergeDeletedLines(jsonorder);
+        mergeDeletedLines(jsonorder, orderlines);
       }
 
       t0 = System.currentTimeMillis();
@@ -462,7 +462,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .getCreateNettingGoodsShipmentPreferenceValue(canceledOrder)
               && CancelAndReplaceUtils
                   .getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(canceledOrder);
-          canceledOrder.setObposAppCashup(jsoncashup.getString("id"));
+          canceledOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           if (canceledOrder.isObposIslayaway()) {
             canceledOrder.setObposIslayaway(false);
           }
@@ -647,14 +647,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  private void mergeDeletedLines(JSONObject jsonorder) {
+  private void mergeDeletedLines(JSONObject jsonorder, JSONArray orderlines) {
     try {
       JSONArray deletedLines = jsonorder.getJSONArray("deletedLines");
-      JSONArray lines = jsonorder.getJSONArray("lines");
       for (int i = 0; i < deletedLines.length(); i++) {
-        lines.put(deletedLines.get(i));
+        orderlines.put(deletedLines.get(i));
       }
-      jsonorder.put("lines", lines);
     } catch (JSONException e) {
       log.error("JSON information couldn't be read when merging deleted lines", e);
       return;
