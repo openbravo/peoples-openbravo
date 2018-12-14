@@ -209,7 +209,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   // 7. Role-OrgAccess relation is active
   // 8. Distance between store orgnization and organizations allowed for that role is the smallest
   // one
-  private Role getNearestRoleValidToLoginInWebPosTerminalForCertainUser(User currentUser,
+  public static Role getNearestRoleValidToLoginInWebPosTerminalForCertainUser(User currentUser,
       OBPOSApplications terminal) {
     StringBuilder hqlQueryStr = new StringBuilder();
     hqlQueryStr
