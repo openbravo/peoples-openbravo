@@ -422,7 +422,8 @@ public class DefaultJsonDataService implements JsonDataService {
     int startRow = Integer.parseInt(startRowStr);
     int endRow = Integer.parseInt(endRowStr);
     int selectedRecords = DataSourceUtils.getNumberOfSelectedRecords(parameters);
-    if (startRow == 0 && endRow != -1 && selectedRecords > JsonConstants.PAE_DATA_PAGE_SIZE) {
+    if (startRow == 0 && endRow != -1 && selectedRecords > JsonConstants.PAE_DATA_PAGE_SIZE
+        && selectedRecords > endRow) {
       return Integer.toString(selectedRecords);
     }
     return endRowStr;
