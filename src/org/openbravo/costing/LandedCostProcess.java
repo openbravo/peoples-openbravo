@@ -51,7 +51,6 @@ import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
@@ -255,13 +254,14 @@ public class LandedCostProcess {
             receiptAmt[2]);
         // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
         MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
-        CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
-            referenceDate, lcCostCurrency);
-        cal.setNeedsPosting(Boolean.FALSE);
-        cal.setUnitCost(Boolean.FALSE);
-        cal.setCurrency(lcCostCurrency);
-        cal.setLineNo((i + 1) * 10L);
-        OBDal.getInstance().save(cal);
+        final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
+            amt, ca);
+        lineParameters.setSource(true);
+        lineParameters.setUnitCost(false);
+        lineParameters.setNeedPosting(false);
+        Long lineNo = (i + 1) * 10L;
+        CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, referenceDate, lineNo,
+            lcCostCurrency);
 
         if (i % 100 == 0) {
           OBDal.getInstance().flush();

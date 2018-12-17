@@ -44,7 +44,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
@@ -184,12 +183,13 @@ public class LCMatchingProcess {
         ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
             receiptAmt[1]);
         MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
-        CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
-            referenceDate);
-        cal.setNeedsPosting(Boolean.FALSE);
-        cal.setUnitCost(Boolean.FALSE);
-        cal.setCurrency(lcCost.getCurrency());
-        OBDal.getInstance().save(cal);
+        final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
+            amt, ca);
+        lineParameters.setSource(true);
+        lineParameters.setUnitCost(false);
+        lineParameters.setNeedPosting(false);
+        CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, referenceDate,
+            lcCost.getCurrency());
 
         if (i % 100 == 0) {
           OBDal.getInstance().flush();
