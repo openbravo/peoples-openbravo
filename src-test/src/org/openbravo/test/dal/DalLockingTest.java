@@ -146,7 +146,7 @@ public class DalLockingTest extends OBBaseTest {
           gotRule.countDown();
           waitUnitl(ruleModified);
           lockedName.append(OBDal.getInstance().getObjectLockForNoKeyUpdate(ar).getName());
-        }, "T1", 0), //
+        }, "T1", 50), //
         doWithDAL(() -> {
           getTestingAlertRule().setName("Modified");
           OBDal.getInstance().commitAndClose();
