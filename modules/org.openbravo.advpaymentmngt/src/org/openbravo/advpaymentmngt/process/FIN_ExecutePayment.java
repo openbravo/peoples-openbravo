@@ -191,7 +191,7 @@ public class FIN_ExecutePayment {
             }
             paymentRunPayment.getPayment().setPosted("N");
             try {
-              OBContext.setAdminMode();
+              OBContext.setAdminMode(false);
               for (FIN_PaymentDetail pd : payment.getFINPaymentDetailList()) {
                 for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
                   if (pd.getGLItem() != null || psd.isInvoicePaid()) {
