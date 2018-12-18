@@ -677,14 +677,13 @@
               line.set('linerateWithPrecision', []);
               return Promise.all(_.map(data, function (productbom) {
                 line.get('bomGross').push(productbom.bomdiscountedgross);
-                return Promise.resolve({
+                return calcProductTaxesIncPrice({
                   receipt: receipt,
                   line: line,
                   taxCategory: productbom.bomtaxcategory,
                   orggross: productbom.bomgross,
                   discountedGross: productbom.bomdiscountedgross
-                }) //
-                .then(calcProductTaxesIncPrice);
+                });
               }));
             });
           });
@@ -693,13 +692,12 @@
           line.set('sortedTaxCollection', []);
           line.set('linerateWithPrecision', []);
 
-          return Promise.resolve({
+          return getTaxCategory({
             receipt: receipt,
             line: line,
             orggross: orggross,
             discountedGross: discountedGross
           }) //
-          .then(getTaxCategory) //
           .then(calcProductTaxesIncPrice);
         }
       }).then(function () {
@@ -1117,7 +1115,7 @@
                 distributeBOM(data, 'bomlinepricenet', linepricenet);
 
                 return Promise.all(_.map(data, function (productbom) {
-                  return Promise.resolve({
+                  return calcProductTaxesExcPrice({
                     receipt: receipt,
                     line: line,
                     taxCategory: productbom.bomtaxcategory,
@@ -1125,14 +1123,13 @@
                     linenet: productbom.bomnet,
                     discountedprice: line.get('qty') === 0 ? new BigDecimal('0') : new BigDecimal(String(productbom.bomdiscountednet)).divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP),
                     discountedNet: productbom.bomdiscountednet
-                  }) //
-                  .then(calcProductTaxesExcPrice);
+                  });
                 }));
               });
             });
           } else {
             // Not BOM, calculate taxes based on the line product
-            return Promise.resolve({
+            return getTaxCategory({
               receipt: receipt,
               line: line,
               linepricenet: linepricenet,
@@ -1140,7 +1137,6 @@
               discountedprice: discountedprice,
               discountedNet: discountedNet
             }) //
-            .then(getTaxCategory) //
             .then(calcProductTaxesExcPrice);
           }
         });
