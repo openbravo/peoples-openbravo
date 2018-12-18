@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.master;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -37,11 +38,19 @@ public class ProductServiceLinked extends ProcessHQLQuery {
   }
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    return Product.createRegularProductValues(jsonsent);
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return Collections.singletonList( //
         "select" //
             + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect() //
             + "from M_PRODUCT_SERVICELINKED psl " //
-            + "where psl.$filtersCriteria and psl.$naturalOrgCriteria and psl.$incrementalUpdateCriteria");
+            + "where exists (select 1 " //
+            + Product.createRegularProductHql(false, false, jsonsent, false, false) //
+            + " and pli.product.id = psl.product.id) " //
+            + "and psl.$filtersCriteria and psl.$naturalOrgCriteria and psl.$incrementalUpdateCriteria");
   }
 }
