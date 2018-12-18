@@ -1355,6 +1355,7 @@ public class ExternalOrderLoader extends OrderLoader {
     protected String resolve(String entityName, String property, String value) {
       try {
         String qryStr = "select id from " + entityName + " where " + property + "=:value";
+        qryStr += " and client.id " + OBDal.getInstance().getReadableClientsInClause();
         if (addOrgFilter) {
           qryStr += " and organization.id "
               + OBDal.getInstance().getReadableOrganizationsInClause();
