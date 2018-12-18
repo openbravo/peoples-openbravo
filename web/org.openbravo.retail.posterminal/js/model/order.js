@@ -3993,9 +3993,12 @@
     },
 
     setOrderInvoice: function () {
+      var me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', true);
-        this.save();
+        this.save(function () {
+          me.trigger('saveCurrent');
+        });
       }
     },
 
@@ -4729,9 +4732,12 @@
       });
     },
     resetOrderInvoice: function () {
+      var me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
         this.set('generateInvoice', false);
-        this.save();
+        this.save(function () {
+          me.trigger('saveCurrent');
+        });
       }
     },
     getPrecision: function (payment) {
@@ -6086,18 +6092,18 @@
       }
 
       function removeReceiptFromDatabase(receipt, callback) {
-        var orderList = OB.MobileApp.model.orderList;
-        if (receipt.get('id')) {
-          if (OB.MobileApp.model.orderList && receipt.get('id') === OB.MobileApp.model.orderList.current.id) {
-            orderList.saveCurrent();
-            OB.Dal.remove(orderList.current, null, null);
-            orderList.deleteCurrent();
-          } else if (receipt.get('id')) {
-            OB.Dal.remove(receipt);
+        var model, orderList = OB.MobileApp.model.orderList;
+        model = _.find(orderList.models, function (model) {
+          return model.get('id') === receipt.get('id');
+        });
+        if (model) {
+          orderList.saveCurrent();
+          orderList.load(model);
+          if (model.get('id')) {
+            OB.Dal.remove(model);
           }
-        } else {
-          orderList.deleteCurrent();
         }
+        orderList.deleteCurrent();
         if (callback && callback instanceof Function) {
           callback();
         }
