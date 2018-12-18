@@ -133,4 +133,25 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     result.put("location", location);
     return result;
   }
+
+  public static String getFilter(JSONObject params, String filterName) {
+    try {
+      if (params.has("remoteFilters")) {
+        JSONArray remoteFilters = params.getJSONArray("remoteFilters");
+        for (int i = 0; i < remoteFilters.length(); i++) {
+          JSONObject filter = remoteFilters.getJSONObject(i);
+          JSONArray columns = filter.getJSONArray("columns");
+          for (int j = 0; j < columns.length(); j++) {
+            String column = columns.getString(j);
+            if (filterName.equals(column)) {
+              return filter.getString("value");
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      // Ignored
+    }
+    return null;
+  }
 }
