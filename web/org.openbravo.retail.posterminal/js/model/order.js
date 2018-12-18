@@ -7019,6 +7019,17 @@
 
     addPaidReceipt: function (model, callback) {
       var me = this;
+
+      function executeFinalCallback() {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PostAddPaidReceipt', {
+          order: model
+        }, function (args) {
+          if (callback instanceof Function) {
+            callback(me.modelorder);
+          }
+        });
+      }
+
       enyo.$.scrim.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         this.doRemoteBPSettings(model.get('bp'));
@@ -7035,20 +7046,14 @@
         // OB.Dal.save is done here because we want to force to save with the original id, only this time.
         OB.Dal.save(model, function () {
           enyo.$.scrim.hide();
-          if (callback instanceof Function) {
-            callback(me.modelorder);
-          }
+          executeFinalCallback();
         }, function () {
           enyo.$.scrim.hide();
           OB.error(arguments);
-          if (callback instanceof Function) {
-            callback(me.modelorder);
-          }
+          executeFinalCallback();
         }, true);
       } else {
-        if (callback instanceof Function) {
-          callback(this.modelorder);
-        }
+        executeFinalCallback();
       }
     },
 
