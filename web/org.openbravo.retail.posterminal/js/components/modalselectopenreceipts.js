@@ -95,7 +95,7 @@ enyo.kind({
               modelsAffectedByCache: ['ProductServiceLinked']
             });
           } else {
-            // Product to ad does not modfify taxes
+            // Product to add does not modify taxes
             // resolve silently
             promiseResolve();
           }
