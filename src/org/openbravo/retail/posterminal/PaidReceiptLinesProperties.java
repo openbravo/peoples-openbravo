@@ -33,9 +33,9 @@ public class PaidReceiptLinesProperties extends ModelExtension {
       private static final long serialVersionUID = 1L;
       private final String currentLanguage = OBContext.getOBContext().getLanguage().getId();
       {
-        add(new HQLProperty("ordLine.product.id", "id"));
-        add(new HQLProperty("ordLine.product.name", "name"));
-        add(new HQLProperty("ordLine.product.uOM.id", "uOM"));
+        add(new HQLProperty("product.id", "id"));
+        add(new HQLProperty("product.name", "name"));
+        add(new HQLProperty("product.uOM.id", "uOM"));
         add(new HQLProperty("ordLine.orderedQuantity", "quantity"));
         add(new HQLProperty("ordLine.baseGrossUnitPrice", "unitPrice"));
         add(new HQLProperty("ordLine.grossUnitPrice", "grossUnitPrice"));
@@ -60,10 +60,10 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty(
             "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)), 0) from OrderLine where goodsShipmentLine.salesOrderLine.id = ordLine.id))",
             "remainingQuantity"));
-        add(new HQLProperty("coalesce(ordLine.product.overdueReturnDays, 999999999999)",
+        add(new HQLProperty("coalesce(product.overdueReturnDays, 999999999999)",
             "overdueReturnDays"));
-        add(new HQLProperty("ordLine.product.productType", "productType"));
-        add(new HQLProperty("ordLine.product.returnable", "returnable"));
+        add(new HQLProperty("product.productType", "productType"));
+        add(new HQLProperty("product.returnable", "returnable"));
         add(new HQLProperty("returnReason.id", "returnReason"));
         add(new HQLProperty("returnReason.name", "returnReasonName"));
         add(new HQLProperty("ordLine.obposCanbedelivered", "obposCanbedelivered"));

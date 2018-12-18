@@ -153,6 +153,7 @@ public class PaidReceipts extends JSONProcessSimple {
         String hqlPaidReceiptsLines = "select " + hqlPropertiesLines.getHqlSelect() + //
             "  from OrderLine as ordLine " + //
             "  left join ordLine.tax as tax " + //
+            "  left join ordLine.product as product " + //
             "  left join ordLine.returnReason as returnReason " + //
             " where ordLine.salesOrder.id=:salesOrderId and ordLine.obposIsDeleted = false"; //
         hqlPaidReceiptsLines += " order by ordLine.lineNo";
