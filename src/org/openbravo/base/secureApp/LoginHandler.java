@@ -522,7 +522,7 @@ public class LoginHandler extends HttpBaseServlet {
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);
 
-      if(loginHasError) {
+      if (loginHasError) {
         vars.clearSession(false);
       }
 
