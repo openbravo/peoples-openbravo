@@ -422,7 +422,9 @@ public class ExternalOrderLoader extends OrderLoader {
 
   // collect all the successfully created orders
   protected JSONObject successMessage(JSONObject jsonOrder) throws Exception {
-    processedOrders.get().put(processedOrders.get().length(), jsonOrder);
+    if (processedOrders.get() != null) {
+      processedOrders.get().put(processedOrders.get().length(), jsonOrder);
+    }
     return super.successMessage(jsonOrder);
   }
 
