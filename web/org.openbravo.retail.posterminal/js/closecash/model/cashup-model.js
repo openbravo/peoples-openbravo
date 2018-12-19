@@ -745,8 +745,21 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                     cashupModel: me
                   }, function (args) {
                     OB.MobileApp.model.runSyncProcess(function () {
-                      OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
-                      callbackFinishedSuccess();
+                      if (!OB.MobileApp.model.get('terminal').ismaster && !OB.MobileApp.model.get('terminal').isslave) {
+                        OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
+                        callbackFinishedSuccess();
+                        return;
+                      }
+                      OB.Dal.find(OB.Model.CashUp, {
+                        'isprocessed': 'N'
+                      }, function (cashUps) {
+                        OB.UTIL.composeCashupInfo(cashUps, null, function () {
+                          OB.MobileApp.model.runSyncProcess(function () {
+                            OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
+                            callbackFinishedSuccess();
+                          });
+                        });
+                      });
                     }, function () {
                       OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
                       callbackFinishedWrongly();
