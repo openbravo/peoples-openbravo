@@ -601,7 +601,7 @@ public class InvoiceUtils {
             OBDal.getInstance().save(reversalPSD);
           }
         }
-        psd.getPaymentDetails().setPrepayment(true);
+        // psd.getPaymentDetails().setPrepayment(true);
       }
       OBDal.getInstance().flush();
 
