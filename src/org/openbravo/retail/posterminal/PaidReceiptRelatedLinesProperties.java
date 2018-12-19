@@ -36,6 +36,7 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
         add(new HQLProperty("rpl.salesOrder.documentNo", "orderDocumentNo"));
         add(new HQLProperty("rpl.salesOrder.id", "orderId"));
         add(new HQLProperty("rpl.orderedQuantity", "qty"));
+        add(new HQLProperty("COALESCE(rpl.deliveredQuantity, 0)", "deliveredQuantity"));
         add(new HQLProperty("rpl.baseGrossUnitPrice * rpl.orderedQuantity", "gross"));
         add(new HQLProperty("rpl.standardPrice * rpl.orderedQuantity", "net"));
         add(new HQLProperty(

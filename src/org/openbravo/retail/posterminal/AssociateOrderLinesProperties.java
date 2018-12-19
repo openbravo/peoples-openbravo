@@ -30,6 +30,7 @@ public class AssociateOrderLinesProperties extends ModelExtension {
         new HQLProperty("ol.id", "orderlineId"), //
         new HQLProperty("ol.lineNo", "lineNo"), //
         new HQLProperty("ol.orderedQuantity", "qty"), //
+        new HQLProperty("COALESCE(ol.deliveredQuantity, 0)", "deliveredQuantity"), //
         new HQLProperty("ol.lineNetAmount", "net"),//
         new HQLProperty("ol.lineGrossAmount", "gross"),//
 

@@ -263,9 +263,6 @@ public class InvoiceUtils {
       ind++;
       invoice.getInvoiceLineTaxList().add(invoicelinetax);
       invoiceLine.getInvoiceLineTaxList().add(invoicelinetax);
-      invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(invoiceLine.getSalesOrderLine().getId()
-          + lineNo + (long) ((ind + 1) * 10)));
-      invoicelinetax.setNewOBObject(true);
       OBDal.getInstance().save(invoicelinetax);
     }
 
@@ -311,24 +308,34 @@ public class InvoiceUtils {
     for (int i = 0; i < invoicelines.length(); i++) {
       final List<ShipmentInOutLine> iolList = lineReferences.get(i)
           .getMaterialMgmtShipmentInOutLineList();
-      if (iolList.size() > 1) {
+      BigDecimal movementQtyTotal = BigDecimal.ZERO;
+      final List<ShipmentInOutLine> iolNotInvoicedList = new ArrayList<>();
+      for (final ShipmentInOutLine iol : iolList) {
+        final OBCriteria<InvoiceLine> invoiceLineCriteria = OBDal.getInstance().createCriteria(
+            InvoiceLine.class);
+        invoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE + "."
+            + ShipmentInOutLine.PROPERTY_ID, iol.getId()));
+        invoiceLineCriteria.setMaxResults(1);
+        if (invoiceLineCriteria.uniqueResult() != null) {
+          continue;
+        }
+        iolNotInvoicedList.add(iol);
+        movementQtyTotal = movementQtyTotal.add(iol.getMovementQuantity());
+      }
+      if (iolNotInvoicedList.size() > 1) {
         multipleShipmentsLines = true;
       }
-      if (iolList.size() == 0) {
+      if (iolNotInvoicedList.size() == 0) {
         lineNo = lineNo + 10;
         createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
-            pricePrecision, null, lineNo, iolList.size(), 1, BigDecimal.ZERO);
+            pricePrecision, null, lineNo, iolNotInvoicedList.size(), 1, BigDecimal.ZERO);
       } else {
         int numIter = 0;
-        BigDecimal movementQtyTotal = BigDecimal.ZERO;
-        for (ShipmentInOutLine iol : iolList) {
-          movementQtyTotal = movementQtyTotal.add(iol.getMovementQuantity());
-        }
-        for (ShipmentInOutLine iol : iolList) {
+        for (final ShipmentInOutLine iol : iolNotInvoicedList) {
           numIter++;
           lineNo = lineNo + 10;
           createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
-              pricePrecision, iol, lineNo, iolList.size(), numIter, movementQtyTotal);
+              pricePrecision, iol, lineNo, iolNotInvoicedList.size(), numIter, movementQtyTotal);
         }
         final BigDecimal qtyToInvoice = BigDecimal.valueOf(invoicelines.getJSONObject(i).getDouble(
             "qty"));
@@ -336,7 +343,8 @@ public class InvoiceUtils {
         if (qtyToInvoice.compareTo(orderedQty) == 0 && movementQtyTotal.compareTo(orderedQty) == -1) {
           lineNo = lineNo + 10;
           createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
-              pricePrecision, null, lineNo, iolList.size(), iolList.size() + 1, movementQtyTotal);
+              pricePrecision, null, lineNo, iolNotInvoicedList.size(),
+              iolNotInvoicedList.size() + 1, movementQtyTotal);
         }
       }
     }

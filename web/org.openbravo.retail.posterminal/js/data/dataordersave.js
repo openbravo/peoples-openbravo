@@ -560,7 +560,7 @@
                     _.each(invoice.get('lines').models, function (invoiceLine) {
                       invoiceLine.unset('product');
                     });
-                    me.get('multiOrders').trigger('print', invoiceToPrint, {
+                    me.context.get('multiOrders').trigger('print', invoiceToPrint, {
                       offline: true
                     });
                   }

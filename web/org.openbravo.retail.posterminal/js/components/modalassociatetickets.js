@@ -353,6 +353,7 @@ enyo.kind({
         newRelatedLine.orderDocumentNo = line.get('documentNo');
         newRelatedLine.otherTicket = line.get('documentNo') === receipt.get('documentNo') ? false : true;
         newRelatedLine.qty = line.get('qty');
+        newRelatedLine.deliveredQuantity = line.get('deliveredQuantity');
         newRelatedLine.promotions = line.get('promotions');
         newRelatedLine.bpName = line.get('bpName');
         relatedLines.push(newRelatedLine);

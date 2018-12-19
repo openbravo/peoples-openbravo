@@ -514,17 +514,18 @@ enyo.kind({
               relatedLine.orderDocumentNo = targetOrder.get('documentNo');
               relatedLine.otherTicket = OB.UTIL.isNullOrUndefined(inEvent.targetOrder);
               relatedLine.deferred = true;
-              var currentLine = targetOrder.get('lines').models.filter(function getCurrentLine(line) {
+              var currentLine = targetOrder.get('lines').models.find(function getCurrentLine(line) {
                 return line.id === relatedLine.orderlineId;
               });
-              relatedLine.qty = currentLine[0].get('qty');
-              relatedLine.gross = currentLine[0].get('gross');
-              relatedLine.net = currentLine[0].get('net');
-              if (currentLine[0].get('promotions')) {
-                relatedLine.promotions = currentLine[0].get('promotions').slice();
+              relatedLine.qty = currentLine.get('qty');
+              relatedLine.deliveredQuantity = currentLine.getDeliveredQuantity();
+              relatedLine.gross = currentLine.get('gross');
+              relatedLine.net = currentLine.get('net');
+              if (currentLine.get('promotions')) {
+                relatedLine.promotions = currentLine.get('promotions').slice();
               }
-              relatedLine.obposCanbedelivered = currentLine[0].get('obposCanbedelivered');
-              relatedLine.obposIspaid = currentLine[0].get('obposIspaid');
+              relatedLine.obposCanbedelivered = currentLine.get('obposCanbedelivered');
+              relatedLine.obposIspaid = currentLine.get('obposIspaid');
             });
 
             // Select open ticket or create a new one

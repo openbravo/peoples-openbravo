@@ -4077,7 +4077,7 @@
                   if (orderline && orderline.get('obposIspaid')) {
                     qtyToDeliver = OB.DEC.add(qtyToDeliver, orderline.get('qty'));
                   } else if (relatedLine.obposIspaid) {
-                    qtyToDeliver = OB.DEC.add(qtyToDeliver, relatedLine.qty);
+                    qtyToDeliver = OB.DEC.add(qtyToDeliver, relatedLine.deliveredQuantity);
                   }
                 });
                 if (qtyToDeliver && line.get('product').get('quantityRule') === 'UQ') {
@@ -6321,8 +6321,8 @@
               } else {
                 qtyToInvoice = qtyPendingToDeliver;
               }
-            } else if (qtyPendingToBeInvoiced) {
-              qtyToInvoice = qtyPendingToBeInvoiced;
+            } else if (qtyToDeliver !== qtyAlreadyInvoiced) {
+              qtyToInvoice = OB.DEC.sub(qtyToDeliver, qtyAlreadyInvoiced);
             } else {
               qtyToInvoice = 0;
             }
