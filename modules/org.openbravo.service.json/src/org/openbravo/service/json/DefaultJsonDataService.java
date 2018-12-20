@@ -256,7 +256,7 @@ public class DefaultJsonDataService implements JsonDataService {
           // If the request is done from a P&E window, then we should adapt the page size to include
           // all selected records into the response
           if (isPickAndEdit) {
-            if (shouldIncreasePageSize(parameters, bobs, startRowStr, endRowStr)) {
+            if (shouldIncreasePageSize(bobs, startRowStr, endRowStr)) {
               String newEndRow = Integer.toString(Integer.parseInt(endRowStr)
                   + JsonConstants.PAE_DATA_PAGE_SIZE);
               parameters.put(JsonConstants.ENDROW_PARAMETER, newEndRow);
@@ -436,8 +436,6 @@ public class DefaultJsonDataService implements JsonDataService {
    * to the the selection status of the last record returned by the database query and the current
    * page size.
    * 
-   * @param parameters
-   *          map of request parameters
    * @param bobs
    *          list of objects returned by the database query
    * @param startRowStr
@@ -446,8 +444,8 @@ public class DefaultJsonDataService implements JsonDataService {
    *          end row of the page
    * @return true if the page size should be increased, false otherwise
    */
-  private boolean shouldIncreasePageSize(Map<String, String> parameters, List<BaseOBObject> bobs,
-      String startRowStr, String endRowStr) {
+  private boolean shouldIncreasePageSize(List<BaseOBObject> bobs, String startRowStr,
+      String endRowStr) {
     if (startRowStr == null || endRowStr == null) {
       return false;
     }
