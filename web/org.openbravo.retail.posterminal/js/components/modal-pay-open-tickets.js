@@ -357,7 +357,7 @@ enyo.kind({
         }
       }
       if (wrongDocNo) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_PaidOrder', [wrongOrder.docNo]));
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_PaidOrder', [wrongDocNo]));
         return;
       }
       OB.UTIL.StockUtils.checkOrderLinesStock(selectedMultiOrders, function (hasStock) {
