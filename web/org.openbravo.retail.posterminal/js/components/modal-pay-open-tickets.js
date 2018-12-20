@@ -440,11 +440,15 @@ enyo.kind({
     }
     this.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, function (iter) {
-      if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
-        iter.getPrepaymentAmount(function () {
-          iter.set('checked', true);
-          iter.save();
-          selectedMultiOrders.push(iter);
+      var idx = me.owner.owner.model.get('orderList').map(function (order) {
+        return order.id;
+      }).indexOf(iter.id);
+      if (idx !== -1) {
+        var order = me.owner.owner.model.get('orderList').at(idx);
+        order.getPrepaymentAmount(function () {
+          order.set('checked', true);
+          order.save();
+          selectedMultiOrders.push(order);
           addOrdersToOrderList();
         });
       } else {
