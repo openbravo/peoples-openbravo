@@ -31,7 +31,9 @@ BEGIN
     INTO v_Count
     FROM dual
     WHERE EXISTS ( SELECT 1 FROM C_Order WHERE m_pricelist_id = :new.m_pricelist_id )
-       OR EXISTS ( SELECT 1 FROM C_Invoice WHERE m_pricelist_id = :new.m_pricelist_id );
+       OR EXISTS ( SELECT 1 FROM C_Invoice WHERE m_pricelist_id = :new.m_pricelist_id )
+       OR EXISTS ( SELECT 1 FROM M_Requisition WHERE m_pricelist_id = :new.m_pricelist_id )
+       OR EXISTS ( SELECT 1 FROM M_RequisitionLine WHERE m_pricelist_id = :new.m_pricelist_id );
     IF (v_count > 0) THEN
       RAISE_APPLICATION_ERROR(-20000, '@IsTaxIncludedFlagWithDocuments@');
     END IF;
