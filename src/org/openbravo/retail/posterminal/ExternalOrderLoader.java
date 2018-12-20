@@ -865,7 +865,6 @@ public class ExternalOrderLoader extends OrderLoader {
     check(json, "discountRule", msg);
     check(json, "quantity", msg);
     check(json, "amount", msg);
-    check(json, "baseUnitPrice", msg);
     check(json, "unitDiscount", msg);
   }
 
