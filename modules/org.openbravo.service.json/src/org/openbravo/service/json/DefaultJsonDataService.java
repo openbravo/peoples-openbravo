@@ -358,7 +358,7 @@ public class DefaultJsonDataService implements JsonDataService {
 
     List<BaseOBObject> gridRows = bobs;
     try {
-      selected = getAllSelectedRecords(queryService, criteria);
+      selected = getAllSelectedRecords(queryService);
       int idsOutOfCurrentPage = selected.size() - selectionInCurrentPage;
       selected.addAll(unselected);
 
@@ -376,9 +376,10 @@ public class DefaultJsonDataService implements JsonDataService {
     return gridRows;
   }
 
-  /** Note side effect: criteria gets modified */
-  private List<BaseOBObject> getAllSelectedRecords(DataEntityQueryService queryService,
-      JSONObject criteria) throws JSONException {
+  /** Note side effect: queryService's criteria gets modified */
+  private List<BaseOBObject> getAllSelectedRecords(DataEntityQueryService queryService)
+      throws JSONException {
+    JSONObject criteria = queryService.getQueryBuilder().getCriteria();
     JSONArray criteriaFields = criteria.getJSONArray("criteria");
     JSONArray crieriaIdFields = new JSONArray();
     for (int i = 0; i < criteriaFields.length(); i++) {
