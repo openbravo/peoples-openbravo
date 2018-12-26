@@ -29,6 +29,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -60,8 +62,6 @@ import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class LandedCostProcess {
   private static final Logger log = LogManager.getLogger();
@@ -255,13 +255,12 @@ public class LandedCostProcess {
         // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
         MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
         final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
-            amt, ca);
+            amt, ca, lcCostCurrency);
         lineParameters.setSource(true);
         lineParameters.setUnitCost(false);
         lineParameters.setNeedPosting(false);
         Long lineNo = (i + 1) * 10L;
-        CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, referenceDate, lineNo,
-            lcCostCurrency);
+        CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, referenceDate, lineNo);
 
         if (i % 100 == 0) {
           OBDal.getInstance().flush();

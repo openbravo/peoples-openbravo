@@ -28,6 +28,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -51,8 +53,6 @@ import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class LCMatchingProcess {
   private static final Logger log = LogManager.getLogger();
@@ -184,12 +184,11 @@ public class LCMatchingProcess {
             receiptAmt[1]);
         MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
         final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
-            amt, ca);
+            amt, ca, lcCost.getCurrency());
         lineParameters.setSource(true);
         lineParameters.setUnitCost(false);
         lineParameters.setNeedPosting(false);
-        CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, referenceDate,
-            lcCost.getCurrency());
+        CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, referenceDate);
 
         if (i % 100 == 0) {
           OBDal.getInstance().flush();

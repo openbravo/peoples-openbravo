@@ -234,7 +234,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
 
     CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters,
-        dateAcct, getNextLineNo(), null);
+        dateAcct, getNextLineNo());
     if (!newCAL.getId().equals(parentLine.getId())) {
       newCAL.setParentCostAdjustmentLine(parentLine);
       OBDal.getInstance().save(newCAL);

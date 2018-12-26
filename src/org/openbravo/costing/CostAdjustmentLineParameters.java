@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
@@ -41,7 +42,8 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 public class CostAdjustmentLineParameters {
   private MaterialTransaction transaction;
   private CostAdjustment costAdjustmentHeader;
-  private BigDecimal costadjusted;
+  private BigDecimal adjustmentAmt;
+  private Currency currency;
   private boolean isSource;
   private boolean isUnitCost;
   private boolean isBackdatedTransaction;
@@ -63,20 +65,48 @@ public class CostAdjustmentLineParameters {
    * 
    * @param transaction
    *          The Transaction for which the adjustment is going to be made
-   * @param costAdjusted
+   * @param adjustmentAmt
    *          The amount that will be adjusted against the Transaction
    * @param costAdjustmentHeader
    *          The Cost Adjustment Document that will contain the adjustment line
    */
   public CostAdjustmentLineParameters(final MaterialTransaction transaction,
-      final BigDecimal costAdjusted, final CostAdjustment costAdjustmentHeader) {
+      final BigDecimal adjustmentAmt, final CostAdjustment costAdjustmentHeader) {
+    this(transaction, adjustmentAmt, costAdjustmentHeader, transaction.getCurrency());
+  }
+
+  /**
+   * It creates a new object based on the given parameters. It also defaults the values of some
+   * other variables:
+   * <ol>
+   * <li>isSource: false</il>
+   * <li>isUnitCost: true></il>
+   * <li>isBackdatedTransaction: false</il>
+   * <li>isNegativeCorrection: false</il>
+   * <li>isNeedsPosting: true</il>
+   * <li>isRelatedTransactionAdjusted: false</il>
+   * </ol>
+   * 
+   * @param transaction
+   *          The Transaction for which the adjustment is going to be made
+   * @param adjustmentAmt
+   *          The amount that will be adjusted against the Transaction
+   * @param costAdjustmentHeader
+   *          The Cost Adjustment Document that will contain the adjustment line
+   * @param currency
+   *          The Currency for which the adjustment amount is done
+   */
+  public CostAdjustmentLineParameters(final MaterialTransaction transaction,
+      final BigDecimal adjustmentAmt, final CostAdjustment costAdjustmentHeader,
+      final Currency currency) {
     if (transaction == null || costAdjustmentHeader == null) {
-      throw new OBException(OBMessageUtils.messageBD("CostAdjsutmentCalculationError"));
+      throw new OBException(OBMessageUtils.messageBD("CostAdjustmentCalculationError"));
     }
 
     this.transaction = transaction;
     this.costAdjustmentHeader = costAdjustmentHeader;
-    this.costadjusted = costAdjusted;
+    this.adjustmentAmt = adjustmentAmt;
+    this.currency = currency;
     this.isSource = false;
     this.isUnitCost = true;
     this.isBackdatedTransaction = false;
@@ -226,8 +256,15 @@ public class CostAdjustmentLineParameters {
    * 
    * @return The amount that is going to be adjusted to the transaction
    */
-  public BigDecimal getCostadjusted() {
-    return costadjusted;
+  public BigDecimal getAdjustmentAmount() {
+    return adjustmentAmt;
   }
 
+  /**
+   * 
+   * @return The currency for which the adjustment is made
+   */
+  public Currency getCurrency() {
+    return currency;
+  }
 }

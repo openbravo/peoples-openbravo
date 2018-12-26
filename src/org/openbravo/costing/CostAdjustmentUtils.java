@@ -148,9 +148,9 @@ public class CostAdjustmentUtils {
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate, Long lineNo, Currency currency) {
     final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
-        transaction, costAdjusted, costAdjustmentHeader);
+        transaction, costAdjusted, costAdjustmentHeader, currency);
     lineParameters.setSource(isSource);
-    return insertCostAdjustmentLine(lineParameters, accountingDate, lineNo, currency);
+    return insertCostAdjustmentLine(lineParameters, accountingDate, lineNo);
   }
 
   /**
@@ -165,25 +165,7 @@ public class CostAdjustmentUtils {
   public static CostAdjustmentLine insertCostAdjustmentLine(
       final CostAdjustmentLineParameters lineParameters, final Date accountingDate) {
     final Long lineNo = getNewLineNo(lineParameters.getCostAdjustmentHeader());
-    return insertCostAdjustmentLine(lineParameters, accountingDate, lineNo, null);
-  }
-
-  /**
-   * Creates a new Adjustment Line and returns it
-   * 
-   * @param lineParameters
-   *          Object that contains most of the information needed to created the Adjustment Line
-   * @param accountingDate
-   *          The Date for which this document will be posted
-   * @param currency
-   *          The Currency to which the Adjustment amount must be converted
-   * @return An Adjustment Line created based on the given parameters
-   */
-  public static CostAdjustmentLine insertCostAdjustmentLine(
-      final CostAdjustmentLineParameters lineParameters, final Date accountingDate,
-      final Currency currency) {
-    final Long lineNo = getNewLineNo(lineParameters.getCostAdjustmentHeader());
-    return insertCostAdjustmentLine(lineParameters, accountingDate, lineNo, currency);
+    return insertCostAdjustmentLine(lineParameters, accountingDate, lineNo);
   }
 
   /**
@@ -196,27 +178,21 @@ public class CostAdjustmentUtils {
    *          The Date for which this document will be posted
    * @param lineNo
    *          Number to position the line within the Cost Adjustment Document
-   * @param currency
-   *          The Currency to which the Adjustment amount must be converted
    * @return An Adjustment Line created based on the given parameters
    */
   public static CostAdjustmentLine insertCostAdjustmentLine(
       final CostAdjustmentLineParameters lineParameters, final Date accountingDate,
-      final Long lineNo, final Currency currency) {
+      final Long lineNo) {
     final Long stdPrecission = lineParameters.getTransaction().getCurrency().getStandardPrecision();
-    Currency adjustmentCurrency = currency;
-    if (adjustmentCurrency == null) {
-      adjustmentCurrency = lineParameters.getTransaction().getCurrency();
-    }
 
     CostAdjustmentLine costAdjustmentLine = getExistingCostAdjustmentLine(lineParameters,
-        accountingDate, adjustmentCurrency);
+        accountingDate);
     if (costAdjustmentLine == null) {
       costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
       costAdjustmentLine
           .setOrganization(lineParameters.getCostAdjustmentHeader().getOrganization());
       costAdjustmentLine.setCostAdjustment(lineParameters.getCostAdjustmentHeader());
-      costAdjustmentLine.setCurrency(adjustmentCurrency);
+      costAdjustmentLine.setCurrency(lineParameters.getCurrency());
       costAdjustmentLine.setInventoryTransaction(lineParameters.getTransaction());
       costAdjustmentLine.setSource(lineParameters.isSource());
       costAdjustmentLine.setAccountingDate(accountingDate);
@@ -228,12 +204,12 @@ public class CostAdjustmentUtils {
       costAdjustmentLine.setRelatedTransactionAdjusted(lineParameters
           .isRelatedTransactionAdjusted());
     }
-    if (lineParameters.getCostadjusted() == null) {
+    if (lineParameters.getAdjustmentAmount() == null) {
       costAdjustmentLine.setAdjustmentAmount(null);
     } else {
       BigDecimal previouslyAdjustedAmount = costAdjustmentLine.getAdjustmentAmount() == null ? BigDecimal.ZERO
           : costAdjustmentLine.getAdjustmentAmount();
-      costAdjustmentLine.setAdjustmentAmount(lineParameters.getCostadjusted()
+      costAdjustmentLine.setAdjustmentAmount(lineParameters.getAdjustmentAmount()
           .add(previouslyAdjustedAmount).setScale(stdPrecission.intValue(), RoundingMode.HALF_UP));
     }
 
@@ -243,7 +219,7 @@ public class CostAdjustmentUtils {
   }
 
   private static CostAdjustmentLine getExistingCostAdjustmentLine(
-      CostAdjustmentLineParameters lineParameters, Date accountingDate, Currency currency) {
+      CostAdjustmentLineParameters lineParameters, Date accountingDate) {
     StringBuilder hql = new StringBuilder("");
     hql.append(" costAdjustment.id = :costAdjustmentId ");
     hql.append(" and inventoryTransaction.id = :transactionId ");
@@ -259,7 +235,7 @@ public class CostAdjustmentUtils {
         hql.toString());
     obc.setNamedParameter("costAdjustmentId", lineParameters.getCostAdjustmentHeader().getId());
     obc.setNamedParameter("transactionId", lineParameters.getTransaction().getId());
-    obc.setNamedParameter("currencyId", currency.getId());
+    obc.setNamedParameter("currencyId", lineParameters.getCurrency().getId());
     obc.setNamedParameter("isSource", lineParameters.isSource());
     obc.setNamedParameter("accountingDate", accountingDate);
     obc.setNamedParameter("isUnitCost", lineParameters.isUnitCost());
