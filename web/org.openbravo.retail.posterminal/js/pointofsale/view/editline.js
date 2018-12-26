@@ -228,15 +228,6 @@ enyo.kind({
     },
     init: function (model) {
       this.model = model;
-      this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
-        if (newValue) {
-          if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
-            this.setShowing(false);
-            return;
-          }
-        }
-        this.setShowing(true);
-      }, this);
     }
   }, {
     kind: 'OB.UI.SmallButton',
@@ -257,15 +248,6 @@ enyo.kind({
     },
     init: function (model) {
       this.model = model;
-      this.model.get('order').on('change:isPaid change:isLayaway', function (newValue) {
-        if (newValue) {
-          if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true) {
-            this.setShowing(false);
-            return;
-          }
-        }
-        this.setShowing(true);
-      }, this);
     }
   }, {
     kind: 'OB.UI.SmallButton',
@@ -310,20 +292,6 @@ enyo.kind({
     },
     init: function (model) {
       this.model = model;
-      if (OB.MobileApp.model.get('permissions')[this.permission]) {
-        this.setShowing(true);
-      }
-      this.model.get('order').on('change:isPaid change:isLayaway change:isQuotation', function (newValue) {
-        if (newValue) {
-          if (newValue.get('isPaid') === true || newValue.get('isLayaway') === true || newValue.get('isQuotation') === true) {
-            this.setShowing(false);
-            return;
-          }
-        }
-        if (OB.MobileApp.model.get('permissions')[this.permission]) {
-          this.setShowing(true);
-        }
-      }, this);
     }
   }, {
     kind: 'OB.UI.SmallButton',
@@ -553,6 +521,8 @@ enyo.kind({
     if (this.$.actionButtonsContainer.$.returnLine) {
       if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
         this.$.actionButtonsContainer.$.returnLine.show();
+      } else {
+        this.$.actionButtonsContainer.$.returnLine.hide();
       }
       if (this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
         this.$.actionButtonsContainer.$.returnLine.hide();
@@ -753,8 +723,8 @@ enyo.kind({
             this.$.actionButtonsContainer.$.showRelatedServices.hide();
           }
         }
-        this.render();
       }
+      this.render();
     }
   },
   toggleLineSelection: function (inSender, inEvent) {
@@ -978,7 +948,9 @@ enyo.kind({
           selectedReason = _.filter(this.$.returnreason.children, function (reason) {
             return reason.getValue() === me.line.get('returnReason');
           })[0];
-          this.$.returnreason.setSelected(selectedReason.getNodeProperty('index'));
+          if (selectedReason) {
+            this.$.returnreason.setSelected(selectedReason.getNodeProperty('index'));
+          }
         }
         this.$.returnreason.show();
         this.$.linePropertiesContainer.setMaxHeight("110px");
@@ -1098,6 +1070,10 @@ enyo.kind({
     this.model = model;
     this.reasons = new OB.Collection.ReturnReasonList();
     this.$.returnreason.setCollection(this.reasons);
+
+    this.model.get('order').on('change:isPaid change:isLayaway change:isQuotation', function (newValue) {
+      this.rearrangeEditButtonBar();
+    }, this);
 
     function errorCallback(tx, error) {
       OB.UTIL.showError(error);
