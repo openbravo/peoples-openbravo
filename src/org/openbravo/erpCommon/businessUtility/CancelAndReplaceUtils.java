@@ -61,7 +61,6 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
-import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -598,11 +597,15 @@ public class CancelAndReplaceUtils {
       if (triggersDisabled) {
         TriggerHandler.getInstance().enable();
       }
-      // Calling Cancelandreplaceorderhook
-      WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
-          .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
-      if (triggersDisabled) {
-        TriggerHandler.getInstance().disable();
+      try {
+        // Calling Cancelandreplaceorderhook
+        WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
+            .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder,
+                jsonorder);
+      } finally {
+        if (triggersDisabled) {
+          TriggerHandler.getInstance().disable();
+        }
       }
     } catch (Exception e1) {
       Throwable e2 = DbUtility.getUnderlyingSQLException(e1);
@@ -1268,21 +1271,14 @@ public class CancelAndReplaceUtils {
         if (triggersDisabled) {
           TriggerHandler.getInstance().enable();
         }
-        if (nettingPayment != null) {
-          if (jsonorder != null && jsonorder.has("canceledorder")) {
-            final JSONObject canceledOrder = jsonorder.getJSONObject("canceledorder");
-            if (canceledOrder.optBoolean("paidOnCredit", false)) {
-              final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class,
-                  canceledOrder.getJSONObject("bp").getString("id"));
-              bp.setCreditUsed(bp.getCreditUsed().subtract(
-                  BigDecimal.valueOf(canceledOrder.getDouble("creditAmount"))));
-              OBDal.getInstance().save(bp);
-            }
+        try {
+          if (nettingPayment != null) {
+            FIN_PaymentProcess.doProcessPayment(nettingPayment, "P", null, null);
           }
-          FIN_PaymentProcess.doProcessPayment(nettingPayment, "P", null, null);
-        }
-        if (triggersDisabled) {
-          TriggerHandler.getInstance().disable();
+        } finally {
+          if (triggersDisabled) {
+            TriggerHandler.getInstance().disable();
+          }
         }
 
       } else {
