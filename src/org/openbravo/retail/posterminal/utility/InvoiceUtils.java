@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.utility;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,6 +33,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -53,7 +55,7 @@ import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.service.json.JsonConstants;
+import org.openbravo.service.db.CallStoredProcedure;
 
 public class InvoiceUtils {
 
@@ -467,309 +469,377 @@ public class InvoiceUtils {
     }
   }
 
-  public JSONObject handlePayments(JSONObject jsoninvoice, Order order, Invoice invoice)
-      throws JSONException {
-    final JSONObject jsonResponse = new JSONObject();
-
+  public FIN_PaymentSchedule createPSInvoice(Order order, Invoice invoice) {
     if (invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) == 0
         || order.getFINPaymentScheduleList().size() == 0) {
-      invoice.setPaymentComplete(Boolean.TRUE);
-      OBDal.getInstance().save(invoice);
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-
-      return jsonResponse;
+      return null;
     }
 
-    FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
-    FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
+    final BigDecimal gross = invoice.getGrandTotalAmount();
+    final FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
+    final FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
         FIN_PaymentSchedule.class);
+    paymentScheduleInvoice.setCurrency(order.getCurrency());
+    paymentScheduleInvoice.setInvoice(invoice);
+    paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
+    paymentScheduleInvoice.setAmount(gross);
+    paymentScheduleInvoice.setOutstandingAmount(gross);
+    paymentScheduleInvoice.setDueDate(order.getOrderDate());
+    paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
+    paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
+    invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
+    OBDal.getInstance().save(paymentScheduleInvoice);
 
-    final int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order
-        .getCurrency().getPricePrecision().intValue() : order.getCurrency().getObposPosprecision()
-        .intValue();
-    final BigDecimal gross = BigDecimal.valueOf(jsoninvoice.getDouble("gross")).setScale(
-        pricePrecision, RoundingMode.HALF_UP);
-    try {
-      paymentScheduleInvoice.setCurrency(order.getCurrency());
-      paymentScheduleInvoice.setInvoice(invoice);
-      paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
-      paymentScheduleInvoice.setAmount(gross);
-      paymentScheduleInvoice.setOutstandingAmount(gross);
-      paymentScheduleInvoice.setDueDate(order.getOrderDate());
-      paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
-      paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
-      invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
-      OBDal.getInstance().save(paymentScheduleInvoice);
+    Date finalSettlementDate = null;
 
-      Date finalSettlementDate = null;
-
-      final OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleCriteria = OBDal.getInstance()
-          .createCriteria(FIN_PaymentScheduleDetail.class);
-      paymentScheduleCriteria.add(Restrictions.eq(
-          FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-      paymentScheduleCriteria.add(Restrictions
-          .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-      if (gross.compareTo(BigDecimal.ZERO) != -1) {
-        paymentScheduleCriteria.addOrder(org.hibernate.criterion.Order
-            .asc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
-      } else {
-        paymentScheduleCriteria.addOrder(org.hibernate.criterion.Order
-            .desc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
-      }
-      final List<FIN_PaymentScheduleDetail> paymentScheduleList = paymentScheduleCriteria.list();
-      // The reversal payments must be added to the same invoice to which are assigned the reversed
-      // payment, so is necessary to put out of the list and add to the invoice each time a reversed
-      // payment is added
-      final List<FIN_PaymentScheduleDetail> reversalPSDList = new ArrayList<>();
-      final Map<String, String> reverseRelation = new HashMap<>();
-      for (final FIN_PaymentScheduleDetail psd : paymentScheduleList) {
-        if (psd.getPaymentDetails().getFinPayment().getReversedPayment() != null) {
-          for (final FIN_PaymentScheduleDetail psd2 : paymentScheduleList) {
-            if (psd.getPaymentDetails().getFinPayment().getId()
-                .equals(psd.getPaymentDetails().getFinPayment().getReversedPayment().getId())) {
-              reversalPSDList.add(psd2);
-              reverseRelation.put(psd.getPaymentDetails().getFinPayment().getId(), psd
-                  .getPaymentDetails().getFinPayment().getReversedPayment().getId());
-              break;
-            }
+    final OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleCriteria = OBDal.getInstance()
+        .createCriteria(FIN_PaymentScheduleDetail.class);
+    paymentScheduleCriteria.add(Restrictions.eq(
+        FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+    paymentScheduleCriteria.add(Restrictions
+        .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
+    paymentScheduleCriteria.add(Restrictions
+        .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+    if (gross.compareTo(BigDecimal.ZERO) != -1) {
+      paymentScheduleCriteria.addOrder(org.hibernate.criterion.Order
+          .asc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
+    } else {
+      paymentScheduleCriteria.addOrder(org.hibernate.criterion.Order
+          .desc(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT));
+    }
+    final List<FIN_PaymentScheduleDetail> paymentScheduleList = paymentScheduleCriteria.list();
+    BigDecimal paidAmt = BigDecimal.ZERO;
+    BigDecimal paymentsAmt = BigDecimal.ZERO;
+    for (final FIN_PaymentScheduleDetail remainingPSD : paymentScheduleList) {
+      paymentsAmt = paymentsAmt.add(remainingPSD.getAmount());
+    }
+    // The reversal payments must be added to the same invoice to which are assigned the reversed
+    // payment, so is necessary to put out of the list and add to the invoice each time a reversed
+    // payment is added
+    final List<FIN_PaymentScheduleDetail> reversalPSDList = new ArrayList<>();
+    final Map<String, String> reverseRelation = new HashMap<>();
+    for (final FIN_PaymentScheduleDetail psd : paymentScheduleList) {
+      if (psd.getPaymentDetails().getFinPayment().getReversedPayment() != null) {
+        for (final FIN_PaymentScheduleDetail psd2 : paymentScheduleList) {
+          if (psd.getPaymentDetails().getFinPayment().getId()
+              .equals(psd.getPaymentDetails().getFinPayment().getReversedPayment().getId())) {
+            reversalPSDList.add(psd2);
+            reverseRelation.put(psd.getPaymentDetails().getFinPayment().getId(), psd
+                .getPaymentDetails().getFinPayment().getReversedPayment().getId());
+            break;
           }
         }
       }
-      for (final FIN_PaymentScheduleDetail reversalPSD : reversalPSDList) {
-        paymentScheduleList.remove(reversalPSD);
+    }
+    for (final FIN_PaymentScheduleDetail reversalPSD : reversalPSDList) {
+      paymentScheduleList.remove(reversalPSD);
+    }
+
+    BigDecimal amtToDistribute = gross.compareTo(paymentsAmt) == 1 ? paymentsAmt : gross;
+    // Create invoice payment schedule details:
+    for (int i = 0; i < paymentScheduleList.size(); i++) {
+      FIN_PaymentScheduleDetail psd = paymentScheduleList.get(i);
+      if (amtToDistribute.compareTo(BigDecimal.ZERO) == 0) {
+        break;
       }
 
-      BigDecimal paidAmt = BigDecimal.ZERO;
-      BigDecimal paymentsAmt = BigDecimal.ZERO;
-      for (final FIN_PaymentScheduleDetail remainingPSD : paymentScheduleList) {
-        paymentsAmt = paymentsAmt.add(remainingPSD.getAmount());
+      if (finalSettlementDate == null
+          || (psd.getPaymentDetails() != null
+              && psd.getPaymentDetails().getFinPayment().getPaymentDate() != null && psd
+              .getPaymentDetails().getFinPayment().getPaymentDate().compareTo(finalSettlementDate) > 0)) {
+        finalSettlementDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
       }
-      BigDecimal amtToDistribute = gross.compareTo(paymentsAmt) == 1 ? paymentsAmt : gross;
-      // Create invoice payment schedule details:
-      for (int i = 0; i < paymentScheduleList.size(); i++) {
-        FIN_PaymentScheduleDetail psd = paymentScheduleList.get(i);
-        if (amtToDistribute.compareTo(BigDecimal.ZERO) == 0) {
-          break;
-        }
+      // Do not consider as paid amount if the payment is in a not valid status
+      boolean invoicePaidAmounts = isPaidStatus(psd.getPaymentDetails().getFinPayment());
 
-        if (finalSettlementDate == null
-            || (psd.getPaymentDetails() != null
-                && psd.getPaymentDetails().getFinPayment().getPaymentDate() != null && psd
-                .getPaymentDetails().getFinPayment().getPaymentDate()
-                .compareTo(finalSettlementDate) > 0)) {
-          finalSettlementDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
-        }
-        // Do not consider as paid amount if the payment is in a not valid status
-        boolean invoicePaidAmounts = isPaidStatus(psd.getPaymentDetails().getFinPayment());
-
-        int amtSign = amtToDistribute.signum();
-        FIN_PaymentScheduleDetail reversalPSD = null;
-        if (psd.getPaymentDetails().getFinPayment().getReversedPayment() != null) {
-          reversalPSD = OBDal.getInstance().get(
-              FIN_PaymentScheduleDetail.class,
-              reverseRelation.get(psd.getPaymentDetails().getFinPayment().getReversedPayment()
-                  .getId()));
-        }
-        if ((amtSign >= 0 && psd.getAmount().compareTo(amtToDistribute) <= 0)
-            || (amtSign == -1 && psd.getAmount().compareTo(amtToDistribute) >= 0)) {
-          psd.setInvoicePaymentSchedule(paymentScheduleInvoice);
-          if (reversalPSD == null) {
-            amtToDistribute = amtToDistribute.subtract(psd.getAmount());
-            paidAmt = paidAmt.add(invoicePaidAmounts ? psd.getAmount() : BigDecimal.ZERO);
-          } else {
-            reversalPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-          }
+      int amtSign = amtToDistribute.signum();
+      FIN_PaymentScheduleDetail reversalPSD = null;
+      if (psd.getPaymentDetails().getFinPayment().getReversedPayment() != null) {
+        reversalPSD = OBDal.getInstance().get(
+            FIN_PaymentScheduleDetail.class,
+            reverseRelation.get(psd.getPaymentDetails().getFinPayment().getReversedPayment()
+                .getId()));
+      }
+      if ((amtSign >= 0 && psd.getAmount().compareTo(amtToDistribute) <= 0)
+          || (amtSign == -1 && psd.getAmount().compareTo(amtToDistribute) >= 0)) {
+        psd.setInvoicePaymentSchedule(paymentScheduleInvoice);
+        if (reversalPSD == null) {
+          amtToDistribute = amtToDistribute.subtract(psd.getAmount());
+          paidAmt = paidAmt.add(invoicePaidAmounts ? psd.getAmount() : BigDecimal.ZERO);
         } else {
-          // Create new paymentScheduleDetail:
+          reversalPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
+        }
+      } else {
+        // Create new paymentScheduleDetail:
+        FIN_AddPayment.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
+            psd.getPaymentDetails(), order.getOrganization(), order.getBusinessPartner());
+
+        // Adjust the original payment schedule detail to match the new amount
+        psd.setAmount(psd.getAmount().subtract(amtToDistribute));
+        OBDal.getInstance().save(psd);
+
+        if (reversalPSD == null) {
+          paidAmt = paidAmt.add(invoicePaidAmounts ? amtToDistribute : BigDecimal.ZERO);
+          amtToDistribute = BigDecimal.ZERO;
+        } else {
+          // Create new paymentScheduleDetail for the reverse payment:
           FIN_AddPayment.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
               psd.getPaymentDetails(), order.getOrganization(), order.getBusinessPartner());
 
           // Adjust the original payment schedule detail to match the new amount
-          psd.setAmount(psd.getAmount().subtract(amtToDistribute));
-          OBDal.getInstance().save(psd);
+          reversalPSD.setAmount(reversalPSD.getAmount().add(amtToDistribute));
+          OBDal.getInstance().save(reversalPSD);
+        }
+      }
+    }
 
-          if (reversalPSD == null) {
-            paidAmt = paidAmt.add(invoicePaidAmounts ? amtToDistribute : BigDecimal.ZERO);
-            amtToDistribute = BigDecimal.ZERO;
-          } else {
-            // Create new paymentScheduleDetail for the reverse payment:
-            FIN_AddPayment.createPSD(amtToDistribute, paymentSchedule, paymentScheduleInvoice,
-                psd.getPaymentDetails(), order.getOrganization(), order.getBusinessPartner());
+    // If the invoice haven't been completely paid, add the remaining payment
+    final BigDecimal remainingAmt = gross.subtract(paidAmt);
+    if (remainingAmt.compareTo(BigDecimal.ZERO) != 0) {
+      final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
+          .createCriteria(FIN_PaymentScheduleDetail.class);
+      remainingPSDCriteria.add(Restrictions.eq(
+          FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+      remainingPSDCriteria.add(Restrictions
+          .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
+      remainingPSDCriteria.add(Restrictions
+          .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+      remainingPSDCriteria.setMaxResults(1);
+      final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
+          .uniqueResult();
+      if (remainingPSD != null) {
+        if (remainingPSD.getAmount().compareTo(remainingAmt) != 0) {
+          // The PSD must be splitted in two PSD, one that belongs to the invoice with the
+          // remaining amount for the invoice and the other only to the order with the remaining
+          // amount for the order that not belongs to an invoice
+          FIN_AddPayment.createPSD(remainingPSD.getAmount().subtract(remainingAmt),
+              paymentSchedule, null, order.getOrganization(), order.getBusinessPartner());
+          remainingPSD.setAmount(remainingAmt);
+        }
+        remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
+        paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
+            remainingPSD);
+        OBDal.getInstance().save(remainingPSD);
 
-            // Adjust the original payment schedule detail to match the new amount
-            reversalPSD.setAmount(reversalPSD.getAmount().add(amtToDistribute));
-            OBDal.getInstance().save(reversalPSD);
+        // Generate credit for the remaining to pay in the invoice
+        BigDecimal creditGenerated = remainingAmt;
+        if (!invoice.getCurrency()
+            .equals(invoice.getBusinessPartner().getPriceList().getCurrency())) {
+          creditGenerated = convertCurrencyInvoice(invoice, remainingAmt);
+        }
+        if (creditGenerated.compareTo(BigDecimal.ZERO) != 0) {
+          OBDal.getInstance().flush();
+          OBContext.setAdminMode(false);
+          try {
+            order.getBusinessPartner().setCreditUsed(
+                order.getBusinessPartner().getCreditUsed().add(creditGenerated));
+            OBDal.getInstance().flush();
+          } finally {
+            OBContext.restorePreviousMode();
           }
         }
-        // psd.getPaymentDetails().setPrepayment(true);
       }
-      OBDal.getInstance().flush();
+    }
 
-      // If the invoice haven't been completely paid, add the remaining payment
-      final BigDecimal remainingAmt = gross.subtract(paymentsAmt);
-      if (remainingAmt.compareTo(BigDecimal.ZERO) != 0) {
-        final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
-            .createCriteria(FIN_PaymentScheduleDetail.class);
-        remainingPSDCriteria.add(Restrictions.eq(
-            FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-        remainingPSDCriteria.add(Restrictions
-            .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
-        remainingPSDCriteria.add(Restrictions
-            .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-        remainingPSDCriteria.setMaxResults(1);
-        final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
-            .uniqueResult();
-        if (remainingPSD != null) {
-          if (remainingPSD.getAmount().compareTo(remainingAmt) != 0) {
-            // The PSD must be splitted in two PSD, one that belongs to the invoice with the
-            // remaining amount for the invoice and the other only to the order with the remaining
-            // amount for the order that not belongs to an invoice
-            FIN_AddPayment.createPSD(remainingPSD.getAmount().subtract(remainingAmt),
-                paymentSchedule, null, order.getOrganization(), order.getBusinessPartner());
-            remainingPSD.setAmount(remainingAmt);
+    paymentScheduleInvoice.setOutstandingAmount(gross.subtract(paidAmt));
+    paymentScheduleInvoice.setPaidAmount(paidAmt);
+
+    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
+      // This property is checked and set this way to force compatibility with both MP13, MP14
+      // and later releases of Openbravo. This property is mandatory and must be set. Check
+      // issue
+      paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
+    }
+
+    if (paidAmt.compareTo(invoice.getGrandTotalAmount()) == 0) {
+      invoice.setFinalSettlementDate(finalSettlementDate);
+    }
+
+    invoice.setTotalPaid(paidAmt);
+    invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(paidAmt));
+    invoice.setDueAmount(invoice.getGrandTotalAmount().subtract(paidAmt));
+    invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice.getDueDate()));
+    invoice.setPaymentComplete(paidAmt.compareTo(invoice.getGrandTotalAmount()) == 0);
+    invoice.setLastCalculatedOnDate(new Date());
+    OBDal.getInstance().save(paymentScheduleInvoice);
+    OBDal.getInstance().save(invoice);
+
+    OBDal.getInstance().flush();
+
+    return paymentScheduleInvoice;
+  }
+
+  private BigDecimal convertCurrencyInvoice(Invoice invoice, BigDecimal amt) {
+    int pricePrecision = invoice.getCurrency().getObposPosprecision() == null ? invoice
+        .getCurrency().getPricePrecision().intValue() : invoice.getCurrency()
+        .getObposPosprecision().intValue();
+    List<Object> parameters = new ArrayList<Object>();
+    List<Class<?>> types = new ArrayList<Class<?>>();
+    parameters.add(amt.setScale(pricePrecision, RoundingMode.HALF_UP));
+    types.add(BigDecimal.class);
+    parameters.add(invoice.getCurrency());
+    types.add(BaseOBObject.class);
+    parameters.add(invoice.getBusinessPartner().getPriceList().getCurrency());
+    types.add(BaseOBObject.class);
+    parameters.add(invoice.getOrderDate());
+    types.add(Timestamp.class);
+    parameters.add("S");
+    types.add(String.class);
+    parameters.add(OBContext.getOBContext().getCurrentClient());
+    types.add(BaseOBObject.class);
+    parameters.add(OBContext.getOBContext().getCurrentOrganization());
+    types.add(BaseOBObject.class);
+    parameters.add('A');
+    types.add(Character.class);
+
+    return (BigDecimal) CallStoredProcedure.getInstance().call("c_currency_convert_precision",
+        parameters, types);
+  }
+
+  public void createPaymentTerms(Order order, Invoice invoice) {
+    final FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
+    final FIN_PaymentSchedule paymentScheduleInvoice = invoice.getFINPaymentScheduleList().get(0);
+    final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
+        .createCriteria(FIN_PaymentScheduleDetail.class);
+    remainingPSDCriteria.add(Restrictions.eq(
+        FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+    remainingPSDCriteria.add(Restrictions.eq(
+        FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, paymentScheduleInvoice));
+    remainingPSDCriteria
+        .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+    remainingPSDCriteria.setMaxResults(1);
+    final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
+        .uniqueResult();
+
+    if (remainingPSD != null) {
+      // There's something remaining to pay, so is necessary to check the payment terms. In case
+      // that the remaining must be paid in different terms, the different PS must be created
+      // for each term
+      final OBCriteria<PaymentTermLine> lineCriteria = OBDal.getInstance().createCriteria(
+          PaymentTermLine.class);
+      lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_PAYMENTTERMS,
+          order.getPaymentTerms()));
+      lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_ACTIVE, true));
+      lineCriteria.addOrderBy(PaymentTermLine.PROPERTY_LINENO, true);
+      List<PaymentTermLine> termLineList = lineCriteria.list();
+      if (termLineList.size() > 0) {
+        final int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order
+            .getCurrency().getPricePrecision().intValue() : order.getCurrency()
+            .getObposPosprecision().intValue();
+        final BigDecimal gross = invoice.getGrandTotalAmount();
+        final BigDecimal remainingAmt = remainingPSD.getAmount();
+        BigDecimal pendingGrossAmount = remainingAmt;
+        int i = 0;
+        for (PaymentTermLine paymentTermLine : termLineList) {
+          if (pendingGrossAmount.compareTo(BigDecimal.ZERO) == 0) {
+            break;
           }
-          remainingPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
-          paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-              remainingPSD);
-          OBDal.getInstance().save(remainingPSD);
-
-          // There's something remaining to pay, so is necessary to check the payment terms. In case
-          // that the remaining must be paid in different terms, the different PS must be created
-          // for each term
-          final OBCriteria<PaymentTermLine> lineCriteria = OBDal.getInstance().createCriteria(
-              PaymentTermLine.class);
-          lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_PAYMENTTERMS,
-              order.getPaymentTerms()));
-          lineCriteria.add(Restrictions.eq(PaymentTermLine.PROPERTY_ACTIVE, true));
-          lineCriteria.addOrderBy(PaymentTermLine.PROPERTY_LINENO, true);
-          List<PaymentTermLine> termLineList = lineCriteria.list();
-          if (termLineList.size() > 0) {
-            BigDecimal pendingGrossAmount = remainingAmt;
-            int i = 0;
-            for (PaymentTermLine paymentTermLine : termLineList) {
-              if (pendingGrossAmount.compareTo(BigDecimal.ZERO) == 0) {
-                break;
-              }
-              BigDecimal amount = BigDecimal.ZERO;
-              if (paymentTermLine.isExcludeTax()) {
-                amount = (invoice.getSummedLineAmount().multiply(paymentTermLine.getPercentageDue()
-                    .divide(BigDecimal.valueOf(100)))).setScale(pricePrecision,
-                    RoundingMode.HALF_UP);
-              } else if (!paymentTermLine.isRest()) {
-                amount = (remainingAmt.multiply(paymentTermLine.getPercentageDue().divide(
-                    BigDecimal.valueOf(100)))).setScale(pricePrecision, RoundingMode.HALF_UP);
-              } else {
-                amount = (pendingGrossAmount.multiply(paymentTermLine.getPercentageDue().divide(
-                    BigDecimal.valueOf(100)))).setScale(pricePrecision, RoundingMode.HALF_UP);
-                pendingGrossAmount = BigDecimal.ZERO;
-              }
-
-              if (amount.compareTo(BigDecimal.ZERO) == 0) {
-                continue;
-              }
-              pendingGrossAmount = pendingGrossAmount.subtract(amount);
-
-              Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(), null,
-                  paymentTermLine);
-
-              if (i == 0 && remainingAmt.compareTo(gross) == 0) {
-                paymentScheduleInvoice.setAmount(amount);
-                paymentScheduleInvoice.setOutstandingAmount(amount);
-                paymentScheduleInvoice.setPaidAmount(BigDecimal.ZERO);
-                paymentScheduleInvoice.setDueDate(dueDate);
-                paymentScheduleInvoice.setExpectedDate(dueDate);
-                i++;
-              } else {
-                addPaymentSchedule(order, invoice, amount, amount, dueDate);
-                i++;
-              }
-              if (termLineList.size() == i) {
-                if (pendingGrossAmount.compareTo(BigDecimal.ZERO) != 0) {
-                  dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
-                      order.getPaymentTerms(), null);
-
-                  addPaymentSchedule(order, invoice, pendingGrossAmount, pendingGrossAmount,
-                      dueDate);
-                  i++;
-                }
-              }
-            }
-            // Now the PSD with the remaining quantity must be divided between the different PS
-            // Invoices
-            for (FIN_PaymentSchedule invoicePS : invoice.getFINPaymentScheduleList()) {
-              if (invoicePS.getId().equals(paymentScheduleInvoice.getId())) {
-                if (remainingAmt.compareTo(gross) != 0) {
-                  // The PS is paid, so is not taken into account by the payment terms
-                  // Set the PS as fully paid (the remaining amount is now in the other PS)
-                  paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-                  final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount().subtract(
-                      remainingAmt);
-                  paymentScheduleInvoice.setPaidAmount(amountToInvoice);
-                  paymentScheduleInvoice.setAmount(amountToInvoice);
-                  for (final FIN_PaymentScheduleDetail invoicePSD : paymentScheduleInvoice
-                      .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-                    invoicePSD.setAmount(amountToInvoice);
-                    OBDal.getInstance().save(invoicePSD);
-                  }
-                }
-                continue;
-              }
-              int pendingSign = remainingAmt.signum();
-              if ((pendingSign >= 0 && remainingPSD.getAmount().compareTo(invoicePS.getAmount()) <= 0)
-                  || (pendingSign == -1 && remainingPSD.getAmount()
-                      .compareTo(invoicePS.getAmount()) >= 0)) {
-                remainingPSD.setInvoicePaymentSchedule(invoicePS);
-              } else {
-                // The remaining PSD must be splitted
-                FIN_AddPayment.createPSD(invoicePS.getAmount(), paymentSchedule, invoicePS,
-                    order.getOrganization(), order.getBusinessPartner());
-                remainingPSD.setAmount(remainingPSD.getAmount().subtract(invoicePS.getAmount()));
-              }
-            }
+          BigDecimal amount = BigDecimal.ZERO;
+          if (paymentTermLine.isExcludeTax()) {
+            amount = (invoice.getSummedLineAmount().multiply(paymentTermLine.getPercentageDue()
+                .divide(BigDecimal.valueOf(100)))).setScale(pricePrecision, RoundingMode.HALF_UP);
+          } else if (!paymentTermLine.isRest()) {
+            amount = (remainingAmt.multiply(paymentTermLine.getPercentageDue().divide(
+                BigDecimal.valueOf(100)))).setScale(pricePrecision, RoundingMode.HALF_UP);
           } else {
-            Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
-                order.getPaymentTerms(), null);
+            amount = (pendingGrossAmount.multiply(paymentTermLine.getPercentageDue().divide(
+                BigDecimal.valueOf(100)))).setScale(pricePrecision, RoundingMode.HALF_UP);
+            pendingGrossAmount = BigDecimal.ZERO;
+          }
+
+          if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            continue;
+          }
+          pendingGrossAmount = pendingGrossAmount.subtract(amount);
+
+          Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(), null,
+              paymentTermLine);
+
+          if (i == 0 && remainingAmt.compareTo(gross) == 0) {
+            paymentScheduleInvoice.setAmount(amount);
+            paymentScheduleInvoice.setOutstandingAmount(amount);
+            paymentScheduleInvoice.setPaidAmount(BigDecimal.ZERO);
             paymentScheduleInvoice.setDueDate(dueDate);
             paymentScheduleInvoice.setExpectedDate(dueDate);
-            paymentScheduleInvoice.setOutstandingAmount(gross.subtract(paidAmt));
-            paymentScheduleInvoice.setPaidAmount(paidAmt);
+            i++;
+          } else {
+            addPaymentSchedule(order, invoice, amount, amount, dueDate);
+            i++;
+          }
+          if (termLineList.size() == i) {
+            if (pendingGrossAmount.compareTo(BigDecimal.ZERO) != 0) {
+              dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
+                  order.getPaymentTerms(), null);
+
+              addPaymentSchedule(order, invoice, pendingGrossAmount, pendingGrossAmount, dueDate);
+              i++;
+            }
+          }
+        }
+        // Now the PSD with the remaining quantity must be divided between the different PS
+        // Invoices
+        for (FIN_PaymentSchedule invoicePS : invoice.getFINPaymentScheduleList()) {
+          if (invoicePS.getId().equals(paymentScheduleInvoice.getId())) {
+            if (remainingAmt.compareTo(gross) != 0) {
+              // The PS is paid, so is not taken into account by the payment terms
+              // Set the PS as fully paid (the remaining amount is now in the other PS)
+              paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
+              final BigDecimal amountToInvoice = paymentScheduleInvoice.getAmount().subtract(
+                  remainingAmt);
+              paymentScheduleInvoice.setPaidAmount(amountToInvoice);
+              paymentScheduleInvoice.setAmount(amountToInvoice);
+              for (final FIN_PaymentScheduleDetail invoicePSD : paymentScheduleInvoice
+                  .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+                invoicePSD.setAmount(amountToInvoice);
+                OBDal.getInstance().save(invoicePSD);
+              }
+            }
+            continue;
+          }
+          int pendingSign = remainingAmt.signum();
+          if ((pendingSign >= 0 && remainingPSD.getAmount().compareTo(invoicePS.getAmount()) <= 0)
+              || (pendingSign == -1 && remainingPSD.getAmount().compareTo(invoicePS.getAmount()) >= 0)) {
+            remainingPSD.setInvoicePaymentSchedule(invoicePS);
+          } else {
+            // The remaining PSD must be splitted
+            FIN_AddPayment.createPSD(invoicePS.getAmount(), paymentSchedule, invoicePS,
+                order.getOrganization(), order.getBusinessPartner());
+            remainingPSD.setAmount(remainingPSD.getAmount().subtract(invoicePS.getAmount()));
           }
         }
       } else {
-        paymentScheduleInvoice.setOutstandingAmount(gross.subtract(paidAmt));
-        paymentScheduleInvoice.setPaidAmount(paidAmt);
-      }
-      if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
-          .hasProperty("origDueDate")) {
-        // This property is checked and set this way to force compatibility with both MP13, MP14
-        // and later releases of Openbravo. This property is mandatory and must be set. Check
-        // issue
-        paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
+        Date dueDate = getCalculatedDueDateBasedOnPaymentTerms(order.getOrderDate(),
+            order.getPaymentTerms(), null);
+        paymentScheduleInvoice.setDueDate(dueDate);
+        paymentScheduleInvoice.setExpectedDate(dueDate);
       }
 
-      if (paidAmt.compareTo(invoice.getGrandTotalAmount()) == 0) {
-        invoice.setFinalSettlementDate(finalSettlementDate);
+      // Set the days till the next due
+      if (invoice.getFINPaymentScheduleList().size() == 1) {
+        invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice.getDueDate()));
+      } else {
+        // Set the lower due date of the PS that is not paid
+        long daysTillDue = -1;
+        for (final FIN_PaymentSchedule currentPSInvoice : invoice.getFINPaymentScheduleList()) {
+          if (currentPSInvoice.getId().equals(paymentScheduleInvoice.getId())) {
+            continue;
+          }
+          final long newDaysTillDue = FIN_Utility.getDaysToDue(currentPSInvoice.getDueDate());
+          if (daysTillDue == -1) {
+            daysTillDue = newDaysTillDue;
+          } else {
+            if (newDaysTillDue < daysTillDue) {
+              daysTillDue = newDaysTillDue;
+            }
+          }
+        }
+        invoice.setDaysTillDue(daysTillDue);
       }
 
-      invoice.setTotalPaid(paidAmt);
-      invoice.setOutstandingAmount(invoice.getGrandTotalAmount().subtract(paidAmt));
-      invoice.setDueAmount(invoice.getGrandTotalAmount().subtract(paidAmt));
-      invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice.getDueDate()));
-      invoice.setPaymentComplete(paidAmt.compareTo(invoice.getGrandTotalAmount()) == 0);
-      invoice.setLastCalculatedOnDate(new Date());
       OBDal.getInstance().save(paymentScheduleInvoice);
       OBDal.getInstance().save(invoice);
-
-    } catch (Exception e) {
-      jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
-      jsonResponse.put(JsonConstants.RESPONSE_ERRORMESSAGE, e.getMessage());
-      return jsonResponse;
+      OBDal.getInstance().flush();
     }
-
-    jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-    jsonResponse.put("paymentScheduleInvoice", paymentScheduleInvoice);
-
-    return jsonResponse;
   }
 
   private void addPaymentSchedule(Order order, Invoice invoice, BigDecimal amount,

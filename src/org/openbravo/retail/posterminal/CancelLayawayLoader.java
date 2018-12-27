@@ -107,7 +107,7 @@ public class CancelLayawayLoader extends OrderLoader {
 
       OBDal.getInstance().save(oldOrder);
 
-      handlePayments(json, inverseOrder);
+      handlePayments(json, inverseOrder, null);
 
       POSUtils.setDefaultPaymentType(json, inverseOrder);
 
