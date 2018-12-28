@@ -43,7 +43,7 @@ BEGIN
   END LOOP;
   IF(p_docaction = 'CO') THEN
     FOR Cur_Orders IN (
-      select c_order.c_order_id
+      select c_order.documentno
       from c_order
       join c_orderline on c_order.c_order_id = c_orderline.c_order_id
       join m_inoutline on m_inoutline.c_orderline_id = c_orderline.c_orderline_id
@@ -52,7 +52,7 @@ BEGIN
       and m_inout.docstatus = 'CO'
       and m_inoutline.m_inout_id = p_record_id
       ) LOOP
-      RAISE_APPLICATION_ERROR(-20000, '@OBPOS_Layaway_No_Shipment@');
+      RAISE_APPLICATION_ERROR(-20000, '@OBPOS_Layaway_No_Shipment@ ' || Cur_Orders.documentno) ;
     END LOOP;
   END IF;
 END OBPOS_DELIVER_LAYAWAY
