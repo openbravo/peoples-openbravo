@@ -109,13 +109,12 @@ public class CheckApproval extends HttpServlet {
             + "                    and r.userContact.id = :user"
             + "                    and r.active=true))"
             + "   and (p.visibleAtOrganization.id = :org "
-            + "   or p.visibleAtOrganization.id in (:orgList) "
+            + "   or p.visibleAtOrganization.id in (" + naturalTreeOrgList + ")"
             + "   or p.visibleAtOrganization is null) group by p.property";
         Query<String> preferenceQuery = OBDal.getInstance().getSession()
             .createQuery(hqlQuery, String.class);
         preferenceQuery.setParameter("user", qUserList.get(0).getId());
         preferenceQuery.setParameter("org", organization);
-        preferenceQuery.setParameter("orgList", naturalTreeOrgList);
 
         List<String> preferenceList = preferenceQuery.list();
         if (preferenceList.isEmpty()) {
