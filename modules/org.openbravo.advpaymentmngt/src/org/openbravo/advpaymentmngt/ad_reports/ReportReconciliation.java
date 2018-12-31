@@ -167,9 +167,9 @@ public class ReportReconciliation extends HttpSecureAppServlet {
       OBContext.restorePreviousMode();
     }
 
-    parameters.put("SUBREP_OUTPAYMENT", subReportOutstandingPayment);
-    parameters.put("SUBREP_OUTDEPOSIT", subReportOutstandingDeposit);
-    parameters.put("SUBREP_UNRECBS", subReportUnreconciledBankStatementLines);
+    parameters.put("SUBREPORT_OUTPAYMENT", subReportOutstandingPayment);
+    parameters.put("SUBREPORT_OUTDEPOSIT", subReportOutstandingDeposit);
+    parameters.put("SUBREPORT_UNRECBS", subReportUnreconciledBankStatementLines);
 
     response.setContentType("text/html; charset=UTF-8");
     renderJR(vars, response, strMainReportName, "pdf", parameters, null, null);
