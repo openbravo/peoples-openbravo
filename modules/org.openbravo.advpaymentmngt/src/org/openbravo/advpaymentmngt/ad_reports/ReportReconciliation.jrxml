@@ -15,9 +15,9 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="SUBREP_OUTPAYMENT" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
-	<parameter name="SUBREP_OUTDEPOSIT" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
-	<parameter name="SUBREP_UNRECBS" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="SUBREPORT_OUTPAYMENT" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="SUBREPORT_OUTDEPOSIT" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
+	<parameter name="SUBREPORT_UNRECBS" class="net.sf.jasperreports.engine.JasperReport" isForPrompting="false"/>
 	<parameter name="DATE" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<parameter name="ACC_BAL_OB" class="java.math.BigDecimal" isForPrompting="false"/>
@@ -174,7 +174,7 @@
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression><![CDATA[$P{SUBREP_OUTPAYMENT}]]></subreportExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_OUTPAYMENT}]]></subreportExpression>
 				</subreport>
 				<staticText>
 					<reportElement key="staticText-11" x="0" y="0" width="244" height="14" isRemoveLineWhenBlank="true" uuid="0b5e5060-e767-45ee-9a73-62e1fe888c76"/>
@@ -230,7 +230,7 @@
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression><![CDATA[$P{SUBREP_OUTDEPOSIT}]]></subreportExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_OUTDEPOSIT}]]></subreportExpression>
 				</subreport>
 				<staticText>
 					<reportElement key="staticText-12" x="0" y="0" width="244" height="14" isRemoveLineWhenBlank="true" uuid="d3314afd-5f53-409e-bce5-13b6a2f86b68"/>
@@ -299,7 +299,7 @@
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression><![CDATA[$P{SUBREP_UNRECBS}]]></subreportExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_UNRECBS}]]></subreportExpression>
 				</subreport>
 				<line>
 					<reportElement key="line-3" x="0" y="13" width="495" height="1" forecolor="#E4DFDF" uuid="d3d4172d-df6f-4db8-9c53-17ea62397922"/>
