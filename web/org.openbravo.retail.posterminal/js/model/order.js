@@ -4279,7 +4279,7 @@
         me.set('negativeDocNo', me.get('documentNo') + '*R*');
         newDocNo = '';
         terminalDocNoPrefix = OB.MobileApp.model.attributes.terminal.docNoPrefix;
-        splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length, me.get('documentNo').length).split(cancelAndReplaceSeparator);
+        splittedDocNo = me.get('documentNo').substring(terminalDocNoPrefix.length + (OB.Model.Order.prototype.includeDocNoSeperator ? 1 : 0), me.get('documentNo').length).split(cancelAndReplaceSeparator);
         if (splittedDocNo.length > 1) {
           var nextNumber = parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
           newDocNo = me.get('documentNo').substring(0, me.get('documentNo').lastIndexOf(cancelAndReplaceSeparator)) + cancelAndReplaceSeparator + nextNumber;
