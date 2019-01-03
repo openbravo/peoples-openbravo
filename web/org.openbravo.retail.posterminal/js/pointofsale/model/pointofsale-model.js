@@ -357,7 +357,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         enyo.$.scrim2.show();
         setTimeout(function () {
           if (receipt.calculatingReceipt === true) {
-            OB.UTIL.showProcessing(true, OB.I18N.getLabel('OBPOS_receiptProcessing'));
+            OB.UTIL.showProcessing(true, 'OBPOS_receiptProcessing');
           }
         }, 1000);
       });
