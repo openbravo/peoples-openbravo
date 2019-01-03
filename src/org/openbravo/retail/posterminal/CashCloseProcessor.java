@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -400,8 +400,8 @@ public class CashCloseProcessor {
               RoundingMode.HALF_EVEN));
       transaction.setTransactionType("BPW");
     } else {
-      transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
-          RoundingMode.HALF_EVEN));
+      transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(
+          accountTo.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_EVEN));
       transaction.setTransactionType("BPD");
     }
     transaction.setProcessed(true);
