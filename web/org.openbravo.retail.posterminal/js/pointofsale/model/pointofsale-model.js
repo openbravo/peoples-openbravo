@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -226,35 +226,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     modelToIncludePayment.addPayment(payment, callback);
   },
   deleteMultiOrderList: function () {
-    var i;
-
-    var checkIsPrepaymentExit = function (paymentList) {
-        var hasnoPrepaymentPayment;
-        if (paymentList.length > 0) {
-          hasnoPrepaymentPayment = _.find(paymentList.models, function (item) {
-            if (!item.get('isPrePayment')) {
-              return item;
-            }
-          });
-        }
-        return (_.isUndefined(hasnoPrepaymentPayment));
-        };
-
-    for (i = 0; this.get('multiOrders').get('multiOrdersList').length > i; i++) {
-      if (!this.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, it means that this is either a new order or a newly generated layaway (not a loaded layaway)
-        this.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
-        continue;
+    _.each(this.get('multiOrders').get('multiOrdersList').models, function (order) {
+      if (order.get('originalOrderType') !== order.get('orderType')) {
+        order.setOrderType(null, order.get('originalOrderType'));
       }
-      this.get('orderList').current = this.get('multiOrders').get('multiOrdersList').at(i);
-      if (checkIsPrepaymentExit(this.get('orderList').current.get('payments'))) {
+      order.unset('amountToLayaway');
+      order.unset('originalOrderType');
+      order.unset('belongsToMultiOrder');
+      if (order.get('loadedFromServer')) {
+        this.get('orderList').current = order;
         this.get('orderList').deleteCurrent();
-        if (!_.isNull(this.get('multiOrders').get('multiOrdersList').at(i).id)) {
-          this.get('orderList').deleteCurrentFromDatabase(this.get('multiOrders').get('multiOrdersList').at(i));
+        if (order.get('id')) {
+          this.get('orderList').deleteCurrentFromDatabase(order);
         }
-      } else {
-        OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
       }
-    }
+    }, this);
+    return true;
   },
   init: function () {
     OB.error("This init method should never be called for this model. Call initModels and loadModels instead");
