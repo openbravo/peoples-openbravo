@@ -77,6 +77,7 @@
       AND C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
       AND C_ORDER.AD_CLIENT_ID IN ('1')
       AND C_ORDER.AD_ORG_ID IN ('1')
+      AND 1=1 AND C_ORDER.AD_ORG_ID IN ('1')
       AND C_ORDER.ISSOTRX='N'
       AND C_ORDER.DOCSTATUS = 'CO'
       AND C_ORDER.C_DOCTYPE_ID = C_DOCTYPE.C_DOCTYPE_ID
@@ -93,6 +94,7 @@
     <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_ORDER.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND C_ORDER.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrgId" optional="true" type="replace" after="AND 1=1 AND C_ORDER.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED < TO_DATE(?)]]></Parameter>
     <Parameter name="parBPartner" optional="true" after="AND C_ORDER.ISSOTRX='N'"> AND C_BPARTNER.C_BPARTNER_ID = ?</Parameter>

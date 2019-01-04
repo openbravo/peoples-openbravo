@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -154,7 +154,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
       data = MaterialReceiptPendingData.selectLines(this, strDateFormat, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"),
-          Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom,
+          Tree.getMembers(this, strTreeOrg, strAD_Org_ID),
+          Utility.getContext(this, vars, "#User_Org", "MaterialReceiptPending"), strDateFrom,
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo, pgLimit,
           oraLimit);
     }
