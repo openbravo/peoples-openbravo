@@ -116,16 +116,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             currentOrder = args.ordersNotPaid.models[0];
             //removing Orders lines without mandatory fields filled
             OB.UTIL.HookManager.executeHooks('OBPOS_CheckReceiptMandatoryFields', {
-              orders: currentOrder
+              orders: orderlist.models
             }, function (args) {
               reCalculateReceipt = args.reCalculateReceipt;
+              orderlist.load(currentOrder);
+              if (reCalculateReceipt) {
+                OB.MobileApp.model.receipt.calculateGrossAndSave();
+              }
+              loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
+              OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
+
             });
-            orderlist.load(currentOrder);
-            if (reCalculateReceipt) {
-              OB.MobileApp.model.receipt.calculateGrossAndSave();
-            }
-            loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
-            OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
           }
         }, model);
         loadUnpaidOrdersCallback();
