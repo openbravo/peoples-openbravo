@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -272,7 +272,7 @@ enyo.kind({
     }, this);
 
     this.model.on('change:totalCounted', function () {
-      this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), OB.Utilities.Number.roundJSNumber(this.model.get('totalExpected'), 2)));
+      this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
       this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(this.model.get("totalDifference"));
       this.waterfall('onAnyCounted');
       this.refreshButtons();

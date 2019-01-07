@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -712,7 +712,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
             if (!product.get('groupProduct')) {
               amount = amount / relatedQuantity;
             }
-            newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / relatedQty, 2);
+            newprice = OB.DEC.add(oldprice, OB.DEC.div(amount, relatedQty));
             callback(line, newprice);
           } else { //ruletype = 'R'
             var rangeCriteria = {};
@@ -749,7 +749,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
                   if (!product.get('groupProduct')) {
                     amount = amount / relatedQuantity;
                   }
-                  newprice = OB.Utilities.Number.roundJSNumber(oldprice + amount / relatedQty, 2);
+                  newprice = OB.DEC.add(oldprice, OB.DEC.div(amount, relatedQty));
                   callback(line, newprice);
                 } else { //ruleType = 'F'
                   if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
@@ -774,7 +774,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
                     var oldprice = product.get('listPrice'),
                         newprice;
                     if (price && price.length > 0) {
-                      newprice = OB.Utilities.Number.roundJSNumber(oldprice + price.at(0).get('listPrice'), 2);
+                      newprice = OB.DEC.add(oldprice, price.at(0).get('listPrice'));
                       callback(line, newprice);
                     } else {
                       errorCallback(line, 'OBPOS_ErrorPriceRuleRangePriceNotFound');

@@ -4910,7 +4910,7 @@
             this.set('paymentWithSign', total);
             //The change value will be computed through a rounded total value, to ensure that the total plus change
             //add up to the paid amount without any kind of precission loss
-            this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, OB.Utilities.Number.roundJSNumber(total, 2), precision)));
+            this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, total, precision)));
           } else {
             pcash.set('paid', pcash.get('origAmount'));
             this.set('payment', OB.DEC.abs(totalPaid));
@@ -4930,7 +4930,7 @@
             this.set('paymentWithSign', total);
             //The change value will be computed through a rounded total value, to ensure that the total plus change
             //add up to the paid amount without any kind of precission loss
-            this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, OB.Utilities.Number.roundJSNumber(total, 2), precision)));
+            this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, total, precision)));
           } else {
             pcash.set('paid', pcash.get('origAmount'));
             this.set('payment', OB.DEC.abs(totalPaid));
