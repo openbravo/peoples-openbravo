@@ -6097,17 +6097,21 @@
 
       function removeReceiptFromDatabase(receipt, callback) {
         var model, orderList = OB.MobileApp.model.orderList;
-        model = _.find(orderList.models, function (model) {
-          return model.get('id') === receipt.get('id');
-        });
-        if (model) {
-          orderList.saveCurrent();
-          orderList.load(model);
-          if (model.get('id')) {
-            OB.Dal.remove(model);
+        if (orderList) {
+          model = _.find(orderList.models, function (model) {
+            return model.get('id') === receipt.get('id');
+          });
+          if (model) {
+            orderList.saveCurrent();
+            orderList.load(model);
+            if (model.get('id')) {
+              OB.Dal.remove(model);
+            }
           }
+          orderList.deleteCurrent();
+        } else if (receipt && receipt.get('id')) {
+          OB.Dal.remove(receipt);
         }
-        orderList.deleteCurrent();
         if (callback && callback instanceof Function) {
           callback();
         }
