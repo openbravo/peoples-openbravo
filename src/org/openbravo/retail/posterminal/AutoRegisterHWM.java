@@ -152,8 +152,8 @@ public class AutoRegisterHWM implements WebService {
       HardwareManager hardwaremng) {
     HardwareURL hardwareurl = OBProvider.getInstance().get(HardwareURL.class);
     hardwareurl.setNewOBObject(true);
-    hardwareurl.setClient(org.getClient());
-    hardwareurl.setOrganization(org);
+    hardwareurl.setClient(termtype.getClient());
+    hardwareurl.setOrganization(termtype.getOrganization());
     hardwareurl.setPOSTerminalType(termtype);
     hardwareurl.setObposHardwaremng(hardwaremng);
     OBDal.getInstance().save(hardwareurl);
