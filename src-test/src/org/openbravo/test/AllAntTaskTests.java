@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,6 +113,7 @@ import org.openbravo.test.services.ServicesTest3;
 import org.openbravo.test.system.CryptoUtilities;
 import org.openbravo.test.system.ErrorTextParserIntegrationTest;
 import org.openbravo.test.system.ErrorTextParserTest;
+import org.openbravo.test.system.ImportEntryBuilderTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.Sessions;
@@ -210,6 +211,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     TestInfrastructure.class, //
     Issue29934Test.class, //
     ImportEntrySizeTest.class, //
+    ImportEntryBuilderTest.class, //
     CryptoUtilities.class, //
     Sessions.class, //
     OBContextTest.class, //

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,12 +47,9 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.access.Role;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -302,59 +299,14 @@ public class ImportEntryManager {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose) {
-    OBContext.setAdminMode(true);
     try {
-      // check if it is not there already or already archived
-      {
-        final Query<Number> qry = SessionHandler
-            .getInstance()
-            .getSession()
-            .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id",
-                Number.class);
-        qry.setParameter("id", id);
-        if (qry.uniqueResult().intValue() > 0) {
-          log.debug("Entry already exists, ignoring it, id/typeofdata " + id + "/" + typeOfData
-              + " json " + json);
-          return;
-        }
-      }
-      {
-        final Query<Number> qry = SessionHandler
-            .getInstance()
-            .getSession()
-            .createQuery(
-                "select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id",
-                Number.class);
-        qry.setParameter("id", id);
-        if (qry.uniqueResult().intValue() > 0) {
-          log.debug("Entry already archived, ignoring it, id/typeofdata " + id + "/" + typeOfData
-              + " json " + json);
-          return;
-        }
-      }
-
-      ImportEntry importEntry = OBProvider.getInstance().get(ImportEntry.class);
-      importEntry.setId(id);
-      importEntry.setRole(OBDal.getInstance().getProxy(Role.class,
-          OBContext.getOBContext().getRole().getId()));
-      importEntry.setNewOBObject(true);
-      importEntry.setImportStatus("Initial");
-      importEntry.setCreatedtimestamp((new Date()).getTime());
-      importEntry.setImported(null);
-      importEntry.setTypeofdata(typeOfData);
-      importEntry.setJsonInfo(json);
-
-      for (ImportEntryPreProcessor processor : entryPreProcessors) {
-        processor.beforeCreate(importEntry);
-      }
-      OBDal.getInstance().save(importEntry);
-      if (commitAndClose) {
-        OBDal.getInstance().commitAndClose();
-
-        notifyNewImportEntryCreated();
-      }
-    } finally {
-      OBContext.restorePreviousMode();
+      ImportEntryBuilder.newInstance(typeOfData, json) //
+          .setId(id) //
+          .setNotifyManager(commitAndClose) //
+          .create();
+    } catch (ImportEntryAlreadyExistsException e) {
+      // Ignore exception when ImportEntry already exists either in ImportEntry or
+      // ImportEntryArchive table
     }
   }
 
