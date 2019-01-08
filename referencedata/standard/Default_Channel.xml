@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><ob:Openbravo xmlns:ob="http://www.openbravo.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <MarketingChannel id="293AB6FFE1B74DD89071AEB8B308403B" identifier="Brick and mortar">
+    <id>293AB6FFE1B74DD89071AEB8B308403B</id>
+    <active>true</active>
+    <name>Brick and mortar</name>
+    <description>Physical Store</description>
+  </MarketingChannel>
+</ob:Openbravo>

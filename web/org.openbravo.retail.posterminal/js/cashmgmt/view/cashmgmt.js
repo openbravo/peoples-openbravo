@@ -44,7 +44,37 @@ enyo.kind({
     },
     tap: function () {
       OB.POS.hwserver.checkDrawer(function () {
-        this.model.depsdropstosave.trigger('makeDeposits');
+        var hasProvider = false,
+            payment = null,
+            currentDrop = null;
+        this.model.depsdropstosave.each(function (drop) {
+          payment = _.find(OB.POS.modelterminal.get('payments'), function (p) {
+            return p.payment.id === drop.get('paymentMethodId');
+          });
+          if (payment && payment.paymentMethod.cashManagementProvider) {
+            hasProvider = true;
+            currentDrop = drop;
+          }
+        });
+        if (hasProvider) {
+          this.bubble('onShowPopup', {
+            popup: 'modalpayment',
+            args: {
+              'receipt': null,
+              'cashManagement': this.model,
+              'provider': payment.paymentMethod.cashManagementProvider,
+              'key': payment.paymentMethod.searchKey,
+              'name': payment.paymentMethod._identifier,
+              'paymentMethod': payment.paymentMethod,
+              'amount': currentDrop.get('amount'),
+              'rate': payment.rate,
+              'mulrate': payment.mulrate,
+              'isocode': payment.isocode
+            }
+          });
+        } else {
+          this.model.depsdropstosave.trigger('makeDeposits');
+        }
       }, this);
     }
   }]
@@ -74,8 +104,11 @@ enyo.kind({
     onShowPopup: ''
   },
   handlers: {
+    onPaymentChanged: 'paymentChanged',
+    onPaymentChangedCancelled: 'paymentChangedCancelled',
     onAdvancedFilterSelector: 'advancedFilterSelector',
-    onChangeFilterSelector: 'changeFilterSelector'
+    onChangeFilterSelector: 'changeFilterSelector',
+    onCashManagementOpenWindow: 'cashManagementOpenWindow'
   },
   components: [{
     kind: 'OB.UI.MultiColumn',
@@ -146,12 +179,27 @@ enyo.kind({
     }]
   }],
 
+  paymentChanged: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onButtonPaymentChanged', inEvent);
+  },
+
+  paymentChangedCancelled: function (inSender, inEvent) {
+    // sending the event to the components bellow this one
+    this.waterfall('onButtonPaymentChangedCancelled', inEvent);
+  },
+
   advancedFilterSelector: function (inSender, inEvent) {
     this.waterfall('onGetAdvancedFilterSelector', inEvent);
   },
 
   changeFilterSelector: function (inSender, inEvent) {
     this.waterfall('onUpdateFilterSelector', inEvent);
+  },
+
+  cashManagementOpenWindow: function (inSender, inEvent) {
+    inEvent.keyboard = this;
+    this.waterfall('onCashManagementOpen', inEvent);
   },
 
   init: function () {
@@ -269,4 +317,9 @@ OB.POS.registerWindow({
       return payment.paymentMethod.iscash === true;
     }).length > 0;
   }
+});
+
+OB.UI.WindowView.registerPopup('OB.OBPOSCashMgmt.UI.CashManagement', {
+  kind: 'OB.UI.ModalPayment',
+  name: 'modalpayment'
 });

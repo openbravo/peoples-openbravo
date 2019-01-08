@@ -51,7 +51,9 @@ enyo.kind({
       this.hide();
       return;
     }
-    if (this.model.get('order').get('replacedorder')) {
+    if (!_.find(OB.MobileApp.model.get('payments'), function (payment) {
+      return payment.paymentMethod.refundable;
+    })) {
       this.hide();
       return;
     }
@@ -92,30 +94,45 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.model.get('order').checkNotProcessedPayments(function () {
-      me.model.get('order').set('voidLayaway', true);
-      me.doShowDivText({
-        permission: me.permission,
-        orderType: 3
-      });
-      me.doTabChange({
-        tabPanel: 'payment',
-        keyboard: 'toolbarpayment',
-        edit: false
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreVoidLayaway', {
+        context: me
+      }, function (args) {
+        if (args && args.cancelOperation) {
+          return;
+        }
+        var order = me.model.get('order');
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_VoidLayawayLbl'), OB.I18N.getLabel('OBPOS_VoidLayawayConfirmation'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            order.set('voidLayaway', true);
+            order.trigger('voidLayaway');
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
       });
     });
   },
   displayLogic: function () {
-    var haspayments;
+    var me = this,
+        i;
+    this.hideVoidLayaway = [];
 
-    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3 && this.model.get('order').get('payments').length === 0 && ((OB.MobileApp.model.hasPermission('OBPOS_payments.voidLayaway', true) && this.model.get('orderList').current.get('payment') === 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.voidLayaway', true))) {
-      this.show();
-      this.adjustVisibilityBasedOnPermissions();
+    this.show();
+    this.adjustVisibilityBasedOnPermissions();
+    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('payments').length === 0) {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreDisplayVoidLayaway', {
+        context: this
+      }, function (args) {
+        for (i = 0; i < me.hideVoidLayaway.length; i++) {
+          if (me.hideVoidLayaway[i]) {
+            me.hide();
+            break;
+          }
+        }
+      });
     } else {
-      this.hide();
-    }
-
-    haspayments = this.model.get('order').get('payments').length > 0;
-    if (!OB.MobileApp.model.get('terminal').layaway_voidpartiallypaid && haspayments) {
       this.hide();
     }
   },
@@ -123,11 +140,7 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order');
     this.setShowing(false);
-    receipt.on('change:isLayaway change:receiptLines', function (model) {
-      this.displayLogic();
-    }, this);
-
-    receipt.on('change:orderType', function (model) {
+    receipt.on('change:isLayaway change:receiptLines change:orderType', function (model) {
       this.displayLogic();
     }, this);
 
@@ -149,7 +162,8 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.receiptLayaway',
   events: {
-    onShowDivText: ''
+    onShowDivText: '',
+    onRearrangeEditButtonBar: ''
   },
   i18nLabel: 'OBPOS_LblReceiptLayaway',
   tap: function () {
@@ -184,6 +198,7 @@ enyo.kind({
         OB.UTIL.showWarning(OB.I18N.getLabel(error));
       });
     }
+    this.doRearrangeEditButtonBar();
   },
   displayLogic: function () {
     if (this.model.get('order').get('orderType') === 2) {
@@ -250,14 +265,14 @@ enyo.kind({
     this.model.get('order').cancelLayaway(this);
   },
   displayLogic: function () {
-    var isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
+    var me = this,
+        isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
 
     receipt = this.model.get('order');
 
-    isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
-    isLayaway = receipt.get('isLayaway') && receipt.get('orderType') !== 3;
+    isPaidReceipt = receipt.get('isPaid') && !receipt.get('isQuotation');
     isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
-    receiptLines = OB.MobileApp.model.receipt.get('receiptLines');
+    receiptLines = receipt.get('receiptLines');
 
     // Function to know the delivered status of the current order
 
@@ -285,34 +300,42 @@ enyo.kind({
       return 'DN';
     }
 
-    if (isLayaway && OB.MobileApp.model.hasPermission('OBPOS_receipt.cancelLayaway', true) && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
-      // Show if the current order is a layaway and has both the 'OBPOS_payments.cancelLayaway' property and some payment,
-      // or is a layaway and doesn't have the 'OBPOS_payments.cancelLayaway' property
-      this.show();
-      this.adjustVisibilityBasedOnPermissions();
-    } else if (isPaidReceipt && !isReturn && receipt.get('orderType') !== 3 && delivered() !== 'TD') {
-      // Show if the current order is a fully paid receipt but not fully delivered, return nor a cancelled ticket
+    function hasPayments() {
+      if (me.model.get('orderList').current && me.model.get('orderList').current.get('payments').length && _.find(me.model.get('orderList').current.get('payments').models, function (payment) {
+        return payment.get('isPrePayment');
+      })) {
+        return true;
+      }
+      return false;
+    }
+
+    if (!isReturn && delivered() !== 'TD' && (isPaidReceipt || (receipt.get('isLayaway') && (!OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) || hasPayments())))) {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
       this.hide();
     }
   },
+  updateLabel: function (model) {
+    if (model.get('isPaid') && this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CancelLayaway')) {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_CancelOrder'));
+    } else if (model.get('isLayaway') && this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CancelOrder')) {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
+    }
+  },
   init: function (model) {
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isLayaway change:receiptLines', function (model) {
-      this.displayLogic();
-    }, this);
 
-    receipt.on('change:orderType', function (model) {
+    receipt.on('change:isLayaway change:isPaid change:orderType change:documentType', function (model) {
+      this.updateLabel(model);
       this.displayLogic();
     }, this);
 
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
       if (changedModel.isOrder()) {
-        this.displayLogic();
+        this.displayLogic(changedModel);
         return;
       }
       if (changedModel.isMultiOrder()) {
@@ -335,7 +358,7 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblLayawayReceipt',
   tap: function () {
-    var negativeLines, me = this;
+    var negativeLines, deliveredLines, me = this;
     if (this.disabled) {
       return true;
     }
@@ -350,6 +373,15 @@ enyo.kind({
       });
       if (negativeLines) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+        return true;
+      }
+    }
+    if (this.model.get('order').get('doCancelAndReplace')) {
+      deliveredLines = _.find(this.model.get('order').get('lines').models, function (line) {
+        return line.get('deliveredQuantity') && OB.DEC.compare(line.get('deliveredQuantity')) === 1;
+      });
+      if (deliveredLines) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_LayawaysOrdersWithDeliveries'));
         return true;
       }
     }
@@ -381,34 +413,13 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isQuotation', function (model) {
-      if (!model.get('isQuotation')) {
-        me.updateVisibility(true);
-      } else {
-        me.updateVisibility(false);
-      }
-    }, this);
-    receipt.on('change:orderType', function (model) {
-      if ((model.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) || model.get('orderType') === 2) {
+    receipt.on('change:isEditable change:isQuotation change:orderType', function (model) {
+      if (!model.get('isEditable') || model.get('isQuotation') || (model.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) || model.get('orderType') === 2) {
         me.updateVisibility(false);
       } else {
         me.updateVisibility(true);
       }
     }, this);
-    receipt.on('change:isEditable change:replacedorder', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false) {
-          me.updateVisibility(false);
-          return;
-        }
-        if (newValue.get('isEditable') === true && (newValue.get('isQuotation') || newValue.get('replacedorder'))) {
-          me.updateVisibility(false);
-          return;
-        }
-      }
-      me.updateVisibility(true);
-    }, this);
-
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
       if (changedModel.isOrder()) {
         if (model.get('order').get('isEditable') && !this.model.get('order').get('isQuotation')) {
@@ -514,18 +525,11 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isQuotation change:isLayaway', function (model) {
-      if (!model.get('isQuotation') || model.get('isLayaway')) {
-        me.updateVisibility(true);
+    receipt.on('change:generateInvoice change:bp change:isQuotation', function (model) {
+      if (!model.get('isQuotation') && !model.get('generateInvoice') && model.get('bp').get('invoiceTerms') === 'I') {
+        this.updateVisibility(true);
       } else {
-        me.updateVisibility(false);
-      }
-    }, this);
-    receipt.on('change:generateInvoice', function (model) {
-      if (!model.get('generateInvoice')) {
-        me.updateVisibility(true);
-      } else {
-        me.updateVisibility(false);
+        this.updateVisibility(false);
       }
     }, this);
     receipt.on('change:bp', function (model) {
@@ -533,19 +537,6 @@ enyo.kind({
       if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
         me.taxIdValidation(model);
       }
-    }, this);
-    receipt.on('change:isEditable', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
-          this.updateVisibility(false);
-          return;
-        }
-        if (newValue.get('isEditable') === true && newValue.get('isQuotation')) {
-          this.updateVisibility(false);
-          return;
-        }
-      }
-      this.updateVisibility(true);
     }, this);
   }
 });
@@ -619,7 +610,8 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_print.receipt',
   events: {
-    onPrintReceipt: ''
+    onPrintReceipt: '',
+    onShowPopup: ''
   },
   i18nLabel: 'OBPOS_LblPrintReceipt',
   tap: function () {
@@ -628,8 +620,18 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doPrintReceipt();
+      if (this.receipt.get('isPaid') && !this.receipt.get('isQuotation')) {
+        this.doShowPopup({
+          popup: 'modalInvoices'
+        });
+      } else {
+        this.doPrintReceipt();
+      }
     }
+  },
+  init: function (model) {
+    this.receipt = model.get('order');
+    this.adjustVisibilityBasedOnPermissions();
   }
 });
 
@@ -993,6 +995,7 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.hasPermission(this.permission)) {
+      this.model.get('orderList').saveCurrent();
       this.doMultiOrders();
     }
   },
@@ -1214,7 +1217,7 @@ enyo.kind({
     receipt = this.model.get('order');
 
     isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
-    isLayaway = receipt.get('isLayaway') && receipt.get('orderType') !== 3;
+    isLayaway = receipt.get('isLayaway');
     isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
     haspayments = receipt.get('payments').length > 0;
     receiptLines = OB.MobileApp.model.receipt.get('receiptLines');
@@ -1246,7 +1249,7 @@ enyo.kind({
       var deliveredresult = delivered();
       if (isPaidReceipt && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplacePaidOrders', true) && deliveredresult === 'TD') {
         this.hide();
-      } else if (isLayaway && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && (deliveredresult === 'ND' && !haspayments)) {
+      } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && deliveredresult === 'ND' && !haspayments) {
         this.hide();
       } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelAndReplaceOrdersWithDeliveries', true) && (deliveredresult === 'TD' || deliveredresult === 'DN')) {
         this.hide();

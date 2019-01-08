@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -31,7 +32,7 @@ import org.openbravo.service.json.JsonUtils;
 
 public class Discount extends ProcessHQLQuery {
 
-  public static final Logger log = Logger.getLogger(Discount.class);
+  public static final Logger log = LogManager.getLogger();
 
   @Override
   protected boolean isAdminMode() {

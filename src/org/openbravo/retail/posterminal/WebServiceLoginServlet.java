@@ -14,7 +14,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
@@ -26,7 +27,7 @@ import org.openbravo.service.web.UserContextCache;
 
 public class WebServiceLoginServlet extends WebServiceAbstractServlet {
 
-  private static final Logger log = Logger.getLogger(WebServiceLoginServlet.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static final long serialVersionUID = 1L;
 

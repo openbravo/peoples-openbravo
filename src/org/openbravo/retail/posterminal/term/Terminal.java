@@ -19,7 +19,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -54,7 +55,7 @@ import org.openbravo.service.json.JsonConstants;
 
 public class Terminal extends JSONProcessSimple {
   public static final String terminalPropertyExtension = "OBPOS_TerminalExtension";
-  private static final Logger log = Logger.getLogger(Terminal.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any
@@ -75,7 +76,7 @@ public class Terminal extends JSONProcessSimple {
       OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
 
       // INITIAL VALIDATIONS
-      InitialValidations.validateTerminal(pOSTerminal);
+      InitialValidations.validateTerminal(pOSTerminal, jsonsent);
 
       // TO use terminalId in QueryTerminalProperty
       jsonsent.put("pos", pOSTerminal.getId());
@@ -200,7 +201,8 @@ public class Terminal extends JSONProcessSimple {
           + " as sessionTimeout, "
           + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()
-          + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype, PricingPriceList pricelist "
+          + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype inner join pos.organization AS org, "
+          + "PricingPriceList pricelist "
           + fromOrgImage
           + " where pos.$readableSimpleCriteria and pos.$activeCriteria and pos.searchKey =:searchKey and pricelist.id =:pricelistId "
           + whereOrgImage;

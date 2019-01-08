@@ -49,7 +49,6 @@ public class ProductCharacteristicAndConfiguration extends Product {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      // TODO: get optional filter
 
       Map<String, Object> paramValues = new HashMap<String, Object>();
 
@@ -82,7 +81,6 @@ public class ProductCharacteristicAndConfiguration extends Product {
           + " FROM ProductCharacteristic AS pc, ProductCharacteristicConf AS pcc " //
           + " WHERE pc.id = pcc.characteristicOfProduct.id ";
 
-      // TODO: get optional filter
       if (jsonsent.getJSONObject("parameters").has("filterProductList")
           && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
           && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {

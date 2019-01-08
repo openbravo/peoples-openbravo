@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -102,7 +102,7 @@ enyo.kind({
           name: 'variableamount',
           style: 'vertical-align: middle; display: table-cell; ',
           setAmount: function (amount) {
-            this.setContent(enyo.format(OB.I18N.getLabel('OBPOS_LblOtherMaxAmount'), OB.I18N.formatCurrency(amount, 2)));
+            this.setContent(enyo.format(OB.I18N.getLabel('OBPOS_LblOtherMaxAmount'), OB.I18N.formatCurrency(amount)));
           },
           initComponents: function () {
             this.setAmount(0);

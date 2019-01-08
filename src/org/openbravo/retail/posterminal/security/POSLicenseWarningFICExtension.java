@@ -23,8 +23,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.retail.posterminal.OBPOSApplications;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Computes warning message to be displayed if number of terminals has exceeded the warning
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 @ApplicationScoped
 public class POSLicenseWarningFICExtension implements FICExtension {
-  private static final Logger log = LoggerFactory.getLogger(POSLicenseRestrictions.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   private POSLicenseRestrictions restrictions;

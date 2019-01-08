@@ -25,7 +25,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -48,7 +49,7 @@ import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
-  public static final Logger log = Logger.getLogger(PaidReceipts.class);
+  public static final Logger log = LogManager.getLogger();
 
   public static final String paidReceiptsPropertyExtension = "PRExtension";
   public static final String paidReceiptsLinesPropertyExtension = "PRExtensionLines";
@@ -247,6 +248,9 @@ public class PaidReceipts extends JSONProcessSimple {
             if (promotion.getObdiscIdentifier() != null) {
               jsonPromo.put("identifier", promotion.getObdiscIdentifier());
             }
+            if (promotion.getObdiscQtyoffer() != null) {
+              jsonPromo.put("obdiscQtyoffer", promotion.getObdiscQtyoffer());
+            }
             promotions.put(jsonPromo);
             hasPromotions = true;
           }
@@ -257,19 +261,23 @@ public class PaidReceipts extends JSONProcessSimple {
             lineAmount = (new BigDecimal(paidReceiptLine.optString("quantity"))
                 .multiply(new BigDecimal(paidReceiptLine.optString("unitPrice"))));
           } else {
-            lineAmount = new BigDecimal(paidReceiptLine.optString("linegrossamount"));
+            lineAmount = new BigDecimal(paidReceiptLine.optString("lineGrossAmount"));
           }
-          paidReceiptLine.put("linegrossamount", lineAmount);
+          paidReceiptLine.put("lineGrossAmount", lineAmount);
 
           paidReceiptLine.put("promotions", promotions);
 
           // Related lines
           HQLPropertyList hqlPropertiesRelatedLines = ModelExtensionUtils
               .getPropertyExtensions(extensionsRelatedLines);
-          String hqlPaidReceiptsRelatedLines = "select "
+          String hqlPaidReceiptsRelatedLines = "SELECT " //
               + hqlPropertiesRelatedLines.getHqlSelect() //
-              + " from OrderlineServiceRelation as olsr where salesOrderLine.id = :salesOrderLineId " //
-              + " order by olsr.orderlineRelated.lineNo";
+              + " FROM OrderlineServiceRelation AS olsr " //
+              + "JOIN olsr.orderlineRelated AS rpl " //
+              + "JOIN rpl.product AS rp " //
+              + "JOIN olsr.salesOrderLine AS rsl " //
+              + "WHERE rsl.id = :salesOrderLineId " //
+              + "ORDER BY rpl.lineNo";
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           @SuppressWarnings("rawtypes")
           Query paidReceiptsRelatedLinesQuery = OBDal.getInstance().getSession()

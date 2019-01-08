@@ -167,7 +167,7 @@ enyo.kind({
       }
       me.$.renderLoading.hide();
       me.receiptList.reset();
-      me.$[this.getNameOfReceiptsListItemPrinter()].$.tempty.show();
+      me.$[me.getNameOfReceiptsListItemPrinter()].$.tempty.show();
       me.doHideSelector();
       var i, message, tokens;
 
@@ -217,8 +217,9 @@ enyo.kind({
       });
     }
 
-    function successCallback(data) {
+    function successCallback(data, criteria) {
       me.$.renderLoading.hide();
+      me.actionPrePrint(data, criteria);
       if (data && data.length > 0) {
         me.receiptList.reset(data.models);
         me.$[me.getNameOfReceiptsListItemPrinter()].$.tbody.show();
@@ -239,6 +240,8 @@ enyo.kind({
         property: inEvent.orderby.sortName ? inEvent.orderby.sortName : inEvent.orderby.name,
         sorting: inEvent.orderby.direction
       }];
+    } else if (inEvent.orderByClause) {
+      criteria._orderByClause = inEvent.orderByClause;
     } else {
       criteria._orderByClause = 'orderDateFrom desc, documentNo desc';
     }
@@ -255,29 +258,31 @@ enyo.kind({
       var fullFlt = _.find(me.filterModel.getProperties(), function (col) {
         return col.column === flt.column;
       });
-      if (flt.hqlFilter) {
-        criteria.remoteFilters.push({
-          value: flt.hqlFilter,
-          columns: [fullFlt.name],
-          operator: OB.Dal.FILTER,
-          params: [flt.value]
-        });
-      } else {
-        criteria.remoteFilters.push({
-          value: flt.value,
-          columns: [fullFlt.name],
-          operator: flt.operator || OB.Dal.STARTSWITH,
-          isId: flt.column === 'orderType' || flt.isId
-        });
-      }
-      if (flt.column === 'orderType' && flt.value === 'QT') {
-        //When filtering by quotations, use the specific documentType filter
-        criteria.remoteFilters.push({
-          value: OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations,
-          columns: ['documentTypeId'],
-          operator: '=',
-          isId: true
-        });
+      if (flt.value) {
+        if (flt.hqlFilter) {
+          criteria.remoteFilters.push({
+            value: flt.hqlFilter,
+            columns: [fullFlt.name],
+            operator: OB.Dal.FILTER,
+            params: [flt.value]
+          });
+        } else {
+          criteria.remoteFilters.push({
+            value: flt.value,
+            columns: [fullFlt.name],
+            operator: flt.operator || OB.Dal.STARTSWITH,
+            isId: flt.column === 'orderType' || flt.isId
+          });
+        }
+        if (flt.column === 'orderType' && flt.value === 'QT') {
+          //When filtering by quotations, use the specific documentType filter
+          criteria.remoteFilters.push({
+            value: OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations,
+            columns: ['documentTypeId'],
+            operator: '=',
+            isId: true
+          });
+        }
       }
     });
 
@@ -289,7 +294,7 @@ enyo.kind({
 
     OB.Dal.find(this.filterModel, criteria, function (data) {
       if (data) {
-        successCallback(data);
+        successCallback(data, criteria);
       } else {
         errorCallback();
       }
@@ -301,6 +306,9 @@ enyo.kind({
     this.model = model;
     this.receiptList = new Backbone.Collection();
     this.$[this.getNameOfReceiptsListItemPrinter()].setCollection(this.receiptList);
+  },
+  actionPrePrint: function () {
+
   }
 });
 
@@ -405,7 +413,7 @@ enyo.kind({
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
-      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, true);
+      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
     }, this);
   }
 });

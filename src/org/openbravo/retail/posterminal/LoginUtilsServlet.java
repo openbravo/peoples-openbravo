@@ -20,7 +20,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -53,7 +54,7 @@ import org.openbravo.retail.posterminal.utility.OBPOSPrintTemplateReader;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
-  public static final Logger log = Logger.getLogger(LoginUtilsServlet.class);
+  public static final Logger log = LogManager.getLogger();
   private static final long serialVersionUID = 1L;
 
   private String[] getClientOrgIds(String terminalName) {
@@ -127,7 +128,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         extraFilter = "not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or ";
       }
 
-      String hqlUser = "select distinct user.name, user.username, user.id "
+      String hqlUser = "select distinct user.name, user.username, user.id, user.firstName, user.lastName "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, "
           + "ADFormAccess formAccess, OBPOS_Applications terminal "
           + "where user.active = true and "
@@ -176,6 +177,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         item.put("name", qryUserObjectItem[0]);
         item.put("userName", qryUserObjectItem[1]);
         item.put("userId", qryUserObjectItem[2]);
+        item.put("firstName", qryUserObjectItem[3]);
+        item.put("lastName", qryUserObjectItem[4]);
 
         // Get the image for the current user
         String hqlImage = "select image.mimetype, image.bindaryData "

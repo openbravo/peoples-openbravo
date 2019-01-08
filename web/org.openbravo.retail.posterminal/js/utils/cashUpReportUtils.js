@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -45,7 +45,7 @@
   }
 
   function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
-    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, replacedOrder, amount, precision, netSales = OB.DEC.Zero,
+    var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay, amount, precision, netSales = OB.DEC.Zero,
         grossSales = OB.DEC.Zero,
         netReturns = OB.DEC.Zero,
         grossReturns = OB.DEC.Zero,
@@ -56,42 +56,46 @@
 
     cashUp.at(0).set('transitionsToOnline', OB.UTIL.localStorage.getItem('transitionsToOnline'));
     cashUp.at(0).set('logclientErrors', OB.UTIL.localStorage.getItem('logclientErrors'));
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalLatencyTime'))) {
+      cashUp.at(0).set('averageLatency', parseInt(OB.UTIL.localStorage.getItem('totalLatencyTime'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalLatencyMeasures'), 10));
+    }
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalUploadBandwidth'))) {
+      cashUp.at(0).set('averageUploadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwidth'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10));
+    }
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'))) {
+      cashUp.at(0).set('averageDownloadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10));
+    }
 
     if (j < receipt.length && !receipt[j].has('obposIsDeleted')) {
       order = receipt[j];
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {
-        _.each(order.get('lines').models, function (line) {
-          if (order.get('isPaid')) {
-            return;
-          }
-          if (order.get('priceIncludesTax')) {
-            gross = line.get('lineGrossAmount');
-          } else {
-            gross = line.get('discountedGross');
-          }
-          //Sales order: Positive line
-          if (!(order.has('isQuotation') && order.get('isQuotation'))) {
-            replacedOrder = (order.get('replacedorder') && line.get('remainingQuantity'));
-            if (orderType !== 3 && !order.get('isLayaway') && !replacedOrder) {
-              if (line.get('qty') > 0) {
-                netSales = OB.DEC.add(netSales, line.get('net'));
-                grossSales = OB.DEC.add(grossSales, gross);
-              } else if (line.get('qty') < 0) {
-                netReturns = OB.DEC.add(netReturns, -line.get('net'));
-                grossReturns = OB.DEC.add(grossReturns, -gross);
-              }
-            } else if (orderType === 3) {
-              if (line.get('qty') > 0) {
-                netSales = OB.DEC.add(netSales, -line.get('net'));
-                grossSales = OB.DEC.add(grossSales, -gross);
-              } else {
-                netReturns = OB.DEC.add(netReturns, line.get('net'));
-                grossReturns = OB.DEC.add(grossReturns, gross);
-              }
+        if (!(order.has('isQuotation') && order.get('isQuotation')) && !order.get('isPaid') && !(order.get('isLayaway') && !order.get('voidLayaway'))) {
+          _.each(order.get('lines').models, function (line) {
+            if (order.get('priceIncludesTax')) {
+              gross = line.get('lineGrossAmount');
+            } else {
+              gross = line.get('discountedGross');
             }
-          }
-        });
+            if (order.get('cancelLayaway')) {
+              // Cancel Layaway
+              netSales = OB.DEC.add(netSales, line.get('net'));
+              grossSales = OB.DEC.add(grossSales, gross);
+            } else if (order.get('voidLayaway')) {
+              // Void Layaway
+              netSales = OB.DEC.add(netSales, -line.get('net'));
+              grossSales = OB.DEC.add(grossSales, -gross);
+            } else if (line.get('qty') > 0) {
+              // Sales order: Positive line
+              netSales = OB.DEC.add(netSales, line.get('net'));
+              grossSales = OB.DEC.add(grossSales, gross);
+            } else if (line.get('qty') < 0) {
+              // Return from customer or Sales with return: Negative line
+              netReturns = OB.DEC.add(netReturns, -line.get('net'));
+              grossReturns = OB.DEC.add(grossReturns, -gross);
+            }
+          });
+        }
         cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), netSales));
         cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), grossSales));
         cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), netReturns));
@@ -104,7 +108,7 @@
         order.get('lines').each(function (line, taxIndex) {
           var taxLines, taxLine;
           taxLines = line.get('taxLines');
-          if (orderType === 1 || line.get('qty') < 0) {
+          if (orderType === 1 || (line.get('qty') < 0 && !order.get('cancelLayaway') && !order.get('voidLayaway'))) {
             taxOrderType = '1';
           } else {
             taxOrderType = '0';
@@ -112,16 +116,10 @@
 
           _.each(taxLines, function (taxLine) {
             if (!(order.has('isQuotation') && order.get('isQuotation'))) {
-              if (line.get('qty') > 0 && orderType !== 3 && !order.get('isLayaway')) {
+              if (order.get('cancelLayaway') || (line.get('qty') > 0 && !order.get('isLayaway'))) {
                 taxAmount = taxLine.amount;
-              } else if (line.get('qty') < 0 && orderType !== 3 && !order.get('isLayaway')) {
+              } else if (order.get('voidLayaway') || (line.get('qty') < 0 && !order.get('isLayaway'))) {
                 taxAmount = -taxLine.amount;
-              } else if (orderType === 3) {
-                if (line.get('qty') > 0) {
-                  taxAmount = -taxLine.amount;
-                } else {
-                  taxAmount = taxLine.amount;
-                }
               }
             }
 
@@ -177,10 +175,8 @@
             }
             precision = OB.MobileApp.model.paymentnames[auxPay.get('searchKey')].obposPosprecision;
             amount = _.isNumber(payment.get('amountRounded')) ? payment.get('amountRounded') : payment.get('amount');
-            if (payment.get('amount') < 0) {
+            if (amount < 0) {
               auxPay.set('totalReturns', OB.DEC.sub(auxPay.get('totalReturns'), amount, precision));
-            } else if (orderType === 3) { // void layaway 
-              auxPay.set('totalReturns', OB.DEC.add(auxPay.get('totalReturns'), amount, precision));
             } else {
               auxPay.set('totalSales', OB.DEC.add(auxPay.get('totalSales'), amount, precision));
             }
@@ -254,6 +250,7 @@
   };
   OB.UTIL.createNewCashupFromServer = function (cashup, callback, oldCashupPaymentMethods) {
     OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
+    OB.UTIL.resetNetworkInformation();
     OB.UTIL.resetNumberOfLogClientErrors();
     var promises = [];
     OB.Dal.save(cashup, function () {
@@ -342,6 +339,7 @@
   OB.UTIL.createNewCashup = function (callback, lastCashupModel) {
     // Create the cashup empty
     OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
+    OB.UTIL.resetNetworkInformation();
     OB.UTIL.resetNumberOfLogClientErrors();
     var uuid = OB.UTIL.get_UUID();
     OB.Dal.save(new OB.Model.CashUp({
@@ -797,7 +795,7 @@
     });
   };
 
-  OB.UTIL.getPaymethodCashUp = function (payMthds, objToSend, cashUp) {
+  OB.UTIL.getPaymethodCashUp = function (payMthds, objToSend, cashUp, tx) {
     _.each(OB.MobileApp.model.get('payments'), function (curModel) {
       var cashPaymentMethodInfo = {
         paymentMethodId: 0,
@@ -836,7 +834,7 @@
     var i;
     for (i = 0; i < payMthds.length; i++) {
       payMthds.at(i).set('newPaymentMethod', false);
-      OB.Dal.save(payMthds.at(i), null, null, false);
+      OB.Dal.saveInTransaction(tx, payMthds.at(i), null, null, false);
     }
   };
 
@@ -875,6 +873,15 @@
     cashUp.at(0).set('lastcashupeportdate', OB.I18N.normalizeDate(new Date()));
     cashUp.at(0).set('transitionsToOnline', OB.UTIL.localStorage.getItem('transitionsToOnline'));
     cashUp.at(0).set('logclientErrors', OB.UTIL.localStorage.getItem('logclientErrors'));
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalLatencyTime'))) {
+      cashUp.at(0).set('averageLatency', parseInt(OB.UTIL.localStorage.getItem('totalLatencyTime'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalLatencyMeasures'), 10));
+    }
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalUploadBandwidth'))) {
+      cashUp.at(0).set('averageUploadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwidth'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10));
+    }
+    if (!OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'))) {
+      cashUp.at(0).set('averageDownloadBandwidth', parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'), 10) / parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10));
+    }
     var objToSend = new Backbone.Model({
       posterminal: OB.MobileApp.model.get('terminal').id,
       posTerminal: OB.MobileApp.model.get('terminal').id,
@@ -893,7 +900,10 @@
       creationDate: (new Date(cashUp.at(0).get('creationDate'))).toISOString(),
       lastcashupeportdate: cashUp.at(0).get('lastcashupeportdate'),
       transitionsToOnline: cashUp.at(0).get('transitionsToOnline'),
-      logclientErrors: cashUp.at(0).get('logclientErrors')
+      logclientErrors: cashUp.at(0).get('logclientErrors'),
+      averageLatency: cashUp.at(0).get('averageLatency'),
+      averageUploadBandwidth: cashUp.at(0).get('averageUploadBandwidth'),
+      averageDownloadBandwidth: cashUp.at(0).get('averageDownloadBandwidth')
     });
 
     //process the payment method cash ups
@@ -901,7 +911,7 @@
       'cashup_id': cashUp.at(0).get('id'),
       '_orderByClause': 'name asc'
     }, function (payMthds) {
-      OB.UTIL.getPaymethodCashUp(payMthds, objToSend, cashUp);
+      OB.UTIL.getPaymethodCashUp(payMthds, objToSend, cashUp, tx);
 
       //process the taxs cash ups
       OB.Dal.findInTransaction(tx, OB.Model.TaxCashUp, {

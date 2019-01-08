@@ -112,6 +112,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/offlineprinter",
         "model/productbom",
         "model/taxcategorybom",
+        "model/orderassociationsfilter",
+        "model/prepaymentrules",
         "components/modalcancel",
         "components/subwindow",
         "components/leftsubwindow",
@@ -122,12 +124,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalmodulesindev",
         "components/modalselectprinters",
         "components/modalmorepaymentmethods",
+        "components/modalDeliveryChange",
         // Web POS window
         "utils/eventbus",
         "utils/attributeUtils",
         "utils/cashUpReportUtils",
         "utils/cashManagementUtils",
         "utils/ticketCloseUtils",
+        "utils/prepaymentUtils",
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",
@@ -165,11 +169,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/servicesfilter",
         "components/modalselectopenreceipts",
         "components/modalsplitlines",
+        "components/modalassociatetickets",
+        "components/modalremoveassociatedtickets",
         "components/openRelatedReceiptsModal",
 
         // Old Tickets
         "components/modalpaidreceipts",
-        "components/modalmultiorders",
+        "components/modal-pay-open-tickets",
+        "components/modalinvoices",
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
@@ -228,6 +235,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
         "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
         // Point of sale modals
+        "pointofsale/view/modals/modalstockdiscontinued",
         "pointofsale/view/modals/modalstockinstore",
         "pointofsale/view/modals/modalstockinstoreclickable",
         "pointofsale/view/modals/modalstockinotherstore",

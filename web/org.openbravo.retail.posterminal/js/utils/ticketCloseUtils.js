@@ -17,10 +17,25 @@
     var mergeable, addPaymentCallback, prevChange;
 
     // Manage change payments (if there is change)
-    if (receipt.get('changePayments')) {
+    if (receipt.get('changePayments') && receipt.get('changePayments').length) {
       prevChange = receipt.get('change');
       mergeable = !OB.MobileApp.model.get('terminal').multiChange && !OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true);
       addPaymentCallback = _.after(receipt.get('changePayments').length, function () {
+        // Set the 'payment' and 'paymentWithSign' attributes
+        var paidAmt = OB.DEC.Zero;
+        _.each(receipt.get('payments').models, function (payment) {
+          if (payment.get('isPrePayment') || payment.get('isReversePayment') || !receipt.isNegative()) {
+            paidAmt = OB.DEC.add(paidAmt, payment.get('origAmount'));
+          } else {
+            paidAmt = OB.DEC.sub(paidAmt, payment.get('origAmount'));
+          }
+        });
+        receipt.set('payment', OB.DEC.abs(paidAmt), {
+          silent: true
+        });
+        receipt.set('paymentWithSign', paidAmt, {
+          silent: true
+        });
         // restore attributes
         receipt.set('change', prevChange, {
           silent: true
@@ -70,7 +85,7 @@
         var negativeLines = _.filter(receipt.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
-        if (negativeLines === receipt.get('lines').models.length) {
+        if (negativeLines === receipt.get('lines').models.length || (negativeLines > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) {
           receipt.setOrderType('OBPOS_receipt.return', OB.DEC.One, {
             applyPromotions: false,
             saveOrder: false
@@ -97,7 +112,7 @@
         paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
         if (paymentKind && paymentKind.paymentMethod && paymentKind.paymentMethod.leaveascredit) {
           receipt.set('payment', OB.DEC.sub(receipt.get('payment'), receipt.get('payments').models[i].get('amount')));
-          receipt.set('paidOnCredit', true);
+          receipt.set('payOnCredit', true);
         }
       }
 
@@ -130,7 +145,8 @@
 
           // verify that the receipt was not cancelled
           if (args.isCancelled !== true) {
-            var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
+            var orderToPrint = OB.UTIL.clone(args.frozenReceipt),
+                invoice = orderToPrint.get('calculatedInvoice');
             orderToPrint.get('payments').reset();
             clonedCollection.each(function (model) {
               orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
@@ -141,6 +157,42 @@
             receipt.trigger('print', orderToPrint, {
               offline: true
             });
+            if (invoice && invoice.get('id')) {
+              var invoiceToPrint = OB.UTIL.clone(invoice),
+                  printInvoice = function () {
+                  receipt.trigger('print', invoiceToPrint, {
+                    offline: true
+                  });
+                  };
+              _.each(invoice.get('lines').models, function (invoiceLine) {
+                invoiceLine.unset('product');
+              });
+              if (!OB.MobileApp.model.hasPermission('OBPOS_print.return_invoice', true)) {
+                var positiveLine = _.find(receipt.get('lines').models, function (line) {
+                  return line.get('qty') >= 0;
+                });
+                if (!positiveLine) {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPrintInvoices'), OB.I18N.getLabel('OBPOS_LblPrintInvoicesReturn'), [{
+                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                    action: function () {
+                      printInvoice();
+                    }
+                  }, {
+                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                  }], {
+                    autoDismiss: false
+                  });
+                } else {
+                  if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
+                    printInvoice();
+                  }
+                }
+              } else {
+                if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
+                  printInvoice();
+                }
+              }
+            }
 
             // Verify that the receipt has not been changed while the ticket has being closed
             var diff = OB.UTIL.diffJson(receipt.serializeToJSON(), args.diffReceipt.serializeToJSON());
@@ -210,13 +262,6 @@
             callbackErrorOrderCancelled();
             return;
           } else {
-            if (_.isUndefined(_.find(receipt.get('lines').models, function (line) {
-              var qty = line.get('qty') ? line.get('qty') : 0,
-                  deliveredQuantity = line.get('deliveredQuantity') ? line.get('deliveredQuantity') : 0;
-              return (qty > 0 && qty > deliveredQuantity) || (qty < 0 && qty < deliveredQuantity);
-            }))) {
-              receipt.set('generateShipment', false);
-            }
             callbackPaymentAccepted(openDrawer);
           }
         }, function () {
@@ -233,7 +278,7 @@
           triggerPaymentAccepted(false);
         }
       });
-    } else if (OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross()) && _.isUndefined(receipt.get('paidInNegativeStatusAmt')) && !receipt.isLayaway() && !receipt.get('paidOnCredit')) {
+    } else if (receipt.getPayment() !== OB.DEC.abs(receipt.getGross()) && !receipt.isLayaway() && !receipt.get('payOnCredit') && OB.DEC.abs(receipt.get('obposPrepaymentamt')) === OB.DEC.abs(receipt.getGross()) && !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       callbackPaymentAmountDistinctThanReceipt(function (result) {
         if (result === true) {
           triggerPaymentAccepted(false);

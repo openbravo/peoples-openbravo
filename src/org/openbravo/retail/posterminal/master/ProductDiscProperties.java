@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -24,7 +25,7 @@ import org.openbravo.mobile.core.model.ModelExtension;
 @Qualifier(Product.productDiscPropertyExtension)
 public class ProductDiscProperties extends ModelExtension {
 
-  private static final Logger log = Logger.getLogger(ProductDiscProperties.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {

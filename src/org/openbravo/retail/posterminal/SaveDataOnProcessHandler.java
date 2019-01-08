@@ -12,7 +12,8 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -24,7 +25,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 @ApplicationScoped
 public class SaveDataOnProcessHandler extends BaseActionHandler {
-  private static final Logger log = Logger.getLogger(SaveDataOnProcessHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public JSONObject execute(Map<String, Object> parameters, String content) {

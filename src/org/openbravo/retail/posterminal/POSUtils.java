@@ -6,14 +6,6 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*
- ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
- * Licensed under the Openbravo Commercial License version 1.0
- * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
- * or in the legal folder of this module distribution.
- ************************************************************************************
- */
 
 package org.openbravo.retail.posterminal;
 
@@ -25,7 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -63,7 +56,7 @@ import org.openbravo.service.importprocess.ImportEntry;
  */
 public class POSUtils {
 
-  public static final Logger log = Logger.getLogger(POSUtils.class);
+  public static final Logger log = LogManager.getLogger();
   public static final String MODULE_JAVA_PACKAGE = "org.openbravo.retail.posterminal";
   public static final String APP_NAME = "WebPOS";
   public static final String WEB_POS_FORM_ID = "B7B7675269CD4D44B628A2C6CF01244F";
@@ -855,4 +848,5 @@ public class POSUtils {
     }
     return isSynchronizeModeActive;
   }
+
 }

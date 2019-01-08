@@ -171,7 +171,7 @@
         var filesArray = [],
             callbackGetFiles, callbackGetBinaryData, recursivePrintFiles, i = 0;
 
-        if (receipt.get('isPaid') || receipt.get('payment') >= receipt.get('gross') || (receipt.isLayaway() && receipt.get('payment') > 0)) {
+        if (receipt.get('isPaid') || receipt.isFullyPaid() || (receipt.isLayaway() && receipt.get('payment') > 0)) {
 
           recursivePrintFiles = function () {
             if (filesArray.length > 0) {
@@ -288,7 +288,9 @@
 
       var hasNegativeLines = _.filter(receipt.get('lines').models, function (line) {
         return line.get('qty') < 0;
-      }).length === receipt.get('lines').size() ? true : false;
+      }).length;
+
+      hasNegativeLines = (hasNegativeLines === receipt.get('lines').size() || (hasNegativeLines > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) ? true : false;
 
       var linesToRemove = [];
       receipt.get('lines').forEach(function (line) {
@@ -303,7 +305,7 @@
       receipt.get('lines').remove(linesToRemove);
 
       receipt.get('payments').forEach(function (payment) {
-        if (receipt.getPaymentStatus().isNegative && !payment.get('isPrePayment') && !payment.get('isReversePayment')) {
+        if (receipt.isNegative() && !payment.get('isPrePayment') && !payment.get('isReversePayment')) {
           payment.set('amount', -Math.abs(payment.get('amount')));
           payment.set('origAmount', -Math.abs(payment.get('origAmount')));
         }
@@ -315,7 +317,7 @@
         args.template = me.templatecanceledreceipt;
       } else if (receipt.get('cancelLayaway')) {
         args.template = me.templatecanceledlayaway;
-      } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
+      } else if (receipt.get('isInvoice')) {
         if (receipt.get('orderType') === 1 || hasNegativeLines) {
           args.template = me.templatereturninvoice;
         } else if (receipt.get('isQuotation')) {

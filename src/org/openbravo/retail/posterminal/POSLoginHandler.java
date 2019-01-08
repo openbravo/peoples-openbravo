@@ -17,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
@@ -36,7 +37,7 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.enterprise.Warehouse;
 
 public class POSLoginHandler extends MobileCoreLoginHandler {
-  private static final Logger log = Logger.getLogger(OrderLoader.class);
+  private static final Logger log = LogManager.getLogger();
   private static final long serialVersionUID = 1L;
   public static final String WEB_POS_SESSION = "OBPOS_POS";
 
@@ -208,7 +209,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   // 7. Role-OrgAccess relation is active
   // 8. Distance between store orgnization and organizations allowed for that role is the smallest
   // one
-  private Role getNearestRoleValidToLoginInWebPosTerminalForCertainUser(User currentUser,
+  public static Role getNearestRoleValidToLoginInWebPosTerminalForCertainUser(User currentUser,
       OBPOSApplications terminal) {
     StringBuilder hqlQueryStr = new StringBuilder();
     hqlQueryStr

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2018 Openbravo S.L.U.
+ * Copyright (C) 2014-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -344,9 +344,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     this.get('paymentList').on('change:counted', function (mod) {
-      mod.set('difference', OB.DEC.sub(mod.get('counted'), OB.Utilities.Number.roundJSNumber(mod.get('expected'), 2)));
+      mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
       if (mod.get('foreignCounted') !== null && mod.get('foreignCounted') !== undefined && mod.get('foreignExpected') !== null && mod.get('foreignExpected') !== undefined) {
-        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), OB.Utilities.Number.roundJSNumber(mod.get('foreignExpected'), 2)));
+        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), mod.get('foreignExpected')));
       }
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function (total, model) {
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;
@@ -745,8 +745,21 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                     cashupModel: me
                   }, function (args) {
                     OB.MobileApp.model.runSyncProcess(function () {
-                      OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
-                      callbackFinishedSuccess();
+                      if (!OB.MobileApp.model.get('terminal').ismaster && !OB.MobileApp.model.get('terminal').isslave) {
+                        OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
+                        callbackFinishedSuccess();
+                        return;
+                      }
+                      OB.Dal.find(OB.Model.CashUp, {
+                        'isprocessed': 'N'
+                      }, function (cashUps) {
+                        OB.UTIL.composeCashupInfo(cashUps, null, function () {
+                          OB.MobileApp.model.runSyncProcess(function () {
+                            OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
+                            callbackFinishedSuccess();
+                          });
+                        });
+                      });
                     }, function () {
                       OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
                       callbackFinishedWrongly();

@@ -20,7 +20,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -33,7 +34,7 @@ import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 
 public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
-  public static final Logger log = Logger.getLogger(PaidReceiptsFilter.class);
+  public static final Logger log = LogManager.getLogger();
 
   public static final String paidReceiptsFilterPropertyExtension = "PaidReceiptsFilter_Extension";
 
@@ -66,6 +67,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     String orderTypeFilter = getOrderTypeFilter(jsonsent);
     String orderTypeHql;
     boolean isVerifiedReturns = false;
+    boolean isPayOpenTicket = false;
 
     switch (orderTypeFilter) {
     case "RET":
@@ -81,6 +83,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       orderTypeHql = "and ord.documentType.return = false and ord.documentType.sOSubType <> 'OB' and ord.obposIslayaway = false and cancelledorder is null";
       isVerifiedReturns = true;
       break;
+    case "payOpenTickets":
+      orderTypeHql = "and ord.grandtotal>0 and ord.documentType.sOSubType <> 'OB' and ord.documentStatus <> 'CL'";
     default:
       orderTypeHql = "";
     }
@@ -95,7 +99,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     hqlPaidReceipts
         .append(" and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
     hqlPaidReceipts.append(" and ord.documentStatus <> 'CA' ");
-    if (!isVerifiedReturns) {
+    if (!isVerifiedReturns && !isPayOpenTicket) {
       // verified returns is already filtering by delivered = true
       hqlPaidReceipts.append(" and (ord.documentStatus <> 'CL' or ord.delivered = true) ");
     }

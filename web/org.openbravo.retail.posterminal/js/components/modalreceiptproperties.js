@@ -145,9 +145,12 @@ enyo.kind({
       }
     }
   },
-  executeOnShow: function () {
+  executeOnShow: function (isSender, inEvent) {
     var bp = this.model.get('bp'),
         p;
+    this.waterfall('onSetModel', {
+      model: this.model
+    });
     if (bp && bp.get('locId') === bp.get('shipLocId')) {
       this.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
       this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));

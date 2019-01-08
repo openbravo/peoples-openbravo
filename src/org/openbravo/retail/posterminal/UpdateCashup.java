@@ -9,12 +9,12 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -31,12 +31,11 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
-import org.openbravo.service.importprocess.ImportEntryManager;
 import org.openbravo.service.json.JsonToDataConverter;
 
 public class UpdateCashup {
 
-  private static final Logger log = Logger.getLogger(ImportEntryManager.class);
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Get and update a cashup. If cashup not exist it's created, otherwise update the cashup data
@@ -248,8 +247,7 @@ public class UpdateCashup {
                       paymentMethod.has("foreignDifference") ? paymentMethod
                           .getString("foreignDifference") : paymentMethod.getString("difference"));
                 }
-                payment.put("totalCounted",
-                    expected.add(difference).setScale(2, RoundingMode.HALF_UP).toString());
+                payment.put("totalCounted", expected.add(difference));
               }
             }
           }
@@ -407,6 +405,9 @@ public class UpdateCashup {
     OBPOSAppTermStatHist terminalStatusHistory = null;
     Long transitionsToOnline;
     Long numberOfLogClientErrors;
+    Long averageLatency;
+    Long averageUploadBandwidth;
+    Long averageDownloadBandwidth;
 
     // Terminal Status History record
     OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
@@ -428,6 +429,9 @@ public class UpdateCashup {
         terminalStatusHistory.setPOSTerminal(posTerminal);
         terminalStatusHistory.setTransitiontoonline(0L);
         terminalStatusHistory.setErrorswhileimporting(0L);
+        terminalStatusHistory.setAveragelatency(0L);
+        terminalStatusHistory.setAverageuploadbandwidth(0L);
+        terminalStatusHistory.setAveragedownloadbandwidth(0L);
         terminalStatusHistory.setLogclienterrors(0L);
         terminalStatusHistory.setNewOBObject(true);
         OBDal.getInstance().save(terminalStatusHistory);
@@ -446,6 +450,25 @@ public class UpdateCashup {
     if (jsonCashup.has("logclientErrors") && !jsonCashup.isNull("logclientErrors")) {
       numberOfLogClientErrors = jsonCashup.getLong("logclientErrors");
       terminalStatusHistory.setLogclienterrors(numberOfLogClientErrors);
+    }
+
+    // Get average latency from json
+    if (jsonCashup.has("averageLatency") && !jsonCashup.isNull("averageLatency")) {
+      averageLatency = jsonCashup.getLong("averageLatency");
+      terminalStatusHistory.setAveragelatency(averageLatency);
+    }
+
+    // Get average upload bandwidth from json
+    if (jsonCashup.has("averageUploadBandwidth") && !jsonCashup.isNull("averageUploadBandwidth")) {
+      averageUploadBandwidth = jsonCashup.getLong("averageUploadBandwidth");
+      terminalStatusHistory.setAverageuploadbandwidth(averageUploadBandwidth);
+    }
+
+    // Get average download bandwidth from json
+    if (jsonCashup.has("averageDownloadBandwidth")
+        && !jsonCashup.isNull("averageDownloadBandwidth")) {
+      averageDownloadBandwidth = jsonCashup.getLong("averageDownloadBandwidth");
+      terminalStatusHistory.setAveragedownloadbandwidth(averageDownloadBandwidth);
     }
 
   }

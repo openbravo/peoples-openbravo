@@ -28,7 +28,8 @@ import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -81,7 +82,7 @@ public class ExternalOrderLoader extends OrderLoader {
 
   public static final String APP_NAME = "External";
 
-  private static final Logger log = Logger.getLogger(ExternalOrderLoader.class);
+  private static final Logger log = LogManager.getLogger();
 
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
   private static ThreadLocal<Throwable> exception = new ThreadLocal<Throwable>();
@@ -421,7 +422,9 @@ public class ExternalOrderLoader extends OrderLoader {
 
   // collect all the successfully created orders
   protected JSONObject successMessage(JSONObject jsonOrder) throws Exception {
-    processedOrders.get().put(processedOrders.get().length(), jsonOrder);
+    if (processedOrders.get() != null) {
+      processedOrders.get().put(processedOrders.get().length(), jsonOrder);
+    }
     return super.successMessage(jsonOrder);
   }
 
@@ -582,19 +585,15 @@ public class ExternalOrderLoader extends OrderLoader {
     final String step = orderJson.getString("step");
     if ("create".equals(step)) {
       orderJson.put("payment", -1);
-      orderJson.put("generateInvoice", false);
-      orderJson.put("generateShipment", false);
-      orderJson.put("deliver", false);
       orderJson.put("isLayaway", false);
     } else if ("pay".equals(step)) {
       orderJson.put("payment", -1);
-      orderJson.put("generateInvoice", false);
-      orderJson.put("generateShipment", false);
-      orderJson.put("deliver", false);
       orderJson.put("isLayaway", true);
     } else if ("ship".equals(step)) {
       orderJson.put("payment", orderJson.getDouble("grossAmount"));
+      orderJson.put("generateExternalInvoice", true);
       orderJson.put("generateShipment", true);
+      orderJson.put("deliver", true);
       orderJson.put("isLayaway", true);
     } else if ("all".equals(step)) {
       copyPropertyValue(orderJson, "grossAmount", "payment");
@@ -774,6 +773,14 @@ public class ExternalOrderLoader extends OrderLoader {
         paid = paid.add(origAmount);
       }
       orderJson.put("payment", paid.doubleValue());
+      BigDecimal gross = BigDecimal.valueOf(orderJson.getDouble("gross")).abs();
+      boolean fullyPaid = BigDecimal.ZERO.compareTo(gross) != 0
+          && gross.compareTo(BigDecimal.valueOf(orderJson.getDouble("payment")).abs()) != 1;
+      if (fullyPaid) {
+        orderJson.put("completeTicket", true);
+      }
+    } else {
+      orderJson.put("completeTicket", true);
     }
   }
 
@@ -858,7 +865,6 @@ public class ExternalOrderLoader extends OrderLoader {
     check(json, "discountRule", msg);
     check(json, "quantity", msg);
     check(json, "amount", msg);
-    check(json, "baseUnitPrice", msg);
     check(json, "unitDiscount", msg);
   }
 
@@ -931,7 +937,7 @@ public class ExternalOrderLoader extends OrderLoader {
 
   protected String getProductIdFromJson(JSONObject json) throws JSONException {
     String productId = resolveJsonValueNoException(Product.ENTITY_NAME, json.getString("product"),
-        new String[] { "id", "searchKey", "name", "uPCEAN" });
+        true, new String[] { "id", "searchKey", "name", "uPCEAN" });
     if (productId == null) {
       productId = findProductIdForLine(json);
     }
@@ -1183,13 +1189,20 @@ public class ExternalOrderLoader extends OrderLoader {
     if (!jsonObject.has("posTerminal")) {
       new OBException("Property posTerminal not found in json " + jsonObject);
     }
-    final String posId = resolveJsonValue(OBPOSApplications.ENTITY_NAME,
+    final String posId = resolveJsonValueWithoutOrgFilter(OBPOSApplications.ENTITY_NAME,
         jsonObject.getString("posTerminal"), new String[] { "id", "name", "searchKey" });
     final OBPOSApplications result = OBDal.getInstance().get(OBPOSApplications.class, posId);
 
     if (result == null) {
       throw new OBException("No pos terminal found using id " + posId + " json " + jsonObject);
     }
+
+    // Context will be set according to the terminal
+    OBContext.setOBContext(
+        OBContext.getOBContext().getUser().getId(),
+        POSLoginHandler.getNearestRoleValidToLoginInWebPosTerminalForCertainUser(
+            OBContext.getOBContext().getUser(), result).getId(), result.getClient().getId(), result
+            .getOrganization().getId());
     return result;
   }
 
@@ -1205,7 +1218,17 @@ public class ExternalOrderLoader extends OrderLoader {
    *          the properties of the entity which are one-by-one used to query
    */
   protected String resolveJsonValue(String entityName, String searchValue, String... properties) {
-    final String id = resolveJsonValueNoException(entityName, searchValue, properties);
+    final String id = resolveJsonValueNoException(entityName, searchValue, true, properties);
+    if (id == null) {
+      throw new OBException("Value " + searchValue + " does not resolve to an instance of "
+          + entityName);
+    }
+    return id;
+  }
+
+  protected String resolveJsonValueWithoutOrgFilter(String entityName, String searchValue,
+      String... properties) {
+    final String id = resolveJsonValueNoException(entityName, searchValue, false, properties);
     if (id == null) {
       throw new OBException("Value " + searchValue + " does not resolve to an instance of "
           + entityName);
@@ -1218,7 +1241,7 @@ public class ExternalOrderLoader extends OrderLoader {
    * value does not resolve to an instance and will not throw an exception in that case.
    */
   private String resolveJsonValueNoException(String entityName, String searchValue,
-      String... properties) {
+      boolean addOrgFilter, String... properties) {
 
     // the deprecated resolve will not resolve the value by default,
     // only an overriding class may do something
@@ -1231,6 +1254,7 @@ public class ExternalOrderLoader extends OrderLoader {
 
     // not found in normal way, use the dataresolvers
     for (DataResolver dataResolver : getDataResolvers()) {
+      dataResolver.setOrgFilter(addOrgFilter);
       String id = dataResolver.resolveJsonValue(entityName, searchValue, properties);
       if (id != null) {
         return id;
@@ -1266,6 +1290,25 @@ public class ExternalOrderLoader extends OrderLoader {
     return null;
   }
 
+  public JSONObject importOrder(JSONObject messageIn) throws ServletException {
+    JSONObject transformedMns;
+    JSONObject ret = new JSONObject();
+    this.setRunInSynchronizedMode(true);
+    try {
+      transformedMns = this.transformMessage(messageIn);
+      ret = this.exec(transformedMns);
+    } catch (Exception e) {
+      try {
+        ret.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        ret.put("result", "-1");
+        ret.put("message", e.getMessage());
+      } catch (JSONException e1) {
+        // wont happen
+      }
+    }
+    return ret;
+  }
+
   public class SetOrderIDHook implements OrderLoaderHook {
     @Override
     public void exec(JSONObject jsonorder, Order order, ShipmentInOut shipment, Invoice invoice)
@@ -1285,11 +1328,17 @@ public class ExternalOrderLoader extends OrderLoader {
    * @author mtaal
    */
   public static abstract class DataResolver {
+    boolean addOrgFilter = true;
+
     public abstract String resolveJsonValue(String entityName, String searchValue,
         String... properties);
 
     public int getOrder() {
       return 110;
+    }
+
+    public void setOrgFilter(boolean addOrgFilter) {
+      this.addOrgFilter = addOrgFilter;
     }
   }
 
@@ -1306,8 +1355,12 @@ public class ExternalOrderLoader extends OrderLoader {
 
     protected String resolve(String entityName, String property, String value) {
       try {
-        String qryStr = "select id from " + entityName + " where " + property + "=:value"
-            + " and organization.id " + OBDal.getInstance().getReadableOrganizationsInClause();
+        String qryStr = "select id from " + entityName + " where " + property + "=:value";
+        qryStr += " and client.id " + OBDal.getInstance().getReadableClientsInClause();
+        if (addOrgFilter) {
+          qryStr += " and organization.id "
+              + OBDal.getInstance().getReadableOrganizationsInClause();
+        }
 
         final Query<String> qry = OBDal.getInstance().getSession()
             .createQuery(qryStr, String.class);

@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -44,7 +45,7 @@ public class CheckApproval extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Logger log = Logger.getLogger(CheckApproval.class);
+  private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any
@@ -108,13 +109,12 @@ public class CheckApproval extends HttpServlet {
             + "                    and r.userContact.id = :user"
             + "                    and r.active=true))"
             + "   and (p.visibleAtOrganization.id = :org "
-            + "   or p.visibleAtOrganization.id in (:orgList) "
+            + "   or p.visibleAtOrganization.id in (" + naturalTreeOrgList + ")"
             + "   or p.visibleAtOrganization is null) group by p.property";
         Query<String> preferenceQuery = OBDal.getInstance().getSession()
             .createQuery(hqlQuery, String.class);
         preferenceQuery.setParameter("user", qUserList.get(0).getId());
         preferenceQuery.setParameter("org", organization);
-        preferenceQuery.setParameter("orgList", naturalTreeOrgList);
 
         List<String> preferenceList = preferenceQuery.list();
         if (preferenceList.isEmpty()) {
