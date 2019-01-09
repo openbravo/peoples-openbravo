@@ -1,3 +1,5 @@
+// @formatter:off
+
 /**
  * WebService3ImplServiceLocator.java
  *
