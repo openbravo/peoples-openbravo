@@ -1234,7 +1234,7 @@
           receipt.get('lines').forEach(function (line) {
             if (line.changePrice) {
               line.set({
-                'price': OB.DEC.div(OB.DEC.mul(line.get('price'), line.get('linerate')), line.get('lineratePrev')),
+                'price': OB.DEC.mul(OB.DEC.div(line.get('price'), line.get('lineratePrev')), line.get('linerate')),
                 'taxChangedPrice': line.get('price')
               }, {
                 silent: true
