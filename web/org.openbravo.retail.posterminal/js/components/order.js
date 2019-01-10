@@ -1247,6 +1247,12 @@ enyo.kind({
       }
       this.$.totalMultiReceiptLine.renderQty(this.orderList.length);
     }, this);
+    this.multiOrders.on('change:selectedPayment', function (model) {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PayOpenTicketsPaymentSelected', {
+        order: this.listMultiOrders,
+        paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
+      });
+    }, this);
     this.orderListPayment.on('add remove', function () {
       OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(this.multiOrders.get('payments').toJSON()));
     }, this);

@@ -608,7 +608,8 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
       amountAfterDiscounts = 0,
       rangeAmountBeforeDiscounts = 0,
       rangeAmountAfterDiscounts = 0,
-      relatedQuantity = 0;
+      relatedQuantity = 0,
+      execution;
   if (product.get('productType') === 'S' && product.get('isPriceRuleBased') && (!line || !line.get('originalOrderLineId'))) {
     var criteria = {};
     relatedLines.forEach(function (rl) {
@@ -701,6 +702,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
           line.set('serviceTrancheMaximum', priceruleVersion.get('maximum'));
           line.set('serviceTrancheMinimum', priceruleVersion.get('minimum'));
         }
+        execution = OB.UTIL.ProcessController.start('addProduct');
         OB.Dal.get(OB.Model.ServicePriceRule, priceruleVersion.get('servicePriceRule'), function (spr) {
           if (spr.get('ruletype') === 'P') {
             var amount, newprice, oldprice = product.get('listPrice');
@@ -779,22 +781,29 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
                     } else {
                       errorCallback(line, 'OBPOS_ErrorPriceRuleRangePriceNotFound');
                     }
+                    OB.UTIL.ProcessController.finish('addProduct', execution);
                   }, function () {
                     errorCallback(line, 'OBPOS_ErrorGettingPriceRuleRangePrice');
+                    OB.UTIL.ProcessController.finish('addProduct', execution);
                   });
                 }
               } else {
                 errorCallback(line, 'OBPOS_ErrorPriceRuleRangeNotFound');
               }
+              OB.UTIL.ProcessController.finish('addProduct', execution);
             }, function () {
               errorCallback(line, 'OBPOS_ErrorGettingPriceRuleRange');
+              OB.UTIL.ProcessController.finish('addProduct', execution);
             });
           }
+          OB.UTIL.ProcessController.finish('addProduct', execution);
         }, function () {
           errorCallback(line, 'OBPOS_ErrorGettingPriceRule');
+          OB.UTIL.ProcessController.finish('addProduct', execution);
         });
       } else {
         errorCallback(line, 'OBPOS_ErrorPriceRuleVersionNotFound');
+        OB.UTIL.ProcessController.finish('addProduct', execution);
       }
     }, function () {
       errorCallback(line, 'OBPOS_ErrorGettingPriceRuleVersion');
