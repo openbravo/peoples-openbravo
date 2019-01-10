@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -60,17 +62,16 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This class generates and processes Invoice from Goods Shipment. Only goods shipment lines not
- * linked to a Sales Order, or from Sales Order with Invoice Term "After Delivery",
- * "After Order Delivery" or "Immediate" are considered.
+ * linked to a Sales Order, or from Sales Order with Invoice Term "After Delivery", "After Order
+ * Delivery" or "Immediate" are considered.
  *
  */
 public class InvoiceGeneratorFromGoodsShipment {
   private static final Logger log = LogManager.getLogger();
+  private static final String POS_ORDER = "WR";
 
   private String shipmentId;
   private Invoice invoice;
@@ -86,6 +87,9 @@ public class InvoiceGeneratorFromGoodsShipment {
         InvoiceTerm.IMMEDIATE.getInvoiceTerm(), InvoiceTerm.AFTER_DELIVERY.getInvoiceTerm(),
         CUSTOMERSCHEDULE.getInvoiceTerm());
 
+    private static final List<String> SHOULD_INVOICE__WEBPOS_ORDERLINE = Arrays.asList(
+        InvoiceTerm.AFTER_DELIVERY.getInvoiceTerm(), AFTER_ORDER_DELIVERY.getInvoiceTerm());
+
     private String invoiceTermId;
 
     private InvoiceTerm(final String invoiceTermId) {
@@ -94,6 +98,10 @@ public class InvoiceGeneratorFromGoodsShipment {
 
     private static boolean canInvoiceOrderLineIndividually(final String invoiceTerm) {
       return CAN_INVOICE_ORDERLINE_INDIVIDUALLY.contains(invoiceTerm);
+    }
+
+    private static boolean shouldInvoicePOSOrderLine(final String invoiceTerm) {
+      return SHOULD_INVOICE__WEBPOS_ORDERLINE.contains(invoiceTerm);
     }
 
     private String getInvoiceTerm() {
@@ -245,6 +253,9 @@ public class InvoiceGeneratorFromGoodsShipment {
   }
 
   private boolean isOrderCandidateToBeInvoiced(final Order order) {
+    if (POS_ORDER.equals(order.getDocumentType().getSOSubType())) {
+      return InvoiceTerm.shouldInvoicePOSOrderLine(order.getInvoiceTerms());
+    }
     return !OBDao
         .getFilteredCriteria(InvoiceCandidateV.class,
             Restrictions.eq(InvoiceCandidateV.PROPERTY_ID, order.getId())).setMaxResults(1).list()
