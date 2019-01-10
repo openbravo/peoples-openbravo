@@ -112,6 +112,17 @@
     propertyId: 'id',
     propertyName: 'name',
     operator: '='
+  }, {
+    name: 'store',
+    column: 'organization',
+    type: 'TEXT',
+    filter: true,
+    caption: 'OBPOS_Store',
+    isList: true,
+    termProperty: 'store',
+    propertyId: 'id',
+    propertyName: 'name',
+    hqlFilter: 'Store'
   }]);
 
 }());
