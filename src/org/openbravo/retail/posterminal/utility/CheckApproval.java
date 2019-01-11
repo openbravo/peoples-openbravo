@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -33,7 +34,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.ApprovalCheckHook;
@@ -97,8 +97,8 @@ public class CheckApproval extends HttpServlet {
           approvals = approvals + ",'" + approvalType.getString(i) + "'";
         }
 
-        String naturalTreeOrgList = Utility.getInStrSet(OBContext.getOBContext()
-            .getOrganizationStructureProvider(client).getNaturalTree(organization));
+        Set<String> naturalTreeOrgList = OBContext.getOBContext()
+            .getOrganizationStructureProvider(client).getNaturalTree(organization);
 
         String hqlQuery = "select p.property from ADPreference as p"
             + " where property IS NOT NULL "
@@ -109,12 +109,13 @@ public class CheckApproval extends HttpServlet {
             + "                    and r.userContact.id = :user"
             + "                    and r.active=true))"
             + "   and (p.visibleAtOrganization.id = :org "
-            + "   or p.visibleAtOrganization.id in (" + naturalTreeOrgList + ")"
+            + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null) group by p.property";
         Query<String> preferenceQuery = OBDal.getInstance().getSession()
             .createQuery(hqlQuery, String.class);
         preferenceQuery.setParameter("user", qUserList.get(0).getId());
         preferenceQuery.setParameter("org", organization);
+        preferenceQuery.setParameterList("orgList", naturalTreeOrgList);
 
         List<String> preferenceList = preferenceQuery.list();
         if (preferenceList.isEmpty()) {
