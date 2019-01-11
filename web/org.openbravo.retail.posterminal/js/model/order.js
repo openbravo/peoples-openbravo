@@ -4180,7 +4180,7 @@
           me = this,
           i, splittedDocNo = [],
           terminalDocNoPrefix, newDocNo = '',
-          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator;
+          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator || '-';
 
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
