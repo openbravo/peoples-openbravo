@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 
@@ -38,14 +39,16 @@ public class Store extends QueryTerminalProperty {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
-    String myOrgId = pOSTerminal.getOrganization().getOrganizationInformationList().get(0)
-        .getOrganization().getId();
+    Organization myOrg = pOSTerminal.getOrganization().getOrganizationInformationList().get(0)
+        .getOrganization();
+    String crossStoreOrgId = myOrg.getOBPOSCrossStoreOrganization() != null ? myOrg
+        .getOBPOSCrossStoreOrganization().getId() : "";
 
-    return Arrays
-        .asList(new String[] { "select id as id, case when id = '0' then '(All Stores)'"
-            + " when id = '"
-            + myOrgId
-            + "' then concat('This Store (', name, ')') else name end as name"
-            + " from Organization organization where $readableSimpleCriteria and $activeCriteria order by name" });
+    return Arrays.asList(new String[] { "select id as id, case when id = '0' then '(All Stores)'"
+        + " when id = '" + myOrg.getId()
+        + "' then concat('This Store (', name, ')') else name end as name"
+        + " from Organization organization" + " where id = '0' " + " or $readableSimpleCriteria"
+        + " and $activeCriteria" + " and oBPOSCrossStoreOrganization.id = '" + crossStoreOrgId
+        + "' order by name" });
   }
 }
