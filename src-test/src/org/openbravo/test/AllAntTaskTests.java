@@ -119,6 +119,7 @@ import org.openbravo.test.system.Sessions;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
+import org.openbravo.test.taxes.ModifyTaxesTest;
 import org.openbravo.test.taxes.TaxesTest;
 import org.openbravo.test.views.GCSequenceNumberTests;
 import org.openbravo.test.views.SortingFilteringGridConfiguration;
@@ -235,6 +236,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // Taxes
     TaxesTest.class, //
+    ModifyTaxesTest.class, //
 
     // Price List
     PriceListTest.class, //
