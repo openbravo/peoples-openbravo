@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -376,8 +376,22 @@ enyo.kind({
         });
         return true;
       }
-      OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
-      return true;
+      var showConfirmationDialog = true;
+      if (showConfirmationDialog) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
+          label: OB.I18N.getLabel('OBMOBC_Continue'),
+          isConfirmButton: true,
+          action: function () {
+            OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
+            return true;
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else {
+        OB.MobileApp.model.orderList.checkForDuplicateReceipts(model, loadOrder, undefined, undefined, true);
+        return true;
+      }
     }, this);
 
     this.setDefaultFilters([{
@@ -413,7 +427,20 @@ enyo.kind({
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
-      OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+      var showConfirmationDialog = true;
+      if (showConfirmationDialog) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
+          label: OB.I18N.getLabel('OBMOBC_Continue'),
+          isConfirmButton: true,
+          action: function () {
+            OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else {
+        OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(model, me.model.get('orderList'), me, undefined, 'orderSelector');
+      }
     }, this);
   }
 });
