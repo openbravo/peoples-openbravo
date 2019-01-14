@@ -5,8 +5,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_APPLICATIONS_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="EM_OBPOS_AD_SESSION_STORE">
         <reference local="EM_OBPOS_STORE_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_AD_SESSION_TERMINAL">
+        <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
     </table>
   </database>
