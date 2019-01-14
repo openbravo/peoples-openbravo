@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -40,8 +42,6 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CancelCostAdjustment extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -118,8 +118,7 @@ public class CancelCostAdjustment extends BaseActionHandler {
         lineCancel.setCreatedBy(OBContext.getOBContext().getUser());
         lineCancel.setCostAdjustment(cacProxy);
         lineCancel.setAdjustmentAmount(lineOrig.getAdjustmentAmount().negate());
-        lineCancel.setBackdatedTrx(Boolean.FALSE);
-        lineCancel.setNegativeStockCorrection(Boolean.FALSE);
+
         if (lineOrig.getInventoryTransaction().isCostPermanent()) {
           lineOrig.getInventoryTransaction().setCostPermanent(Boolean.FALSE);
           OBDal.getInstance().save(lineOrig.getInventoryTransaction());

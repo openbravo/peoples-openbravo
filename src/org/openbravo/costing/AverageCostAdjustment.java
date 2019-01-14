@@ -768,7 +768,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, trx));
     critLines.add(Restrictions.or(//
         Restrictions.eq("ca.id", getCostAdj().getId()),//
-        Restrictions.eq("ca." + CostAdjustment.PROPERTY_DOCUMENTSTATUS, "CO")));
+        Restrictions.not(Restrictions.eq("ca." + CostAdjustment.PROPERTY_DOCUMENTSTATUS, "DR"))));
 
     return critLines.list();
   }
