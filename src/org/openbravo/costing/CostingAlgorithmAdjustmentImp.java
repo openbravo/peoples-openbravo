@@ -203,6 +203,15 @@ public abstract class CostingAlgorithmAdjustmentImp {
     return insertCostAdjustmentLine(lineParameters, null);
   }
 
+  @Deprecated
+  protected CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction trx,
+      BigDecimal adjustmentamt, CostAdjustmentLine _parentLine) {
+    final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
+        adjustmentamt, getCostAdj());
+    return insertCostAdjustmentLine(lineParameters, _parentLine);
+
+  }
+
   /**
    * Inserts a new cost adjustment line
    *
