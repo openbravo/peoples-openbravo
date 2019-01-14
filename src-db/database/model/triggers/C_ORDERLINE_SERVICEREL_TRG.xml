@@ -23,21 +23,21 @@
   * file and version.
   *************************************************************************/
 
-  v_organization_id VARCHAR(60);  --OBTG: varchar2--
-  v_orderline_id VARCHAR(60);  --OBTG: varchar2--
-  v_related_orderline_id VARCHAR(60);  --OBTG: varchar2--
+  v_organization_id VARCHAR(32);  --OBTG: varchar2--
+  v_orderline_id VARCHAR(32);  --OBTG: varchar2--
+  v_related_orderline_id VARCHAR(32);  --OBTG: varchar2--
 
-  v_product_id VARCHAR(60); --OBTG: varchar2--
-  v_taxcategory_id VARCHAR(60); --OBTG: varchar2--
-  v_tax_id VARCHAR(60); --OBTG: varchar2--
+  v_product_id VARCHAR(32); --OBTG: varchar2--
+  v_taxcategory_id VARCHAR(32); --OBTG: varchar2--
+  v_tax_id VARCHAR(32); --OBTG: varchar2--
   v_new_grossprice NUMBER;
 
-  v_productcategory_id VARCHAR(60); --OBTG: varchar2--
-  v_productservice_id VARCHAR(60); --OBTG: varchar2--
+  v_productcategory_id VARCHAR(32); --OBTG: varchar2--
+  v_productservice_id VARCHAR(32); --OBTG: varchar2--
   v_dateordered DATE;
-  v_warehouse_id VARCHAR(60); --OBTG: varchar2--
-  v_bill_location_id VARCHAR(60); --OBTG: varchar2--
-  v_shiplocation_id VARCHAR(60); --OBTG: varchar2--
+  v_warehouse_id VARCHAR(32); --OBTG: varchar2--
+  v_bill_location_id VARCHAR(32); --OBTG: varchar2--
+  v_shiplocation_id VARCHAR(32); --OBTG: varchar2--
   v_issotrx CHAR(1);
   v_iscashvat CHAR(1);
   v_istaxincluded CHAR(1);
@@ -69,12 +69,23 @@ BEGIN
   END IF;
 
   -- Find configuration
-  v_taxcategory_id := NULL;	
-  SELECT P.M_PRODUCT_CATEGORY_ID INTO v_productcategory_id FROM C_ORDERLINE OL, M_PRODUCT P WHERE OL.M_PRODUCT_ID = P.M_PRODUCT_ID AND OL.C_ORDERLINE_ID = v_related_orderline_id;
-  SELECT OL.M_PRODUCT_ID INTO v_productservice_id FROM C_ORDERLINE OL WHERE OL.C_ORDERLINE_ID = v_orderline_id;
+  SELECT P.M_PRODUCT_CATEGORY_ID 
+  INTO v_productcategory_id 
+  FROM C_ORDERLINE OL
+  JOIN M_PRODUCT P ON OL.M_PRODUCT_ID = P.M_PRODUCT_ID  
+  WHERE OL.C_ORDERLINE_ID = v_related_orderline_id;
+  
+  SELECT OL.M_PRODUCT_ID 
+  INTO v_productservice_id 
+  FROM C_ORDERLINE OL 
+  WHERE OL.C_ORDERLINE_ID = v_orderline_id;
+  
   v_taxcategory_id := NULL;
   FOR cur_linked_products IN (
-    SELECT PSL.C_TAXCATEGORY_ID FROM M_PRODUCT_SERVICELINKED PSL WHERE PSL.M_PRODUCT_ID = v_productservice_id AND PSL.M_PRODUCT_CATEGORY_ID = v_productcategory_id)
+    SELECT PSL.C_TAXCATEGORY_ID 
+    FROM M_PRODUCT_SERVICELINKED PSL 
+    WHERE PSL.M_PRODUCT_ID = v_productservice_id 
+    AND PSL.M_PRODUCT_CATEGORY_ID = v_productcategory_id)
   LOOP
     v_taxcategory_id := cur_linked_products.C_TAXCATEGORY_ID;
     EXIT;
@@ -90,31 +101,29 @@ BEGIN
     v_taxcategory_id := NULL;
   END IF;
 
-  SELECT 
-  O.DATEORDERED,
-  O.M_WAREHOUSE_ID,
-  COALESCE(O.BILLTO_ID, O.C_BPARTNER_LOCATION_ID),
-  O.C_BPARTNER_LOCATION_ID,
-  O.ISSOTRX,
-  O.ISCASHVAT,
-  O.ISTAXINCLUDED,
-  C.PRICEPRECISION
-  INTO v_dateordered, v_warehouse_id, v_bill_location_id, v_shiplocation_id, v_issotrx, v_iscashvat, v_istaxincluded, v_price_precision
-  FROM C_ORDER O, C_ORDERLINE OL, C_CURRENCY C 
-  WHERE O.C_ORDER_ID = OL.C_ORDER_ID AND O.C_CURRENCY_ID = C.C_CURRENCY_ID AND OL.C_ORDERLINE_ID = v_orderline_id;
+  SELECT O.DATEORDERED, O.M_WAREHOUSE_ID, COALESCE(O.BILLTO_ID, O.C_BPARTNER_LOCATION_ID),
+    O.C_BPARTNER_LOCATION_ID, O.ISSOTRX, O.ISCASHVAT,
+    O.ISTAXINCLUDED, C.PRICEPRECISION
+  INTO v_dateordered, v_warehouse_id, v_bill_location_id, 
+    v_shiplocation_id, v_issotrx, v_iscashvat, 
+    v_istaxincluded, v_price_precision
+  FROM C_ORDER O
+  JOIN C_ORDERLINE OL ON O.C_ORDER_ID = OL.C_ORDER_ID
+  JOIN C_CURRENCY C ON O.C_CURRENCY_ID = C.C_CURRENCY_ID
+  WHERE OL.C_ORDERLINE_ID = v_orderline_id;
 
-  SELECT 
-  OL.M_PRODUCT_ID,
-  OL.GROSS_UNIT_PRICE / OL.PRICEACTUAL,
-  OL.GROSS_UNIT_PRICE,
-  OL.GROSSPRICELIST
-  INTO v_product_id, v_line_rate_prev, v_grossprice, v_gross_pricelist
+  SELECT  OL.M_PRODUCT_ID, OL.GROSS_UNIT_PRICE / OL.PRICEACTUAL, OL.GROSS_UNIT_PRICE,
+    OL.GROSSPRICELIST
+  INTO v_product_id, v_line_rate_prev, v_grossprice, 
+    v_gross_pricelist
   FROM C_ORDERLINE OL
   WHERE OL.C_ORDERLINE_ID = v_related_orderline_id;
 
-  -- Update ORDERLINE TAX. For testing use: 'D7E18B5459464D92B91B498A28F06A03'  Entregas IVA 10%
+  -- Update ORDERLINE TAX
   v_tax_id := C_GETTAX(v_product_id, v_dateordered, v_organization_id, v_warehouse_id, v_bill_location_id, v_shiplocation_id, NULL, v_issotrx, NULL, v_iscashvat, v_taxcategory_id);
-  update c_orderline set c_tax_id = v_tax_id where C_ORDERLINE_ID = v_related_orderline_id; 
+  UPDATE c_orderline 
+  SET c_tax_id = v_tax_id 
+  WHERE C_ORDERLINE_ID = v_related_orderline_id; 
 
   IF (v_istaxincluded = 'Y') THEN
     IF (v_taxcategory_id IS NULL) THEN
@@ -123,7 +132,7 @@ BEGIN
       SELECT GROSS_UNIT_PRICE / PRICEACTUAL INTO v_linerate FROM C_ORDERLINE WHERE C_ORDERLINE_ID = v_related_orderline_id;		
         v_new_grossprice := ROUND(ROUND(v_grossprice * ROUND(v_linerate, v_price_precision), v_price_precision) / ROUND(v_line_rate_prev, v_price_precision), v_price_precision);
     END IF;
-      update c_orderline set gross_unit_price = v_new_grossprice where C_ORDERLINE_ID = v_related_orderline_id;
+    UPDATE c_orderline SET gross_unit_price = v_new_grossprice WHERE C_ORDERLINE_ID = v_related_orderline_id;
   END IF;
 
   END C_ORDERLINE_SERVICEREL_TRG
