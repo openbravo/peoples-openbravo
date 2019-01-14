@@ -53,12 +53,12 @@ public class Store extends QueryTerminalProperty {
     hql.append(" from Organization organization");
     hql.append(" where id = '");
     hql.append(myOrg.getId());
-    hql.append("' or (id = '0' and exists (select 1 from Organization where $readableSimpleCriteria and $activeCriteria and oBPOSCrossStoreOrganization.id = '");
+    hql.append("' or (id = '0' and exists (select 1 from Organization where $readableSimpleClientCriteria and $activeCriteria and oBPOSCrossStoreOrganization.id = '");
     hql.append(crossStoreOrgId);
     hql.append("' and id <> '");
     hql.append(myOrg.getId());
     hql.append("'))");
-    hql.append(" or $readableSimpleCriteria");
+    hql.append(" or $readableSimpleClientCriteria");
     hql.append(" and $activeCriteria and oBPOSCrossStoreOrganization.id = '");
     hql.append(crossStoreOrgId);
     hql.append("' order by case when id = '");
