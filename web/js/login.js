@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,6 +70,7 @@ function setLoginMessage(type, title, text) {
 }
 
 function doLogin(command) {
+  var extraParams;
   if (document.getElementById('resetPassword').value === 'true' && document.getElementById('user').value !== document.getElementById('password').value) {
     setLoginMessage('Error', errorSamePassword, errorDifferentPasswordInFields);
     return true;
@@ -91,10 +92,15 @@ function doLogin(command) {
     }
     disableButton('buttonOK');
     command = command || (document.getElementById('resetPassword').value === 'true' ? 'FORCE_RESET_PASSWORD' : 'DEFAULT');
-    submitXmlHttpRequest(loginResult, document.frmIdentificacion, command, '../secureApp/LoginHandler.html', false, null, null);
+    extraParams = '&targetQueryString=' + getURLQueryString();
+    submitXmlHttpRequest(loginResult, document.frmIdentificacion, command, '../secureApp/LoginHandler.html', false, extraParams, null);
   }
 
   return false;
+}
+
+function getURLQueryString() {
+  return encodeURIComponent(window.location.search.substr(1));
 }
 
 function loginResult(paramXMLParticular, XMLHttpRequestObj) {
@@ -513,10 +519,6 @@ function enableAttributeWithFunction(element, type, attribute) {
  */
 
 function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
-  submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, null, paramXMLReq);
-}
-
-function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
   var XMLHttpRequestObj = null;
   XMLHttpRequestObj = getXMLHttpRequest();
   if (formObject === null) {
