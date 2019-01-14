@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,10 +77,9 @@ public class Menu extends HttpSecureAppServlet {
             OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
         // redirect if the startpage is there and if it is not the same as the standard
         if (startPage != null && !startPage.endsWith("/security/Menu.html")) {
-          final String storedQueryString = vars.getSessionValue("targetQueryString");
-          if (storedQueryString != null && storedQueryString.length() > 0) {
+          if (queryString != null && queryString.length() > 0) {
             final String separator = startPage.contains("?") ? "&" : "?";
-            response.sendRedirect(".." + startPage + separator + storedQueryString);
+            response.sendRedirect(".." + startPage + separator + queryString);
           } else {
             response.sendRedirect(".." + startPage);
           }
