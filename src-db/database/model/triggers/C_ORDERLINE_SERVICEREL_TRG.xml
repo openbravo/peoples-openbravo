@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2018 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2018-2019 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -50,78 +50,83 @@
   curlinks RECORD;
 BEGIN
 
-IF AD_isTriggerEnabled()='N' THEN RETURN;
-END IF;
+  IF AD_isTriggerEnabled()='N' THEN 
+    IF DELETING THEN 
+      RETURN OLD; 
+    ELSE 
+      RETURN NEW; 
+    END IF; 
+  END IF;
 
-    IF (INSERTING OR UPDATING) THEN
-        org := :NEW.AD_ORG_ID;
-        orderline := :NEW.C_ORDERLINE_ID;
-        orderlinerelated := :NEW.C_ORDERLINE_RELATED_ID;
-    ELSE
-        org := :OLD.AD_ORG_ID;    
-        orderline := :OLD.C_ORDERLINE_ID;
-        orderlinerelated := :OLD.C_ORDERLINE_RELATED_ID;      
-    END IF;
+  IF (INSERTING OR UPDATING) THEN
+    org := :NEW.AD_ORG_ID;
+    orderline := :NEW.C_ORDERLINE_ID;
+    orderlinerelated := :NEW.C_ORDERLINE_RELATED_ID;
+  ELSE
+    org := :OLD.AD_ORG_ID;    
+    orderline := :OLD.C_ORDERLINE_ID;
+    orderlinerelated := :OLD.C_ORDERLINE_RELATED_ID;      
+  END IF;
 
-    -- Find configuration
-    taxcat := NULL;	
-    SELECT P.M_PRODUCT_CATEGORY_ID INTO prodcat FROM C_ORDERLINE OL, M_PRODUCT P WHERE OL.M_PRODUCT_ID = P.M_PRODUCT_ID AND OL.C_ORDERLINE_ID = orderlinerelated;
-    SELECT OL.M_PRODUCT_ID INTO prodservice FROM C_ORDERLINE OL WHERE OL.C_ORDERLINE_ID = orderline;
+  -- Find configuration
+  taxcat := NULL;	
+  SELECT P.M_PRODUCT_CATEGORY_ID INTO prodcat FROM C_ORDERLINE OL, M_PRODUCT P WHERE OL.M_PRODUCT_ID = P.M_PRODUCT_ID AND OL.C_ORDERLINE_ID = orderlinerelated;
+  SELECT OL.M_PRODUCT_ID INTO prodservice FROM C_ORDERLINE OL WHERE OL.C_ORDERLINE_ID = orderline;
+  taxcat := NULL;
+  FOR curlinks IN (
+    SELECT PSL.C_TAXCATEGORY_ID FROM M_PRODUCT_SERVICELINKED PSL WHERE PSL.M_PRODUCT_ID = prodservice AND PSL.M_PRODUCT_CATEGORY_ID = prodcat)
+  LOOP
+    taxcat := curlinks.C_TAXCATEGORY_ID;
+    EXIT;
+  END LOOP;
+
+  IF (taxcat IS NULL) THEN
+    -- No configuration found so return without any action
+    RETURN;
+  END IF;    
+
+  IF (DELETING) THEN
+    -- In case of DELETE, force to use the tax category of the product.
     taxcat := NULL;
-    FOR curlinks IN (
-        SELECT PSL.C_TAXCATEGORY_ID FROM M_PRODUCT_SERVICELINKED PSL WHERE PSL.M_PRODUCT_ID = prodservice AND PSL.M_PRODUCT_CATEGORY_ID = prodcat)
-    LOOP
-        taxcat := curlinks.C_TAXCATEGORY_ID;
-        EXIT;
-    END LOOP;
+  END IF;
 
+  SELECT 
+  O.DATEORDERED,
+  O.M_WAREHOUSE_ID,
+  COALESCE(O.BILLTO_ID, O.C_BPARTNER_LOCATION_ID),
+  O.C_BPARTNER_LOCATION_ID,
+  O.ISSOTRX,
+  O.ISCASHVAT,
+  O.ISTAXINCLUDED,
+  C.PRICEPRECISION
+  INTO dateordered, warehouse, billto, shipto, issotrx, iscashvat, istaxincluded, priceprecision
+  FROM C_ORDER O, C_ORDERLINE OL, C_CURRENCY C 
+  WHERE O.C_ORDER_ID = OL.C_ORDER_ID AND O.C_CURRENCY_ID = C.C_CURRENCY_ID AND OL.C_ORDERLINE_ID = orderline;
+
+  SELECT 
+  OL.M_PRODUCT_ID,
+  OL.GROSS_UNIT_PRICE / OL.PRICEACTUAL,
+  OL.GROSS_UNIT_PRICE,
+  OL.GROSSPRICELIST
+  INTO prod, linerateprev, grossprice, grosspricelist
+  FROM C_ORDERLINE OL
+  WHERE OL.C_ORDERLINE_ID = orderlinerelated;
+
+  -- Update ORDERLINE TAX. For testing use: 'D7E18B5459464D92B91B498A28F06A03'  Entregas IVA 10%
+  tax := C_GETTAX(prod, dateordered, org, warehouse, billto, shipto, NULL, issotrx, NULL, iscashvat, taxcat);
+  update c_orderline set c_tax_id = tax where C_ORDERLINE_ID = orderlinerelated; 
+
+  IF (istaxincluded = 'Y') THEN
     IF (taxcat IS NULL) THEN
-        -- No configuration found so return without any action
-        RETURN;
-    END IF;    
-
-    IF (DELETING) THEN
-        -- In case of DELETE, force to use the tax category of the product.
-        taxcat := NULL;
+      newgrossprice := grosspricelist; -- old price grosspricelist
+    ELSE
+      SELECT GROSS_UNIT_PRICE / PRICEACTUAL INTO linerate FROM C_ORDERLINE WHERE C_ORDERLINE_ID = orderlinerelated;		
+        newgrossprice := ROUND(ROUND(grossprice * ROUND(linerate, priceprecision), priceprecision) / ROUND(linerateprev, priceprecision), priceprecision);
     END IF;
+      update c_orderline set gross_unit_price = newgrossprice where C_ORDERLINE_ID = orderlinerelated;
+  END IF;
 
-    SELECT 
-    O.DATEORDERED,
-    O.M_WAREHOUSE_ID,
-    COALESCE(O.BILLTO_ID, O.C_BPARTNER_LOCATION_ID),
-    O.C_BPARTNER_LOCATION_ID,
-    O.ISSOTRX,
-    O.ISCASHVAT,
-    O.ISTAXINCLUDED,
-    C.PRICEPRECISION
-    INTO dateordered, warehouse, billto, shipto, issotrx, iscashvat, istaxincluded, priceprecision
-    FROM C_ORDER O, C_ORDERLINE OL, C_CURRENCY C 
-    WHERE O.C_ORDER_ID = OL.C_ORDER_ID AND O.C_CURRENCY_ID = C.C_CURRENCY_ID AND OL.C_ORDERLINE_ID = orderline;
-
-    SELECT 
-    OL.M_PRODUCT_ID,
-    OL.GROSS_UNIT_PRICE / OL.PRICEACTUAL,
-    OL.GROSS_UNIT_PRICE,
-    OL.GROSSPRICELIST
-    INTO prod, linerateprev, grossprice, grosspricelist
-    FROM C_ORDERLINE OL
-    WHERE OL.C_ORDERLINE_ID = orderlinerelated;
-
-    -- Update ORDERLINE TAX. For testing use: 'D7E18B5459464D92B91B498A28F06A03'  Entregas IVA 10%
-    tax := C_GETTAX(prod, dateordered, org, warehouse, billto, shipto, NULL, issotrx, NULL, iscashvat, taxcat);
-    update c_orderline set c_tax_id = tax where C_ORDERLINE_ID = orderlinerelated; 
-
-    IF (istaxincluded = 'Y') THEN
-        IF (taxcat IS NULL) THEN
-            newgrossprice := grosspricelist; -- old price grosspricelist
-        ELSE
-            SELECT GROSS_UNIT_PRICE / PRICEACTUAL INTO linerate FROM C_ORDERLINE WHERE C_ORDERLINE_ID = orderlinerelated;		
-            newgrossprice := ROUND(ROUND(grossprice * ROUND(linerate, priceprecision), priceprecision) / ROUND(linerateprev, priceprecision), priceprecision);
-        END IF;
-        update c_orderline set gross_unit_price = newgrossprice where C_ORDERLINE_ID = orderlinerelated;
-    END IF;
-
-END C_ORDERLINE_SERVICEREL_TRG
+  END C_ORDERLINE_SERVICEREL_TRG
 ]]></body>
     </trigger>
   </database>
