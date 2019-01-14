@@ -510,13 +510,16 @@ public class LoginHandler extends HttpBaseServlet {
       ServletException {
     String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
         "CPEmptyUserPassword", vars.getLanguage());
+    String targetQueryString = vars.getStringParameter("targetQueryString");
+    String target = StringUtils.isBlank(targetQueryString) ? action : action + "?"
+        + targetQueryString;
 
     // Show the message in the login window, return a JSON object with the info to print the message
     try {
       boolean loginHasError = "Error".equals(msgType);
       JSONObject jsonMsg = new JSONObject();
       jsonMsg.put("showMessage", true);
-      jsonMsg.put("target", loginHasError ? null : action);
+      jsonMsg.put("target", loginHasError ? null : target);
       jsonMsg.put("messageType", msgType);
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);
