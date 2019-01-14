@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -310,7 +310,8 @@ enyo.kind({
                   action: function () {
                     OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
                       customerAddr: me.model.get('customerAddr'),
-                      isNew: true
+                      isNew: true,
+                      windowComponent: me
                     }, function (args) {
                       var receipt = OB.MobileApp.model.receipt,
                           orderlines = [];
@@ -337,7 +338,8 @@ enyo.kind({
               } else {
                 OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
                   customerAddr: me.model.get('customerAddr'),
-                  isNew: true
+                  isNew: true,
+                  windowComponent: me
                 }, function (args) {
                   if (args && args.cancellation && args.cancellation === true) {
                     enableButtonsCallback();

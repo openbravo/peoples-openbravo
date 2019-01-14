@@ -42,6 +42,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -1358,13 +1359,18 @@ public class ExternalOrderLoader extends OrderLoader {
         String qryStr = "select id from " + entityName + " where " + property + "=:value";
         qryStr += " and client.id " + OBDal.getInstance().getReadableClientsInClause();
         if (addOrgFilter) {
-          qryStr += " and organization.id "
-              + OBDal.getInstance().getReadableOrganizationsInClause();
+          qryStr += " and organization.id in (:orgs)";
         }
 
         final Query<String> qry = OBDal.getInstance().getSession()
             .createQuery(qryStr, String.class);
         qry.setParameter("value", value);
+        if (addOrgFilter) {
+          OrganizationStructureProvider osp = OBContext.getOBContext()
+              .getOrganizationStructureProvider();
+          qry.setParameterList("orgs",
+              osp.getNaturalTree(OBContext.getOBContext().getCurrentOrganization().getId()));
+        }
         final List<String> values = qry.list();
         if (values.isEmpty() || values.size() > 1) {
           return null;

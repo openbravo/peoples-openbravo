@@ -4184,7 +4184,7 @@
           me = this,
           i, splittedDocNo = [],
           terminalDocNoPrefix, newDocNo = '',
-          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator;
+          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator || '-';
 
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
@@ -4225,6 +4225,8 @@
           line.set('replacedorderline', line.get('id'));
           line.set('id', idMap[line.get('id')]);
           line.unset('invoicedQuantity');
+          line.set('obposCanbedelivered', true);
+          line.set('obposIspaid', false);
         });
 
         // The lines must be iterated a second time after finishing the first loop, to ensure that

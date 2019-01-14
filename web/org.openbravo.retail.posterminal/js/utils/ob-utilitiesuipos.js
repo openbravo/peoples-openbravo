@@ -694,6 +694,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
       criteria._orderByClause = 'validFromDate desc';
       criteria._limit = 1;
     }
+    execution = OB.UTIL.ProcessController.start('addProduct');
     OB.Dal.find(OB.Model.ServicePriceRuleVersion, criteria, function (sprvs) {
       var priceruleVersion;
       if (sprvs && sprvs.length > 0) {
@@ -702,7 +703,6 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
           line.set('serviceTrancheMaximum', priceruleVersion.get('maximum'));
           line.set('serviceTrancheMinimum', priceruleVersion.get('minimum'));
         }
-        execution = OB.UTIL.ProcessController.start('addProduct');
         OB.Dal.get(OB.Model.ServicePriceRule, priceruleVersion.get('servicePriceRule'), function (spr) {
           if (spr.get('ruletype') === 'P') {
             var amount, newprice, oldprice = product.get('listPrice');
@@ -716,6 +716,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
             }
             newprice = OB.DEC.add(oldprice, OB.DEC.div(amount, relatedQty));
             callback(line, newprice);
+            OB.UTIL.ProcessController.finish('addProduct', execution);
           } else { //ruletype = 'R'
             var rangeCriteria = {};
             if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
@@ -753,6 +754,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
                   }
                   newprice = OB.DEC.add(oldprice, OB.DEC.div(amount, relatedQty));
                   callback(line, newprice);
+                  OB.UTIL.ProcessController.finish('addProduct', execution);
                 } else { //ruleType = 'F'
                   if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
                     priceCriteria.remoteFilters = [];
@@ -789,14 +791,13 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
                 }
               } else {
                 errorCallback(line, 'OBPOS_ErrorPriceRuleRangeNotFound');
+                OB.UTIL.ProcessController.finish('addProduct', execution);
               }
-              OB.UTIL.ProcessController.finish('addProduct', execution);
             }, function () {
               errorCallback(line, 'OBPOS_ErrorGettingPriceRuleRange');
               OB.UTIL.ProcessController.finish('addProduct', execution);
             });
           }
-          OB.UTIL.ProcessController.finish('addProduct', execution);
         }, function () {
           errorCallback(line, 'OBPOS_ErrorGettingPriceRule');
           OB.UTIL.ProcessController.finish('addProduct', execution);
@@ -807,6 +808,7 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, re
       }
     }, function () {
       errorCallback(line, 'OBPOS_ErrorGettingPriceRuleVersion');
+      OB.UTIL.ProcessController.finish('addProduct', execution);
     });
   }
 };
