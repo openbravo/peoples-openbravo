@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -1460,7 +1460,6 @@ public class VariablesBase {
     if (log4j.isDebugEnabled())
       log4j.debug("...: removing session");
     String target = "";
-    String targetQueryString = null;
     try {
       if (session != null) {
         String sessionName;
@@ -1472,17 +1471,11 @@ public class VariablesBase {
           if (!all && sessionName.equalsIgnoreCase("target")) {
             target = (String) session.getAttribute(sessionName);
           }
-          if (!all && sessionName.equalsIgnoreCase("targetQueryString")) {
-            targetQueryString = (String) session.getAttribute(sessionName);
-          }
           session.removeAttribute(sessionName);
           e = session.getAttributeNames();
         }
         if (!target.equals("")) {
           session.setAttribute("TARGET", target);
-        }
-        if (targetQueryString != null) {
-          session.setAttribute("TARGETQUERYSTRING", targetQueryString);
         }
       } else {
         for (String key : sessionAttributes.keySet()) {
@@ -1491,16 +1484,10 @@ public class VariablesBase {
           if (!all && key.equalsIgnoreCase("target")) {
             target = (String) sessionAttributes.get(key);
           }
-          if (!all && key.equalsIgnoreCase("targetQueryString")) {
-            targetQueryString = (String) sessionAttributes.get(key);
-          }
         }
         sessionAttributes.clear();
         if (!target.equals("")) {
           sessionAttributes.put("TARGET", target);
-        }
-        if (targetQueryString != null) {
-          sessionAttributes.put("TARGETQUERYSTRING", targetQueryString);
         }
       }
     } catch (IllegalStateException ignored) {

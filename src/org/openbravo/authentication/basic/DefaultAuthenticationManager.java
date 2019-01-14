@@ -188,9 +188,6 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     // Storing target string to redirect after a successful login
     variables.setSessionValue("target",
         strDireccionLocal + "/" + (qString != null && !qString.equals("") ? "?" + qString : ""));
-    if (qString != null && !qString.equals("")) {
-      variables.setSessionValue("targetQueryString", qString);
-    }
   }
 
   @Override
