@@ -26,9 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.query.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -140,21 +138,10 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
 
     if (!StringUtils.isEmpty(documentNo) && !StringUtils.isEmpty(crossStoreOrgId)) {
 
-      StringBuilder query = new StringBuilder();
-      query.append("select id");
-      query.append(" from ");
-      query.append(Organization.ENTITY_NAME);
-      query.append(" where oBPOSCrossStoreOrganization.id = '");
-      query.append(crossStoreOrgId);
-      query.append("'");
+      String crossStoreOrg = StringCollectionUtils.commaSeparated(
+          POSUtils.getOrgListByCrossStoreId(crossStoreOrgId), true);
 
-      @SuppressWarnings("unchecked")
-      Query<String> crossQuery = OBDal.getInstance().getSession().createQuery(query.toString());
-      List<String> orgIds = crossQuery.list();
-
-      String crossStoreOrg = StringCollectionUtils.commaSeparated(orgIds, true);
-
-      orgFilter.append(" and ord.organization in (");
+      orgFilter.append(" and ord.organization.id in (");
       orgFilter.append(crossStoreOrg);
       orgFilter.append(")");
     } else {

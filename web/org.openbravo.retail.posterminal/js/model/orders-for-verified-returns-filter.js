@@ -120,7 +120,7 @@
     caption: 'OBPOS_Store',
     isList: true,
     termProperty: 'store',
-    propertyId: 'id',
+    propertyId: 'storeId',
     propertyName: 'name',
     hqlFilter: 'Store'
   }]);

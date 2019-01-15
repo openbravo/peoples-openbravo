@@ -175,6 +175,27 @@ public class POSUtils {
     return null;
   }
 
+  public static List<String> getOrgListByCrossStoreId(String crossStoreId) {
+    try {
+      StringBuilder query = new StringBuilder();
+      query.append("select id");
+      query.append(" from ");
+      query.append(Organization.ENTITY_NAME);
+      query.append(" where oBPOSCrossStoreOrganization.id = '");
+      query.append(crossStoreId);
+      query.append("'");
+
+      @SuppressWarnings("unchecked")
+      Query<String> crossQuery = OBDal.getInstance().getSession().createQuery(query.toString());
+      return crossQuery.list();
+    } catch (Exception e) {
+      log.error("Error getting store list: " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return null;
+  }
+
   public static List<String> getStoreList(String orgId) {
     return OBContext.getOBContext().getOrganizationStructureProvider().getParentList(orgId, true);
   }

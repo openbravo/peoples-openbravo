@@ -45,7 +45,10 @@ public class Store extends QueryTerminalProperty {
         .getOBPOSCrossStoreOrganization().getId() : "";
 
     StringBuilder hql = new StringBuilder();
-    hql.append("select id as id,");
+    hql.append("select case when id = '0' then concat('all_', '");
+    hql.append(crossStoreOrgId);
+    hql.append("')");
+    hql.append(" else id end as storeId,");
     hql.append(" case when id = '0' then '(All Stores)'");
     hql.append(" when id = '");
     hql.append(myOrg.getId());
