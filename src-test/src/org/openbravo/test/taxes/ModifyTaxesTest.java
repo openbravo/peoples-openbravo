@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -148,7 +148,7 @@ public class ModifyTaxesTest extends OBBaseTest {
         });
   }
 
-  public ModifyTaxesTest(String testNumber, String testDescription, OrderTestData data) {
+  public ModifyTaxesTest(final String testNumber, final String testDescription, final OrderTestData data) {
     this.testNumber = testNumber;
     this.testDescription = testDescription;
     this.data = data;
@@ -177,7 +177,6 @@ public class ModifyTaxesTest extends OBBaseTest {
     order.setSummedLineAmount(BigDecimal.ZERO);
     order.setGrandTotalAmount(BigDecimal.ZERO);
     order.setDescription(testDescription);
-    order.setPriceIncludesTax(false);
 
     PriceList pricelist = OBDal.getInstance().get(PriceList.class, data.getPriceList());
     order.setPriceList(pricelist);
@@ -206,10 +205,6 @@ public class ModifyTaxesTest extends OBBaseTest {
         orderLine.setGrossUnitPrice(new BigDecimal(linedata.getPrice()));
         orderLine.setGrossListPrice(new BigDecimal(linedata.getPrice()));
         orderLine.setBaseGrossUnitPrice(new BigDecimal(linedata.getPrice()));
-      } else {
-        orderLine.setUnitPrice(new BigDecimal(linedata.getPrice()));
-        orderLine.setListPrice(new BigDecimal(linedata.getPrice()));
-        orderLine.setStandardPrice(new BigDecimal(linedata.getPrice()));
       }
 
       orderLine.setUnitPrice(new BigDecimal(linedata.getPrice()));

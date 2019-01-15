@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,9 +34,9 @@ public class OrderTestData {
   private final List<OrderLineTestData> lines;
   private final List<OrderLineRelTestData> relations;
 
-  public OrderTestData(String customer, String location, String priceList, String expectedNet,
-      String expectedGross, String expectedNet2, String expectedGross2,
-      List<OrderLineTestData> lines, List<OrderLineRelTestData> relations) {
+  public OrderTestData(final String customer, final String location, final String priceList, final String expectedNet,
+      final String expectedGross, final String expectedNet2, final String expectedGross2,
+      final List<OrderLineTestData> lines, final List<OrderLineRelTestData> relations) {
     this.customer = customer;
     this.location = location;
     this.priceList = priceList;
@@ -48,9 +48,9 @@ public class OrderTestData {
     this.relations = relations;
   }
 
-  public OrderTestData(String customer, String location, String priceList, String expectedNet,
-      String expectedGross, String expectedNet2, String expectedGross2,
-      List<OrderLineTestData> lines) {
+  public OrderTestData(final String customer, final String location, final String priceList, final String expectedNet,
+      final String expectedGross, final String expectedNet2, final String expectedGross2,
+      final List<OrderLineTestData> lines) {
     this(customer, location, priceList, expectedNet, expectedGross, expectedNet2, expectedGross2,
         lines, new ArrayList<OrderLineRelTestData>());
   }

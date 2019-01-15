@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,9 +32,9 @@ public class OrderLineTestData {
   private final String expectedNet2;
   private final String expectedGross2;
 
-  public OrderLineTestData(String product, String tax, String quantity, String price,
-      String expectedTax, String expectedNet, String expectedGross, String expectedTax2,
-      String expectedNet2, String expectedGross2) {
+  public OrderLineTestData(final String product, final String tax, final String quantity, final String price,
+      final String expectedTax, final String expectedNet, final String expectedGross, final String expectedTax2,
+      final String expectedNet2, final String expectedGross2) {
     super();
     this.product = product;
     this.tax = tax;
