@@ -409,6 +409,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISMODIFYTAX" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="RELATEPRODCATTAXTOSERVICE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="COPYSERVICEMODIFYTAXCONFIG" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_ORG_MPRODUCT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
@@ -529,6 +541,7 @@
       <check name="M_PRODUCT_ISEXPDEFERRED_CHK"><![CDATA[ISDEFERREDEXPENSE IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISGENERIC"><![CDATA[ISGENERIC IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISINVOICEPRINTDE_CHK"><![CDATA[ISINVOICEPRINTDETAILS IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCT_ISMODIFYTAX_CHK"><![CDATA[ISMODIFYTAX IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPICKLISTPRINTD_CHK"><![CDATA[ISPICKLISTPRINTDETAILS IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISPURCHASED_CHECK"><![CDATA[ISPURCHASED IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_ISQTYVAR_CHECK"><![CDATA[ISQUANTITYVARIABLE IN ('Y', 'N')]]></check>
