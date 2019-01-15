@@ -330,12 +330,12 @@ OB.UTIL.getPriceListName = function (priceListId, callback) {
  * in this same browser. Data regarding privileged users is stored in supervisor table
  */
 OB.UTIL.checkApproval = function (approvalType, username, password, callback, windowModel, attrs) {
-  enyo.$.scrim.show();
   OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
   var approvalList = [];
   approvalType.forEach(function (approvalType) {
     approvalList.push(typeof (approvalType) === 'object' ? approvalType.approval : approvalType);
   });
+  var execution = OB.UTIL.ProcessController.start('checkApproval');
 
   var rr, checkApprovalRequest = new enyo.Ajax({
     url: '../../org.openbravo.retail.posterminal.utility.CheckApproval',
@@ -352,6 +352,7 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     },
     contentType: 'application/json;charset=utf-8',
     success: function (inSender, inResponse) {
+      OB.UTIL.ProcessController.finish('checkApproval', execution);
       var approved = false;
       if (inResponse.error) {
         callback(false, null, null, true, inResponse.error.message);
@@ -417,6 +418,7 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
     },
     fail: function (inSender, inResponse) {
       // offline
+      OB.UTIL.ProcessController.finish('checkApproval', execution);
       OB.Dal.find(OB.Model.Supervisor, {
         'name': username
       }, enyo.bind(this, function (users) {

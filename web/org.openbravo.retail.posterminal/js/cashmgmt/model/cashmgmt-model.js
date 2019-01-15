@@ -358,10 +358,10 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       var paymentMth;
       var criteria;
       // synch logic
-      enyo.$.scrim.show();
+      var execution = OB.UTIL.ProcessController.start('cashMgmtLoadCashup');
 
       function finishSynch() {
-        enyo.$.scrim.hide();
+        OB.UTIL.ProcessController.finish('cashMgmtLoadCashup', execution);
       }
       var i;
       var asyncToSyncWrapper = new Promise(function (resolve, reject) {
@@ -461,6 +461,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         callback();
       }, function () {
         OB.error("Could not load cashup related information");
+        OB.UTIL.ProcessController.finish('cashMgmtLoadCashup', execution);
       });
     }
 

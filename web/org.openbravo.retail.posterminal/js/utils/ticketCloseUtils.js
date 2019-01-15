@@ -224,7 +224,7 @@
     });
   };
 
-  OB.UTIL.TicketCloseUtils.paymentDone = function (receipt, callbackPaymentAccepted, callbackOverpaymentExists, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled) {
+  OB.UTIL.TicketCloseUtils.paymentDone = function (receipt, callbackPaymentAccepted, callbackOverpaymentExists, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled, callbackPaymentCancelled) {
 
     var isOrderCancelledProcess = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
         triggerPaymentAccepted, triggerPaymentAcceptedImpl;
@@ -234,7 +234,7 @@
         receipt: receipt
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
-          receipt.trigger('paymentCancel');
+          callbackPaymentCancelled();
           return;
         }
         if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {

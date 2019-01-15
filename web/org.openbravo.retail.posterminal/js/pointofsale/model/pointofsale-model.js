@@ -353,18 +353,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     // If the device is too slow and the preference allows it, or the terminal type is configured, a block screen is shown if the calculation of the receipt is taking more than 1 sec
     if ((OB.MobileApp.model.get('terminal') && OB.MobileApp.model.get('terminal').terminalType && OB.MobileApp.model.get('terminal').terminalType.processingblockscreen) || (isSlowDevice && OB.MobileApp.model.hasPermission('OBPOS_processingBlockScreenOnSlowDevices', true))) {
+      var execution;
       receipt.on('calculatingReceipt', function () {
-        enyo.$.scrim2.show();
         setTimeout(function () {
           if (receipt.calculatingReceipt === true) {
-            OB.UTIL.showProcessing(true, 'OBPOS_receiptProcessing');
+            execution = OB.UTIL.ProcessController.start('slowCalculateReceipt');
           }
         }, 1000);
       });
 
       receipt.on('calculatedReceipt', function () {
-        enyo.$.scrim2.hide();
-        OB.UTIL.showProcessing(false);
+        OB.UTIL.ProcessController.finish('slowCalculateReceipt', execution);
       });
     }
 
@@ -377,45 +376,52 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
 
     receipt.on('paymentAccepted', function () {
-      OB.UTIL.TicketCloseUtils.paymentAccepted(receipt, orderList, function () {
-        if (OB.MobileApp.view.openedPopup === null) {
-          enyo.$.scrim.hide();
-        }
-      });
+      OB.UTIL.TicketCloseUtils.paymentAccepted(receipt, orderList, null);
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
-      receipt.trigger('disableDoneButton');
       if (receipt.get('paymentDone')) {
         return true;
       }
       receipt.set('paymentDone', true);
+      var execution = OB.UTIL.ProcessController.start('paymentDone');
 
       function callbackPaymentAccepted(allowedOpenDrawer) {
         if (allowedOpenDrawer) {
           me.openDrawer = openDrawer;
         }
         receipt.trigger('paymentAccepted');
+        OB.UTIL.ProcessController.finish('paymentDone', execution);
+      }
+
+      function callbackPaymentCancelled(callbackToExecuteAfter) {
+        OB.UTIL.ProcessController.finish('paymentDone', execution);
+        receipt.unset('paymentDone');
+        // Review this showLoading false
+        //OB.UTIL.showLoading(false);
+        if (callbackToExecuteAfter instanceof Function) {
+          callbackToExecuteAfter();
+        }
       }
 
       function callbackOverpaymentExist(callback) {
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
         var amount = receipt.getPaymentStatus().overpayment;
-        var scrimShowing = enyo.$.scrim.showing;
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
-          scrimShowing: scrimShowing,
           action: function () {
             me.openDrawer = openDrawer;
+            // Need to finish process here??
             callback(true);
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel'),
           action: function () {
-            receipt.trigger('paymentCancel');
-            callback(false);
+            callbackPaymentCancelled(function () {
+              callback(false);
+            });
           }
         }], {
           autoDismiss: false,
@@ -428,33 +434,38 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
+            // Need to finish process here??
             callback(true);
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel'),
           action: function () {
-            receipt.trigger('paymentCancel');
-            callback(false);
+            callbackPaymentCancelled(function () {
+              callback(false);
+            });
           }
         }]);
       }
 
       function callbackErrorCancelAndReplace(errorMessage) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), errorMessage);
-        receipt.trigger('paymentCancel');
+        callbackPaymentCancelled(function () {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), errorMessage);
+        });
       }
 
       function callbackErrorCancelAndReplaceOffline() {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
-        receipt.trigger('paymentCancel');
+        callbackPaymentCancelled(function () {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+        });
       }
 
       function callbackErrorOrderCancelled() {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
-        receipt.trigger('paymentCancel');
+        callbackPaymentCancelled(function () {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+        });
       }
 
-      OB.UTIL.TicketCloseUtils.paymentDone(receipt, callbackPaymentAccepted, callbackOverpaymentExist, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled);
+      OB.UTIL.TicketCloseUtils.paymentDone(receipt, callbackPaymentAccepted, callbackOverpaymentExist, callbackPaymentAmountDistinctThanReceipt, callbackErrorCancelAndReplace, callbackErrorCancelAndReplaceOffline, callbackErrorOrderCancelled, callbackPaymentCancelled);
     }, this);
 
     this.get('multiOrders').on('paymentAccepted', function () {
@@ -635,11 +646,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (overpayment > 0) {
         var symbol = OB.MobileApp.model.get('terminal').symbol,
             symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
-        var scrimShowing = enyo.$.scrim.showing;
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(overpayment, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
-          scrimShowing: scrimShowing,
           action: function () {
             me.openDrawer = openDrawer;
             triggerPaymentAccepted(orders, 0);
@@ -703,9 +712,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
       function finishVoidLayaway() {
         OB.UTIL.ProcessController.finish('voidLayaway', execution);
-        if (OB.MobileApp.view.openedPopup === null) {
-          enyo.$.scrim.hide();
-        }
       }
 
       function revertCashupReport(callback) {
@@ -774,7 +780,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         });
       }
 
-      enyo.$.scrim.show();
       OB.UTIL.clone(receipt, auxReceipt);
       auxReceipt.set('voidLayaway', true);
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
@@ -792,7 +797,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           var processCancelLayaway, process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
               execution = OB.UTIL.ProcessController.start('cancelLayaway');
 
-          enyo.$.scrim.show();
           processCancelLayaway = function () {
             var cloneOrderForNew = new OB.Model.Order();
             var cloneOrderForPrinting = new OB.Model.Order();
@@ -930,7 +934,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     function syncProcessCallback() {
                       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [receipt.get('canceledorder').get('documentNo')]));
                       orderList.deleteCurrent();
-                      enyo.$.scrim.hide();
                       OB.UTIL.calculateCurrentCash();
                       OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                       receipt.trigger('print', cloneOrderForPrinting, {
@@ -940,7 +943,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     }
 
                     OB.MobileApp.model.runSyncProcess(function () {
-                      OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                       syncProcessCallback();
                     }, function () {
                       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
@@ -955,7 +957,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                           receipt.set('hasbeenpaid', 'N');
                           receipt.trigger('updatePending');
                           OB.Dal.save(receipt, function () {
-                            OB.UTIL.calculateCurrentCash();
+                            OB.UTIL.calculateCurrentCash(function () {
+                              OB.UTIL.ProcessController.finish('cancelLayaway', execution);
+                            });
                           }, null, false);
                         });
                       } else {
@@ -1008,11 +1012,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
         var amount = receipt.getPaymentStatus().overpayment;
-        var scrimShowing = enyo.$.scrim.showing;
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
-          scrimShowing: scrimShowing,
           action: function () {
             finishCancelLayaway();
           }
