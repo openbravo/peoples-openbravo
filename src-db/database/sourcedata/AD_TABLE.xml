@@ -13051,7 +13051,8 @@ where @whereClause@]]></HQLQUERY>
 <!--E42E75B452F545469E648BD84C9538E9-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1E74B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--E42E75B452F545469E648BD84C9538E9-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--E42E75B452F545469E648BD84C9538E9-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--E42E75B452F545469E648BD84C9538E9-->  <HQLQUERY><![CDATA[select cat.id as catID, cat.name as catName, cat.searchKey as searchKey, case when 1>0 then false else true end as ob_selected,
+<!--E42E75B452F545469E648BD84C9538E9-->  <HQLQUERY><![CDATA[select cat.id as catID, cat.name as catName, cat.searchKey as searchKey, 
+case when 1>0 then false else true end as ob_selected,
 (select max(tc.id) from FinancialMgmtTaxCategory tc where tc.default = true and tc.client.id = cat.client.id) as C_TaxCategory_ID
 from ProductCategory cat
 where @additional_filters@]]></HQLQUERY>
