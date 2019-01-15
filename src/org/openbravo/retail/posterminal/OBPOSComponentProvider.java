@@ -113,6 +113,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/productbom",
         "model/taxcategorybom",
         "model/orderassociationsfilter",
+        "model/product-servicelinked",
         "model/prepaymentrules",
         "components/modalcancel",
         "components/subwindow",
