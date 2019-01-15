@@ -107,13 +107,15 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
     OBCriteria<ProductServiceLinked> obc = OBDal.getInstance().createCriteria(
         ProductServiceLinked.class);
     obc.add(Restrictions.eq(ProductServiceLinked.PROPERTY_PRODUCT, sourceProduct));
-    for (ProductServiceLinked psl : obc.list()) {
-      ProductServiceLinked newPsl = OBProvider.getInstance().get(ProductServiceLinked.class);
-      newPsl.setOrganization(targetProduct.getOrganization());
-      newPsl.setProduct(targetProduct);
-      newPsl.setProductCategory(psl.getProductCategory());
-      newPsl.setTaxCategory(psl.getTaxCategory());
-      OBDal.getInstance().save(newPsl);
+    for (ProductServiceLinked sourceProductServiceLinked : obc.list()) {
+      ProductServiceLinked targetProductServiceLinked = OBProvider.getInstance().get(
+          ProductServiceLinked.class);
+      targetProductServiceLinked.setOrganization(targetProduct.getOrganization());
+      targetProductServiceLinked.setProduct(targetProduct);
+      targetProductServiceLinked
+          .setProductCategory(sourceProductServiceLinked.getProductCategory());
+      targetProductServiceLinked.setTaxCategory(sourceProductServiceLinked.getTaxCategory());
+      OBDal.getInstance().save(targetProductServiceLinked);
     }
   }
 }
