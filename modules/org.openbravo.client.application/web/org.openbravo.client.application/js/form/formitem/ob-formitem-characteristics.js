@@ -177,9 +177,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   getValue: function () {
     var selection = this.tree.getSelection(),
         result = {},
-        i, c, chars = {},
-        values = {},
-        completeParentNodes = [],
+        i, c, completeParentNodes = [],
         node, currentChar, grandParent;
 
     for (i = 0; i < selection.length; i++) {
@@ -267,12 +265,10 @@ isc.OBCharacteristicsFilterDialog.addProperties({
      * based on the filter initial criteria
      */
     dataArrived = function () {
-      var internalValue, nodeList, i, j;
       this.Super('dataArrived', arguments);
       if (this.topElement && this.topElement.creator && this.topElement.creator.internalValue) {
         this.checkInitialNodes(this.topElement.creator.internalValue);
       }
-
     };
 
     /**
@@ -444,8 +440,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
    * not usable in other views than Product
    */
   getCriterion: function () {
-    var c, characteristic, v, value, charCriteria, fieldName = this.getCriteriaFieldName(),
-        inValues;
+    var c, characteristic, v, value, charCriteria, inValues;
     if (!this.internalValue) {
       return;
     }
