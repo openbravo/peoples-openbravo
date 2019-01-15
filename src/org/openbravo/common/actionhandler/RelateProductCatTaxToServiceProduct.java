@@ -77,13 +77,13 @@ public class RelateProductCatTaxToServiceProduct extends BaseProcessActionHandle
         final TaxCategory taxCategory = OBDal.getInstance().getProxy(TaxCategory.class,
             selectedLine.getString("taxCategory"));
 
-        ProductServiceLinked sp = OBProvider.getInstance().get(ProductServiceLinked.class);
-        sp.setClient(serviceProductClient);
-        sp.setOrganization(serviceProductOrg);
-        sp.setProduct(serviceProduct);
-        sp.setProductCategory(productCategory);
-        sp.setTaxCategory(taxCategory);
-        OBDal.getInstance().save(sp);
+        ProductServiceLinked productServiceLinked = OBProvider.getInstance().get(ProductServiceLinked.class);
+        productServiceLinked.setClient(serviceProductClient);
+        productServiceLinked.setOrganization(serviceProductOrg);
+        productServiceLinked.setProduct(serviceProduct);
+        productServiceLinked.setProductCategory(productCategory);
+        productServiceLinked.setTaxCategory(taxCategory);
+        OBDal.getInstance().save(productServiceLinked);
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
