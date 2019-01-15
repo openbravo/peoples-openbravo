@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,7 +52,7 @@ public class RelateProductCatTaxToServiceProduct extends BaseProcessActionHandle
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
 
-      JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+      final JSONArray selectedLines = jsonRequest.getJSONObject("_params")
           .getJSONObject("relateProdCatNewTax").getJSONArray("_selection");
       if (selectedLines.length() == 0) {
         errorMessage.put(SEVERITY, "error");
@@ -69,7 +69,7 @@ public class RelateProductCatTaxToServiceProduct extends BaseProcessActionHandle
           jsonRequest.getString("inpadOrgId"));
 
       for (int i = 0; i < selectedLines.length(); i++) {
-        JSONObject selectedLine = selectedLines.getJSONObject(i);
+        final JSONObject selectedLine = selectedLines.getJSONObject(i);
         log.debug("{}", selectedLine);
 
         final ProductCategory productCategory = OBDal.getInstance().getProxy(ProductCategory.class,

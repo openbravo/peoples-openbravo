@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,7 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
 
-      JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+      final JSONArray selectedLines = jsonRequest.getJSONObject("_params")
           .getJSONObject("servicesModifyTax").getJSONArray("_selection");
       if (selectedLines.length() == 0) {
         errorMessage.put(SEVERITY, "error");
@@ -64,7 +64,7 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
           jsonRequest.getString("inpmProductId"));
 
       for (int i = 0; i < selectedLines.length(); i++) {
-        JSONObject selectedLine = selectedLines.getJSONObject(i);
+        final JSONObject selectedLine = selectedLines.getJSONObject(i);
         log.debug("{}", selectedLine);
 
         final Product targetProduct = OBDal.getInstance().getProxy(Product.class,
@@ -98,7 +98,7 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
 
   private void appendConfig(Product sourceProduct, Product targetProduct) {
     // Remove existing configuration
-    StringBuilder hqlDelete = new StringBuilder(
+    final StringBuilder hqlDelete = new StringBuilder(
         "delete from M_PRODUCT_SERVICELINKED where product.id = :productId");
     Query<?> hqlQueryDelete = OBDal.getInstance().getSession().createQuery(hqlDelete.toString());
     hqlQueryDelete.setParameter("productId", targetProduct.getId());
