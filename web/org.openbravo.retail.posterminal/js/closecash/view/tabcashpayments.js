@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -383,7 +383,7 @@ enyo.kind({
     this.payment.set('foreignCounted', totalCounted);
     var cTotalCounted = OB.UTIL.currency.toDefaultCurrency(this.payment.attributes.paymentMethod.currency, totalCounted);
     this.payment.set('counted', cTotalCounted);
-    this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, OB.Utilities.Number.roundJSNumber(this.payment.get('foreignExpected'), 2)));
+    this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, this.payment.get('foreignExpected')));
     this.printTotals();
 
     this.setCoinsStatus(null);

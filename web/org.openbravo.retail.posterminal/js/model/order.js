@@ -4176,7 +4176,7 @@
           me = this,
           i, splittedDocNo = [],
           terminalDocNoPrefix, newDocNo = '',
-          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator;
+          cancelAndReplaceSeparator = OB.MobileApp.model.get('terminal').cancelAndReplaceSeparator || '-';
 
       //Cloning order to be canceled
       var clonedreceipt = new OB.Model.Order();
@@ -4217,6 +4217,8 @@
           line.set('replacedorderline', line.get('id'));
           line.set('id', idMap[line.get('id')]);
           line.unset('invoicedQuantity');
+          line.set('obposCanbedelivered', true);
+          line.set('obposIspaid', false);
         });
 
         // The lines must be iterated a second time after finishing the first loop, to ensure that
@@ -4902,7 +4904,7 @@
             this.set('paymentWithSign', total);
             //The change value will be computed through a rounded total value, to ensure that the total plus change
             //add up to the paid amount without any kind of precission loss
-            this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, OB.Utilities.Number.roundJSNumber(total, 2), precision)));
+            this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, total, precision)));
           } else {
             pcash.set('paid', pcash.get('origAmount'));
             this.set('payment', OB.DEC.abs(totalPaid));
@@ -4922,7 +4924,7 @@
             this.set('paymentWithSign', total);
             //The change value will be computed through a rounded total value, to ensure that the total plus change
             //add up to the paid amount without any kind of precission loss
-            this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, OB.Utilities.Number.roundJSNumber(total, 2), precision)));
+            this.set('change', OB.DEC.abs(OB.DEC.sub(totalPaid, total, precision)));
           } else {
             pcash.set('paid', pcash.get('origAmount'));
             this.set('payment', OB.DEC.abs(totalPaid));
@@ -6089,17 +6091,21 @@
 
       function removeReceiptFromDatabase(receipt, callback) {
         var model, orderList = OB.MobileApp.model.orderList;
-        model = _.find(orderList.models, function (model) {
-          return model.get('id') === receipt.get('id');
-        });
-        if (model) {
-          orderList.saveCurrent();
-          orderList.load(model);
-          if (model.get('id')) {
-            OB.Dal.remove(model);
+        if (orderList) {
+          model = _.find(orderList.models, function (model) {
+            return model.get('id') === receipt.get('id');
+          });
+          if (model) {
+            orderList.saveCurrent();
+            orderList.load(model);
+            if (model.get('id')) {
+              OB.Dal.remove(model);
+            }
           }
+          orderList.deleteCurrent();
+        } else if (receipt && receipt.get('id')) {
+          OB.Dal.remove(receipt);
         }
-        orderList.deleteCurrent();
         if (callback && callback instanceof Function) {
           callback();
         }

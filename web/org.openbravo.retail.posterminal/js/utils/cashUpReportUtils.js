@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -795,7 +795,7 @@
     });
   };
 
-  OB.UTIL.getPaymethodCashUp = function (payMthds, objToSend, cashUp) {
+  OB.UTIL.getPaymethodCashUp = function (payMthds, objToSend, cashUp, tx) {
     _.each(OB.MobileApp.model.get('payments'), function (curModel) {
       var cashPaymentMethodInfo = {
         paymentMethodId: 0,
@@ -834,7 +834,7 @@
     var i;
     for (i = 0; i < payMthds.length; i++) {
       payMthds.at(i).set('newPaymentMethod', false);
-      OB.Dal.save(payMthds.at(i), null, null, false);
+      OB.Dal.saveInTransaction(tx, payMthds.at(i), null, null, false);
     }
   };
 
@@ -911,7 +911,7 @@
       'cashup_id': cashUp.at(0).get('id'),
       '_orderByClause': 'name asc'
     }, function (payMthds) {
-      OB.UTIL.getPaymethodCashUp(payMthds, objToSend, cashUp);
+      OB.UTIL.getPaymethodCashUp(payMthds, objToSend, cashUp, tx);
 
       //process the taxs cash ups
       OB.Dal.findInTransaction(tx, OB.Model.TaxCashUp, {

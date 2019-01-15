@@ -51,6 +51,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     // Shows a modal window with the orders pending to be paid
     var orderlist = this.get('orderList'),
         model = this,
+        reCalculateReceipt = false,
         criteria = {
         'hasbeenpaid': 'N'
         };
@@ -97,15 +98,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         ordersNotPaid.remove(orderToRemove);
       });
 
-      //removing Orders lines without mandatory fields filled
-      OB.UTIL.HookManager.executeHooks('OBPOS_CheckReceiptMandatoryFields', {
-        orders: ordersNotPaid.models
-      }, function (args) {
-        _.each(args.removeOrderList, function (orderToRemove) {
-          ordersNotPaid.remove(orderToRemove);
-        });
-      });
-
       OB.UTIL.HookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
         ordersNotPaid: ordersNotPaid,
         model: model
@@ -122,9 +114,19 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             // At this point it is sure that there exists at least one order
             // Function to continue of there is some error
             currentOrder = args.ordersNotPaid.models[0];
-            orderlist.load(currentOrder);
-            loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
-            OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
+            //removing Orders lines without mandatory fields filled
+            OB.UTIL.HookManager.executeHooks('OBPOS_CheckReceiptMandatoryFields', {
+              orders: orderlist.models
+            }, function (args) {
+              reCalculateReceipt = args.reCalculateReceipt;
+              orderlist.load(currentOrder);
+              if (reCalculateReceipt) {
+                OB.MobileApp.model.receipt.calculateGrossAndSave();
+              }
+              loadOrderStr = OB.I18N.getLabel('OBPOS_Order') + currentOrder.get('documentNo') + OB.I18N.getLabel('OBPOS_Loaded');
+              OB.UTIL.showAlert.display(loadOrderStr, OB.I18N.getLabel('OBPOS_Info'));
+
+            });
           }
         }, model);
         loadUnpaidOrdersCallback();
