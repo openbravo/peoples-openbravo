@@ -115,6 +115,5 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
       newPsl.setTaxCategory(psl.getTaxCategory());
       OBDal.getInstance().save(newPsl);
     }
-    return;
   }
 }
