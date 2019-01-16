@@ -887,6 +887,8 @@ Sets all transactions prior to the reference date as permanently adjusted.]]></H
 <!--E0870062F05F4DC88E589ABC6A45DF4C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E0870062F05F4DC88E589ABC6A45DF4C-->  <VALUE><![CDATA[Relate Product Category and new tax to a]]></VALUE>
 <!--E0870062F05F4DC88E589ABC6A45DF4C-->  <NAME><![CDATA[Relate Product Category and new tax to a Service Product]]></NAME>
+<!--E0870062F05F4DC88E589ABC6A45DF4C-->  <DESCRIPTION><![CDATA[Process to edit the tax properties of services linked to product]]></DESCRIPTION>
+<!--E0870062F05F4DC88E589ABC6A45DF4C-->  <HELP><![CDATA[Executes the process to edit the tax properties of services linked to product]]></HELP>
 <!--E0870062F05F4DC88E589ABC6A45DF4C-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--E0870062F05F4DC88E589ABC6A45DF4C-->  <CLASSNAME><![CDATA[org.openbravo.common.actionhandler.RelateProductCatTaxToServiceProduct]]></CLASSNAME>
 <!--E0870062F05F4DC88E589ABC6A45DF4C-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>

@@ -20954,7 +20954,8 @@ When it is active this field will be focused by default when the tab is opened.]
 <!--028EB75EC30644CFB4203D20EABF148B-->  <COLUMNNAME><![CDATA[Copyservicemodifytaxconfig]]></COLUMNNAME>
 <!--028EB75EC30644CFB4203D20EABF148B-->  <NAME><![CDATA[Copy Service Modify Tax Configuration]]></NAME>
 <!--028EB75EC30644CFB4203D20EABF148B-->  <PRINTNAME><![CDATA[Copy Service Modify Tax Configuration]]></PRINTNAME>
-<!--028EB75EC30644CFB4203D20EABF148B-->  <HELP><![CDATA[Process to copy configuration from current service to selected services. This process erases existing configuration for the target service/s. ]]></HELP>
+<!--028EB75EC30644CFB4203D20EABF148B-->  <DESCRIPTION><![CDATA[Process to copy configuration from current service to selected services]]></DESCRIPTION>
+<!--028EB75EC30644CFB4203D20EABF148B-->  <HELP><![CDATA[Process to copy configuration from current service to selected services. This process erases existing configuration for the target service/s.]]></HELP>
 <!--028EB75EC30644CFB4203D20EABF148B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--028EB75EC30644CFB4203D20EABF148B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--028EB75EC30644CFB4203D20EABF148B--></AD_ELEMENT>
@@ -21737,6 +21738,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--1932ABC5B1164F48ADB3D0B154D3165E-->  <COLUMNNAME><![CDATA[Relateprodcattaxtoservice]]></COLUMNNAME>
 <!--1932ABC5B1164F48ADB3D0B154D3165E-->  <NAME><![CDATA[Modify Tax for Product Category]]></NAME>
 <!--1932ABC5B1164F48ADB3D0B154D3165E-->  <PRINTNAME><![CDATA[Modify Tax for Product Category]]></PRINTNAME>
+<!--1932ABC5B1164F48ADB3D0B154D3165E-->  <DESCRIPTION><![CDATA[Process to define the Modify Tax configuration for the selected services]]></DESCRIPTION>
+<!--1932ABC5B1164F48ADB3D0B154D3165E-->  <HELP><![CDATA[Process to define the Modify Tax configuration for the selected services]]></HELP>
 <!--1932ABC5B1164F48ADB3D0B154D3165E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1932ABC5B1164F48ADB3D0B154D3165E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1932ABC5B1164F48ADB3D0B154D3165E--></AD_ELEMENT>
@@ -22324,6 +22327,8 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--275E532261A34362A2125C5BC76808AC-->  <COLUMNNAME><![CDATA[M_Product_Servicelinked_ID]]></COLUMNNAME>
 <!--275E532261A34362A2125C5BC76808AC-->  <NAME><![CDATA[M_Product_Servicelinked_ID]]></NAME>
 <!--275E532261A34362A2125C5BC76808AC-->  <PRINTNAME><![CDATA[M_Product_Servicelinked_ID]]></PRINTNAME>
+<!--275E532261A34362A2125C5BC76808AC-->  <DESCRIPTION><![CDATA[Identifier of properties for services linked to product]]></DESCRIPTION>
+<!--275E532261A34362A2125C5BC76808AC-->  <HELP><![CDATA[Defines the identifier of properties for services linked to product]]></HELP>
 <!--275E532261A34362A2125C5BC76808AC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--275E532261A34362A2125C5BC76808AC-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--275E532261A34362A2125C5BC76808AC--></AD_ELEMENT>
@@ -23837,6 +23842,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--4F4322F47A50477D919DD540759643AC-->  <COLUMNNAME><![CDATA[relateProdCatNewTax]]></COLUMNNAME>
 <!--4F4322F47A50477D919DD540759643AC-->  <NAME><![CDATA[Relate Product Category New Tax]]></NAME>
 <!--4F4322F47A50477D919DD540759643AC-->  <PRINTNAME><![CDATA[Relate Product Category New Tax]]></PRINTNAME>
+<!--4F4322F47A50477D919DD540759643AC-->  <DESCRIPTION><![CDATA[Parameter of the process to edit the tax properties of services linked to product]]></DESCRIPTION>
+<!--4F4322F47A50477D919DD540759643AC-->  <HELP><![CDATA[Defines the parameter of the process to edit the tax properties of services linked to product]]></HELP>
 <!--4F4322F47A50477D919DD540759643AC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--4F4322F47A50477D919DD540759643AC-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--4F4322F47A50477D919DD540759643AC--></AD_ELEMENT>
@@ -26561,6 +26568,8 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--6322708CFDD64839A1E92DBF8D587A08-->  <COLUMNNAME><![CDATA[servicesModifyTax]]></COLUMNNAME>
 <!--6322708CFDD64839A1E92DBF8D587A08-->  <NAME><![CDATA[Services Modify Tax]]></NAME>
 <!--6322708CFDD64839A1E92DBF8D587A08-->  <PRINTNAME><![CDATA[Services Modify Tax]]></PRINTNAME>
+<!--6322708CFDD64839A1E92DBF8D587A08-->  <DESCRIPTION><![CDATA[Parameter of the process to copy configuration from current service to selected services]]></DESCRIPTION>
+<!--6322708CFDD64839A1E92DBF8D587A08-->  <HELP><![CDATA[Defines the parameter of the process to copy configuration from current service to selected services]]></HELP>
 <!--6322708CFDD64839A1E92DBF8D587A08-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6322708CFDD64839A1E92DBF8D587A08-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--6322708CFDD64839A1E92DBF8D587A08--></AD_ELEMENT>
@@ -34439,18 +34448,6 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--D8028ED62BC34DAFBD15048D0AB458BB-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--D8028ED62BC34DAFBD15048D0AB458BB--></AD_ELEMENT>
 
-<!--D819BCC4DCE0488F959F8A79F9F28990--><AD_ELEMENT>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <AD_ELEMENT_ID><![CDATA[D819BCC4DCE0488F959F8A79F9F28990]]></AD_ELEMENT_ID>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <COLUMNNAME><![CDATA[catID]]></COLUMNNAME>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <NAME><![CDATA[M_Product_Category_ID]]></NAME>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <PRINTNAME><![CDATA[M_Product_Category_ID]]></PRINTNAME>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--D819BCC4DCE0488F959F8A79F9F28990-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--D819BCC4DCE0488F959F8A79F9F28990--></AD_ELEMENT>
-
 <!--D81D859886DB4CA4910DBC340EAF3D5F--><AD_ELEMENT>
 <!--D81D859886DB4CA4910DBC340EAF3D5F-->  <AD_ELEMENT_ID><![CDATA[D81D859886DB4CA4910DBC340EAF3D5F]]></AD_ELEMENT_ID>
 <!--D81D859886DB4CA4910DBC340EAF3D5F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -35626,6 +35623,8 @@ This field is populated in case the used price list includes taxes.]]></HELP>
 <!--F361E9B12D5E4670AD6EA5DC72F41DDD-->  <COLUMNNAME><![CDATA[categoryName]]></COLUMNNAME>
 <!--F361E9B12D5E4670AD6EA5DC72F41DDD-->  <NAME><![CDATA[Product Category]]></NAME>
 <!--F361E9B12D5E4670AD6EA5DC72F41DDD-->  <PRINTNAME><![CDATA[Product Category]]></PRINTNAME>
+<!--F361E9B12D5E4670AD6EA5DC72F41DDD-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
+<!--F361E9B12D5E4670AD6EA5DC72F41DDD-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
 <!--F361E9B12D5E4670AD6EA5DC72F41DDD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--F361E9B12D5E4670AD6EA5DC72F41DDD-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--F361E9B12D5E4670AD6EA5DC72F41DDD--></AD_ELEMENT>
