@@ -6333,7 +6333,7 @@
           } else if (me.get('bp').get('invoiceTerms') === 'I' || me.get('bp').get('invoiceTerms') === 'O') {
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
-          if (qtyToInvoice && (ol.get('obposCanbedelivered') || me.get('bp').get('invoiceTerms') === 'I')) {
+          if (qtyToInvoice && (ol.get('obposCanbedelivered') || ol.get('obposIspaid') || me.get('bp').get('invoiceTerms') === 'I')) {
             lineToInvoice = new OB.Model.OrderLine();
             OB.UTIL.clone(ol, lineToInvoice);
             lineToInvoice.set('id', OB.UTIL.get_UUID());
