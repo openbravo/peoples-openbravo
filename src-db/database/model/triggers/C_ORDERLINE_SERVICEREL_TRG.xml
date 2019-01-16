@@ -130,7 +130,7 @@ BEGIN
       v_new_grossprice := v_gross_pricelist; -- old price gross pricelist
     ELSE
       SELECT GROSS_UNIT_PRICE / PRICEACTUAL INTO v_linerate FROM C_ORDERLINE WHERE C_ORDERLINE_ID = v_related_orderline_id;		
-        v_new_grossprice := ROUND(ROUND(v_grossprice * ROUND(v_linerate, v_price_precision), v_price_precision) / ROUND(v_line_rate_prev, v_price_precision), v_price_precision);
+      v_new_grossprice := ROUND(ROUND(v_grossprice * ROUND(v_linerate, v_price_precision), v_price_precision) / ROUND(v_line_rate_prev, v_price_precision), v_price_precision);
     END IF;
     UPDATE c_orderline SET gross_unit_price = v_new_grossprice WHERE C_ORDERLINE_ID = v_related_orderline_id;
   END IF;
