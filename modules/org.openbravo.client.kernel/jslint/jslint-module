@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# --browser doesn't work properly in jslint4java 1.4.7
-# adding the global available functions manually: window, unscape, top, alert, escape
-# adding globals present in qunit: ok, test, module, expect, same, stop, start, equals, asyncTest
-
 echo "Checking --> $@"
-java -jar ../org.openbravo.client.kernel/lib/runtime/jslint4java-1.4.7.jar \
- --browser --evil --continue --undef \
- --predef window,unescape,escape,top,alert,isc,OB,ok,test,module,expect,same,stop,start,asyncTest,equals,BigDecimal "$@"
+
+if ! [[ -x "$(command -v eslint)" ]]; then
+    echo -e "\n\033[0;33mERROR:\033[0m eslint command not found. Install using"
+    echo -e "# sudo npm install -g eslint@^5.12.0\n"
+    exit 1
+fi
+
+if ! [[ "$(eslint -v)" =~ ^v5.12* ]]; then
+    echo -e "\n\033[0;33mWARNING:\033[0m For better compatibility it is recommended to use a 5.12.x version of eslint\n"
+    exit 1
+fi
+
+eslint -c ../org.openbravo.client.kernel/jslint/.eslintrc.json "$@"
