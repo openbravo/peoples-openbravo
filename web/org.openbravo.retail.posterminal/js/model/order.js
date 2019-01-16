@@ -4208,6 +4208,7 @@
 
         me.preventOrderSave(true);
         me.set('preventServicesUpdate', true);
+        me.unset('orderid');
 
         if (me.get('paidOnCredit')) {
           me.set('paidOnCredit', false);
