@@ -91,7 +91,6 @@
       extendHWResource(this.templatecanceledreceipt, "printCanceledReceiptTemplate");
       this.templatecanceledlayaway = new OB.DS.HWResource(terminal.printCanceledLayawayTemplate || OB.OBPOSPointOfSale.Print.CanceledLayawayTemplate);
       extendHWResource(this.templatecanceledlayaway, "printCanceledLayawayTemplate");
-
       this.isRetry = false;
       };
 
@@ -154,6 +153,7 @@
             OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, true, 'OBPOS_MsgPDFPrintAgain');
           } else {
             // Success. Try to print the pending receipts.
+            me.isRetry = false;
             OB.Model.OfflinePrinter.printPendingJobs();
             OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
               receipt: receipt
@@ -207,6 +207,7 @@
                       };
                   OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, true, 'OBPOS_MsgPDFPrintAgain');
                 } else {
+                  me.isRetry = false;
                   i++;
                   if (i < filesArray.length) {
                     recursivePrintFiles();
@@ -412,6 +413,7 @@
                   OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, false, 'OBPOS_MsgPrintAgain');
                 } else {
                   // Success. Try to print the pending receipts.
+                  me.isRetry = false;
                   OB.Model.OfflinePrinter.printPendingJobs();
                   OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
                     receipt: receipt,
@@ -465,6 +467,7 @@
                     OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, false, 'OBPOS_MsgPrintAgain');
                   } else {
                     // Success. Try to print the pending receipts.
+                    me.isRetry = false;
                     OB.Model.OfflinePrinter.printPendingJobs();
                   }
                 });
