@@ -38,7 +38,6 @@ public class ConfigParameters {
   private final boolean isFullPathBaseDesignPath;
   public final String strDefaultDesignPath;
   public final String strLocalReplaceWith;
-  private final String strFopConfig;
   public final String strBBDD = null;
   public final String strVersion;
   public final String strParentVersion;
@@ -94,7 +93,6 @@ public class ConfigParameters {
     String s = "FormatFile";
     strFileFormat = getResolvedParameter(context, s);
 
-    strFopConfig = getResolvedParameter(context, "FOPConfig");
     strBaseDesignPath = trimTrailing(getResolvedParameter(context, "BaseDesignPath"), "/");
     isFullPathBaseDesignPath = determineIsFullDesignPath();
     strDefaultDesignPath = getResolvedParameter(context, "DefaultDesignPath");
@@ -209,14 +207,6 @@ public class ConfigParameters {
     } catch (Exception e) {
       return false;
     }
-  }
-
-  public boolean haveFopConfig() {
-    return strBaseDesignPath != null && strFopConfig != null;
-  }
-
-  public String getFopConfigPath() {
-    return prefix + "/" + strBaseConfigPath + "/" + strFopConfig;
   }
 
   public String getPoolFilePath() {
