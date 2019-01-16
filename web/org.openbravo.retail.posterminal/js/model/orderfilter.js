@@ -50,6 +50,10 @@
     filter: false,
     type: 'TEXT'
   }, {
+    name: 'orgId',
+    filter: false,
+    type: 'TEXT'
+  }, {
     name: 'documentNo',
     column: 'documentNo',
     filter: true,

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,6 +8,8 @@
  */
 
 /*global enyo, Backbone, _, OB */
+
+var crossStoreInfo = false;
 
 enyo.kind({
   name: 'OB.UI.ReceiptsForPayOpenTicketsList',
@@ -132,6 +134,16 @@ enyo.kind({
     totalData = totalData.concat(data.models);
     data.models = totalData;
     data.length = totalData.length;
+
+    crossStoreInfo = false;
+    if (data && data.length > 0) {
+      data.models.forEach(function (model) {
+        if (OB.MobileApp.model.get('terminal').organization !== model.attributes.orgId) {
+          crossStoreInfo = true;
+          return;
+        }
+      });
+    }
   }
 });
 
@@ -236,7 +248,7 @@ enyo.kind({
   name: 'OB.UI.ListMultiOrdersLine',
   kind: 'OB.UI.CheckboxButton',
   classes: 'modal-dialog-btn-check',
-  style: 'border-bottom: 1px solid #cccccc;text-align: left; padding-left: 70px; height: 58px;',
+  style: 'border-bottom: 1px solid #cccccc;text-align: left; padding-left: 70px; height: 90px;',
   events: {
     onHideThisPopup: ''
   },
@@ -247,8 +259,13 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    style: 'line-height: 23px; display: inline',
+    style: 'line-height: 30px; display: inline',
     components: [{
+      style: 'float: left; font-weight: bold; color: blue',
+      name: 'store'
+    }, {
+      style: 'clear: both;'
+    }, {
       style: 'display: inline',
       name: 'topLine'
     }, {
@@ -263,6 +280,11 @@ enyo.kind({
   create: function () {
     var returnLabel = '';
     this.inherited(arguments);
+    if (crossStoreInfo) {
+      this.$.store.setContent(this.model.get('store'));
+    } else {
+      this.$.store.setContent('');
+    }
     if (this.model.get('documentTypeId') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
       this.model.set('totalamount', OB.DEC.mul(this.model.get('totalamount'), -1));
       returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
