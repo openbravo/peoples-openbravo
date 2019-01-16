@@ -9,7 +9,7 @@ if ! [[ -x "$(command -v eslint)" ]]; then
 fi
 
 if ! [[ "$(eslint -v)" =~ ^v5.12* ]]; then
-    echo -e "\n\033[0;33mWARNING:\033[0m For better compatibility it is recommended to use a 5.12.x version of eslint\n"
+    echo -e "\n\033[0;33mWARNING:\033[0m For better compatibility it is recommended to use a 5.x version of eslint\n"
     exit 1
 fi
 

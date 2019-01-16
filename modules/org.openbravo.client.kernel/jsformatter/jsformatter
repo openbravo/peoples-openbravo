@@ -11,30 +11,38 @@
 # * under the License.
 # * The Original Code is Openbravo ERP.
 # * The Initial Developer of the Original Code is Openbravo SLU
-# * All portions are Copyright (C) 2016 Openbravo SLU
+# * All portions are Copyright (C) 2019 Openbravo SLU
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
 set -e
-# Mercurial pre-commit hook for jsbeautify
+
+if ! [[ -x "$(command -v prettier)" ]]; then
+    echo -e "\n\033[0;33mERROR:\033[0m prettier command not found. Install using"
+    echo -e "# sudo npm install -g prettier@^1.15.3\n"
+    exit 1
+fi
+
+if ! [[ "$(eslint -v)" =~ ^1.15* ]]; then
+    echo -e "\n\033[0;33mWARNING:\033[0m For better compatibility it is recommended to use a 1.x version of prettier\n"
+fi
 
 changedfile=$1
 replaceparam=$2
-../org.openbravo.client.kernel/jsbeautify/jsbeautifier.py --indent-size=2 --jslint-happy "$changedfile" | perl -pe 'chop if eof' > "$changedfile.beautified"
-if ! diff -u "$changedfile" "$changedfile.beautified"; then
+prettier --config ./modules/org.openbravo.client.kernel/jsformatter/.prettierrc.json "$changedfile" > "$changedfile.prettier"
+if ! diff -u "$changedfile" "$changedfile.prettier"; then
   if [ "$replaceparam" != "replace" ] ; then
     echo ""
     echo "******************************************************************************************************************************************************"
-    echo "See above Beautify Error --> Please, beautify $changedfile";
+    echo "See above Formatter Error --> Please, format $changedfile";
     echo "******************************************************************************************************************************************************"
-    echo "*Note: JS Beautifier Eclipse plugin doesn't remove white spaces at the end of the line in block comments. You have to do it manually"
     echo ""
-    rm -rf "$changedfile.beautified"
+    rm -rf "$changedfile.prettier"
     export ERROR="1"
   else
-    cat "$changedfile.beautified" > "$changedfile"
-    echo "Beautify --> File beautified: $changedfile";
+    cat "$changedfile.prettier" > "$changedfile"
+    echo "Formatter --> File formatted: $changedfile";
   fi
 fi
-rm -rf "$changedfile.beautified"
+rm -rf "$changedfile.prettier"

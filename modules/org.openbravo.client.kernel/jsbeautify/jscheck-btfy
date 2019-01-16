@@ -11,7 +11,7 @@
 # * under the License.
 # * The Original Code is Openbravo ERP.
 # * The Initial Developer of the Original Code is Openbravo SLU
-# * All portions are Copyright (C) 2016 Openbravo SLU
+# * All portions are Copyright (C) 2016-2019 Openbravo SLU
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
@@ -22,9 +22,9 @@ replaceparam=$1
  echo ""
  echo "-----------------------------------------------"
 if [ "$replaceparam" != "replace" ] ; then
- echo "Performing jsbeautify check on all js resources"
+ echo "Performing formatting check on all js resources"
 else
- echo "Performing jsbeautify replacement on all js resources"
+ echo "Performing formatting replacement on all js resources"
 fi
  echo "-----------------------------------------------"
  echo ""
@@ -32,7 +32,7 @@ files=$(./modules/org.openbravo.client.kernel/jscheck/jsfiles ./modules)
 
 for changedfile in echo $files; do
   if [ -f "$changedfile" -a -n "$(echo $changedfile | awk '/.js$/')" ]; then
-    source ./modules/org.openbravo.client.kernel/jsbeautify/jsbeautify $changedfile $replaceparam
+    source ./modules/org.openbravo.client.kernel/jsformatter/jsformatter $changedfile $replaceparam
   fi
 done
 exit $ERROR
