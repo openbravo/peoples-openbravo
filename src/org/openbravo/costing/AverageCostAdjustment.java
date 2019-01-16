@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -55,8 +57,6 @@ import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 @ComponentProvider.Qualifier("org.openbravo.costing.AverageAlgorithm")
 public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
@@ -168,11 +168,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             .subtract(adjustmentBalance);
         adjustmentBalance = adjustmentBalance.add(negCorrAmt.multiply(trxSignMultiplier));
         // If there is a difference insert a cost adjustment line.
-        CostAdjustmentLine newCAL = insertCostAdjustmentLine(basetrx, negCorrAmt, null);
-        newCAL.setNegativeStockCorrection(Boolean.TRUE);
-        newCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
-        newCAL.setUnitCost(Boolean.FALSE);
-        OBDal.getInstance().save(newCAL);
+        final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+            basetrx, negCorrAmt, getCostAdj());
+        lineParameters.setNegativeCorrection(true);
+        lineParameters.setRelatedTransactionAdjusted(true);
+        insertCostAdjustmentLine(lineParameters);
         cost = trxPrice;
         log.debug("Negative stock correction. Amount: {}, new cost {}", negCorrAmt.toPlainString(),
             cost.toPlainString());
@@ -319,9 +319,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                 adjustmentBalance = adjustmentBalance.add(unitCostDifference
                     .multiply(trxSignMultiplier));
                 // If there is a difference insert a cost adjustment line.
-                CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, unitCostDifference, null);
-                newCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
-                OBDal.getInstance().save(newCAL);
+                final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+                    trx, unitCostDifference, getCostAdj());
+                lineParameters.setRelatedTransactionAdjusted(true);
+                insertCostAdjustmentLine(lineParameters);
                 log.debug("Adjustment added. Amount {}.", unitCostDifference.toPlainString());
               }
 
@@ -348,11 +349,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                 .subtract(adjustmentBalance);
             adjustmentBalance = adjustmentBalance.add(negCorrAmt.multiply(trxSignMultiplier));
             // If there is a difference insert a cost adjustment line.
-            CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, negCorrAmt, null);
-            newCAL.setNegativeStockCorrection(Boolean.TRUE);
-            newCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
-            newCAL.setUnitCost(Boolean.FALSE);
-            OBDal.getInstance().save(newCAL);
+            final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+                trx, negCorrAmt, getCostAdj());
+            lineParameters.setNegativeCorrection(true);
+            lineParameters.setRelatedTransactionAdjusted(true);
+            insertCostAdjustmentLine(lineParameters);
             cost = trxPrice;
             log.debug("Negative stock correction. Amount: {}, new cost {}",
                 negCorrAmt.toPlainString(), cost.toPlainString());
@@ -367,12 +368,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               }
               adjustmentBalance = adjustmentBalance.add(revertedNegativeAdjustment);
               // If there is a difference insert a cost adjustment line.
-              CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, revertedNegativeAdjustment,
-                  null);
-              newCAL.setNegativeStockCorrection(Boolean.TRUE);
-              newCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
-              newCAL.setUnitCost(Boolean.FALSE);
-              OBDal.getInstance().save(newCAL);
+              final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+                  trx, revertedNegativeAdjustment, getCostAdj());
+              lineParameters.setNegativeCorrection(true);
+              lineParameters.setRelatedTransactionAdjusted(true);
+              insertCostAdjustmentLine(lineParameters);
               cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
                   RoundingMode.HALF_UP);
               log.debug("Revert Negative stock correction. Amount: {}, new cost {}",
@@ -412,9 +412,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               trxUnitCostAdjAmt = trxUnitCostAdjAmt.add(newAdjAmt);
               adjustmentBalance = adjustmentBalance.add(newAdjAmt.multiply(trxSignMultiplier));
               // If there is a difference insert a cost adjustment line.
-              CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, newAdjAmt, null);
-              newCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
-              OBDal.getInstance().save(newCAL);
+              final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+                  trx, newAdjAmt, getCostAdj());
+              lineParameters.setRelatedTransactionAdjusted(true);
+              insertCostAdjustmentLine(lineParameters);
               log.debug("Adjustment added. Amount {}.", newAdjAmt.toPlainString());
             }
           }
@@ -767,7 +768,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, trx));
     critLines.add(Restrictions.or(//
         Restrictions.eq("ca.id", getCostAdj().getId()),//
-        Restrictions.eq("ca." + CostAdjustment.PROPERTY_DOCUMENTSTATUS, "CO")));
+        Restrictions.not(Restrictions.eq("ca." + CostAdjustment.PROPERTY_DOCUMENTSTATUS, "DR"))));
 
     return critLines.list();
   }

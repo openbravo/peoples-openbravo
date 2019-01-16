@@ -27,6 +27,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -58,8 +60,6 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.TransactionLast;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CostAdjustmentUtils {
   private static final Logger log4j = LogManager.getLogger();
@@ -117,6 +117,7 @@ public class CostAdjustmentUtils {
    * 
    * @param isSource
    */
+  @Deprecated
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate) {
@@ -125,6 +126,7 @@ public class CostAdjustmentUtils {
         accountingDate, lineNo);
   }
 
+  @Deprecated
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate, Currency currency) {
@@ -133,6 +135,7 @@ public class CostAdjustmentUtils {
         accountingDate, lineNo, currency);
   }
 
+  @Deprecated
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate, Long lineNo) {
@@ -140,34 +143,74 @@ public class CostAdjustmentUtils {
         accountingDate, lineNo, null);
   }
 
+  @Deprecated
   public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
       CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
       Date accountingDate, Long lineNo, Currency currency) {
-    Long stdPrecission = transaction.getCurrency().getStandardPrecision();
-    Currency adjustmentCurrency = currency;
-    if (adjustmentCurrency == null) {
-      adjustmentCurrency = transaction.getCurrency();
-    }
+    final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+        transaction, costAdjusted, costAdjustmentHeader, currency);
+    lineParameters.setSource(isSource);
+    return insertCostAdjustmentLine(lineParameters, accountingDate, lineNo);
+  }
 
-    CostAdjustmentLine costAdjustmentLine = getExistingCostAdjustmentLine(transaction,
-        costAdjustmentHeader, isSource, accountingDate, adjustmentCurrency);
+  /**
+   * Creates a new Adjustment Line and returns it
+   * 
+   * @param lineParameters
+   *          Object that contains most of the information needed to created the Adjustment Line
+   * @param accountingDate
+   *          The Date for which this document will be posted
+   * @return An Adjustment Line created based on the given parameters
+   */
+  public static CostAdjustmentLine insertCostAdjustmentLine(
+      final CostAdjustmentLineParameters lineParameters, final Date accountingDate) {
+    final Long lineNo = getNewLineNo(lineParameters.getCostAdjustmentHeader());
+    return insertCostAdjustmentLine(lineParameters, accountingDate, lineNo);
+  }
+
+  /**
+   * 
+   * Creates a new Adjustment Line and returns it
+   * 
+   * @param lineParameters
+   *          Object that contains most of the information needed to created the Adjustment Line
+   * @param accountingDate
+   *          The Date for which this document will be posted
+   * @param lineNo
+   *          Number to position the line within the Cost Adjustment Document
+   * @return An Adjustment Line created based on the given parameters
+   */
+  public static CostAdjustmentLine insertCostAdjustmentLine(
+      final CostAdjustmentLineParameters lineParameters, final Date accountingDate,
+      final Long lineNo) {
+    final Long stdPrecission = lineParameters.getTransaction().getCurrency().getStandardPrecision();
+
+    CostAdjustmentLine costAdjustmentLine = getExistingCostAdjustmentLine(lineParameters,
+        accountingDate);
     if (costAdjustmentLine == null) {
       costAdjustmentLine = OBProvider.getInstance().get(CostAdjustmentLine.class);
-      costAdjustmentLine.setOrganization(costAdjustmentHeader.getOrganization());
-      costAdjustmentLine.setCostAdjustment(costAdjustmentHeader);
-      costAdjustmentLine.setCurrency(adjustmentCurrency);
-      costAdjustmentLine.setInventoryTransaction(transaction);
-      costAdjustmentLine.setSource(isSource);
+      costAdjustmentLine
+          .setOrganization(lineParameters.getCostAdjustmentHeader().getOrganization());
+      costAdjustmentLine.setCostAdjustment(lineParameters.getCostAdjustmentHeader());
+      costAdjustmentLine.setCurrency(lineParameters.getCurrency());
+      costAdjustmentLine.setInventoryTransaction(lineParameters.getTransaction());
+      costAdjustmentLine.setSource(lineParameters.isSource());
       costAdjustmentLine.setAccountingDate(accountingDate);
       costAdjustmentLine.setLineNo(lineNo);
+      costAdjustmentLine.setUnitCost(lineParameters.isUnitCost());
+      costAdjustmentLine.setNegativeStockCorrection(lineParameters.isNegativeCorrection());
+      costAdjustmentLine.setBackdatedTrx(lineParameters.isBackdatedTransaction());
+      costAdjustmentLine.setNeedsPosting(lineParameters.isNeedPosting());
+      costAdjustmentLine.setRelatedTransactionAdjusted(lineParameters
+          .isRelatedTransactionAdjusted());
     }
-    if (costAdjusted == null) {
+    if (lineParameters.getAdjustmentAmount() == null) {
       costAdjustmentLine.setAdjustmentAmount(null);
     } else {
       BigDecimal previouslyAdjustedAmount = costAdjustmentLine.getAdjustmentAmount() == null ? BigDecimal.ZERO
           : costAdjustmentLine.getAdjustmentAmount();
-      costAdjustmentLine.setAdjustmentAmount(costAdjusted.add(previouslyAdjustedAmount).setScale(
-          stdPrecission.intValue(), RoundingMode.HALF_UP));
+      costAdjustmentLine.setAdjustmentAmount(lineParameters.getAdjustmentAmount()
+          .add(previouslyAdjustedAmount).setScale(stdPrecission.intValue(), RoundingMode.HALF_UP));
     }
 
     OBDal.getInstance().save(costAdjustmentLine);
@@ -175,8 +218,8 @@ public class CostAdjustmentUtils {
     return costAdjustmentLine;
   }
 
-  private static CostAdjustmentLine getExistingCostAdjustmentLine(MaterialTransaction transaction,
-      CostAdjustment costAdjustmentHeader, boolean isSource, Date accountingDate, Currency currency) {
+  private static CostAdjustmentLine getExistingCostAdjustmentLine(
+      CostAdjustmentLineParameters lineParameters, Date accountingDate) {
     StringBuilder hql = new StringBuilder("");
     hql.append(" costAdjustment.id = :costAdjustmentId ");
     hql.append(" and inventoryTransaction.id = :transactionId ");
@@ -184,14 +227,20 @@ public class CostAdjustmentUtils {
     hql.append(" and currency.id = :currencyId ");
     hql.append(" and isSource = :isSource ");
     hql.append(" and accountingDate = :accountingDate");
+    hql.append(" and unitCost = :isUnitCost ");
+    hql.append(" and isBackdatedTrx = :isBackdatedTrx");
+    hql.append(" and isNegativeStockCorrection = :isNegativeCorrection");
 
     OBQuery<CostAdjustmentLine> obc = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
         hql.toString());
-    obc.setNamedParameter("costAdjustmentId", costAdjustmentHeader.getId());
-    obc.setNamedParameter("transactionId", transaction.getId());
-    obc.setNamedParameter("currencyId", currency.getId());
-    obc.setNamedParameter("isSource", isSource);
+    obc.setNamedParameter("costAdjustmentId", lineParameters.getCostAdjustmentHeader().getId());
+    obc.setNamedParameter("transactionId", lineParameters.getTransaction().getId());
+    obc.setNamedParameter("currencyId", lineParameters.getCurrency().getId());
+    obc.setNamedParameter("isSource", lineParameters.isSource());
     obc.setNamedParameter("accountingDate", accountingDate);
+    obc.setNamedParameter("isUnitCost", lineParameters.isUnitCost());
+    obc.setNamedParameter("isBackdatedTrx", lineParameters.isBackdatedTransaction());
+    obc.setNamedParameter("isNegativeCorrection", lineParameters.isNegativeCorrection());
 
     obc.setMaxResult(1);
 

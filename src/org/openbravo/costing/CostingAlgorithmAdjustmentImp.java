@@ -26,6 +26,8 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
@@ -54,8 +56,6 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 @Dependent
 public abstract class CostingAlgorithmAdjustmentImp {
@@ -199,9 +199,22 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
   }
 
+  protected CostAdjustmentLine insertCostAdjustmentLine(CostAdjustmentLineParameters lineParameters) {
+    return insertCostAdjustmentLine(lineParameters, null);
+  }
+
+  @Deprecated
+  protected CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction trx,
+      BigDecimal adjustmentamt, CostAdjustmentLine _parentLine) {
+    final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
+        adjustmentamt, getCostAdj());
+    return insertCostAdjustmentLine(lineParameters, _parentLine);
+
+  }
+
   /**
    * Inserts a new cost adjustment line
-   * 
+   *
    * @param trx
    *          Material transaction
    * @param adjustmentamt
@@ -210,9 +223,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
    *          Cost Adjustment Line
    * 
    */
-  protected CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction trx,
-      BigDecimal adjustmentamt, CostAdjustmentLine _parentLine) {
-    Date dateAcct = trx.getMovementDate();
+  protected CostAdjustmentLine insertCostAdjustmentLine(
+      CostAdjustmentLineParameters lineParameters, CostAdjustmentLine _parentLine) {
+    Date dateAcct = lineParameters.getTransaction().getMovementDate();
 
     CostAdjustmentLine parentLine;
     if (_parentLine == null) {
@@ -229,12 +242,11 @@ public abstract class CostingAlgorithmAdjustmentImp {
       dateAcct = parentAcctDate;
     }
 
-    CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
-        (CostAdjustment) OBDal.getInstance().getProxy(CostAdjustment.ENTITY_NAME, strCostAdjId),
-        adjustmentamt, false, dateAcct, getNextLineNo());
-    newCAL.setRelatedTransactionAdjusted(false);
+    CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters,
+        dateAcct, getNextLineNo());
     if (!newCAL.getId().equals(parentLine.getId())) {
       newCAL.setParentCostAdjustmentLine(parentLine);
+      OBDal.getInstance().save(newCAL);
     }
 
     addCostDependingTrx(newCAL);
@@ -279,7 +291,10 @@ public abstract class CostingAlgorithmAdjustmentImp {
     if (!deptrx.isCostCalculated() || deptrx.isCostPermanent()) {
       return;
     }
-    insertCostAdjustmentLine(deptrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
+
+    final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(deptrx,
+        costAdjLine.getAdjustmentAmount(), getCostAdj());
+    insertCostAdjustmentLine(lineParameters, _costAdjLine);
   }
 
   protected void searchManufacturingProduced(CostAdjustmentLine _costAdjLine) {
@@ -317,7 +332,10 @@ public abstract class CostingAlgorithmAdjustmentImp {
       if (!prodtrx.isCostCalculated() || prodtrx.isCostPermanent()) {
         continue;
       }
-      CostAdjustmentLine newCAL = insertCostAdjustmentLine(prodtrx, adjAmt, _costAdjLine);
+
+      final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(prodtrx,
+          adjAmt, getCostAdj());
+      CostAdjustmentLine newCAL = insertCostAdjustmentLine(lineParameters, _costAdjLine);
 
       lastAdjLine = newCAL;
     }
@@ -352,7 +370,10 @@ public abstract class CostingAlgorithmAdjustmentImp {
       if (!prodtrx.isCostCalculated() || prodtrx.isCostPermanent()) {
         continue;
       }
-      insertCostAdjustmentLine(prodtrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
+      final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(prodtrx,
+          costAdjLine.getAdjustmentAmount(), getCostAdj());
+      lineParameters.setUnitCost(true);
+      insertCostAdjustmentLine(lineParameters, _costAdjLine);
     }
   }
 
@@ -376,7 +397,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
     if (!voidedTrx.isCostCalculated() || voidedTrx.isCostPermanent()) {
       return;
     }
-    insertCostAdjustmentLine(voidedTrx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
+    final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(voidedTrx,
+        costAdjLine.getAdjustmentAmount(), getCostAdj());
+    insertCostAdjustmentLine(lineParameters, _costAdjLine);
   }
 
   protected void searchIntMovementTo(CostAdjustmentLine _costAdjLine) {
@@ -395,7 +418,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
       if (!movementTransaction.isCostCalculated() || movementTransaction.isCostPermanent()) {
         continue;
       }
-      insertCostAdjustmentLine(movementTransaction, costAdjLine.getAdjustmentAmount(), _costAdjLine);
+      final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+          movementTransaction, costAdjLine.getAdjustmentAmount(), getCostAdj());
+      insertCostAdjustmentLine(lineParameters, _costAdjLine);
     }
   }
 
@@ -415,7 +440,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
       if (!trx.isCostCalculated() || trx.isCostPermanent()) {
         continue;
       }
-      insertCostAdjustmentLine(trx, costAdjLine.getAdjustmentAmount(), _costAdjLine);
+      final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
+          costAdjLine.getAdjustmentAmount(), getCostAdj());
+      insertCostAdjustmentLine(lineParameters, _costAdjLine);
     }
   }
 
@@ -450,7 +477,9 @@ public abstract class CostingAlgorithmAdjustmentImp {
         if (trx.isCostCalculated() && !trx.isCostPermanent()) {
           BigDecimal adjAmt = costAdjAmt.multiply(trx.getMovementQuantity().abs()).divide(
               inoutline.getMovementQuantity().abs(), precission, RoundingMode.HALF_UP);
-          insertCostAdjustmentLine(trx, adjAmt, _costAdjLine);
+          final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
+              adjAmt, getCostAdj());
+          insertCostAdjustmentLine(lineParameters, _costAdjLine);
         }
 
         if (counter % 1000 == 0) {

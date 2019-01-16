@@ -32,7 +32,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.QueryTimeoutException;
 import org.hibernate.Session;
 import org.hibernate.exception.GenericJDBCException;
 import org.hibernate.query.Query;
@@ -107,26 +106,12 @@ public class InventoryCountProcess implements Process {
 
       bundle.setResult(msg);
 
-      // Postgres wraps the exception into a GenericJDBCException
     } catch (GenericJDBCException ge) {
       log4j.error("Exception processing physical inventory", ge);
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(ge.getSQLException().getMessage());
-      bundle.setResult(msg);
-      OBDal.getInstance().rollbackAndClose();
-      final String recordID = (String) bundle.getParams().get("M_Inventory_ID");
-      final InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, recordID);
-      inventory.setProcessNow(false);
-      OBDal.getInstance().save(inventory);
-      // Oracle wraps the exception into a QueryTimeoutException
-    } catch (QueryTimeoutException qte) {
-      log4j.error("Exception processing physical inventory", qte);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
-      msg.setMessage(qte.getSQLException().getMessage().split("\n")[0]);
+      msg.setMessage(ge.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
       final String recordID = (String) bundle.getParams().get("M_Inventory_ID");
@@ -296,8 +281,8 @@ public class InventoryCountProcess implements Process {
   private void checkMandatoryAttributesWithoutVavlue(InventoryCount inventory) {
     InventoryCountLine inventoryLine = getLineWithMandatoryAttributeWithoutValue(inventory);
     if (inventoryLine != null) {
-      throw new OBException(OBMessageUtils.parseTranslation("@Inline@ " + (inventoryLine).getLineNo()
-          + " @productWithoutAttributeSet@"));
+      throw new OBException(OBMessageUtils.parseTranslation("@Inline@ "
+          + (inventoryLine).getLineNo() + " @productWithoutAttributeSet@"));
     }
   }
 
@@ -386,7 +371,8 @@ public class InventoryCountProcess implements Process {
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
         inventory.getClient().getId());
     Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
-    List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(inventory, org);
+    List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(
+        inventory, org);
     if (!inventoryLineList.isEmpty()) {
       for (InventoryCountLine inventoryLine : inventoryLineList) {
         if (!inventoryLegalOrBusinessUnitOrg.getId().equals(

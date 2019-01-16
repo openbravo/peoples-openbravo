@@ -1,7 +1,6 @@
 /*
  ************************************************************************************
-
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -401,7 +400,7 @@ public class LoginHandler extends HttpBaseServlet {
       }
 
       String target = getUserStartPage(strUserAuth, userLoginDefaults,
-          vars.getSessionValue("target"), vars.getSessionValue("targetQueryString"));
+          vars.getSessionValue("target"), vars.getStringParameter("targetQueryString"));
       vars.removeSessionValue("target");
 
       goToTarget(res, target);
@@ -511,13 +510,16 @@ public class LoginHandler extends HttpBaseServlet {
       ServletException {
     String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
         "CPEmptyUserPassword", vars.getLanguage());
+    String targetQueryString = vars.getStringParameter("targetQueryString");
+    String target = StringUtils.isBlank(targetQueryString) ? action : action + "?"
+        + targetQueryString;
 
     // Show the message in the login window, return a JSON object with the info to print the message
     try {
       boolean loginHasError = "Error".equals(msgType);
       JSONObject jsonMsg = new JSONObject();
       jsonMsg.put("showMessage", true);
-      jsonMsg.put("target", loginHasError ? null : action);
+      jsonMsg.put("target", loginHasError ? null : target);
       jsonMsg.put("messageType", msgType);
       jsonMsg.put("messageTitle", title);
       jsonMsg.put("messageText", msg);

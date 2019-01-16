@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -31,13 +33,10 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -83,11 +82,14 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
         }
         costAdjusted = newAmountCost.subtract(totalCost);
       }
-      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
-          costAdjustmentHeader, costAdjusted, Boolean.TRUE, acctDate);
+
+      final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+          transaction, costAdjusted, costAdjustmentHeader);
+      lineParameters.setSource(true);
       if (isIncremental) {
-        cal.setUnitCost(isUnitCost);
+        lineParameters.setUnitCost(isUnitCost);
       }
+      CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, acctDate);
 
       OBDal.getInstance().flush();
       JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);

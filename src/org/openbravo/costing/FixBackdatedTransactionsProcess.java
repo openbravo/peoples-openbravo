@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -37,13 +39,10 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
   private static final Logger log4j = LogManager.getLogger();
@@ -101,10 +100,11 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
             if (CostAdjustmentUtils.isNeededBackdatedCostAdjustment(trx,
                 rule.isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(rule))) {
               createCostAdjustmenHeader(rule.getOrganization());
-              CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx,
-                  costAdjHeader, null, Boolean.TRUE, trx.getMovementDate());
-              cal.setBackdatedTrx(Boolean.TRUE);
-              OBDal.getInstance().save(cal);
+              final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+                  trx, null, costAdjHeader);
+              lineParameters.setSource(true);
+              lineParameters.setBackdatedTransaction(true);
+              CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, trx.getMovementDate());
               i++;
               OBDal.getInstance().flush();
               if ((i % 100) == 0) {

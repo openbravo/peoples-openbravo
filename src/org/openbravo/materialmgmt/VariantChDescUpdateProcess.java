@@ -21,7 +21,6 @@ package org.openbravo.materialmgmt;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.QueryTimeoutException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.exception.GenericJDBCException;
@@ -62,16 +61,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
           .getLanguage()));
-      msg.setMessage(ge.getSQLException().getMessage());
-      bundle.setResult(msg);
-      OBDal.getInstance().rollbackAndClose();
-      // Oracle wraps the exception into a QueryTimeoutException
-    } catch (QueryTimeoutException qte) {
-      log4j.error("Exception processing variant generation", qte);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
-      msg.setMessage(qte.getSQLException().getMessage().split("\n")[0]);
+      msg.setMessage(ge.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } catch (final Exception e) {

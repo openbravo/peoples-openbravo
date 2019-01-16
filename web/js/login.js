@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,6 +70,7 @@ function setLoginMessage(type, title, text) {
 }
 
 function doLogin(command) {
+  var extraParams;
   if (document.getElementById('resetPassword').value === 'true' && document.getElementById('user').value !== document.getElementById('password').value) {
     setLoginMessage('Error', errorSamePassword, errorDifferentPasswordInFields);
     return true;
@@ -91,10 +92,15 @@ function doLogin(command) {
     }
     disableButton('buttonOK');
     command = command || (document.getElementById('resetPassword').value === 'true' ? 'FORCE_RESET_PASSWORD' : 'DEFAULT');
-    submitXmlHttpRequest(loginResult, document.frmIdentificacion, command, '../secureApp/LoginHandler.html', false, null, null);
+    extraParams = '&targetQueryString=' + getURLQueryString();
+    submitXmlHttpRequest(loginResult, document.frmIdentificacion, command, '../secureApp/LoginHandler.html', false, extraParams, null);
   }
 
   return false;
+}
+
+function getURLQueryString() {
+  return encodeURIComponent(window.location.search.substr(1));
 }
 
 function loginResult(paramXMLParticular, XMLHttpRequestObj) {
@@ -110,8 +116,7 @@ function loginResult(paramXMLParticular, XMLHttpRequestObj) {
 }
 
 function processResult(result) {
-  var target = '_self',
-      command, shouldContinue = true;
+  var shouldContinue = true;
   if (result.showMessage) {
     shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
     if (!shouldContinue) {
@@ -233,7 +238,6 @@ function browserVersionTrim(versionNum) {
 function checkBrowserCompatibility() {
   var browserName = getBrowserInfo('name');
   var browserVersion = getBrowserInfo('version');
-  var browserMajorVersion = getBrowserInfo('majorVersion');
   var isValid = false;
   if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
     if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserFirefox)) {
@@ -262,7 +266,6 @@ function checkBrowserCompatibility() {
 function checkRecommendedBrowser() {
   var browserName = getBrowserInfo('name');
   var browserVersion = getBrowserInfo('version');
-  var browserMajorVersion = getBrowserInfo('majorVersion');
   var isRecommended = false;
   if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
     if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserFirefox)) {
@@ -360,7 +363,6 @@ function beforeLoadDo() {
 }
 
 function onLoadDo() {
-  var msgContainer = document.getElementById('errorMsg');
   var msgContainerTitle = document.getElementById('errorMsgTitle');
   var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
   var msgContainerContent = document.getElementById('errorMsgContent');
@@ -485,11 +487,12 @@ function enableButton(id) {
 }
 
 function disableAttributeWithFunction(element, type, attribute) {
+  var obj;
   if (type == 'obj') {
-    var obj = element;
+    obj = element;
   }
   if (type == 'id') {
-    var obj = document.getElementById(element);
+    obj = document.getElementById(element);
   }
   var attribute_text = getObjAttribute(obj, attribute);
   attribute_text = 'return true; tmp_water_mark; ' + attribute_text;
@@ -497,11 +500,12 @@ function disableAttributeWithFunction(element, type, attribute) {
 }
 
 function enableAttributeWithFunction(element, type, attribute) {
+  var obj;
   if (type == 'obj') {
-    var obj = element;
+    obj = element;
   }
   if (type == 'id') {
-    var obj = document.getElementById(element);
+    obj = document.getElementById(element);
   }
   var attribute_text = getObjAttribute(obj, attribute);
   attribute_text = attribute_text.replace('return true; tmp_water_mark; ', '')
@@ -513,10 +517,6 @@ function enableAttributeWithFunction(element, type, attribute) {
  */
 
 function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
-  submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, null, paramXMLReq);
-}
-
-function submitXmlHttpRequestWithParams(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
   var XMLHttpRequestObj = null;
   XMLHttpRequestObj = getXMLHttpRequest();
   if (formObject === null) {
@@ -616,7 +616,6 @@ function getReadyStateHandler(req, responseXmlHandler, notifyError) {
       }
       return false;
     }
-    return false;
   }
   return false;
 }

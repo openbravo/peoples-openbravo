@@ -40,7 +40,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
@@ -142,10 +141,10 @@ public class PriceDifferenceProcess {
       BigDecimal trxCostDifference = (expectedUnitCost.multiply(receiptQty))
           .subtract(currentTrxCost);
 
-      CostAdjustmentLine costAdjLine = CostAdjustmentUtils.insertCostAdjustmentLine(
-          materialTransaction, costAdjHeader, trxCostDifference, Boolean.TRUE, costAdjDateAcct);
-      costAdjLine.setNeedsPosting(Boolean.TRUE);
-      OBDal.getInstance().save(costAdjLine);
+      final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+          materialTransaction, trxCostDifference, costAdjHeader);
+      lineParameters.setSource(true);
+      CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, costAdjDateAcct);
       costAdjCreated = true;
     }
 

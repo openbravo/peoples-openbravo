@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -177,9 +177,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
   getValue: function () {
     var selection = this.tree.getSelection(),
         result = {},
-        i, c, chars = {},
-        values = {},
-        completeParentNodes = [],
+        i, c, completeParentNodes = [],
         node, currentChar, grandParent;
 
     for (i = 0; i < selection.length; i++) {
@@ -267,12 +265,10 @@ isc.OBCharacteristicsFilterDialog.addProperties({
      * based on the filter initial criteria
      */
     dataArrived = function () {
-      var internalValue, nodeList, i, j;
       this.Super('dataArrived', arguments);
       if (this.topElement && this.topElement.creator && this.topElement.creator.internalValue) {
         this.checkInitialNodes(this.topElement.creator.internalValue);
       }
-
     };
 
     /**
@@ -444,8 +440,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
    * not usable in other views than Product
    */
   getCriterion: function () {
-    var c, characteristic, v, value, charCriteria, fieldName = this.getCriteriaFieldName(),
-        inValues;
+    var c, characteristic, v, value, charCriteria, inValues;
     if (!this.internalValue) {
       return;
     }
@@ -527,7 +522,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
     // previous to the last one 
     if (this.grid && this.grid.parentElement && this.grid.parentElement.viewProperties && this.grid.parentElement.viewProperties.gridProperties && this.grid.parentElement.viewProperties.gridProperties.alias) {
       this.propertyName = this.grid.parentElement.viewProperties.gridProperties.alias;
-      if (!this.isProductEntity()) {
+      if (!this.isProductEntity() && !this.isPropertyPathFromProduct(this.getFieldName())) {
         this.propertyName += '.product';
       }
     } else {
@@ -584,6 +579,10 @@ isc.OBCharacteristicsFilterItem.addProperties({
       entity = theGrid.viewProperties.entity;
     }
     return entity === 'Product';
+  },
+
+  isPropertyPathFromProduct: function (propertyName) {
+    return propertyName.startsWith('product' + OB.Constants.FIELDSEPARATOR);
   },
 
   removeProductCharacteristicsCriteria: function (fullCriteria) {

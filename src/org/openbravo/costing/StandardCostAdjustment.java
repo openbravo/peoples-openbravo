@@ -76,8 +76,10 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
           adjAmount = transaction.getMovementQuantity();
         }
 
-        CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, adjAmount, null);
-        newCAL.setRelatedTransactionAdjusted(true);
+        final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
+            adjAmount, getCostAdj());
+        lineParameters.setRelatedTransactionAdjusted(true);
+        insertCostAdjustmentLine(lineParameters);
 
         i++;
         if (i % 100 == 0) {

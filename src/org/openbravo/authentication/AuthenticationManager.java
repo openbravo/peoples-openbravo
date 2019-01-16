@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -62,7 +62,7 @@ public abstract class AuthenticationManager {
   private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";
   private static final String REJECTED_SESSION_WEB_SERVICE = "WSR";
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
-  private static final String FAILED_SESSION = "F";
+  protected static final String FAILED_SESSION = "F";
 
   protected static final String LOGIN_PARAM = "user";
   protected static final String PASSWORD_PARAM = "password";

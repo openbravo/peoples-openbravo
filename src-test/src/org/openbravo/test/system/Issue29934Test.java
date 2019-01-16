@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,16 +52,12 @@ public class Issue29934Test extends OBBaseTest {
     assertTrue("val".equals(app.getSessionObject("abc")));
     assertTrue("val".equals(app.getSessionObject("ABC")));
     assertTrue(null == app.getSessionObject("ABD"));
-    app.setSessionValue("TARGETQUERYSTRING", "tgstr");
     app.setSessionValue("TARGET", "tgvalue");
-    assertTrue("tgstr".equals(app.getSessionObject("TARGETQUERYSTRING")));
     assertTrue("tgvalue".equals(app.getSessionObject("TARGET")));
     app.clearSession(false);
-    assertTrue("tgstr".equals(app.getSessionObject("TARGETQUERYSTRING")));
     assertTrue("tgvalue".equals(app.getSessionObject("TARGET")));
     assertTrue(null == app.getSessionObject("ABC"));
     app.clearSession(true);
-    assertTrue(null == app.getSessionObject("TARGETQUERYSTRING"));
     assertTrue(null == app.getSessionObject("TARGET"));
   }
 }

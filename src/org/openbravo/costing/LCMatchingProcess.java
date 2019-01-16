@@ -28,6 +28,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -44,7 +46,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
@@ -52,8 +53,6 @@ import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class LCMatchingProcess {
   private static final Logger log = LogManager.getLogger();
@@ -184,12 +183,12 @@ public class LCMatchingProcess {
         ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
             receiptAmt[1]);
         MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
-        CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(trx, ca, amt, true,
-            referenceDate);
-        cal.setNeedsPosting(Boolean.FALSE);
-        cal.setUnitCost(Boolean.FALSE);
-        cal.setCurrency(lcCost.getCurrency());
-        OBDal.getInstance().save(cal);
+        final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
+            amt, ca, lcCost.getCurrency());
+        lineParameters.setSource(true);
+        lineParameters.setUnitCost(false);
+        lineParameters.setNeedPosting(false);
+        CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, referenceDate);
 
         if (i % 100 == 0) {
           OBDal.getInstance().flush();

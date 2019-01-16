@@ -47,7 +47,6 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
@@ -369,20 +368,19 @@ public class CostingServer {
   }
 
   private boolean createAdjustment(String type, BigDecimal amount) {
-
     CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
         transaction.getOrganization(), type);
-    CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
-        costAdjustmentHeader, amount, Boolean.TRUE, transaction.getMovementDate());
-
+    final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+        transaction, amount, costAdjustmentHeader);
+    lineParameters.setSource(true);
     if (StringUtils.equals(type, "BDT")) {
-      cal.setBackdatedTrx(Boolean.TRUE);
+      lineParameters.setBackdatedTransaction(true);
     } else if (StringUtils.equals(type, "NSC")) {
-      cal.setNegativeStockCorrection(Boolean.TRUE);
-      cal.setUnitCost(Boolean.FALSE);
+      lineParameters.setNegativeCorrection(true);
     }
 
-    OBDal.getInstance().save(cal);
+    CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, transaction.getMovementDate());
+
     OBDal.getInstance().flush();
     JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
 

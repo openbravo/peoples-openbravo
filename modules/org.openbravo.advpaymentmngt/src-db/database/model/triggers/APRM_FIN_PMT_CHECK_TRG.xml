@@ -15,12 +15,13 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2016 Openbravo SLU
+* All portions are Copyright (C) 2010-2019 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 *************************************************************************/
 
 v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
+v_Count NUMBER:=0;
   
 BEGIN
    
@@ -50,6 +51,17 @@ BEGIN
               AND (COALESCE(:NEW.AMOUNT, 0) - COALESCE(:OLD.AMOUNT, 0))  <> (COALESCE(:NEW.GENERATED_CREDIT, 0) - COALESCE(:OLD.GENERATED_CREDIT, 0))))
       )) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20501@');
+    END IF;
+    IF(:OLD.PROCESSED='Y' AND :NEW.PROCESSED='N') THEN
+      SELECT COUNT(*)
+      INTO v_Count
+      FROM GL_JOURNALLINE
+      JOIN GL_JOURNAL ON GL_JOURNALLINE.GL_JOURNAL_ID = GL_JOURNAL.GL_JOURNAL_ID
+      WHERE GL_JOURNALLINE.FIN_PAYMENT_ID = :OLD.FIN_PAYMENT_ID
+      AND GL_JOURNAL.PROCESSED = 'Y';
+      IF(v_Count > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000,'@APRM_ReactivatePaymentInGLJournalLine@');
+      END IF;
     END IF;
   END IF;
   IF(INSERTING) THEN
