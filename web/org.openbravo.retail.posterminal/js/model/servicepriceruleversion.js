@@ -48,6 +48,14 @@
     name: 'maximum',
     column: 'maximum',
     type: 'NUMERIC'
+  }, {
+    name: 'relatedProduct',
+    column: 'relatedProduct',
+    type: 'TEXT'
+  }, {
+    name: 'relatedProductCategory',
+    column: 'relatedProductCategory',
+    type: 'TEXT'
   }]);
 
   OB.Data.Registry.registerModel(ServicePriceRuleVersion);

@@ -50,7 +50,8 @@ public class ServicePriceRuleVersion extends ProcessHQLQuery {
         .getPropertyExtensions(extensions);
 
     hqlQueries.add("select" + regularPriceRuleVersionHQLProperties.getHqlSelect()
-        + "from ServicePriceRuleVersion sprv "
+        + "from ServicePriceRuleVersion sprv " + "left join sprv.relatedProduct rp "
+        + "left join sprv.relatedProductCategory rpc "
         + "where $filtersCriteria and $hqlCriteria and sprv.$naturalOrgCriteria and sprv.$incrementalUpdateCriteria "
         + "order by sprv.validFromDate desc, sprv.id ");
 

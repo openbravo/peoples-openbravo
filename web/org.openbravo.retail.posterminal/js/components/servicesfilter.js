@@ -91,11 +91,68 @@ enyo.kind({
         where += " product.availableForMultiline = 'true' and ";
       }
 
+      var addAnd;
       //including/excluding products
       where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id in " + auxProdStr + " )) ";
       where += "or (product.includeProducts = 'N' and " + auxProdFilters.length + " = (select count(*) from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id in " + auxProdStr + " )) ";
       where += "or product.includeProducts is null) ";
-      where += "and (product.isPriceRuleBased = 'false' or (product.quantityRule = 'UQ' and exists (select 1 from m_product_service sp, m_servicepricerule_version sprv where product.m_product_id = sp.m_product_id and sprv.product = product.m_product_id and sprv.validFromDate = (select max(sprv2.validFromDate) from m_servicepricerule_version sprv2 where sprv2.product = product.m_product_id and sprv2.validFromDate <= strftime('%Y-%m-%d', 'now') and sprv2.active = 'true') and (sprv.minimum is null and sprv.maximum is null or sprv.minimum is null and sprv.maximum >= ? or sprv.minimum <= ? and sprv.maximum is null or sprv.minimum <= ? and sprv.maximum >= ?) and sprv.active = 'true')) or (product.quantityRule = 'PP' and exists (select 1 from m_product_service sp, m_servicepricerule_version sprv where product.m_product_id = sp.m_product_id and sprv.product = product.m_product_id and sprv.validFromDate = (select max(sprv2.validFromDate) from m_servicepricerule_version sprv2 where sprv2.product = product.m_product_id and sprv2.validFromDate <= strftime('%Y-%m-%d', 'now') and sprv2.active = 'true') and (sprv.minimum is null and sprv.maximum is null or sprv.minimum is null and sprv.maximum >= ? or sprv.minimum <= ? and sprv.maximum is null or sprv.minimum <= ? and sprv.maximum >= ?) and sprv.active = 'true')))";
+      where += " AND (product.isPriceRuleBased = 'false' OR (product.quantityRule = 'UQ' AND "; //
+      addAnd = false;
+
+      this.productList.forEach(function (p) {
+        if (addAnd) {
+          where += " AND ";
+        } else {
+          addAnd = true;
+        }
+        where += " EXISTS (SELECT 1" //
+        + " FROM m_product_service sp," //
+        + "      m_servicepricerule_version sprv" //
+        + " WHERE product.m_product_id = sp.m_product_id" //
+        + " AND   sprv.product = product.m_product_id" //
+        + " AND   sprv.validFromDate = (SELECT MAX(sprv2.validFromDate)" //
+        + "                             FROM m_servicepricerule_version sprv2" //
+        + "                             WHERE sprv2.product = product.m_product_id" //
+        + "                             AND   sprv2.validFromDate <= strftime ('%Y-%m-%d','now')" //
+        + "                             AND   sprv2.active = 'true'" //
+        + "                             AND   ((product.includeProducts = 'Y' AND product.includeProductCategories = 'Y')" //
+        + "                                    OR (product.includeProducts = 'Y' AND product.includeProductCategories is null)" //
+        + "                                    OR (product.includeProducts is null AND product.includeProductCategories = 'Y')" //
+        + "                                    OR (product.includeProducts = 'N' AND (sprv2.relatedProduct IS NULL OR sprv2.relatedProduct = ?))" //
+        + "                                    OR (product.includeProductCategories = 'N' AND (sprv2.relatedProductCategory IS NULL OR sprv2.relatedProductCategory = ?))))" //
+        + " AND   (sprv.minimum IS NULL OR sprv.minimum <= ?)" //
+        + " AND   (sprv.maximum IS NULL OR sprv.maximum >= ?)" //
+        + " AND   sprv.active = 'true')"; //
+      });
+      where += ") OR (product.quantityRule = 'PP' AND ";
+      addAnd = false;
+      this.productList.forEach(function (p) {
+        if (addAnd) {
+          where += " AND ";
+        } else {
+          addAnd = true;
+        }
+        where += " EXISTS (SELECT 1" //
+        + " FROM m_product_service sp," //
+        + "      m_servicepricerule_version sprv" //
+        + " WHERE product.m_product_id = sp.m_product_id" //
+        + " AND   sprv.product = product.m_product_id" //
+        + " AND   sprv.validFromDate = (SELECT MAX(sprv2.validFromDate)" //
+        + "                             FROM m_servicepricerule_version sprv2" //
+        + "                             WHERE sprv2.product = product.m_product_id" //
+        + "                             AND   sprv2.validFromDate <= strftime ('%Y-%m-%d','now')" //
+        + "                             AND   sprv2.active = 'true'" //
+        + "                             AND   ((product.includeProducts = 'Y' AND product.includeProductCategories = 'Y')" //
+        + "                                    OR (product.includeProducts = 'Y' AND product.includeProductCategories is null)" //
+        + "                                    OR (product.includeProducts is null AND product.includeProductCategories = 'Y')" //
+        + "                                    OR (product.includeProducts = 'N' AND (sprv2.relatedProduct IS NULL OR sprv2.relatedProduct = ?))" //
+        + "                                    OR (product.includeProductCategories = 'N' AND (sprv2.relatedProductCategory IS NULL OR sprv2.relatedProductCategory = ?))))" //
+        + " AND   (sprv.minimum IS NULL OR sprv.minimum <= ?)" //
+        + " AND   (sprv.maximum IS NULL OR sprv.maximum >= ?)" //
+        + " AND   sprv.active = 'true')"; //
+      });
+
+      where += ")) ";
 
       //including/excluding product categories
       where += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id in " + auxCatStr + " )) ";
@@ -105,14 +162,25 @@ enyo.kind({
 
       filters = filters.concat(auxProdFilters);
       filters = filters.concat(auxProdFilters);
-      filters.push(totalAmountSelected);
-      filters.push(totalAmountSelected);
-      filters.push(totalAmountSelected);
-      filters.push(totalAmountSelected);
-      filters.push(maximumSelected);
-      filters.push(minimumSelected);
-      filters.push(minimumSelected);
-      filters.push(maximumSelected);
+
+      this.productList.forEach(function (productId) {
+        filters.push(productId);
+        filters.push(this.orderlineList.find(function (ol) {
+          return ol.get('product').get('id') === productId;
+        }, this).get('product').get('productCategory'));
+        filters.push(totalAmountSelected);
+        filters.push(totalAmountSelected);
+      }, this);
+
+      this.productList.forEach(function (productId) {
+        filters.push(productId);
+        filters.push(this.orderlineList.find(function (ol) {
+          return ol.get('product').get('id') === productId;
+        }, this).get('product').get('productCategory'));
+        filters.push(minimumSelected);
+        filters.push(maximumSelected);
+      }, this);
+
       filters = filters.concat(auxCatFilters);
       filters = filters.concat(auxCatFilters);
 
@@ -138,7 +206,43 @@ enyo.kind({
       where += "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? )) ";
       where += "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? )) ";
       where += "or product.includeProducts is null) ";
-      where += "and (product.isPriceRuleBased = 'false' or (product.quantityRule = 'UQ' and exists (select 1 from m_product_service sp, m_servicepricerule_version sprv where product.m_product_id = sp.m_product_id and sprv.product = product.m_product_id and sprv.validFromDate = (select max(sprv2.validFromDate) from m_servicepricerule_version sprv2 where sprv2.product = product.m_product_id and sprv2.validFromDate <= strftime('%Y-%m-%d', 'now') and sprv2.active = 'true') and (sprv.minimum is null and sprv.maximum is null or sprv.minimum is null and sprv.maximum >= ? or sprv.minimum <= ? and sprv.maximum is null or sprv.minimum <= ? and sprv.maximum >= ?) and sprv.active = 'true')) or (product.quantityRule = 'PP' and exists (select 1 from m_product_service sp, m_servicepricerule_version sprv where product.m_product_id = sp.m_product_id and sprv.product = product.m_product_id and sprv.validFromDate = (select max(sprv2.validFromDate) from m_servicepricerule_version sprv2 where sprv2.product = product.m_product_id and sprv2.validFromDate <= strftime('%Y-%m-%d', 'now') and sprv2.active = 'true') and (sprv.minimum is null and sprv.maximum is null or sprv.minimum is null and sprv.maximum >= ? or sprv.minimum <= ? and sprv.maximum is null or sprv.minimum <= ? and sprv.maximum >= ?) and sprv.active = 'true')))";
+      where += " AND (product.isPriceRuleBased = 'false' " //
+      + " OR (product.quantityRule = 'UQ' AND EXISTS (SELECT 1" //
+      + " FROM m_product_service sp," //
+      + "      m_servicepricerule_version sprv" //
+      + " WHERE product.m_product_id = sp.m_product_id" //
+      + " AND   sprv.product = product.m_product_id" //
+      + " AND   sprv.validFromDate = (SELECT MAX(sprv2.validFromDate)" //
+      + "                             FROM m_servicepricerule_version sprv2" //
+      + "                             WHERE sprv2.product = product.m_product_id" //
+      + "                             AND   sprv2.validFromDate <= strftime ('%Y-%m-%d','now')" //
+      + "                             AND   sprv2.active = 'true'" //
+      + "                             AND   ((product.includeProducts = 'Y' AND product.includeProductCategories = 'Y') " //
+      + "                                    OR (product.includeProducts = 'Y' AND product.includeProductCategories is null)" //
+      + "                                    OR (product.includeProducts is null AND product.includeProductCategories = 'Y')" //
+      + "                                    OR (product.includeProducts = 'N' AND (sprv2.relatedProduct IS NULL OR sprv2.relatedProduct = ?)) " //
+      + "                                    OR (product.includeProductCategories = 'N' AND (sprv2.relatedProductCategory IS NULL OR sprv2.relatedProductCategory = ?))))" //
+      + " AND   (sprv.minimum IS NULL OR sprv.minimum <= ?)" //
+      + " AND   (sprv.maximum IS NULL OR sprv.maximum >= ?)" //
+      + " AND   sprv.active = 'true')) " //
+      + " OR (product.quantityRule = 'PP' AND EXISTS (SELECT 1" //
+      + " FROM m_product_service sp," //
+      + "      m_servicepricerule_version sprv" //
+      + " WHERE product.m_product_id = sp.m_product_id" //
+      + " AND   sprv.product = product.m_product_id" //
+      + " AND   sprv.validFromDate = (SELECT MAX(sprv2.validFromDate)" //
+      + "                             FROM m_servicepricerule_version sprv2" //
+      + "                             WHERE sprv2.product = product.m_product_id" //
+      + "                             AND   sprv2.validFromDate <= strftime ('%Y-%m-%d','now')" //
+      + "                             AND   sprv2.active = 'true'" //
+      + "                             AND   ((product.includeProducts = 'Y' AND product.includeProductCategories = 'Y') " //
+      + "                                    OR (product.includeProducts = 'Y' AND product.includeProductCategories is null)" //
+      + "                                    OR (product.includeProducts is null AND product.includeProductCategories = 'Y')" //
+      + "                                    OR (product.includeProducts = 'N' AND (sprv2.relatedProduct IS NULL OR sprv2.relatedProduct = ?)) " //
+      + "                                    OR (product.includeProductCategories = 'N' AND (sprv2.relatedProductCategory IS NULL OR sprv2.relatedProductCategory = ?))))" //
+      + " AND   (sprv.minimum IS NULL OR sprv.minimum <= ?)" //
+      + " AND   (sprv.maximum IS NULL OR sprv.maximum >= ?)" //
+      + " AND   sprv.active = 'true'))) ";
 
       //including/excluding product categories
       where += "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
@@ -150,17 +254,26 @@ enyo.kind({
           productId = product.get('forceFilterId') || product.get('id');
       filters.push(productId);
       filters.push(productId);
+      filters.push(productId);
+      filters.push(this.orderline.get('product').get('productCategory'));
       filters.push(totalAmountSelected);
       filters.push(totalAmountSelected);
-      filters.push(totalAmountSelected);
-      filters.push(totalAmountSelected);
-      filters.push(maximumSelected);
-      filters.push(minimumSelected);
+      filters.push(productId);
+      filters.push(this.orderline.get('product').get('productCategory'));
       filters.push(minimumSelected);
       filters.push(maximumSelected);
       filters.push(this.orderline.get('product').get('productCategory'));
       filters.push(this.orderline.get('product').get('productCategory'));
     }
+
+    var extResult;
+    this.filterExtensions.forEach(function (extension) {
+      if (extension.sqlExtension) {
+        extResult = extension.sqlExtension(this.productId, this.productList, this.orderline, this.orderlineList, where, filters, this.extraParams);
+        where = extResult.where;
+        filters = extResult.filters;
+      }
+    }, this);
 
     result.where = where;
     result.filters = filters;
@@ -172,7 +285,8 @@ enyo.kind({
         prodList, catList, lineIdList, existingServices, trancheValues = [],
         totalAmountSelected = 0,
         minimumSelected = 999999999999,
-        maximumSelected = 0;
+        maximumSelected = 0,
+        filters;
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
         var product = line.get('product');
@@ -202,7 +316,7 @@ enyo.kind({
       totalAmountSelected = trancheValues[0];
       minimumSelected = trancheValues[1];
       maximumSelected = trancheValues[2];
-      return [{
+      filters = [{
         columns: [],
         operator: OB.Dal.FILTER,
         value: (this.orderlineList.length > 1 ? 'Services_Filter_Multi' : 'Services_Filter'),
@@ -214,41 +328,49 @@ enyo.kind({
         value: false,
         fieldType: 'forceString'
       }];
+    } else {
+      existingServices = OB.MobileApp.model.receipt.get('lines').filter(function (l) {
+        if (l.get('relatedLines') && _.indexOf(_.pluck(l.get('relatedLines'), 'orderlineId'), me.orderline.get('id')) !== -1) {
+          return true;
+        }
+        return false;
+      }).map(function (line) {
+        var product = line.get('product');
+        return product.get('forceFilterId') || product.get('id');
+      });
+      var product = this.orderline.get('product');
+      if (this.orderline.get('qty') > 0) {
+        var discountAmount = _.reduce(this.orderline.get('promotions'), function (memo, promo) {
+          return memo + promo.amt;
+        }, 0),
+            currentLinePrice = OB.DEC.div(OB.DEC.sub(this.orderline.get('gross'), discountAmount), this.orderline.get('qty'));
+        totalAmountSelected = OB.DEC.add(totalAmountSelected, OB.DEC.sub(this.orderline.get('gross'), discountAmount));
+        if (currentLinePrice < minimumSelected) {
+          minimumSelected = currentLinePrice;
+        }
+        if (currentLinePrice > maximumSelected) {
+          maximumSelected = currentLinePrice;
+        }
+      }
+      filters = [{
+        columns: [],
+        operator: OB.Dal.FILTER,
+        value: 'Services_Filter',
+        params: [product.get('isNew') ? null : (product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id')), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : "'-'"), totalAmountSelected, minimumSelected, maximumSelected]
+      }, {
+        columns: ['ispack'],
+        operator: 'equals',
+        value: false,
+        fieldType: 'forceString'
+      }];
     }
-    existingServices = OB.MobileApp.model.receipt.get('lines').filter(function (l) {
-      if (l.get('relatedLines') && _.indexOf(_.pluck(l.get('relatedLines'), 'orderlineId'), me.orderline.get('id')) !== -1) {
-        return true;
+    this.filterExtensions.forEach(function (extension) {
+      if (extension.hqlExtension) {
+        filters = extension.hqlExtension(this.productId, this.productList, this.orderline, this.orderlineList, filters, this.extraParams);
       }
-      return false;
-    }).map(function (line) {
-      var product = line.get('product');
-      return product.get('forceFilterId') || product.get('id');
-    });
-    var product = this.orderline.get('product');
-    if (this.orderline.get('qty') > 0) {
-      var discountAmount = _.reduce(this.orderline.get('promotions'), function (memo, promo) {
-        return memo + promo.amt;
-      }, 0),
-          currentLinePrice = (this.orderline.get('gross') - discountAmount) / this.orderline.get('qty');
-      totalAmountSelected += this.orderline.get('gross') - discountAmount;
-      if (currentLinePrice < minimumSelected) {
-        minimumSelected = currentLinePrice;
-      }
-      if (currentLinePrice > maximumSelected) {
-        maximumSelected = currentLinePrice;
-      }
-    }
-    return [{
-      columns: [],
-      operator: OB.Dal.FILTER,
-      value: 'Services_Filter',
-      params: [product.get('isNew') ? null : (product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id')), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : "'-'"), totalAmountSelected, minimumSelected, maximumSelected]
-    }, {
-      columns: ['ispack'],
-      operator: 'equals',
-      value: false,
-      fieldType: 'forceString'
-    }];
+    }, this);
+
+    return filters;
   },
   lineAttributes: function () {
 
@@ -303,7 +425,8 @@ enyo.kind({
       }
     }
     return [totalAmountSelected, minimumSelected, maximumSelected];
-  }
+  },
+  filterExtensions: []
 });
 
 enyo.kind({

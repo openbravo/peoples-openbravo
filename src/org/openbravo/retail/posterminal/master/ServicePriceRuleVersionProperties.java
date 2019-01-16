@@ -31,9 +31,10 @@ public class ServicePriceRuleVersionProperties extends ModelExtension {
         add(new HQLProperty("sprv.servicePriceRule.id", "servicePriceRule"));
         add(new HQLProperty("sprv.obposMinimum", "minimum"));
         add(new HQLProperty("sprv.obposMaximum", "maximum"));
+        add(new HQLProperty("rp.relatedProduct.id", "relatedProduct"));
+        add(new HQLProperty("rpc.productCategory.id", "relatedProductCategory"));
       }
     };
     return list;
   }
-
 }
