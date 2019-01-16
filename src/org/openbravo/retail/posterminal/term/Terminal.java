@@ -74,6 +74,7 @@ public class Terminal extends JSONProcessSimple {
       OBContext.setAdminMode(false);
 
       OBPOSApplications pOSTerminal = POSUtils.getTerminal(jsonsent.optString("terminalName"));
+      Organization organization = pOSTerminal.getOrganization();
 
       // INITIAL VALIDATIONS
       InitialValidations.validateTerminal(pOSTerminal, jsonsent);
@@ -81,17 +82,17 @@ public class Terminal extends JSONProcessSimple {
       // TO use terminalId in QueryTerminalProperty
       jsonsent.put("pos", pOSTerminal.getId());
 
-      // saving quotations doc id to prevent session to be lost in getLastDocumentNumberForPOS
-      String quotationsDocTypeId = pOSTerminal.getObposTerminaltype()
-          .getDocumentTypeForQuotations() == null ? null : pOSTerminal.getObposTerminaltype()
-          .getDocumentTypeForQuotations().getId();
-      // saving returns doc id to prevent session to be lost in getLastDocumentNumberForPOS
-      String returnsDocTypeId = pOSTerminal.getObposTerminaltype().getDocumentTypeForReturns()
-          .getId();
+      // saving quotations doc id to prevent session to be lost in
+      // getLastDocumentNumberForPOS
+      String quotationsDocTypeId = organization.getObposCDoctypequot() == null ? null
+          : organization.getObposCDoctypequot().getId();
+      // saving returns doc id to prevent session to be lost in
+      // getLastDocumentNumberForPOS
+      String returnsDocTypeId = organization.getObposCDoctyperet().getId();
       List<String> doctypeIds = new ArrayList<String>();
-      doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentType().getId());
+      doctypeIds.add(organization.getObposCDoctype().getId());
       if (pOSTerminal.getReturndocnoPrefix() == null)
-        doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
+        doctypeIds.add(organization.getObposCDoctyperet().getId());
       int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
           doctypeIds);
       int lastQuotationDocumentNumber = 0;
