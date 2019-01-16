@@ -46,8 +46,6 @@
   v_grossprice NUMBER;
   v_gross_pricelist NUMBER;
   v_price_precision NUMBER;
-  TYPE RECORD IS REF CURSOR;
-  cur_linked_products RECORD;
 BEGIN
 
   IF AD_isTriggerEnabled()='N' THEN 
@@ -79,22 +77,17 @@ BEGIN
   INTO v_productservice_id 
   FROM C_ORDERLINE OL 
   WHERE OL.C_ORDERLINE_ID = v_orderline_id;
-  
-  v_taxcategory_id := NULL;
-  FOR cur_linked_products IN (
-    SELECT PSL.C_TAXCATEGORY_ID 
+
+  BEGIN
+    SELECT PSL.C_TAXCATEGORY_ID
+    INTO v_taxcategory_id
     FROM M_PRODUCT_SERVICELINKED PSL 
     WHERE PSL.M_PRODUCT_ID = v_productservice_id 
-    AND PSL.M_PRODUCT_CATEGORY_ID = v_productcategory_id)
-  LOOP
-    v_taxcategory_id := cur_linked_products.C_TAXCATEGORY_ID;
-    EXIT;
-  END LOOP;
-
-  IF (v_taxcategory_id IS NULL) THEN
+    AND PSL.M_PRODUCT_CATEGORY_ID = v_productcategory_id;
+  EXCEPTION WHEN NO_DATA_FOUND THEN
     -- No configuration found so return without any action
-    RETURN;
-  END IF;    
+    IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
+  END;
 
   IF (DELETING) THEN
     -- In case of DELETE, force to use the tax category of the product.
