@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -153,6 +153,18 @@
                   } else {
                     terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]]);
                   }
+                }
+
+                if (terminalModel.get('store').length !== 0) {
+                  var organization = terminalModel.get('terminal').organization;
+                  terminalModel.get('store').splice(0, 0, {
+                    storeId: organization,
+                    name: "This Store (" + terminalModel.get('terminal').organization$_identifier + ")"
+                  });
+                  terminalModel.get('store').splice(1, 0, {
+                    storeId: "all_" + organization,
+                    name: "(All Stores)"
+                  });
                 }
 
                 OB.DS.commonParams = {

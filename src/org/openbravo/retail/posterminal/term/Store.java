@@ -45,28 +45,17 @@ public class Store extends QueryTerminalProperty {
         .getOBPOSCrossStoreOrganization().getId() : "";
 
     StringBuilder hql = new StringBuilder();
-    hql.append("select case when id = '0' then concat('all_', '");
-    hql.append(crossStoreOrgId);
-    hql.append("')");
-    hql.append(" else id end as storeId,");
-    hql.append(" case when id = '0' then '(All Stores)'");
-    hql.append(" when id = '");
-    hql.append(myOrg.getId());
-    hql.append("' then concat('This Store (', name, ')') else name end as name");
+    hql.append("select id as storeId, name as name");
     hql.append(" from Organization organization");
-    hql.append(" where id = '");
-    hql.append(myOrg.getId());
-    hql.append("' or (id = '0' and exists (select 1 from Organization where $readableSimpleClientCriteria and $activeCriteria and oBPOSCrossStoreOrganization.id = '");
+    hql.append(" where $readableSimpleClientCriteria");
+    hql.append(" and $activeCriteria");
+    hql.append(" and oBRETCORetailOrgType = 'S'");
+    hql.append(" and oBPOSCrossStoreOrganization is not null");
+    hql.append(" and oBPOSCrossStoreOrganization.id = '");
     hql.append(crossStoreOrgId);
     hql.append("' and id <> '");
     hql.append(myOrg.getId());
-    hql.append("'))");
-    hql.append(" or $readableSimpleClientCriteria");
-    hql.append(" and $activeCriteria and oBPOSCrossStoreOrganization.id = '");
-    hql.append(crossStoreOrgId);
-    hql.append("' order by case when id = '");
-    hql.append(myOrg.getId());
-    hql.append("' then 2 when id = '0' then 1 else 0 end desc, name");
+    hql.append("' order by name");
 
     return Arrays.asList(new String[] { hql.toString() });
   }
