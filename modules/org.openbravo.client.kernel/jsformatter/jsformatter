@@ -18,19 +18,14 @@
 
 set -e
 
-if ! [[ -x "$(command -v prettier)" ]]; then
-    echo -e "\n\033[0;33mERROR:\033[0m prettier command not found. Install using"
-    echo -e "# sudo npm install -g prettier@^1.15.3\n"
+if [[ ! -d ./node_modules || -z "$(find ./node_modules -name prettier)" ]]; then
+    echo -e "\n\033[0;33mERROR:\033[0m prettier command not found. Install using \"npm install\" at the root of the project\n"
     exit 1
-fi
-
-if ! [[ "$(eslint -v)" =~ ^1.15* ]]; then
-    echo -e "\n\033[0;33mWARNING:\033[0m For better compatibility it is recommended to use a 1.x version of prettier\n"
 fi
 
 changedfile=$1
 replaceparam=$2
-prettier --config ./modules/org.openbravo.client.kernel/jsformatter/.prettierrc.json "$changedfile" > "$changedfile.prettier"
+npm run jsformatter -s -- --config ./modules/org.openbravo.client.kernel/jsformatter/.prettierrc.json "$changedfile" > "$changedfile.prettier"
 if ! diff -u "$changedfile" "$changedfile.prettier"; then
   if [ "$replaceparam" != "replace" ] ; then
     echo ""
