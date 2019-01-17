@@ -53,6 +53,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
@@ -1169,14 +1170,13 @@ public class ExternalOrderLoader extends OrderLoader {
               new String[] { "id", "name" }));
       return;
     }
+    Organization organization = posTerminal.getOrganization();
     if (orderJson.has("isQuotation") && orderJson.getBoolean("isQuotation")) {
-      orderJson.put("documentType", posTerminal.getObposTerminaltype()
-          .getDocumentTypeForQuotations().getId());
+      orderJson.put("documentType", organization.getObposCDoctypequot().getId());
     } else if (orderJson.has("isReturn") && orderJson.getBoolean("isReturn")) {
-      orderJson.put("documentType", posTerminal.getObposTerminaltype().getDocumentTypeForReturns()
-          .getId());
+      orderJson.put("documentType", organization.getObposCDoctyperet().getId());
     } else {
-      orderJson.put("documentType", posTerminal.getObposTerminaltype().getDocumentType().getId());
+      orderJson.put("documentType", organization.getObposCDoctype().getId());
     }
   }
 

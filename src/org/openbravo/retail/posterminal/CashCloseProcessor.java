@@ -37,6 +37,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -45,6 +46,8 @@ import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
+
+
 
 public class CashCloseProcessor {
 
@@ -236,6 +239,7 @@ public class CashCloseProcessor {
     BigDecimal startingBalance;
     OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance().createCriteria(
         FIN_Reconciliation.class);
+    Organization organization = posTerminal.getOrganization();
     reconciliationsForAccount.add(Restrictions.eq("account", account));
     reconciliationsForAccount.addOrderBy("creationDate", false);
     reconciliationsForAccount.setMaxResults(1);
@@ -252,9 +256,8 @@ public class CashCloseProcessor {
       reconciliation.setNewOBObject(true);
     }
     reconciliation.setAccount(account);
-    reconciliation.setOrganization(posTerminal.getOrganization());
-    reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
-        .getDocumentTypeForReconciliations());
+    reconciliation.setOrganization(organization);
+    reconciliation.setDocumentType(organization.getObposCDoctyperecon());
     reconciliation.setDocumentNo("99999999temp");
     reconciliation.setEndingDate(currentDate);
     reconciliation.setTransactionDate(currentDate);

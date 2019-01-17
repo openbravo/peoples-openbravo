@@ -46,6 +46,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.invoice.InvoiceLineOffer;
@@ -115,17 +116,18 @@ public class OrderGroupingProcessor {
     }
 
     TerminalType terminalType = posTerminal.getObposTerminaltype();
-    if (terminalType.getDocumentType().getDocumentTypeForInvoice() == null) {
+    Organization organization = posTerminal.getOrganization();
+    if (organization.getObposCDoctype().getDocumentTypeForInvoice() == null) {
       throw new OBException(String.format(OBMessageUtils
-          .messageBD("OBPOS_DocTypeInvValidationOnCashup"), terminalType.getDocumentType()
+          .messageBD("OBPOS_DocTypeInvValidationOnCashup"), organization.getObposCDoctype()
           .getName()));
     }
 
     if (terminalType.isSeparateinvoiceforreturns()
-        && terminalType.getDocumentTypeForReturns().getDocumentTypeForInvoice() == null) {
+        && organization.getObposCDoctyperet().getDocumentTypeForInvoice() == null) {
       throw new OBException(String.format(OBMessageUtils
-          .messageBD("OBPOS_DocTypeInvValidationOnCashup"), terminalType
-          .getDocumentTypeForReturns().getName()));
+          .messageBD("OBPOS_DocTypeInvValidationOnCashup"), organization.getObposCDoctyperet()
+          .getName()));
     }
 
     final String strExecutionId = SequenceIdData.getUUID().substring(0, 30);

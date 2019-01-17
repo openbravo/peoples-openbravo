@@ -25,6 +25,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class CashCloseReport extends JSONProcessSimple {
 
@@ -42,6 +43,7 @@ public class CashCloseReport extends JSONProcessSimple {
     } finally {
       OBContext.restorePreviousMode();
     }
+    Organization organization = terminal.getOrganization();
 
     JSONObject result = new JSONObject();
 
@@ -60,8 +62,7 @@ public class CashCloseReport extends JSONProcessSimple {
         + " group by olt.tax.name order by olt.tax.name asc";
     Query<Object[]> salesTaxesQuery = OBDal.getInstance().getSession()
         .createQuery(hqlTaxes, Object[].class);
-    salesTaxesQuery.setParameter("docTypeId", terminal.getObposTerminaltype().getDocumentType()
-        .getId());
+    salesTaxesQuery.setParameter("docTypeId", organization.getObposCDoctype().getId());
     salesTaxesQuery.setParameter("applicationId", posTerminalId);
     JSONArray salesTaxes = new JSONArray();
     BigDecimal totalSalesTax = BigDecimal.ZERO;
@@ -85,7 +86,7 @@ public class CashCloseReport extends JSONProcessSimple {
 
     Query<BigDecimal> salesQuery = OBDal.getInstance().getSession()
         .createQuery(hqlSales, BigDecimal.class);
-    salesQuery.setParameter("docTypeId", terminal.getObposTerminaltype().getDocumentType().getId());
+    salesQuery.setParameter("docTypeId", organization.getObposCDoctype().getId());
     salesQuery.setParameter("applicationId", posTerminalId);
     BigDecimal totalNetAmount = salesQuery.uniqueResult();
     if (totalNetAmount == null) {
@@ -99,8 +100,7 @@ public class CashCloseReport extends JSONProcessSimple {
 
     Query<Object[]> returnTaxesQuery = OBDal.getInstance().getSession()
         .createQuery(hqlTaxes, Object[].class);
-    returnTaxesQuery.setParameter("docTypeId", terminal.getObposTerminaltype()
-        .getDocumentTypeForReturns().getId());
+    returnTaxesQuery.setParameter("docTypeId", organization.getObposCDoctyperet().getId());
     returnTaxesQuery.setParameter("applicationId", posTerminalId);
     JSONArray returnTaxes = new JSONArray();
     BigDecimal totalReturnsTax = BigDecimal.ZERO;
@@ -116,8 +116,7 @@ public class CashCloseReport extends JSONProcessSimple {
 
     Query<BigDecimal> returnsQuery = OBDal.getInstance().getSession()
         .createQuery(hqlSales, BigDecimal.class);
-    returnsQuery.setParameter("docTypeId", terminal.getObposTerminaltype()
-        .getDocumentTypeForReturns().getId());
+    returnsQuery.setParameter("docTypeId", organization.getObposCDoctyperet().getId());
     returnsQuery.setParameter("applicationId", posTerminalId);
     BigDecimal totalReturnsAmount = returnsQuery.uniqueResult();
     if (totalReturnsAmount == null) {

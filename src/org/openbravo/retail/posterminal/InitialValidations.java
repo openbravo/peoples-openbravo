@@ -26,6 +26,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class InitialValidations {
 
@@ -86,9 +87,9 @@ public class InitialValidations {
     if (posTerminal.isMaster() && posTerminal.getMasterterminal() != null) {
       throw new JSONException("OBPOS_NotAllowSlaveAndMaster");
     }
-
-    DocumentType documentType = posTerminal.getObposTerminaltype().getDocumentType(), returnDocumentType = posTerminal
-        .getObposTerminaltype().getDocumentTypeForReturns();
+    Organization organization = posTerminal.getOrganization();
+    DocumentType documentType = organization.getObposCDoctype(), returnDocumentType = organization
+        .getObposCDoctyperet();
     if (documentType.getDocumentTypeForInvoice() == null) {
       throw new JSONException("OBPOS_DocTypeInvoiceNotConfigured");
     } else if (documentType.getDocumentTypeForShipment() == null) {
