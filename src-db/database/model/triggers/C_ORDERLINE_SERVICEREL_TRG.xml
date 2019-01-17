@@ -85,9 +85,11 @@ BEGIN
     WHERE PSL.M_PRODUCT_ID = v_productservice_id 
     AND PSL.M_PRODUCT_CATEGORY_ID = v_productcategory_id;
   EXCEPTION WHEN NO_DATA_FOUND THEN
-    -- No configuration found so return without any action
-    IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
+    v_taxcategory_id := NULL;
   END;
+  IF (v_taxcategory_id IS NULL) THEN
+    IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
+  END IF;
 
   IF (DELETING) THEN
     -- In case of DELETE, force to use the tax category of the product.
