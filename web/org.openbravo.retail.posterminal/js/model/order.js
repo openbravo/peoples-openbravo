@@ -4702,6 +4702,7 @@
       this.set('session', OB.MobileApp.model.get('session'));
       this.set('orderDate', OB.I18N.normalizeDate(new Date()));
       this.set('skipApplyPromotions', false);
+      this.unset('deletedLines');
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
