@@ -24,6 +24,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -88,8 +89,25 @@ public class InitialValidations {
       throw new JSONException("OBPOS_NotAllowSlaveAndMaster");
     }
     Organization organization = posTerminal.getOrganization();
-    DocumentType documentType = organization.getObposCDoctype(), returnDocumentType = organization
-        .getObposCDoctyperet();
+    DocumentType documentType;
+    DocumentType returnDocumentType;
+    if (organization.getObposCDoctype() == null) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("OBPOS_DocType"),
+          organization.getName()));
+    } else {
+      documentType = organization.getObposCDoctype();
+    }
+    if (organization.getObposCDoctyperet() == null) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("OBPOS_DocTypeReturn"),
+          organization.getName()));
+    } else {
+      returnDocumentType = organization.getObposCDoctyperet();
+    }
+    if (organization.getObposCDoctyperecon() == null) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("OBPOS_DocTypeReconciliation"),
+          organization.getName()));
+    }
+
     if (documentType.getDocumentTypeForInvoice() == null) {
       throw new JSONException("OBPOS_DocTypeInvoiceNotConfigured");
     } else if (documentType.getDocumentTypeForShipment() == null) {
