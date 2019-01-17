@@ -18,9 +18,18 @@
 
 set -e
 
-if [[ ! -d ./modules/org.openbravo.client.kernel/node_modules || -z "$(find ./modules/org.openbravo.client.kernel/node_modules -name prettier)" ]]; then
-    echo -e "\n\033[0;33mERROR:\033[0m prettier command not found. Install using \"npm install\" at the root of the project\n"
+if ! [[ -x "$(command -v npm)" ]]; then
+    echo -e "\n\033[0;33mERROR:\033[0m npm command not found. Install using"
+    echo -e "sudo apt install npm\n";
     exit 1
+fi
+
+if [[ ! -d ./modules/org.openbravo.client.kernel/node_modules || -z "$(find ./modules/org.openbravo.client.kernel/node_modules -name prettier)" ]]; then
+    echo  "prettier command not found. Running npm install\n"
+    originalDir="$(pwd)"
+    cd modules/org.openbravo.client.kernel
+    npm install
+    cd "$originalDir"
 fi
 
 changedfile="$(pwd)/$1"
