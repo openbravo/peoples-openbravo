@@ -177,6 +177,8 @@ public class POSUtils {
 
   public static List<String> getOrgListByCrossStoreId(String crossStoreId) {
     try {
+      OBContext.setAdminMode(false);
+
       StringBuilder query = new StringBuilder();
       query.append("select id");
       query.append(" from ");
