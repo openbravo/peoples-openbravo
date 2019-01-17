@@ -182,6 +182,7 @@ enyo.kind({
   model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
+    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
     this.setFilters(OB.Model.VReturnsFilter.getProperties());
   }
 });

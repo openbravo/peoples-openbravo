@@ -534,6 +534,7 @@ enyo.kind({
   model: OB.Model.OrderFilter,
   initComponents: function () {
     this.inherited(arguments);
+    OB.UTIL.hideStoreFilter(OB.Model.OrderFilter.getProperties());
     this.setFilters(OB.Model.OrderFilter.getProperties());
   }
 });
@@ -544,6 +545,7 @@ enyo.kind({
   model: OB.Model.VReturnsFilter,
   initComponents: function () {
     this.inherited(arguments);
+    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
     this.setFilters(OB.Model.VReturnsFilter.getProperties());
   }
 });
