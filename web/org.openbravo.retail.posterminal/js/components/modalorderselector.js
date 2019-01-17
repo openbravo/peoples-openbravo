@@ -9,8 +9,6 @@
 
 /*global enyo, Backbone, _ */
 
-var crossStoreInfo = false;
-
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelector',
   kind: 'OB.UI.ModalSelector',
@@ -36,6 +34,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+    this.crossStoreInfo = false;
   }
 });
 
@@ -94,7 +93,7 @@ enyo.kind({
       return ot.id === me.model.get('orderType');
     }).name;
 
-    if (crossStoreInfo) {
+    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
       this.$.store.setContent(this.model.get('store'));
     } else {
       this.$.store.setContent('');
@@ -323,14 +322,14 @@ enyo.kind({
     this.$[this.getNameOfReceiptsListItemPrinter()].setCollection(this.receiptList);
   },
   actionPrePrint: function (data) {
-    crossStoreInfo = false;
+    this.owner.owner.crossStoreInfo = false;
     if (data && data.length > 0) {
-      data.models.forEach(function (model) {
+      _.each(data.models, function (model) {
         if (OB.MobileApp.model.get('terminal').organization !== model.attributes.orgId) {
-          crossStoreInfo = true;
+          this.owner.owner.crossStoreInfo = true;
           return;
         }
-      });
+      }, this);
     }
   }
 });
@@ -400,7 +399,7 @@ enyo.kind({
         return true;
       }
 
-      if (crossStoreInfo) {
+      if (this.owner.owner.crossStoreInfo) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
           label: OB.I18N.getLabel('OBMOBC_Continue'),
           isConfirmButton: true,
@@ -453,7 +452,7 @@ enyo.kind({
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
-      if (crossStoreInfo) {
+      if (this.owner.owner.crossStoreInfo) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
           label: OB.I18N.getLabel('OBMOBC_Continue'),
           isConfirmButton: true,

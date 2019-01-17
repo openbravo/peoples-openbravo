@@ -9,8 +9,6 @@
 
 /*global enyo, Backbone, _, OB */
 
-var crossStoreInfo = false;
-
 enyo.kind({
   name: 'OB.UI.ReceiptsForPayOpenTicketsList',
   kind: 'OB.UI.GenericReceiptsList',
@@ -37,6 +35,7 @@ enyo.kind({
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceipts');
     this.inherited(arguments);
     this.model = model;
+    this.crossStoreInfo = false;
     if (OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.setDefaultFilters([{
         value: 'payOpenTickets',
@@ -135,14 +134,14 @@ enyo.kind({
     data.models = totalData;
     data.length = totalData.length;
 
-    crossStoreInfo = false;
+    this.owner.owner.crossStoreInfo = false;
     if (data && data.length > 0) {
-      data.models.forEach(function (model) {
+    	_.each(data.models, function (model) {
         if (OB.MobileApp.model.get('terminal').organization !== model.attributes.orgId) {
-          crossStoreInfo = true;
+          this.owner.owner.crossStoreInfo = true;
           return;
         }
-      });
+      }, this);
     }
   }
 });
@@ -281,7 +280,7 @@ enyo.kind({
   create: function () {
     var returnLabel = '';
     this.inherited(arguments);
-    if (crossStoreInfo) {
+    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
       this.$.store.setContent(this.model.get('store'));
     } else {
       this.$.store.setContent('');
