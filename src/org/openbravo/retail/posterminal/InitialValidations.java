@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -88,6 +88,7 @@ public class InitialValidations {
     if (posTerminal.isMaster() && posTerminal.getMasterterminal() != null) {
       throw new JSONException("OBPOS_NotAllowSlaveAndMaster");
     }
+    // Make sure the store have the necessary document types
     Organization organization = posTerminal.getOrganization();
     DocumentType documentType;
     DocumentType returnDocumentType;
@@ -109,14 +110,20 @@ public class InitialValidations {
     }
 
     if (documentType.getDocumentTypeForInvoice() == null) {
-      throw new JSONException("OBPOS_DocTypeInvoiceNotConfigured");
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_DocTypeInvoiceNotConfigured"), documentType.getName()));
     } else if (documentType.getDocumentTypeForShipment() == null) {
-      throw new JSONException("OBPOS_DocTypeShipmentNotConfigured");
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_DocTypeShipmentNotConfigured"), documentType.getName()));
     }
     if (returnDocumentType.getDocumentTypeForInvoice() == null) {
-      throw new JSONException("OBPOS_DocTypeReturnInvoiceNotConfigured");
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_DocTypeReturnInvoiceNotConfigured"),
+          returnDocumentType.getName()));
     } else if (returnDocumentType.getDocumentTypeForShipment() == null) {
-      throw new JSONException("OBPOS_DocTypeReturnShipmentNotConfigured");
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_DocTypeReturnShipmentNotConfigured"),
+          returnDocumentType.getName()));
     }
 
     String whereclausePM = " as e where e.obposApplications=:terminal and e.financialAccount is not null "
