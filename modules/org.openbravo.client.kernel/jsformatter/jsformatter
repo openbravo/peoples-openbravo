@@ -18,14 +18,14 @@
 
 set -e
 
-if [[ ! -d ./node_modules || -z "$(find ./node_modules -name prettier)" ]]; then
+if [[ ! -d ./modules/org.openbravo.client.kernel/node_modules || -z "$(find ./modules/org.openbravo.client.kernel/node_modules -name prettier)" ]]; then
     echo -e "\n\033[0;33mERROR:\033[0m prettier command not found. Install using \"npm install\" at the root of the project\n"
     exit 1
 fi
 
-changedfile=$1
+changedfile="$(pwd)/$1"
 replaceparam=$2
-npm run jsformatter -s -- --config ./modules/org.openbravo.client.kernel/jsformatter/.prettierrc.json "$changedfile" > "$changedfile.prettier"
+npm run jsformatter -s --prefix ./modules/org.openbravo.client.kernel -- "$changedfile" > "$changedfile.prettier"
 if ! diff -u "$changedfile" "$changedfile.prettier"; then
   if [ "$replaceparam" != "replace" ] ; then
     echo ""

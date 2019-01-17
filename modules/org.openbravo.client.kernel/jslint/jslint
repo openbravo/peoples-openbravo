@@ -2,9 +2,9 @@
 
 echo "Checking --> $@"
 
-if [[ ! -d ./node_modules || -z "$(find ./node_modules -name eslint)" ]]; then
+if [[ ! -d ./modules/org.openbravo.client.kernel/node_modules || -z "$(find ./modules/org.openbravo.client.kernel/node_modules -name eslint)" ]]; then
     echo -e "\n\033[0;33mERROR:\033[0m eslint command not found. Install using \"npm install\" at the root of the project\n"
     exit 1
 fi
 
-npm run jslint -s -- "$@"
+npm run jslint --prefix ./modules/org.openbravo.client.kernel -s -- "$(pwd)/$@"
