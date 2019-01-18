@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -177,6 +177,12 @@
                       OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
                       terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
                       terminalModel.set('useEmbededBarcode', terminalModel.get('terminal').terminalType.useembededbarcodescanner);
+                      //Set document types from organization to terminaltype object
+                      terminalModel.get('terminal').terminalType.documentType=OB.MobileApp.model.get('context').organization.obposCDoctype;
+                      terminalModel.get('terminal').terminalType.documentTypeForReturns=OB.MobileApp.model.get('context').organization.obposCDoctyperet;
+                      terminalModel.get('terminal').terminalType.documentTypeForReconciliations=OB.MobileApp.model.get('context').organization.obposCDoctyperecon;
+                      terminalModel.get('terminal').terminalType.documentTypeForQuotations=OB.MobileApp.model.get('context').organization.obposCDoctypequot;
+
                       if (!terminalModel.usermodel) {
                         OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
                       } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
