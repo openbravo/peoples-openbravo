@@ -37,6 +37,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_DOCTYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_DOCTYPERET_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_DOCTYPERECON_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="GROUPINGORDERS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
@@ -46,6 +58,10 @@
         <onCreateDefault/>
       </column>
       <column name="MINUTESTOREFRESHDATAINC" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_DOCTYPEQUOT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -133,6 +149,9 @@
         <default><![CDATA[OBPOS]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
+        <reference local="C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_CHANNEL" name="OBPOS_TERMINALTYPE_C_CHANNEL">
         <reference local="C_CHANNEL_ID" foreign="C_CHANNEL_ID"/>
       </foreign-key>
@@ -145,9 +164,22 @@
       <foreign-key foreignTable="AD_ORG" name="OBPOS_TERTYPE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_TERTYPE_DOCTYPE">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_TERTYPE_DOCTYPERET">
+        <reference local="C_DOCTYPERET_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="OBRETCO_PRODUCTLIST" name="OBPOS_TERTYPE_PRODUCTLIST">
         <reference local="OBRETCO_PRODUCTLIST_ID" foreign="OBRETCO_PRODUCTLIST_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_TERTYPELICATIONS_RECON">
+        <reference local="C_DOCTYPERECON_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <index name="OBPOS_DOCTYPE_QUOT_ID" unique="false">
+        <index-column name="C_DOCTYPEQUOT_ID"/>
+        <whereClause><![CDATA[C_DOCTYPEQUOT_ID IS NOT NULL]]></whereClause>
+      </index>
       <check name="OBPOS_MINSHOWFRESHDATAINC_CHK"><![CDATA[MINUTESTORESHOWFRESHDATAINC < MINUTESTOREFRESHDATAINC]]></check>
       <check name="OBPOS_OPENRELATEDRECEIPTS_CHK"><![CDATA[OPENRELATEDRECEIPTS IN ('Y', 'N')]]></check>
       <check name="OBPOS_SHOWTAXBREAKDOWN_CHK"><![CDATA[SHOWTAXBREAKDOWN IN ('Y', 'N')]]></check>
