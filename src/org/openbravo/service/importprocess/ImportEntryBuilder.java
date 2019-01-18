@@ -106,7 +106,7 @@ public class ImportEntryBuilder {
 
   /**
    * This method let initialize any ImportEntry property using its property name. Note that if
-   * propertyName does not exist for ImportEntry, create() will throw an CheckException. Also, if
+   * propertyName does not exist for ImportEntry, create() will throw an OBException. Also, if
    * propertyValue cannot be assigned to the property, a ValidationException will be thrown.
    *
    * @param propertyName
