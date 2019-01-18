@@ -2,18 +2,6 @@
 
 echo "Checking --> $@"
 
-if ! [[ -x "$(command -v npm)" ]]; then
-    echo -e "\n\033[0;33mERROR:\033[0m npm command not found. Install using"
-    echo -e "sudo apt install npm\n";
-    exit 1
-fi
-
-if [[ ! -d ../org.openbravo.client.kernel/node_modules || -z "$(find ../org.openbravo.client.kernel/node_modules -name eslint)" ]]; then
-    echo  "eslint command not found. Running npm install\n"
-    originalDir="$(pwd)"
-    cd ../org.openbravo.client.kernel
-    npm install
-    cd "$originalDir"
-fi
+source ../org.openbravo.client.kernel/jscheck/check-dependencies
 
 npm run jslint -s --prefix ../org.openbravo.client.kernel -- "$(pwd)/$@"
