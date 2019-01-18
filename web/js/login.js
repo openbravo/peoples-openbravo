@@ -419,8 +419,15 @@ function enableEditionShortcuts() {
 }
 
 function getEditionShortcuts() {
-  this.keyArray = new Array();
-  this.keyArray.splice(keyArray.length - 1, 0, new keyArrayItem("TAB", "windowTabKey(true);", null, null, false, 'onkeydown'), new keyArrayItem("TAB", "windowTabKey(false);", null, null, false, 'onkeyup'), new keyArrayItem("TAB", "windowShiftTabKey(true);", null, "shiftKey", false, 'onkeydown'), new keyArrayItem("TAB", "windowShiftTabKey(false);", null, "shiftKey", false, 'onkeyup'), new keyArrayItem("ENTER", "windowCtrlShiftEnterKey();", null, "ctrlKey+shiftKey", false, 'onkeydown'), new keyArrayItem("ENTER", "windowCtrlEnterKey();", null, "ctrlKey", true, 'onkeydown'), new keyArrayItem("ENTER", "windowEnterKey();", null, null, true, 'onkeydown'));
+  this.keyArray = [
+	  new keyArrayItem('TAB', 'windowTabKey(true);', null, null, false, 'onkeydown'),
+	  new keyArrayItem('TAB', 'windowTabKey(false);', null, null, false, 'onkeyup'),
+	  new keyArrayItem('TAB', 'windowShiftTabKey(true);', null, 'shiftKey', false, 'onkeydown'),
+	  new keyArrayItem('TAB', 'windowShiftTabKey(false);', null, 'shiftKey', false, 'onkeyup'),
+	  new keyArrayItem('ENTER', 'windowCtrlShiftEnterKey();', null, 'ctrlKey+shiftKey', false, 'onkeydown'),
+	  new keyArrayItem('ENTER', 'windowCtrlEnterKey();', null, 'ctrlKey', true, 'onkeydown'),
+	  new keyArrayItem('ENTER', 'windowEnterKey();', null, null, true, 'onkeydown')
+    ];
 }
 
 /**
