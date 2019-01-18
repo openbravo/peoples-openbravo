@@ -59,6 +59,17 @@ public class ImportEntryBuilder {
   private Map<String, Object> customProperties;
   private boolean notifyManager;
 
+  /**
+   * Create a new instance of the Builder to create a new ImportEntry. Both the typeOfData and
+   * jsonData values are mandatory.
+   *
+   * @param typeOfData
+   *          Type of data. It must be a valid list reference value within the reference: 'Type of
+   *          Import Data'
+   * @param jsonData
+   *          String representation of a JSONObject with the content to distribute
+   * @return A new ImportEntryBuilder instance with typeOfData and jsonData values set
+   */
   public static ImportEntryBuilder newInstance(String typeOfData, String jsonData) {
     return new ImportEntryBuilder(typeOfData, jsonData);
   }
@@ -93,11 +104,30 @@ public class ImportEntryBuilder {
     return this;
   }
 
+  /**
+   * This let initialize ImportEntry properties that has no set*() method implemented. Note that if
+   * propertyName does not exist for ImportEntry, create() will throw an CheckException or a
+   * ValidationException is propertyValue cannot be assigned to the property.
+   *
+   * @param propertyName
+   *          the name of the property
+   * @param propertyValue
+   *          the value of the property
+   * @return The ImportEntryBuilder instance to chain another method
+   */
   public ImportEntryBuilder setProperty(String propertyName, Object propertyValue) {
     this.customProperties.put(propertyName, propertyValue);
     return this;
   }
 
+  /**
+   * Set this flag to true to notify the ImportEntryManager there is a new ImportEntry to process
+   * 
+   * @param notifyManager
+   *          whether ImportEntryManager.notifyNewImportEntryCreated() will be called after
+   *          ImportEntry creation
+   * @return The ImportEntryBuilder instance to chain another method
+   */
   public ImportEntryBuilder setNotifyManager(boolean notifyManager) {
     this.notifyManager = notifyManager;
     return this;
