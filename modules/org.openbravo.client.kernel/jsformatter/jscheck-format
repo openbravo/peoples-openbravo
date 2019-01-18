@@ -28,7 +28,7 @@ else
 fi
  echo "-----------------------------------------------"
  echo ""
-files=$(./modules/org.openbravo.client.kernel/jscheck/jsfiles ./modules)
+files=$(./modules/org.openbravo.client.kernel/jscheck/jsfiles $(pwd)/modules)
 
 for changedfile in echo $files; do
   if [ -f "$changedfile" -a -n "$(echo $changedfile | awk '/.js$/')" ]; then

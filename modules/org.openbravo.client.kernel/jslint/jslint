@@ -4,4 +4,5 @@ echo "Checking --> $@"
 
 source ./modules/org.openbravo.client.kernel/jscheck/check-dependencies
 
-npm run jslint --prefix ./modules/org.openbravo.client.kernel -s -- "$(pwd)/$@"
+npm run jslint --prefix ./modules/org.openbravo.client.kernel -s -- "$@"
+#./modules/org.openbravo.client.kernel/node_modules/.bin/eslint -c ./modules/org.openbravo.client.kernel/jslint/.eslintrc.json --max-warnings 0 "$@"
