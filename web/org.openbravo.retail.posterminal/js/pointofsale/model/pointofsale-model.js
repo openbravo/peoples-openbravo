@@ -800,10 +800,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               execution = OB.UTIL.ProcessController.start('cancelLayaway');
 
           processCancelLayaway = function () {
-            var cloneOrderForNew = new OB.Model.Order();
-            var cloneOrderForPrinting = new OB.Model.Order();
+            var cloneOrderForNew = new OB.Model.Order(),
+                cloneOrderForPrinting = new OB.Model.Order(),
+                creationDate;
 
             receipt.prepareToSend(function () {
+              creationDate = new Date();
+              receipt.set('creationDate', OB.I18N.normalizeDate(creationDate));
+              receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+              receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
               OB.UTIL.HookManager.executeHooks('OBPOS_FinishCancelLayaway', {
                 context: me,
                 model: me,
@@ -994,7 +999,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             } else {
               if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                 OB.UTIL.rebuildCashupFromServer(function () {
-                  receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
                   OB.MobileApp.model.setSynchronizedCheckpoint(function () {
                     processCancelLayaway();
                   });
