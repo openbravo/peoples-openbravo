@@ -48,12 +48,7 @@
   v_price_precision NUMBER;
 BEGIN
 
-  IF AD_isTriggerEnabled()='N' THEN 
-    IF DELETING THEN 
-      RETURN OLD; 
-    ELSE 
-      RETURN NEW; 
-    END IF; 
+  IF AD_isTriggerEnabled()='N' THEN RETURN;
   END IF;
 
   IF (INSERTING OR UPDATING) THEN
@@ -88,7 +83,7 @@ BEGIN
     v_taxcategory_id := NULL;
   END;
   IF (v_taxcategory_id IS NULL) THEN
-    IF DELETING THEN RETURN OLD; ELSE RETURN NEW; END IF;
+    RETURN;
   END IF;
 
   IF (DELETING) THEN
