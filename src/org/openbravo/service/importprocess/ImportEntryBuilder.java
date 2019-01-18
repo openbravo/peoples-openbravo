@@ -105,9 +105,9 @@ public class ImportEntryBuilder {
   }
 
   /**
-   * This let initialize ImportEntry properties that has no set*() method implemented. Note that if
-   * propertyName does not exist for ImportEntry, create() will throw an CheckException or a
-   * ValidationException is propertyValue cannot be assigned to the property.
+   * This method let initialize any ImportEntry property using its property name. Note that if
+   * propertyName does not exist for ImportEntry, create() will throw an CheckException. Also, if
+   * propertyValue cannot be assigned to the property, a ValidationException will be thrown.
    *
    * @param propertyName
    *          the name of the property
