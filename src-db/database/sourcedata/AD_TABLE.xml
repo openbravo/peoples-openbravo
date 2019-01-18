@@ -13057,7 +13057,8 @@ where @whereClause@]]></HQLQUERY>
 case when 1>0 then false else true end as ob_selected,
 (select max(tc.id) from FinancialMgmtTaxCategory tc where tc.default = true and tc.client.id = cat.client.id) as C_TaxCategory_ID
 from ProductCategory cat
-where @additional_filters@]]></HQLQUERY>
+where @additional_filters@
+and @insertion_point@]]></HQLQUERY>
 <!--E42E75B452F545469E648BD84C9538E9-->  <ENTITY_ALIAS><![CDATA[cat]]></ENTITY_ALIAS>
 <!--E42E75B452F545469E648BD84C9538E9--></AD_TABLE>
 

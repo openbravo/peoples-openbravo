@@ -21,17 +21,29 @@ package org.openbravo.common.datasource;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
 @ComponentProvider.Qualifier("E42E75B452F545469E648BD84C9538E9")
 public class ServiceModifyTaxProductCategoryTransformer extends HqlQueryTransformer {
+  private static final String MODIFY_TAX_PROD_CAT_PE = "B51960EFD3E04B79917A1277C751232F";
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-
-    return hqlQuery.replace("@Product.id@", "'" + requestParameters.get("@Product.id@") + "'");
+    String tabId = requestParameters.get("tabId");
+    if (StringUtils.equals(tabId, MODIFY_TAX_PROD_CAT_PE)) {
+      StringBuilder replacement = new StringBuilder("");
+      replacement.append(" not exists (select sl.id ");
+      replacement.append("             from M_PRODUCT_SERVICELINKED sl ");
+      replacement.append("             where sl.productCategory.id = cat.id ");
+      replacement.append("             and sl.product.id = :productId)");
+      queryNamedParameters.put("productId", requestParameters.get("@Product.id@"));
+      return hqlQuery.replace("@insertion_point@", replacement);
+    } else {
+      return hqlQuery;
+    }
   }
 
 }
