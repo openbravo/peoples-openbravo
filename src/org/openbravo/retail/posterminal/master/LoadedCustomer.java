@@ -13,11 +13,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -55,6 +57,16 @@ public class LoadedCustomer extends ProcessHQLQuery {
             jsonsent.getJSONObject("parameters").getJSONObject("bpBillLocationId").get("value"));
       }
 
+      if (jsonsent.getJSONObject("parameters").has("crossStore")) {
+        String crossStore = jsonsent.getJSONObject("parameters").getJSONObject("crossStore")
+            .getString("value");
+
+        Set<String> crossStoreNaturalTree = OBContext.getOBContext()
+            .getOrganizationStructureProvider(jsonsent.getString("client"))
+            .getNaturalTree(crossStore);
+        paramValues.put("crossStoreNaturalTree", crossStoreNaturalTree);
+      }
+
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -68,6 +80,11 @@ public class LoadedCustomer extends ProcessHQLQuery {
     HQLPropertyList bpartnerLocHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensionsLoc);
 
+    String crossStore = StringUtils.EMPTY;
+    if (jsonsent.getJSONObject("parameters").has("crossStore")) {
+      crossStore = jsonsent.getJSONObject("parameters").getJSONObject("crossStore")
+          .getString("value");
+    }
     StringBuilder bpartnerHQLQuery = new StringBuilder();
     bpartnerHQLQuery.append("select ");
     bpartnerHQLQuery.append(bpartnerHQLProperties.getHqlSelect());
@@ -82,7 +99,11 @@ public class LoadedCustomer extends ProcessHQLQuery {
     bpartnerHQLQuery.append("  where bpls.businessPartner.id=bp.id ");
     bpartnerHQLQuery.append("   and bpls.invoiceToAddress = true ");
     bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria ");
-    bpartnerHQLQuery.append("   and bpls.$naturalOrgCriteria");
+    if (StringUtils.isEmpty(crossStore)) {
+      bpartnerHQLQuery.append(" and bpls.$naturalOrgCriteria ");
+    } else {
+      bpartnerHQLQuery.append(" and bpls.organization.id in (:crossStoreNaturalTree) ");
+    }
     bpartnerHQLQuery.append("  group by bpls.businessPartner.id)");
     bpartnerHQLQuery.append(" and (ulist.id in (select max(ulist2.id) ");
     bpartnerHQLQuery.append("  from ADUser as ulist2 ");
@@ -95,7 +116,11 @@ public class LoadedCustomer extends ProcessHQLQuery {
     bpartnerHQLQuery.append("  and bpls.shipToAddress = true ");
     bpartnerHQLQuery.append("  and bpls.businessPartner.id=bp.id ");
     bpartnerHQLQuery.append("  and bpls.$readableSimpleClientCriteria ");
-    bpartnerHQLQuery.append("  and bpls.$naturalOrgCriteria)) ");
+    if (StringUtils.isEmpty(crossStore)) {
+      bpartnerHQLQuery.append("  and bpls.$naturalOrgCriteria)) ");
+    } else {
+      bpartnerHQLQuery.append("  and bpls.organization.id in (:crossStoreNaturalTree))) ");
+    }
     bpartnerHQLQuery.append(" order by bp.name");
     customers.add(bpartnerHQLQuery.toString());
 

@@ -6607,6 +6607,9 @@
       bpLocId = model.bpLocId;
       bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
+      if(OB.MobileApp.model.get('store').length > 2){
+    	  crossStore = order.attributes.organization;  
+      }      
       var bpartnerForProduct = function (bp) {
           var loadProducts = function () {
               var linepos = 0,
@@ -6941,7 +6944,8 @@
         //Empty
         var loadCustomerParameters = {
           bpartnerId: bpId,
-          bpLocationId: bpLocId
+          bpLocationId: bpLocId,
+          crossStore: crossStore
         };
         if (bpLocId !== bpBillLocId) {
           loadCustomerParameters.bpBillLocationId = bpBillLocId;
