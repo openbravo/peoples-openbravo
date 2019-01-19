@@ -118,7 +118,7 @@
     operator: '='
   }, {
     name: 'store',
-    column: 'orgName',
+    column: 'store',
     type: 'TEXT',
     filter: true,
     caption: 'OBPOS_Store',
