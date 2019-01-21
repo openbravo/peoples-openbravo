@@ -31,6 +31,9 @@
       <parameter name="p_forcedcashvat" type="CHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
+      <parameter name="p_taxcat_id" type="VARCHAR" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -43,7 +46,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2014 Openbravo SLU
+* All portions are Copyright (C) 2001-2019 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -182,14 +185,20 @@
         v_shipTo := v_shipFrom;
         v_shipFrom := v_aux;
       END IF;
+      
       IF(p_glitem_id IS NULL) THEN
-        v_taxcategoryid := C_GET_PRODUCT_TAXCATEGORY(p_product_id, p_org_id, p_shipDate, v_shipfrom, v_shipto);
+        IF (p_taxcat_id IS NULL) THEN
+	        v_taxcategoryid := C_GET_PRODUCT_TAXCATEGORY(p_product_id, p_org_id, p_shipDate, v_shipfrom, v_shipto);
+	      ELSE
+	        v_taxcategoryid :=  p_taxcat_id;
+	      END IF;
       ELSE
         SELECT C_TaxCategory_ID
         INTO v_TaxCategoryID
         FROM C_GLITEM
         WHERE C_GLITEM_ID = p_glitem_id;
       END IF;
+      
       DECLARE
         SEL1 RECORD;
         SEL2 RECORD;
