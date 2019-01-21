@@ -46,7 +46,7 @@ public class ImportEntryBuilder {
 
   private static final Logger log = LogManager.getLogger();
 
-  private final String INITIAL_IMPORT_STATUS = "Initial";
+  private static final String INITIAL_IMPORT_STATUS = "Initial";
 
   private List<ImportEntryPreProcessor> entryPreProcessors;
 
@@ -135,8 +135,8 @@ public class ImportEntryBuilder {
 
   /**
    * Creates a ImportEntry instance, checks that this instance is not already created or archived
-   * and then saves it. If setCommitAndClose(true) is called, the transaction is commited and then
-   * the connection is closed.
+   * and then saves it. If setNotifyManager(true) is called, the transaction is commited, the
+   * connection closed and the ImportEntryManager will be notified of the change.
    *
    * @throws ImportEntryAlreadyExistsException
    *           when import entry already exists either in c_import_entry or c_import_entry_archive
@@ -208,11 +208,8 @@ public class ImportEntryBuilder {
       return false;
     }
 
-    final Query<Number> qry = SessionHandler
-        .getInstance()
-        .getSession()
-        .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where id=:id",
-            Number.class);
+    final Query<Number> qry = SessionHandler.getInstance().getSession()
+        .createQuery("select count(*) from C_IMPORT_ENTRY where id=:id", Number.class);
     qry.setParameter("id", entryId);
 
     return qry.uniqueResult().intValue() > 0;
@@ -223,11 +220,8 @@ public class ImportEntryBuilder {
       return false;
     }
 
-    final Query<Number> qry = SessionHandler
-        .getInstance()
-        .getSession()
-        .createQuery("select count(*) from " + ImportEntryArchive.ENTITY_NAME + " where id=:id",
-            Number.class);
+    final Query<Number> qry = SessionHandler.getInstance().getSession()
+        .createQuery("select count(*) from C_Import_Entry_Archive where id=:id", Number.class);
     qry.setParameter("id", entryId);
 
     return qry.uniqueResult().intValue() > 0;
