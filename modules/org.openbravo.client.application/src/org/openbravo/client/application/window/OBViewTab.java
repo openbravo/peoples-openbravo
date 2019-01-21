@@ -370,10 +370,21 @@ public class OBViewTab extends BaseTemplateComponent {
     viewGridComponent.setParameters(getParameters());
     viewGridComponent.setTab(tab);
     viewGridComponent.setViewTab(this);
-    viewGridComponent.setApplyTransactionalFilter(isRootTab()
-        && this.tab.getWindow().getWindowType().equals("T"));
+    viewGridComponent.setApplyTransactionalFilter(shouldApplyTransactionalFilter());
     viewGridComponent.setGCSettings(systemGridConfig, tabsGridConfig);
     return viewGridComponent.generate();
+  }
+
+  private boolean shouldApplyTransactionalFilter() {
+    return isRootTab() && tab.getWindow().getWindowType().equals("T")
+        && areTransactionalFiltersEnabled();
+  }
+
+  private boolean areTransactionalFiltersEnabled() {
+    if (!systemGridConfig.isPresent()) {
+      return true;
+    }
+    return systemGridConfig.get().isAllowTransactionalFilters();
   }
 
   public OBViewTab getParentTabComponent() {
