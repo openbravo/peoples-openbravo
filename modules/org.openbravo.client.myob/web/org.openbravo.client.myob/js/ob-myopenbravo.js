@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -845,7 +845,7 @@ isc.OBMyOpenbravo.addProperties({
       if (window.start) {
         // Qunit is present, we are running the tests
         // This makes the synchronization of unit tests possible
-        start();
+        window.start();
       }
       return;
     }

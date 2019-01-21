@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -191,11 +191,9 @@ isc.OBTabSetMain.addProperties({
 
   closeAllTabs: function () { // Except "Workspace" tab
     var tabCount, tabArray = [],
-        i;
-    for (i = 1; i > 0; i++) {
-      if (typeof this.getTab(i) === 'undefined') {
-        break;
-      }
+        i = 1;
+    while (typeof this.getTab(i) !== 'undefined') {
+      i++;
     }
     tabCount = i - 1;
     this.selectTab(0);
