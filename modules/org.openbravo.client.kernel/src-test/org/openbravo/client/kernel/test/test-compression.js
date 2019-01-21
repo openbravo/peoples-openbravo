@@ -2436,7 +2436,6 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
         obFormProperties: {
           onFieldChanged: function (form, item, value) {
             var f = form || this,
-                context = this.view.getContextInfo(false, true),
                 currentValues = f.view.getCurrentValues(),
                 otherItem;
             otherItem = f.getItem('organization');
@@ -10011,10 +10010,6 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 statusBarFields: [],
                 obFormProperties: {
                   onFieldChanged: function (form, item, value) {
-                    var f = form || this,
-                        context = this.view.getContextInfo(false, true),
-                        currentValues = f.view.getCurrentValues(),
-                        otherItem;
                   }
                 }
               });
@@ -10920,10 +10915,6 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 statusBarFields: [],
                 obFormProperties: {
                   onFieldChanged: function (form, item, value) {
-                    var f = form || this,
-                        context = this.view.getContextInfo(false, true),
-                        currentValues = f.view.getCurrentValues(),
-                        otherItem;
                   }
                 }
               });
@@ -11809,7 +11800,6 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               onFieldChanged: function (form, item, value) {
                 var f = form || this,
                     context = this.view.getContextInfo(false, true),
-                    currentValues = f.view.getCurrentValues(),
                     otherItem;
                 otherItem = f.getItem('lineNo');
                 if (otherItem && otherItem.disable && otherItem.enable) {
@@ -12725,10 +12715,6 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             statusBarFields: [],
             obFormProperties: {
               onFieldChanged: function (form, item, value) {
-                var f = form || this,
-                    context = this.view.getContextInfo(false, true),
-                    currentValues = f.view.getCurrentValues(),
-                    otherItem;
               }
             }
           });
@@ -13798,10 +13784,6 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             statusBarFields: [],
             obFormProperties: {
               onFieldChanged: function (form, item, value) {
-                var f = form || this,
-                    context = this.view.getContextInfo(false, true),
-                    currentValues = f.view.getCurrentValues(),
-                    otherItem;
               }
             }
           });
@@ -15267,10 +15249,6 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 statusBarFields: [],
                 obFormProperties: {
                   onFieldChanged: function (form, item, value) {
-                    var f = form || this,
-                        context = this.view.getContextInfo(false, true),
-                        currentValues = f.view.getCurrentValues(),
-                        otherItem;
                   }
                 }
               });
@@ -17663,7 +17641,6 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             obFormProperties: {
               onFieldChanged: function (form, item, value) {
                 var f = form || this,
-                    context = this.view.getContextInfo(false, true),
                     currentValues = f.view.getCurrentValues(),
                     otherItem;
                 otherItem = f.getItem('amount');
@@ -18403,7 +18380,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
               type: '_id_800059',
               editorProperties: {
                 "width": "",
-                "searchUrl": "\/info\/Invoice.html",
+                "searchUrl": "/info/Invoice.html",
                 "inFields": [{
                   "columnName": "inpadOrgId",
                   "parameterName": "inpAD_Org_ID"

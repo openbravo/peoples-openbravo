@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -653,10 +653,7 @@ isc.OBFKFilterTextItem.addProperties({
           continue;
         }
 
-        same = opDefs[prop].symbol && val.startsWith(opDefs[prop].symbol);
-        if (same) {
-          return true;
-        }
+        return opDefs[prop].symbol && val.startsWith(opDefs[prop].symbol);
       }
     }
     return false;
@@ -689,7 +686,7 @@ isc.OBFKFilterTextItem.addProperties({
   // if the filterType is ID, try to return the record ids instead of the record identifiers
   getCriteriaValue: function () {
     var value, values = this.getValue(),
-        record, i, j, criteriaValues = [],
+        i, j, criteriaValues = [],
         recordIds;
     if (values && this.filterType === 'id') {
       for (i = 0; i < values.length; i++) {

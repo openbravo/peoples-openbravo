@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,7 @@ isc.OBPickAndExecuteView.addProperties({
   messageBar: null,
 
   initWidget: function () {
-    var newButton, i, view = this;
+    var view = this;
 
     this.prepareGridFields(this.viewProperties.fields);
 
@@ -128,7 +128,7 @@ isc.OBPickAndExecuteView.addProperties({
 
   prepareGridFields: function (fields) {
     var result = isc.OBStandardView.getPrototype().prepareGridFields.apply(this, arguments),
-        i, f, len = result.length;
+        i, len = result.length;
 
     for (i = 0; i < len; i++) {
       if (result[i].editorProperties && result[i].editorProperties.disabled) {
@@ -225,7 +225,7 @@ isc.OBPickAndExecuteView.addProperties({
 
   getContextInfo: function () {
     var contextInfo = {},
-        record, i, fields, field;
+        record, i, field;
     if (!this.viewGrid.getSelectedRecords() || this.viewGrid.getSelectedRecords().length !== 1) {
       return contextInfo;
     }

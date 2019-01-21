@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,9 +38,7 @@
 
   // cache object references locally
   var L = OB.Layout,
-      QUOTE_REPLACE = '__',
-      ISC = isc,
-      historyMgr;
+      QUOTE_REPLACE = '__';
 
   function HistoryManager() {}
 
@@ -182,7 +180,7 @@
   };
 
   // Initialize the HistoryManager object
-  historyMgr = L.HistoryManager = new HistoryManager();
+  L.HistoryManager = new HistoryManager();
 
   // and register the callback
   isc.History.registerCallback('OB.Layout.HistoryManager.restoreHistory(id, data)');

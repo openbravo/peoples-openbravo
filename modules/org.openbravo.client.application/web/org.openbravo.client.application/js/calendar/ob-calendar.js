@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -149,8 +149,7 @@ isc.OBCalendar.addProperties({
           return this.Super('transformRequest', arguments);
         },
         transformResponse: function (dsResponse, dsRequest, data) {
-          var showDSAlert, records = data && data.response && data.response.data,
-              i, j;
+          var showDSAlert, records = data && data.response && data.response.data;
 
           showDSAlert = function (text) {
             if (calendar.OBEventEditor && calendar.OBEventEditor.messageBar) {
@@ -287,7 +286,6 @@ isc.OBCalendar.addProperties({
           calendar.eventDialog.currentLane = event[calendar.laneNameField];
           calendar.eventDialog.calendar = calendar;
           try {
-            //To avoid js error due to conflicts with Smartclient default EventDialog
             if (event[calendar.canEditField] === false && event[calendar.canRemoveField] === false) {
               isc.warn(OB.I18N.getLabel('OBUIAPP_CalendarCanNotUpdateEvent'), function () {
                 return true;
@@ -298,7 +296,9 @@ isc.OBCalendar.addProperties({
             } else {
               calendar.eventDialog.show();
             }
-          } catch (e) {}
+          } catch (e) {
+            //To avoid js error due to conflicts with Smartclient default EventDialog
+          }
         }
       }
     };
@@ -319,9 +319,10 @@ isc.OBCalendar.addProperties({
       this.eventDialog.currentLane = event[this.laneNameField];
       this.eventDialog.calendar = this;
       try {
-        //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
-      } catch (e) {}
+      } catch (e) {
+        //To avoid js error due to conflicts with Smartclient default EventDialog
+      }
       return false;
     } else {
       return this.Super('eventResized', arguments);
@@ -340,9 +341,10 @@ isc.OBCalendar.addProperties({
       this.eventDialog.currentLane = newLane;
       this.eventDialog.calendar = this;
       try {
-        //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
-      } catch (e) {}
+      } catch (e) {
+        //To avoid js error due to conflicts with Smartclient default EventDialog
+      }
       return false;
     } else {
       return this.Super('eventMoved', arguments);
@@ -356,9 +358,10 @@ isc.OBCalendar.addProperties({
       this.eventDialog.currentLane = event[this.laneNameField];
       this.eventDialog.calendar = this;
       try {
-        //To avoid js error due to conflicts with Smartclient default EventDialog
         this.eventDialog.show();
-      } catch (e) {}
+      } catch (e) {
+        //To avoid js error due to conflicts with Smartclient default EventDialog
+      }
       return false;
     } else {
       return this.Super('eventRemoveClick', arguments);
@@ -532,7 +535,9 @@ isc.OBCalendar.addProperties({
             setTimeout(function () {
               try {
                 calendar.scrollToTime(calendar.initialScrollTime);
-              } catch (e) {}
+              } catch (e) {
+                // Ignoring calendar exception
+              }
             }, 100);
           }
         }
@@ -544,7 +549,9 @@ isc.OBCalendar.addProperties({
       setTimeout(function () {
         try {
           calendar.scrollToTime(calendar.initialScrollTime);
-        } catch (e) {}
+        } catch (e) {
+          // Ignoring calendar exception
+        }
       }, 100);
     }
     return ret;
@@ -603,9 +610,10 @@ isc.OBCalendar.addProperties({
     this.eventDialog.currentLane = null;
     this.eventDialog.calendar = this;
     try {
-      //To avoid js error due to conflicts with Smartclient default EventDialog
       this.eventDialog.show();
-    } catch (e) {}
+    } catch (e) {
+      //To avoid js error due to conflicts with Smartclient default EventDialog
+    }
   }
 
 });

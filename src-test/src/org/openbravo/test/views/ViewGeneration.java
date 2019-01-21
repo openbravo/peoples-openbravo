@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,39 +26,29 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
-import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.client.application.ViewComponent;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.test.base.mock.HttpServletRequestMock;
 
 /** Checks all views can be generated */
-public class ViewGeneration extends WeldBaseTest {
+public class ViewGeneration extends ViewGenerationTest {
   final static private Logger log = LogManager.getLogger();
 
   @Inject
   private ApplicationDictionaryCachedStructures adcs;
-
-  @Inject
-  private ViewComponent vc;
 
   @Test
   public void viewsShouldBeGeneratedAfterADCSCaching() {
     setSystemAdministratorContext();
 
     adcs.init();
-    HttpServletRequestMock.setRequestMockInRequestContext();
 
     List<String> allTabs = OBDal.getInstance().getSession()
         .createQuery("select id from ADTab where active = true order by id", String.class).list();
@@ -80,23 +70,18 @@ public class ViewGeneration extends WeldBaseTest {
 
   private Stats generateViews(List<String> viewIds) {
     Stats stats = new Stats();
-    ActivationKey ak = ActivationKey.getInstance();
     for (String viewId : viewIds) {
       try {
-        if (ak.hasLicenseAccess("MW", viewId) != FeatureRestriction.NO_RESTRICTION) {
+        OBDal.getInstance().getSession().clear();
+
+        long t = System.currentTimeMillis();
+        Optional<String> viewDef = generateView(viewId);
+
+        if (!viewDef.isPresent()) {
           continue;
         }
 
-        OBDal.getInstance().getSession().clear();
-        long t = System.currentTimeMillis();
-
-        Map<String, Object> p = new HashMap<>(1);
-        p.put("viewId", viewId);
-        vc.setParameters(p);
-
-        String viewDef = vc.generate();
-
-        Event e = new Event(viewId, System.currentTimeMillis() - t, viewDef.length());
+        Event e = new Event(viewId, System.currentTimeMillis() - t, viewDef.get().length());
         stats.add(e);
         // Files.write(Paths.get("/tmp", "view", viewId), viewDef.getBytes());
       } catch (Exception e) {

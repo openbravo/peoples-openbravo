@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,10 @@ public class TestConstants {
     public static final String ESP = "B843C30461EA4501935CB1D125C9C25A";
     public static final String ESP_SUR = "DC206C91AA6A4897B44DA897936E0EC3";
     public static final String ESP_NORTE = "E443A31992CB4635AFCAEABE7183CE85";
+  }
+
+  public static class Clients {
+    public static final String SYSTEM = "0";
   }
 
   public static class Roles {

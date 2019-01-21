@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -458,9 +458,7 @@ isc.OBAlertGrid.addProperties({
   },
 
   cellHoverHTML: function (record, rowNum, colNum) {
-    var field = this.getField(colNum),
-        cellErrors, msg = '',
-        i;
+    var field = this.getField(colNum);
     if (this.isCheckboxField(field)) {
       return OB.I18N.getLabel('OBUIAPP_GridSelectColumnPrompt');
     }

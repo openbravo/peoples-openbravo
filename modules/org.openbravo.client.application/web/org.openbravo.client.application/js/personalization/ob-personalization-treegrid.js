@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -149,7 +149,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   },
 
   closeFolder: function (folder) {
-    var fld, i, length, flds = this.personalizeForm.previewForm.getFields();
+    var i, length, flds = this.personalizeForm.previewForm.getFields();
 
     this.Super('closeFolder', arguments);
 
@@ -165,7 +165,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   },
 
   openFolder: function (folder) {
-    var fld, i, length, flds = this.personalizeForm.previewForm.getFields();
+    var i, length, flds = this.personalizeForm.previewForm.getFields();
 
     this.Super('openFolder', arguments);
 
@@ -185,7 +185,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // in the same location (code commented out, seems to prevent move..)
   // - set isStatusBarField flag when moved into the status bar folder
   folderDrop: function (nodes, folder, index, sourceWidget, callback) {
-    var i, oldNode, oldValue, newCallback, changed, length;
+    var i, length;
 
     if (!nodes) {
       return;
@@ -274,7 +274,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // entries are shown for status bar or normal fields
   createCellContextItems: function (record) {
     var i, menuItems = [],
-        updatePropertyFunction, me = this,
+        updatePropertyFunction,
         personalizeForm = this.personalizeForm,
         length, allNodes;
 

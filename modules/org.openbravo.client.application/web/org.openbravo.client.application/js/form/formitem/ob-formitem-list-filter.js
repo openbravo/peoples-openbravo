@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,8 +49,9 @@ isc.OBListFilterItem.addProperties({
   selectDefaultItem: function () {},
 
   showPickList: function () {
-    var ret = this.Super('showPickList', arguments),
-        value, i;
+    this.Super('showPickList', arguments);
+
+    var value, i;
     //remove double equals symbol used for filtering purposes, so that the appropriate item is selected.
     value = this.getValue();
     if (value && value.length > 0) {

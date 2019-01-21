@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2017 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -279,7 +279,7 @@ isc.OBTreeViewGrid.addProperties({
   // smartclients transferNodes does not update the tree it a node is moved within its same parent
   // do it here
   doTransferNodes: function (nodes, folder, index, sourceWidget, callback) {
-    var node, dataSource, oldValues, dragTree, dropNeighbor, dataSourceProperties, i;
+    var node, dataSource, oldValues, dragTree, dataSourceProperties, i;
     if (this.movedToSameParent(nodes, folder)) {
       dragTree = sourceWidget.getData();
       dataSource = this.getDataSource();
@@ -406,8 +406,7 @@ isc.OBTreeViewGrid.addProperties({
   },
 
   delayedSelectionUpdated: function (record, recordList) {
-    var selectedRecordId = this.getSelectedRecord() ? this.getSelectedRecord().id : null,
-        length, tabViewPane, i;
+    var length, tabViewPane, i;
     this.view.updateSubtabVisibility();
     this.view.toolBar.updateButtonState();
     // refresh the tabs

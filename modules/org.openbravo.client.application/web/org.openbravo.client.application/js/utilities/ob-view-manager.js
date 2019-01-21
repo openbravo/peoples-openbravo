@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -86,11 +86,11 @@
 
       removeTab: function (viewTabId) {
         var len = this.cache.length,
-            i, item, removed;
+            i, item;
         for (i = len; i > 0; i--) {
           item = this.cache[i - 1];
           if (item.viewTabId === viewTabId) {
-            removed = this.cache.splice(i - 1, 1);
+            this.cache.splice(i - 1, 1);
             return;
           }
         }
@@ -126,7 +126,7 @@
 
     fetchView: function (viewId, callback, clientContext, params, useLoadingTab, additionalParams) {
       var rpcMgr = ISC.RPCManager,
-          reqObj, request;
+          reqObj;
 
       if (useLoadingTab) {
         params = this.createLoadingTab(viewId, params);
@@ -145,7 +145,7 @@
       };
       reqObj.params = isc.addProperties({}, additionalParams, reqObj.params);
 
-      request = rpcMgr.sendRequest(reqObj);
+      rpcMgr.sendRequest(reqObj);
     },
 
     addRecentDocument: function (params) {
@@ -291,8 +291,8 @@
           // 1) view is not open and class not loaded (open view and show loading bar)
           // 2) view is not open but class was loaded (open view and show loading bar)
           // 3) view is open and class is loaded (show loading bar in open view)          
-          var viewTabId, tabTitle, loadingTab = vmgr.findLoadingTab(params),
-              loadingPane, currentPane, tabSet = OB.MainView.TabSet,
+          var viewTabId, loadingTab = vmgr.findLoadingTab(params),
+              loadingPane, tabSet = OB.MainView.TabSet,
               parent, i;
 
           params = params || {};
@@ -478,7 +478,7 @@
     //
     restoreState: function (newState, data) {
 
-      var viewId, tabSet = OB.MainView.TabSet,
+      var viewId,
           tabsLength, i, tabObject, hasChanged = false,
           stateData, requestViewsRestoreState;
 
@@ -608,7 +608,7 @@
     },
 
     createAddStartTab: function () {
-      var error, historyId = isc.History.getCurrentHistoryId();
+      var historyId = isc.History.getCurrentHistoryId();
       if (historyId) {
         try {
           OB.Layout.HistoryManager.restoreHistory(historyId, isc.History.getHistoryData(historyId));

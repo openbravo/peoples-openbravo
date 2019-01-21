@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -347,7 +347,7 @@ isc.OBStandardView.addProperties({
   },
 
   buildStructure: function () {
-    var length, i, fld, lazyFiltering;
+    var lazyFiltering;
     this.createMainParts();
     this.createViewStructure();
     if (this.childTabSet && this.childTabSet.tabs.length === 0) {
@@ -564,8 +564,7 @@ isc.OBStandardView.addProperties({
   // ** {{{ createMainParts }}} **
   // Creates the main layout components of this view.
   createMainParts: function () {
-    var me = this,
-        completeFieldsWithoutBLOBs, fieldsWithoutBLOBs;
+    var completeFieldsWithoutBLOBs, fieldsWithoutBLOBs;
     if (this.tabId && this.tabId.length > 0) {
       this.messageBar = isc.OBMessageBar.create({
         visibility: 'hidden',
@@ -1010,7 +1009,7 @@ isc.OBStandardView.addProperties({
 
   setViewFocus: function () {
 
-    var object, functionName, items, item, i;
+    var object, functionName, i;
 
     // clear for a non-focusable item
     if (this.lastFocusedItem && !this.lastFocusedItem.getCanFocus()) {
@@ -1530,9 +1529,8 @@ isc.OBStandardView.addProperties({
   // Opens the edit form and selects the record in the grid, will refresh
   // child views also
   editRecordFromTreeGrid: function (record, preventFocus, focusFieldName) {
-    var rowNum,
     // at this point the time fields of the record are formatted in local time
-    localTime = true;
+    var localTime = true;
     this.messageBar.hide();
 
     if (!this.isShowingForm) {
@@ -1741,7 +1739,7 @@ isc.OBStandardView.addProperties({
   },
 
   updateSubtabVisibility: function () {
-    var i, length, tabViewPane, activeTab, activeTabNum, activeTabPane, indexFirstNotHiddenTab, contextInfo;
+    var i, length, tabViewPane, activeTab, activeTabPane, indexFirstNotHiddenTab, contextInfo;
     if (this.childTabSet) {
       length = this.childTabSet.tabs.length;
       for (i = 0; i < length; i++) {
@@ -1771,7 +1769,6 @@ isc.OBStandardView.addProperties({
       // If the active tab of the tabset is now hidden, another tab has to to be selected
       // If there are no visible tabs left, maximize the current view
       activeTab = this.childTabSet.getSelectedTab();
-      activeTabNum = this.childTabSet.getTabNumber(activeTab);
       activeTabPane = this.childTabSet.getTabPane(activeTab);
       if (activeTabPane.hidden) {
         //Look for the first not-hidden tab
@@ -2276,7 +2273,7 @@ isc.OBStandardView.addProperties({
       }
 
       callback = function (ok) {
-        var i, doUpdateTotalRows, data, deleteData, error, recordInfos = [],
+        var i, doUpdateTotalRows, deleteData, error, recordInfos = [],
             length, removeCallBack, selection;
 
         //modal dialog shown to restrict the user from accessing records when deleting records. Will be closed after successful deletion in removeCallback.
@@ -2445,7 +2442,7 @@ isc.OBStandardView.addProperties({
 
   undo: function () {
     var view = this,
-        callback, form, grid, errorRows, i, length;
+        form, grid, errorRows, i, length;
     view.messageBar.hide(true);
     if (this.isEditingGrid) {
       grid = view.viewGrid;
@@ -2510,7 +2507,6 @@ isc.OBStandardView.addProperties({
   },
 
   setHalfSplit: function () {
-    var i, tab, pane;
     if (this.members[1]) {
       // divide the space between the first and second level
       if (this.members[1].draggedHeight) {
@@ -2893,7 +2889,7 @@ isc.OBStandardView.addProperties({
   },
 
   setFieldFormProperties: function (fld, isGridField) {
-    var onChangeFunction, newShowIf;
+    var newShowIf;
 
     if (fld.displayed === false && !isGridField) {
       fld.hiddenInForm = true;
@@ -2986,7 +2982,7 @@ isc.OBStandardView.addProperties({
   prepareGridFields: function (fields) {
     var result = [],
         i, length = fields.length,
-        fld, type, expandFieldNames, hoverFunction, yesNoFormatFunction;
+        fld, type, hoverFunction, yesNoFormatFunction;
 
     hoverFunction = function (record, value, rowNum, colNum, grid) {
       return grid.getDisplayValue(colNum, record[(this.displayField ? this.displayField : this.name)]);
@@ -3123,9 +3119,7 @@ isc.OBStandardView.addProperties({
       var t1 = v1.displaylength,
           t2 = v2.displaylength,
           l1 = v1.length,
-          l2 = v2.length,
-          n1 = v1.name,
-          n2 = v2.name;
+          l2 = v2.length;
       if (!t1 && !t2) {
         return 0;
       }
