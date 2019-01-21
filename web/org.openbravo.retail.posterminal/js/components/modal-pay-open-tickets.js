@@ -136,7 +136,7 @@ enyo.kind({
 
     this.owner.owner.crossStoreInfo = false;
     if (data && data.length > 0) {
-    	_.each(data.models, function (model) {
+      _.each(data.models, function (model) {
         if (OB.MobileApp.model.get('terminal').organization !== model.attributes.orgId) {
           this.owner.owner.crossStoreInfo = true;
           return;
@@ -281,7 +281,7 @@ enyo.kind({
     var returnLabel = '';
     this.inherited(arguments);
     if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
-      this.$.store.setContent(this.model.get('store'));
+      this.$.store.setContent(this.model.get('orgId') === OB.MobileApp.model.get('terminal').organization ? 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')' : this.model.get('store'));
     } else {
       this.$.store.setContent('');
     }

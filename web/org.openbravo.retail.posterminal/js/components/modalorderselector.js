@@ -94,7 +94,7 @@ enyo.kind({
     }).name;
 
     if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo) {
-      this.$.store.setContent(this.model.get('store'));
+      this.$.store.setContent(this.model.get('orgId') === OB.MobileApp.model.get('terminal').organization ? 'This Store (' + OB.MobileApp.model.get('terminal').organization$_identifier + ')' : this.model.get('store'));
     } else {
       this.$.store.setContent('');
     }
