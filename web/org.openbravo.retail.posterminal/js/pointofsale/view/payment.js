@@ -340,13 +340,6 @@ enyo.kind({
     var me = this;
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
-    this.receipt.on('change:payment change:change calculategross change:gross', function () {
-      if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
-        //We are processing the receipt, we cannot update pending yet
-        return;
-      }
-      this.updatePending();
-    }, this);
     this.receipt.on('change:bp', function (model) {
       var me = this;
       if (model.isCalculateReceiptLocked || model.isCalculateGrossLocked) {
@@ -368,8 +361,8 @@ enyo.kind({
     this.receipt.on('disableDoneButton', function () {
       this.$.donebutton.setDisabled(true);
     }, this);
-    this.receipt.on('updatePending', function () {
-      this.updatePending();
+    this.receipt.on('updatePending', function (ignorePanel) {
+      this.updatePending(ignorePanel);
     }, this);
     this.receipt.on('paymentCancel', function () {
       this.$.layawayaction.setDisabled(false);
@@ -420,29 +413,33 @@ enyo.kind({
   },
 
   updateLayawayAction: function (forceDisable) {
-    var disable = forceDisable || !(this.model.get('leftColumnViewManager').isMultiOrder() ? true : this.receipt.isReversedPaid()),
+    var disable = forceDisable,
         paymentstatus = this.receipt.getPaymentStatus(),
-        prepaymentAmount = this.receipt.get('obposPrepaymentamt'),
-        receiptHasPrepaymentAmount = prepaymentAmount !== 0 && prepaymentAmount !== paymentstatus.totalAmt,
-        pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentstatus.pendingAmt), paymentstatus.totalAmt);
-    if ((this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway')) && !paymentstatus.done && !paymentstatus.isNegative) {
+        isLayaway = this.receipt.get('orderType') === 2 || this.receipt.get('isLayaway'),
+        isMultiOrder = this.model.get('leftColumnViewManager').isMultiOrder();
+    if (isMultiOrder || paymentstatus.isNegative || !isLayaway || paymentstatus.done) {
+      this.$.layawayaction.setLocalDisabled(false);
+      this.$.layawayaction.hide();
+    } else {
+      var prepaymentAmount = this.receipt.get('obposPrepaymentamt'),
+          receiptHasPrepaymentAmount = prepaymentAmount !== OB.DEC.Zero && prepaymentAmount !== paymentstatus.totalAmt,
+          pendingPrepayment = OB.DEC.sub(OB.DEC.add(prepaymentAmount, paymentstatus.pendingAmt), paymentstatus.totalAmt);
       this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
       if (!disable && this.receipt.get('isLayaway')) {
-        if (!_.find(this.receipt.get('payments').models, function (payment) {
+        if (!this.receipt.isReversedPaid()) {
+          disable = true;
+        } else if (!_.find(this.receipt.get('payments').models, function (payment) {
           return !payment.get('isPrePayment');
         })) {
           disable = true;
         }
       }
       this.$.layawayaction.setLocalDisabled(disable);
-      if ((receiptHasPrepaymentAmount && pendingPrepayment <= 0) || this.model.get('leftColumnViewManager').isMultiOrder()) {
+      if (receiptHasPrepaymentAmount && pendingPrepayment <= OB.DEC.Zero) {
         this.$.layawayaction.hide();
       } else {
         this.$.layawayaction.show();
       }
-    } else if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
-      this.$.layawayaction.setLocalDisabled(false);
-      this.$.layawayaction.hide();
     }
   },
 
@@ -597,8 +594,12 @@ enyo.kind({
     });
     return changepayment ? changepayment.origAmount : 0;
   },
-  updatePending: function () {
+  updatePending: function (ignorePanel) {
     var execution = OB.UTIL.ProcessController.start('updatePending');
+    if (!ignorePanel && OB.MobileApp.model.get('lastPaneShown') !== 'payment') {
+      OB.UTIL.ProcessController.finish('updatePending', execution);
+      return true;
+    }
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       OB.UTIL.ProcessController.finish('updatePending', execution);
       return true;

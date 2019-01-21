@@ -393,6 +393,7 @@
           this.set('canceledorder', new OB.Model.Order(attributes.canceledorder));
         }
         this.set('payment', attributes.payment);
+        this.set('paymentWithSign', attributes.paymentWithSign);
         this.set('change', attributes.change);
         this.set('qty', attributes.qty);
         this.set('gross', attributes.gross);
@@ -831,12 +832,14 @@
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+                me.trigger('updatePending');
               });
             } else {
               me.calculatingReceipt = false;
               OB.MobileApp.view.waterfall('calculatedReceipt');
               me.trigger('calculatedReceipt');
               OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+              me.trigger('updatePending');
             }
           }
         });
@@ -902,9 +905,6 @@
     },
 
     getPaymentWithSign: function () {
-      if (!this.has('paymentWithSign')) {
-        this.adjustPayment();
-      }
       return this.get('paymentWithSign');
     },
 
@@ -1133,6 +1133,7 @@
       this.set('orderManualPromotions', this.get('orderManualPromotions') ? this.get('orderManualPromotions').reset() : new Backbone.Collection());
       this.set('payments', this.get('payments') ? this.get('payments').reset() : new PaymentLineList());
       this.set('payment', OB.DEC.Zero);
+      this.set('paymentWithSign', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
       this.set('qty', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
@@ -4477,12 +4478,13 @@
                         me.preventOrderSave(false);
                         me.save();
                         OB.MobileApp.model.orderList.saveCurrent();
-                      });
-                      // Finally change to the payments tab
-                      context.doTabChange({
-                        tabPanel: 'payment',
-                        keyboard: 'toolbarpayment',
-                        edit: false
+                        me.trigger('updatePending', true);
+                        // Finally change to the payments tab
+                        context.doTabChange({
+                          tabPanel: 'payment',
+                          keyboard: 'toolbarpayment',
+                          edit: false
+                        });
                       });
                     });
                   });
@@ -4951,6 +4953,9 @@
         this.set('payment', OB.DEC.abs(totalPaid));
         this.set('paymentWithSign', totalPaid);
         this.set('change', OB.DEC.Zero);
+      }
+      if (!OB.UTIL.ProcessController.isProcessActive('calculateReceipt')) {
+        this.trigger('updatePending');
       }
     },
 
