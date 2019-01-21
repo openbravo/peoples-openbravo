@@ -382,7 +382,7 @@ isc.OBApplicationMenuButton.addProperties({
       }
     }
 
-    return 'scLocator=//' + this.getClassName() + '[ID=\"' + currentMenu.ID + '\"]/body/row[' + searchedIndex + ']/col[1]';
+    return 'scLocator=//' + this.getClassName() + '[ID="' + currentMenu.ID + '"]/body/row[' + searchedIndex + ']/col[1]';
     //return currentMenu.body.getTableElement(searchedIndex);
   }
 });
