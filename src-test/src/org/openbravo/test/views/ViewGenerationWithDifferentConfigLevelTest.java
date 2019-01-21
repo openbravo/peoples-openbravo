@@ -24,13 +24,18 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.GCField;
 import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
+import org.openbravo.client.application.ViewComponent;
 import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -119,7 +124,8 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       OBDal.getInstance().flush();
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
-      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(), getTabGridConfig(tab));
+      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(),
+          getTabGridConfig(tab));
 
       assertThat("Grid configuration at tab level with filtering disabled:", tabConfig.toString(),
           containsString(CAN_FILTER_FALSE));
@@ -165,7 +171,8 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
 
-      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(), getTabGridConfig(tab));
+      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(),
+          getTabGridConfig(tab));
 
       Field field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_TAB_CURRENCY_FIELD_ID);
       JSONObject systemConfig = OBViewUtil.getGridConfigurationSettings(field,
@@ -319,7 +326,8 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       OBDal.getInstance().flush();
 
       tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
-      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(), getTabGridConfig(tab));
+      JSONObject tabConfig = OBViewUtil.getGridConfigurationSettings(getSystemGridConfig(),
+          getTabGridConfig(tab));
 
       Field field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID);
       JSONObject fieldConfig = OBViewUtil.getGridConfigurationSettings(field,
@@ -336,4 +344,39 @@ public class ViewGenerationWithDifferentConfigLevelTest extends GridConfiguratio
       OBContext.restorePreviousMode();
     }
   }
+
+  /**
+   * Having a grid configuration at System level that disables the transactional filters , the
+   * expression "canFilter: true" must not be found.
+   */
+  @Test
+  public void disableTransactionalFilters() throws Exception {
+    GCSystem gcsystem = null;
+    OBContext.setAdminMode(false);
+    try {
+      gcsystem = OBProvider.getInstance().get(GCSystem.class);
+      gcsystem.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
+      gcsystem.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
+      gcsystem.setAllowTransactionalFilters(false);
+      // OBDal.getInstance().save(gcsystem);
+      // OBDal.getInstance().flush();
+
+      Map<String, Object> p = new HashMap<>(1);
+      p.put("viewId", "167");
+      getViewComponent().setParameters(p);
+
+      String viewDef = getViewComponent().generate();
+
+      assertThat("Grid configuration at system level with filtering enabled:", viewDef,
+          containsString("This grid is filtered using an implicit filter"));
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private ViewComponent getViewComponent() {
+    return WeldUtils.getInstanceFromStaticBeanManager(ViewComponent.class);
+  }
+
 }
