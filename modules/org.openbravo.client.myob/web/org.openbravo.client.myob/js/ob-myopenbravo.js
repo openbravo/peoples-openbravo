@@ -95,7 +95,7 @@ isc.OBMyOpenbravo.addProperties({
 
   createLeftColumnLayout: function () {
     var me = this,
-        i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
+        recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
 
     if (OB.User.isPortal && OB.Application.licenseType === 'C') {
       this.addMember(isc.HLayout.create({
@@ -578,8 +578,8 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   setRecentDocumentsList: function (layout) {
-    var recentList, newRecent, recentIndex = 0,
-        recent, lbl, newIcon, entryLayout, icon, handleClickFunction, handleEnterKeyPressFunction;
+    var recentList, recentIndex = 0,
+        recent, lbl, entryLayout, handleClickFunction, handleEnterKeyPressFunction;
 
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
@@ -734,7 +734,7 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   eventResponseHandler: function (rpcResponse, data, rpcRequest) {
-    var i, j, adminLevel, adminLevelValue, publishMessage, levelKey, levelValueKey;
+    var i, adminLevel, adminLevelValue, publishMessage, levelKey, levelValueKey;
 
     if (!data || !data.message || !data.context || !data.widgets) {
       isc.Log.logError('Response does not contain required data for processing');
@@ -836,7 +836,7 @@ isc.OBMyOpenbravo.addProperties({
   //
   updateWidgetsCache: function (eventType, responseWidgets) {
     var columns = this.portalLayout.getMembers(),
-        i, j, k, newWidget, col, rows, row, widget, newObj;
+        i, j, k, newWidget, col, rows, row, widget;
 
     this.widgets = []; // clear cache
     if (eventType === 'RELOAD_WIDGETS' && isc.isAn.Array(responseWidgets)) {

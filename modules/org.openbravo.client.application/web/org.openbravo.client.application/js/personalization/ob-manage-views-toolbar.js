@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -66,9 +66,9 @@
     // and delete option
     action: function () {
       var data = [],
-          icon, i, item, undef, view, formData, standardWindow = this.view.standardWindow,
+          icon, i, item, view, formData, standardWindow = this.view.standardWindow,
           adminLevel = false,
-          length, viewSelected = false,
+          length,
           personalization = standardWindow.getClass().personalization,
           views = personalization && personalization.views ? personalization.views : [],
           canDelete = false;

@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,7 +72,6 @@ isc.OBSelectorLinkWidget.addProperties({
   // open the popup window and make sure that it has the correct
   // filter set
   openSelectorWindow: function (form) {
-    var initialFilter = {};
     setOBTabBehavior(false);
     form.selectorWindow.show();
     form.selectorGrid.setFilterEditorCriteria({});

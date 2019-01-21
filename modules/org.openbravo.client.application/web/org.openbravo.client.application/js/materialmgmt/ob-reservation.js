@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,7 +71,6 @@ OB.Reservation.PrereservationQuantityValidate = function (item, validator, value
       receivedQty = isc.isA.Number(record.receivedQty) ? new BigDecimal(String(record.receivedQty)) : BigDecimal.prototype.ZERO,
       pendingQty = purchasedQty.subtract(receivedQty),
       orderedQuantity = isc.isA.Number(record.orderedQuantity) ? new BigDecimal(String(record.orderedQuantity)) : BigDecimal.prototype.ZERO,
-      deliveredQuantity = isc.isA.Number(record.deliveredQuantity) ? new BigDecimal(String(record.deliveredQuantity)) : BigDecimal.prototype.ZERO,
       otherReservedQty = isc.isA.Number(record.otherReservedQty) ? new BigDecimal(String(record.otherReservedQty)) : BigDecimal.prototype.ZERO,
       solTotalReserved = BigDecimal.prototype.ZERO,
       totalQty = BigDecimal.prototype.ZERO,

@@ -149,8 +149,7 @@ isc.OBCalendar.addProperties({
           return this.Super('transformRequest', arguments);
         },
         transformResponse: function (dsResponse, dsRequest, data) {
-          var showDSAlert, records = data && data.response && data.response.data,
-              i, j;
+          var showDSAlert, records = data && data.response && data.response.data;
 
           showDSAlert = function (text) {
             if (calendar.OBEventEditor && calendar.OBEventEditor.messageBar) {

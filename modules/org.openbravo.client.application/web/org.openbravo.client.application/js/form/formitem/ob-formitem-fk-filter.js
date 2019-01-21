@@ -686,7 +686,7 @@ isc.OBFKFilterTextItem.addProperties({
   // if the filterType is ID, try to return the record ids instead of the record identifiers
   getCriteriaValue: function () {
     var value, values = this.getValue(),
-        record, i, j, criteriaValues = [],
+        i, j, criteriaValues = [],
         recordIds;
     if (values && this.filterType === 'id') {
       for (i = 0; i < values.length; i++) {

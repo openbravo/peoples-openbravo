@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,7 +72,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   initWidget: function () {
     var i, len = this.fields.length,
-        theGrid, me = this,
+        me = this,
         filterableProperties, canFilter;
 
     this.selectedIds = [];
@@ -665,7 +665,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   dataArrived: function (startRow, endRow) {
     var record, i, rows, selectedLen = this.selectedIds.length,
-        len, savedRecord, index, j, fields, allRequiredSet;
+        len, savedRecord, j, fields;
     fields = this.getFields();
     for (i = 0; i < selectedLen; i++) {
       record = this.data.findByKey(this.selectedIds[i]);
@@ -896,7 +896,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     var context = response && response.clientContext,
         rowNum = context && context.rowNum,
         grid = context && context.grid,
-        columnValues, prop, value, undef;
+        columnValues, prop, undef;
 
 
     if (rowNum === undef || !data || !data.columnValues) {
@@ -951,7 +951,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   retrieveInitialValues: function (rowNum, colNum, newCell, newRow, suppressFocus) {
-    var requestParams, allProperties, i, record, newRecord;
+    var requestParams, allProperties, record, newRecord;
 
     allProperties = this.getContextInfo(rowNum);
     record = this.getRecord(rowNum);
@@ -1030,13 +1030,12 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   validateRows: function () {
-    var i, row, field, errors, editRowIndexes, editRowIDs, rowIndexID, data = this.data.allRows || this.data.localData;
+    var i, row, field, errors, editRowIDs, data = this.data.allRows || this.data.localData;
 
     if (!this.neverValidate) {
       return;
     }
 
-    editRowIndexes = this.getAllEditRows();
     editRowIDs = this.getAllEditRows(true);
 
     for (i = 0; i < this.fields.length; i++) {
@@ -1048,11 +1047,6 @@ isc.OBPickAndExecuteGrid.addProperties({
       for (row = 0; row < data.length; row++) {
         errors = this.validateCellValue(row, i, data[row][field.name]);
         if (!errors || isc.isA.emptyArray(errors)) {
-          if (editRowIndexes.indexOf(row) !== -1) {
-            rowIndexID = editRowIDs[editRowIndexes.indexOf(row)];
-          } else {
-            rowIndexID = row;
-          }
           this.clearFieldError(editRowIDs[row], field.name);
         } else {
           this.setFieldError(row, field.name, errors[0]);

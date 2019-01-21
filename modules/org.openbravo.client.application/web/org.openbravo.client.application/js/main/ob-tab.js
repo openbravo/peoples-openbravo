@@ -213,8 +213,6 @@ isc.OBTabSetMain.addProperties({
   selectParentTab: function () {
     var tabSet = this,
         tab = tabSet.getSelectedTab(),
-        ID = tab.ID,
-        tabNum = tabSet.getTabNumber(tab),
         tabPane = tabSet.getTabPane(tab);
 
     if (tabPane.selectParentTab) { //Redirect if tabPane has its own selectPreviousTab handler
@@ -227,8 +225,6 @@ isc.OBTabSetMain.addProperties({
   selectChildTab: function () {
     var tabSet = this,
         tab = tabSet.getSelectedTab(),
-        ID = tab.ID,
-        tabNum = tabSet.getTabNumber(tab),
         tabPane = tabSet.getTabPane(tab);
 
     if (tabPane.selectChildTab) { //Redirect if tabPane has its own selectPreviousTab handler
@@ -241,7 +237,6 @@ isc.OBTabSetMain.addProperties({
   selectPreviousTab: function (doDefaultAction) {
     var tabSet = this,
         tab = tabSet.getSelectedTab(),
-        ID = tab.ID,
         tabNum = tabSet.getTabNumber(tab),
         tabPane = tabSet.getTabPane(tab);
 
@@ -261,7 +256,6 @@ isc.OBTabSetMain.addProperties({
   selectNextTab: function (doDefaultAction) {
     var tabSet = this,
         tab = tabSet.getSelectedTab(),
-        ID = tab.ID,
         tabNum = tabSet.getTabNumber(tab),
         tabPane = tabSet.getTabPane(tab);
 
@@ -427,8 +421,7 @@ isc.OBTabSetChild.addProperties({
     overflow: 'hidden',
 
     itemClick: function (item, itemNum) {
-      var me = this,
-          tab = item;
+      var me = this;
       this.itemClicked = true;
       if (this.tabSet.ignoreItemClick) {
         delete this.tabSet.ignoreItemClick;

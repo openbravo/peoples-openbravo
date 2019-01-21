@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -425,7 +425,6 @@ isc.OBPersonalizeFormLayout.addProperties({
 
     // is called when a field in the tree is selected or unselected
     propertiesLayout.updatePropertiesDisplay = function (record) {
-      var newRecord;
       if (!record) {
         this.hideMember(this.formLayout);
         this.emptyMessage.show();
@@ -483,7 +482,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // the toolbar shows the save, delete and undo button
   createAddToolbar: function () {
-    var saveButtonProperties, saveCloseButtonProperties, deleteButtonProperties, cancelButtonProperties, restoreButtonProperties, restoreLayout;
+    var saveButtonProperties, saveCloseButtonProperties, deleteButtonProperties, cancelButtonProperties, restoreButtonProperties;
 
     saveButtonProperties = {
       action: function () {
@@ -632,7 +631,6 @@ isc.OBPersonalizeFormLayout.addProperties({
     // user may delete the record, this is allowed if the record is on
     // user level
     OB.RemoteCallManager.call('org.openbravo.client.application.personalization.PersonalizationActionHandler', this.getPersonalizationFields(), params, function (resp, data, req) {
-      var personalization;
 
       // if there is no personalization data then create it
       if (!me.personalizationData) {
@@ -773,7 +771,7 @@ isc.OBPersonalizeFormLayout.addProperties({
 
   // creates the preview form and displays it
   buildPreviewForm: function () {
-    var statusBar, currentPane, i, fld, itemClick, me = this;
+    var statusBar, currentPane, i, fld, itemClick;
 
     this.formLayout = isc.VLayout.create({
       height: '100%',
@@ -813,7 +811,7 @@ isc.OBPersonalizeFormLayout.addProperties({
           [],
           []
         ],
-            i, item, value, tmpValue, length = this.statusBarFields.length;
+            i, item, length = this.statusBarFields.length;
 
         for (i = 0; i < length; i++) {
           item = this.getItem(this.statusBarFields[i]);
@@ -1058,7 +1056,7 @@ isc.OBPersonalizeFormLayout.addProperties({
   // called by the buttons in the toolbar of the standard maintenance form/grid
   doOpen: function (retrievedInitialData) {
     var me = this,
-        window, i, j, persField, fld, tabSet, tab;
+        window, tabSet, tab;
 
     // first get the preview form data, continue after receiving it
     if (!retrievedInitialData) {
@@ -1151,8 +1149,8 @@ isc.OBPersonalizeFormLayout.addProperties({
     var statusBarFields = null,
         barFieldValues = [],
         barFieldTitles = [],
-        label, icon = null,
-        statusCode = null;
+        label, icon = null;
+
     if (this.isNew) {
       icon = this.statusBar.newIcon;
       label = 'OBUIAPP_New';

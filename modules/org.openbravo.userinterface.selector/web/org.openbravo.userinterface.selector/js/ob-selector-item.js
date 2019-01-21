@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -293,7 +293,7 @@ isc.OBSelectorPopupWindow.addProperties({
 
   setFilterEditorProperties: function (gridFields) {
     var type, selectorWindow = this,
-        keyPressFunction, clickFunction, i, gridField;
+        keyPressFunction, i, gridField;
 
     keyPressFunction = function (item, form, keyName, characterValue) {
       if (keyName === 'Escape') {
@@ -301,12 +301,6 @@ isc.OBSelectorPopupWindow.addProperties({
         return false;
       }
       return true;
-    };
-
-    clickFunction = function (form, item, icon) {
-      item.setValue(null);
-      selectorWindow.selectorGrid.focusInFilterEditor(item);
-      selectorWindow.selectorGrid.filterByEditor();
     };
 
     for (i = 0; i < gridFields.length; i++) {
@@ -825,7 +819,7 @@ isc.OBSelectorItem.addProperties({
     var currentValue = this.getValue(),
         identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
         valueMapObj = {},
-        valueToDisplay, i;
+        valueToDisplay;
     this._notUpdatingManually = true;
     if (!record) {
       this.storeValue(null);
@@ -913,7 +907,7 @@ isc.OBSelectorItem.addProperties({
     var i, j, outFields = this.outFields,
         form = this.form,
         grid = this.grid,
-        item, value, fields, numberFormat;
+        item, value, fields;
 
     if ((!form || (form && !form.fields)) && (!grid || (grid && !grid.fields))) {
       // not handling out fields
@@ -1392,7 +1386,7 @@ isc.OBSelectorLinkItem.addProperties({
     var i, j, outFields = this.outFields,
         form = this.form,
         grid = this.grid,
-        item, value, fields = form.fields || grid.fields;
+        value, fields = form.fields || grid.fields;
     form.hiddenInputs = form.hiddenInputs || {};
     for (i in outFields) {
       if (outFields.hasOwnProperty(i)) {

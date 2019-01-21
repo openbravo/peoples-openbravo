@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -283,31 +283,13 @@ isc.OBMultiCalendarLegend.addProperties({
 
   updateMembers: function (newMembers) {
     var calendarGroups = [],
-        getNextCalendarGroupFromPosition, getCalendarGroupPosition, i, j, me = this;
+        i, j;
     if (this.members) {
       for (i = this.members.length - 1; i > -1; i--) {
         this.members[i].destroy();
       }
     }
     this.multiCalendar.eventStyles = {};
-
-    getNextCalendarGroupFromPosition = function (position) {
-      var i;
-      for (i = position; i < me.members.length; i++) {
-        if (me.members[i].Class === 'OBMultiCalendarLegendGroupElement') {
-          return me.members[i].id;
-        }
-      }
-    };
-
-    getCalendarGroupPosition = function (id) {
-      var i;
-      for (i = 0; i < me.members.length; i++) {
-        if (me.members[i].id === id) {
-          return i;
-        }
-      }
-    };
 
     // Create calendar groups
     for (i = 0; i < this.multiCalendar.calendarData.calendarGroups.length; i++) {
@@ -407,7 +389,7 @@ isc.OBMultiCalendarLeftControls.addProperties({
     return legendArray;
   },
   initWidget: function () {
-    var button, label, legend, customFilterObj, leftControls = this,
+    var button, label, customFilterObj, leftControls = this,
         currentFilter = null,
         i;
     this.Super('initWidget', arguments);

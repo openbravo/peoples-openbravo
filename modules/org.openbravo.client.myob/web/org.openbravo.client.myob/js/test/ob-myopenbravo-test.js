@@ -128,8 +128,10 @@ QUnit.asyncTest('Remove widget', function () {
     var post = isc.addProperties({}, d, {
       'eventType': 'WIDGET_REMOVED',
       'widgets': OB.MyOB.widgets
-    }),
-        removed = OB.MyOB.widgets.splice(-1, 1);
+    });
+
+    OB.MyOB.widgets.splice(-1, 1);
+
     OB.RemoteCallManager.call('org.openbravo.client.myob.MyOpenbravoActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
 
       QUnit.strictEqual(data.message.type, 'Success', 'Widget removed');

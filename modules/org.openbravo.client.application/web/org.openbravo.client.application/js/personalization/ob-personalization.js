@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -280,7 +280,7 @@ OB.Personalization.updatePersonalizationDataFromFields = function (dataFields, f
 // Also handles the case that a personalization record is deleted so that the
 // form falls back to the default state
 OB.Personalization.personalizeWindow = function (data, window) {
-  var tabId, personalizationData, undef, form, view, i, viewsToReset = [],
+  var tabId, personalizationData, undef, view, i, viewsToReset = [],
       done, length;
 
   // no personalization, nothing to do
@@ -363,7 +363,7 @@ OB.Personalization.personalizeWindow = function (data, window) {
 // Applies the data structure which contains the personalization settings to a
 // form.
 OB.Personalization.personalizeForm = function (data, form) {
-  var persId, i, j, fld, undef, fldDef, childFld, newField, newFields = [],
+  var i, j, fld, undef, fldDef, newField, newFields = [],
       record, length, allChildFieldsHidden, statusBarFields = [];
 
   if (!data || !data.form || !data.form.fields || !form) {

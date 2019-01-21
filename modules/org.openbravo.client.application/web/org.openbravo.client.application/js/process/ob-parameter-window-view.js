@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2017 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -213,8 +213,7 @@ isc.OBParameterWindowView.addProperties({
   },
 
   handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
-    var window = this.parentWindow,
-        tab = OB.MainView.TabSet.getTab(this.viewTabId),
+    var tab = OB.MainView.TabSet.getTab(this.viewTabId),
         i, afterRefreshCallback, me = this;
 
     // change title to done
@@ -315,8 +314,8 @@ isc.OBParameterWindowView.addProperties({
   },
 
   doProcess: function (btnValue) {
-    var i, tmp, view = this,
-        grid, allProperties, selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail, selectedRecords, recordIds, additionalInfo;
+    var i, view = this,
+        allProperties, tab, actionHandlerCall, clientSideValidationFail, selectedRecords, recordIds, additionalInfo;
 
     if (this.button && this.button.multiRecord) {
       selectedRecords = this.buttonOwnerView.viewGrid.getSelectedRecords();

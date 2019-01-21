@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2017 Openbravo SLU
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -250,13 +250,10 @@ isc.OBSelectorWidget.addProperties({
   // called when a value is selected in the grid
   // sets the combo and the openbravo field
   setSelectorValueFromGrid: function () {
-    var changed = false,
-        oldValue = this.selector.openbravoField.value,
-        selected = this.selector.selectorGrid.getSelectedRecord(),
+    var selected = this.selector.selectorGrid.getSelectedRecord(),
         newValue;
     if (selected) {
       newValue = selected[this.selector.valueField];
-      changed = oldValue !== newValue;
       this.selector.openbravoField.value = newValue;
       this.selector.selectorField.setValue(newValue);
 
@@ -268,7 +265,6 @@ isc.OBSelectorWidget.addProperties({
       this.selector.selectorField.valueMap[newValue] = selected[this.selector.displayField];
       this.selector.selectorField.updateValueMap();
     } else {
-      changed = oldValue !== '';
       this.selector.openbravoField.value = '';
       this.selector.selectorField.setValue(null);
     }
@@ -288,15 +284,11 @@ isc.OBSelectorWidget.addProperties({
       return;
     }
 
-    var oldValue = item.selector.openbravoField.value,
-        changed = false,
-        selected = item.selector.selectorField.getSelectedRecord();
+    var selected = item.selector.selectorField.getSelectedRecord();
 
     if (selected) {
-      changed = (oldValue !== item.selector.selectorField.getSelectedRecord()[item.selector.valueField]);
       item.selector.openbravoField.value = item.selector.selectorField.getSelectedRecord()[item.selector.valueField];
     } else {
-      changed = (oldValue !== '');
       item.selector.openbravoField.value = '';
     }
 
@@ -324,7 +316,6 @@ isc.OBSelectorWidget.addProperties({
   // changes. Executes onValueChanged function.
   openbravoChanged: function (selected) {
     var selectedObj = {},
-        fieldsLength = this.outFields.length,
         i, hiddenInput;
 
     function changeField(field, value) {
@@ -680,7 +671,6 @@ isc.OBSelectorWidget.addProperties({
       editorType: 'comboBox',
       displayField: this.displayField,
       focus: function (form, item) {
-        var currentWindowElementType = 'custom'; // To
         if (typeof setWindowElementFocus === 'function') {
           // To sync with Openbravo focus logic
           setWindowElementFocus(document.getElementById(this.selector.openbravoField.id), 'obj');
@@ -724,7 +714,7 @@ isc.OBSelectorWidget.addProperties({
         this.selector.checkDefaultValidations(form, item);
       },
       getPickListFilterCriteria: function () {
-        var defValue, i, criteria = {
+        var i, criteria = {
           operator: 'or',
           _constructor: 'AdvancedCriteria',
           criteria: []

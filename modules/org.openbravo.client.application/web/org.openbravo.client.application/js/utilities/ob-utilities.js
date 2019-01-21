@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -449,7 +449,7 @@ OB.Utilities.openView = function (windowId, tabId, tabTitle, recordId, command, 
 // Open the correct view for a passed in target definition, coming from a certain source Window.
 OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity, recordId, fieldId) {
   var actionURL = OB.Application.contextUrl + 'utility/ReferencedLink.html',
-      callback, reqObj, request;
+      callback, reqObj;
 
   callback = function (response, data, request) {
     OB.Utilities.openView(data.windowId, data.tabId, data.tabTitle, data.recordId, null, null, null, null, true);
@@ -470,7 +470,8 @@ OB.Utilities.openDirectView = function (sourceWindowId, keyColumn, targetEntity,
     useSimpleHttp: true,
     actionURL: actionURL
   };
-  request = isc.RPCManager.sendRequest(reqObj);
+
+  isc.RPCManager.sendRequest(reqObj);
 };
 
 // ** {{{OB.Utilities.getPromptString}}} **
@@ -634,7 +635,7 @@ OB.Utilities.trim = function (str) {
 
 OB.Utilities.processLogoutQueue = function () {
   var q = OB.Utilities.logoutWorkQueue,
-      qElement, result, tab, tabID;
+      qElement, result, tab;
 
   if (q && q.length === 0) {
     return;

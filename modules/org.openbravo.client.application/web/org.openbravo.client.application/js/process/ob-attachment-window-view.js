@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -270,8 +270,7 @@ isc.OBAttachmentWindowView.addProperties({
   },
 
   editFile: function () {
-    var form = this.theForm,
-        allProperties = {},
+    var allProperties = {},
         params = {
         tabId: this.attachSection.tabId,
         attachmentId: this.attachmentId,
