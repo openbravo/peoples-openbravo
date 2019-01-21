@@ -10,6 +10,7 @@
 package org.openbravo.retail.posterminal.utility;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.CallableStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -41,10 +43,14 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
@@ -181,6 +187,8 @@ public class ShipmentUtils {
         continue;
       }
 
+      final List<ShipmentInOutLine> createdShipmentLines = new ArrayList<>();
+
       BigDecimal pendingQty = orderLine.getDeliveredQuantity().abs();
       if (orderlines.getJSONObject(i).has("deliveredQuantity")
           && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
@@ -228,8 +236,9 @@ public class ShipmentUtils {
               binForReturn = returnBinHookResponse.getNewLocator();
             }
           }
-          addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, pendingQty.negate(), binForReturn, null, i);
+          createdShipmentLines.add(addShipmentline(shipment, shplineentity,
+              orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty.negate(),
+              binForReturn, null, i));
         } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
           lineNo += 10;
@@ -250,8 +259,9 @@ public class ShipmentUtils {
               foundSingleBin = singleBinHookResponse.getNewLocator();
             }
           }
-          addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-              jsonorder, lineNo, pendingQty, foundSingleBin, null, i);
+          createdShipmentLines.add(addShipmentline(shipment, shplineentity,
+              orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty,
+              foundSingleBin, null, i));
         } else {
           HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
           if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
@@ -316,6 +326,7 @@ public class ShipmentUtils {
                     orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty, stock
                         .getStorageDetail().getStorageBin(), stock.getStorageDetail()
                         .getAttributeSetValue(), i);
+                createdShipmentLines.add(objShipmentLine);
 
                 usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
 
@@ -364,8 +375,98 @@ public class ShipmentUtils {
                   .add(pendingQty));
               OBDal.getInstance().save(objShipmentInOutLine);
             } else {
-              addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                  jsonorder, lineNo, pendingQty, loc, null, i);
+              createdShipmentLines.add(addShipmentline(shipment, shplineentity,
+                  orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty, loc, null,
+                  i));
+            }
+          }
+        }
+      }
+      if (createdShipmentLines.size() != 0) {
+        // Check if there's already an invoice line that is not related to any shipment
+        final OBCriteria<InvoiceLine> invoiceLineCriteria = OBDal.getInstance().createCriteria(
+            InvoiceLine.class);
+        invoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE, orderLine));
+        invoiceLineCriteria.add(Restrictions.isNull(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE));
+        final List<InvoiceLine> invoiceLineList = invoiceLineCriteria.list();
+        if (invoiceLineList.size() != 0) {
+          final int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order
+              .getCurrency().getPricePrecision().intValue() : order.getCurrency()
+              .getObposPosprecision().intValue();
+          final Invoice invoice = invoiceLineList.get(0).getInvoice();
+          for (final ShipmentInOutLine shipmentLine : createdShipmentLines) {
+            BigDecimal qtyToShip = shipmentLine.getMovementQuantity();
+            for (final InvoiceLine invoiceLine : invoiceLineList) {
+              if (qtyToShip.compareTo(BigDecimal.ZERO) != 1) {
+                break;
+              }
+              final BigDecimal invoicedQty = invoiceLine.getInvoicedQuantity();
+              if (qtyToShip.compareTo(invoicedQty) == 0) {
+                invoiceLine.setGoodsShipmentLine(shipmentLine);
+                OBDal.getInstance().save(invoiceLine);
+                qtyToShip = qtyToShip.subtract(invoicedQty);
+              } else if (qtyToShip.compareTo(invoicedQty) == 1) {
+                invoiceLine.setGoodsShipmentLine(shipmentLine);
+                OBDal.getInstance().save(invoiceLine);
+                qtyToShip = qtyToShip.subtract(invoicedQty);
+              } else {
+                // The invoice line must be splitted
+                final InvoiceLine newInvoiceLine = (InvoiceLine) DalUtil.copy(invoiceLine, false,
+                    true);
+                invoice.getInvoiceLineList().add(newInvoiceLine);
+                invoiceLine.setInvoicedQuantity(qtyToShip);
+                invoiceLine.setLineNetAmount(orderLine.getUnitPrice().multiply(qtyToShip)
+                    .setScale(pricePrecision, RoundingMode.HALF_UP));
+                invoiceLine.setGrossAmount(orderLine.getGrossUnitPrice().multiply(qtyToShip)
+                    .setScale(pricePrecision, RoundingMode.HALF_UP));
+                newInvoiceLine.setLineNo(invoice.getInvoiceLineList().size() * 10L);
+                newInvoiceLine.setInvoicedQuantity(invoicedQty.subtract(qtyToShip));
+                newInvoiceLine.setLineNetAmount(newInvoiceLine.getLineNetAmount()
+                    .subtract(invoiceLine.getLineNetAmount())
+                    .setScale(pricePrecision, RoundingMode.HALF_UP));
+                newInvoiceLine.setGrossAmount(newInvoiceLine.getGrossAmount()
+                    .subtract(invoiceLine.getGrossAmount())
+                    .setScale(pricePrecision, RoundingMode.HALF_UP));
+                OBDal.getInstance().save(invoiceLine);
+                OBDal.getInstance().save(newInvoiceLine);
+                // Split the taxes
+                for (final InvoiceLineTax invoiceLineTax : invoiceLine.getInvoiceLineTaxList()) {
+                  final InvoiceLineTax newInvoiceLineTax = (InvoiceLineTax) DalUtil.copy(
+                      invoiceLineTax, false, true);
+                  newInvoiceLineTax.setInvoiceLine(newInvoiceLine);
+                  newInvoiceLine.getInvoiceLineTaxList().add(newInvoiceLineTax);
+                  invoiceLineTax.setTaxableAmount(invoiceLineTax.getTaxableAmount()
+                      .divide(invoicedQty, 32, RoundingMode.HALF_UP).multiply(qtyToShip)
+                      .setScale(pricePrecision, RoundingMode.HALF_UP));
+                  invoiceLineTax.setTaxAmount(invoiceLineTax.getTaxAmount()
+                      .divide(invoicedQty, 32, RoundingMode.HALF_UP).multiply(qtyToShip)
+                      .setScale(pricePrecision, RoundingMode.HALF_UP));
+                  newInvoiceLineTax.setTaxableAmount(newInvoiceLineTax.getTaxableAmount()
+                      .subtract(invoiceLineTax.getTaxableAmount())
+                      .setScale(pricePrecision, RoundingMode.HALF_UP));
+                  newInvoiceLineTax.setTaxAmount(newInvoiceLineTax.getTaxAmount()
+                      .subtract(invoiceLineTax.getTaxAmount())
+                      .setScale(pricePrecision, RoundingMode.HALF_UP));
+                  OBDal.getInstance().save(invoiceLineTax);
+                  OBDal.getInstance().save(newInvoiceLineTax);
+                }
+                // Split the discounts
+                for (final InvoiceLineOffer invoiceLineOffer : invoiceLine
+                    .getInvoiceLineOfferList()) {
+                  final InvoiceLineOffer newInvoiceLineOffer = (InvoiceLineOffer) DalUtil.copy(
+                      invoiceLineOffer, false, true);
+                  newInvoiceLineOffer.setInvoiceLine(newInvoiceLine);
+                  newInvoiceLine.getInvoiceLineOfferList().add(newInvoiceLineOffer);
+                  invoiceLineOffer.setTotalAmount(invoiceLineOffer.getBaseGrossUnitPrice()
+                      .multiply(qtyToShip).setScale(pricePrecision, RoundingMode.HALF_UP));
+                  newInvoiceLineOffer.setTotalAmount(newInvoiceLineOffer.getTotalAmount()
+                      .subtract(invoiceLineOffer.getTotalAmount())
+                      .setScale(pricePrecision, RoundingMode.HALF_UP));
+                  OBDal.getInstance().save(invoiceLineOffer);
+                  OBDal.getInstance().save(newInvoiceLineOffer);
+                }
+                qtyToShip = qtyToShip.subtract(invoicedQty);
+              }
             }
           }
         }
