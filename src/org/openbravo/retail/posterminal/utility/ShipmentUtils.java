@@ -401,11 +401,7 @@ public class ShipmentUtils {
                 break;
               }
               final BigDecimal invoicedQty = invoiceLine.getInvoicedQuantity();
-              if (qtyToShip.compareTo(invoicedQty) == 0) {
-                invoiceLine.setGoodsShipmentLine(shipmentLine);
-                OBDal.getInstance().save(invoiceLine);
-                qtyToShip = qtyToShip.subtract(invoicedQty);
-              } else if (qtyToShip.compareTo(invoicedQty) == 1) {
+              if (qtyToShip.compareTo(invoicedQty) != -1) {
                 invoiceLine.setGoodsShipmentLine(shipmentLine);
                 OBDal.getInstance().save(invoiceLine);
                 qtyToShip = qtyToShip.subtract(invoicedQty);
