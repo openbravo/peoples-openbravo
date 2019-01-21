@@ -2145,7 +2145,6 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.setDisabled(!OB.MobileApp.model.hasPermission(this.permission));
-    OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
   },
   tap: function () {
     if (this.disabled) {

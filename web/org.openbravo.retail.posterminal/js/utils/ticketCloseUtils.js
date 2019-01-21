@@ -122,7 +122,9 @@
         callback: function (args) {
           if (args.skipCallback) {
             OB.UTIL.ProcessController.finish('completeReceipt', execution);
-            triggerClosedCallback();
+            if (triggerClosedCallback instanceof Function) {
+              triggerClosedCallback();
+            }
             return true;
           }
           receipt.set('isBeingClosed', false);
@@ -218,7 +220,9 @@
             orderList.synchronizeCurrentOrder();
 
           }
-          triggerClosedCallback();
+          if (triggerClosedCallback instanceof Function) {
+            triggerClosedCallback();
+          }
         }
       });
     });
