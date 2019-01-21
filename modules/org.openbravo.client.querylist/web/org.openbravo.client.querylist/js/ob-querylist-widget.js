@@ -104,8 +104,7 @@ isc.defineClass('OBQueryListWidget', isc.OBWidget).addProperties({
   },
 
   createWindowContents: function () {
-    var layout,
-        showFilter = (this.viewMode === 'maximized');
+    var layout, showFilter = (this.viewMode === 'maximized');
 
     layout = isc.VStack.create({
       height: '100%',

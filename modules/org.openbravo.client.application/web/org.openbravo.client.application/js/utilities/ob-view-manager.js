@@ -478,8 +478,7 @@
     //
     restoreState: function (newState, data) {
 
-      var viewId,
-          tabsLength, i, tabObject, hasChanged = false,
+      var viewId, tabsLength, i, tabObject, hasChanged = false,
           stateData, requestViewsRestoreState;
 
       if (vmgr.inStateHandling) {

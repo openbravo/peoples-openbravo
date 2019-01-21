@@ -274,8 +274,7 @@ isc.OBPersonalizationTreeGrid.addProperties({
   // entries are shown for status bar or normal fields
   createCellContextItems: function (record) {
     var i, menuItems = [],
-        updatePropertyFunction,
-        personalizeForm = this.personalizeForm,
+        updatePropertyFunction, personalizeForm = this.personalizeForm,
         length, allNodes;
 
     updatePropertyFunction = function (record, property, value) {

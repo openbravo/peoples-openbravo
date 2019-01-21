@@ -10009,8 +10009,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }],
                 statusBarFields: [],
                 obFormProperties: {
-                  onFieldChanged: function (form, item, value) {
-                  }
+                  onFieldChanged: function (form, item, value) {}
                 }
               });
               this.viewGrid = isc.OBViewGrid.create({
@@ -10914,8 +10913,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }],
                 statusBarFields: [],
                 obFormProperties: {
-                  onFieldChanged: function (form, item, value) {
-                  }
+                  onFieldChanged: function (form, item, value) {}
                 }
               });
               this.viewGrid = isc.OBViewGrid.create({
@@ -12714,8 +12712,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             }],
             statusBarFields: [],
             obFormProperties: {
-              onFieldChanged: function (form, item, value) {
-              }
+              onFieldChanged: function (form, item, value) {}
             }
           });
           this.viewGrid = isc.OBViewGrid.create({
@@ -13783,8 +13780,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
             }],
             statusBarFields: [],
             obFormProperties: {
-              onFieldChanged: function (form, item, value) {
-              }
+              onFieldChanged: function (form, item, value) {}
             }
           });
           this.viewGrid = isc.OBViewGrid.create({
@@ -15248,8 +15244,7 @@ isc.ClassFactory.defineClass('_143', isc.OBStandardWindow).addProperties({
                 }],
                 statusBarFields: [],
                 obFormProperties: {
-                  onFieldChanged: function (form, item, value) {
-                  }
+                  onFieldChanged: function (form, item, value) {}
                 }
               });
               this.viewGrid = isc.OBViewGrid.create({

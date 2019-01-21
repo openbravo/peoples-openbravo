@@ -38,6 +38,7 @@ function isTrue(objectName) {
 }
 
 /* exported initFIN_Utilities */
+
 function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _isGLItemEnabled) {
   frm = _frm;
   isReceipt = isTrue('isReceipt');
@@ -60,6 +61,7 @@ function initFIN_Utilities(_frm, _creditAllowed, _isCreditCheckedFromBPinGrid, _
 }
 
 /* exported processLabels */
+
 function processLabels() {
   var receiptlbls = getElementsByName('lblR'),
       i;
@@ -99,6 +101,7 @@ function applyFormat(number) {
  * @type String
  */
 /* exported applyFormatJSToOBMasked */
+
 function applyFormatJSToOBMasked(number, _globalMaskNumeric) {
   if (!_globalMaskNumeric) {
     _globalMaskNumeric = globalMaskNumeric;
@@ -107,6 +110,7 @@ function applyFormatJSToOBMasked(number, _globalMaskNumeric) {
 }
 
 /* exported applyFormatOBMaskedToJS */
+
 function applyFormatOBMaskedToJS(number) {
   return OB.Utilities.Number.OBMaskedToJS(number, globalDecSeparator, globalGroupSeparator);
 }
@@ -212,6 +216,7 @@ function subtract(number1, number2) {
  * @type String
  */
 /* exported divide */
+
 function divide(number1, number2) {
   return formattedNumberOpTemp(number1, '/', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
 }
@@ -224,6 +229,7 @@ function divide(number1, number2) {
  * @type String
  */
 /* exported multiply */
+
 function multiply(number1, number2) {
   return formattedNumberOpTemp(number1, '*', number2, globalMaskNumeric, globalDecSeparator, globalGroupSeparator, globalGroupInterval);
 }
@@ -506,6 +512,7 @@ function updateTotal() {
 }
 
 /* exported distributeAmount */
+
 function distributeAmount(_amount) {
   var amount = applyFormat(_amount);
   var distributedAmount = 0;
@@ -587,6 +594,7 @@ function distributeAmount(_amount) {
 }
 
 /* exported updateReadOnly */
+
 function updateReadOnly(key, mark) {
   if (mark === null) {
     mark = false;
@@ -618,6 +626,7 @@ function updateReadOnly(key, mark) {
 }
 
 /* exported updateAll */
+
 function updateAll(drivenByGrid) {
   var frm = document.frmMain;
   var chk = frm.inpScheduledPaymentDetailId;
@@ -655,6 +664,7 @@ function updateAll(drivenByGrid) {
  * @return true if validations are fine.
  */
 /* exported validateSelectedPendingPayments */
+
 function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action) {
   if (allowNotSelectingPendingPayment === undefined) {
     allowNotSelectingPendingPayment = false;
@@ -722,6 +732,7 @@ function validateSelectedPendingPayments(allowNotSelectingPendingPayment, action
  *     The string with the options. Example '<option value="id1">fist<option>'
  */
 /* exported createCombo */
+
 function createCombo(object, innerHTML) {
   object.innerHTML = "";
   var selTemp = document.createElement("temp");
@@ -774,6 +785,7 @@ function createCombo(object, innerHTML) {
  * @return
  */
 /* exported reloadParentGrid */
+
 function reloadParentGrid() {
   var f, dad, layoutMDI, popup;
   try {
@@ -804,6 +816,7 @@ function reloadParentGrid() {
  * @param jsonString
  */
 /* exported decodeJSON */
+
 function decodeJSON(jsonString) {
   try {
     return eval('(' + jsonString + ')'); // do the eval
