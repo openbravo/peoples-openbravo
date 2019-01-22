@@ -116,6 +116,13 @@ if (useServiceWorkers) {
       }
     }());
   </script>
+  <script>
+    (function () {
+      if(OB.UTIL.isIOS()) {
+        window.addEventListener("touchmove", function(event) {event.preventDefault();}, {passive: false} );
+      }
+    }());
+  </script>
   <script src=<%=toServiceWorker%>></script>
 </body>
 </html>
