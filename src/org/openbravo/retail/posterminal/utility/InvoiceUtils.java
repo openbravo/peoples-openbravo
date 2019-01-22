@@ -317,12 +317,21 @@ public class InvoiceUtils {
             InvoiceLine.class);
         invoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE + "."
             + ShipmentInOutLine.PROPERTY_ID, iol.getId()));
-        invoiceLineCriteria.setMaxResults(1);
-        if (invoiceLineCriteria.uniqueResult() != null) {
-          continue;
+        final List<InvoiceLine> invoiceLineList = invoiceLineCriteria.list();
+        if (invoiceLineList.size() == 0) {
+          iolNotInvoicedList.add(iol);
+          movementQtyTotal = movementQtyTotal.add(iol.getMovementQuantity());
+        } else {
+          BigDecimal invoicedQty = BigDecimal.ZERO;
+          for (final InvoiceLine invoiceLine : invoiceLineList) {
+            invoicedQty = invoicedQty.add(invoiceLine.getInvoicedQuantity());
+          }
+          if (invoicedQty.compareTo(iol.getMovementQuantity()) == -1) {
+            iolNotInvoicedList.add(iol);
+            movementQtyTotal = movementQtyTotal
+                .add(iol.getMovementQuantity().subtract(invoicedQty));
+          }
         }
-        iolNotInvoicedList.add(iol);
-        movementQtyTotal = movementQtyTotal.add(iol.getMovementQuantity());
       }
       if (iolNotInvoicedList.size() > 1) {
         multipleShipmentsLines = true;

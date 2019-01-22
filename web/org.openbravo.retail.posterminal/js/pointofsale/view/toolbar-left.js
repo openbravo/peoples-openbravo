@@ -427,7 +427,7 @@ enyo.kind({
     if (!this.model.get('order').get('isEditable') && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid') && this.model.get('order').get('orderType') !== 3) {
       return true;
     }
-    receipt.trigger('updatePending');
+    receipt.trigger('updatePending', true);
     if (this.model.get('order').get('orderType') === 3) {
       me.doTabChange({
         tabPanel: me.tabPanel,
