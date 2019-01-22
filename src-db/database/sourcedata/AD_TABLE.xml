@@ -374,6 +374,7 @@ where @additional_filters@]]></HQLQUERY>
 <!--622D7B99C1494356A0C983BE4E6E8446-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--622D7B99C1494356A0C983BE4E6E8446-->  <HQLQUERY><![CDATA[SELECT  get_uuid() AS id,
 o.searchKey AS org,
+o.id AS orgId,
 hm.id AS hardwareid,
 hm.hardwareURL AS HardwareURL
 FROM Organization AS o,

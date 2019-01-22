@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -598,29 +598,6 @@
       successfunc();
     }
   };
-
-  OB.OBPOS.showSelectPrintersWindow = function (successfunc, hidefunc, cancelfunc, isPdf, isRetry) {
-    if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-      return isPdf ? printer.hasPDFPrinter : printer.hasReceiptPrinter;
-    })) {
-      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-        popup: isPdf ? 'modalSelectPDFPrinters' : 'modalSelectPrinters',
-        args: {
-          title: isPdf ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle') : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-          hasPrinterProperty: isPdf ? 'hasPDFPrinter' : 'hasReceiptPrinter',
-          serverURLProperty: isPdf ? 'activepdfurl' : 'activeurl',
-          serverURLSetter: isPdf ? 'setActivePDFURL' : 'setActiveURL',
-          onSuccess: successfunc,
-          onCancel: cancelfunc,
-          onHide: hidefunc,
-          isRetry: isRetry
-        }
-      });
-    } else {
-      successfunc();
-    }
-  };
-
 
   // Public object definition
   OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};

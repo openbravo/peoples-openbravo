@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,6 +24,7 @@ public class DeletionAutoRegisterHwmUrlActionHandler extends BaseProcessActionHa
       .getLogger(DeletionAutoRegisterHwmUrlActionHandler.class);
   private static final String HARDWARE_MANAGER_AUTO_REGISTER = "HardwareManagerAutoRegister";
   private static final String HARDWAREID = "hardwareid";
+  private static final String ORGID = "orgId";
   private static final String ERROR = "Error in delete hardware manager process";
   private static final String ERROR_RESPONSE = "Error in delete hardware manager create response";
   private static final String ERROR_DEPENDENCIES = "Exception in delete hardware manager dependencies process";
@@ -45,13 +46,15 @@ public class DeletionAutoRegisterHwmUrlActionHandler extends BaseProcessActionHa
       JSONObject request = new JSONObject(content);
       Integer hardwaremngDeleted = 0;
       String hardwareid = null;
-      hardwaremngArray = request.getJSONObject(PARAMS).getJSONObject(HARDWARE_MANAGER_AUTO_REGISTER)
-          .getJSONArray(SELECTION);
+      String orgId = null;
+      hardwaremngArray = request.getJSONObject(PARAMS)
+          .getJSONObject(HARDWARE_MANAGER_AUTO_REGISTER).getJSONArray(SELECTION);
       for (int j = 0; j < hardwaremngArray.length(); j++) {
         JSONObject selectedElem = hardwaremngArray.getJSONObject(j);
+        orgId = selectedElem.getString(ORGID);
         hardwareid = selectedElem.getString(HARDWAREID);
-        deleteHardwareUrl(hardwareid);
-        deleteHardwareManager(hardwareid);
+        deleteHardwareUrl(hardwareid, orgId);
+        deleteHardwareManager(hardwareid, orgId);
         hardwaremngDeleted++;
       }
       return createResponse(hardwaremngDeleted);
@@ -61,10 +64,10 @@ public class DeletionAutoRegisterHwmUrlActionHandler extends BaseProcessActionHa
     }
   }
 
-  private void deleteHardwareManager(String hardwaremngid) {
+  private void deleteHardwareManager(String hardwaremngid, String orgid) {
     try {
       String sql = "delete from obpos_hardwaremng where obpos_hardwaremng_id = '" + hardwaremngid
-          + "'";
+          + "' and ad_org_id = '" + orgid + "'";
       PreparedStatement ps = new DalConnectionProvider(false).getPreparedStatement(sql);
       ps.executeUpdate();
     } catch (Exception e) {
@@ -72,10 +75,10 @@ public class DeletionAutoRegisterHwmUrlActionHandler extends BaseProcessActionHa
     }
   }
 
-  private void deleteHardwareUrl(String hardwaremanagerid) {
+  private void deleteHardwareUrl(String hardwaremanagerid, String orgId) {
     try {
       String sql = "delete from obpos_hardwareurl " + "where obpos_hardwaremng_id = '"
-          + hardwaremanagerid + "'\n";
+          + hardwaremanagerid + "' and ad_org_id = '" + orgId + "'";
       PreparedStatement ps = new DalConnectionProvider(false).getPreparedStatement(sql);
       ps.executeUpdate();
     } catch (Exception e) {

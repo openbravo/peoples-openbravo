@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -86,8 +86,8 @@ public class AutoRegisterHWM implements WebService {
 
   private HardwareManager syncHardwareManager(Organization org, String hardwareUrl,
       String hardwareName, Boolean receiptPrinter, Boolean pdfPrinter) {
-    OBCriteria<HardwareManager> hardwareQuery = OBDal.getInstance()
-        .createCriteria(HardwareManager.class);
+    OBCriteria<HardwareManager> hardwareQuery = OBDal.getInstance().createCriteria(
+        HardwareManager.class);
     hardwareQuery.add(Restrictions.eq(HardwareManager.PROPERTY_ORGANIZATION, org));
     hardwareQuery.add(Restrictions.eq(HardwareManager.PROPERTY_HARDWAREURL, hardwareUrl));
     hardwareQuery.setMaxResults(1);
@@ -119,8 +119,8 @@ public class AutoRegisterHWM implements WebService {
   }
 
   private void syncTerminalTypes(Organization org, HardwareManager hardwaremng) {
-    OBCriteria<TerminalType> terminaltypeQuery = OBDal.getInstance()
-        .createCriteria(TerminalType.class);
+    OBCriteria<TerminalType> terminaltypeQuery = OBDal.getInstance().createCriteria(
+        TerminalType.class);
     terminaltypeQuery.add(Restrictions.eq(TerminalType.PROPERTY_ORGANIZATION, org));
     terminaltypeQuery.add(Restrictions.eq(TerminalType.PROPERTY_AUTOREGISTERHWMURL, true));
     terminaltypeQuery.setFetchSize(1000);
@@ -148,8 +148,7 @@ public class AutoRegisterHWM implements WebService {
     }
   }
 
-  private void saveHardwareUrl(TerminalType termtype, Organization org,
-      HardwareManager hardwaremng) {
+  private void saveHardwareUrl(TerminalType termtype, Organization org, HardwareManager hardwaremng) {
     HardwareURL hardwareurl = OBProvider.getInstance().get(HardwareURL.class);
     hardwareurl.setNewOBObject(true);
     hardwareurl.setClient(termtype.getClient());
