@@ -827,7 +827,9 @@
             return;
           } else {
             if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
-              executeCallback(me.get('calculateReceiptCallbacks'), function () {
+              var calculateReceiptCallbacks = me.get('calculateReceiptCallbacks').slice(0);
+              me.unset('calculateReceiptCallbacks');
+              executeCallback(calculateReceiptCallbacks, function () {
                 me.calculatingReceipt = false;
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
