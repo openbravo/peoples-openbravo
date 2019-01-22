@@ -45,7 +45,7 @@ public class Store extends QueryTerminalProperty {
         .getOBPOSCrossStoreOrganization().getId() : "";
 
     StringBuilder hql = new StringBuilder();
-    hql.append("select id as storeId, name as name");
+    hql.append("select id as id, name as name");
     hql.append(" from Organization organization");
     hql.append(" where $readableSimpleClientCriteria");
     hql.append(" and $activeCriteria");
