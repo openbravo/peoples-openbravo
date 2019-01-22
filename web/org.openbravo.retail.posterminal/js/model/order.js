@@ -393,6 +393,7 @@
           this.set('canceledorder', new OB.Model.Order(attributes.canceledorder));
         }
         this.set('payment', attributes.payment);
+        this.set('paymentWithSign', attributes.paymentWithSign);
         this.set('change', attributes.change);
         this.set('qty', attributes.qty);
         this.set('gross', attributes.gross);
@@ -427,8 +428,26 @@
       }
     },
 
+    preventOrderSave: function (value) {
+      if (value) {
+        if (this.has('preventOrderSave')) {
+          this.set('preventOrderSave', OB.Dec.add(this.get('preventOrderSave'), OB.DEC.One));
+        } else {
+          this.set('preventOrderSave', OB.DEC.One);
+        }
+      } else {
+        if (this.has('preventOrderSave')) {
+          if (OB.DEC.compare(OB.DEC.sub(this.get('preventOrderSave'), OB.DEC.One)) === 1) {
+            this.set('preventOrderSave', OB.DEC.sub(this.get('preventOrderSave'), OB.DEC.One));
+          } else {
+            this.unset('preventOrderSave');
+          }
+        }
+      }
+    },
+
     save: function (callback) {
-      if (!OB.MobileApp.model.get('preventOrderSave') && !this.pendingCalculateReceipt) {
+      if (!OB.MobileApp.model.get('preventOrderSave') && !this.get('preventOrderSave') && !this.pendingCalculateReceipt) {
         var undoCopy = this.get('undo'),
             me = this,
             forceInsert = false;
@@ -813,12 +832,14 @@
                 OB.MobileApp.view.waterfall('calculatedReceipt');
                 me.trigger('calculatedReceipt');
                 OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+                me.trigger('updatePending');
               });
             } else {
               me.calculatingReceipt = false;
               OB.MobileApp.view.waterfall('calculatedReceipt');
               me.trigger('calculatedReceipt');
               OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+              me.trigger('updatePending');
             }
           }
         });
@@ -884,9 +905,6 @@
     },
 
     getPaymentWithSign: function () {
-      if (!this.has('paymentWithSign')) {
-        this.adjustPayment();
-      }
       return this.get('paymentWithSign');
     },
 
@@ -1115,6 +1133,7 @@
       this.set('orderManualPromotions', this.get('orderManualPromotions') ? this.get('orderManualPromotions').reset() : new Backbone.Collection());
       this.set('payments', this.get('payments') ? this.get('payments').reset() : new PaymentLineList());
       this.set('payment', OB.DEC.Zero);
+      this.set('paymentWithSign', OB.DEC.Zero);
       this.set('change', OB.DEC.Zero);
       this.set('qty', OB.DEC.Zero);
       this.set('gross', OB.DEC.Zero);
@@ -1445,15 +1464,12 @@
 
       function postDeleteLine() {
         var cleanReceipt, hasServices = me.get('hasServices'),
-            preventOrderSave = OB.MobileApp.model.get('preventOrderSave'),
             linesToDelete = _.filter(me.get('lines').models, function (line) {
             return line.get('obposIsDeleted');
           });
 
         cleanReceipt = function () {
-          if (!preventOrderSave) {
-            OB.MobileApp.model.unset('preventOrderSave');
-          }
+          me.preventOrderSave(false);
           if (hasServices) {
             var services = _.find(me.get('lines').models, function (line) {
               return line.get('relatedLines');
@@ -1554,9 +1570,7 @@
         if (hasServices) {
           me.unset('hasServices');
         }
-        if (!preventOrderSave) {
-          OB.MobileApp.model.set('preventOrderSave', true);
-        }
+        me.preventOrderSave(true);
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
           me.calculateReceipt(function () {
             if (!me.get('deletedLines')) {
@@ -4193,8 +4207,9 @@
       OB.Dal.remove(this, function () {
         var deliveredLine, linesWithDeferred = [];
 
-        OB.MobileApp.model.set('preventOrderSave', true);
+        me.preventOrderSave(true);
         me.set('preventServicesUpdate', true);
+        me.unset('orderid');
 
         if (me.get('paidOnCredit')) {
           me.set('paidOnCredit', false);
@@ -4303,7 +4318,7 @@
           me.calculateReceipt(function () {
             me.unset('skipApplyPromotions');
             me.unset('preventServicesUpdate');
-            OB.MobileApp.model.unset('preventOrderSave');
+            me.preventOrderSave(false);
             me.save();
           });
         });
@@ -4388,7 +4403,7 @@
                   OB.Dal.remove(me, function () {
                     var idMap = {};
                     me.set('skipCalculateReceipt', true);
-                    OB.MobileApp.model.set('preventOrderSave', true);
+                    me.preventOrderSave(true);
                     me.set('preventServicesUpdate', true);
                     me.set('isEditable', true);
                     me.set('cancelLayaway', true);
@@ -4468,15 +4483,16 @@
                       me.getPrepaymentAmount(function () {
                         me.set('isEditable', false);
                         me.unset('preventServicesUpdate');
-                        OB.MobileApp.model.unset('preventOrderSave');
+                        me.preventOrderSave(false);
                         me.save();
                         OB.MobileApp.model.orderList.saveCurrent();
-                      });
-                      // Finally change to the payments tab
-                      context.doTabChange({
-                        tabPanel: 'payment',
-                        keyboard: 'toolbarpayment',
-                        edit: false
+                        me.trigger('updatePending', true);
+                        // Finally change to the payments tab
+                        context.doTabChange({
+                          tabPanel: 'payment',
+                          keyboard: 'toolbarpayment',
+                          edit: false
+                        });
                       });
                     });
                   });
@@ -4688,6 +4704,7 @@
       this.set('session', OB.MobileApp.model.get('session'));
       this.set('orderDate', OB.I18N.normalizeDate(new Date()));
       this.set('skipApplyPromotions', false);
+      this.unset('deletedLines');
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
@@ -4944,6 +4961,9 @@
         this.set('payment', OB.DEC.abs(totalPaid));
         this.set('paymentWithSign', totalPaid);
         this.set('change', OB.DEC.Zero);
+      }
+      if (!OB.UTIL.ProcessController.isProcessActive('calculateReceipt')) {
+        this.trigger('updatePending');
       }
     },
 
@@ -6339,7 +6359,7 @@
           } else if (me.get('bp').get('invoiceTerms') === 'I' || me.get('bp').get('invoiceTerms') === 'O') {
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
-          if (qtyToInvoice && (ol.get('obposCanbedelivered') || me.get('bp').get('invoiceTerms') === 'I')) {
+          if (qtyToInvoice && (ol.get('obposCanbedelivered') || ol.get('obposIspaid') || me.get('bp').get('invoiceTerms') === 'I')) {
             lineToInvoice = new OB.Model.OrderLine();
             OB.UTIL.clone(ol, lineToInvoice);
             lineToInvoice.set('id', OB.UTIL.get_UUID());
@@ -6399,9 +6419,9 @@
             invoice.set('skipApplyPromotions', true);
             invoice.set('ignoreCheckIfIsActiveOrder', true);
             invoice.set('forceCalculateTaxes', true);
-            OB.MobileApp.model.set('preventOrderSave', true);
+            invoice.preventOrderSave(true);
             invoice.calculateReceipt(function () {
-              OB.MobileApp.model.unset('preventOrderSave');
+              invoice.preventOrderSave(false);
               invoice.adjustPrices();
               finalCallback(invoice);
             });
