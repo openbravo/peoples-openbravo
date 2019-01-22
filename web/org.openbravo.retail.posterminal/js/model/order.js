@@ -5756,7 +5756,7 @@
             return promo.manual;
           });
           _.forEach(groupedPromos, function (promotion) {
-            if (!promoManual) {
+            if (!promotion.manual) {
               var promoAmt = 0,
                   promotionQtyOffer = promotion.pendingQtyOffer || promotion.qtyOffer,
                   promoQtyoffer = promotionQtyOffer;
@@ -5767,7 +5767,7 @@
                 var qtyOffer = 0;
                 var qtyToCheck = line.get('qty');
                 _.forEach(line.get('promotions'), function (promot) {
-                  if (!promot.applyNext || (promot.hidden !== promotion.hidden && promot.discountType === promotion.discountType)) {
+                  if (promot.hidden !== promotion.hidden && promot.discountType === promotion.discountType) {
                     samePromos.push(promot);
                   }
                 });
@@ -5791,6 +5791,8 @@
                     clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal((promotion.displayedTotalAmount || 0) * (clonedPromotion.obdiscQtyoffer / promotionQtyOffer)));
                   } else {
                     clonedPromotion.amt = 0;
+                    clonedPromotion.fullAmt = 0;
+                    clonedPromotion.displayedTotalAmount = 0;
                   }
                   clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
@@ -5799,12 +5801,7 @@
                   if (!line.get('promotions')) {
                     line.set('promotions', []);
                   }
-
-                  if (clonedPromotion.pendingQtyoffer && clonedPromotion.pendingQtyoffer > 0) {
-                    line.get('promotions').push(clonedPromotion);
-                  } else {
-                    line.get('promotions').push(clonedPromotion);
-                  }
+                  line.get('promotions').push(clonedPromotion);
                   line.trigger('change');
                   promoQtyoffer -= clonedPromotion.obdiscQtyoffer;
                   promoAmt += clonedPromotion.amt;
