@@ -68,8 +68,8 @@ public class DocumentTypesinStore extends BuildValidation {
     return false;
   }
 
-//  @Override
-//  protected ExecutionLimits getBuildValidationLimits() {
-//    return new ExecutionLimits(RETAIL_POSTERMINAL_MODULE_ID, null, new OpenbravoVersion(1, 2, 5900));
-//  }
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits(RETAIL_POSTERMINAL_MODULE_ID, null, new OpenbravoVersion(1, 2, 6100));
+  }
 }

@@ -19,7 +19,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
 public class UpdateDocumentTypesinStore extends ModuleScript {
 
   private static final Logger log4j = LogManager.getLogger();
-  private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
+  private static final String RETAIL_POSTERMINAL_MODULE_ID = "FF808181326CC34901326D53DBCF0018";
 
   @Override
   public void execute() {
@@ -37,11 +37,11 @@ public class UpdateDocumentTypesinStore extends ModuleScript {
     }
   }
 
-//  @Override
-//  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-//    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
-//        new OpenbravoVersion(1, 8, 3302));
-//  }
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits(RETAIL_POSTERMINAL_MODULE_ID, null,
+        new OpenbravoVersion(1, 2, 6100));
+  }
 
   @Override
   protected boolean executeOnInstall() {
