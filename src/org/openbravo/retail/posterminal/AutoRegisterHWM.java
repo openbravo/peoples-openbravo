@@ -46,7 +46,6 @@ public class AutoRegisterHWM implements WebService {
     String storeSearchKey = (String) getParameter(parameters, STORE_SEARCH_KEY,
         "The organization identifier is mandatory");
     Organization org = null;
-    HardwareManager hardwaremng = null;
     String hardwareUrl = (String) getParameter(parameters, HARDWARE_URL,
         "The Hardware Manager url is mandatory");
     String hardwareName = (String) getParameter(parameters, HARDWARE_NAME,
@@ -58,10 +57,10 @@ public class AutoRegisterHWM implements WebService {
     orgQuery.add(Restrictions.eq(Organization.PROPERTY_SEARCHKEY, storeSearchKey));
     orgQuery.setMaxResults(1);
     org = (Organization) orgQuery.uniqueResult();
-
     if (org != null) {
-      hardwaremng = syncHardwareManager(org, hardwareUrl, hardwareName, receiptPrinter, pdfPrinter);
-      syncTerminalTypes(org, hardwaremng);
+      syncTerminalTypes(org,
+          syncHardwareManager(org, hardwareUrl, hardwareName, receiptPrinter, pdfPrinter));
+      OBDal.getInstance().flush();
       final String res = OBMessageUtils.getI18NMessage("OBPOS_AutoRegisterComplete", null);
       response.setContentType("text/plain");
       response.setCharacterEncoding("utf-8");
@@ -91,17 +90,17 @@ public class AutoRegisterHWM implements WebService {
     hardwareQuery.add(Restrictions.eq(HardwareManager.PROPERTY_ORGANIZATION, org));
     hardwareQuery.add(Restrictions.eq(HardwareManager.PROPERTY_HARDWAREURL, hardwareUrl));
     hardwareQuery.setMaxResults(1);
-    if (hardwareQuery.count() == 0) {
+    HardwareManager hardwareManager = (HardwareManager) hardwareQuery.uniqueResult();
+    if (hardwareManager == null) {
       return saveHardwareManager(org, hardwareName, hardwareUrl, receiptPrinter, pdfPrinter);
     } else {
-      return (HardwareManager) hardwareQuery.uniqueResult();
+      return hardwareManager;
     }
   }
 
   private HardwareManager saveHardwareManager(Organization org, String hardwareName,
       String hardwareUrl, Boolean receiptPrinter, Boolean pdfPrinter) {
     HardwareManager hardwaremng = OBProvider.getInstance().get(HardwareManager.class);
-    hardwaremng.setNewOBObject(true);
     hardwaremng.setClient(org.getClient());
     hardwaremng.setOrganization(org);
     hardwaremng.setName(hardwareName);
@@ -123,13 +122,13 @@ public class AutoRegisterHWM implements WebService {
         TerminalType.class);
     terminaltypeQuery.add(Restrictions.eq(TerminalType.PROPERTY_ORGANIZATION, org));
     terminaltypeQuery.add(Restrictions.eq(TerminalType.PROPERTY_AUTOREGISTERHWMURL, true));
-    terminaltypeQuery.setFetchSize(1000);
     final ScrollableResults terminalScroller = terminaltypeQuery.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;
     while (terminalScroller.next()) {
       final TerminalType termType = (TerminalType) terminalScroller.get()[0];
       addHardwareToTerminalType(termType, hardwaremng, org);
       if ((i % 100) == 0) {
+        OBDal.getInstance().flush();
         OBDal.getInstance().getSession().clear();
       }
     }
@@ -150,13 +149,11 @@ public class AutoRegisterHWM implements WebService {
 
   private void saveHardwareUrl(TerminalType termtype, Organization org, HardwareManager hardwaremng) {
     HardwareURL hardwareurl = OBProvider.getInstance().get(HardwareURL.class);
-    hardwareurl.setNewOBObject(true);
     hardwareurl.setClient(termtype.getClient());
     hardwareurl.setOrganization(termtype.getOrganization());
     hardwareurl.setPOSTerminalType(termtype);
     hardwareurl.setObposHardwaremng(hardwaremng);
     OBDal.getInstance().save(hardwareurl);
-    OBDal.getInstance().flush();
   }
 
   private JSONObject getParameters(HttpServletRequest request) {
