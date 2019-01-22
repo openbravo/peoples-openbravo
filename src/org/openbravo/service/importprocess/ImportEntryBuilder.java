@@ -151,7 +151,7 @@ public class ImportEntryBuilder {
     try {
       validateImportEntryData();
       ImportEntry importEntry = createImportEntry();
-      processAndSave(importEntry, notifyManager);
+      preprocessAndSave(importEntry, notifyManager);
       return importEntry;
     } finally {
       OBContext.restorePreviousMode();
@@ -227,7 +227,7 @@ public class ImportEntryBuilder {
     return qry.uniqueResult().intValue() > 0;
   }
 
-  private void processAndSave(ImportEntry importEntry, boolean notify) {
+  private void preprocessAndSave(ImportEntry importEntry, boolean notify) {
     for (ImportEntryPreProcessor processor : getEntryPreProcessors()) {
       processor.beforeCreate(importEntry);
     }
