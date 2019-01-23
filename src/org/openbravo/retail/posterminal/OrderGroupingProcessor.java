@@ -135,14 +135,14 @@ public class OrderGroupingProcessor {
     if (posTerminal.getObposTerminaltype().isGroupingOrders()) {
       // Extend sql to separate invoices for sales and returns
       final String strSeparateInvoiceForReturnsHeaderParameter1 = posTerminal
-          .getObposTerminaltype().isSeparateinvoiceforreturns() ? "tt.c_doctype_id, tt.c_doctyperet_id"
-          : "tt.c_doctype_id";
+          .getObposTerminaltype().isSeparateinvoiceforreturns() ? "org.em_obpos_c_doctype_id, org.em_obpos_c_doctype_id"
+          : "org.em_obpos_c_doctype_id";
       final String strSeparateInvoiceForReturnsHeaderParameter2 = posTerminal
           .getObposTerminaltype().isSeparateinvoiceforreturns() ? "and o.c_doctype_id = dt.c_doctype_id"
           : "";
       final String strSeparateInvoiceForReturnsLines = posTerminal.getObposTerminaltype()
           .isSeparateinvoiceforreturns() ? "and o.c_doctype_id = dt.c_doctype_id and dt.c_doctypeinvoice_id = i.c_doctype_id"
-          : "and tt.c_doctype_id = dt.c_doctype_id";
+          : "and org.em_obpos_c_doctype_id = dt.c_doctype_id";
 
       // insert invoice headers
       OrderGroupingProcessorData.insertHeaderGrouping(conn, strUserId, strExecutionId,
