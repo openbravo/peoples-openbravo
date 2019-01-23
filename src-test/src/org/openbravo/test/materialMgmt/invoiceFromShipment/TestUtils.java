@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -100,10 +100,6 @@ public class TestUtils {
    * Returns a new Order Line based on the given one. It is a clone of the first one but without
    * being invoiced or delivered
    * 
-   * @param orderLine
-   *          Order Line to be cloned
-   * @param newOrder
-   *          new Order (a clone of the original one)
    * @return A new Order Line clone based on the original one
    */
   public static Order cloneOrder(final String orderId, final String docNo) {
@@ -149,7 +145,7 @@ public class TestUtils {
    * Returns a new Order Line based on the given one. It is a clone of the first one but without
    * being invoiced or delivered
    * 
-   * @param orderLine
+   * @param oldLine
    *          Order Line to be cloned
    * @param newOrder
    *          new Order (a clone of the original one)
