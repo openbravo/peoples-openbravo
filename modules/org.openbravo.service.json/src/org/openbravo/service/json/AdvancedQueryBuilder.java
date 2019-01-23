@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -794,40 +795,28 @@ public class AdvancedQueryBuilder {
 
   private String buildValueClause(Property property, String operator, Object value)
       throws JSONException {
-    Object localValue = value;
-
     String alias = getTypedParameterAlias();
     if (ignoreCase(property, operator)) {
       alias = "upper(" + alias + ")";
     }
-    String clause;
+
+    String clause = alias;
     if (isLike(operator)) {
-      clause = alias + " escape '" + ESCAPE_CHAR + "' ";
-    } else {
-      clause = alias;
+      clause += " escape '" + ESCAPE_CHAR + "' ";
     }
 
-    localValue = unEscapeOperator(localValue);
-
-    if (!property.isPrimitive()) {
-      // an in parameter use it...
-      if (localValue.toString().contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
-        final List<String> values = new ArrayList<String>();
-        final String[] separatedValues = localValue.toString()
-            .split(JsonConstants.IN_PARAMETER_SEPARATOR);
-        for (String separatedValue : separatedValues) {
-          values.add(separatedValue);
-        }
-        clause = "(" + clause + ")";
-        localValue = values;
-      }
+    Object localValue = unEscapeOperator(value);
+    if (!property.isPrimitive() && localValue != null
+        && localValue.toString().contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
+      clause = "(" + clause + ")";
+      localValue = Arrays.asList(localValue.toString().split(JsonConstants.IN_PARAMETER_SEPARATOR));
     }
 
     try {
       localValue = getTypeSafeValue(operator, property, localValue);
     } catch (IllegalArgumentException e) {
       throw new OBException(OBMessageUtils.getI18NMessage("OBJSON_InvalidFilterValue",
-          new String[] { value != null ? value.toString() : "" }));
+          new String[] { Objects.toString(value, "") }));
     }
     typedParameters.add(localValue);
     return clause;
