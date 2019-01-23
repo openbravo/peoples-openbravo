@@ -399,7 +399,7 @@ enyo.kind({
         return true;
       }
 
-      if (this.owner.owner.crossStoreInfo) {
+      if (this.owner.owner.crossStoreInfo && OB.MobileApp.model.get('terminal').organization !== model.get('orgId')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
           label: OB.I18N.getLabel('OBMOBC_Continue'),
           isConfirmButton: true,
@@ -452,7 +452,7 @@ enyo.kind({
     this.model = model;
     this.inherited(arguments);
     this.receiptList.on('click', function (model) {
-      if (this.owner.owner.crossStoreInfo) {
+      if (this.owner.owner.crossStoreInfo && OB.MobileApp.model.get('terminal').organization !== model.get('orgId')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [model.get('documentNo'), model.get('store')]), [{
           label: OB.I18N.getLabel('OBMOBC_Continue'),
           isConfirmButton: true,

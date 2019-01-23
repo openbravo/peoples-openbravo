@@ -137,7 +137,7 @@ enyo.kind({
     this.owner.owner.crossStoreInfo = false;
     if (data && data.length > 0) {
       _.each(data.models, function (model) {
-        if (OB.MobileApp.model.get('terminal').organization !== model.attributes.orgId) {
+        if (OB.MobileApp.model.get('terminal').organization !== model.attributes.id) {
           this.owner.owner.crossStoreInfo = true;
           return;
         }
@@ -254,8 +254,32 @@ enyo.kind({
   },
   tap: function () {
     this.inherited(arguments);
-    this.model.set('checked', !this.model.get('checked'));
-    this.model.trigger('verifyDoneButton', this.model);
+    if (this.owner.owner.owner.owner.owner.owner.crossStoreInfo && OB.MobileApp.model.get('terminal').organization !== this.model.get('orgId') && !this.model.get('checked')) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblCrossStorePayment'), OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [this.model.get('documentNo'), this.model.get('store')]), [{
+        label: OB.I18N.getLabel('OBMOBC_Continue'),
+        isConfirmButton: true,
+        args: {
+          model: this.model
+        },
+        action: function () {
+          this.args.model.set('checked', !this.args.model.get('checked'));
+          this.args.model.trigger('verifyDoneButton', this.args.model);
+          return true;
+        }
+      }, {
+        label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+        args: {
+          button: this
+        },
+        action: function () {
+          this.args.button.removeClass('active');
+          return true;
+        }
+      }]);
+    } else {
+      this.model.set('checked', !this.model.get('checked'));
+      this.model.trigger('verifyDoneButton', this.model);
+    }
   },
   components: [{
     name: 'line',
