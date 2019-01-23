@@ -178,10 +178,10 @@
                       terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
                       terminalModel.set('useEmbededBarcode', terminalModel.get('terminal').terminalType.useembededbarcodescanner);
                       //Set document types from organization to terminaltype object
-                      terminalModel.get('terminal').terminalType.documentType=OB.MobileApp.model.get('context').organization.obposCDoctype;
-                      terminalModel.get('terminal').terminalType.documentTypeForReturns=OB.MobileApp.model.get('context').organization.obposCDoctyperet;
-                      terminalModel.get('terminal').terminalType.documentTypeForReconciliations=OB.MobileApp.model.get('context').organization.obposCDoctyperecon;
-                      terminalModel.get('terminal').terminalType.documentTypeForQuotations=OB.MobileApp.model.get('context').organization.obposCDoctypequot;
+                      terminalModel.get('terminal').terminalType.documentType = OB.MobileApp.model.get('context').organization.obposCDoctype;
+                      terminalModel.get('terminal').terminalType.documentTypeForReturns = OB.MobileApp.model.get('context').organization.obposCDoctyperet;
+                      terminalModel.get('terminal').terminalType.documentTypeForReconciliations = OB.MobileApp.model.get('context').organization.obposCDoctyperecon;
+                      terminalModel.get('terminal').terminalType.documentTypeForQuotations = OB.MobileApp.model.get('context').organization.obposCDoctypequot;
 
                       if (!terminalModel.usermodel) {
                         OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
