@@ -124,8 +124,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" case when (inv." + Invoice.PROPERTY_SALESTRANSACTION
           + " = false and oinfo is not null and oinfo."
           + OrganizationInformation.PROPERTY_APRMPAYMENTDESCRIPTION
-          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE
-          + " else inv." + Invoice.PROPERTY_DOCUMENTNO + " end as invoiceNo, ");
+          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE + " else inv."
+          + Invoice.PROPERTY_DOCUMENTNO + " end as invoiceNo, ");
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
@@ -137,9 +137,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(getAggregatorFunction(" case when (inv."
           + Invoice.PROPERTY_SALESTRANSACTION + " = false and oinfo is not null and oinfo."
           + OrganizationInformation.PROPERTY_APRMPAYMENTDESCRIPTION
-          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE
-          + " else inv." + Invoice.PROPERTY_DOCUMENTNO + " end")
-          + " as invoiceNo, ");
+          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE + " else inv."
+          + Invoice.PROPERTY_DOCUMENTNO + " end") + " as invoiceNo, ");
       selectClause
           .append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(opsfp.name, ipsfp.name) as paymentMethodName, ");
@@ -151,8 +150,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause.append(" case when (inv." + Invoice.PROPERTY_SALESTRANSACTION
           + " = false and oinfo is not null and oinfo."
           + OrganizationInformation.PROPERTY_APRMPAYMENTDESCRIPTION
-          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE
-          + " else inv." + Invoice.PROPERTY_DOCUMENTNO + " end as invoiceNo, ");
+          + " like 'Supplier Reference') then inv." + Invoice.PROPERTY_ORDERREFERENCE + " else inv."
+          + Invoice.PROPERTY_DOCUMENTNO + " end as invoiceNo, ");
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
@@ -179,8 +178,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
   protected StringBuffer getJoinClauseOrder(Map<String, String> requestParameters) {
     String strBusinessPartnerId = requestParameters.get("received_from");
     StringBuffer joinClauseOrder = new StringBuffer();
-    joinClauseOrder
-        .append(" with ord.salesTransaction = :isSalesTransaction and ord.currency.id = :currencyId");
+    joinClauseOrder.append(
+        " with ord.salesTransaction = :isSalesTransaction and ord.currency.id = :currencyId");
     if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
       joinClauseOrder.append(" and ord.businessPartner.id = :businessPartnerId");
     }
@@ -190,8 +189,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
   protected StringBuffer getJoinClauseInvoice(Map<String, String> requestParameters) {
     String strBusinessPartnerId = requestParameters.get("received_from");
     StringBuffer joinClauseInvoice = new StringBuffer();
-    joinClauseInvoice
-        .append(" with inv.salesTransaction = :isSalesTransaction and inv.currency.id = :currencyId");
+    joinClauseInvoice.append(
+        " with inv.salesTransaction = :isSalesTransaction and inv.currency.id = :currencyId");
     if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
       joinClauseInvoice.append(" and inv.businessPartner.id = :businessPartnerId");
     }

@@ -83,30 +83,38 @@ class InsertAcctDimensions {
    */
   private void createInvoiceLineAccDimension(OrderLineAccountingDimension orderLineAccDimension,
       InOutLineAccountingDimension inOutLineAccDimension) {
-    InvoiceLineAccountingDimension invoiceLineAccDimension = OBProvider.getInstance().get(
-        InvoiceLineAccountingDimension.class);
-    invoiceLineAccDimension.setActivity(orderLineAccDimension != null ? orderLineAccDimension
-        .getActivity() : inOutLineAccDimension.getActivity());
+    InvoiceLineAccountingDimension invoiceLineAccDimension = OBProvider.getInstance()
+        .get(InvoiceLineAccountingDimension.class);
+    invoiceLineAccDimension
+        .setActivity(orderLineAccDimension != null ? orderLineAccDimension.getActivity()
+            : inOutLineAccDimension.getActivity());
     invoiceLineAccDimension
         .setAmount(orderLineAccDimension != null ? orderLineAccDimension.getAmount()
             : inOutLineAccDimension.getQuantity().multiply(invoiceLine.getStandardPrice()));
-    invoiceLineAccDimension.setAsset(orderLineAccDimension != null ? orderLineAccDimension
-        .getAsset() : inOutLineAccDimension.getAsset());
     invoiceLineAccDimension
-        .setBusinessPartner(orderLineAccDimension != null ? orderLineAccDimension
-            .getBusinessPartner() : inOutLineAccDimension.getBusinessPartner());
-    invoiceLineAccDimension.setCostcenter(orderLineAccDimension != null ? orderLineAccDimension
-        .getCostcenter() : inOutLineAccDimension.getCostcenter());
-    invoiceLineAccDimension.setNdDimension(orderLineAccDimension != null ? orderLineAccDimension
-        .getNdDimension() : inOutLineAccDimension.getNdDimension());
-    invoiceLineAccDimension.setOrganization(orderLineAccDimension != null ? orderLineAccDimension
-        .getOrganization() : inOutLineAccDimension.getOrganization());
-    invoiceLineAccDimension.setProduct(orderLineAccDimension != null ? orderLineAccDimension
-        .getProduct() : inOutLineAccDimension.getProduct());
-    invoiceLineAccDimension.setProject(orderLineAccDimension != null ? orderLineAccDimension
-        .getProject() : inOutLineAccDimension.getProject());
-    invoiceLineAccDimension.setStDimension(orderLineAccDimension != null ? orderLineAccDimension
-        .getStDimension() : inOutLineAccDimension.getStDimension());
+        .setAsset(orderLineAccDimension != null ? orderLineAccDimension.getAsset()
+            : inOutLineAccDimension.getAsset());
+    invoiceLineAccDimension.setBusinessPartner(
+        orderLineAccDimension != null ? orderLineAccDimension.getBusinessPartner()
+            : inOutLineAccDimension.getBusinessPartner());
+    invoiceLineAccDimension
+        .setCostcenter(orderLineAccDimension != null ? orderLineAccDimension.getCostcenter()
+            : inOutLineAccDimension.getCostcenter());
+    invoiceLineAccDimension
+        .setNdDimension(orderLineAccDimension != null ? orderLineAccDimension.getNdDimension()
+            : inOutLineAccDimension.getNdDimension());
+    invoiceLineAccDimension
+        .setOrganization(orderLineAccDimension != null ? orderLineAccDimension.getOrganization()
+            : inOutLineAccDimension.getOrganization());
+    invoiceLineAccDimension
+        .setProduct(orderLineAccDimension != null ? orderLineAccDimension.getProduct()
+            : inOutLineAccDimension.getProduct());
+    invoiceLineAccDimension
+        .setProject(orderLineAccDimension != null ? orderLineAccDimension.getProject()
+            : inOutLineAccDimension.getProject());
+    invoiceLineAccDimension
+        .setStDimension(orderLineAccDimension != null ? orderLineAccDimension.getStDimension()
+            : inOutLineAccDimension.getStDimension());
     invoiceLineAccDimension.setInvoiceLine(invoiceLine);
     OBDal.getInstance().save(invoiceLineAccDimension);
   }

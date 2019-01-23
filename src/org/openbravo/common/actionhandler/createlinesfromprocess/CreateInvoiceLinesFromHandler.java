@@ -20,6 +20,8 @@ package org.openbravo.common.actionhandler.createlinesfromprocess;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -29,8 +31,6 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Abstract class to be implemented by any process that creates invoice lines from any Openbravo
@@ -39,7 +39,8 @@ import org.apache.logging.log4j.LogManager;
  * @param <T>
  *          Invoice lines will be created from an object whose class extends from the BaseOBObject
  */
-abstract class CreateInvoiceLinesFromHandler<T extends BaseOBObject> extends BaseProcessActionHandler {
+abstract class CreateInvoiceLinesFromHandler<T extends BaseOBObject>
+    extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   protected abstract Class<T> getFromClass();
@@ -76,6 +77,8 @@ abstract class CreateInvoiceLinesFromHandler<T extends BaseOBObject> extends Bas
   private JSONObject showExceptionInViewAndRetry(Exception e) {
     return getResponseBuilder()
         .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("error"), e.getMessage(),
-            true).retryExecution().build();
+            true)
+        .retryExecution()
+        .build();
   }
 }

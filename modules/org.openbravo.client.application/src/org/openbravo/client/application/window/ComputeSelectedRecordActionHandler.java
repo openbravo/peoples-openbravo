@@ -83,8 +83,8 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
         if (menuOption.getType() == MenuManager.MenuEntryType.Window) {
           if (windowId.equals(menuOption.getMenu().getWindow().getId())) {
             // found the window process it
-            final Window menuWindow = OBDal.getInstance().get(Window.class,
-                menuOption.getMenu().getWindow().getId());
+            final Window menuWindow = OBDal.getInstance()
+                .get(Window.class, menuOption.getMenu().getWindow().getId());
             result = processWindow(menuWindow, targetRecordId, targetEntity);
             break;
           }
@@ -155,8 +155,8 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
   }
 
   private TabInfo createTabInfo(BaseOBObject childObject, Tab childTab, TabTreeNode tabTreeNode) {
-    final String parentProperty = ApplicationUtils
-        .getParentProperty(childTab, tabTreeNode.getTab());
+    final String parentProperty = ApplicationUtils.getParentProperty(childTab,
+        tabTreeNode.getTab());
     final BaseOBObject parent = (BaseOBObject) childObject.get(parentProperty);
     final TabInfo tabInfo = new TabInfo();
     tabInfo.setRecord(parent);
@@ -174,6 +174,7 @@ public class ComputeSelectedRecordActionHandler extends BaseActionHandler {
     return null;
   }
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     throw new UnsupportedOperationException();
   }

@@ -94,14 +94,14 @@ class WADValidator {
       // Check tables without key
       WADValidatorData data[] = WADValidatorData.checkKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(issue.moduleid, issue.modulename, WADValidationType.MISSING_KEY, "Table "
-            + issue.objectname + " has not primary key.");
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.MISSING_KEY,
+            "Table " + issue.objectname + " has not primary key.");
       }
 
       data = WADValidatorData.checkMultipleKey(conn, modules, checkAll);
       for (WADValidatorData issue : data) {
-        result.addError(issue.moduleid, issue.modulename, WADValidationType.MULTIPLE_KEYS, "Table "
-            + issue.objectname + " has more than one key column.");
+        result.addError(issue.moduleid, issue.modulename, WADValidationType.MULTIPLE_KEYS,
+            "Table " + issue.objectname + " has more than one key column.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,
@@ -185,8 +185,8 @@ class WADValidator {
           checkAll);
       for (WADValidatorData issue : data) {
         result.addError(issue.moduleid, issue.modulename,
-            WADValidationType.BASEREFERENCE_WITH_PARENT, issue.objectname
-                + " base reference has parent reference " + issue.currentvalue
+            WADValidationType.BASEREFERENCE_WITH_PARENT,
+            issue.objectname + " base reference has parent reference " + issue.currentvalue
                 + ". Base references should not have parent reference.");
       }
     } catch (Exception e) {
@@ -226,10 +226,10 @@ class WADValidator {
           modules, checkAll);
       for (WADValidatorData issue : data) {
         result.addError(issue.moduleid, issue.modulename,
-            WADValidationType.TABS_WITH_MULTIPLE_FIELDS_FOR_SAME_COLUMN, "Error in field "
-                + issue.fieldname + ". There are more than one fields pointing to the column "
-                + issue.columnname + " in the tab " + issue.tabname + " of the " + issue.windowname
-                + " window.");
+            WADValidationType.TABS_WITH_MULTIPLE_FIELDS_FOR_SAME_COLUMN,
+            "Error in field " + issue.fieldname
+                + ". There are more than one fields pointing to the column " + issue.columnname
+                + " in the tab " + issue.tabname + " of the " + issue.windowname + " window.");
       }
     } catch (Exception e) {
       result.addWarning(WADValidationType.SQL,

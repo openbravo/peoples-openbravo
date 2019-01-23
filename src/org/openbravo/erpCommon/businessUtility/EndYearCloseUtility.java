@@ -76,8 +76,8 @@ public class EndYearCloseUtility {
       }
       EndYearCloseUtilityData[] dataOrgs = EndYearCloseUtilityData.treeOrg(conn, vars.getClient(),
           strOrgId);
-      EndYearCloseUtilityData[] dataOrgAcctSchemas = EndYearCloseUtilityData.treeOrgAcctSchemas(
-          conn, vars.getClient(), strOrgId);
+      EndYearCloseUtilityData[] dataOrgAcctSchemas = EndYearCloseUtilityData
+          .treeOrgAcctSchemas(conn, vars.getClient(), strOrgId);
       EndYearCloseUtilityData[] acctSchema = EndYearCloseUtilityData.treeAcctSchema(conn,
           vars.getClient(), strOrgId);
       String strPediodId = EndYearCloseUtilityData.getLastPeriod(conn, strYearId);
@@ -95,36 +95,44 @@ public class EndYearCloseUtility {
           } finally {
             OBContext.restorePreviousMode();
           }
-          throw new OBException(Utility.parseTranslation(conn, vars, parameters,
-              vars.getLanguage(),
+          throw new OBException(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
               Utility.messageBD(conn, "BalanceIsNotBalanced", vars.getLanguage())));
         }
         String strRegId = SequenceIdData.getUUID();
         String strCloseId = SequenceIdData.getUUID();
         String strOpenId = SequenceIdData.getUUID();
         String strDivideUpId = SequenceIdData.getUUID();
-        boolean createClosing = OBDal.getInstance().get(AcctSchema.class, acctSchema[j].id)
-            .getFinancialMgmtAcctSchemaGLList().size() > 0 ? OBDal.getInstance()
-            .get(AcctSchema.class, acctSchema[j].id).getFinancialMgmtAcctSchemaGLList().get(0)
-            .isCreateClosing() : true;
-        EndYearCloseUtilityData[] retainedEarningAccount = EndYearCloseUtilityData.retainedearning(
-            conn, acctSchema[j].id);
+        boolean createClosing = OBDal.getInstance()
+            .get(AcctSchema.class, acctSchema[j].id)
+            .getFinancialMgmtAcctSchemaGLList()
+            .size() > 0
+                ? OBDal.getInstance()
+                    .get(AcctSchema.class, acctSchema[j].id)
+                    .getFinancialMgmtAcctSchemaGLList()
+                    .get(0)
+                    .isCreateClosing()
+                : true;
+        EndYearCloseUtilityData[] retainedEarningAccount = EndYearCloseUtilityData
+            .retainedearning(conn, acctSchema[j].id);
         if (retainedEarningAccount == null || retainedEarningAccount.length == 0) {
           strDivideUpId = "";
         }
         for (int i = 0; i < dataOrgs.length; i++) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("Output: Before buttonReg");
+          }
           String regCount = EndYearCloseUtilityData.getRegCount(conn, vars.getClient(),
               dataOrgs[i].org, acctSchema[j].id, strPediodId);
           if (Integer.parseInt(regCount) > 0) {
-            throw new OBException(Utility.messageBD(conn, "RegularizationDoneAlready",
-                vars.getLanguage()));
+            throw new OBException(
+                Utility.messageBD(conn, "RegularizationDoneAlready", vars.getLanguage()));
           }
           String strRegOut = processButtonReg(strYearId, dataOrgs[i].org, strRegId,
               acctSchema[j].id, strDivideUpId, retainedEarningAccount);
-          String strCloseOut = createClosing ? processButtonClose(strYearId, dataOrgs[i].org,
-              strCloseId, strOpenId, acctSchema[j].id, strDivideUpId) : "Success";
+          String strCloseOut = createClosing
+              ? processButtonClose(strYearId, dataOrgs[i].org, strCloseId, strOpenId,
+                  acctSchema[j].id, strDivideUpId)
+              : "Success";
           if (!createClosing) {
             strCloseId = "";
             strOpenId = "";
@@ -132,8 +140,8 @@ public class EndYearCloseUtility {
           if (!strRegOut.equals("Success")) {
             throw new OBException(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
           } else if (!strCloseOut.equals("Success")) {
-            throw new OBException(Utility.messageBD(conn, "ProcessRunError_CreateNextPeriod",
-                vars.getLanguage()));
+            throw new OBException(
+                Utility.messageBD(conn, "ProcessRunError_CreateNextPeriod", vars.getLanguage()));
           }
           ExpenseAmtDr = BigDecimal.ZERO;
           ExpenseAmtCr = BigDecimal.ZERO;
@@ -152,9 +160,10 @@ public class EndYearCloseUtility {
           }
         }
         if (!closedOrganizations.contains(strOrgId)) {
-          if (EndYearCloseUtilityData.updateClose(con, conn, vars.getUser(), strYearId, strOrgId) == 0) {
-            throw new OBException(Utility.messageBD(conn, "AllPeriodsPermanentClosed",
-                vars.getLanguage()));
+          if (EndYearCloseUtilityData.updateClose(con, conn, vars.getUser(), strYearId,
+              strOrgId) == 0) {
+            throw new OBException(
+                Utility.messageBD(conn, "AllPeriodsPermanentClosed", vars.getLanguage()));
           }
         }
         closedOrganizations.add(strOrgId);
@@ -175,9 +184,9 @@ public class EndYearCloseUtility {
     return myError;
   }
 
-  private String processButtonReg(String strYearId, String stradOrgId,
-      String strFact_Acct_Group_ID, String strAcctSchema, String strDivideUpId,
-      EndYearCloseUtilityData[] account2) throws ServletException {
+  private String processButtonReg(String strYearId, String stradOrgId, String strFact_Acct_Group_ID,
+      String strAcctSchema, String strDivideUpId, EndYearCloseUtilityData[] account2)
+      throws ServletException {
     String Fact_Acct_ID = "";
     String Fact_Acct_Group_ID = strFact_Acct_Group_ID;
     String strPediodId = EndYearCloseUtilityData.getLastPeriod(conn, strYearId);
@@ -201,21 +210,21 @@ public class EndYearCloseUtility {
     EndYearCloseUtilityData[] account = EndYearCloseUtilityData.incomesummary(conn, strAcctSchema);
     if (ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).signum() > 0) {
       Fact_Acct_ID = SequenceIdData.getUUID();
-      EndYearCloseUtilityData
-          .insert(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(),
-              strAcctSchema, account[0].accountId,
-              EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
-              EndYearCloseUtilityData.adTableId(conn), "A",
-              EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema), "0",
-              ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
-                  .toString(), "0",
-              ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
-                  .toString(), Fact_Acct_Group_ID, "10", account[0].name, account[0].value,
-              account[0].cBpartnerId, account[0].mProductId,
-              account[0].aAssetId, strRegEntry, account[0].cTaxId, account[0].cProjectId,
-              account[0].cActivityId, account[0].user1Id, account[0].user2Id,
-              account[0].cCampaignId, account[0].cSalesregionId);
-    } else if (ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
+      EndYearCloseUtilityData.insert(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId,
+          vars.getUser(), strAcctSchema, account[0].accountId,
+          EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
+          EndYearCloseUtilityData.adTableId(conn), "A",
+          EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema), "0",
+          ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).toString(),
+          "0",
+          ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).toString(),
+          Fact_Acct_Group_ID, "10", account[0].name, account[0].value, account[0].cBpartnerId,
+          account[0].mProductId, account[0].aAssetId, strRegEntry, account[0].cTaxId,
+          account[0].cProjectId, account[0].cActivityId, account[0].user1Id, account[0].user2Id,
+          account[0].cCampaignId, account[0].cSalesregionId);
+    } else if (ExpenseAmtDr.add(RevenueAmtDr)
+        .subtract(RevenueAmtCr)
+        .subtract(ExpenseAmtCr)
         .signum() < 0) {
       Fact_Acct_ID = SequenceIdData.getUUID();
 
@@ -223,77 +232,79 @@ public class EndYearCloseUtility {
           vars.getUser(), strAcctSchema, account[0].accountId,
           EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
           EndYearCloseUtilityData.adTableId(conn), "A",
-          EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema), ExpenseAmtCr.add(RevenueAmtCr)
-              .subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(), "0",
+          EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema),
+          ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),
+          "0",
           ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),
           "0", Fact_Acct_Group_ID, "10", account[0].name, account[0].value, account[0].cBpartnerId,
-          account[0].mProductId, account[0].aAssetId, strRegEntry,
-          account[0].cTaxId, account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
-          account[0].user2Id, account[0].cCampaignId, account[0].cSalesregionId);
+          account[0].mProductId, account[0].aAssetId, strRegEntry, account[0].cTaxId,
+          account[0].cProjectId, account[0].cActivityId, account[0].user1Id, account[0].user2Id,
+          account[0].cCampaignId, account[0].cSalesregionId);
     }
     // Inserts retained earning statement
     String strClosingEntry = Utility.messageBD(conn, "ClosingEntry", vars.getLanguage());
     if (account2 != null && account2.length > 0) {
-      if (ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).signum() > 0) {
+      if (ExpenseAmtDr.add(RevenueAmtDr)
+          .subtract(RevenueAmtCr)
+          .subtract(ExpenseAmtCr)
+          .signum() > 0) {
         Fact_Acct_ID = SequenceIdData.getUUID();
-        EndYearCloseUtilityData
-            .insertClose(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(),
-                strAcctSchema, account[0].accountId,
-                EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
-                EndYearCloseUtilityData.adTableId(conn), "A",
-                EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema),
-                ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
-                    .toString(), "0", ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr)
-                    .subtract(ExpenseAmtCr).toString(), "0", strDivideUpId, "10", "D",
-                account[0].name, account[0].value, account[0].cBpartnerId,
-                account[0].mProductId, account[0].aAssetId, strClosingEntry, account[0].cTaxId,
-                account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
-                account[0].user2Id, account[0].cCampaignId, account[0].cSalesregionId);
+        EndYearCloseUtilityData.insertClose(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId,
+            vars.getUser(), strAcctSchema, account[0].accountId,
+            EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
+            EndYearCloseUtilityData.adTableId(conn), "A",
+            EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema),
+            ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).toString(),
+            "0",
+            ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).toString(),
+            "0", strDivideUpId, "10", "D", account[0].name, account[0].value,
+            account[0].cBpartnerId, account[0].mProductId, account[0].aAssetId, strClosingEntry,
+            account[0].cTaxId, account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
+            account[0].user2Id, account[0].cCampaignId, account[0].cSalesregionId);
         Fact_Acct_ID = SequenceIdData.getUUID();
-        EndYearCloseUtilityData
-            .insertClose(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(),
-                strAcctSchema, account2[0].accountId,
-                EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
-                EndYearCloseUtilityData.adTableId(conn), "A",
-                EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema), "0",
-                ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
-                    .toString(), "0", ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr)
-                    .subtract(ExpenseAmtCr).toString(), strDivideUpId, "10", "D", account2[0].name,
-                account2[0].value, account2[0].cBpartnerId,
-                account2[0].mProductId, account2[0].aAssetId, strClosingEntry, account2[0].cTaxId,
-                account2[0].cProjectId, account2[0].cActivityId, account2[0].user1Id,
-                account2[0].user2Id, account2[0].cCampaignId, account2[0].cSalesregionId);
-      } else if (ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr)
+        EndYearCloseUtilityData.insertClose(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId,
+            vars.getUser(), strAcctSchema, account2[0].accountId,
+            EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
+            EndYearCloseUtilityData.adTableId(conn), "A",
+            EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema), "0",
+            ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).toString(),
+            "0",
+            ExpenseAmtDr.add(RevenueAmtDr).subtract(RevenueAmtCr).subtract(ExpenseAmtCr).toString(),
+            strDivideUpId, "10", "D", account2[0].name, account2[0].value, account2[0].cBpartnerId,
+            account2[0].mProductId, account2[0].aAssetId, strClosingEntry, account2[0].cTaxId,
+            account2[0].cProjectId, account2[0].cActivityId, account2[0].user1Id,
+            account2[0].user2Id, account2[0].cCampaignId, account2[0].cSalesregionId);
+      } else if (ExpenseAmtDr.add(RevenueAmtDr)
+          .subtract(RevenueAmtCr)
+          .subtract(ExpenseAmtCr)
           .signum() < 0) {
         Fact_Acct_ID = SequenceIdData.getUUID();
-        EndYearCloseUtilityData
-            .insertClose(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(),
-                strAcctSchema, account[0].accountId,
-                EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
-                EndYearCloseUtilityData.adTableId(conn), "A",
-                EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema), "0",
-                ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr)
-                    .toString(), "0", ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr)
-                    .subtract(ExpenseAmtDr).toString(), strDivideUpId, "10", "D", account[0].name,
-                account[0].value, account[0].cBpartnerId,
-                account[0].mProductId, account[0].aAssetId, strClosingEntry, account[0].cTaxId,
-                account[0].cProjectId, account[0].cActivityId, account[0].user1Id,
-                account[0].user2Id, account[0].cCampaignId, account[0].cSalesregionId);
+        EndYearCloseUtilityData.insertClose(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId,
+            vars.getUser(), strAcctSchema, account[0].accountId,
+            EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
+            EndYearCloseUtilityData.adTableId(conn), "A",
+            EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema), "0",
+            ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),
+            "0",
+            ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),
+            strDivideUpId, "10", "D", account[0].name, account[0].value, account[0].cBpartnerId,
+            account[0].mProductId, account[0].aAssetId, strClosingEntry, account[0].cTaxId,
+            account[0].cProjectId, account[0].cActivityId, account[0].user1Id, account[0].user2Id,
+            account[0].cCampaignId, account[0].cSalesregionId);
         Fact_Acct_ID = SequenceIdData.getUUID();
-        EndYearCloseUtilityData
-            .insertClose(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(),
-                strAcctSchema, account2[0].accountId,
-                EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
-                EndYearCloseUtilityData.adTableId(conn), "A",
-                EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema),
-                ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr)
-                    .toString(), "0", ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr)
-                    .subtract(ExpenseAmtDr).toString(), "0", strDivideUpId, "10", "D",
-                account2[0].name, account2[0].value, account2[0].cBpartnerId,
-                account2[0].mProductId, account2[0].aAssetId,
-                strClosingEntry, account2[0].cTaxId, account2[0].cProjectId,
-                account2[0].cActivityId, account2[0].user1Id, account2[0].user2Id,
-                account2[0].cCampaignId, account2[0].cSalesregionId);
+        EndYearCloseUtilityData.insertClose(con, conn, Fact_Acct_ID, vars.getClient(), stradOrgId,
+            vars.getUser(), strAcctSchema, account2[0].accountId,
+            EndYearCloseUtilityData.getEndDate(conn, strPediodId), strPediodId,
+            EndYearCloseUtilityData.adTableId(conn), "A",
+            EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema),
+            ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),
+            "0",
+            ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),
+            "0", strDivideUpId, "10", "D", account2[0].name, account2[0].value,
+            account2[0].cBpartnerId, account2[0].mProductId, account2[0].aAssetId, strClosingEntry,
+            account2[0].cTaxId, account2[0].cProjectId, account2[0].cActivityId,
+            account2[0].user1Id, account2[0].user2Id, account2[0].cCampaignId,
+            account2[0].cSalesregionId);
       }
     }
     return "Success";

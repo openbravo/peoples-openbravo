@@ -41,8 +41,9 @@ public class TestSelectorDefaultFilterActionHandler extends BaseDataSourceTestDa
     JSONObject defaultsFilterSelector = new JSONObject(response);
     // The Product Complete selector has a Filter Expression defined in the Application Dictionary
     // that we should be retrieving here
-    String filterExpression = defaultsFilterSelector.has(PARAM_FILTER_EXPRESSION) ? defaultsFilterSelector
-        .getString(PARAM_FILTER_EXPRESSION) : null;
+    String filterExpression = defaultsFilterSelector.has(PARAM_FILTER_EXPRESSION)
+        ? defaultsFilterSelector.getString(PARAM_FILTER_EXPRESSION)
+        : null;
     assertThat("Selector default filters are returned", filterExpression, notNullValue());
   }
 

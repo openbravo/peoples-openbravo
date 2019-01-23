@@ -39,8 +39,8 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
     try {
       final JSONObject jsonData = new JSONObject(data);
       JSONObject result = new JSONObject();
-      FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          jsonData.getString("financialAccount"));
+      FIN_FinancialAccount financialAccount = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, jsonData.getString("financialAccount"));
       FIN_PaymentMethod paymentMethod = null;
       String paymentMethodId = "";
       String paymentMethodName = "";
@@ -48,8 +48,8 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
       if (financialAccount != null) {
         if (jsonData.has("receivedFrom") && jsonData.get("receivedFrom") != JSONObject.NULL) {
           final String receivedFrom = jsonData.getString("receivedFrom");
-          BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-              receivedFrom);
+          BusinessPartner businessPartner = OBDal.getInstance()
+              .get(BusinessPartner.class, receivedFrom);
           if (jsonData.getString("isSOTrx").toString().equals("true")) {
             paymentMethod = businessPartner.getPaymentMethod();
           } else {
@@ -57,8 +57,8 @@ public class ReceivedFromPaymentMethodActionHandler extends BaseActionHandler {
           }
 
           if (paymentMethod != null) {
-            OBCriteria<FinAccPaymentMethod> criteria = OBDal.getInstance().createCriteria(
-                FinAccPaymentMethod.class);
+            OBCriteria<FinAccPaymentMethod> criteria = OBDal.getInstance()
+                .createCriteria(FinAccPaymentMethod.class);
             criteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, financialAccount));
             criteria
                 .add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));

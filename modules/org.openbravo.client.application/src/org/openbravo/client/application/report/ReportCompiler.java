@@ -25,14 +25,14 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.Replace;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -97,8 +97,8 @@ class ReportCompiler {
    *           error message.
    */
   Map<String, JasperReport> compileSubReports(ConnectionProvider provider) throws OBException {
-    ConnectionProvider cp = provider != null ? provider : DalConnectionProvider
-        .getReadOnlyConnectionProvider();
+    ConnectionProvider cp = provider != null ? provider
+        : DalConnectionProvider.getReadOnlyConnectionProvider();
     try {
       Map<String, JasperReport> compiledSubReports = new HashMap<>();
       for (Object parameterObj : getMainDesign().getParametersList()) {

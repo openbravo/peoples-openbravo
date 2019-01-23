@@ -80,8 +80,8 @@ public class TransactionsDao {
     parameters.put("financialAccountId", finFinancialAccountId);
     OBContext.setAdminMode();
     try {
-      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance().createQuery(
-          FIN_FinaccTransaction.class, whereClause.toString());
+      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
+          .createQuery(FIN_FinaccTransaction.class, whereClause.toString());
       obQuery.setNamedParameters(parameters);
       OBObjectFieldProvider[] objectFieldProvider = OBObjectFieldProvider
           .createOBObjectFieldProvider(obQuery.list());
@@ -92,8 +92,8 @@ public class TransactionsDao {
   }
 
   public static FIN_FinaccTransaction createFinAccTransaction(FIN_Payment payment) {
-    final FIN_FinaccTransaction newTransaction = OBProvider.getInstance().get(
-        FIN_FinaccTransaction.class);
+    final FIN_FinaccTransaction newTransaction = OBProvider.getInstance()
+        .get(FIN_FinaccTransaction.class);
     OBContext.setAdminMode();
     try {
       newTransaction.setId(payment.getId());
@@ -111,8 +111,7 @@ public class TransactionsDao {
       newTransaction.setCurrency(payment.getAccount().getCurrency());
       String desc = "";
       if (payment.getDescription() != null && !payment.getDescription().isEmpty()) {
-        desc = payment
-            .getDescription()
+        desc = payment.getDescription()
             .replace("\n", ". ")
             .substring(0,
                 payment.getDescription().length() > 254 ? 254 : payment.getDescription().length());
@@ -121,15 +120,18 @@ public class TransactionsDao {
       newTransaction.setClient(payment.getClient());
       newTransaction.setLineNo(getTransactionMaxLineNo(payment.getAccount()) + 10);
 
-      BigDecimal depositAmt = FIN_Utility.getDepositAmount(payment.getDocumentType()
-          .getDocumentCategory().equals("ARR"), payment.getFinancialTransactionAmount());
-      BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(payment.getDocumentType()
-          .getDocumentCategory().equals("ARR"), payment.getFinancialTransactionAmount());
+      BigDecimal depositAmt = FIN_Utility.getDepositAmount(
+          payment.getDocumentType().getDocumentCategory().equals("ARR"),
+          payment.getFinancialTransactionAmount());
+      BigDecimal paymentAmt = FIN_Utility.getPaymentAmount(
+          payment.getDocumentType().getDocumentCategory().equals("ARR"),
+          payment.getFinancialTransactionAmount());
 
       newTransaction.setDepositAmount(depositAmt);
       newTransaction.setPaymentAmount(paymentAmt);
-      newTransaction.setStatus(newTransaction.getDepositAmount().compareTo(
-          newTransaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
+      newTransaction.setStatus(
+          newTransaction.getDepositAmount().compareTo(newTransaction.getPaymentAmount()) > 0 ? "RPR"
+              : "PPM");
       if (!newTransaction.getCurrency().equals(payment.getCurrency())) {
         newTransaction.setForeignCurrency(payment.getCurrency());
         newTransaction.setForeignConversionRate(payment.getFinancialTransactionConvertRate());
@@ -145,8 +147,7 @@ public class TransactionsDao {
   }
 
   public static Long getTransactionMaxLineNo(FIN_FinancialAccount financialAccount) {
-    Query<Long> query = OBDal
-        .getInstance()
+    Query<Long> query = OBDal.getInstance()
         .getSession()
         .createQuery(
             "select max(f.lineNo) as maxLineno from FIN_Finacc_Transaction as f where account.id=:accountId",
@@ -161,11 +162,11 @@ public class TransactionsDao {
 
   @Deprecated
   public static void process(FIN_FinaccTransaction finFinancialAccountTransaction) {
-    final FIN_FinancialAccount financialAccount = OBDal.getInstance().get(
-        FIN_FinancialAccount.class, finFinancialAccountTransaction.getAccount().getId());
-    financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
-        finFinancialAccountTransaction.getDepositAmount().subtract(
-            finFinancialAccountTransaction.getPaymentAmount())));
+    final FIN_FinancialAccount financialAccount = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, finFinancialAccountTransaction.getAccount().getId());
+    financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
+        .add(finFinancialAccountTransaction.getDepositAmount()
+            .subtract(finFinancialAccountTransaction.getPaymentAmount())));
     finFinancialAccountTransaction.setProcessed(true);
     FIN_Payment payment = finFinancialAccountTransaction.getFinPayment();
     if (payment != null) {
@@ -190,8 +191,8 @@ public class TransactionsDao {
           finFinancialAccountTransaction.getOrganization().getId(), connectionProvider);
       if (acct == null) {
         throw new OBException("Accounting process failed for the financial account transaction");
-      } else if (!acct.post(finFinancialAccountTransaction.getId(), false, vars,
-          connectionProvider, connectionProvider.getConnection()) || acct.errors != 0) {
+      } else if (!acct.post(finFinancialAccountTransaction.getId(), false, vars, connectionProvider,
+          connectionProvider.getConnection()) || acct.errors != 0) {
         connectionProvider.releaseRollbackConnection(connectionProvider.getConnection());
         throw new OBException(acct.getMessageResult().getMessage());
       }
@@ -204,8 +205,8 @@ public class TransactionsDao {
       String isProcessed) {
     OBContext.setAdminMode();
     try {
-      final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance().createCriteria(
-          FIN_Reconciliation.class);
+      final OBCriteria<FIN_Reconciliation> obc = OBDal.getInstance()
+          .createCriteria(FIN_Reconciliation.class);
       obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_ACCOUNT, account));
       if ("Y".equals(isProcessed)) {
         obc.add(Restrictions.eq(FIN_Reconciliation.PROPERTY_PROCESSED, true));
@@ -232,10 +233,11 @@ public class TransactionsDao {
       whereClause.append(".id='");
       whereClause.append(financialAccount.getId());
       whereClause.append("'");
-      whereClause.append(" and fatrx.").append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION)
+      whereClause.append(" and fatrx.")
+          .append(FIN_FinaccTransaction.PROPERTY_RECONCILIATION)
           .append(" is null ");
-      final OBQuery<FIN_FinaccTransaction> obqFATrx = OBDal.getInstance().createQuery(
-          FIN_FinaccTransaction.class, whereClause.toString());
+      final OBQuery<FIN_FinaccTransaction> obqFATrx = OBDal.getInstance()
+          .createQuery(FIN_FinaccTransaction.class, whereClause.toString());
       return obqFATrx.count();
 
     } finally {
@@ -278,8 +280,8 @@ public class TransactionsDao {
       }
       whereClause.append(" order by ft.transactionDate, ft.lineNo");
 
-      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance().createQuery(
-          FIN_FinaccTransaction.class, whereClause.toString(), parameters);
+      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
+          .createQuery(FIN_FinaccTransaction.class, whereClause.toString(), parameters);
 
       return obQuery.list();
 
@@ -294,7 +296,8 @@ public class TransactionsDao {
   public static FieldProvider[] getTransactionsFiltered(FIN_FinancialAccount account,
       Date statementDate, boolean hideAfterDate) {
 
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     OBContext.setAdminMode();
@@ -314,8 +317,8 @@ public class TransactionsDao {
       }
       whereClause.append(" order by ft.transactionDate, ft.lineNo");
 
-      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance().createQuery(
-          FIN_FinaccTransaction.class, whereClause.toString(), parameters);
+      final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
+          .createQuery(FIN_FinaccTransaction.class, whereClause.toString(), parameters);
 
       List<FIN_FinaccTransaction> transactionOBList = obQuery.list();
 
@@ -337,8 +340,9 @@ public class TransactionsDao {
         }
 
         // Truncate business partner name
-        String truncateBPname = (strBusinessPartner.length() > 30) ? strBusinessPartner
-            .substring(0, 27).concat("...").toString() : strBusinessPartner;
+        String truncateBPname = (strBusinessPartner.length() > 30)
+            ? strBusinessPartner.substring(0, 27).concat("...").toString()
+            : strBusinessPartner;
         FieldProviderFactory.setField(data[i], "businessPartner",
             (strBusinessPartner.length() > 30) ? strBusinessPartner : "");
         FieldProviderFactory.setField(data[i], "businessPartnerTrunc", truncateBPname);
@@ -349,17 +353,18 @@ public class TransactionsDao {
         String description = FIN_Transactions[i].getDescription();
         String truncateDescription = "";
         if (description != null) {
-          truncateDescription = (description.length() > 42) ? description.substring(0, 39)
-              .concat("...").toString() : description;
+          truncateDescription = (description.length() > 42)
+              ? description.substring(0, 39).concat("...").toString()
+              : description;
         }
         FieldProviderFactory.setField(data[i], "description",
             (description != null && description.length() > 42) ? description : "");
         FieldProviderFactory.setField(data[i], "descriptionTrunc", truncateDescription);
 
-        FieldProviderFactory.setField(data[i], "paymentAmount", FIN_Transactions[i]
-            .getPaymentAmount().toString());
-        FieldProviderFactory.setField(data[i], "depositAmount", FIN_Transactions[i]
-            .getDepositAmount().toString());
+        FieldProviderFactory.setField(data[i], "paymentAmount",
+            FIN_Transactions[i].getPaymentAmount().toString());
+        FieldProviderFactory.setField(data[i], "depositAmount",
+            FIN_Transactions[i].getDepositAmount().toString());
         FieldProviderFactory.setField(data[i], "rownum", "" + (i + 1));
         FieldProviderFactory.setField(data[i], "markSelectedId",
             (FIN_Transactions[i].getStatus().equals("RPPC")) ? FIN_Transactions[i].getId() : "");

@@ -45,13 +45,14 @@ public abstract class BaseActionHandler implements ActionHandler {
    * @see org.openbravo.client.kernel.ActionHandler#execute(javax.servlet.http.HttpServletRequest,
    * javax.servlet.http.HttpServletResponse)
    */
+  @Override
   public void execute() {
     final StringBuilder sb = new StringBuilder();
     String line;
     try {
       final HttpServletRequest request = RequestContext.get().getRequest();
-      final BufferedReader reader = new BufferedReader(new InputStreamReader(
-          request.getInputStream(), "UTF-8"));
+      final BufferedReader reader = new BufferedReader(
+          new InputStreamReader(request.getInputStream(), "UTF-8"));
       while ((line = reader.readLine()) != null) {
         sb.append(line).append("\n");
       }

@@ -64,9 +64,9 @@ public class TemplateResolverTest extends OBBaseTest {
     COMPONENT_TYPE = componentTypeProperty.getAllowedValues().iterator().next();
   }
 
-  /** 
-   * This before method is named setUpT() to avoid overwriting the super 
-   * setUp method that is invoke automatically before this one.
+  /**
+   * This before method is named setUpT() to avoid overwriting the super setUp method that is invoke
+   * automatically before this one.
    */
   @Before
   public void setUpT() throws Exception {
@@ -104,8 +104,8 @@ public class TemplateResolverTest extends OBBaseTest {
     // now do resolving
     check(TemplateResolver.getInstance().resolve(templateB), new String[] { "D", "E", "B" });
     check(TemplateResolver.getInstance().resolve(templateC), new String[] { "F", "G", "C" });
-    check(TemplateResolver.getInstance().resolve(templateA), new String[] { "D", "E", "B", "F",
-        "G", "C", "A" });
+    check(TemplateResolver.getInstance().resolve(templateA),
+        new String[] { "D", "E", "B", "F", "G", "C", "A" });
 
     // rollback to not save the new templates
     OBDal.getInstance().rollbackAndClose();
@@ -155,8 +155,8 @@ public class TemplateResolverTest extends OBBaseTest {
     // now do resolving
     check(TemplateResolver.getInstance().resolve(templateB), new String[] { "I", "J", "H" });
     check(TemplateResolver.getInstance().resolve(templateC), new String[] { "F", "G", "C" });
-    check(TemplateResolver.getInstance().resolve(templateA), new String[] { "I", "J", "H", "F",
-        "G", "C", "A" });
+    check(TemplateResolver.getInstance().resolve(templateA),
+        new String[] { "I", "J", "H", "F", "G", "C", "A" });
 
     // now override the top of the inheritance structure
     final Template templateK = createSaveTemplate("K");
@@ -189,8 +189,8 @@ public class TemplateResolverTest extends OBBaseTest {
     template.setComponentType(COMPONENT_TYPE);
 
     for (Template dependency : dependencies) {
-      final TemplateDependency templateDependency = OBProvider.getInstance().get(
-          TemplateDependency.class);
+      final TemplateDependency templateDependency = OBProvider.getInstance()
+          .get(TemplateDependency.class);
       templateDependency.setObclkerTemplate(template);
       templateDependency.setDependsOnTemplate(dependency);
       template.getOBCLKERTemplateDependencyList().add(templateDependency);

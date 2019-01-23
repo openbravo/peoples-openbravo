@@ -63,15 +63,15 @@ public class DalPerformanceInventoryLineTest extends OBBaseTest {
     // make sure our user can do this addReadWriteAccess(InventoryCount.class);
     addReadWriteAccess(InventoryCountLine.class);
 
-    final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
-        InventoryCount.class);
+    final OBCriteria<InventoryCount> icObc = OBDal.getInstance()
+        .createCriteria(InventoryCount.class);
     icObc.setFirstResult(1);
     icObc.setMaxResults(1);
     icObc.addOrderBy("id", false);
     final InventoryCount baseIc = (InventoryCount) DalUtil.copy(icObc.list().get(0), false);
 
-    final OBCriteria<InventoryCountLine> iclObc = OBDal.getInstance().createCriteria(
-        InventoryCountLine.class);
+    final OBCriteria<InventoryCountLine> iclObc = OBDal.getInstance()
+        .createCriteria(InventoryCountLine.class);
     iclObc.setFirstResult(1);
     iclObc.setMaxResults(1);
     final InventoryCountLine baseLine = (InventoryCountLine) DalUtil.copy(iclObc.list().get(0),
@@ -107,8 +107,8 @@ public class DalPerformanceInventoryLineTest extends OBBaseTest {
     addReadWriteAccess(InventoryCount.class);
     addReadWriteAccess(InventoryCountLine.class);
 
-    final OBCriteria<InventoryCountLine> iclObc = OBDal.getInstance().createCriteria(
-        InventoryCountLine.class);
+    final OBCriteria<InventoryCountLine> iclObc = OBDal.getInstance()
+        .createCriteria(InventoryCountLine.class);
     iclObc.setFirstResult(1);
     iclObc.setMaxResults(1);
     final InventoryCountLine baseLine = (InventoryCountLine) DalUtil.copy(iclObc.list().get(0),
@@ -118,8 +118,8 @@ public class DalPerformanceInventoryLineTest extends OBBaseTest {
     Hibernate.initialize(baseLine.getCreatedBy());
     commitTransaction();
 
-    final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
-        InventoryCount.class);
+    final OBCriteria<InventoryCount> icObc = OBDal.getInstance()
+        .createCriteria(InventoryCount.class);
     icObc.add(Restrictions.like("name", NAME_PREFIX + "%"));
     int cnt = 0;
     int cntLine = 0;
@@ -134,8 +134,8 @@ public class DalPerformanceInventoryLineTest extends OBBaseTest {
 
       icl.setDescription("desc " + ic.getName());
       final InventoryCountLine icl2 = ic.getMaterialMgmtInventoryCountLineList().get(0);
-      icl2.setQuantityOrderBook(new BigDecimal((icl2.getQuantityOrderBook() == null ? 0f : icl2
-          .getQuantityOrderBook().floatValue() + 1f)));
+      icl2.setQuantityOrderBook(new BigDecimal((icl2.getQuantityOrderBook() == null ? 0f
+          : icl2.getQuantityOrderBook().floatValue() + 1f)));
       OBDal.getInstance().save(ic);
     }
     commitTransaction();
@@ -151,8 +151,8 @@ public class DalPerformanceInventoryLineTest extends OBBaseTest {
   public void testZCleanUp() {
     addReadWriteAccess(InventoryCount.class);
     addReadWriteAccess(InventoryCountLine.class);
-    final OBCriteria<InventoryCount> icObc = OBDal.getInstance().createCriteria(
-        InventoryCount.class);
+    final OBCriteria<InventoryCount> icObc = OBDal.getInstance()
+        .createCriteria(InventoryCount.class);
     icObc.add(Restrictions.like("name", NAME_PREFIX + "%"));
     for (InventoryCount ic : icObc.list()) {
       OBDal.getInstance().remove(ic);

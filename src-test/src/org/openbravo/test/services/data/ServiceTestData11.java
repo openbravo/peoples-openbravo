@@ -21,9 +21,9 @@ package org.openbravo.test.services.data;
 
 import java.math.BigDecimal;
 
-import org.openbravo.erpCommon.utility.OBDateUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 
 public class ServiceTestData11 extends ServiceTestData {
 
@@ -42,9 +42,9 @@ public class ServiceTestData11 extends ServiceTestData {
     setBpartnerId(BP_CUSTOMER_A);
     setOrderDate("01-01-2008");
     setServiceId(SERVICE_WARRANTY);
-    setProducts(new String[][] {//
-    // ProductId, quantity, price, amount
-    { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10.00", "10.00" } //
+    setProducts(new String[][] { //
+        // ProductId, quantity, price, amount
+        { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10.00", "10.00" } //
     });
     setQuantity(BigDecimal.ONE);
     setPrice(new BigDecimal("250.00"));

@@ -38,8 +38,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class RegisterModule extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -47,8 +48,9 @@ public class RegisterModule extends HttpSecureAppServlet {
     }
     if (vars.commandIn("REGISTER")) {
       printPage(response, vars, true);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, boolean process)
@@ -102,8 +104,8 @@ public class RegisterModule extends HttpSecureAppServlet {
           OBError message = new OBError();
           message.setType("Error");
           message.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          message.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(),
-              e.getMessage()));
+          message
+              .setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), e.getMessage()));
           vars.setMessage("RegisterModule", message);
           error = true;
           e.printStackTrace();
@@ -120,8 +122,9 @@ public class RegisterModule extends HttpSecureAppServlet {
       discard[0] = "discardDefault";
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/RegisterModule", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/RegisterModule", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());

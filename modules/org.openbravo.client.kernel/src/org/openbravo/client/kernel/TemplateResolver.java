@@ -95,8 +95,8 @@ public class TemplateResolver {
     Template currentTemplate = template;
     int cnt = 0;
     while (true) {
-      final OBCriteria<Template> templateCriteria = OBDal.getInstance().createCriteria(
-          Template.class);
+      final OBCriteria<Template> templateCriteria = OBDal.getInstance()
+          .createCriteria(Template.class);
       templateCriteria.add(Restrictions.eq(Template.PROPERTY_OVERRIDESTEMPLATE, currentTemplate));
       final List<Template> overridingTemplates = templateCriteria.list();
       if (overridingTemplates.size() == 0) {
@@ -109,8 +109,8 @@ public class TemplateResolver {
       derivePath.add(currentTemplate);
       final Template newTemplate = overridingTemplates.get(0);
       if (derivePath.contains(newTemplate)) {
-        log.error("There is a cycle in the overriding of templates, one template is "
-            + currentTemplate);
+        log.error(
+            "There is a cycle in the overriding of templates, one template is " + currentTemplate);
         return currentTemplate;
       }
       currentTemplate = newTemplate;

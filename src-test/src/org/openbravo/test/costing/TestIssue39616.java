@@ -95,8 +95,8 @@ public class TestIssue39616 extends TestCostingBase {
       TestCostingUtils.createLandedCost(landedCostTypeIdList, amountList, receiptList,
           receiptLineList, day1);
 
-      List<MaterialTransaction> transactionList = TestCostingUtils.getProductTransactions(product
-          .getId());
+      List<MaterialTransaction> transactionList = TestCostingUtils
+          .getProductTransactions(product.getId());
 
       List<CostAdjustment> costAdjustmentList = TestCostingUtils.getCostAdjustment(product.getId());
 

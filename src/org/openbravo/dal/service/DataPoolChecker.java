@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.database.ExternalConnectionPool;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Helper class used to determine if a report should use the read-only pool to retrieve data
@@ -81,7 +81,8 @@ public class DataPoolChecker implements OBSingleton {
     hql.append("select dps.report.id, dps.dataPool from OBUIAPP_Data_Pool_Selection dps ");
     hql.append("where dps.active = true");
 
-    Query<Object[]> query = OBDal.getInstance().getSession()
+    Query<Object[]> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), Object[].class);
     List<Object[]> queryResults = query.list();
 
@@ -95,8 +96,10 @@ public class DataPoolChecker implements OBSingleton {
   private void refreshDefaultPoolPreference() {
     final StringBuilder hql = new StringBuilder();
     hql.append("select p.searchKey from ADPreference p ");
-    hql.append("where p.property='OBUIAPP_DefaultDBPoolForReports' and p.active=true and p.visibleAtClient.id='0' and p.visibleAtOrganization.id='0' ");
-    Query<String> defaultPoolQuery = OBDal.getInstance().getSession()
+    hql.append(
+        "where p.property='OBUIAPP_DefaultDBPoolForReports' and p.active=true and p.visibleAtClient.id='0' and p.visibleAtOrganization.id='0' ");
+    Query<String> defaultPoolQuery = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), String.class);
     defaultPoolQuery.setMaxResults(1);
     setDefaultReadOnlyPool(defaultPoolQuery.uniqueResult());

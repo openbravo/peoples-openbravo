@@ -101,8 +101,9 @@ public class OBViewUtil {
   public static String getParameterTitle(Parameter parameter, boolean purchaseTrx) {
     if (purchaseTrx && parameter.getApplicationElement() != null
         && parameter.isCentralMaintenance()) {
-      return getLabel(parameter.getApplicationElement(), parameter.getApplicationElement()
-          .getADElementTrlList(), Element.PROPERTY_PURCHASEORDERNAME, Element.PROPERTY_NAME);
+      return getLabel(parameter.getApplicationElement(),
+          parameter.getApplicationElement().getADElementTrlList(),
+          Element.PROPERTY_PURCHASEORDERNAME, Element.PROPERTY_NAME);
     }
     return getLabel(parameter, parameter.getOBUIAPPParameterTrlList());
   }
@@ -142,8 +143,8 @@ public class OBViewUtil {
    *          be used
    * @return a translated name if found or otherwise the name of the owner
    */
-  private static String getLabel(BaseOBObject owner, List<?> trlObjects,
-      String primaryPropertyName, String secondaryPropertyName) {
+  private static String getLabel(BaseOBObject owner, List<?> trlObjects, String primaryPropertyName,
+      String secondaryPropertyName) {
     if (OBContext.hasTranslationInstalled()) {
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
 
@@ -170,7 +171,8 @@ public class OBViewUtil {
   }
 
   @SuppressWarnings("unchecked")
-  private static List<BaseOBObject> getInitializedTrlObjects(BaseOBObject owner, List<?> trlObjects) {
+  private static List<BaseOBObject> getInitializedTrlObjects(BaseOBObject owner,
+      List<?> trlObjects) {
     List<BaseOBObject> initializedTrlObjects;
     // owner could have been loaded in a different DAL session via ADCS, as we are not caching trl
     // entries in ADCS, so we need to handle this case
@@ -178,8 +180,8 @@ public class OBViewUtil {
       // check if there is already a different instance for the same entry in current DAL session
       SessionImpl si = ((SessionImpl) OBDal.getInstance().getSession());
       EntityPersister p = si.getEntityPersister(owner.getEntityName(), owner);
-      BaseOBObject ownerInSession = (BaseOBObject) si.getPersistenceContext().getEntity(
-          new EntityKey((String) owner.getId(), p));
+      BaseOBObject ownerInSession = (BaseOBObject) si.getPersistenceContext()
+          .getEntity(new EntityKey((String) owner.getId(), p));
 
       if (ownerInSession == null) {
         // there is no a different instance in this session, just load it
@@ -221,7 +223,8 @@ public class OBViewUtil {
         // Grid Configurations at field level for this tab configuration
         // (tabConf.getOBUIAPPGCFieldList) gets cached on Hibernate's first level cache so they can
         // be reused for all fields without the need of reach DB again
-        Optional<GCField> fieldConf = tabConf.get().getOBUIAPPGCFieldList() //
+        Optional<GCField> fieldConf = tabConf.get()
+            .getOBUIAPPGCFieldList() //
             .stream() //
             .filter(fieldGC -> fieldGC.getField().getId().equals(field.getId())) //
             .findFirst();
@@ -282,11 +285,12 @@ public class OBViewUtil {
         sortingPropertyValue(gcItem);
         filteringPropertyValue(gcItem);
         if (operator == null) {
-          if (gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem).toString()) != null
-              && !"D".equals(gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem)
-                  .toString()))) {
-            operator = (String) gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY)
-                .get(gcItem).toString());
+          if (gcItem
+              .get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem).toString()) != null
+              && !"D".equals(gcItem
+                  .get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem).toString()))) {
+            operator = (String) gcItem
+                .get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem).toString());
           }
         }
         if (filterOnChange == null) {
@@ -302,8 +306,8 @@ public class OBViewUtil {
           disableFkDropdown = convertBoolean(gcItem, DISABLEFKCOMBO_PROPERTY);
         }
         if (thresholdToFilter == null) {
-          thresholdToFilter = (Long) gcItem.get(itemClass.getField(THRESHOLDTOFILTER_PROPERTY)
-              .get(gcItem).toString());
+          thresholdToFilter = (Long) gcItem
+              .get(itemClass.getField(THRESHOLDTOFILTER_PROPERTY).get(gcItem).toString());
         }
         if (lazyFiltering == null && !(gcItem instanceof GCField)) {
           lazyFiltering = convertBoolean(gcItem, ISLAZYFILTERING_PROPERTY);
@@ -320,7 +324,8 @@ public class OBViewUtil {
         if (gcItem instanceof GCSystem) {
           if (gcItem.get(itemClass.getField(property).get(gcItem).toString()).equals(true)) {
             isPropertyEnabled = true;
-          } else if (gcItem.get(itemClass.getField(property).get(gcItem).toString()).equals(false)) {
+          } else if (gcItem.get(itemClass.getField(property).get(gcItem).toString())
+              .equals(false)) {
             isPropertyEnabled = false;
           }
         } else {

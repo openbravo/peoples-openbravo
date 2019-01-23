@@ -56,6 +56,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
   public static final String TRXTYPE_BankFee = "BF";
   static Logger log4j = LogManager.getLogger();
 
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
     msg.setType("Success");
@@ -70,8 +71,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
       if (recordID == null) {
         recordID = (String) bundle.getParams().get("Fin_Finacc_Transaction_ID");
       }
-      final FIN_FinaccTransaction transaction = OBDal.getInstance().get(
-          FIN_FinaccTransaction.class, recordID);
+      final FIN_FinaccTransaction transaction = OBDal.getInstance()
+          .get(FIN_FinaccTransaction.class, recordID);
       transactionProcess(strAction, transaction);
       bundle.setResult(msg);
     } catch (Exception e) {
@@ -102,13 +103,12 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
         // ***********************
 
         boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(
-            FIN_FinaccTransaction.TABLE_NAME, transaction.getId(), FIN_FinaccTransaction.TABLE_NAME
-                + "_ID", "LE");
+            FIN_FinaccTransaction.TABLE_NAME, transaction.getId(),
+            FIN_FinaccTransaction.TABLE_NAME + "_ID", "LE");
         boolean documentEnabled = getDocumentConfirmation(transaction.getId());
-        if (documentEnabled
-            && !FIN_Utility.isPeriodOpen(transaction.getClient().getId(),
-                AcctServer.DOCTYPE_FinAccTransaction, transaction.getOrganization().getId(),
-                OBDateUtils.formatDate(transaction.getDateAcct())) && orgLegalWithAccounting) {
+        if (documentEnabled && !FIN_Utility.isPeriodOpen(transaction.getClient().getId(),
+            AcctServer.DOCTYPE_FinAccTransaction, transaction.getOrganization().getId(),
+            OBDateUtils.formatDate(transaction.getDateAcct())) && orgLegalWithAccounting) {
           msg = OBMessageUtils.messageBD("PeriodNotAvailable");
           throw new OBException(msg);
         }
@@ -154,15 +154,17 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             }
           }
 
-          if (!StringUtils.equals(transaction.getCurrency().getId(), payment.getCurrency().getId())) {
+          if (!StringUtils.equals(transaction.getCurrency().getId(),
+              payment.getCurrency().getId())) {
             transaction.setForeignCurrency(payment.getCurrency());
             transaction.setForeignConversionRate(payment.getFinancialTransactionConvertRate());
             transaction.setForeignAmount(payment.getAmount());
           }
 
         } else {
-          transaction.setStatus(transaction.getDepositAmount().compareTo(
-              transaction.getPaymentAmount()) > 0 ? "RDNC" : "PWNC");
+          transaction.setStatus(
+              transaction.getDepositAmount().compareTo(transaction.getPaymentAmount()) > 0 ? "RDNC"
+                  : "PWNC");
         }
         if (transaction.getForeignCurrency() != null
             && !transaction.getCurrency().equals(transaction.getForeignCurrency())
@@ -170,10 +172,10 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           insertConversionRateDocument(transaction);
         }
 
-        FIN_FinancialAccount financialAccount = OBDal.getInstance().getObjectLockForNoKeyUpdate(
-            transaction.getAccount());
-        financialAccount.setCurrentBalance(financialAccount.getCurrentBalance().add(
-            transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
+        FIN_FinancialAccount financialAccount = OBDal.getInstance()
+            .getObjectLockForNoKeyUpdate(transaction.getAccount());
+        financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
+            .add(transaction.getDepositAmount().subtract(transaction.getPaymentAmount())));
         transaction.setAprmProcessed("R");
         OBDal.getInstance().save(transaction);
 
@@ -194,18 +196,18 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
         // Payment Method associated to payment not longer in financial account
         final FIN_Payment payment = transaction.getFinPayment();
         if (payment != null && FIN_Utility.invoicePaymentStatus(payment) == null) {
-          msg = String.format(OBMessageUtils.messageBD("APRM_NoPaymentMethod"), payment
-              .getPaymentMethod().getIdentifier(), payment.getDocumentNo(), payment.getAccount()
-              .getName());
+          msg = String.format(OBMessageUtils.messageBD("APRM_NoPaymentMethod"),
+              payment.getPaymentMethod().getIdentifier(), payment.getDocumentNo(),
+              payment.getAccount().getName());
           throw new OBException(msg);
         }
         // Remove conversion rate at document level for the given transaction
         OBContext.setAdminMode();
         try {
-          OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
-              ConversionRateDoc.class);
-          obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION,
-              transaction));
+          OBCriteria<ConversionRateDoc> obc = OBDal.getInstance()
+              .createCriteria(ConversionRateDoc.class);
+          obc.add(
+              Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION, transaction));
           boolean dataRemoved = false;
           for (ConversionRateDoc conversionRateDoc : obc.list()) {
             dataRemoved = true;
@@ -226,8 +228,9 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
             for (FIN_PaymentScheduleDetail psd : pd.getFINPaymentScheduleDetailList()) {
               invoicePaidold = psd.isInvoicePaid();
               if (invoicePaidold) {
-                boolean restore = (FIN_Utility.seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
-                    .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
+                boolean restore = (FIN_Utility
+                    .seqnumberpaymentstatus(payment.getStatus())) == (FIN_Utility
+                        .seqnumberpaymentstatus(FIN_Utility.invoicePaymentStatus(payment)));
                 if (restore) {
                   FIN_Utility.restorePaidAmounts(psd);
                 }
@@ -238,13 +241,15 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           transaction.setStatus(payment.isReceipt() ? "RPR" : "PPM");
           OBDal.getInstance().save(payment);
         } else {
-          transaction.setStatus(transaction.getDepositAmount().compareTo(
-              transaction.getPaymentAmount()) > 0 ? "RPR" : "PPM");
+          transaction.setStatus(
+              transaction.getDepositAmount().compareTo(transaction.getPaymentAmount()) > 0 ? "RPR"
+                  : "PPM");
         }
-        FIN_FinancialAccount financialAccount = OBDal.getInstance().getObjectLockForNoKeyUpdate(
-            transaction.getAccount());
+        FIN_FinancialAccount financialAccount = OBDal.getInstance()
+            .getObjectLockForNoKeyUpdate(transaction.getAccount());
         financialAccount.setCurrentBalance(financialAccount.getCurrentBalance()
-            .subtract(transaction.getDepositAmount()).add(transaction.getPaymentAmount()));
+            .subtract(transaction.getDepositAmount())
+            .add(transaction.getPaymentAmount()));
         transaction.setAprmProcessed("P");
         OBDal.getInstance().save(transaction);
       }
@@ -257,9 +262,10 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
   private List<ConversionRateDoc> getConversionRateDocument(FIN_FinaccTransaction transaction) {
     OBContext.setAdminMode();
     try {
-      OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
-          ConversionRateDoc.class);
-      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, transaction.getForeignCurrency()));
+      OBCriteria<ConversionRateDoc> obc = OBDal.getInstance()
+          .createCriteria(ConversionRateDoc.class);
+      obc.add(
+          Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, transaction.getForeignCurrency()));
       obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, transaction.getCurrency()));
       obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_FINANCIALACCOUNTTRANSACTION, transaction));
       return obc.list();
@@ -278,8 +284,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
       newConversionRateDoc.setToCurrency(transaction.getCurrency());
       newConversionRateDoc.setRate(transaction.getForeignConversionRate());
       newConversionRateDoc.setForeignAmount(transaction.getForeignAmount());
-      newConversionRateDoc.setFinancialAccountTransaction(OBDal.getInstance().get(
-          APRM_FinaccTransactionV.class, transaction.getId()));
+      newConversionRateDoc.setFinancialAccountTransaction(
+          OBDal.getInstance().get(APRM_FinaccTransactionV.class, transaction.getId()));
       OBDal.getInstance().save(newConversionRateDoc);
       OBDal.getInstance().flush();
       return newConversionRateDoc;
@@ -299,64 +305,67 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
     boolean confirmation = false;
     OBContext.setAdminMode();
     try {
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          strRecordId);
+      FIN_FinaccTransaction transaction = OBDal.getInstance()
+          .get(FIN_FinaccTransaction.class, strRecordId);
       List<FIN_FinancialAccountAccounting> accounts = transaction.getAccount()
           .getFINFinancialAccountAcctList();
       FIN_Payment payment = transaction.getFinPayment();
       if (payment != null) {
-        OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance().createCriteria(
-            FinAccPaymentMethod.class);
-        obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
-            transaction.getAccount()));
+        OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance()
+            .createCriteria(FinAccPaymentMethod.class);
+        obCriteria
+            .add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, transaction.getAccount()));
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
             payment.getPaymentMethod()));
         obCriteria.setFilterOnReadableClients(false);
         obCriteria.setFilterOnReadableOrganization(false);
         List<FinAccPaymentMethod> lines = obCriteria.list();
         for (FIN_FinancialAccountAccounting account : accounts) {
-          if (confirmation)
+          if (confirmation) {
             return confirmation;
+          }
           if (payment.isReceipt()) {
             if (("INT").equals(lines.get(0).getUponDepositUse())
-                && account.getInTransitPaymentAccountIN() != null)
+                && account.getInTransitPaymentAccountIN() != null) {
               confirmation = true;
-            else if (("DEP").equals(lines.get(0).getUponDepositUse())
-                && account.getDepositAccount() != null)
+            } else if (("DEP").equals(lines.get(0).getUponDepositUse())
+                && account.getDepositAccount() != null) {
               confirmation = true;
-            else if (("CLE").equals(lines.get(0).getUponDepositUse())
-                && account.getClearedPaymentAccount() != null)
+            } else if (("CLE").equals(lines.get(0).getUponDepositUse())
+                && account.getClearedPaymentAccount() != null) {
               confirmation = true;
-
-            else if (null == (lines.get(0).getUponDepositUse())
+            } else if (null == (lines.get(0).getUponDepositUse())
                 && null == (lines.get(0).getINUponClearingUse())
                 && transaction.getAccount() != payment.getAccount()) {
               confirmation = true;
             }
           } else {
             if (("INT").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getFINOutIntransitAcct() != null)
+                && account.getFINOutIntransitAcct() != null) {
               confirmation = true;
-            else if (("WIT").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getWithdrawalAccount() != null)
+            } else if (("WIT").equals(lines.get(0).getUponWithdrawalUse())
+                && account.getWithdrawalAccount() != null) {
               confirmation = true;
-            else if (("CLE").equals(lines.get(0).getUponWithdrawalUse())
-                && account.getClearedPaymentAccountOUT() != null)
+            } else if (("CLE").equals(lines.get(0).getUponWithdrawalUse())
+                && account.getClearedPaymentAccountOUT() != null) {
               confirmation = true;
+            }
           }
         }
 
       } else {
         for (FIN_FinancialAccountAccounting account : accounts) {
-          if (confirmation)
+          if (confirmation) {
             return confirmation;
-          if ((TRXTYPE_BPDeposit.equals(transaction.getTransactionType()) && account
-              .getDepositAccount() != null)
-              || (TRXTYPE_BPWithdrawal.equals(transaction.getTransactionType()) && account
-                  .getWithdrawalAccount() != null)
-              || (TRXTYPE_BankFee.equals(transaction.getTransactionType()) && account
-                  .getWithdrawalAccount() != null))
+          }
+          if ((TRXTYPE_BPDeposit.equals(transaction.getTransactionType())
+              && account.getDepositAccount() != null)
+              || (TRXTYPE_BPWithdrawal.equals(transaction.getTransactionType())
+                  && account.getWithdrawalAccount() != null)
+              || (TRXTYPE_BankFee.equals(transaction.getTransactionType())
+                  && account.getWithdrawalAccount() != null)) {
             confirmation = true;
+          }
         }
       }
     } catch (Exception e) {

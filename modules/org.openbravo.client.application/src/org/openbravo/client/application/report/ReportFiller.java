@@ -22,11 +22,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -105,11 +105,14 @@ class ReportFiller {
     } catch (final Exception e) {
       Throwable t = (e.getCause() != null) ? e.getCause().getCause() : null;
       if (t != null) {
-        throw new OBException((t instanceof SQLException && t.getMessage().contains(
-            "@NoConversionRate@")) ? t.getMessage() : e.getMessage(), e);
+        throw new OBException(
+            (t instanceof SQLException && t.getMessage().contains("@NoConversionRate@"))
+                ? t.getMessage()
+                : e.getMessage(),
+            e);
       } else {
-        throw new OBException(e.getCause() instanceof SQLException ? e.getCause().getMessage()
-            : e.getMessage(), e);
+        throw new OBException(
+            e.getCause() instanceof SQLException ? e.getCause().getMessage() : e.getMessage(), e);
       }
     } finally {
       try {

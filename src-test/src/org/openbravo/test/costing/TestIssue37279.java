@@ -69,8 +69,9 @@ public class TestIssue37279 extends TestCostingBase {
   public void testIssue37279_PriceDifferenceAdjustment_GoodsReceiptWithNoRelatedPurchaseOrder()
       throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
       OrderToReceiptResult results = TestCostingUtils.executeOrderToReceiptFlow("product37279-A",
           new BigDecimal("3.00"), new BigDecimal("1"));
@@ -83,13 +84,13 @@ public class TestIssue37279 extends TestCostingBase {
       TestCostingUtils.runCostingBackground();
       TestCostingUtils.assertTransactionsCountIsTwo(results.getProduct().getId());
       TestCostingUtils.assertTransactionsCostsAre3And30(results.getProduct().getId());
-      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(results
-          .getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
+      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(
+          results.getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
       TestCostingUtils.completeDocument(purchaseInvoice);
       TestCostingUtils.runPriceBackground();
       TestCostingUtils
-          .assertTransactionCostsAdjustmentsForTestIssue37279GoodsReceiptWithNoRelatedPurchaseOrder(results
-              .getProduct().getId());
+          .assertTransactionCostsAdjustmentsForTestIssue37279GoodsReceiptWithNoRelatedPurchaseOrder(
+              results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -124,8 +125,9 @@ public class TestIssue37279 extends TestCostingBase {
   public void testIssue37279_PriceDifferenceAdjustment_ShippingNegativeWithNoRelatedPurchaseOrder()
       throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
       OrderToReceiptResult results = TestCostingUtils.executeOrderToReceiptFlow("product37279-B",
           new BigDecimal("3.00"), new BigDecimal("1"));
@@ -138,12 +140,12 @@ public class TestIssue37279 extends TestCostingBase {
       TestCostingUtils.runCostingBackground();
       TestCostingUtils.assertTransactionsCountIsTwo(results.getProduct().getId());
       TestCostingUtils.assertTransactionsCostsAre3And30(results.getProduct().getId());
-      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(results
-          .getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
+      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(
+          results.getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
       TestCostingUtils.completeDocument(purchaseInvoice);
       TestCostingUtils.runPriceBackground();
-      TestCostingUtils.assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct()
-          .getId());
+      TestCostingUtils
+          .assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -178,29 +180,31 @@ public class TestIssue37279 extends TestCostingBase {
   public void testIssue37279_PriceDifferenceAdjustment_ShipmentReturnWithNoRelatedPurchaseOrder()
       throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
       OrderToReceiptResult results = TestCostingUtils.executeOrderToReceiptFlow("product37279-C",
           new BigDecimal("3.00"), new BigDecimal("1"));
       TestCostingUtils.runCostingBackground();
       // Add sleep to avoid assert errors
       Thread.sleep(1000);
-      ShipmentInOut returnToVendorShipment = TestCostingUtils.cloneMovement(results.getProduct()
-          .getId(), false, new BigDecimal("10"), TestCostingConstants.LOCATOR_L01_ID, 0);
-      DocumentType rtvShipment = OBDal.getInstance().get(DocumentType.class,
-          RTV_SHIPMENT_DOCTYPE_ID);
+      ShipmentInOut returnToVendorShipment = TestCostingUtils.cloneMovement(
+          results.getProduct().getId(), false, new BigDecimal("10"),
+          TestCostingConstants.LOCATOR_L01_ID, 0);
+      DocumentType rtvShipment = OBDal.getInstance()
+          .get(DocumentType.class, RTV_SHIPMENT_DOCTYPE_ID);
       returnToVendorShipment.setDocumentType(rtvShipment);
       TestCostingUtils.completeDocument(returnToVendorShipment);
       TestCostingUtils.runCostingBackground();
       TestCostingUtils.assertTransactionsCountIsTwo(results.getProduct().getId());
       TestCostingUtils.assertTransactionsCostsAre3And30(results.getProduct().getId());
-      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(results
-          .getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
+      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(
+          results.getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
       TestCostingUtils.completeDocument(purchaseInvoice);
       TestCostingUtils.runPriceBackground();
-      TestCostingUtils.assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct()
-          .getId());
+      TestCostingUtils
+          .assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -234,27 +238,29 @@ public class TestIssue37279 extends TestCostingBase {
   public void testIssue37279_PriceDifferenceAdjustment_InternalConsumptionWithNoRelatedPurchaseOrder()
       throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
       OrderToReceiptResult results = TestCostingUtils.executeOrderToReceiptFlow("product37279-D",
           new BigDecimal("3.00"), new BigDecimal("1"));
       TestCostingUtils.runCostingBackground();
       // Add sleep to avoid assert errors
       Thread.sleep(1000);
-      InternalConsumption internalConsumption = TestCostingUtils.createInternalConsumption(results
-          .getProduct().getId(), new BigDecimal("-10"), TestCostingConstants.LOCATOR_L01_ID, 0);
+      InternalConsumption internalConsumption = TestCostingUtils.createInternalConsumption(
+          results.getProduct().getId(), new BigDecimal("-10"), TestCostingConstants.LOCATOR_L01_ID,
+          0);
       TestCostingUtils.completeDocument(internalConsumption,
           TestCostingConstants.PROCESSCONSUMPTION_PROCESS_ID);
       TestCostingUtils.runCostingBackground();
       TestCostingUtils.assertTransactionsCountIsTwo(results.getProduct().getId());
       TestCostingUtils.assertTransactionsCostsAre3And30(results.getProduct().getId());
-      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(results
-          .getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
+      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(
+          results.getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
       TestCostingUtils.completeDocument(purchaseInvoice);
       TestCostingUtils.runPriceBackground();
-      TestCostingUtils.assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct()
-          .getId());
+      TestCostingUtils
+          .assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -271,7 +277,8 @@ public class TestIssue37279 extends TestCostingBase {
    * <li>Create and book a Purchase Order for 1 unit of product</li>
    * <li>Create and complete a Goods Receipt based on previous Purchase Order</li>
    * <li>Run Costing Background Process</li>
-   * <li>Create and complete a NORMAL Physical Inventory to increase stock in 10 units of product</li>
+   * <li>Create and complete a NORMAL Physical Inventory to increase stock in 10 units of
+   * product</li>
    * <li>Run Costing Background Process</li>
    * <li>Assert the product has 2 transactions</li>
    * <li>Assert one transaction has transaction cost of 3.00 and the other has transaction cost of
@@ -288,8 +295,9 @@ public class TestIssue37279 extends TestCostingBase {
   public void testIssue37279_PriceDifferenceAdjustment_InventoryIncreaseWithNoRelatedPurchaseOrder()
       throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
       OrderToReceiptResult results = TestCostingUtils.executeOrderToReceiptFlow("product37279-E",
           new BigDecimal("3.00"), new BigDecimal("1"));
@@ -302,12 +310,12 @@ public class TestIssue37279 extends TestCostingBase {
       TestCostingUtils.runCostingBackground();
       TestCostingUtils.assertTransactionsCountIsTwo(results.getProduct().getId());
       TestCostingUtils.assertTransactionsCostsAre3And30(results.getProduct().getId());
-      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(results
-          .getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
+      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(
+          results.getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
       TestCostingUtils.completeDocument(purchaseInvoice);
       TestCostingUtils.runPriceBackground();
-      TestCostingUtils.assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct()
-          .getId());
+      TestCostingUtils
+          .assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);
@@ -324,7 +332,8 @@ public class TestIssue37279 extends TestCostingBase {
    * <li>Create and book a Purchase Order for 1 unit of product</li>
    * <li>Create and complete a Goods Receipt based on previous Purchase Order</li>
    * <li>Run Costing Background Process</li>
-   * <li>Create and complete an OPENING Physical Inventory to increase stock in 10 units of product</li>
+   * <li>Create and complete an OPENING Physical Inventory to increase stock in 10 units of
+   * product</li>
    * <li>Run Costing Background Process</li>
    * <li>Assert the product has 2 transactions</li>
    * <li>Assert one transaction has transaction cost of 3.00 and the other has transaction cost of
@@ -342,8 +351,9 @@ public class TestIssue37279 extends TestCostingBase {
   public void testIssue37279_PriceDifferenceAdjustment_InventoryOpeningWithNoRelatedPurchaseOrder()
       throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
       OrderToReceiptResult results = TestCostingUtils.executeOrderToReceiptFlow("product37279-F",
           new BigDecimal("3.00"), new BigDecimal("1"));
@@ -356,12 +366,12 @@ public class TestIssue37279 extends TestCostingBase {
       TestCostingUtils.runCostingBackground();
       TestCostingUtils.assertTransactionsCountIsTwo(results.getProduct().getId());
       TestCostingUtils.assertTransactionsCostsAre3And30(results.getProduct().getId());
-      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(results
-          .getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
+      Invoice purchaseInvoice = TestCostingUtils.createInvoiceFromMovement(
+          results.getGoodsReceipt().getId(), false, new BigDecimal("20"), new BigDecimal("1"), 0);
       TestCostingUtils.completeDocument(purchaseInvoice);
       TestCostingUtils.runPriceBackground();
-      TestCostingUtils.assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct()
-          .getId());
+      TestCostingUtils
+          .assertTransactionCostsAdjustmentsForTestIssue37279(results.getProduct().getId());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       throw new OBException(e);

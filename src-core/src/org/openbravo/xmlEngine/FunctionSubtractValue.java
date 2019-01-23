@@ -24,6 +24,7 @@ class FunctionSubtractValue extends FunctionEvaluationValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
@@ -34,6 +35,7 @@ class FunctionSubtractValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {

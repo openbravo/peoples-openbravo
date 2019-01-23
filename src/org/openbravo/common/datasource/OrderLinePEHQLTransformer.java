@@ -142,8 +142,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append(isSalesTransaction ? " ic.documentNo," : " o.documentNo,");
     groupByClause.append(isSalesTransaction ? " ic.orderDate," : " o.orderDate,");
     groupByClause.append(isSalesTransaction ? " ic.grandTotalAmount," : " o.grandTotalAmount,");
-    groupByClause.append(isSalesTransaction ? " ic.scheduledDeliveryDate,"
-        : " o.scheduledDeliveryDate,");
+    groupByClause
+        .append(isSalesTransaction ? " ic.scheduledDeliveryDate," : " o.scheduledDeliveryDate,");
     groupByClause.append(isSalesTransaction ? " COALESCE(e.asset.id, ic.asset.id),"
         : " COALESCE(e.asset.id, o.asset.id),");
     groupByClause.append(isSalesTransaction ? " COALESCE(e.project.id, ic.project.id),"
@@ -162,10 +162,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       groupByClause.append("  e.invoicedQuantity");
     } else {
       groupByClause.append("  ci.id");
-      groupByClause
-          .append(" HAVING ((e.explode='Y') OR ((e.orderedQuantity-SUM(COALESCE(m.quantity,0))) <> 0");
-      groupByClause
-          .append(" AND (ci.id is null OR SUM(COALESCE(ci.invoicedQuantity,0))-COALESCE(e.orderedQuantity,0)-SUM(COALESCE(m.quantity,0)) < 0)");
+      groupByClause.append(
+          " HAVING ((e.explode='Y') OR ((e.orderedQuantity-SUM(COALESCE(m.quantity,0))) <> 0");
+      groupByClause.append(
+          " AND (ci.id is null OR SUM(COALESCE(ci.invoicedQuantity,0))-COALESCE(e.orderedQuantity,0)-SUM(COALESCE(m.quantity,0)) < 0)");
       groupByClause.append("))");
     }
     return groupByClause.toString();
@@ -181,8 +181,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     if (isSalesTransaction) {
       orderedQuantityHql.append(" e.orderedQuantity-COALESCE(e.invoicedQuantity,0)");
     } else {
-      orderedQuantityHql
-          .append(" e.orderedQuantity-SUM(COALESCE(m.quantity, 0))-SUM(COALESCE(ci.invoicedQuantity, 0))");
+      orderedQuantityHql.append(
+          " e.orderedQuantity-SUM(COALESCE(m.quantity, 0))-SUM(COALESCE(ci.invoicedQuantity, 0))");
     }
     return orderedQuantityHql.toString();
   }
@@ -194,8 +194,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     StringBuilder operativeQuantityHql = new StringBuilder();
     operativeQuantityHql.append(" to_number(M_GET_CONVERTED_AUMQTY(e.product.id, ");
     operativeQuantityHql.append(getOrderedQuantityHQL());
-    operativeQuantityHql
-        .append(" , coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, ");
+    operativeQuantityHql.append(
+        " , coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, ");
     operativeQuantityHql.append(isSalesTransaction ? "ic.documentType.id" : "o.documentType.id");
     operativeQuantityHql.append(")))))");
     return operativeQuantityHql.toString();
@@ -205,12 +205,12 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     StringBuilder orderQuantityHql = new StringBuilder();
     if (isSalesTransaction) {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
-      orderQuantityHql
-          .append(" , e.orderQuantity * ((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
+      orderQuantityHql.append(
+          " , e.orderQuantity * ((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
     } else {
       orderQuantityHql.append(" COALESCE(il.orderQuantity ");
-      orderQuantityHql
-          .append(" , e.orderQuantity * ((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
+      orderQuantityHql.append(
+          " , e.orderQuantity * ((e.orderedQuantity - coalesce(e.invoicedQuantity,0)) / (case when e.orderedQuantity <> 0 then e.orderedQuantity else null end)))");
     }
     return orderQuantityHql.toString();
   }
@@ -219,8 +219,8 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     StringBuilder operativeUOMHql = new StringBuilder();
     if (UOMUtil.isUomManagementEnabled()) {
       operativeUOMHql.append(" (select aum2.name from UOM aum2 where aum2.id = ");
-      operativeUOMHql
-          .append(" (coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, ");
+      operativeUOMHql.append(
+          " (coalesce(e.operativeUOM.id, TO_CHAR(M_GET_DEFAULT_AUM_FOR_DOCUMENT(e.product.id, ");
       operativeUOMHql.append(isSalesTransaction ? "ic.documentType.id" : "o.documentType.id");
       operativeUOMHql.append("))))) ");
     } else {
@@ -260,10 +260,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     int daysCount = 365;
     try {
       Window window = OBDal.getInstance().get(Window.class, CREATE_INVOICE_LINES_FORM_ORDER_WINDOW);
-      String value = Preferences.getPreferenceValue("FilterByDocumentsProcessedSinceNDaysAgo",
-          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), window);
+      String value = Preferences.getPreferenceValue("FilterByDocumentsProcessedSinceNDaysAgo", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), window);
       daysCount = Integer.valueOf(value);
     } catch (Exception ignore) {
     }

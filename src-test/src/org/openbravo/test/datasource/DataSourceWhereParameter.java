@@ -118,9 +118,9 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
     Note("090A37D22E61FE94012E621729090048", null, null, true, new HashMap<String, String>() {
       {
         // Note of a record in Windows, Tabs and Fields.
-        String criteria = "{\"fieldName\":\"table\",\"operator\":\"equals\",\"value\":\""
-            + TABLE_ID + "\"}__;__{\"fieldName\":\"record\",\"operator\":\"equals\",\"value\":\""
-            + RECORD_ID + "\"}";
+        String criteria = "{\"fieldName\":\"table\",\"operator\":\"equals\",\"value\":\"" + TABLE_ID
+            + "\"}__;__{\"fieldName\":\"record\",\"operator\":\"equals\",\"value\":\"" + RECORD_ID
+            + "\"}";
         String entityName = "OBUIAPP_Note";
         put("criteria", criteria);
         put("_entityName", entityName);
@@ -204,7 +204,8 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
 
   @Test
   public void datasourceWithManualWhereParameter() throws Exception {
-    if (!datasource.onlySuccessAssert && !"DB9F062472294F12A0291A7BD203F922".equals(datasource.ds)) {
+    if (!datasource.onlySuccessAssert
+        && !"DB9F062472294F12A0291A7BD203F922".equals(datasource.ds)) {
       datasource.params.put("isImplicitFilterApplied", "true");
       datasource.params.put("_where", MANUAL_WHERE);
       String datasourceResponseWhereTrue = getDataSourceResponse();

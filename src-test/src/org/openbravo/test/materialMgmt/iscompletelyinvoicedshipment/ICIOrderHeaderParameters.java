@@ -54,8 +54,8 @@ public class ICIOrderHeaderParameters {
   public ICIOrderHeaderParameters() {
     this.client = OBContext.getOBContext().getCurrentClient();
     this.organization = OBContext.getOBContext().getCurrentOrganization();
-    this.businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-        ICIConstants.BUSINESS_PARTNER_ID);
+    this.businessPartner = OBDal.getInstance()
+        .get(BusinessPartner.class, ICIConstants.BUSINESS_PARTNER_ID);
     this.businessPartnerLocation = this.businessPartner.getBusinessPartnerLocationList().get(0);
     this.isReceipt = true;
     this.documentType = OBDal.getInstance().get(DocumentType.class, ICIConstants.ORDER_DOCTYPE_ID);

@@ -117,8 +117,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     final int startRow = Integer.parseInt(parameters.get(JsonConstants.STARTROW_PARAMETER));
     final int endRow = Integer.parseInt(parameters.get(JsonConstants.ENDROW_PARAMETER));
     final List<Map<String, Object>> data = getData(parameters, startRow, endRow);
-    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
-        DataToJsonConverter.class);
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
+        .get(DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
     return toJsonConverter.convertToJsonObjects(data);
   }
@@ -178,8 +178,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     ids.add("-");
     for (Map<String, Object> record : data) {
       if (contains != null && !"".equals(contains)) {
-        OrderLine purchaseOrderLine = OBDal.getInstance().get(OrderLine.class,
-            record.get("purchaseOrderLine"));
+        OrderLine purchaseOrderLine = OBDal.getInstance()
+            .get(OrderLine.class, record.get("purchaseOrderLine"));
         if (purchaseOrderLine.getIdentifier().contains(contains)) {
           continue;
         }
@@ -247,8 +247,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       return obc.list();
     }
     if (reservation.getStorageBin() != null) {
-      obc.add(Restrictions.eq(Warehouse.PROPERTY_ID, reservation.getStorageBin().getWarehouse()
-          .getId()));
+      obc.add(Restrictions.eq(Warehouse.PROPERTY_ID,
+          reservation.getStorageBin().getWarehouse().getId()));
       return obc.list();
     }
     // Just on hand warehouses are taken into account as per window validation
@@ -274,10 +274,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                       "%" + myJSONObject.get("value") + "%");
                 }
               } else {
-                myCriterion = Restrictions.or(
-                    myCriterion,
-                    Restrictions.ilike(Warehouse.PROPERTY_NAME, "%" + myJSONObject.get("value")
-                        + "%"));
+                myCriterion = Restrictions.or(myCriterion, Restrictions
+                    .ilike(Warehouse.PROPERTY_NAME, "%" + myJSONObject.get("value") + "%"));
               }
             } else if (myJSONObject.get("fieldName").equals("warehouse")
                 && myJSONObject.get("operator").equals("equals") && myJSONObject.has("value")) {
@@ -398,10 +396,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                       "%" + myJSONObject.get("value") + "%");
                 }
               } else {
-                myCriterion = Restrictions.or(
-                    myCriterion,
-                    Restrictions.ilike(Locator.PROPERTY_SEARCHKEY, "%" + myJSONObject.get("value")
-                        + "%"));
+                myCriterion = Restrictions.or(myCriterion, Restrictions
+                    .ilike(Locator.PROPERTY_SEARCHKEY, "%" + myJSONObject.get("value") + "%"));
               }
             } else if (myJSONObject.get("fieldName").equals("storageBin")
                 && operator.equals("equals") && myJSONObject.has("value")) {
@@ -457,8 +453,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     for (Map<String, Object> record : data) {
       ids.add((String) record.get("attributeSetValue"));
     }
-    OBCriteria<AttributeSetInstance> obc = OBDal.getInstance().createCriteria(
-        AttributeSetInstance.class);
+    OBCriteria<AttributeSetInstance> obc = OBDal.getInstance()
+        .createCriteria(AttributeSetInstance.class);
     obc.add(Restrictions.in(AttributeSetInstance.PROPERTY_ID, ids));
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
@@ -515,8 +511,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         final JSONObject criteria = criterias.getJSONObject(i);
         if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")) {
           if (criteria.has("value")) {
-            selectedIds.add(criteria.has("value") ? criteria.getString("value") : criteria
-                .toString());
+            selectedIds
+                .add(criteria.has("value") ? criteria.getString("value") : criteria.toString());
           }
         }
 
@@ -531,10 +527,10 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                 final JSONObject criteria3 = mySonSon.getJSONObject(k);
                 if (criteria3.has("fieldName")) {
                   if (filterCriteria.containsKey(criteria3.getString("fieldName"))) {
-                    JSONArray values = new JSONArray(filterCriteria.get(criteria3
-                        .getString("fieldName")));
-                    filterCriteria.put(criteria3.getString("fieldName"), values.put(criteria3)
-                        .toString());
+                    JSONArray values = new JSONArray(
+                        filterCriteria.get(criteria3.getString("fieldName")));
+                    filterCriteria.put(criteria3.getString("fieldName"),
+                        values.put(criteria3).toString());
                   } else {
                     filterCriteria.put(criteria3.getString("fieldName"),
                         new JSONArray().put(criteria3).toString());
@@ -543,27 +539,25 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
               }
             } else if (criteria2.has("fieldName")) {
               if (filterCriteria.containsKey(criteria2.getString("fieldName"))) {
-                JSONArray values = new JSONArray(filterCriteria.get(criteria2
-                    .getString("fieldName")));
-                filterCriteria.put(criteria2.getString("fieldName"), values.put(criteria2)
-                    .toString());
+                JSONArray values = new JSONArray(
+                    filterCriteria.get(criteria2.getString("fieldName")));
+                filterCriteria.put(criteria2.getString("fieldName"),
+                    values.put(criteria2).toString());
               } else {
-                filterCriteria.put(criteria2.getString("fieldName"), new JSONArray().put(criteria2)
-                    .toString());
+                filterCriteria.put(criteria2.getString("fieldName"),
+                    new JSONArray().put(criteria2).toString());
               }
             }
           }
           // lessOrEqual
-        } else if (criteria.has("operator")
-            && ("greaterThan".equals(criteria.getString("operator"))
-                || "lessThan".equals(criteria.getString("operator"))
-                || "greaterOrEqual".equals(criteria.getString("operator")) || "lessOrEqual"
-                  .equals(criteria.getString("operator")))) {
+        } else if (criteria.has("operator") && ("greaterThan".equals(criteria.getString("operator"))
+            || "lessThan".equals(criteria.getString("operator"))
+            || "greaterOrEqual".equals(criteria.getString("operator"))
+            || "lessOrEqual".equals(criteria.getString("operator")))) {
           filterCriteria.put(criteria.getString("fieldName"), criteria.toString());
-        } else if (criteria.has("operator")
-            && ("equals".equals(criteria.getString("operator"))
-                || "iEquals".equals(criteria.getString("operator")) || "iContains".equals(criteria
-                .getString("operator")))) {
+        } else if (criteria.has("operator") && ("equals".equals(criteria.getString("operator"))
+            || "iEquals".equals(criteria.getString("operator"))
+            || "iContains".equals(criteria.getString("operator")))) {
 
           if (filterCriteria.containsKey(criteria.getString("fieldName"))) {
             JSONArray myson = new JSONArray(filterCriteria.get(criteria.getString("fieldName")));
@@ -587,8 +581,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     ol = parameters.get("@OrderLine.id@");
     Reservation reservation = null;
     if (ol != null && !"".equals(ol)) {
-      reservation = ReservationUtils.getReservationFromOrder(OBDal.getInstance().get(
-          OrderLine.class, ol));
+      reservation = ReservationUtils
+          .getReservationFromOrder(OBDal.getInstance().get(OrderLine.class, ol));
       parameters.put("@MaterialMgmtReservation.id@", reservation.getId());
     }
     // Filters
@@ -659,8 +653,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     }
 
     if (ol != null && !"".equals(ol)) {
-      reservation = ReservationUtils.getReservationFromOrder(OBDal.getInstance().get(
-          OrderLine.class, ol));
+      reservation = ReservationUtils
+          .getReservationFromOrder(OBDal.getInstance().get(OrderLine.class, ol));
       if (reservation.getRESStatus().equals("DR")) {
         ReservationUtils.processReserve(reservation, "PR");
       }
@@ -774,10 +768,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     String strReservation = parameters.get("@MaterialMgmtReservation.id@");
     Reservation reservation = OBDal.getInstance().get(Reservation.class, strReservation);
     new OrganizationStructureProvider().getChildTree(reservation.getOrganization().getId(), true);
-    OBCriteria<AttributeSetInstance> obc = OBDal.getInstance().createCriteria(
-        AttributeSetInstance.class);
+    OBCriteria<AttributeSetInstance> obc = OBDal.getInstance()
+        .createCriteria(AttributeSetInstance.class);
     if (reservation.getAttributeSetValue() != null) {
-      obc.add(Restrictions.eq(AttributeSetInstance.PROPERTY_ID, reservation.getAttributeSetValue()));
+      obc.add(
+          Restrictions.eq(AttributeSetInstance.PROPERTY_ID, reservation.getAttributeSetValue()));
     }
     if (contains != null && !"".equals(contains)) {
       Criterion myCriterion = null;
@@ -791,17 +786,16 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                 && myJSONObject.has("value")) {
               if (myCriterion == null) {
                 if (operator.equals("iContains")) {
-                  myCriterion = Restrictions.ilike(AttributeSetInstance.PROPERTY_DESCRIPTION, "%"
-                      + myJSONObject.get("value") + "%");
+                  myCriterion = Restrictions.ilike(AttributeSetInstance.PROPERTY_DESCRIPTION,
+                      "%" + myJSONObject.get("value") + "%");
                 } else if (operator.equals("iEquals")) {
                   myCriterion = Restrictions.ilike(AttributeSetInstance.PROPERTY_DESCRIPTION,
                       myJSONObject.get("value"));
                 }
               } else {
-                myCriterion = Restrictions.or(
-                    myCriterion,
-                    Restrictions.ilike(AttributeSetInstance.PROPERTY_DESCRIPTION, "%"
-                        + myJSONObject.get("value") + "%"));
+                myCriterion = Restrictions.or(myCriterion,
+                    Restrictions.ilike(AttributeSetInstance.PROPERTY_DESCRIPTION,
+                        "%" + myJSONObject.get("value") + "%"));
               }
             } else if (myJSONObject.get("fieldName").equals("attributeSetValue")
                 && operator.equals("equals") && myJSONObject.has("value")) {
@@ -821,7 +815,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           log4j.error("Error getting filter for attribute", e);
         }
       } else {
-        obc.add(Restrictions.ilike(AttributeSetInstance.PROPERTY_DESCRIPTION, "%" + contains + "%"));
+        obc.add(
+            Restrictions.ilike(AttributeSetInstance.PROPERTY_DESCRIPTION, "%" + contains + "%"));
       }
     }
     obc.addOrder(Order.asc(AttributeSetInstance.PROPERTY_DESCRIPTION));
@@ -850,20 +845,19 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
             if (myJSONObject.getString("fieldName").equals("purchaseOrderLine$_identifier")) {
               if (myCriterion == null) {
                 if (operator.equals("iContains")) {
-                  myCriterion = Restrictions.ilike("o."
-                      + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO, "%"
-                      + getOrderDocumentNo((String) myJSONObject.get("value")) + "%");
+                  myCriterion = Restrictions.ilike(
+                      "o." + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO,
+                      "%" + getOrderDocumentNo((String) myJSONObject.get("value")) + "%");
                 } else if (operator.equals("iEquals")) {
-                  myCriterion = Restrictions.ilike("o."
-                      + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO,
+                  myCriterion = Restrictions.ilike(
+                      "o." + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO,
                       getOrderDocumentNo((String) myJSONObject.get("value")));
                 }
               } else {
-                myCriterion = Restrictions.or(
-                    myCriterion,
-                    Restrictions.ilike("o."
-                        + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO, "%"
-                        + getOrderDocumentNo((String) myJSONObject.get("value")) + "%"));
+                myCriterion = Restrictions.or(myCriterion,
+                    Restrictions.ilike(
+                        "o." + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO,
+                        "%" + getOrderDocumentNo((String) myJSONObject.get("value")) + "%"));
               }
             } else if (myJSONObject.getString("fieldName").equals("purchaseOrderLine")
                 && operator.equals("equals") && myJSONObject.has("value")) {
@@ -872,9 +866,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                     org.openbravo.model.common.order.OrderLine.PROPERTY_ID,
                     myJSONObject.get("value"));
               } else {
-                myCriterion = Restrictions.or(myCriterion, Restrictions.eq(
-                    org.openbravo.model.common.order.OrderLine.PROPERTY_ID,
-                    myJSONObject.get("value")));
+                myCriterion = Restrictions.or(myCriterion,
+                    Restrictions.eq(org.openbravo.model.common.order.OrderLine.PROPERTY_ID,
+                        myJSONObject.get("value")));
               }
             }
           }
@@ -885,9 +879,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           log4j.error("Error getting filter for attribute", e);
         }
       } else {
-        obc.add(Restrictions.ilike("o."
-            + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO, "%"
-            + getOrderDocumentNo(contains) + "%"));
+        obc.add(
+            Restrictions.ilike("o." + org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO,
+                "%" + getOrderDocumentNo(contains) + "%"));
       }
     }
 
@@ -911,17 +905,15 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
             if (myJSONObject.getString("fieldName").equals("inventoryStatus$_identifier")) {
               if (myCriterion == null) {
                 if (operator.equals("iContains")) {
-                  myCriterion = Restrictions.ilike(InventoryStatus.PROPERTY_NAME, "%"
-                      + myJSONObject.get("value") + "%");
+                  myCriterion = Restrictions.ilike(InventoryStatus.PROPERTY_NAME,
+                      "%" + myJSONObject.get("value") + "%");
                 } else if (operator.equals("iEquals")) {
                   myCriterion = Restrictions.ilike(InventoryStatus.PROPERTY_NAME,
                       myJSONObject.get("value"));
                 }
               } else {
-                myCriterion = Restrictions.or(
-                    myCriterion,
-                    Restrictions.ilike(InventoryStatus.PROPERTY_NAME,
-                        "%" + myJSONObject.get("value") + "%"));
+                myCriterion = Restrictions.or(myCriterion, Restrictions
+                    .ilike(InventoryStatus.PROPERTY_NAME, "%" + myJSONObject.get("value") + "%"));
               }
             } else if (myJSONObject.getString("fieldName").equals("inventoryStatus")
                 && operator.equals("equals") && myJSONObject.has("value")) {
@@ -953,12 +945,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Map<String, Object>> getSelectedLines(Reservation reservation,
-      Set<String> organizations, List<Warehouse> warehousesFiltered,
-      List<Locator> locatorsFiltered, List<AttributeSetInstance> attributeSetInstancesFiltered,
-      List<OrderLine> orderLinesFiltered, String availableQtyFilterCriteria,
-      String reservedinothersFilterCriteria, String releasedFilterCriteria,
-      String allocatedCriteria, String quantityCriteria, ArrayList<String> selectedIds,
-      List<InventoryStatus> inventoryStatusFiltered) {
+      Set<String> organizations, List<Warehouse> warehousesFiltered, List<Locator> locatorsFiltered,
+      List<AttributeSetInstance> attributeSetInstancesFiltered, List<OrderLine> orderLinesFiltered,
+      String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
+      String releasedFilterCriteria, String allocatedCriteria, String quantityCriteria,
+      ArrayList<String> selectedIds, List<InventoryStatus> inventoryStatusFiltered) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select rs from MaterialMgmtReservationStock rs ");
@@ -1049,25 +1040,20 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         for (int i = 0; i < selectedIds.size(); i++) {
           if (!(rs.getId().equals(selectedIds.get(i)))) {
             // Check Filter Criteria
-            if (availableQtyFilterCriteria != null
-                && !"".equals(availableQtyFilterCriteria)
-                && !isInScope(
-                    "availableQty",
-                    availableQtyFilterCriteria,
+            if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
+                && !isInScope("availableQty", availableQtyFilterCriteria,
                     getQtyOnHand(reservation.getProduct(),
                         rs.getStorageBin() != null ? rs.getStorageBin() : null,
                         rs.getAttributeSetValue() != null ? rs.getAttributeSetValue() : null,
                         rs.getSalesOrderLine() != null ? rs.getSalesOrderLine() : null))) {
               continue;
             }
-            if (reservedinothersFilterCriteria != null
-                && !"".equals(reservedinothersFilterCriteria)
-                && !isInScope(
-                    "reservedinothers",
-                    reservedinothersFilterCriteria,
-                    rs.getSalesOrderLine() != null ? getQtyReserved(reservation,
-                        rs.getSalesOrderLine()) : getQtyReserved(reservation,
-                        reservation.getProduct(), rs.getAttributeSetValue(), rs.getStorageBin()))) {
+            if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
+                && !isInScope("reservedinothers", reservedinothersFilterCriteria,
+                    rs.getSalesOrderLine() != null
+                        ? getQtyReserved(reservation, rs.getSalesOrderLine())
+                        : getQtyReserved(reservation, reservation.getProduct(),
+                            rs.getAttributeSetValue(), rs.getStorageBin()))) {
               continue;
             }
             if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
@@ -1083,28 +1069,23 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
               continue;
             }
             myMap = tomap(rs, reservation);
-            if (!reservationStockFiltered(result, rs))
+            if (!reservationStockFiltered(result, rs)) {
               result.add(myMap);
+            }
           }
         }
       } else {
         // Check Filter Criterias
-        if (availableQtyFilterCriteria != null
-            && !"".equals(availableQtyFilterCriteria)
-            && !isInScope(
-                "availableQty",
-                availableQtyFilterCriteria,
+        if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
+            && !isInScope("availableQty", availableQtyFilterCriteria,
                 getQtyOnHand(reservation.getProduct(),
                     rs.getStorageBin() != null ? rs.getStorageBin() : null,
                     rs.getAttributeSetValue() != null ? rs.getAttributeSetValue() : null,
                     rs.getSalesOrderLine() != null ? rs.getSalesOrderLine() : null))) {
           continue;
         }
-        if (reservedinothersFilterCriteria != null
-            && !"".equals(reservedinothersFilterCriteria)
-            && !isInScope(
-                "reservedinothers",
-                reservedinothersFilterCriteria,
+        if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
+            && !isInScope("reservedinothers", reservedinothersFilterCriteria,
                 rs.getSalesOrderLine() != null ? getQtyReserved(reservation, rs.getSalesOrderLine())
                     : getQtyReserved(reservation, reservation.getProduct(),
                         rs.getAttributeSetValue(), rs.getStorageBin()))) {
@@ -1124,8 +1105,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         }
 
         myMap = tomap(rs, reservation);
-        if (!reservationStockFiltered(result, rs))
+        if (!reservationStockFiltered(result, rs)) {
           result.add(myMap);
+        }
       }
     }
 
@@ -1213,8 +1195,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         hqlString.append("and ol in :orderLinesFiltered ");
       }
     }
-    hqlString
-        .append("and ol.orderedQuantity <> coalesce((select Sum(mpo.quantity) from ProcurementPOInvoiceMatch as mpo where mpo.salesOrderLine = ol and mpo.goodsShipmentLine is not null),0)");
+    hqlString.append(
+        "and ol.orderedQuantity <> coalesce((select Sum(mpo.quantity) from ProcurementPOInvoiceMatch as mpo where mpo.salesOrderLine = ol and mpo.goodsShipmentLine is not null),0)");
     hqlString.append("order by o.documentNo, ol.lineNo");
     final Session session = OBDal.getInstance().getSession();
     Query<OrderLine> query = session.createQuery(hqlString.toString(), OrderLine.class);
@@ -1244,17 +1226,20 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       myMap.put("storageBin", "");
       myMap.put("warehouse", null);
       myMap.put("warehouse$_identifier", "");
-      myMap.put("attributeSetValue", orderLine.getAttributeSetValue() != null ? orderLine
-          .getAttributeSetValue().getId() : null);
+      myMap.put("attributeSetValue",
+          orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue().getId()
+              : null);
       myMap.put("attributeSetValue$_identifier",
-          orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue()
-              .getIdentifier() : "");
+          orderLine.getAttributeSetValue() != null
+              ? orderLine.getAttributeSetValue().getIdentifier()
+              : "");
       myMap.put("purchaseOrderLine", orderLine.getId());
       myMap.put("purchaseOrderLine$_identifier", orderLine.getIdentifier());
       // Check Filter Criterias
 
       if (availableQtyFilterCriteria != null && !"".equals(availableQtyFilterCriteria)
-          && !isInScope("availableQty", availableQtyFilterCriteria, orderLine.getOrderedQuantity())) {
+          && !isInScope("availableQty", availableQtyFilterCriteria,
+              orderLine.getOrderedQuantity())) {
         continue;
       }
       BigDecimal reservedinothers = getQtyReserved(reservation, orderLine);
@@ -1270,9 +1255,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           && !isInScope("quantity", quantityCriteria, BigDecimal.ZERO)) {
         continue;
       }
-      if (StringUtils.isNotBlank(allocatedCriteria)
-          && !isInScope("allocated", allocatedCriteria, orderLine.getSalesOrder().getWarehouse()
-              .isAllocated())) {
+      if (StringUtils.isNotBlank(allocatedCriteria) && !isInScope("allocated", allocatedCriteria,
+          orderLine.getSalesOrder().getWarehouse().isAllocated())) {
         continue;
       }
 
@@ -1289,11 +1273,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Map<String, Object>> getStorageDetail(Reservation reservation,
-      Set<String> organizations, List<Warehouse> warehousesFiltered,
-      List<Locator> locatorsFiltered, List<AttributeSetInstance> attributeSetInstancesFiltered,
-      String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
-      String releasedFilterCriteria, String allocatedCriteria, String quantityCriteria,
-      ArrayList<String> selectedIds, List<InventoryStatus> inventoryStatusFiltered) {
+      Set<String> organizations, List<Warehouse> warehousesFiltered, List<Locator> locatorsFiltered,
+      List<AttributeSetInstance> attributeSetInstancesFiltered, String availableQtyFilterCriteria,
+      String reservedinothersFilterCriteria, String releasedFilterCriteria,
+      String allocatedCriteria, String quantityCriteria, ArrayList<String> selectedIds,
+      List<InventoryStatus> inventoryStatusFiltered) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
     final StringBuilder hqlString = new StringBuilder();
     hqlString.append("select sd from MaterialMgmtStorageDetail as sd ");
@@ -1308,8 +1292,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
     hqlString.append("select 1 from MaterialMgmtReservationStock as rs ");
     hqlString.append("where rs.reservation = :reservation ");
-    hqlString
-        .append("and (rs.attributeSetValue = sd.attributeSetValue or rs.attributeSetValue is null) ");
+    hqlString.append(
+        "and (rs.attributeSetValue = sd.attributeSetValue or rs.attributeSetValue is null) ");
     hqlString.append("and rs.storageBin = sd.storageBin ");
 
     hqlString.append(") ");
@@ -1412,9 +1396,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
             BigDecimal reservedinothers = getQtyReserved(reservation, reservation.getProduct(),
                 sd.getAttributeSetValue(), sd.getStorageBin());
 
-            if (reservedinothersFilterCriteria != null
-                && !"".equals(reservedinothersFilterCriteria)
-                && !isInScope("reservedinothers", reservedinothersFilterCriteria, reservedinothers)) {
+            if (reservedinothersFilterCriteria != null && !"".equals(reservedinothersFilterCriteria)
+                && !isInScope("reservedinothers", reservedinothersFilterCriteria,
+                    reservedinothers)) {
               continue;
             }
             if (releasedFilterCriteria != null && !"".equals(releasedFilterCriteria)
@@ -1433,9 +1417,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
                 && !isInScope("quantity", quantityCriteria, qtty)) {
               continue;
             }
-            if (StringUtils.isNotBlank(allocatedCriteria)
-                && !isInScope("allocated", allocatedCriteria, sd.getStorageBin().getWarehouse()
-                    .isAllocated())) {
+            if (StringUtils.isNotBlank(allocatedCriteria) && !isInScope("allocated",
+                allocatedCriteria, sd.getStorageBin().getWarehouse().isAllocated())) {
               continue;
             }
             result = tomap(sd, false, result, reservedinothers, reservation);
@@ -1470,9 +1453,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
             && !isInScope("quantity", quantityCriteria, qtty)) {
           continue;
         }
-        if (StringUtils.isNotBlank(allocatedCriteria)
-            && !isInScope("allocated", allocatedCriteria, sd.getStorageBin().getWarehouse()
-                .isAllocated())) {
+        if (StringUtils.isNotBlank(allocatedCriteria) && !isInScope("allocated", allocatedCriteria,
+            sd.getStorageBin().getWarehouse().isAllocated())) {
           continue;
         }
         result = tomap(sd, false, result, reservedinothers, reservation);
@@ -1492,31 +1474,35 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       myMap.put("reservationStock", null);
       myMap.put("reservationStock$_identifier", "");
     }
-    myMap.put("storageBin$_identifier", rs.getStorageBin() != null ? rs.getStorageBin()
-        .getIdentifier() : "");
+    myMap.put("storageBin$_identifier",
+        rs.getStorageBin() != null ? rs.getStorageBin().getIdentifier() : "");
     myMap.put("storageBin", rs.getStorageBin() != null ? rs.getStorageBin().getId() : null);
     myMap.put("warehouse",
-        (rs.getStorageBin() != null && rs.getStorageBin().getWarehouse() != null) ? rs
-            .getStorageBin().getWarehouse().getId() : null);
-    myMap.put("warehouse$_identifier", (rs.getStorageBin() != null && rs.getStorageBin()
-        .getWarehouse() != null) ? rs.getStorageBin().getWarehouse().getIdentifier() : "");
-    myMap.put("attributeSetValue", rs.getAttributeSetValue() != null
-        && !rs.getAttributeSetValue().getId().equals("0") ? rs.getAttributeSetValue().getId()
-        : null);
-    myMap.put("attributeSetValue$_identifier", rs.getAttributeSetValue() != null
-        && !rs.getAttributeSetValue().getId().equals("0") ? rs.getAttributeSetValue()
-        .getIdentifier() : "");
-    myMap.put("purchaseOrderLine", rs.getSalesOrderLine() == null ? null : rs.getSalesOrderLine()
-        .getId());
-    myMap.put("purchaseOrderLine$_identifier", rs.getSalesOrderLine() == null ? "" : rs
-        .getSalesOrderLine().getIdentifier());
-    myMap.put(
-        "availableQty",
-        getQtyOnHand(reservation.getProduct(), rs.getStorageBin() != null ? rs.getStorageBin()
-            : null, rs.getAttributeSetValue() != null ? rs.getAttributeSetValue() : null, rs
-            .getSalesOrderLine() != null ? rs.getSalesOrderLine() : null));
-    myMap.put(
-        "reservedinothers",
+        (rs.getStorageBin() != null && rs.getStorageBin().getWarehouse() != null)
+            ? rs.getStorageBin().getWarehouse().getId()
+            : null);
+    myMap.put("warehouse$_identifier",
+        (rs.getStorageBin() != null && rs.getStorageBin().getWarehouse() != null)
+            ? rs.getStorageBin().getWarehouse().getIdentifier()
+            : "");
+    myMap.put("attributeSetValue",
+        rs.getAttributeSetValue() != null && !rs.getAttributeSetValue().getId().equals("0")
+            ? rs.getAttributeSetValue().getId()
+            : null);
+    myMap.put("attributeSetValue$_identifier",
+        rs.getAttributeSetValue() != null && !rs.getAttributeSetValue().getId().equals("0")
+            ? rs.getAttributeSetValue().getIdentifier()
+            : "");
+    myMap.put("purchaseOrderLine",
+        rs.getSalesOrderLine() == null ? null : rs.getSalesOrderLine().getId());
+    myMap.put("purchaseOrderLine$_identifier",
+        rs.getSalesOrderLine() == null ? "" : rs.getSalesOrderLine().getIdentifier());
+    myMap.put("availableQty",
+        getQtyOnHand(reservation.getProduct(),
+            rs.getStorageBin() != null ? rs.getStorageBin() : null,
+            rs.getAttributeSetValue() != null ? rs.getAttributeSetValue() : null,
+            rs.getSalesOrderLine() != null ? rs.getSalesOrderLine() : null));
+    myMap.put("reservedinothers",
         rs.getSalesOrderLine() != null ? getQtyReserved(reservation, rs.getSalesOrderLine())
             : getQtyReserved(reservation, reservation.getProduct(), rs.getAttributeSetValue(),
                 rs.getStorageBin()));
@@ -1524,10 +1510,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     myMap.put("reservationQuantity", reservation.getQuantity());
     myMap.put("released", rs.getReleased());
     myMap.put("allocated", rs.isAllocated());
-    myMap.put("inventoryStatus", (rs.getStorageBin() != null) ? rs.getStorageBin()
-        .getInventoryStatus().getId() : null);
-    myMap.put("inventoryStatus$_identifier", (rs.getStorageBin() != null) ? rs.getStorageBin()
-        .getInventoryStatus().getIdentifier() : "");
+    myMap.put("inventoryStatus",
+        (rs.getStorageBin() != null) ? rs.getStorageBin().getInventoryStatus().getId() : null);
+    myMap.put("inventoryStatus$_identifier",
+        (rs.getStorageBin() != null) ? rs.getStorageBin().getInventoryStatus().getIdentifier()
+            : "");
 
     return myMap;
 
@@ -1549,18 +1536,23 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       myMap.put("reservationStock", null);
       myMap.put("reservationStock$_identifier", "");
       myMap.put("storageBin", sd.getStorageBin() != null ? sd.getStorageBin().getId() : "");
-      myMap.put("storageBin$_identifier", sd.getStorageBin() != null ? sd.getStorageBin()
-          .getIdentifier() : "");
-      myMap.put("warehouse", (sd.getStorageBin().getWarehouse() != null) ? sd.getStorageBin()
-          .getWarehouse().getId() : null);
-      myMap.put("warehouse$_identifier", (sd.getStorageBin().getWarehouse() != null) ? sd
-          .getStorageBin().getWarehouse().getIdentifier() : "");
-      myMap.put("attributeSetValue", sd.getAttributeSetValue() != null
-          && !sd.getAttributeSetValue().getId().equals("0") ? sd.getAttributeSetValue().getId()
-          : null);
-      myMap.put("attributeSetValue$_identifier", sd.getAttributeSetValue() != null
-          && !sd.getAttributeSetValue().getId().equals("0") ? sd.getAttributeSetValue()
-          .getIdentifier() : "");
+      myMap.put("storageBin$_identifier",
+          sd.getStorageBin() != null ? sd.getStorageBin().getIdentifier() : "");
+      myMap.put("warehouse",
+          (sd.getStorageBin().getWarehouse() != null) ? sd.getStorageBin().getWarehouse().getId()
+              : null);
+      myMap.put("warehouse$_identifier",
+          (sd.getStorageBin().getWarehouse() != null)
+              ? sd.getStorageBin().getWarehouse().getIdentifier()
+              : "");
+      myMap.put("attributeSetValue",
+          sd.getAttributeSetValue() != null && !sd.getAttributeSetValue().getId().equals("0")
+              ? sd.getAttributeSetValue().getId()
+              : null);
+      myMap.put("attributeSetValue$_identifier",
+          sd.getAttributeSetValue() != null && !sd.getAttributeSetValue().getId().equals("0")
+              ? sd.getAttributeSetValue().getIdentifier()
+              : "");
       myMap.put("purchaseOrderLine", null);
       myMap.put("purchaseOrderLine$_identifier", "");
 
@@ -1578,8 +1570,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       myMap.put("released", BigDecimal.ZERO);
       myMap.put("allocated", sd.getStorageBin().getWarehouse().isAllocated());
       myMap.put("inventoryStatus", sd.getStorageBin().getInventoryStatus().getId());
-      myMap.put("inventoryStatus$_identifier", sd.getStorageBin().getInventoryStatus()
-          .getIdentifier());
+      myMap.put("inventoryStatus$_identifier",
+          sd.getStorageBin().getInventoryStatus().getIdentifier());
 
       result.add(myMap);
     }
@@ -1721,8 +1713,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private BigDecimal getQtyReserved(Reservation reservation, OrderLine orderLine) {
     final StringBuilder hqlString = new StringBuilder();
-    hqlString
-        .append("select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs ");
+    hqlString.append(
+        "select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs ");
     hqlString.append("join rs.reservation as r ");
     hqlString.append(" where r.rESStatus not in ('CL', 'DR') ");
     hqlString.append(" and rs.salesOrderLine = :orderLine ");
@@ -1737,8 +1729,8 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   private BigDecimal getQtyReserved(Reservation reservation, Product product,
       AttributeSetInstance attribute, Locator storageBin) {
     final StringBuilder hqlString = new StringBuilder();
-    hqlString
-        .append("select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs ");
+    hqlString.append(
+        "select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs ");
     hqlString.append("join rs.reservation as r ");
     hqlString.append(" where r.rESStatus not in ('CL', 'DR') ");
     // hqlString.append(" and rs.salesOrderLine is null ");

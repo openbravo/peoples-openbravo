@@ -57,6 +57,7 @@ public class Zip {
 
   private static void zip(File orig, ZipOutputStream dest, String relativeDir) throws Exception {
     File[] list = orig.listFiles(new FilenameFilter() {
+      @Override
       public boolean accept(File f, String s) {
         return !s.equals(".svn");
       }
@@ -68,8 +69,8 @@ public class Zip {
   public static void zip(File[] list, String dest, String relativeDir) throws Exception {
     String localRelativeDir = relativeDir;
     ZipOutputStream destZip = new ZipOutputStream(new FileOutputStream(dest));
-    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace(
-        "/", File.separator);
+    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace("/",
+        File.separator);
     zip(list, destZip, localRelativeDir);
     destZip.close();
     log4j.info("zipped in " + dest);
@@ -78,8 +79,8 @@ public class Zip {
   public static void zip(String orig, String dest, String relativeDir) throws Exception {
     String localRelativeDir = relativeDir;
     File file = new File(orig);
-    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace(
-        "/", File.separator);
+    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace("/",
+        File.separator);
     ZipOutputStream destZip = new ZipOutputStream(new FileOutputStream(dest));
     zip(file, destZip, localRelativeDir);
     destZip.close();

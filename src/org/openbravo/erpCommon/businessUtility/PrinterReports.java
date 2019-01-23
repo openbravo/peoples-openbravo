@@ -40,13 +40,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class PrinterReports extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strDirectPrint = vars.getStringParameter("inpdirectprint", "N");
@@ -59,8 +61,8 @@ public class PrinterReports extends HttpSecureAppServlet {
       }
       String strWindowId = vars.getStringParameter("inpwindowId");
       String inptabId = vars.getStringParameter("inpTabId");
-      String strHiddenValue = vars.getGlobalVariable("inphiddenvalue", strWindowId + "|"
-          + strKeyColumnId);
+      String strHiddenValue = vars.getGlobalVariable("inphiddenvalue",
+          strWindowId + "|" + strKeyColumnId);
       String strIsDirectPDF = vars.getStringParameter("inpIsDirectPDF");
       Window window;
       try {
@@ -84,29 +86,34 @@ public class PrinterReports extends HttpSecureAppServlet {
       }
       printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey, strHiddenValue, inptabId,
           strIsDirectPDF, strIsDirectAttach);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strDirectPrint, String strPDFPath, String strHiddenKey, String strHiddenValue,
-      String inptabId, String strIsDirectPDF, String strIsDirectAttach) throws IOException,
-      ServletException {
+      String inptabId, String strIsDirectPDF, String strIsDirectAttach)
+      throws IOException, ServletException {
     String localStrPDFPath = strPDFPath;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     String[] discard = { "isPrintPreview" };
-    if (strDirectPrint.equals("N"))
+    if (strDirectPrint.equals("N")) {
       discard[0] = new String("isDirectPrint");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/PrinterReports", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/businessUtility/PrinterReports", discard)
+        .createXmlDocument();
     String mapping = "";
     if (localStrPDFPath.startsWith("..")) {
       localStrPDFPath = localStrPDFPath.substring(2);
       mapping = localStrPDFPath;
       localStrPDFPath = FormatUtilities.replace(PrinterReportsData.select(this, localStrPDFPath));
-    } else
+    } else {
       mapping = PrinterReportsData.selectMapping(this, localStrPDFPath);
+    }
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -123,11 +130,12 @@ public class PrinterReports extends HttpSecureAppServlet {
     vars.setSessionValue("inpTabID", inptabId);
     final String hiddenValue = quouteIds(strHiddenValue);
     vars.setSessionValue(localStrPDFPath + "." + strHiddenKey, "(" + hiddenValue + ")");
-    if (!strHiddenValue.equals(""))
+    if (!strHiddenValue.equals("")) {
       vars.setSessionValue(localStrPDFPath + "." + strHiddenKey, "(" + hiddenValue + ")");
-    else
+    } else {
       vars.getRequestInGlobalVariable(strHiddenKey, localStrPDFPath + "." + strHiddenKey,
           IsIDFilter.instance);
+    }
 
     // vars.getRequestInGlobalVariable(strHiddenKey + "_R", mapping + "." +
     // strHiddenKey + "_R");

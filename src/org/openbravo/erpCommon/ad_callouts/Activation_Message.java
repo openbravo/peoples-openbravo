@@ -28,15 +28,16 @@ public class Activation_Message extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     // Parameters
-    String strHBActive = info.getStringParameter("inpisheartbeatactive", new ValueListFilter("Y",
-        "N"));
-    String strRegActive = info.getStringParameter("inpisregistrationactive", new ValueListFilter(
-        "Y", "N"));
+    String strHBActive = info.getStringParameter("inpisheartbeatactive",
+        new ValueListFilter("Y", "N"));
+    String strRegActive = info.getStringParameter("inpisregistrationactive",
+        new ValueListFilter("Y", "N"));
 
     // Message
     String msg = StringUtils.equalsIgnoreCase(strHBActive, "Y")
-        || StringUtils.equalsIgnoreCase(strRegActive, "Y") ? Utility.messageBD(this,
-        "REG_INFO_MESSAGE", info.vars.getLanguage()) : "";
+        || StringUtils.equalsIgnoreCase(strRegActive, "Y")
+            ? Utility.messageBD(this, "REG_INFO_MESSAGE", info.vars.getLanguage())
+            : "";
     if (StringUtils.isNotEmpty(msg)) {
       info.showMessage(msg);
     }

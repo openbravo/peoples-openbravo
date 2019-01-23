@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -57,8 +59,6 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class InventoryStatusTest extends WeldBaseTest {
@@ -286,7 +286,8 @@ public class InventoryStatusTest extends WeldBaseTest {
    * <li>IS003A: Clone Product and Storage Bin and create a Goods Receipt to create Stock. Change
    * Inventory Status to Blocked</li>
    * <li>IS003B: Try to Complete the Goods Shipment, it is not possible</li>
-   * <li>IS003C: Change the Inventory Status to Available. Complete the Goods Shipment successfully</li>
+   * <li>IS003C: Change the Inventory Status to Available. Complete the Goods Shipment
+   * successfully</li>
    * </ul>
    */
   @Test
@@ -547,13 +548,16 @@ public class InventoryStatusTest extends WeldBaseTest {
     createShipmentInOut(GOODS_RECEIPT_ID, product, storageBin, documentNo, quantity);
   }
 
-  private void createStockReservationForProductInBinForTest0005(Product product, Locator storageBin) {
+  private void createStockReservationForProductInBinForTest0005(Product product,
+      Locator storageBin) {
     BigDecimal reservedQty = BigDecimal.ONE;
     createStockReservationForProductInBin(product, storageBin, reservedQty);
   }
 
   /***********************************************************************************************************************/
-  /********************************************** General methods for tests **********************************************/
+  /**********************************************
+   * General methods for tests
+   **********************************************/
   /***********************************************************************************************************************/
 
   /**
@@ -713,8 +717,8 @@ public class InventoryStatusTest extends WeldBaseTest {
    */
   private static int getNumberOfShipmentsWithSameName(String docNo) {
     try {
-      final OBCriteria<ShipmentInOut> criteria = OBDal.getInstance().createCriteria(
-          ShipmentInOut.class);
+      final OBCriteria<ShipmentInOut> criteria = OBDal.getInstance()
+          .createCriteria(ShipmentInOut.class);
       criteria.add(Restrictions.like(ShipmentInOut.PROPERTY_DOCUMENTNO, docNo + "-%"));
       return criteria.count();
     } catch (Exception e) {
@@ -941,23 +945,23 @@ public class InventoryStatusTest extends WeldBaseTest {
   }
 
   private static void assertThatBinHasUndefOverIssueStatus(Locator storageBin) {
-    assertThat("Inventory Status of Storage Bin must be 'Undefined Over-Issue': ", storageBin
-        .getInventoryStatus().getId(), equalTo(UNDEF_OVERISSUE_STATUS));
+    assertThat("Inventory Status of Storage Bin must be 'Undefined Over-Issue': ",
+        storageBin.getInventoryStatus().getId(), equalTo(UNDEF_OVERISSUE_STATUS));
   }
 
   private static void assertThatBinHasBlockedStatus(Locator storageBin) {
-    assertThat("Inventory Status of Storage Bin must be 'Blocked': ", storageBin
-        .getInventoryStatus().getId(), equalTo(BLOCKED_STATUS));
+    assertThat("Inventory Status of Storage Bin must be 'Blocked': ",
+        storageBin.getInventoryStatus().getId(), equalTo(BLOCKED_STATUS));
   }
 
   private static void assertThatBinHasAvailableStatus(Locator storageBin) {
-    assertThat("Inventory Status of Storage Bin must be 'Available': ", storageBin
-        .getInventoryStatus().getId(), equalTo(AVAILABLE_STATUS));
+    assertThat("Inventory Status of Storage Bin must be 'Available': ",
+        storageBin.getInventoryStatus().getId(), equalTo(AVAILABLE_STATUS));
   }
 
   private static void assertThatBinHasBackflushStatus(Locator storageBin) {
-    assertThat("Inventory Status of Storage Bin must be 'Backflush': ", storageBin
-        .getInventoryStatus().getId(), equalTo(BACKFLUSH_STATUS));
+    assertThat("Inventory Status of Storage Bin must be 'Backflush': ",
+        storageBin.getInventoryStatus().getId(), equalTo(BACKFLUSH_STATUS));
   }
 
   private static void assertThatDocumentHasBeenCompleted(ShipmentInOut shipment) {
@@ -977,10 +981,10 @@ public class InventoryStatusTest extends WeldBaseTest {
 
   private static void assertThatNotPossibleToChangeStatusDueToExistingReservation(Exception e,
       Product product) {
-    assertThat(
-        "The expected exception is 'There are Reservations created for Product: '" + product,
-        StringUtils.contains(e.getMessage(), "There are Reservations created for Product: "
-            + product.getName()), equalTo(true));
+    assertThat("The expected exception is 'There are Reservations created for Product: '" + product,
+        StringUtils.contains(e.getMessage(),
+            "There are Reservations created for Product: " + product.getName()),
+        equalTo(true));
   }
 
   private static void assertThatNotPossibleToCompleteShipmentDueToNotAvailableBin(Exception e) {

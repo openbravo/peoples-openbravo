@@ -359,7 +359,8 @@ public class AdvancedQueryBuilder {
   }
 
   private Set<String> getReadableOrgsInOrgNaturalTree(String adOrgId) {
-    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
+    Set<String> orgs = OBContext.getOBContext()
+        .getOrganizationStructureProvider()
         .getNaturalTree(adOrgId);
     String[] readableOrgs = OBContext.getOBContext().getReadableOrganizations();
     Set<String> readableOrgsSet = new HashSet<>(Arrays.asList(readableOrgs));
@@ -405,11 +406,11 @@ public class AdvancedQueryBuilder {
   private String substituteParameters(String where) {
 
     // add some default filter parameters which are substituted
-    filterParameters
-        .put(JsonConstants.QUERY_PARAM_USER, OBContext.getOBContext().getUser().getId());
+    filterParameters.put(JsonConstants.QUERY_PARAM_USER,
+        OBContext.getOBContext().getUser().getId());
     if (!filterParameters.containsKey(JsonConstants.QUERY_PARAM_CLIENT)) {
-      filterParameters.put(JsonConstants.QUERY_PARAM_CLIENT, OBContext.getOBContext()
-          .getCurrentClient().getId());
+      filterParameters.put(JsonConstants.QUERY_PARAM_CLIENT,
+          OBContext.getOBContext().getCurrentClient().getId());
     }
 
     String localWhereClause = where;
@@ -502,12 +503,12 @@ public class AdvancedQueryBuilder {
 
     // Retrieves the UTC time zone offset of the client
     if (jsonCriteria.has("minutesTimezoneOffset")) {
-      int clientMinutesTimezoneOffset = Integer.parseInt(jsonCriteria.get("minutesTimezoneOffset")
-          .toString());
+      int clientMinutesTimezoneOffset = Integer
+          .parseInt(jsonCriteria.get("minutesTimezoneOffset").toString());
       Calendar now = Calendar.getInstance();
       // Obtains the UTC time zone offset of the server
-      int serverMinutesTimezoneOffset = (now.get(Calendar.ZONE_OFFSET) + now
-          .get(Calendar.DST_OFFSET)) / (1000 * 60);
+      int serverMinutesTimezoneOffset = (now.get(Calendar.ZONE_OFFSET)
+          + now.get(Calendar.DST_OFFSET)) / (1000 * 60);
       // Obtains the time zone offset between the server and the client
       clientUTCMinutesTimeZoneDiff = clientMinutesTimezoneOffset;
       UTCServerMinutesTimeZoneDiff = serverMinutesTimezoneOffset;
@@ -553,7 +554,8 @@ public class AdvancedQueryBuilder {
     final Object end = jsonCriteria.get("end");
     final String leftClause = parseSimpleClause(fieldName, getBetweenOperator(operator, false),
         start);
-    final String rightClause = parseSimpleClause(fieldName, getBetweenOperator(operator, true), end);
+    final String rightClause = parseSimpleClause(fieldName, getBetweenOperator(operator, true),
+        end);
     if (leftClause != null && rightClause != null) {
       return "(" + leftClause + " and " + rightClause + ")";
     }
@@ -625,8 +627,8 @@ public class AdvancedQueryBuilder {
           }
           sb.append(prop.getName());
         }
-        throw new OBException(OBMessageUtils.getI18NMessage("OBJSON_InvalidProperty", new String[] {
-            value.toString(), sb.toString() }));
+        throw new OBException(OBMessageUtils.getI18NMessage("OBJSON_InvalidProperty",
+            new String[] { value.toString(), sb.toString() }));
       }
       final Property fieldProperty = properties.get(properties.size() - 1);
       if (property == null) {
@@ -661,8 +663,8 @@ public class AdvancedQueryBuilder {
       tableReference = refProperty.getDomainType() instanceof TableDomainType;
       if (tableReference) {
         // special case table reference itself
-        final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
-            Table.ENTITY_NAME);
+        final boolean isTable = property.getEntity() == ModelProvider.getInstance()
+            .getEntity(Table.ENTITY_NAME);
         if (isTable) {
           useProperty = property.getEntity().getProperty(Table.PROPERTY_NAME);
           final int index = useFieldName.indexOf(DalUtil.DOT);
@@ -674,13 +676,13 @@ public class AdvancedQueryBuilder {
           // just in case the _identifier value is sent in some case as part of the fieldName.
 
           // read the reference to get the table reference
-          final Reference reference = OBDal.getInstance().get(Reference.class,
-              refProperty.getDomainType().getReference().getId());
+          final Reference reference = OBDal.getInstance()
+              .get(Reference.class, refProperty.getDomainType().getReference().getId());
           for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
             if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
                 && referencedTable.getDisplayedColumn().isActive()) {
-              useProperty = property.getEntity().getPropertyByColumnName(
-                  referencedTable.getDisplayedColumn().getDBColumnName());
+              useProperty = property.getEntity()
+                  .getPropertyByColumnName(referencedTable.getDisplayedColumn().getDBColumnName());
               final int index = useFieldName.lastIndexOf(DalUtil.DOT);
               if (useProperty.isPrimitive()) {
                 useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
@@ -724,21 +726,22 @@ public class AdvancedQueryBuilder {
           tableReference = refProperty.getDomainType() instanceof TableDomainType;
         }
         if (subEntity != null && tableReference) {
-          final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
-              Table.ENTITY_NAME);
+          final boolean isTable = property.getEntity() == ModelProvider.getInstance()
+              .getEntity(Table.ENTITY_NAME);
           if (isTable) {
             useProperty = property.getEntity().getProperty(Table.PROPERTY_NAME);
             final int index = useFieldName.indexOf(DalUtil.DOT);
             useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
           } else {
             // read the reference to get the table reference
-            final Reference reference = OBDal.getInstance().get(Reference.class,
-                refProperty.getDomainType().getReference().getId());
+            final Reference reference = OBDal.getInstance()
+                .get(Reference.class, refProperty.getDomainType().getReference().getId());
             for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
               if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
                   && referencedTable.getDisplayedColumn().isActive()) {
-                useProperty = property.getEntity().getPropertyByColumnName(
-                    referencedTable.getDisplayedColumn().getDBColumnName());
+                useProperty = property.getEntity()
+                    .getPropertyByColumnName(
+                        referencedTable.getDisplayedColumn().getDBColumnName());
                 final int index = useFieldName.lastIndexOf(DalUtil.DOT);
                 if (useProperty.isPrimitive()) {
                   useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
@@ -831,8 +834,8 @@ public class AdvancedQueryBuilder {
       // an in parameter use it...
       if (localValue.toString().contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
         final List<String> values = new ArrayList<String>();
-        final String[] separatedValues = localValue.toString().split(
-            JsonConstants.IN_PARAMETER_SEPARATOR);
+        final String[] separatedValues = localValue.toString()
+            .split(JsonConstants.IN_PARAMETER_SEPARATOR);
         for (String separatedValue : separatedValues) {
           values.add(separatedValue);
         }
@@ -976,19 +979,17 @@ public class AdvancedQueryBuilder {
   }
 
   private boolean isGreaterOperator(String operator) {
-    return operator != null
-        && (operator.equals(OPERATOR_GREATERTHAN) || operator.equals(OPERATOR_GREATEROREQUAL)
-            || operator.equals(OPERATOR_IGREATERTHAN) || operator.equals(OPERATOR_IGREATEROREQUAL)
-            || operator.equals(OPERATOR_GREATERTHANFIElD) || operator
-              .equals(OPERATOR_GREATEROREQUALFIELD));
+    return operator != null && (operator.equals(OPERATOR_GREATERTHAN)
+        || operator.equals(OPERATOR_GREATEROREQUAL) || operator.equals(OPERATOR_IGREATERTHAN)
+        || operator.equals(OPERATOR_IGREATEROREQUAL) || operator.equals(OPERATOR_GREATERTHANFIElD)
+        || operator.equals(OPERATOR_GREATEROREQUALFIELD));
   }
 
   private boolean isLesserOperator(String operator) {
-    return operator != null
-        && (operator.equals(OPERATOR_LESSTHAN) || operator.equals(OPERATOR_LESSOREQUAL)
-            || operator.equals(OPERATOR_ILESSTHAN) || operator.equals(OPERATOR_ILESSOREQUAL)
-            || operator.equals(OPERATOR_LESSTHANFIELD) || operator
-              .equals(OPERATOR_LESSOREQUALFIElD));
+    return operator != null && (operator.equals(OPERATOR_LESSTHAN)
+        || operator.equals(OPERATOR_LESSOREQUAL) || operator.equals(OPERATOR_ILESSTHAN)
+        || operator.equals(OPERATOR_ILESSOREQUAL) || operator.equals(OPERATOR_LESSTHANFIELD)
+        || operator.equals(OPERATOR_LESSOREQUALFIElD));
   }
 
   private String computeLeftWhereClauseForIdentifier(Property property, String key,
@@ -1000,8 +1001,8 @@ public class AdvancedQueryBuilder {
     List<Property> identifierProperties = null;
     identifierProperties = property.getEntity().getIdentifierProperties();
     if (!isTableReference) {
-      Check.isTrue(identifierProperties.contains(property), "Property " + property
-          + " not part of identifier of " + property.getEntity());
+      Check.isTrue(identifierProperties.contains(property),
+          "Property " + property + " not part of identifier of " + property.getEntity());
     } else {
       // for table references, the display column identifier properties should be used in the joins
       if (property.getTargetEntity() != null) {
@@ -1033,7 +1034,8 @@ public class AdvancedQueryBuilder {
   private String parseAdvancedCriteria(JSONObject advancedCriteria) throws JSONException {
     final String operator = advancedCriteria.getString(OPERATOR_KEY);
     if (operator.equals(OPERATOR_NOT)) {
-      final String clause = parseStructuredClause(advancedCriteria.getJSONArray(CRITERIA_KEY), "or");
+      final String clause = parseStructuredClause(advancedCriteria.getJSONArray(CRITERIA_KEY),
+          "or");
       if (clause != null) {
         return " not(" + clause + ")";
       }
@@ -1128,9 +1130,8 @@ public class AdvancedQueryBuilder {
         || operator.equals(OPERATOR_IBETWEENINCLUSIVE);
 
     for (Property property : properties) {
-      if (!property.isPrimitive()
-          || (!property.isNumericType() && !property.isDate() && !property.isDatetime() && !property
-              .isAbsoluteDateTime())) {
+      if (!property.isPrimitive() || (!property.isNumericType() && !property.isDate()
+          && !property.isDatetime() && !property.isAbsoluteDateTime())) {
         return operatorCase;
       }
     }
@@ -1138,9 +1139,8 @@ public class AdvancedQueryBuilder {
   }
 
   private boolean ignoreCase(Property property, String operator) {
-    if (property.isPrimitive()
-        && (property.isNumericType() || property.isDate() || property.isDatetime() || property
-            .isAbsoluteDateTime())) {
+    if (property.isPrimitive() && (property.isNumericType() || property.isDate()
+        || property.isDatetime() || property.isAbsoluteDateTime())) {
       return false;
     }
     return operator.equals(OPERATOR_IEQUALS) || operator.equals(OPERATOR_INOTEQUAL)
@@ -1269,8 +1269,8 @@ public class AdvancedQueryBuilder {
       if (param.substring(param.length() - 3).toUpperCase().equals("_ID")
           && !StringUtils.isEmpty(tabId)) {
         VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-        Entity paramEntity = ModelProvider.getInstance().getEntityByTableName(
-            param.substring(0, param.length() - 3));
+        Entity paramEntity = ModelProvider.getInstance()
+            .getEntityByTableName(param.substring(0, param.length() - 3));
 
         if (tab == null) {
           tab = OBDal.getInstance().get(Tab.class, tabId);
@@ -1280,8 +1280,8 @@ public class AdvancedQueryBuilder {
 
         while (ancestorTab != null && paramValue.equals("")) {
 
-          Entity tabEntity = ModelProvider.getInstance().getEntityByTableName(
-              ancestorTab.getTable().getDBTableName());
+          Entity tabEntity = ModelProvider.getInstance()
+              .getEntityByTableName(ancestorTab.getTable().getDBTableName());
 
           if (tabEntity.equals(paramEntity)) {
             paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
@@ -1304,10 +1304,11 @@ public class AdvancedQueryBuilder {
 
       // If paramValue has not been brought form the request, select it from context
       if (paramValue.equals("")) {
-        paramValue = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-            .getVariablesSecureApp(), param,
-            RequestContext.get().getRequestParameter("windowId") != null ? RequestContext.get()
-                .getRequestParameter("windowId") : "");
+        paramValue = Utility.getContext(new DalConnectionProvider(false),
+            RequestContext.get().getVariablesSecureApp(), param,
+            RequestContext.get().getRequestParameter("windowId") != null
+                ? RequestContext.get().getRequestParameter("windowId")
+                : "");
       }
 
       // not found, try to get the parameter directly from the request object
@@ -1421,8 +1422,8 @@ public class AdvancedQueryBuilder {
       if (!firstElement) {
         sb.append(",");
       }
-      sb.append(getOrderByClausePart(localOrderBy.trim().replace(DalUtil.FIELDSEPARATOR,
-          DalUtil.DOT)));
+      sb.append(
+          getOrderByClausePart(localOrderBy.trim().replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT)));
       firstElement = false;
     }
 
@@ -1477,8 +1478,8 @@ public class AdvancedQueryBuilder {
       if (!localOrderBy.equals(JsonConstants.IDENTIFIER)) {
         // be lazy get the last property, it belongs to the last entity
         final Property prop = DalUtil.getPropertyFromPath(searchEntity, localOrderBy);
-        Check.isNotNull(prop, "Property path " + localOrderBy + " is not valid for entity "
-            + searchEntity);
+        Check.isNotNull(prop,
+            "Property path " + localOrderBy + " is not valid for entity " + searchEntity);
         searchEntity = prop.getEntity();
         prefix = localOrderBy.substring(0, localOrderBy.lastIndexOf(DalUtil.DOT) + 1);
 
@@ -1505,20 +1506,20 @@ public class AdvancedQueryBuilder {
 
       if (tableReference) {
         // special case table reference itself
-        final boolean isTable = originalProp.getEntity() == ModelProvider.getInstance().getEntity(
-            Table.ENTITY_NAME);
+        final boolean isTable = originalProp.getEntity() == ModelProvider.getInstance()
+            .getEntity(Table.ENTITY_NAME);
         Property useProperty = null;
         if (isTable) {
           useProperty = originalProp.getEntity().getProperty(Table.PROPERTY_NAME);
         } else {
           // read the reference to get the table reference
-          final Reference reference = OBDal.getInstance().get(Reference.class,
-              originalProp.getDomainType().getReference().getId());
+          final Reference reference = OBDal.getInstance()
+              .get(Reference.class, originalProp.getDomainType().getReference().getId());
           for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
             if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
                 && referencedTable.getDisplayedColumn().isActive()) {
-              useProperty = originalProp.getTargetEntity().getPropertyByColumnName(
-                  referencedTable.getDisplayedColumn().getDBColumnName());
+              useProperty = originalProp.getTargetEntity()
+                  .getPropertyByColumnName(referencedTable.getDisplayedColumn().getDBColumnName());
               break;
             }
           }
@@ -1621,8 +1622,8 @@ public class AdvancedQueryBuilder {
           //
           // raises: with clause can only reference columns in the driving table
 
-          sb.append("COALESCE(to_char((select " + prop.getTranslationProperty().getName()
-              + " from " + prop.getTranslationProperty().getEntity().getName() + " as t where t."
+          sb.append("COALESCE(to_char((select " + prop.getTranslationProperty().getName() + " from "
+              + prop.getTranslationProperty().getEntity().getName() + " as t where t."
               + prop.getTrlParentProperty().getName() + " = "
               + prefix.substring(0, prefix.lastIndexOf('.')) + " and t.language.language='"
               + OBContext.getOBContext().getLanguage().getLanguage() + "')), to_char("
@@ -1639,7 +1640,8 @@ public class AdvancedQueryBuilder {
         }
 
       } else {
-        final List<Property> newIdentifierProperties = prop.getReferencedProperty().getEntity()
+        final List<Property> newIdentifierProperties = prop.getReferencedProperty()
+            .getEntity()
             .getIdentifierProperties();
 
         String newPrefix = prefix + prop.getName();
@@ -2067,19 +2069,19 @@ public class AdvancedQueryBuilder {
       tableReference = refProperty.getDomainType() instanceof TableDomainType;
       if (tableReference) {
         // special case table reference itself
-        final boolean isTable = property.getEntity() == ModelProvider.getInstance().getEntity(
-            Table.ENTITY_NAME);
+        final boolean isTable = property.getEntity() == ModelProvider.getInstance()
+            .getEntity(Table.ENTITY_NAME);
         if (isTable) {
           property = property.getEntity().getProperty(Table.PROPERTY_NAME);
         } else {
           // read the reference to get the table reference
-          final Reference reference = OBDal.getInstance().get(Reference.class,
-              refProperty.getDomainType().getReference().getId());
+          final Reference reference = OBDal.getInstance()
+              .get(Reference.class, refProperty.getDomainType().getReference().getId());
           for (ReferencedTable referencedTable : reference.getADReferencedTableList()) {
             if (referencedTable.isActive() && referencedTable.getDisplayedColumn() != null
                 && referencedTable.getDisplayedColumn().isActive()) {
-              property = property.getEntity().getPropertyByColumnName(
-                  referencedTable.getDisplayedColumn().getDBColumnName());
+              property = property.getEntity()
+                  .getPropertyByColumnName(referencedTable.getDisplayedColumn().getDBColumnName());
               break;
             }
           }

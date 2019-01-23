@@ -52,22 +52,22 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
   @Override
   public List<ComponentResource> getGlobalComponentResources() {
     final List<ComponentResource> globalResources = new ArrayList<ComponentResource>();
-    globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-myopenbravo.js",
-        false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.myob/js/ob-getting-started-view.js", false));
+    globalResources
+        .add(createStaticResource("web/org.openbravo.client.myob/js/ob-myopenbravo.js", false));
+    globalResources.add(
+        createStaticResource("web/org.openbravo.client.myob/js/ob-getting-started-view.js", false));
     globalResources
         .add(createStaticResource("web/org.openbravo.client.myob/js/ob-widget.js", false));
-    globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-url-widget.js",
-        false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.myob/js/ob-showparameter-widget.js", false));
+    globalResources
+        .add(createStaticResource("web/org.openbravo.client.myob/js/ob-url-widget.js", false));
+    globalResources.add(
+        createStaticResource("web/org.openbravo.client.myob/js/ob-showparameter-widget.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.myob/js/ob-community-branding-widget.js", false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.myob/js/ob-calendar-widget.js", false));
-    globalResources.add(createStaticResource("web/org.openbravo.client.myob/js/ob-about-popup.js",
-        false));
+    globalResources
+        .add(createStaticResource("web/org.openbravo.client.myob/js/ob-calendar-widget.js", false));
+    globalResources
+        .add(createStaticResource("web/org.openbravo.client.myob/js/ob-about-popup.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.myob/js/ob-getting-started-widget.js", false));
 
@@ -78,8 +78,8 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER + "/org.openbravo.client.myob/ob-widget-styles.js",
         false));
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+    globalResources
+        .add(createStaticResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.myob/ob-myopenbravo-styles.js", false));
 
@@ -87,8 +87,8 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER + "/org.openbravo.client.myob/ob-widget-styles.css",
         false));
-    globalResources.add(createStyleSheetResource(
-        "web/org.openbravo.userinterface.smartclient/openbravo/skins/"
+    globalResources
+        .add(createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.myob/ob-myopenbravo-styles.css", false));
 

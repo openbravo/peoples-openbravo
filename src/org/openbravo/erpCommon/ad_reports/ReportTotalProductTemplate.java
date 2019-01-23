@@ -38,26 +38,30 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportTotalProductTemplate extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("FIND"))
+    if (vars.commandIn("FIND")) {
       printPageDataHtml(response, vars);
-    else
+    } else {
       printPageDataSheet(response, vars);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
     XmlDocument xmlDocument = null;
     ReportTotalProductTemplateData[] data = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit")
+        .createXmlDocument();
 
     data = ReportTotalProductTemplateData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportTotalProductTemplate"),
@@ -113,16 +117,18 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplate").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplate")
+        .createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTotalProductTemplate", false,
-        "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTotalProductTemplate", false, "",
+        "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -165,6 +171,7 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportSalesOrderOpenItem. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

@@ -33,8 +33,8 @@ public class PaymentSelectorFilterExpression implements FilterExpression {
     requestMap = _requestMap;
 
     if (requestMap.containsKey("inpfinFinancialAccountId")) {
-      FIN_FinancialAccount financialaccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-          requestMap.get("inpfinFinancialAccountId"));
+      FIN_FinancialAccount financialaccount = OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, requestMap.get("inpfinFinancialAccountId"));
       return financialaccount.getId();
     }
 

@@ -47,8 +47,8 @@ import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
 public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance()
-      .getEntity(AcctSchema.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(AcctSchema.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -56,35 +56,35 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     boolean eval = false;
-    if ((Boolean) event.getCurrentState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE)) == true) {
-      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE)).equals(
-          event.getCurrentState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE)))) {
+    if ((Boolean) event
+        .getCurrentState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE)) == true) {
+      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE))
+          .equals(event.getCurrentState(getProperty(AcctSchema.PROPERTY_CENTRALMAINTENANCE)))) {
         eval = true;
       }
-      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_ASSETPOSITIVE)).equals(
-          event.getCurrentState(getProperty(AcctSchema.PROPERTY_ASSETPOSITIVE)))) {
+      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_ASSETPOSITIVE))
+          .equals(event.getCurrentState(getProperty(AcctSchema.PROPERTY_ASSETPOSITIVE)))) {
         eval = true;
       }
-      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_LIABILITYPOSITIVE)).equals(
-          event.getCurrentState(getProperty(AcctSchema.PROPERTY_LIABILITYPOSITIVE)))) {
+      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_LIABILITYPOSITIVE))
+          .equals(event.getCurrentState(getProperty(AcctSchema.PROPERTY_LIABILITYPOSITIVE)))) {
         eval = true;
       }
-      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_EQUITYPOSITIVE)).equals(
-          event.getCurrentState(getProperty(AcctSchema.PROPERTY_EQUITYPOSITIVE)))) {
+      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_EQUITYPOSITIVE))
+          .equals(event.getCurrentState(getProperty(AcctSchema.PROPERTY_EQUITYPOSITIVE)))) {
         eval = true;
       }
-      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_EXPENSEPOSITIVE)).equals(
-          event.getCurrentState(getProperty(AcctSchema.PROPERTY_EXPENSEPOSITIVE)))) {
+      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_EXPENSEPOSITIVE))
+          .equals(event.getCurrentState(getProperty(AcctSchema.PROPERTY_EXPENSEPOSITIVE)))) {
         eval = true;
       }
-      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_REVENUEPOSITIVE)).equals(
-          event.getCurrentState(getProperty(AcctSchema.PROPERTY_REVENUEPOSITIVE)))) {
+      if (!event.getPreviousState(getProperty(AcctSchema.PROPERTY_REVENUEPOSITIVE))
+          .equals(event.getCurrentState(getProperty(AcctSchema.PROPERTY_REVENUEPOSITIVE)))) {
         eval = true;
       }
     }
@@ -145,8 +145,8 @@ public class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
     final String ACCOUNTTYPE_MEMO = "M";
     Element element = OBDal.getInstance().get(Element.class, _element.getId());
     where.append(ElementValue.PROPERTY_ACCOUNTINGELEMENT + ".id = :element");
-    OBQuery<ElementValue> elementValueQry = OBDal.getInstance().createQuery(ElementValue.class,
-        where.toString());
+    OBQuery<ElementValue> elementValueQry = OBDal.getInstance()
+        .createQuery(ElementValue.class, where.toString());
     elementValueQry.setFilterOnActive(false);
     elementValueQry.setFilterOnReadableClients(false);
     elementValueQry.setFilterOnReadableOrganization(false);

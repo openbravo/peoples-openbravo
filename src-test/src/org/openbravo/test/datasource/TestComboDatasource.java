@@ -37,14 +37,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.JsonConstants;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class TestComboDatasource extends BaseDataSourceTestDal {
 
@@ -261,8 +261,9 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
     String response = doRequest(ficRequest, new HashMap<String, String>(), 200, "POST");
     JSONObject jsonResponse = new JSONObject(response);
     assertTrue(jsonResponse.toString() != null);
-    assertThat(jsonResponse.getJSONObject("columnValues").getJSONObject("AD_Org_ID")
-        .getString("id"), isEmptyOrNullString());
+    assertThat(
+        jsonResponse.getJSONObject("columnValues").getJSONObject("AD_Org_ID").getString("id"),
+        isEmptyOrNullString());
   }
 
   /**

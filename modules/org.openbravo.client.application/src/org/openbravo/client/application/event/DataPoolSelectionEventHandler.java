@@ -44,8 +44,8 @@ import org.openbravo.dal.service.DataPoolChecker;
 public class DataPoolSelectionEventHandler extends EntityPersistenceEventObserver {
 
   protected Logger logger = LogManager.getLogger();
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      DataPoolSelection.class) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(DataPoolSelection.class) };
 
   private static ThreadLocal<String> dataPoolSelectionValueUpdated = new ThreadLocal<>();
   private static DataPoolChecker dataPoolChecker;

@@ -50,8 +50,8 @@ public class BaseTemplateComponent extends BaseComponent {
       }
 
       final Template template = getComponentTemplate();
-      final TemplateProcessor templateProcessor = templateProcessRegistry.get(template
-          .getTemplateLanguage());
+      final TemplateProcessor templateProcessor = templateProcessRegistry
+          .get(template.getTemplateLanguage());
       return templateProcessor.process(template, getParameters());
     } finally {
       OBContext.restorePreviousMode();
@@ -70,6 +70,7 @@ public class BaseTemplateComponent extends BaseComponent {
    * @return returns this instance
    * @see org.openbravo.client.kernel.BaseComponent#getData()
    */
+  @Override
   public Object getData() {
     return this;
   }

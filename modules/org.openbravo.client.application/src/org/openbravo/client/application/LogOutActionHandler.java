@@ -51,11 +51,13 @@ public class LogOutActionHandler extends BaseActionHandler implements PortalAcce
     final HttpServletResponse response = RequestContext.get().getResponse();
     if (response instanceof KernelHttpServletResponse) {
       final KernelHttpServletResponse kernelResponse = (KernelHttpServletResponse) response;
-      // The callback of this handler performs a redirect to the base url, letting to the AuthenticationManager the final logout actions.
+      // The callback of this handler performs a redirect to the base url, letting to the
+      // AuthenticationManager the final logout actions.
       kernelResponse.setDoLogout(true);
     }
   }
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     throw new UnsupportedOperationException();
   }

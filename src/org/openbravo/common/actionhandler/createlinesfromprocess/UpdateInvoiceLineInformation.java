@@ -203,8 +203,8 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     relatedOrdersHQL.append(" where il.invoice.id = :invId");
     relatedOrdersHQL.append("  and il.salesOrderLine.salesOrder.id <> :ordId");
 
-    OBQuery<InvoiceLine> relatedOrdersQuery = OBDal.getInstance().createQuery(InvoiceLine.class,
-        relatedOrdersHQL.toString());
+    OBQuery<InvoiceLine> relatedOrdersQuery = OBDal.getInstance()
+        .createQuery(InvoiceLine.class, relatedOrdersHQL.toString());
     relatedOrdersQuery.setNamedParameter("invId", getInvoice().getId());
     relatedOrdersQuery.setNamedParameter("ordId", processingOrder.getId());
     relatedOrdersQuery.setMaxResult(1);

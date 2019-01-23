@@ -42,8 +42,8 @@ public class SL_InvoiceTax_Amt extends SimpleCallout {
 
     // Update Tax Amount and Tax Base Amount
     SLInvoiceTaxAmtData[] data = SLInvoiceTaxAmtData.select(this, taxId, invoiceId);
-    BigDecimal taxRate = StringUtils.isEmpty(data[0].rate) ? BigDecimal.ONE : new BigDecimal(
-        data[0].rate);
+    BigDecimal taxRate = StringUtils.isEmpty(data[0].rate) ? BigDecimal.ONE
+        : new BigDecimal(data[0].rate);
     Integer taxScale = Integer.valueOf(data[0].priceprecision);
 
     if (StringUtils.equals(fieldChanged, "inptaxamt")) {

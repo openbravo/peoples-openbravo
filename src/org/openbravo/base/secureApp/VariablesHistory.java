@@ -41,14 +41,14 @@ public class VariablesHistory {
   }
 
   void upCurrentHistoryIndex() {
-    this.currentHistoryIndex = Integer.toString(Integer.valueOf(this.currentHistoryIndex)
-        .intValue() + 1);
+    this.currentHistoryIndex = Integer
+        .toString(Integer.valueOf(this.currentHistoryIndex).intValue() + 1);
     setSessionValue("reqHistory.current", this.currentHistoryIndex);
   }
 
   public void downCurrentHistoryIndex() {
-    this.currentHistoryIndex = Integer.toString(Integer.valueOf(this.currentHistoryIndex)
-        .intValue() - 1);
+    this.currentHistoryIndex = Integer
+        .toString(Integer.valueOf(this.currentHistoryIndex).intValue() - 1);
     setSessionValue("reqHistory.current", this.currentHistoryIndex);
   }
 
@@ -68,23 +68,28 @@ public class VariablesHistory {
     String auxStr = null;
     try {
       auxStr = (String) session.getAttribute(sessionAttribute.toUpperCase());
-      if (auxStr == null || auxStr.trim().equals(""))
+      if (auxStr == null || auxStr.trim().equals("")) {
         auxStr = defaultValue;
+      }
     } catch (Exception e) {
       auxStr = defaultValue;
     }
-    if (!sessionAttribute.equalsIgnoreCase("menuVertical"))
-      if (log4j.isDebugEnabled())
+    if (!sessionAttribute.equalsIgnoreCase("menuVertical")) {
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Session attribute: " + sessionAttribute + ":..." + auxStr);
+      }
+    }
     return auxStr;
   }
 
   public void setSessionValue(String attribute, String value) {
     try {
       session.setAttribute(attribute.toUpperCase(), value);
-      if (!attribute.equalsIgnoreCase("menuVertical"))
-        if (log4j.isDebugEnabled())
+      if (!attribute.equalsIgnoreCase("menuVertical")) {
+        if (log4j.isDebugEnabled()) {
           log4j.debug("session value: " + attribute + ":..." + value.toString());
+        }
+      }
     } catch (Exception e) {
       log4j.error("setSessionValue error: " + attribute + ":..." + value);
     }

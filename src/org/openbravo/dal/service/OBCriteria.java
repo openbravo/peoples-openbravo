@@ -95,6 +95,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
    * 
    * @return the list of Objects retrieved through this Criteria object
    */
+  @Override
   @SuppressWarnings("unchecked")
   public List<E> list() throws HibernateException {
     initialize();
@@ -125,6 +126,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   /**
    * See the scroll method on the Hibernate Criteria class.
    */
+  @Override
   public ScrollableResults scroll() throws HibernateException {
     scrolling = true;
     try {
@@ -138,6 +140,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   /**
    * See the scroll method on the Hibernate Criteria class.
    */
+  @Override
   public ScrollableResults scroll(ScrollMode scrollMode) throws HibernateException {
     scrolling = true;
     try {
@@ -162,6 +165,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   /**
    * See the uniqueResult() method on the Hibernate Criteria class.
    */
+  @Override
   public Object uniqueResult() throws HibernateException {
     initialize();
     return super.uniqueResult();
@@ -172,8 +176,9 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
       if (!modified) {
         return;
       }
-      log.warn("Detected multiple calls to initialize() in the same OBCriteria instance. "
-          + "This should be fixed in order to prevent adding duplicated filters in the query.",
+      log.warn(
+          "Detected multiple calls to initialize() in the same OBCriteria instance. "
+              + "This should be fixed in order to prevent adding duplicated filters in the query.",
           new Exception());
     }
     final OBContext obContext = OBContext.getOBContext();

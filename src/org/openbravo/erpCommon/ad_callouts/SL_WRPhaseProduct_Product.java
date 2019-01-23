@@ -53,9 +53,9 @@ public class SL_WRPhaseProduct_Product extends SimpleCallout {
     FieldProvider[] tld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              "SLOrderProduct"), Utility.getContext(this, info.vars, "#User_Client",
-              "SLOrderProduct"), 0);
+          "M_Product_UOM", "",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SLOrderProduct"),
+          Utility.getContext(this, info.vars, "#User_Client", "SLOrderProduct"), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderProduct", "");
       tld = comboTableData.select(false);
       comboTableData = null;

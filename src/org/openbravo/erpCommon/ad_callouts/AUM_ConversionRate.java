@@ -53,8 +53,8 @@ public class AUM_ConversionRate extends SimpleCallout {
       Product product = OBDal.getInstance().get(Product.class, strmProductId);
       String strpUOM = product.getUOM().getId();
 
-      OBCriteria<UOMConversion> uOMConversionCriteria = OBDal.getInstance().createCriteria(
-          UOMConversion.class);
+      OBCriteria<UOMConversion> uOMConversionCriteria = OBDal.getInstance()
+          .createCriteria(UOMConversion.class);
       uOMConversionCriteria.add(Restrictions.and(Restrictions.eq("uOM.id", srtcUOMId),
           Restrictions.eq("toUOM.id", strpUOM)));
       uOMConversionCriteria.setMaxResults(1);

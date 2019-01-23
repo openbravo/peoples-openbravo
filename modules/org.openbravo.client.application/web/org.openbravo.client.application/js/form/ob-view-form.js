@@ -1034,8 +1034,7 @@ OB.ViewFormProperties = {
     // Modifications in this method should go also in setColumnValuesInEditValues because both almost do the same
     var typeInstance;
     var assignValue;
-    var isDate, jsDateTime, isDateTime, isAbsoluteDateTime, isImage,
-        oldValue, field = this.getFieldFromColumnName(columnName),
+    var isDate, jsDateTime, isDateTime, isAbsoluteDateTime, isImage, oldValue, field = this.getFieldFromColumnName(columnName),
         entries = columnValue.entries;
     // not a field on the form, probably a datasource field
     var propDef = this.view.getPropertyDefinitionFromDbColumnName(columnName);

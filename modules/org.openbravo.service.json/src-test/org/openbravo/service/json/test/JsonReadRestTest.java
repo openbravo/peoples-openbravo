@@ -54,8 +54,9 @@ public class JsonReadRestTest extends JsonRestTest {
   public void testWhereClause() throws Exception {
     String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
     whereClause = URLEncoder.encode(whereClause, "UTF-8");
-    final JSONObject jsonObject = doRequest(URL_PART + "/ADColumn?" + JsonConstants.WHERE_PARAMETER
-        + "=" + whereClause, JsonConstants.IDENTIFIER, "GET", 200);
+    final JSONObject jsonObject = doRequest(
+        URL_PART + "/ADColumn?" + JsonConstants.WHERE_PARAMETER + "=" + whereClause,
+        JsonConstants.IDENTIFIER, "GET", 200);
     final JSONArray jsonArray = jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
         .getJSONArray(JsonConstants.DATA);
     assertEquals(2, jsonArray.length());
@@ -65,11 +66,13 @@ public class JsonReadRestTest extends JsonRestTest {
     setSystemAdministratorContext();
     final JsonToDataConverter converter = new JsonToDataConverter();
     final Column column1 = (Column) converter.toBaseOBObject(jsonColumn1);
-    assertTrue(column1.getTable().getId().equals("104") || column1.getTable().getId().equals("105"));
+    assertTrue(
+        column1.getTable().getId().equals("104") || column1.getTable().getId().equals("105"));
     assertFalse(converter.hasErrors());
     converter.clearState();
     final Column column2 = (Column) converter.toBaseOBObject(jsonColumn2);
-    assertTrue(column2.getTable().getId().equals("104") || column2.getTable().getId().equals("105"));
+    assertTrue(
+        column2.getTable().getId().equals("104") || column2.getTable().getId().equals("105"));
     assertFalse(converter.hasErrors());
 
     assertTrue(!column1.isNewOBObject());
@@ -127,18 +130,12 @@ public class JsonReadRestTest extends JsonRestTest {
     final int columnCnt = colCriteria.count();
     final JSONObject jsonObject = doRequest(URL_PART + "/ADColumn?_startRow=10&_endRow=17",
         JsonConstants.IDENTIFIER, "GET", 200);
-    assertEquals(
-        columnCnt,
-        jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
-            JsonConstants.RESPONSE_TOTALROWS));
-    assertEquals(
-        17,
-        jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
-            JsonConstants.RESPONSE_ENDROW));
-    assertEquals(
-        10,
-        jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE).getInt(
-            JsonConstants.RESPONSE_STARTROWS));
+    assertEquals(columnCnt, jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
+        .getInt(JsonConstants.RESPONSE_TOTALROWS));
+    assertEquals(17, jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
+        .getInt(JsonConstants.RESPONSE_ENDROW));
+    assertEquals(10, jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
+        .getInt(JsonConstants.RESPONSE_STARTROWS));
     final JSONArray jsonArray = jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
         .getJSONArray(JsonConstants.DATA);
 
@@ -162,8 +159,9 @@ public class JsonReadRestTest extends JsonRestTest {
   private void doTestSortByAndFilter(boolean ascending) throws Exception {
     String filterClause = "Reference List";
     filterClause = URLEncoder.encode(filterClause, "UTF-8");
-    final JSONObject jsonObject = doRequest(URL_PART + "/ADRole?clientList=1000000&_sortBy="
-        + (ascending ? "" : "-") + "name", JsonConstants.IDENTIFIER, "GET", 200);
+    final JSONObject jsonObject = doRequest(
+        URL_PART + "/ADRole?clientList=1000000&_sortBy=" + (ascending ? "" : "-") + "name",
+        JsonConstants.IDENTIFIER, "GET", 200);
     final JSONArray jsonArray = jsonObject.getJSONObject(JsonConstants.RESPONSE_RESPONSE)
         .getJSONArray(JsonConstants.DATA);
     assertEquals(8, jsonArray.length());

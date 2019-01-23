@@ -27,6 +27,8 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
@@ -51,8 +53,6 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CostAdjustmentProcess {
   private static final Logger log = LogManager.getLogger();
@@ -108,7 +108,8 @@ public class CostAdjustmentProcess {
     query.append(" where " + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " = :ca");
     query.append("   and " + CostAdjustmentLine.PROPERTY_ISSOURCE + " = true");
 
-    Query<Date> qryMinDate = OBDal.getInstance().getSession()
+    Query<Date> qryMinDate = OBDal.getInstance()
+        .getSession()
         .createQuery(query.toString(), Date.class);
     qryMinDate.setParameter("ca", costAdjustment);
     Date minDate = qryMinDate.uniqueResult();
@@ -117,8 +118,8 @@ public class CostAdjustmentProcess {
       Period periodClosed = CostingUtils.periodClosed(costAdjustment.getOrganization(), minDate,
           maxDate, "CAD");
       if (periodClosed != null) {
-        String errorMsg = OBMessageUtils.getI18NMessage("DocumentTypePeriodClosed", new String[] {
-            "CAD", periodClosed.getIdentifier() });
+        String errorMsg = OBMessageUtils.getI18NMessage("DocumentTypePeriodClosed",
+            new String[] { "CAD", periodClosed.getIdentifier() });
         throw new OBException(errorMsg);
       }
     } catch (ServletException e) {
@@ -166,8 +167,8 @@ public class CostAdjustmentProcess {
     where.append(" and cal." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
     where.append(" order by cal." + CostAdjustmentLine.PROPERTY_LINENO);
 
-    OBQuery<CostAdjustmentLine> qry = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
-        where.toString());
+    OBQuery<CostAdjustmentLine> qry = OBDal.getInstance()
+        .createQuery(CostAdjustmentLine.class, where.toString());
     qry.setNamedParameter("strCostAdjId", strCostAdjId);
 
     ScrollableResults lines = qry.scroll(ScrollMode.FORWARD_ONLY);
@@ -209,7 +210,8 @@ public class CostAdjustmentProcess {
     updateQuery.append(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED);
     updateQuery.append(" = true ");
     @SuppressWarnings("rawtypes")
-    Query adjustmentLineQuery = OBDal.getInstance().getSession()
+    Query adjustmentLineQuery = OBDal.getInstance()
+        .getSession()
         .createQuery(updateQuery.toString());
     adjustmentLineQuery.setParameter("adjustmentId", costAdjustment.getId());
     adjustmentLineQuery.executeUpdate();
@@ -219,7 +221,8 @@ public class CostAdjustmentProcess {
     CostAdjustmentLine line = getNextLine(strCostAdjustmentId);
     while (line != null) {
       MaterialTransaction trx = line.getInventoryTransaction();
-      log.debug("Start processing line: {}, transaction: {}", line.getLineNo(), trx.getIdentifier());
+      log.debug("Start processing line: {}, transaction: {}", line.getLineNo(),
+          trx.getIdentifier());
       if (trx.getCostingAlgorithm() == null) {
         log.error("Transaction is cost calculated with legacy cost engine.");
         throw new OBException(OBMessageUtils.messageBD("NotAdjustLegacyEngineTrx"));
@@ -227,8 +230,8 @@ public class CostAdjustmentProcess {
       final String strCostAdjLineId = line.getId();
 
       // Add transactions that depend on the transaction being adjusted.
-      CostingAlgorithmAdjustmentImp costAdjImp = getAlgorithmAdjustmentImp(trx
-          .getCostingAlgorithm().getJavaClassName());
+      CostingAlgorithmAdjustmentImp costAdjImp = getAlgorithmAdjustmentImp(
+          trx.getCostingAlgorithm().getJavaClassName());
 
       log.debug("costing algorithm imp loaded {}", costAdjImp.getClass().getName());
       costAdjImp.init(line);
@@ -244,8 +247,8 @@ public class CostAdjustmentProcess {
   }
 
   private CostAdjustmentLine getNextLine(String strCostAdjustmentId) {
-    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
-        CostAdjustmentLine.class);
+    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance()
+        .createCriteria(CostAdjustmentLine.class);
     critLines.createAlias(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, "trx");
     critLines.createAlias(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, "ca");
     critLines.add(Restrictions.eq("ca.id", strCostAdjustmentId));
@@ -262,8 +265,8 @@ public class CostAdjustmentProcess {
   private void generateTransactionCosts(CostAdjustmentLine costAdjustmentLine) {
     log.debug("Generate transaction costs of line: {}", costAdjustmentLine.getLineNo());
     long t1 = System.currentTimeMillis();
-    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
-        CostAdjustmentLine.class);
+    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance()
+        .createCriteria(CostAdjustmentLine.class);
     Date referenceDate = costAdjustmentLine.getCostAdjustment().getReferenceDate();
     critLines.add(Restrictions.or(
         Restrictions.eq(CostAdjustmentLine.PROPERTY_PARENTCOSTADJUSTMENTLINE, costAdjustmentLine),

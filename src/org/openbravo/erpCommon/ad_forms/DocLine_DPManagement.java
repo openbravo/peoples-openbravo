@@ -36,6 +36,7 @@ public class DocLine_DPManagement extends DocLine {
     super(DocumentType, TrxHeader_ID, TrxLine_ID);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

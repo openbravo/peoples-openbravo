@@ -49,14 +49,14 @@ public class OrderLinePickEditTransformer extends HqlQueryTransformer {
     final String strProductId = requestParameters.get("@OrderLine.product@");
     final String strTabId = requestParameters.get("buttonOwnerViewTabId");
 
-    Check.isTrue(IsIDFilter.instance.accept(strOrderId), "Value " + strOrderId
-        + " is not a valid id.");
-    Check.isTrue(IsIDFilter.instance.accept(strBusinessPartnerId), "Value " + strBusinessPartnerId
-        + " is not a valid id.");
-    Check.isTrue(IsIDFilter.instance.accept(strOrderLineId), "Value " + strOrderLineId
-        + " is not a valid id.");
-    Check.isTrue(IsIDFilter.instance.accept(strProductId), "Value " + strProductId
-        + " is not a valid id.");
+    Check.isTrue(IsIDFilter.instance.accept(strOrderId),
+        "Value " + strOrderId + " is not a valid id.");
+    Check.isTrue(IsIDFilter.instance.accept(strBusinessPartnerId),
+        "Value " + strBusinessPartnerId + " is not a valid id.");
+    Check.isTrue(IsIDFilter.instance.accept(strOrderLineId),
+        "Value " + strOrderLineId + " is not a valid id.");
+    Check.isTrue(IsIDFilter.instance.accept(strProductId),
+        "Value " + strProductId + " is not a valid id.");
 
     final Product product = OBDal.getInstance().get(Product.class, strProductId);
     String includedCategories = product.getIncludedProductCategories();
@@ -77,18 +77,18 @@ public class OrderLinePickEditTransformer extends HqlQueryTransformer {
       whereClause.append(" and e.product.productType <> 'S' ");
 
       if ("N".equals(includedCategories)) {
-        whereClause
-            .append(" and exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory and spc.product.id = :productId) ");
+        whereClause.append(
+            " and exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory and spc.product.id = :productId) ");
       } else if ("Y".equals(includedCategories)) {
-        whereClause
-            .append(" and not exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory and spc.product.id = :productId) ");
+        whereClause.append(
+            " and not exists ( select 1 from ServiceProductCategory spc where spc.productCategory = e.product.productCategory and spc.product.id = :productId) ");
       }
       if ("N".equals(includedProducts)) {
-        whereClause
-            .append(" and exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = :productId) ");
+        whereClause.append(
+            " and exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = :productId) ");
       } else if ("Y".equals(includedProducts)) {
-        whereClause
-            .append(" and not exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = :productId) ");
+        whereClause.append(
+            " and not exists (select 1 from ServiceProduct p where p.relatedProduct.id = e.product.id and p.product.id = :productId) ");
       }
 
       queryNamedParameters.put("orderId", strOrderId);
@@ -105,11 +105,11 @@ public class OrderLinePickEditTransformer extends HqlQueryTransformer {
       if (orderLine.getGoodsShipmentLine() != null
           && orderLine.getGoodsShipmentLine().getSalesOrderLine() != null) {
         final OrderLine originalOrderLine = orderLine.getGoodsShipmentLine().getSalesOrderLine();
-        whereClause
-            .append(" exists (select 1 from OrderlineServiceRelation osr where osr.salesOrderLine.id = :originalOrderLineId and osr.orderlineRelated.id = e.id) ");
+        whereClause.append(
+            " exists (select 1 from OrderlineServiceRelation osr where osr.salesOrderLine.id = :originalOrderLineId and osr.orderlineRelated.id = e.id) ");
         whereClause.append(" or ");
-        whereClause
-            .append(" exists (select 1 from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id) ");
+        whereClause.append(
+            " exists (select 1 from OrderlineServiceRelation osr where osr.salesOrderLine.id = :orderLineId and osr.orderlineRelated.id = e.id) ");
         queryNamedParameters.put("originalOrderLineId", originalOrderLine.getId());
         queryNamedParameters.put("orderLineId", strOrderLineId);
       }

@@ -113,8 +113,7 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
       return 0L;
     }
 
-    final String hql = "select distinct(e.alertRule)"
-        + " from ADAlertRecipient"
+    final String hql = "select distinct(e.alertRule)" + " from ADAlertRecipient"
         + " e where e.alertRule.active = true and (e.userContact.id= :userId "
         + " or (e.userContact.id = null and e.role.id = :roleId))"
 
@@ -123,15 +122,18 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
         + " and e.alertRule.organization.id "
         + OBDal.getInstance().getReadableOrganizationsInClause();
 
-    final Query<AlertRule> qry = OBDal.getInstance().getSession().createQuery(hql, AlertRule.class)
+    final Query<AlertRule> qry = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, AlertRule.class)
         .setParameter("userId", OBContext.getOBContext().getUser().getId())
         .setParameter("roleId", OBContext.getOBContext().getRole().getId());
 
-    long total = qry.stream() //
-        .collect( //
-            groupingBy(rule -> Objects.toString(rule.getFilterClause(), ""))) // null can't be key
-        .values().stream() //
-        .mapToLong(rulesByFilterClause -> countActiveAlertsForRules(rulesByFilterClause, vars)) //
+    long total = qry.stream()
+        .collect(groupingBy(rule -> Objects.toString(rule.getFilterClause(), ""))) // null can't be
+                                                                                   // key
+        .values()
+        .stream()
+        .mapToLong(rulesByFilterClause -> countActiveAlertsForRules(rulesByFilterClause, vars))
         .sum();
 
     return total;

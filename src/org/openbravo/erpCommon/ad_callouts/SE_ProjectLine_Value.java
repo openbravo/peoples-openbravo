@@ -86,9 +86,9 @@ public class SE_ProjectLine_Value extends SimpleCallout {
         if (StringUtils.isNotEmpty(strCBPartnerLocationID)
             && StringUtils.isNotEmpty(strMWarehouseID)) {
           try {
-            String strCTaxID = Tax
-                .get(this, strmProductId, DateTimeData.today(this), strADOrgID, strMWarehouseID,
-                    strCBPartnerLocationID, strCBPartnerLocationID, strProjectId, true);
+            String strCTaxID = Tax.get(this, strmProductId, DateTimeData.today(this), strADOrgID,
+                strMWarehouseID, strCBPartnerLocationID, strCBPartnerLocationID, strProjectId,
+                true);
             if (StringUtils.isNotEmpty(strCTaxID)) {
               info.addResult("inpcTaxId", strCTaxID);
             } else {
@@ -107,8 +107,8 @@ public class SE_ProjectLine_Value extends SimpleCallout {
 
     // Show message if any
     if (StringUtils.isNotEmpty(strMessage)) {
-      info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, strMessage,
-          info.vars.getLanguage())));
+      info.showMessage(
+          FormatUtilities.replaceJS(Utility.messageBD(this, strMessage, info.vars.getLanguage())));
     }
   }
 }

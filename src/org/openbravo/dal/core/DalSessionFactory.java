@@ -87,50 +87,62 @@ public class DalSessionFactory implements SessionFactory {
     this.delegateSessionFactory = delegateSessionFactory;
   }
 
+  @Override
   public void close() throws HibernateException {
     delegateSessionFactory.close();
   }
 
+  @Override
   public Map getAllClassMetadata() throws HibernateException {
     return delegateSessionFactory.getAllClassMetadata();
   }
 
+  @Override
   public Map getAllCollectionMetadata() throws HibernateException {
     return delegateSessionFactory.getAllCollectionMetadata();
   }
 
+  @Override
   public ClassMetadata getClassMetadata(Class persistentClass) throws HibernateException {
     return delegateSessionFactory.getClassMetadata(persistentClass);
   }
 
+  @Override
   public ClassMetadata getClassMetadata(String entityName) throws HibernateException {
     return delegateSessionFactory.getClassMetadata(entityName);
   }
 
+  @Override
   public CollectionMetadata getCollectionMetadata(String roleName) throws HibernateException {
     return delegateSessionFactory.getCollectionMetadata(roleName);
   }
 
+  @Override
   public Session getCurrentSession() throws HibernateException {
     return delegateSessionFactory.getCurrentSession();
   }
 
+  @Override
   public Set getDefinedFilterNames() {
     return delegateSessionFactory.getDefinedFilterNames();
   }
 
+  @Override
   public FilterDefinition getFilterDefinition(String filterName) throws HibernateException {
     return delegateSessionFactory.getFilterDefinition(filterName);
   }
 
+  @Override
   public Reference getReference() throws NamingException {
     return delegateSessionFactory.getReference();
   }
 
+  @Override
   public Statistics getStatistics() {
     return delegateSessionFactory.getStatistics();
   }
 
+  @Override
   public boolean isClosed() {
     return delegateSessionFactory.isClosed();
   }
@@ -179,18 +191,21 @@ public class DalSessionFactory implements SessionFactory {
 
   private void initializeDBSessionInfo(StatelessSessionImpl session) {
     Connection conn = session.connection();
-    SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("bbdd.rdbms"));
+    SessionInfo.initDB(conn,
+        OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
   }
 
+  @Override
   public Cache getCache() {
     return delegateSessionFactory.getCache();
   }
 
+  @Override
   public boolean containsFetchProfileDefinition(String name) {
     return delegateSessionFactory.containsFetchProfileDefinition(name);
   }
 
+  @Override
   public TypeHelper getTypeHelper() {
     return delegateSessionFactory.getTypeHelper();
   }

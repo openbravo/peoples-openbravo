@@ -43,9 +43,9 @@ public class KernelUtilTest extends OBBaseTest {
   private static void initializeStatics() {
   }
 
-  /** 
-   * This before method is named setUpK() to avoid overwriting the super 
-   * setUp method that is invoke automatically before this one.
+  /**
+   * This before method is named setUpK() to avoid overwriting the super setUp method that is invoke
+   * automatically before this one.
    */
   @Before
   public void setUpK() throws Exception {

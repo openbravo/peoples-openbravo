@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportTaxPaymentJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -73,14 +74,16 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
         return;
       }
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     // String strMessage = "";
@@ -140,10 +143,11 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
   }
 
   private void printReportJRRegisterByVat(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strTypeReport) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strDateFrom, String strDateTo, String strTypeReport)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print html");
+    }
 
     ReportRegisterByVatJRData[] data = null;
     data = ReportRegisterByVatJRData.select(this, strDateFrom,
@@ -159,6 +163,7 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportVatRegisterJR.";
   } // end of getServletInfo() method
@@ -172,12 +177,13 @@ class TypeReportPayment implements FieldProvider {
   public String id;
   public String name;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("ID"))
+    if (fieldName.equalsIgnoreCase("ID")) {
       return id;
-    else if (fieldName.equalsIgnoreCase("NAME"))
+    } else if (fieldName.equalsIgnoreCase("NAME")) {
       return name;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + fieldName);
       return null;
     }

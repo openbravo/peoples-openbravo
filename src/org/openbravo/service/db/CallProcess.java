@@ -84,12 +84,12 @@ public class CallProcess {
       Boolean doCommit) {
     final OBCriteria<org.openbravo.model.ad.ui.Process> processCriteria = OBDal.getInstance()
         .createCriteria(org.openbravo.model.ad.ui.Process.class);
-    processCriteria.add(Restrictions.eq(org.openbravo.model.ad.ui.Process.PROPERTY_PROCEDURE,
-        processName));
+    processCriteria
+        .add(Restrictions.eq(org.openbravo.model.ad.ui.Process.PROPERTY_PROCEDURE, processName));
     List<org.openbravo.model.ad.ui.Process> processList = processCriteria.list();
     if (processList.size() != 1) {
-      throw new OBException("No process or more than one process found using procedurename "
-          + processName);
+      throw new OBException(
+          "No process or more than one process found using procedurename " + processName);
 
     }
     return call(processList.get(0), recordID, parameters, doCommit);
@@ -202,8 +202,8 @@ public class CallProcess {
         final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();
         if (obProps.getProperty("bbdd.rdbms") != null
             && obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-          ps = connection.prepareStatement("SELECT * FROM " + process.getProcedure()
-              + procedureParameters);
+          ps = connection
+              .prepareStatement("SELECT * FROM " + process.getProcedure() + procedureParameters);
         } else {
           ps = connection.prepareStatement(" CALL " + process.getProcedure() + procedureParameters);
         }

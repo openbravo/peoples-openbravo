@@ -52,8 +52,8 @@ public class ICIInvoiceHeaderParameters {
   public ICIInvoiceHeaderParameters() {
     this.client = OBContext.getOBContext().getCurrentClient();
     this.organization = OBContext.getOBContext().getCurrentOrganization();
-    this.businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-        ICIConstants.BUSINESS_PARTNER_ID);
+    this.businessPartner = OBDal.getInstance()
+        .get(BusinessPartner.class, ICIConstants.BUSINESS_PARTNER_ID);
     this.businessPartnerLocation = this.businessPartner.getBusinessPartnerLocationList().get(0);
     this.isReceipt = true;
     this.documentType = OBDal.getInstance()

@@ -35,8 +35,8 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class DocTypeEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      DocumentType.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(DocumentType.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -44,8 +44,7 @@ public class DocTypeEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -53,8 +52,7 @@ public class DocTypeEventHandler extends EntityPersistenceEventObserver {
     checkDocumentSoSubType(docType);
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

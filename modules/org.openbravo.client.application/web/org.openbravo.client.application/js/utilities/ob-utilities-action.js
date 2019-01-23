@@ -217,7 +217,8 @@ OB.Utilities.Action = {
   // * {{{delay}}}: delay in ms to start the action execution
   // * {{{processView}}}: view of the process that invoked the execution
   executeJSON: function (jsonArray, threadId, delay, processView) {
-    var length = jsonArray.length, object, member, paramObj;
+    var length = jsonArray.length,
+        object, member, paramObj;
 
     if (delay && Object.prototype.toString.apply(delay) === '[object Number]') {
       setTimeout(function () {

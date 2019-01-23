@@ -68,8 +68,7 @@
       var data = [],
           icon, i, item, view, formData, standardWindow = this.view.standardWindow,
           adminLevel = false,
-          length,
-          personalization = standardWindow.getClass().personalization,
+          length, personalization = standardWindow.getClass().personalization,
           views = personalization && personalization.views ? personalization.views : [],
           canDelete = false;
 

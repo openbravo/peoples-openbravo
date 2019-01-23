@@ -32,6 +32,7 @@ public class WADMemo extends WADControl {
     initialize();
   }
 
+  @Override
   public void initialize() {
     generateJSCode();
   }
@@ -39,8 +40,9 @@ public class WADMemo extends WADControl {
   private void generateJSCode() {
     addImport("ValidationTextArea", "../../../../../web/js/default/ValidationTextArea.js");
     if (getData("IsMandatory").equals("Y")) {
-      XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-          "org/openbravo/wad/controls/WADMemoJSValidation").createXmlDocument();
+      XmlDocument xmlDocument = getReportEngine()
+          .readXmlTemplate("org/openbravo/wad/controls/WADMemoJSValidation")
+          .createXmlDocument();
 
       xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
       setValidation(replaceHTML(xmlDocument.print()));
@@ -48,24 +50,28 @@ public class WADMemo extends WADControl {
     setCalloutJS();
   }
 
+  @Override
   public String getType() {
     return "TextArea";
   }
 
+  @Override
   public String editMode() {
     double rowLength = ((Integer.valueOf(getData("FieldLength")).intValue() * 20) / 4000);
-    if (rowLength < 3.0)
+    if (rowLength < 3.0) {
       rowLength = 3.0;
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADMemo").createXmlDocument();
+    }
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADMemo")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
-        "IsUpdateable").equals("N"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
+        || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -80,19 +86,23 @@ public class WADMemo extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
     double rowLength = ((Integer.valueOf(getData("FieldLength")).intValue() * 20) / 4000);
-    if (rowLength < 3.0)
+    if (rowLength < 3.0) {
       rowLength = 3.0;
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADMemo").createXmlDocument();
+    }
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADMemo")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y")
+        || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -107,19 +117,23 @@ public class WADMemo extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String toXml() {
     String[] discard = { "xx_PARAM", "xx_PARAMHIDDEN", "xx_HIDDEN" };
     if (getData("IsDisplayed").equals("N")) {
-      if (getData("IsParameter").equals("Y"))
+      if (getData("IsParameter").equals("Y")) {
         discard[1] = "xx";
-      else
+      } else {
         discard[2] = "xx";
+      }
     } else {
-      if (getData("IsParameter").equals("Y"))
+      if (getData("IsParameter").equals("Y")) {
         discard[0] = "xx";
+      }
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADMemoXML", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADMemoXML", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());
   }

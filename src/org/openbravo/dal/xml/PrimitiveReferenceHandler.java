@@ -136,8 +136,8 @@ public class PrimitiveReferenceHandler implements OBSingleton {
    */
   public boolean isPrimitiveReference(Property property) {
     if (property.getEntity().getName().equals(TreeNode.ENTITY_NAME)
-        && (property.getName().equals(TreeNode.PROPERTY_REPORTSET) || property.getName().equals(
-            TreeNode.PROPERTY_NODE))) {
+        && (property.getName().equals(TreeNode.PROPERTY_REPORTSET)
+            || property.getName().equals(TreeNode.PROPERTY_NODE))) {
       return true;
     }
     if (property.getEntity().getName().equals(Alert.ENTITY_NAME)
@@ -149,8 +149,8 @@ public class PrimitiveReferenceHandler implements OBSingleton {
       return true;
     }
     if (property.getEntity().getName().equals(AccountingFact.ENTITY_NAME)
-        && (property.getName().equals(AccountingFact.PROPERTY_RECORDID) || property.getName()
-            .equals(AccountingFact.PROPERTY_RECORDID2))) {
+        && (property.getName().equals(AccountingFact.PROPERTY_RECORDID)
+            || property.getName().equals(AccountingFact.PROPERTY_RECORDID2))) {
       return true;
     }
     return false;
@@ -203,11 +203,11 @@ public class PrimitiveReferenceHandler implements OBSingleton {
   public Entity getPrimitiveReferencedEntity(BaseOBObject obObject, Property property) {
     if (property.getEntity().getName().equals(TreeNode.ENTITY_NAME)) {
       final TreeNode treeNode = (TreeNode) obObject;
-      Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
-          treeNode.getTree().getTypeArea());
+      Entity entity = ModelProvider.getInstance()
+          .getEntityFromTreeType(treeNode.getTree().getTypeArea());
       if (entity == null && treeNode.getTree().getTable() != null) {
-        entity = ModelProvider.getInstance().getEntityByTableId(
-            treeNode.getTree().getTable().getId());
+        entity = ModelProvider.getInstance()
+            .getEntityByTableId(treeNode.getTree().getTable().getId());
       }
 
       if (entity == null) {
@@ -237,11 +237,11 @@ public class PrimitiveReferenceHandler implements OBSingleton {
         return ModelProvider.getInstance().getEntity(DebtPayment.ENTITY_NAME);
       }
       final AccountingFact accountingFact = (AccountingFact) obObject;
-      final Entity entity = ModelProvider.getInstance().getEntity(
-          accountingFact.getTable().getName());
+      final Entity entity = ModelProvider.getInstance()
+          .getEntity(accountingFact.getTable().getName());
       if (entity == null) {
-        throw new OBException("No entity for table with name "
-            + accountingFact.getTable().getName());
+        throw new OBException(
+            "No entity for table with name " + accountingFact.getTable().getName());
       }
       return entity;
     }

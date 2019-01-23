@@ -74,8 +74,8 @@ public class SL_User_Name extends SimpleCallout {
 
     // informs about characters cut
     if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
-      info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "NameUsernameLengthCut",
-          info.vars.getLanguage())));
+      info.showMessage(FormatUtilities
+          .replaceJS(Utility.messageBD(this, "NameUsernameLengthCut", info.vars.getLanguage())));
     }
   }
 }

@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -38,8 +40,6 @@ import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 class CreateLinesFromUtil {
   private static final Logger log = LogManager.getLogger();
@@ -93,8 +93,8 @@ class CreateLinesFromUtil {
 
   static BigDecimal getOrderedQuantity(JSONObject selectedPEValuesInLine) {
     try {
-      return new BigDecimal(selectedPEValuesInLine.getString(selectedPEValuesInLine
-          .has("orderedQuantity") ? "orderedQuantity" : "movementQuantity"));
+      return new BigDecimal(selectedPEValuesInLine.getString(
+          selectedPEValuesInLine.has("orderedQuantity") ? "orderedQuantity" : "movementQuantity"));
     } catch (JSONException e) {
       log.error("Error getting the Ordered Quantity.", e);
       throw new OBException(e);
@@ -103,8 +103,9 @@ class CreateLinesFromUtil {
 
   static BigDecimal getOperativeQuantity(JSONObject selectedPEValuesInLine) {
     try {
-      return hasNotEmptyValue(selectedPEValuesInLine, "operativeQuantity") ? new BigDecimal(
-          selectedPEValuesInLine.getString("operativeQuantity")) : null;
+      return hasNotEmptyValue(selectedPEValuesInLine, "operativeQuantity")
+          ? new BigDecimal(selectedPEValuesInLine.getString("operativeQuantity"))
+          : null;
     } catch (JSONException e) {
       log.error("Error getting the Operative Quantity.", e);
       throw new OBException(e);
@@ -113,8 +114,9 @@ class CreateLinesFromUtil {
 
   static BigDecimal getOrderQuantity(JSONObject selectedPEValuesInLine) {
     try {
-      return hasNotEmptyValue(selectedPEValuesInLine, "orderQuantity") ? new BigDecimal(
-          selectedPEValuesInLine.getString("orderQuantity")) : null;
+      return hasNotEmptyValue(selectedPEValuesInLine, "orderQuantity")
+          ? new BigDecimal(selectedPEValuesInLine.getString("orderQuantity"))
+          : null;
     } catch (JSONException e) {
       log.error("Error getting the Order Quantity.", e);
       throw new OBException(e);
@@ -125,8 +127,8 @@ class CreateLinesFromUtil {
     ShipmentInOutLine inOutLine = null;
     try {
       if (hasNotEmptyValue(selectedPEValuesInLine, "shipmentInOutLine")) {
-        inOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-            selectedPEValuesInLine.getString("shipmentInOutLine"));
+        inOutLine = OBDal.getInstance()
+            .get(ShipmentInOutLine.class, selectedPEValuesInLine.getString("shipmentInOutLine"));
       }
     } catch (JSONException e) {
       log.error("Error getting the Shipment/Receipt.", e);
@@ -137,8 +139,9 @@ class CreateLinesFromUtil {
 
   static UOM getAUM(BaseOBObject line) {
     if (isOrderLine(line)) {
-      return ((OrderLine) line).getGoodsShipmentLine() != null ? ((OrderLine) line)
-          .getGoodsShipmentLine().getOperativeUOM() : ((OrderLine) line).getOperativeUOM();
+      return ((OrderLine) line).getGoodsShipmentLine() != null
+          ? ((OrderLine) line).getGoodsShipmentLine().getOperativeUOM()
+          : ((OrderLine) line).getOperativeUOM();
     } else {
       return ((ShipmentInOutLine) line).getOperativeUOM();
     }
@@ -175,8 +178,8 @@ class CreateLinesFromUtil {
       shipmentHQLQuery.append(" il.orderQuantity,");
     } else {
       shipmentHQLQuery.append(" il.movementQuantity - sum(coalesce(mi.quantity,0)),");
-      shipmentHQLQuery
-          .append(" il.orderQuantity * to_number(c_divide(il.movementQuantity - sum(coalesce((mi.quantity),0)), il.movementQuantity)),");
+      shipmentHQLQuery.append(
+          " il.orderQuantity * to_number(c_divide(il.movementQuantity - sum(coalesce((mi.quantity),0)), il.movementQuantity)),");
     }
     shipmentHQLQuery.append(" il.operativeQuantity,");
     shipmentHQLQuery.append(" il.operativeUOM.id,");

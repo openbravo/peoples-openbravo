@@ -32,25 +32,29 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 public class RptM_Requisition extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strmRequisitionId = vars.getSessionValue("RptM_Requisition.inpmRequisitionId_R");
-      if (strmRequisitionId.equals(""))
+      if (strmRequisitionId.equals("")) {
         strmRequisitionId = vars.getSessionValue("RptM_Requisition.inpmRequisitionId");
+      }
       if (log4j.isDebugEnabled()) {
         log4j.debug("+***********************: " + strmRequisitionId);
       }
       printPagePartePDF(response, vars, strmRequisitionId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars,
@@ -63,6 +67,7 @@ public class RptM_Requisition extends HttpSecureAppServlet {
     renderJR(vars, response, null, "pdf", parameters, null, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the RptMRequisitions seeker";
   } // End of getServletInfo() method

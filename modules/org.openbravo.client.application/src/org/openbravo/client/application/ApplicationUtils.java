@@ -61,8 +61,8 @@ public class ApplicationUtils {
    */
   public static String getParentProperty(Tab tab, Tab parentTab) {
     final Entity thisEntity = ModelProvider.getInstance().getEntity(tab.getTable().getName());
-    final Entity parentEntity = ModelProvider.getInstance().getEntity(
-        parentTab.getTable().getName());
+    final Entity parentEntity = ModelProvider.getInstance()
+        .getEntity(parentTab.getTable().getName());
     Property returnProperty = null;
     // first try the real parent properties
     for (Property property : thisEntity.getProperties()) {
@@ -142,8 +142,8 @@ public class ApplicationUtils {
     try {
       OBContext.setAdminMode();
 
-      final OBCriteria<RoleOrganization> roleOrgs = OBDal.getInstance().createCriteria(
-          RoleOrganization.class);
+      final OBCriteria<RoleOrganization> roleOrgs = OBDal.getInstance()
+          .createCriteria(RoleOrganization.class);
       roleOrgs.add(Restrictions.eq(RoleOrganization.PROPERTY_ROLE, role));
       roleOrgs.add(Restrictions.eq(RoleOrganization.PROPERTY_ORGADMIN, true));
 

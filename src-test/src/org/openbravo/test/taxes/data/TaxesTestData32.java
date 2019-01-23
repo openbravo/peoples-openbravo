@@ -45,12 +45,12 @@ public class TaxesTestData32 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes = new HashMap<String, String[]>();
-    lineTaxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "-1.03", "-0.10", "-1.03", "-0.10",
-        "-2.05", "-0.20", "-2.05", "-0.20" });
-    lineTaxes.put(TaxDataConstants.TAX_VAT_3_Child, new String[] { "-1.81", "-0.05", "-1.81",
-        "-0.05", "-3.62", "-0.11", "-3.62", "-0.11" });
-    lineTaxes.put(TaxDataConstants.TAX_CHARGE, new String[] { "-1.81", "-0.01", "-1.81", "-0.01",
-        "-3.62", "-0.02", "-3.62", "-0.02" });
+    lineTaxes.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "-1.03", "-0.10", "-1.03", "-0.10", "-2.05", "-0.20", "-2.05", "-0.20" });
+    lineTaxes.put(TaxDataConstants.TAX_VAT_3_Child,
+        new String[] { "-1.81", "-0.05", "-1.81", "-0.05", "-3.62", "-0.11", "-3.62", "-0.11" });
+    lineTaxes.put(TaxDataConstants.TAX_CHARGE,
+        new String[] { "-1.81", "-0.01", "-1.81", "-0.01", "-3.62", "-0.02", "-3.62", "-0.02" });
     line.setLinetaxes(lineTaxes);
 
     // Amounts for line level are provided
@@ -69,12 +69,12 @@ public class TaxesTestData32 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> taxes = new HashMap<String, String[]>();
-    taxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "-1.03", "-0.10", "-1.03", "-0.10",
-        "-2.05", "-0.20", "-2.05", "-0.20" });
-    taxes.put(TaxDataConstants.TAX_VAT_3_Child, new String[] { "-1.81", "-0.05", "-1.81", "-0.05",
-        "-3.62", "-0.11", "-3.62", "-0.11" });
-    taxes.put(TaxDataConstants.TAX_CHARGE, new String[] { "-1.81", "-0.01", "-1.81", "-0.01",
-        "-3.62", "-0.02", "-3.62", "-0.02" });
+    taxes.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "-1.03", "-0.10", "-1.03", "-0.10", "-2.05", "-0.20", "-2.05", "-0.20" });
+    taxes.put(TaxDataConstants.TAX_VAT_3_Child,
+        new String[] { "-1.81", "-0.05", "-1.81", "-0.05", "-3.62", "-0.11", "-3.62", "-0.11" });
+    taxes.put(TaxDataConstants.TAX_CHARGE,
+        new String[] { "-1.81", "-0.01", "-1.81", "-0.01", "-3.62", "-0.02", "-3.62", "-0.02" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided

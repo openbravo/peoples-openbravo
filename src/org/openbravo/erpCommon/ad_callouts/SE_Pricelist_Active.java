@@ -42,11 +42,11 @@ public class SE_Pricelist_Active extends SimpleCallout {
 
     // Check whether there exists active versions for price list being set Active = No
     if (StringUtils.equals(strIsActive, "N")) {
-      SEPricelistActiveData[] pricelistVersion = SEPricelistActiveData.getActivePricelistVersion(
-          this, strPricelistId);
+      SEPricelistActiveData[] pricelistVersion = SEPricelistActiveData
+          .getActivePricelistVersion(this, strPricelistId);
       if (pricelistVersion != null && pricelistVersion.length > 0) {
-        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this,
-            "PricelistVersionActive", info.vars.getLanguage())));
+        info.showMessage(FormatUtilities
+            .replaceJS(Utility.messageBD(this, "PricelistVersionActive", info.vars.getLanguage())));
       }
     }
   }

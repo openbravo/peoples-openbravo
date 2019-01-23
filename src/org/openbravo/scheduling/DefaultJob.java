@@ -46,6 +46,7 @@ public class DefaultJob implements Job {
   /**
    * See the execute method of the Quartz Job class.
    */
+  @Override
   public void execute(JobExecutionContext jec) throws JobExecutionException {
     bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
     try {
@@ -64,8 +65,9 @@ public class DefaultJob implements Job {
       processInstance.execute(bundle);
 
     } catch (final Exception e) {
-      String processName = bundle != null && bundle.getProcessClass() != null ? bundle
-          .getProcessClass().getName() : "";
+      String processName = bundle != null && bundle.getProcessClass() != null
+          ? bundle.getProcessClass().getName()
+          : "";
       log.error("Error executing process " + processName, e);
       throw new JobExecutionException(e);
     }

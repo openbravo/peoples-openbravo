@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
@@ -46,8 +48,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class SetNewBPCurrency extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -93,11 +93,11 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
           return jsonRequest;
         }
       } else {
-        rate = "null".equals(strRate) ? BigDecimal.ZERO : BigDecimal.valueOf(Double
-            .parseDouble(strRate));
+        rate = "null".equals(strRate) ? BigDecimal.ZERO
+            : BigDecimal.valueOf(Double.parseDouble(strRate));
       }
-      BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-          strBpartnerId);
+      BusinessPartner businessPartner = OBDal.getInstance()
+          .get(BusinessPartner.class, strBpartnerId);
       creditUsed = businessPartner.getCreditUsed();
 
       ScrollableResults scroll = null;
@@ -115,9 +115,9 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
         if (!strSetAmount) {
           creditRate = rate;
         } else if (creditUsed.compareTo(BigDecimal.ZERO) != 0) {
-          creditRate = BigDecimal.valueOf(amount).divide(creditUsed,
-              FIN_Utility.getConversionRatePrecision(RequestContext.get().getVariablesSecureApp()),
-              RoundingMode.HALF_UP);
+          creditRate = BigDecimal.valueOf(amount)
+              .divide(creditUsed, FIN_Utility.getConversionRatePrecision(
+                  RequestContext.get().getVariablesSecureApp()), RoundingMode.HALF_UP);
         }
         if (creditRate.compareTo(BigDecimal.ZERO) != 0) {
           reverseCreditRate = BigDecimal.ONE.divide(creditRate,
@@ -131,17 +131,17 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
         try {
           while (scroll.next()) {
             final String paymentCreditId = (String) scroll.get()[0];
-            final FIN_Payment paymentCredit = OBDal.getInstance().get(FIN_Payment.class,
-                paymentCreditId);
-            creditAmount = paymentCredit.getGeneratedCredit().subtract(
-                paymentCredit.getUsedCredit());
+            final FIN_Payment paymentCredit = OBDal.getInstance()
+                .get(FIN_Payment.class, paymentCreditId);
+            creditAmount = paymentCredit.getGeneratedCredit()
+                .subtract(paymentCredit.getUsedCredit());
 
             // Create a payment to consume the credit with a glitem
             FIN_Payment payment1 = (FIN_Payment) DalUtil.copy(paymentCredit, false);
             payment1.setPaymentDate(new Date());
             payment1.setAmount(creditAmount);
-            payment1.setDocumentNo(FIN_Utility.getDocumentNo(payment1.getOrganization(), payment1
-                .getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
+            payment1.setDocumentNo(FIN_Utility.getDocumentNo(payment1.getOrganization(),
+                payment1.getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
             payment1.setProcessed(false);
             payment1.setPosted("N");
             payment1.setDescription(null);
@@ -160,8 +160,8 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             paymentDetail1.setPrepayment(false);
 
             // Create a payment schedule detail to consume the credit with a glitem
-            FIN_PaymentScheduleDetail paymentScheduleDetail1 = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
+            FIN_PaymentScheduleDetail paymentScheduleDetail1 = OBProvider.getInstance()
+                .get(FIN_PaymentScheduleDetail.class);
             paymentScheduleDetail1.setClient(paymentCredit.getClient());
             paymentScheduleDetail1.setOrganization(paymentCredit.getOrganization());
             paymentScheduleDetail1.setPaymentDetails(paymentDetail1);
@@ -176,31 +176,30 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             FIN_PaymentProcess.doProcessPayment(payment1, "D", null, null);
 
             // Modify description of original credit payment
-            String paymentCreditDesc = paymentCredit.getDescription()
-                + "\n"
-                + String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
-                    payment1.getDocumentNo());
-            paymentCredit.setDescription((paymentCreditDesc.length() > 255) ? paymentCreditDesc
-                .substring(0, 251).concat("...").toString() : paymentCreditDesc.toString());
+            String paymentCreditDesc = paymentCredit.getDescription() + "\n" + String.format(
+                OBMessageUtils.messageBD("APRM_CreditUsedPayment"), payment1.getDocumentNo());
+            paymentCredit.setDescription((paymentCreditDesc.length() > 255)
+                ? paymentCreditDesc.substring(0, 251).concat("...").toString()
+                : paymentCreditDesc.toString());
 
             // Create a payment to refund the credit
             FIN_Payment payment2 = (FIN_Payment) DalUtil.copy(paymentCredit, false);
             payment2.setPaymentDate(new Date());
             payment2.setAmount(creditAmount.negate());
-            payment2.setDocumentNo(FIN_Utility.getDocumentNo(payment2.getOrganization(), payment2
-                .getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
+            payment2.setDocumentNo(FIN_Utility.getDocumentNo(payment2.getOrganization(),
+                payment2.getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
             payment2.setProcessed(false);
             payment2.setPosted("N");
-            payment2.setDescription(OBMessageUtils.messageBD("APRM_RefundPayment") + ": "
-                + payment1.getDocumentNo());
+            payment2.setDescription(
+                OBMessageUtils.messageBD("APRM_RefundPayment") + ": " + payment1.getDocumentNo());
             payment2.setGeneratedCredit(BigDecimal.ZERO);
             payment2.setUsedCredit(creditAmount);
-            payment2.setFinancialTransactionAmount(paymentCredit.getFinancialTransactionAmount()
-                .negate());
+            payment2.setFinancialTransactionAmount(
+                paymentCredit.getFinancialTransactionAmount().negate());
 
             // Create a payment credit to refund the credit
-            FIN_Payment_Credit paymentCredit2 = OBProvider.getInstance().get(
-                FIN_Payment_Credit.class);
+            FIN_Payment_Credit paymentCredit2 = OBProvider.getInstance()
+                .get(FIN_Payment_Credit.class);
             paymentCredit2.setClient(paymentCredit.getClient());
             paymentCredit2.setOrganization(paymentCredit.getOrganization());
             paymentCredit2.setPayment(payment2);
@@ -219,8 +218,8 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             paymentDetail2.setPrepayment(true);
 
             // Create a payment schedule detail to refund the credit
-            FIN_PaymentScheduleDetail paymentScheduleDetail2 = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
+            FIN_PaymentScheduleDetail paymentScheduleDetail2 = OBProvider.getInstance()
+                .get(FIN_PaymentScheduleDetail.class);
             paymentScheduleDetail2.setClient(paymentCredit.getClient());
             paymentScheduleDetail2.setOrganization(paymentCredit.getOrganization());
             paymentScheduleDetail2.setPaymentDetails(paymentDetail2);
@@ -253,8 +252,8 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
           i = 0;
           while (scroll.next()) {
             final String paymentCreditId = (String) scroll.get()[0];
-            final FIN_Payment paymentCredit = OBDal.getInstance().get(FIN_Payment.class,
-                paymentCreditId);
+            final FIN_Payment paymentCredit = OBDal.getInstance()
+                .get(FIN_Payment.class, paymentCreditId);
             creditAmount = paymentCredit.getGeneratedCredit();
 
             // Create a payment to create the credit with a glitem
@@ -262,13 +261,13 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             payment3.setPaymentDate(new Date());
             payment3.setCurrency(currency);
             payment3.setAmount(BigDecimal.ZERO);
-            payment3.setDocumentNo(FIN_Utility.getDocumentNo(payment3.getOrganization(), payment3
-                .getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
+            payment3.setDocumentNo(FIN_Utility.getDocumentNo(payment3.getOrganization(),
+                payment3.getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment"));
             payment3.setProcessed(false);
             payment3.setPosted("N");
             payment3.setDescription(null);
-            final BigDecimal generatedCredit = creditAmount.multiply(creditRate).setScale(
-                currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
+            final BigDecimal generatedCredit = creditAmount.multiply(creditRate)
+                .setScale(currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
             payment3.setGeneratedCredit(generatedCredit);
             payment3.setUsedCredit(BigDecimal.ZERO);
             payment3.setFinancialTransactionConvertRate(reverseCreditRate);
@@ -296,16 +295,16 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             paymentDetail4.setPrepayment(false);
 
             // Create a payment schedule detail to create the credit with a glitem
-            FIN_PaymentScheduleDetail paymentScheduleDetail3 = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
+            FIN_PaymentScheduleDetail paymentScheduleDetail3 = OBProvider.getInstance()
+                .get(FIN_PaymentScheduleDetail.class);
             paymentScheduleDetail3.setClient(paymentCredit.getClient());
             paymentScheduleDetail3.setOrganization(paymentCredit.getOrganization());
             paymentScheduleDetail3.setPaymentDetails(paymentDetail3);
             paymentScheduleDetail3.setAmount(generatedCredit);
 
             // Create a payment schedule detail to create the credit with a glitem
-            FIN_PaymentScheduleDetail paymentScheduleDetail4 = OBProvider.getInstance().get(
-                FIN_PaymentScheduleDetail.class);
+            FIN_PaymentScheduleDetail paymentScheduleDetail4 = OBProvider.getInstance()
+                .get(FIN_PaymentScheduleDetail.class);
             paymentScheduleDetail4.setClient(paymentCredit.getClient());
             paymentScheduleDetail4.setOrganization(paymentCredit.getOrganization());
             paymentScheduleDetail4.setPaymentDetails(paymentDetail4);
@@ -380,16 +379,16 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
     final Date today = new Date();
     BigDecimal exchangeRate = BigDecimal.ZERO;
     // Apply default conversion rate
-    int conversionRatePrecision = FIN_Utility.getConversionRatePrecision(RequestContext.get()
-        .getVariablesSecureApp());
+    int conversionRatePrecision = FIN_Utility
+        .getConversionRatePrecision(RequestContext.get().getVariablesSecureApp());
     Organization organization = OBDal.getInstance().get(Organization.class, strOrgId);
     Currency fromCurrency = OBDal.getInstance().get(Currency.class, strFromCurrencyId);
     Currency toCurrency = OBDal.getInstance().get(Currency.class, strToCurrencyId);
     final ConversionRate conversionRate = FIN_Utility.getConversionRate(fromCurrency, toCurrency,
         today, organization);
     if (conversionRate != null) {
-      exchangeRate = conversionRate.getMultipleRateBy().setScale(conversionRatePrecision,
-          RoundingMode.HALF_UP);
+      exchangeRate = conversionRate.getMultipleRateBy()
+          .setScale(conversionRatePrecision, RoundingMode.HALF_UP);
     } else {
       exchangeRate = BigDecimal.ZERO;
     }

@@ -38,6 +38,7 @@ import org.openbravo.dal.service.OBDal;
 @ApplicationScoped
 public class ComputeTranslatedNameActionHandler extends BaseActionHandler {
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
 
     final String processId = removeFragment((String) parameters.get("processId"));
@@ -45,8 +46,8 @@ public class ComputeTranslatedNameActionHandler extends BaseActionHandler {
     try {
       OBContext.setAdminMode();
 
-      final org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-          org.openbravo.model.ad.ui.Process.class, processId);
+      final org.openbravo.model.ad.ui.Process process = OBDal.getInstance()
+          .get(org.openbravo.model.ad.ui.Process.class, processId);
 
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
 

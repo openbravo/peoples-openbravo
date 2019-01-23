@@ -30,18 +30,22 @@ class AttributeComponentValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String print() {
     return xmlComponentValue.print();
   }
 
+  @Override
   public String printPrevious() {
     return xmlComponentValue.printPrevious();
   }
 
+  @Override
   public String printSimple() {
     return xmlComponentValue.printSimple();
   }
 
+  @Override
   public String printPreviousSimple() {
     return xmlComponentValue.printPreviousSimple();
   }

@@ -91,11 +91,11 @@ public class ReadByNameTest extends OBBaseTest {
     assertNotNull(bp);
 
     // Getting an existent Location
-    org.openbravo.model.common.geography.Location loc = OBDal.getInstance().get(
-        org.openbravo.model.common.geography.Location.class, TEST_LOCATION_ID);
+    org.openbravo.model.common.geography.Location loc = OBDal.getInstance()
+        .get(org.openbravo.model.common.geography.Location.class, TEST_LOCATION_ID);
 
-    org.openbravo.model.common.businesspartner.Location bpLoc = OBProvider.getInstance().get(
-        org.openbravo.model.common.businesspartner.Location.class);
+    org.openbravo.model.common.businesspartner.Location bpLoc = OBProvider.getInstance()
+        .get(org.openbravo.model.common.businesspartner.Location.class);
 
     // Generating a location name
     locName = UUID.randomUUID().toString();

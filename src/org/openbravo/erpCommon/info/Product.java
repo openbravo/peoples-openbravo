@@ -51,13 +51,15 @@ public class Product extends HttpSecureAppServlet {
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
   private static final String ROWKEY_SEPARATOR = "@_##_@";
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -67,8 +69,9 @@ public class Product extends HttpSecureAppServlet {
       if (!strIDValue.equals("")) {
         String strNameAux = ProductData.existsActual(this, vars.getLanguage(), strNameValue,
             strIDValue);
-        if (!strNameAux.equals(""))
+        if (!strNameAux.equals("")) {
           strNameValue = strNameAux;
+        }
       }
       String strPriceList = vars.getRequestGlobalVariable("inpPriceList", "Product.priceList");
       String strDate = vars.getRequestGlobalVariable("inpDate", "Product.date");
@@ -81,24 +84,28 @@ public class Product extends HttpSecureAppServlet {
       vars.setSessionValue("Product.name", strNameValue);
       if (strPriceList.equals("")) {
         strPriceList = Utility.getContext(this, vars, "M_Pricelist_ID", windowId);
-        if (strPriceList.equals(""))
+        if (strPriceList.equals("")) {
           strPriceList = ProductData.priceListDefault(this,
               Utility.getContext(this, vars, "#User_Client", "Product"),
               Utility.getContext(this, vars, "#AccessibleOrgTree", "Product"));
+        }
         vars.setSessionValue("Product.priceList", strPriceList);
       }
       if (strDate.equals("")) {
         strDate = Utility.getContext(this, vars, "DateOrdered", windowId);
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("DateOrdered:" + strDate);
+        }
       }
       if (strDate.equals("")) {
         strDate = Utility.getContext(this, vars, "DateInvoiced", windowId);
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("DateInvoiced:" + strDate);
+        }
       }
-      if (strDate.equals(""))
+      if (strDate.equals("")) {
         strDate = DateTimeData.today(this);
+      }
       vars.setSessionValue("Product.date", strDate);
 
       String strPriceListVersion = getPriceListVersion(vars, strPriceList, strDate);
@@ -113,8 +120,9 @@ public class Product extends HttpSecureAppServlet {
       if (!strIDValue.equals("")) {
         String strNameAux = ProductData.existsActualValue(this, vars.getLanguage(), strKeyValue,
             strIDValue);
-        if (!strNameAux.equals(""))
+        if (!strNameAux.equals("")) {
           strKeyValue = strNameAux;
+        }
       }
       String strWarehouse = vars.getRequestGlobalVariable("inpWarehouse", "Product.warehouse");
       String strPriceList = vars.getRequestGlobalVariable("inpPriceList", "Product.priceList");
@@ -125,30 +133,35 @@ public class Product extends HttpSecureAppServlet {
       vars.removeSessionValue("Product.name");
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("Product.key", strKeyValue);
-      if (strWarehouse.equals(""))
+      if (strWarehouse.equals("")) {
         strWarehouse = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
+      }
       vars.setSessionValue("Product.warehouse", strWarehouse);
       if (strPriceList.equals("")) {
         strPriceList = Utility.getContext(this, vars, "M_Pricelist_ID", windowId);
-        if (strPriceList.equals(""))
+        if (strPriceList.equals("")) {
           strPriceList = ProductData.priceListDefault(this,
               Utility.getContext(this, vars, "#User_Client", "Product"),
               Utility.getSelectorOrgs(this, vars, strOrg));
+        }
         vars.setSessionValue("Product.priceList", strPriceList);
       }
 
       if (strDate.equals("")) {
         strDate = Utility.getContext(this, vars, "DateOrdered", windowId);
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("DateOrdered:" + strDate);
+        }
       }
       if (strDate.equals("")) {
         strDate = Utility.getContext(this, vars, "DateInvoiced", windowId);
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("DateInvoiced:" + strDate);
+        }
       }
-      if (strDate.equals(""))
+      if (strDate.equals("")) {
         strDate = DateTimeData.today(this);
+      }
       vars.setSessionValue("Product.date", strDate);
 
       String strPriceListVersion = getPriceListVersion(vars, strPriceList, strDate);
@@ -168,13 +181,14 @@ public class Product extends HttpSecureAppServlet {
       }
       ProductData[] data = ProductData.select(this, strWarehouse, rownum, strKeyValue + "%", "",
           Utility.getContext(this, vars, "#User_Client", "Product"),
-          Utility.getContext(this, vars, "#User_Org", "Product"), strPriceListVersion, "1",
-          pgLimit, oraLimit1, oraLimit2);
-      if (data != null && data.length == 1)
+          Utility.getContext(this, vars, "#User_Org", "Product"), strPriceListVersion, "1", pgLimit,
+          oraLimit1, oraLimit2);
+      if (data != null && data.length == 1) {
         printPageKey(response, vars, data, strWarehouse, strPriceListVersion);
-      else
+      } else {
         printPage(response, vars, strKeyValue, "", strWarehouse, strPriceList, strPriceListVersion,
             windowId, "paramKey");
+      }
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -195,8 +209,9 @@ public class Product extends HttpSecureAppServlet {
       String strSortDirs = vars.getInStringParameter("sort_dirs", directionFilter);
       printGridData(response, vars, strKey, strName, strOrg, strWarehouse, strPriceListVersion,
           strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void removePageSessionVariables(VariablesSecureApp vars) {
@@ -218,26 +233,30 @@ public class Product extends HttpSecureAppServlet {
       throws IOException, ServletException {
     PriceListVersionComboData[] data = PriceListVersionComboData.selectActual(this, strPriceList,
         strDate, Utility.getContext(this, vars, "#User_Client", "Product"));
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Selecting pricelistversion date:" + strDate + " - pricelist:" + strPriceList);
-    if (data == null || data.length == 0)
+    }
+    if (data == null || data.length == 0) {
       return "";
+    }
     return data[0].mPricelistVersionId;
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
       String strNameValue, String strWarehouse, String strPriceList, String strPriceListVersion,
       String windowId, String focusedId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of the products seeker");
+    }
     String[] discard = new String[1];
     if (windowId.equals("800004")) {
       discard[0] = new String("NotReducedSearch");
     } else {
       discard[0] = new String("ReducedSearch");
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Product",
-        discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/Product", discard)
+        .createXmlDocument();
 
     if (strKeyValue.equals("") && strNameValue.equals("")) {
       xmlDocument.setParameter("key", "%");
@@ -262,10 +281,8 @@ public class Product extends HttpSecureAppServlet {
     xmlDocument.setData("structure1",
         WarehouseComboData.select(this, vars.getRole(), vars.getClient()));
 
-    xmlDocument.setData(
-        "structure2",
-        PriceListVersionComboData.select(this, strPriceList,
-            Utility.getContext(this, vars, "#User_Client", "Product")));
+    xmlDocument.setData("structure2", PriceListVersionComboData.select(this, strPriceList,
+        Utility.getContext(this, vars, "#User_Client", "Product")));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -274,12 +291,14 @@ public class Product extends HttpSecureAppServlet {
   }
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
-      ProductData[] data, String strWarehouse, String strPriceListVersion) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      ProductData[] data, String strWarehouse, String strPriceListVersion)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: product seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     DecimalFormat df = Utility.getFormat(vars, "priceEdition");
 
@@ -290,8 +309,8 @@ public class Product extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String generateResult(ProductData[] data, String strWarehouse,
-      String strPriceListVersion, DecimalFormat df) throws IOException, ServletException {
+  private String generateResult(ProductData[] data, String strWarehouse, String strPriceListVersion,
+      DecimalFormat df) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -315,10 +334,12 @@ public class Product extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -333,8 +354,9 @@ public class Product extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -374,8 +396,9 @@ public class Product extends HttpSecureAppServlet {
       String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
       String strNewFilter) throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
 
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -433,8 +456,8 @@ public class Product extends HttpSecureAppServlet {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = ProductData.select(this, strWarehouse, "1", strKey, strName,
               Utility.getContext(this, vars, "#User_Client", "Product"),
-              Utility.getSelectorOrgs(this, vars, strOrg), strPriceListVersion, strOrderBy,
-              pgLimit, "", "");
+              Utility.getSelectorOrgs(this, vars, strOrg), strPriceListVersion, strOrderBy, pgLimit,
+              "", "");
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -446,20 +469,23 @@ public class Product extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
@@ -467,12 +493,15 @@ public class Product extends HttpSecureAppServlet {
     final DecimalFormat df = Utility.getFormat(vars, "priceEdition");
     final DecimalFormat qdf = Utility.getFormat(vars, "qtyEdition");
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -480,7 +509,8 @@ public class Product extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -502,35 +532,46 @@ public class Product extends HttpSecureAppServlet {
             rowKey.append(data[j].getField("mProductId")).append(ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("name")).append(ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("cUomId")).append(ROWKEY_SEPARATOR);
-            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelist")))).append(
-                ROWKEY_SEPARATOR);
-            rowKey.append(df.format(new BigDecimal(data[j].getField("pricestd")))).append(
-                ROWKEY_SEPARATOR);
-            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelimit")))).append(
-                ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelist"))))
+                .append(ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricestd"))))
+                .append(ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("pricelimit"))))
+                .append(ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("cCurrencyId"));
             strRowsData.append(rowKey);
           } else if (columnname.equalsIgnoreCase("pricelist")
               || columnname.equalsIgnoreCase("pricestd")
-              || columnname.equalsIgnoreCase("pricelimit") || columnname.equalsIgnoreCase("margin")) {
+              || columnname.equalsIgnoreCase("pricelimit")
+              || columnname.equalsIgnoreCase("margin")) {
             strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
           } else if (columnname.equalsIgnoreCase("qtyonhand")
               || columnname.equalsIgnoreCase("qtyordered")
               || columnname.equalsIgnoreCase("qtyavailable")) {
             strRowsData.append(qdf.format(new BigDecimal(data[j].getField(columnname))));
           } else if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -543,12 +584,14 @@ public class Product extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the products seeker";
   } // end of getServletInfo() method

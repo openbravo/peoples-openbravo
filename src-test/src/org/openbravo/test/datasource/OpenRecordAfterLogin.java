@@ -50,8 +50,8 @@ public class OpenRecordAfterLogin extends BaseDataSourceTestDal {
   }
 
   private String doRequestForLoginPage() throws Exception {
-    final HttpURLConnection hc = DatasourceTestUtil.createConnection(getOpenbravoURL(), "/?"
-        + URL_QUERY_STRING, "GET", null);
+    final HttpURLConnection hc = DatasourceTestUtil.createConnection(getOpenbravoURL(),
+        "/?" + URL_QUERY_STRING, "GET", null);
     try (OutputStream os = hc.getOutputStream()) {
       os.flush();
       hc.connect();

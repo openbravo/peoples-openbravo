@@ -138,8 +138,8 @@ public class DataQueryServiceTest extends OBBaseTest {
       // of the readable orgs
       {
         setSystemAdministratorContext();
-        final OBCriteria<RoleOrganization> criteria = OBDal.getInstance().createCriteria(
-            RoleOrganization.class);
+        final OBCriteria<RoleOrganization> criteria = OBDal.getInstance()
+            .createCriteria(RoleOrganization.class);
         criteria.setFilterOnReadableClients(false);
         criteria.setFilterOnReadableOrganization(false);
         List<RoleOrganization> roleOrgs = criteria.list();
@@ -271,8 +271,9 @@ public class DataQueryServiceTest extends OBBaseTest {
     setSystemAdministratorContext();
     final DataEntityQueryService queryService = new DataEntityQueryService();
     queryService.setEntityName(Column.ENTITY_NAME);
-    queryService.addFilterParameter(Column.PROPERTY_TABLE + "." + Table.PROPERTY_WINDOW + "."
-        + JsonConstants.IDENTIFIER, "atase");
+    queryService.addFilterParameter(
+        Column.PROPERTY_TABLE + "." + Table.PROPERTY_WINDOW + "." + JsonConstants.IDENTIFIER,
+        "atase");
     queryService.setTextMatching(TextMatching.substring.name());
 
     // test simple sorting
@@ -300,8 +301,9 @@ public class DataQueryServiceTest extends OBBaseTest {
     queryService.setEntityName(Column.ENTITY_NAME);
     queryService.addFilterParameter(Column.PROPERTY_TABLE + "." + JsonConstants.IDENTIFIER,
         "AD_Column");
-    queryService.addFilterParameter(Column.PROPERTY_TABLE + "." + Table.PROPERTY_DATAPACKAGE + "."
-        + DataPackage.PROPERTY_NAME, "org.openbravo.model.ad.datamodel");
+    queryService.addFilterParameter(
+        Column.PROPERTY_TABLE + "." + Table.PROPERTY_DATAPACKAGE + "." + DataPackage.PROPERTY_NAME,
+        "org.openbravo.model.ad.datamodel");
     queryService.setDoOrExpression();
     queryService.setOrderBy(Column.PROPERTY_TABLE + "." + Table.PROPERTY_NAME);
     queryService.setTextMatching(TextMatching.startsWith.name());
@@ -313,9 +315,10 @@ public class DataQueryServiceTest extends OBBaseTest {
     for (BaseOBObject bob : list) {
       assertTrue(bob instanceof Column);
       final Column column = (Column) bob;
-      assertTrue(column.getTable().getName().contains("ADColumn")
-          || column.getTable().getDataPackage().getName()
-              .equals("org.openbravo.model.ad.datamodel"));
+      assertTrue(column.getTable().getName().contains("ADColumn") || column.getTable()
+          .getDataPackage()
+          .getName()
+          .equals("org.openbravo.model.ad.datamodel"));
     }
   }
 

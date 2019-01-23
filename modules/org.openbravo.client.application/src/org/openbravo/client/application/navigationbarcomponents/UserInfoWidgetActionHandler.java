@@ -69,6 +69,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
    * 
    * @see org.openbravo.client.kernel.BaseActionHandler#execute(Map, String)
    */
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     final String command = (String) parameters.get(ApplicationConstants.COMMAND);
     OBContext.setAdminMode();
@@ -92,8 +93,8 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
   protected JSONObject executeChangePasswordCommand(Map<String, Object> parameters, String content)
       throws Exception {
     // do some checking
-    final User user = OBDal.getInstance().get(User.class,
-        OBContext.getOBContext().getUser().getId());
+    final User user = OBDal.getInstance()
+        .get(User.class, OBContext.getOBContext().getUser().getId());
     final JSONObject json = new JSONObject(content);
     final String currentPwd = json.getString("currentPwd");
     final String newPwd = json.getString("newPwd");
@@ -187,18 +188,17 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       defaultRoleProperty = User.PROPERTY_DEFAULTROLE;
     }
 
-    new UserSessionSetter().resetSession(request, isDefault, OBContext.getOBContext().getUser()
-        .getId(), roleId, clientId, orgId, languageId, warehouseId, defaultRoleProperty,
-        setOnlyRole);
+    new UserSessionSetter().resetSession(request, isDefault,
+        OBContext.getOBContext().getUser().getId(), roleId, clientId, orgId, languageId,
+        warehouseId, defaultRoleProperty, setOnlyRole);
 
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }
 
   private String pickLanguage() {
-    final OBQuery<Language> languages = OBDal.getInstance().createQuery(
-        Language.class,
-        "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or " + Language.PROPERTY_BASELANGUAGE
-            + "=true)");
+    final OBQuery<Language> languages = OBDal.getInstance()
+        .createQuery(Language.class, "(" + Language.PROPERTY_SYSTEMLANGUAGE + "=true or "
+            + Language.PROPERTY_BASELANGUAGE + "=true)");
     languages.setFilterOnReadableClients(false);
     languages.setFilterOnReadableOrganization(false);
     List<Language> languagesList = languages.list();
@@ -257,8 +257,8 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       }
 
       if (clientId == null || organizationId == null || roleId == null) {
-        throw new IllegalArgumentException("Illegal values for client/org or role " + clientId
-            + "/" + organizationId + "/" + roleId);
+        throw new IllegalArgumentException("Illegal values for client/org or role " + clientId + "/"
+            + organizationId + "/" + roleId);
       }
 
       // Clear session variables maintaining session and user
@@ -269,11 +269,10 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       request.getSession(true).setAttribute(AUTHENTICATED_USER, sessionUser);
 
       OBDal.getInstance().flush();
-      boolean result = LoginUtils
-          .fillSessionArguments(new DalConnectionProvider(false), vars, userId,
-              toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
-              toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),
-              toSaveStr(warehouseId));
+      boolean result = LoginUtils.fillSessionArguments(new DalConnectionProvider(false), vars,
+          userId, toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
+          toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),
+          toSaveStr(warehouseId));
       if (!result) {
         throw new IllegalArgumentException("Error when saving default values");
       }

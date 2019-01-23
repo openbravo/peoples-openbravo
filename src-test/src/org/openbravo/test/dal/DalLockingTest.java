@@ -115,8 +115,8 @@ public class DalLockingTest extends OBBaseTest {
   }
 
   @Test
-  public void lockedObjectShouldAllowChildrenCreation() throws InterruptedException,
-      ExecutionException {
+  public void lockedObjectShouldAllowChildrenCreation()
+      throws InterruptedException, ExecutionException {
     CountDownLatch latch = new CountDownLatch(1);
     List<Callable<Void>> threads = Arrays.asList( //
         doWithDAL(() -> acquireLock(latch), "T1", 200), //
@@ -187,7 +187,8 @@ public class DalLockingTest extends OBBaseTest {
     return doWithDAL(r, name, null, waitAfter);
   }
 
-  private Callable<Void> doWithDAL(Runnable r, String name, CountDownLatch waitEvent, long waitAfter) {
+  private Callable<Void> doWithDAL(Runnable r, String name, CountDownLatch waitEvent,
+      long waitAfter) {
     return () -> {
       boolean errorOccurred = false;
       try {
@@ -230,8 +231,8 @@ public class DalLockingTest extends OBBaseTest {
   }
 
   private AlertRule acquireLock(CountDownLatch latch) {
-    AlertRule lockedRule = OBDal.getInstance().getObjectLockForNoKeyUpdate(
-        OBDal.getInstance().getProxy(AlertRule.class, testingRuleId));
+    AlertRule lockedRule = OBDal.getInstance()
+        .getObjectLockForNoKeyUpdate(OBDal.getInstance().getProxy(AlertRule.class, testingRuleId));
     if (latch != null) {
       latch.countDown();
     }

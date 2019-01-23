@@ -47,13 +47,14 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
 
     try {
 
-      ProductionPlan productionPlan = OBDal.getInstance().get(ProductionPlan.class,
-          strMProductionPlanID);
+      ProductionPlan productionPlan = OBDal.getInstance()
+          .get(ProductionPlan.class, strMProductionPlanID);
       ProductionTransaction production = productionPlan.getProduction();
 
-      if (production.getMaterialMgmtProductionPlanList().size() > 1)
-        throw new OBException(Utility.messageBD(conn, "MoreThanOneProductionPlanError", bundle
-            .getContext().getLanguage()));
+      if (production.getMaterialMgmtProductionPlanList().size() > 1) {
+        throw new OBException(Utility.messageBD(conn, "MoreThanOneProductionPlanError",
+            bundle.getContext().getLanguage()));
+      }
 
       if (productionPlan.getProductionplandate() != null) {
         production.setMovementDate(productionPlan.getProductionplandate());
@@ -78,10 +79,12 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
       msg.setType("Error");
       if (e instanceof org.hibernate.exception.GenericJDBCException) {
         msg.setMessage(((org.hibernate.exception.GenericJDBCException) e).getSQLException()
-            .getNextException().getMessage());
+            .getNextException()
+            .getMessage());
       } else if (e instanceof org.hibernate.exception.ConstraintViolationException) {
         msg.setMessage(((org.hibernate.exception.ConstraintViolationException) e).getSQLException()
-            .getNextException().getMessage());
+            .getNextException()
+            .getMessage());
       } else {
         msg.setMessage(e.getMessage());
       }
@@ -95,11 +98,11 @@ public class ValidateWorkEffort_ProductionRun implements org.openbravo.schedulin
     try {
       OBContext.setAdminMode(true);
 
-      org.openbravo.model.ad.ui.Process process = OBDal.getInstance().get(
-          org.openbravo.model.ad.ui.Process.class, "800106");
+      org.openbravo.model.ad.ui.Process process = OBDal.getInstance()
+          .get(org.openbravo.model.ad.ui.Process.class, "800106");
 
-      final ProcessInstance pInstance = CallProcess.getInstance().call(process, production.getId(),
-          null);
+      final ProcessInstance pInstance = CallProcess.getInstance()
+          .call(process, production.getId(), null);
 
       if (pInstance.getResult() == 0) {
         // Error Processing

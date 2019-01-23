@@ -51,6 +51,7 @@ class LabelValue implements XmlComponentValue {
     this.strValue = replace(strValue);
   }
 
+  @Override
   public String print() {
     log4j.debug("running print() in LabelValue class");
     if (xmlComponentValue != null) {
@@ -60,6 +61,7 @@ class LabelValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printPrevious() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printPrevious();
@@ -68,6 +70,7 @@ class LabelValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printSimple();
@@ -76,6 +79,7 @@ class LabelValue implements XmlComponentValue {
     }
   }
 
+  @Override
   public String printPreviousSimple() {
     if (xmlComponentValue != null) {
       return xmlComponentValue.printPreviousSimple();

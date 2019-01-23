@@ -120,7 +120,8 @@ public class SL_Order_Product extends SimpleCallout {
     BigDecimal price = isTaxIncludedPriceList ? grossPriceList : netPriceList;
     BigDecimal priceToSubtract = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
     if (price.compareTo(BigDecimal.ZERO) != 0) {
-      discount = price.subtract(priceToSubtract).multiply(new BigDecimal("100"))
+      discount = price.subtract(priceToSubtract)
+          .multiply(new BigDecimal("100"))
           .divide(price, 2, RoundingMode.HALF_UP);
     }
     info.addResult("inpdiscount", discount);
@@ -148,19 +149,20 @@ public class SL_Order_Product extends SimpleCallout {
 
     // Organization Location and Tax
     String orgLocationID = SLOrderProductData.getOrgLocationId(this,
-        Utility.getContext(this, info.vars, "#User_Client", "SLOrderProduct"), "'" + strADOrgID
-            + "'");
+        Utility.getContext(this, info.vars, "#User_Client", "SLOrderProduct"),
+        "'" + strADOrgID + "'");
     if (StringUtils.isEmpty(orgLocationID)) {
-      info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this,
-          "NoLocationNoTaxCalculated", info.vars.getLanguage())));
+      info.showMessage(FormatUtilities.replaceJS(
+          Utility.messageBD(this, "NoLocationNoTaxCalculated", info.vars.getLanguage())));
     } else {
       SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
       if (data != null && data.length > 0) {
         try {
           String strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID,
-              strMWarehouseID, (StringUtils.isEmpty(data[0].billtoId) ? strCBPartnerLocationID
-                  : data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, StringUtils
-                  .equals(strIsSOTrx, "Y"), StringUtils.equals(data[0].iscashvat, "Y"));
+              strMWarehouseID,
+              (StringUtils.isEmpty(data[0].billtoId) ? strCBPartnerLocationID : data[0].billtoId),
+              strCBPartnerLocationID, data[0].cProjectId, StringUtils.equals(strIsSOTrx, "Y"),
+              StringUtils.equals(data[0].iscashvat, "Y"));
           info.addResult("inpcTaxId", strCTaxID);
         } catch (Exception e) {
           log4j.error(e.getMessage());
@@ -175,23 +177,22 @@ public class SL_Order_Product extends SimpleCallout {
 
     // Set AUM based on default
     if (UOMUtil.isUomManagementEnabled() && StringUtils.isEmpty(strUOMProduct)) {
-      String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, order
-          .getTransactionDocument().getId());
+      String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID,
+          order.getTransactionDocument().getId());
       if (StringUtils.isNotEmpty(finalAUM)) {
         info.addResult("inpcAum", finalAUM);
       }
     }
 
     // Load Product UOM if product has Second UOM
-    if (StringUtils.equals(strHasSecondaryUOM, "1")
-        && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && StringUtils
-            .isNotEmpty(strUOMProduct)))) {
+    if (StringUtils.equals(strHasSecondaryUOM, "1") && (!UOMUtil.isUomManagementEnabled()
+        || (UOMUtil.isUomManagementEnabled() && StringUtils.isNotEmpty(strUOMProduct)))) {
       FieldProvider[] tld = null;
       try {
         ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-                "SLOrderProduct"), Utility.getContext(this, info.vars, "#User_Client",
-                "SLOrderProduct"), 0);
+            "M_Product_UOM", "",
+            Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SLOrderProduct"),
+            Utility.getContext(this, info.vars, "#User_Client", "SLOrderProduct"), 0);
         Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderProduct", "");
         tld = comboTableData.select(false);
         comboTableData = null;

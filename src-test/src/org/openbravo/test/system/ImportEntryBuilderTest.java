@@ -51,12 +51,12 @@ import org.openbravo.service.importprocess.ImportEntryBuilder;
  */
 public class ImportEntryBuilderTest extends WeldBaseTest {
 
-  private static final Organization SPAIN_ORG = OBDal.getInstance().getProxy(Organization.class,
-      "357947E87C284935AD1D783CF6F099A1");
-  private static final Client QA_TESTING_CLIENT = OBDal.getInstance().getProxy(Client.class,
-      "4028E6C72959682B01295A070852010D");
-  private static final Role QA_TESTING_ADMIN_ROLE = OBDal.getInstance().getProxy(Role.class,
-      "4028E6C72959682B01295A071429011E");
+  private static final Organization SPAIN_ORG = OBDal.getInstance()
+      .getProxy(Organization.class, "357947E87C284935AD1D783CF6F099A1");
+  private static final Client QA_TESTING_CLIENT = OBDal.getInstance()
+      .getProxy(Client.class, "4028E6C72959682B01295A070852010D");
+  private static final Role QA_TESTING_ADMIN_ROLE = OBDal.getInstance()
+      .getProxy(Role.class, "4028E6C72959682B01295A071429011E");
   private static final String JSON_DATA = "{\"custom\":\"data\"}";
   private static final String IMPORT_STATUS = "Initial";
   private static final String TYPE_OF_DATA = "Order";
@@ -190,10 +190,8 @@ public class ImportEntryBuilderTest extends WeldBaseTest {
         .setRole(QA_TESTING_ADMIN_ROLE) //
         .create();
 
-    assertTrue(
-        "Created entry values matches defined values",
-        checkImportEntryValues(createdEntry, QA_TESTING_CLIENT, SPAIN_ORG, QA_TESTING_ADMIN_ROLE,
-            TYPE_OF_DATA, JSON_DATA));
+    assertTrue("Created entry values matches defined values", checkImportEntryValues(createdEntry,
+        QA_TESTING_CLIENT, SPAIN_ORG, QA_TESTING_ADMIN_ROLE, TYPE_OF_DATA, JSON_DATA));
   }
 
   private boolean checkImportEntryValues(ImportEntry entry, Client client,

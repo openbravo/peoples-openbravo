@@ -53,13 +53,15 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
   private static final BigDecimal ZERO = new BigDecimal(0.0);
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -82,8 +84,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
       printPage(response, vars, strDatefrom, strDateto, strDateOrdered, strBPartner,
           strOrganization, strCompleteAuto);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError processButton(VariablesSecureApp vars, String strBPartner, String strDatefrom,
@@ -99,8 +102,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     try {
       conn = getTransactionConnection();
       ExpenseSOrderData[] data = ExpenseSOrderData.select(this, strBPartner, strDatefrom,
-          DateTimeData.nDaysAfter(this, strDateto, "1"), Utility.getContext(this, vars,
-              "#User_Client", "ExpenseSOrder"),
+          DateTimeData.nDaysAfter(this, strDateto, "1"),
+          Utility.getContext(this, vars, "#User_Client", "ExpenseSOrder"),
           strOrganization.equals("") ? Utility.getContext(this, vars, "#User_Org", "ExpenseSOrder")
               : Utility.stringList(strOrganization));
       String strOldOrganization = "-1";
@@ -130,8 +133,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
         // the same as the previous data line, complete the previous sales order, create a new
         // sales
         // order header and insert the first line
-        if (!data[i].cBpartnerId.equals(strOldBPartner)
-            || !data[i].cProjectId.equals(strOldProject)
+        if (!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject)
             || !data[i].adOrgId.equals(strOldOrganization)) {
           // Complete previous order
           if (!strCOrderId.equals("") && strCOrderId != null) {
@@ -140,8 +142,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             if (strCompleteAuto.equals("Y")) {
               try {
                 myMessage = processOrder(vars, strCOrderId);
-                if (myMessage != null)
+                if (myMessage != null) {
                   txtOrder.append(" -> ").append(myMessage.getMessage());
+                }
               } catch (ServletException ex) {
                 myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
                 myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
@@ -197,9 +200,12 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             if (myMessage.getType() != "Error") {
               txtOrder.append(myMessage.getMessage());
             } else {
-              myMessage.setMessage(textoMensaje.append(
-                  Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
-                      + Integer.toString(total) + "<br/>" + myMessage.getMessage()).toString());
+              myMessage
+                  .setMessage(
+                      textoMensaje
+                          .append(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+                              + Integer.toString(total) + "<br/>" + myMessage.getMessage())
+                          .toString());
               releaseRollbackConnection(conn);
               return myMessage;
             }
@@ -213,8 +219,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
           if (strCompleteAuto.equals("Y")) {
             try {
               myMessage = processOrder(vars, strCOrderId);
-              if (myMessage != null)
+              if (myMessage != null) {
                 txtOrder.append(" -> ").append(myMessage.getMessage());
+              }
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               myMessage.setMessage(Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
@@ -240,8 +247,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     } catch (Exception ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       try {
-        if (conn != null)
+        if (conn != null) {
           releaseRollbackConnection(conn);
+        }
         return myMessage;
       } catch (Exception ignored) {
       }
@@ -257,9 +265,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       myMessage = new OBError();
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "ExpenseSheetNo", vars.getLanguage()) + " "
-          + strDocumentNo + ": "
-          + Utility.messageBD(this, "NoExpenseWarehouse", vars.getLanguage()) + ".");
+      myMessage.setMessage(
+          Utility.messageBD(this, "ExpenseSheetNo", vars.getLanguage()) + " " + strDocumentNo + ": "
+              + Utility.messageBD(this, "NoExpenseWarehouse", vars.getLanguage()) + ".");
 
       return myMessage;
     }
@@ -282,9 +290,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     if (data.mPricelistId.equals("")) {
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
-          + strCust + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage())
-          + ".");
+      myMessage
+          .setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + strCust
+              + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()) + ".");
       return myMessage;
     } else {
       try {
@@ -298,9 +306,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
         if (data1[0].finPaymentmethodId.equals("") || data1[0].finPaymentmethodId == null) {
           myMessage.setType("Error");
           myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' '
-              + strCust + ' '
-              + Utility.messageBD(this, "PayementMethodNotdefined", vars.getLanguage()) + ".");
+          myMessage.setMessage(
+              Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + strCust + ' '
+                  + Utility.messageBD(this, "PayementMethodNotdefined", vars.getLanguage()) + ".");
           return myMessage;
         } else {
           if (data1[0].paymentrule.equals("") || data1[0].paymentrule == null) {
@@ -310,37 +318,23 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               data.adOrgId);
           String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", docTargetType,
               docTargetType, false, true);
-          ExpenseSOrderData.insertCOrder(
-              conn,
-              this,
-              strCOrderId,
-              data.adClientId,
-              data.adOrgId,
-              vars.getUser(),
-              strDocumentNo,
-              strDocStatus,
-              strDocAction,
-              strProcessing,
-              docType,
-              docTargetType,
-              strDateOrdered,
-              strDateOrdered,
-              strDateOrdered,
-              data.cBpartnerId,
+          ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data.adClientId, data.adOrgId,
+              vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType,
+              docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data.cBpartnerId,
               ExpenseSOrderData.cBPartnerLocationId(this, data.cBpartnerId),
-              ExpenseSOrderData.billto(this, data.cBpartnerId).equals("") ? ExpenseSOrderData
-                  .cBPartnerLocationId(this, data.cBpartnerId) : ExpenseSOrderData.billto(this,
-                  data.cBpartnerId),
-              strBPCCurrencyId,
-              data1[0].paymentrule,
-              data1[0].finPaymentmethodId,
-              data1[0].cPaymenttermId.equals("") ? ExpenseSOrderData.selectPaymentTerm(this,
-                  data.adClientId) : data1[0].cPaymenttermId, data1[0].invoicerule.equals("") ? "I"
-                  : data1[0].invoicerule, data1[0].deliveryrule.equals("") ? "A"
-                  : data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("") ? "D"
-                  : data1[0].deliveryviarule, data.mWarehouseId.equals("") ? vars.getWarehouse()
-                  : data.mWarehouseId, data.mPricelistId, data.cProjectId, null, null,
-              data.user1Id, data.user2Id, data.cCostcenterId, data.aAssetId);
+              ExpenseSOrderData.billto(this, data.cBpartnerId).equals("")
+                  ? ExpenseSOrderData.cBPartnerLocationId(this, data.cBpartnerId)
+                  : ExpenseSOrderData.billto(this, data.cBpartnerId),
+              strBPCCurrencyId, data1[0].paymentrule, data1[0].finPaymentmethodId,
+              data1[0].cPaymenttermId.equals("")
+                  ? ExpenseSOrderData.selectPaymentTerm(this, data.adClientId)
+                  : data1[0].cPaymenttermId,
+              data1[0].invoicerule.equals("") ? "I" : data1[0].invoicerule,
+              data1[0].deliveryrule.equals("") ? "A" : data1[0].deliveryrule, "I",
+              data1[0].deliveryviarule.equals("") ? "D" : data1[0].deliveryviarule,
+              data.mWarehouseId.equals("") ? vars.getWarehouse() : data.mWarehouseId,
+              data.mPricelistId, data.cProjectId, null, null, data.user1Id, data.user2Id,
+              data.cCostcenterId, data.aAssetId);
           // Do not inherit activity and campaign dimensions from expense line to sales order header
           myMessage.setType("Success");
           myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
@@ -378,8 +372,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       String strDateexpense = data.dateexpense.equals("") ? data.datereport : data.dateexpense;
       strDateexpense = strDateexpense.equals("") ? DateTimeData.today(this) : strDateexpense;
 
-      boolean isPriceIncludingTaxes = "Y".equals(ExpenseSOrderData.selectisPriceIncludingTaxes(
-          this, data.mPricelistId));
+      boolean isPriceIncludingTaxes = "Y"
+          .equals(ExpenseSOrderData.selectisPriceIncludingTaxes(this, data.mPricelistId));
 
       // Gets the tax for the sales order line
       String strCTaxID = Tax.get(this, data.mProductId, strDateOrdered, data.adOrgId,
@@ -473,9 +467,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
           }
 
           // Calculating discount
-          if (priceList.compareTo(BigDecimal.ZERO) == 0)
+          if (priceList.compareTo(BigDecimal.ZERO) == 0) {
             discount = ZERO;
-          else {
+          } else {
             if (log4j.isDebugEnabled()) {
               log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
             }
@@ -492,13 +486,15 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                   RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"));
             }
           }
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("Discount: " + discount.toString());
+          }
           if (discount.scale() > StdPrecision) {
             discount = discount.setScale(StdPrecision, RoundingMode.HALF_UP);
           }
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("Discount rounded: " + discount.toString());
+          }
 
           priceactual = priceActual.toString();
           grossprice = grossPrice.toString();
@@ -511,15 +507,16 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
           ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data.adClientId,
               strOrganization.equals("") ? data.adOrgId : strOrganization, vars.getUser(),
-              strCOrderId, Integer.toString(line), data.cBpartnerId, ExpenseSOrderData
-                  .cBPartnerLocationId(this, data.cBpartnerId), strDateOrdered, strDateOrdered,
-              data.description, data.mProductId, data.mWarehouseId.equals("") ? vars.getWarehouse()
-                  : data.mWarehouseId,
+              strCOrderId, Integer.toString(line), data.cBpartnerId,
+              ExpenseSOrderData.cBPartnerLocationId(this, data.cBpartnerId), strDateOrdered,
+              strDateOrdered, data.description, data.mProductId,
+              data.mWarehouseId.equals("") ? vars.getWarehouse() : data.mWarehouseId,
               data.cUomId.equals("") ? Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder")
-                  : data.cUomId, data.qty, strBPCCurrencyId, pricelist, priceactual,
-              data.mPricelistId, pricelimit, strCTaxID, data.sResourceassignmentId, strDiscount,
-              grossprice, grosspricelist, data.lineCProjectId, data.lineUser1Id, data.lineUser2Id,
-              data.lineCCostcenterId, data.lineAAssetId);
+                  : data.cUomId,
+              data.qty, strBPCCurrencyId, pricelist, priceactual, data.mPricelistId, pricelimit,
+              strCTaxID, data.sResourceassignmentId, strDiscount, grossprice, grosspricelist,
+              data.lineCProjectId, data.lineUser1Id, data.lineUser2Id, data.lineCCostcenterId,
+              data.lineAAssetId);
 
           // Updates expense line with the sales order line ID
           ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID,
@@ -542,8 +539,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 
     String pinstance = SequenceIdData.getUUID();
     try {
-      PInstanceProcessData.insertPInstance(this, pinstance, "104", strCOrderId, "N",
-          vars.getUser(), vars.getClient(), vars.getOrg());
+      PInstanceProcessData.insertPInstance(this, pinstance, "104", strCOrderId, "N", vars.getUser(),
+          vars.getClient(), vars.getOrg());
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       releaseRollbackConnection(conn);
@@ -562,25 +559,29 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,
       String strDateto, String strDateOrdered, String strBPartner, String strOrganization,
       String strCompleteAuto) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: process ExpenseSOrder");
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "", strProcessId = "186";
     String[] discard = { "" };
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
+    }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/ExpenseSOrder").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ExpenseSOrder")
+        .createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ExpenseSOrder", false, "", "", "",
         false, "ad_actionButton", strReplaceWith, false, true);
@@ -654,6 +655,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet Create Sales Orders from Expenses";
   } // end of getServletInfo() method

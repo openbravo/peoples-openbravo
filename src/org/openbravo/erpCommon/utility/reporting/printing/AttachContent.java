@@ -80,10 +80,11 @@ class AttachContent implements FieldProvider {
     this.docName = docName;
   }
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("FILENAME"))
+    if (fieldName.equalsIgnoreCase("FILENAME")) {
       return fileName;
-    else if (fieldName.equalsIgnoreCase("ID")) {
+    } else if (fieldName.equalsIgnoreCase("ID")) {
       return id;
     } else if (fieldName.equalsIgnoreCase("VISIBLE")) {
       return visible;

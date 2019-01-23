@@ -27,6 +27,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.SessionHandler;
@@ -34,8 +36,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.exception.NoConnectionAvailableException;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * A connection provider which is created on the basis of the current connection of the DAL (see
@@ -65,6 +65,7 @@ public class DalConnectionProvider implements ConnectionProvider {
   private boolean flush = true;
   private String pool;
 
+  @Override
   public void destroy() throws Exception {
     // never close
   }
@@ -92,6 +93,7 @@ public class DalConnectionProvider implements ConnectionProvider {
     this.flush = flush;
   }
 
+  @Override
   public Connection getConnection() throws NoConnectionAvailableException {
     try {
       if (connection == null || connection.isClosed()) {
@@ -116,13 +118,15 @@ public class DalConnectionProvider implements ConnectionProvider {
     this.connection = connection;
   }
 
+  @Override
   public String getRDBMS() {
     return getProperties().getProperty("bbdd.rdbms");
   }
 
   private boolean closeConnection(Connection conn) {
-    if (conn == null)
+    if (conn == null) {
       return false;
+    }
     try {
       conn.setAutoCommit(true);
       conn.close();
@@ -132,6 +136,7 @@ public class DalConnectionProvider implements ConnectionProvider {
     return true;
   }
 
+  @Override
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
     Connection conn = SessionHandler.getInstance().getNewConnection(pool);
 
@@ -142,29 +147,36 @@ public class DalConnectionProvider implements ConnectionProvider {
     return conn;
   }
 
+  @Override
   public void releaseCommitConnection(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return;
+    }
     conn.commit();
     closeConnection(conn);
   }
 
+  @Override
   public void releaseRollbackConnection(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return;
+    }
     conn.rollback();
     closeConnection(conn);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String SQLPreparedStatement) throws Exception {
     return getPreparedStatement(getConnection(), SQLPreparedStatement);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(String poolName, String SQLPreparedStatement)
       throws Exception {
     return getPreparedStatement(getConnection(), SQLPreparedStatement);
   }
 
+  @Override
   public PreparedStatement getPreparedStatement(Connection conn, String SQLPreparedStatement)
       throws SQLException {
     PreparedStatement ps = conn.prepareStatement(SQLPreparedStatement,
@@ -172,20 +184,24 @@ public class DalConnectionProvider implements ConnectionProvider {
     return ps;
   }
 
+  @Override
   public CallableStatement getCallableStatement(String SQLCallableStatement) throws Exception {
     return getCallableStatement("", SQLCallableStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(String poolName, String SQLCallableStatement)
       throws Exception {
     Connection conn = getConnection();
     return getCallableStatement(conn, SQLCallableStatement);
   }
 
+  @Override
   public CallableStatement getCallableStatement(Connection conn, String SQLCallableStatement)
       throws SQLException {
-    if (conn == null || SQLCallableStatement == null || SQLCallableStatement.equals(""))
+    if (conn == null || SQLCallableStatement == null || SQLCallableStatement.equals("")) {
       return null;
+    }
     CallableStatement cs = null;
     try {
       cs = conn.prepareCall(SQLCallableStatement);
@@ -195,18 +211,22 @@ public class DalConnectionProvider implements ConnectionProvider {
     return (cs);
   }
 
+  @Override
   public Statement getStatement() throws Exception {
     return getStatement("");
   }
 
+  @Override
   public Statement getStatement(String poolName) throws Exception {
     Connection conn = getConnection();
     return getStatement(conn);
   }
 
+  @Override
   public Statement getStatement(Connection conn) throws SQLException {
-    if (conn == null)
+    if (conn == null) {
       return null;
+    }
     try {
       return (conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY));
     } catch (SQLException e) {
@@ -214,6 +234,7 @@ public class DalConnectionProvider implements ConnectionProvider {
     }
   }
 
+  @Override
   public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
     if (preparedStatement == null) {
       return;
@@ -221,6 +242,7 @@ public class DalConnectionProvider implements ConnectionProvider {
     preparedStatement.close();
   }
 
+  @Override
   public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException {
     if (callableStatement == null) {
       return;
@@ -228,6 +250,7 @@ public class DalConnectionProvider implements ConnectionProvider {
     callableStatement.close();
   }
 
+  @Override
   public void releaseStatement(Statement statement) throws SQLException {
     if (statement == null) {
       return;
@@ -235,6 +258,7 @@ public class DalConnectionProvider implements ConnectionProvider {
     statement.close();
   }
 
+  @Override
   public void releaseTransactionalStatement(Statement statement) throws SQLException {
     if (statement == null) {
       return;
@@ -242,6 +266,7 @@ public class DalConnectionProvider implements ConnectionProvider {
     statement.close();
   }
 
+  @Override
   public void releaseTransactionalPreparedStatement(PreparedStatement preparedStatement)
       throws SQLException {
     if (preparedStatement == null) {
@@ -250,6 +275,7 @@ public class DalConnectionProvider implements ConnectionProvider {
     preparedStatement.close();
   }
 
+  @Override
   public String getStatus() {
     return "Not implemented";
   }

@@ -30,7 +30,8 @@ class SectionValue {
   FieldValue breakFieldValue;
   static Logger log4jSectionValue = LogManager.getLogger();
 
-  public SectionValue(SectionTemplate sectionTemplate, XmlDocument xmlDocument, DataValue dataValue) {
+  public SectionValue(SectionTemplate sectionTemplate, XmlDocument xmlDocument,
+      DataValue dataValue) {
     this.sectionTemplate = sectionTemplate;
     this.dataValue = dataValue;
 

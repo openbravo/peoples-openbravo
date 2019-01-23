@@ -18,8 +18,6 @@
  */
 package org.openbravo.client.kernel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 
 /**

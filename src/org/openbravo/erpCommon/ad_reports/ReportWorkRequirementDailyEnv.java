@@ -39,8 +39,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -61,21 +62,24 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
       String strmaProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId",
           "ReportWorkRequirementDailyEnv|MA_ProcessPlan_ID");
       printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
-      String strStartDateFrom, String strStartDateTo, String strmaProcessPlan) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strStartDateFrom, String strStartDateTo, String strmaProcessPlan)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
     ReportWorkRequirementDailyEnvData[] data = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnvEdit").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnvEdit")
+        .createXmlDocument();
     data = ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(),
         Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv"),
@@ -90,15 +94,17 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strStartDateFrom, String strStartDateTo, String strmaProcessPlan) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strStartDateFrom, String strStartDateTo, String strmaProcessPlan)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnv").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnv")
+        .createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWorkRequirementDailyEnv", false,
         "", "", "", false, "ad_reports", strReplaceWith, false, true);
@@ -141,9 +147,10 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strStartDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this,
-        Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv")));
+    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure",
+        ProcessPlanComboData.select(this,
+            Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWorkRequirementDailyEnv")));
 
     out.println(xmlDocument.print());
     out.close();
@@ -194,6 +201,7 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
    * xmlDocument.setData("structure1", data); out.println(xmlDocument.print()); out.close(); }
    */
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportWorkRequirementDailyEnv.";
   } // end of getServletInfo() method

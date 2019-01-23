@@ -43,8 +43,8 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 public class ProcessRequestEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ProcessRequest.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ProcessRequest.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -70,8 +70,8 @@ public class ProcessRequestEventHandler extends EntityPersistenceEventObserver {
 
   private void checkMandatoryFields(EntityPersistenceEvent event) {
 
-    final Entity processRequestEntity = ModelProvider.getInstance().getEntity(
-        ProcessRequest.ENTITY_NAME);
+    final Entity processRequestEntity = ModelProvider.getInstance()
+        .getEntity(ProcessRequest.ENTITY_NAME);
     final Property isGroupNameProperty = processRequestEntity
         .getProperty(ProcessRequest.PROPERTY_ISGROUP);
     final Property processProperty = processRequestEntity
@@ -110,8 +110,8 @@ public class ProcessRequestEventHandler extends EntityPersistenceEventObserver {
    */
   private void checkValidOrganizationCostingServer(EntityPersistenceEvent event) {
     if (event != null && (event instanceof EntityNewEvent || event instanceof EntityUpdateEvent)) {
-      final Entity processRequestEntity = ModelProvider.getInstance().getEntity(
-          ProcessRequest.ENTITY_NAME);
+      final Entity processRequestEntity = ModelProvider.getInstance()
+          .getEntity(ProcessRequest.ENTITY_NAME);
 
       final Property isGroupNameProperty = processRequestEntity
           .getProperty(ProcessRequest.PROPERTY_ISGROUP);

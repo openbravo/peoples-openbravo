@@ -110,17 +110,16 @@ public class UniqueConstraintImportTest extends XMLBaseTest {
     // change the id
     xml = xml.replaceAll("<CountryTrl id=\"..", "<CountryTrl id=\"1k");
 
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml,
-        OBDal.getInstance().get(Module.class, "0"));
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml,
+            OBDal.getInstance().get(Module.class, "0"));
 
     log.debug("WARNING>>>>");
     log.debug(ir.getWarningMessages());
-    assertTrue(ir.getWarningMessages() != null
-        && ir.getWarningMessages().trim().length() != 0
-        && ir.getWarningMessages().indexOf(
-            "eventhough it does not belong to the target organization") != -1);
+    assertTrue(ir.getWarningMessages() != null && ir.getWarningMessages().trim().length() != 0
+        && ir.getWarningMessages()
+            .indexOf("eventhough it does not belong to the target organization") != -1);
 
     for (final BaseOBObject bob : ir.getUpdatedObjects()) {
       OBDal.getInstance().refresh(bob);

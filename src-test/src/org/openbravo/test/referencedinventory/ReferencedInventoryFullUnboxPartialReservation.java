@@ -35,14 +35,13 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  * Full unbox of a partial reservation. Storage detail should be reserved and out of the box. Box
  * and Unbox movements will have 2 lines
  */
-public class ReferencedInventoryFullUnboxPartialReservation extends
-    ReferencedInventoryUnboxReservationTest {
+public class ReferencedInventoryFullUnboxPartialReservation
+    extends ReferencedInventoryUnboxReservationTest {
   @Rule
   public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule2 = new ParameterCdiTestRule<ParamsUnboxReservationTest>(
-      Arrays
-          .asList(new ParamsUnboxReservationTest[] { new ParamsUnboxReservationTest(
-              "Full unbox of a partial reservation. Storage detail should be reserved and out of the box",
-              "10", "10", "4") }));
+      Arrays.asList(new ParamsUnboxReservationTest[] { new ParamsUnboxReservationTest(
+          "Full unbox of a partial reservation. Storage detail should be reserved and out of the box",
+          "10", "10", "4") }));
 
   protected @ParameterCdiTest ParamsUnboxReservationTest params;
 
@@ -63,7 +62,7 @@ public class ReferencedInventoryFullUnboxPartialReservation extends
   @Override
   void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
       final int expectedNumberOfLines) {
-    assertThat("Box and Unbox Movement has two lines", boxMovement
-        .getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
+    assertThat("Box and Unbox Movement has two lines",
+        boxMovement.getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
   }
 }

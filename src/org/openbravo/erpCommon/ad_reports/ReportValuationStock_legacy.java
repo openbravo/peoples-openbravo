@@ -41,8 +41,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportValuationStock_legacy extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
@@ -68,15 +69,17 @@ public class ReportValuationStock_legacy extends HttpSecureAppServlet {
           "ReportValuationStock_legacy|currency", strUserCurrencyId);
       printPageDataSheet(request, response, vars, strDate, strWarehouse, strCategoryProduct,
           strCurrencyId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strDate, String strWarehouse, String strCategoryProduct,
       String strCurrencyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "discard" };
@@ -118,13 +121,15 @@ public class ReportValuationStock_legacy extends HttpSecureAppServlet {
       }
       if (vars.commandIn("DEFAULT")) {
         discard[0] = "sectionCategoryProduct";
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportValuationStock_legacy", discard)
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportValuationStock_legacy",
+                discard)
             .createXmlDocument();
         data = ReportValuationStockLegacyData.set();
       } else {
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_reports/ReportValuationStock_legacy", discard)
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportValuationStock_legacy",
+                discard)
             .createXmlDocument();
       }
 
@@ -180,8 +185,9 @@ public class ReportValuationStock_legacy extends HttpSecureAppServlet {
       }
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                ""), Utility.getContext(this, vars, "#User_Client", ""), 0);
+            "M_Product_Category_ID", "", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+            Utility.getContext(this, vars, "#User_Client", ""), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "", strCategoryProduct);
         xmlDocument.setData("reportM_PRODUCT_CATEGORYID", "liststructure",
             comboTableData.select(false));
@@ -193,9 +199,9 @@ public class ReportValuationStock_legacy extends HttpSecureAppServlet {
       xmlDocument.setParameter("ccurrencyid", strCurrencyId);
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID",
-            "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "ReportValuationStock_legacy"), Utility.getContext(this, vars, "#User_Client",
-                "ReportValuationStock_legacy"), 0);
+            "", "",
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportValuationStock_legacy"),
+            Utility.getContext(this, vars, "#User_Client", "ReportValuationStock_legacy"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportValuationStock_legacy",
             strCurrencyId);
         xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -210,6 +216,7 @@ public class ReportValuationStock_legacy extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportValuationStock_legacy. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

@@ -48,9 +48,8 @@ public class OBContextCollectionsTest extends OBBaseTest {
   @Parameters(name = "{index}: method = {0}")
   public static Collection<Object[]> data() {
     return Arrays.asList(new Object[][] { { "getReadableOrganizations" },
-        { "getWritableOrganizations" }, { "getDeactivatedOrganizations" },
-        { "getReadableClients" }, { "getNaturalTree" }, { "getParentTree" }, { "getParentList" },
-        { "getChildTree" } });
+        { "getWritableOrganizations" }, { "getDeactivatedOrganizations" }, { "getReadableClients" },
+        { "getNaturalTree" }, { "getParentTree" }, { "getParentList" }, { "getChildTree" } });
   }
 
   @Test

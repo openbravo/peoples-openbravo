@@ -124,8 +124,8 @@ public class DataSourceServiceProvider {
         dataSource = table.getObserdsDatasource();
       } else if (ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType())) {
         // If the table is based on a HQL table, use the 'HQL Tables Datasource'
-        dataSource = OBDal.getInstance().get(DataSource.class,
-            ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
+        dataSource = OBDal.getInstance()
+            .get(DataSource.class, ApplicationConstants.HQL_TABLE_DATASOURCE_ID);
       }
     }
     return dataSource;

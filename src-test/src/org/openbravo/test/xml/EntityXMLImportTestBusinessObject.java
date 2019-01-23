@@ -103,9 +103,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     setUserContext(QA_TEST_ADMIN_USER_ID);
     // don't be bothered by access checks...
     setAccess();
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -136,9 +136,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     // export to client 1000001
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -174,9 +174,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -223,9 +223,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     // force this by being admin
     OBContext.setAdminMode();
     try {
-      final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-          OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-          OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+      final ImportResult ir = DataImportService.getInstance()
+          .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+              OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
       if (ir.getException() != null) {
         ir.getException().printStackTrace(System.err);
         fail(ir.getException().getMessage());
@@ -296,9 +296,9 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
     setAccess();
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -307,8 +307,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     // + 1 for the inserted line
     assertEquals(TOTAL_PT_PTL + 1, ir.getInsertedObjects().size());
     for (final Object o : ir.getInsertedObjects()) {
-      assertTrue(o instanceof PaymentTermTrl || o instanceof PaymentTerm
-          || o instanceof PaymentTermLine);
+      assertTrue(
+          o instanceof PaymentTermTrl || o instanceof PaymentTerm || o instanceof PaymentTermLine);
     }
     OBDal.getInstance().commitAndClose();
   }
@@ -366,8 +366,8 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
     setAccess();
     final List<PaymentTerm> result = new ArrayList<PaymentTerm>();
     for (int i = 0; i < NO_OF_PT; i++) {
-      final PaymentTerm source = OBDal.getInstance().get(PaymentTerm.class,
-          "66BA1164A7394344BB9CD1A6ECEED05D");
+      final PaymentTerm source = OBDal.getInstance()
+          .get(PaymentTerm.class, "66BA1164A7394344BB9CD1A6ECEED05D");
       final PaymentTerm pt = (PaymentTerm) DalUtil.copy(source, false);
       pt.setName(PREFIX + " test " + i);
       pt.setOrganization(OBContext.getOBContext().getCurrentOrganization());
@@ -421,6 +421,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
   }
 
   // overridden because also children are exported
+  @Override
   @SuppressWarnings("unchecked")
   protected <T extends BaseOBObject> String getXML(List<T> pts) {
     final EntityXMLConverter exc = EntityXMLConverter.newInstance();

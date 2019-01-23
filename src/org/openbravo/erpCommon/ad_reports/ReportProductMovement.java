@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportProductMovement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -67,8 +68,8 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       String strInternalConsumption = vars.getGlobalVariable("inpInternalConsumption",
           "ReportProductMovement|internalConsumption", "-1");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strmProductId,
-          strInout, strReturn, strInventory, strMovement, strProduction,
-          strmAttributesetinstanceId, strInternalConsumption);
+          strInout, strReturn, strInventory, strMovement, strProduction, strmAttributesetinstanceId,
+          strInternalConsumption);
     } else if (vars.commandIn("DIRECT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportProductMovement|dateFrom",
           "");
@@ -91,8 +92,8 @@ public class ReportProductMovement extends HttpSecureAppServlet {
           "ReportProductMovement|internalConsumption", "");
       setHistoryCommand(request, "DIRECT");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strmProductId,
-          strInout, strReturn, strInventory, strMovement, strProduction,
-          strmAttributesetinstanceId, strInternalConsumption);
+          strInout, strReturn, strInventory, strMovement, strProduction, strmAttributesetinstanceId,
+          strInternalConsumption);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportProductMovement|dateFrom");
@@ -115,8 +116,8 @@ public class ReportProductMovement extends HttpSecureAppServlet {
           "ReportProductMovement|internalConsumption");
       setHistoryCommand(request, "DIRECT");
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strmProductId,
-          strInout, strReturn, strInventory, strMovement, strProduction,
-          strmAttributesetinstanceId, strInternalConsumption);
+          strInout, strReturn, strInventory, strMovement, strProduction, strmAttributesetinstanceId,
+          strInternalConsumption);
     } else {
       pageError(response);
     }
@@ -258,8 +259,9 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       data4 = ReportProductMovementData.set();
       data5 = ReportProductMovementData.set();
     }
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportProductMovement", discard).createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProductMovement", discard)
+        .createXmlDocument();
 
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProductMovement", false,
         "", "", "", false, "ad_reports", strReplaceWith, false, true);
@@ -313,9 +315,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
     xmlDocument.setParameter("mProduct", strmProductId);
 
-    xmlDocument.setData(
-        "reportM_ATTRIBUTESETINSTANCE_ID",
-        "liststructure",
+    xmlDocument.setData("reportM_ATTRIBUTESETINSTANCE_ID", "liststructure",
         AttributeSetInstanceComboData.select(readOnlyCP, vars.getLanguage(), strmProductId,
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductMovement")));
@@ -342,6 +342,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportProductMovement. This Servlet was made by Jon Alegria";
   } // end of getServletInfo() method

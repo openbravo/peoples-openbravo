@@ -20,6 +20,7 @@ package org.openbravo.materialmgmt;
 import java.util.Map;
 
 import org.openbravo.client.application.FilterExpression;
+import org.openbravo.common.actionhandler.InvoiceFromShipmentActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 
@@ -34,8 +35,8 @@ public class InvoiceFromGoodsShipmentPriceListFilterExpression implements Filter
   public String getExpression(Map<String, String> requestMap) {
     ShipmentInOut shipment = getShipmentFromContextData(requestMap);
     if (InvoiceFromGoodsShipmentUtil.shipmentLinesFromOrdersWithSamePriceList(shipment)) {
-      return " e.id='"
-          + InvoiceFromGoodsShipmentUtil.getPriceListFromOrder(shipment).get(0).getId() + "' ";
+      return " e.id='" + InvoiceFromGoodsShipmentUtil.getPriceListFromOrder(shipment).get(0).getId()
+          + "' ";
     }
     return " 1=1 ";
   }

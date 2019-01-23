@@ -53,8 +53,8 @@ class UpdateQuantitiesAndUOMs extends CreateLinesFromProcessHook {
     Product product = (Product) getCopiedFromLine().get("product");
 
     if (uomManagementIsEnabledAndAUMAndOrderUOMAreEmpty()) {
-      String defaultAum = UOMUtil.getDefaultAUMForDocument(product.getId(), getInvoice()
-          .getTransactionDocument().getId());
+      String defaultAum = UOMUtil.getDefaultAUMForDocument(product.getId(),
+          getInvoice().getTransactionDocument().getId());
       operativeQuantity = orderedQuantity;
       operativeUOM = OBDal.getInstance().getProxy(UOM.class, defaultAum);
       orderUOM = null;

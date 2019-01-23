@@ -46,12 +46,13 @@ public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBo
         reservationQty, isAllocated);
     final StorageDetail storageDetail = refInv.getMaterialMgmtStorageDetailList().get(0);
     final Product originalProduct = storageDetail.getProduct();
-    final String originalAttributeSet = ReferencedInventoryUtil.getParentAttributeSetInstance(
-        storageDetail).getId();
+    final String originalAttributeSet = ReferencedInventoryUtil
+        .getParentAttributeSetInstance(storageDetail)
+        .getId();
 
-    final InternalMovement unBoxMovement = new UnboxProcessor(refInv,
-        ReferencedInventoryTestUtils.getUnboxStorageDetailsJSArray(storageDetail, qtyToUnbox,
-            toBinId)).createAndProcessGoodsMovement();
+    final InternalMovement unBoxMovement = new UnboxProcessor(refInv, ReferencedInventoryTestUtils
+        .getUnboxStorageDetailsJSArray(storageDetail, qtyToUnbox, toBinId))
+            .createAndProcessGoodsMovement();
 
     OBDal.getInstance().refresh(unBoxMovement);
     OBDal.getInstance().getSession().evict(refInv); // Hack to avoid problems in Hibernate when the
@@ -92,10 +93,10 @@ public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBo
       if (sd.getQuantityOnHand().compareTo(qtyToUnbox) == 0) {
         assertThat("Unboxed storage detail is in the expected bin", sd.getStorageBin().getId(),
             equalTo(toBinId));
-        assertThat("Current storage detail has restored its original attribute set", sd
-            .getAttributeSetValue().getId(), equalTo(originalAttributeSet));
-        assertThat("Attribute Set description doesn't contain info about referenced inventory", sd
-            .getAttributeSetValue().getDescription(),
+        assertThat("Current storage detail has restored its original attribute set",
+            sd.getAttributeSetValue().getId(), equalTo(originalAttributeSet));
+        assertThat("Attribute Set description doesn't contain info about referenced inventory",
+            sd.getAttributeSetValue().getDescription(),
             not(endsWith(ReferencedInventoryUtil.REFERENCEDINVENTORYPREFIX + refInv.getSearchKey()
                 + ReferencedInventoryUtil.REFERENCEDINVENTORYSUFFIX)));
       }
@@ -121,8 +122,8 @@ public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBo
     final List<StorageDetail> storageDetails = refInv.getMaterialMgmtStorageDetailList();
     assertThat("Referenced inventory must still be linked to a storage detail",
         storageDetails.size(), equalTo(1));
-    assertThat("Storage detail must have expected qty on hand", storageDetails.get(0)
-        .getQuantityOnHand(), equalTo(expectedQtyInRefInv));
+    assertThat("Storage detail must have expected qty on hand",
+        storageDetails.get(0).getQuantityOnHand(), equalTo(expectedQtyInRefInv));
     assertThat("Attribute Set description does contain info about referenced inventory",
         storageDetails.get(0).getAttributeSetValue().getDescription(),
         endsWith(ReferencedInventoryUtil.REFERENCEDINVENTORYPREFIX + refInv.getSearchKey()

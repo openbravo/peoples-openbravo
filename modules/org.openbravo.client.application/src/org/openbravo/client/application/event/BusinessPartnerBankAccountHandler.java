@@ -41,8 +41,8 @@ import org.openbravo.model.common.businesspartner.BankAccount;
  */
 public class BusinessPartnerBankAccountHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      BankAccount.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(BankAccount.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -58,13 +58,13 @@ public class BusinessPartnerBankAccountHandler extends EntityPersistenceEventObs
     final BankAccount bankAccount = (BankAccount) event.getTargetInstance();
     if (bankAccount != null && StringUtils.isBlank(bankAccount.getBankFormat())) {
       final Boolean showIBAN = bankAccount.isShowIBAN();
-      final Entity bankAccountEntity = ModelProvider.getInstance().getEntity(
-          BankAccount.ENTITY_NAME);
+      final Entity bankAccountEntity = ModelProvider.getInstance()
+          .getEntity(BankAccount.ENTITY_NAME);
       final Property bankFormatProperty = bankAccountEntity
           .getProperty(BankAccount.PROPERTY_BANKFORMAT);
       event.setCurrentState(bankFormatProperty, showIBAN ? "IBAN" : "GENERIC");
-      logger
-          .info("Automatically populated the Bank Account Format based on the Show Generic | Show IBAN info");
+      logger.info(
+          "Automatically populated the Bank Account Format based on the Show Generic | Show IBAN info");
     }
   }
 
@@ -76,13 +76,13 @@ public class BusinessPartnerBankAccountHandler extends EntityPersistenceEventObs
     final BankAccount bankAccount = (BankAccount) event.getTargetInstance();
     if (bankAccount != null && StringUtils.isBlank(bankAccount.getBankFormat())) {
       final Boolean showIBAN = bankAccount.isShowIBAN();
-      final Entity bankAccountEntity = ModelProvider.getInstance().getEntity(
-          BankAccount.ENTITY_NAME);
+      final Entity bankAccountEntity = ModelProvider.getInstance()
+          .getEntity(BankAccount.ENTITY_NAME);
       final Property bankFormatProperty = bankAccountEntity
           .getProperty(BankAccount.PROPERTY_BANKFORMAT);
       event.setCurrentState(bankFormatProperty, showIBAN ? "IBAN" : "GENERIC");
-      logger
-          .info("Automatically populated the Bank Account Format based on the Show Generic | Show IBAN info");
+      logger.info(
+          "Automatically populated the Bank Account Format based on the Show Generic | Show IBAN info");
     }
   }
 }

@@ -21,11 +21,11 @@ package org.openbravo.client.kernel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import net.matthaynes.jsmin.JSMin;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
+
+import net.matthaynes.jsmin.JSMin;
 
 /**
  * Compresses a JavaScript source using JSMin <br>

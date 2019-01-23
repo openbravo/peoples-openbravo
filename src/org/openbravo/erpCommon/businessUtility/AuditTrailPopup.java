@@ -101,13 +101,15 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private static final RequestFilter columnFilterHistory = new ValueListFilter(colNamesHistory);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Prevent execution in Community instances
@@ -140,8 +142,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         String tableId = vars.getGlobalVariable("inpTableId", "AuditTrail.tableId",
             IsIDFilter.instance);
         // recordId is optional as popup can be called from empty grid
-        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false,
-            false, false, "", IsIDFilter.instance);
+        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false, false,
+            false, "", IsIDFilter.instance);
         printPagePopupHistory(response, vars, tabId, tableId, recordId);
 
       } else if (vars.commandIn("STRUCTURE_HISTORY")) {
@@ -157,8 +159,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
             IsIDFilter.instance);
         String tabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
         // recordId is optional as popup can be called from empty grid
-        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false,
-            false, false, "", IsIDFilter.instance);
+        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false, false,
+            false, "", IsIDFilter.instance);
 
         // filter fields
         String userId = vars.getGlobalVariable("inpUser", "AuditTrail.userId", "",
@@ -191,8 +193,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
             IsIDFilter.instance);
 
         // recordId is optional as popup can be called from empty grid
-        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false,
-            false, false, "", IsIDFilter.instance);
+        String recordId = vars.getGlobalVariable("inpRecordId", "AuditTrail.recordId", false, false,
+            false, "", IsIDFilter.instance);
         printPagePopupDeleted(response, vars, recordId, tabId, tableId);
 
       } else if (vars.commandIn("STRUCTURE_DELETED")) {
@@ -248,11 +250,12 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private void printPagePopupHistory(HttpServletResponse response, VariablesSecureApp vars,
       String tabId, String tableId, String recordId) throws IOException {
-    log4j.debug("POPUP-HISTORY - tabId: " + tabId + ", tableId: " + tableId + ", inpRecordId: "
-        + recordId);
+    log4j.debug(
+        "POPUP-HISTORY - tabId: " + tabId + ", tableId: " + tableId + ", inpRecordId: " + recordId);
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/AuditTrailPopupHistory").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/businessUtility/AuditTrailPopupHistory")
+        .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -269,8 +272,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     xmlDocument.setParameter("grid_Default", "0");
 
     // display/save-formats for the datetime fields
-    xmlDocument
-        .setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
+    xmlDocument.setParameter("dateFromdisplayFormat",
+        vars.getSessionValue("#AD_SqlDateTimeFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getJavaDataTimeFormat());
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getJavaDataTimeFormat());
@@ -278,8 +281,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     // user combobox (restricted to login users only)
     try {
       ComboTableData cmd = new ComboTableData(vars, this, "19", "AD_User_ID", "",
-          "C48E4CAE3C2A4C5DBC2E011D8AD2C428", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "AuditTrailPopup"),
+          "C48E4CAE3C2A4C5DBC2E011D8AD2C428",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AuditTrailPopup"),
           Utility.getContext(this, vars, "#User_Client", "AuditTrailPopup"), 0);
       cmd.fillParameters(null, "AuditTrailPopup", "");
       xmlDocument.setData("reportAD_User_ID", "liststructure", cmd.select(false));
@@ -291,8 +294,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     try {
       // ad_reference.19 == TableDir
       ComboTableData cmd = new ComboTableData(vars, this, "19", "AD_Field_ID", "",
-          adValRuleIdForFields, Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "AuditTrailPopup"),
+          adValRuleIdForFields,
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AuditTrailPopup"),
           Utility.getContext(this, vars, "#User_Client", "AuditTrailPopup"), 0);
       SQLReturnObject params = new SQLReturnObject();
       params.setData("AD_Tab_ID", tabId); // parameter for the validation
@@ -327,8 +330,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
 
     // name of the business element shown (i.e. Business Partner)
-    String elementNameDisplay = getElementNameForTable(table, OBContext.getOBContext()
-        .getLanguage());
+    String elementNameDisplay = getElementNameForTable(table,
+        OBContext.getOBContext().getLanguage());
 
     String text = Utility.messageBD(this, recordStatus, vars.getLanguage());
     text = text.replace("@recordidentifier@", identifier);
@@ -373,8 +376,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     if (lElem.isEmpty()) {
       elementNameDisplay = "(deleted)";
     } else {
-      elementNameDisplay = getTranslatedElementName(lElem.get(0), OBContext.getOBContext()
-          .getLanguage());
+      elementNameDisplay = getTranslatedElementName(lElem.get(0),
+          OBContext.getOBContext().getLanguage());
     }
     return elementNameDisplay;
   }
@@ -392,8 +395,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private void printPagePopupDeleted(HttpServletResponse response, VariablesSecureApp vars,
       String recordId, String tabId, String tableId) throws IOException, ServletException {
-    log4j.debug("POPUP_DELETED - recordId: " + recordId + ", tabId: " + tabId + ", tableId: "
-        + tableId);
+    log4j.debug(
+        "POPUP_DELETED - recordId: " + recordId + ", tabId: " + tabId + ", tableId: " + tableId);
 
     // first check, if this is an open following a history -> deleted link? or a follow into a child
     // tab link from the deleted records view
@@ -425,8 +428,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
     String[] discard = new String[discards.size()];
     discards.toArray(discard);
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/businessUtility/AuditTrailPopupDeleted", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/businessUtility/AuditTrailPopupDeleted", discard)
         .createXmlDocument();
 
     xmlDocument.setParameter("childTabsLinksArea", links.toString());
@@ -446,8 +449,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     xmlDocument.setParameter("grid_Default", "0");
 
     // display/save-formats for the datetime fields
-    xmlDocument
-        .setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
+    xmlDocument.setParameter("dateFromdisplayFormat",
+        vars.getSessionValue("#AD_SqlDateTimeFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateTimeFormat"));
@@ -455,8 +458,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     // user combobox (restricted to login users only)
     try {
       ComboTableData cmd = new ComboTableData(vars, this, "19", "AD_User_ID", "",
-          "C48E4CAE3C2A4C5DBC2E011D8AD2C428", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "AuditTrailPopup"),
+          "C48E4CAE3C2A4C5DBC2E011D8AD2C428",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AuditTrailPopup"),
           Utility.getContext(this, vars, "#User_Client", "AuditTrailPopup"), 0);
       cmd.fillParameters(null, "AuditTrailPopup", "");
       xmlDocument.setData("reportAD_User_ID", "liststructure", cmd.select(false));
@@ -476,10 +479,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     if (parentTabId == null) {
       // top-level tab
       log4j.debug("Deleted records view opened for top-level tab");
-      String text = Utility
-          .messageBD(this, "AUDIT_HISTORY_DELETED_TOPLEVELTAB", vars.getLanguage());
-      String elementCurrentTab = getElementNameForTable(tab.getTable(), OBContext.getOBContext()
-          .getLanguage());
+      String text = Utility.messageBD(this, "AUDIT_HISTORY_DELETED_TOPLEVELTAB",
+          vars.getLanguage());
+      String elementCurrentTab = getElementNameForTable(tab.getTable(),
+          OBContext.getOBContext().getLanguage());
       text = text.replace("@elementnameCurrentTab@", elementCurrentTab);
       xmlDocument.setParameter("recordIdentifierText", text);
 
@@ -527,10 +530,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
         }
 
         // name of the business element shown (i.e. Business Partner)
-        String elementCurrentTab = getElementNameForTable(tab.getTable(), OBContext.getOBContext()
-            .getLanguage());
-        String elementParentTab = getElementNameForTable(parentTab.getTable(), OBContext
-            .getOBContext().getLanguage());
+        String elementCurrentTab = getElementNameForTable(tab.getTable(),
+            OBContext.getOBContext().getLanguage());
+        String elementParentTab = getElementNameForTable(parentTab.getTable(),
+            OBContext.getOBContext().getLanguage());
 
         // get identifier for current record in parent tab (existing or deleted record)
         String parentIdentifier;
@@ -606,8 +609,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private void printGridDataHistory(HttpServletResponse response, VariablesSecureApp vars,
       String tableId, String tabId, String recordId, String userId, String fieldId,
       String strDateFrom, String strDateTo, String strOrderCols, String strOrderDirs,
-      String strOffset, String strPageSize, String strNewFilter) throws IOException,
-      ServletException {
+      String strOffset, String strPageSize, String strNewFilter)
+      throws IOException, ServletException {
 
     log4j.debug("DATA_HISTORY: tableId: " + tableId + " recordId: " + recordId);
 
@@ -665,27 +668,32 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       } else {
         type = myError.getType();
         title = myError.getTitle();
-        if (!myError.getMessage().startsWith("<![CDATA["))
+        if (!myError.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + myError.getMessage() + "]]>";
-        else
+        } else {
           description = myError.getMessage();
+        }
       }
     } catch (Exception e) {
       log4j.error("Error getting row data: ", e);
       type = "Error";
       title = "Error";
-      if (e.getMessage().startsWith("<![CDATA["))
+      if (e.getMessage().startsWith("<![CDATA[")) {
         description = "<![CDATA[" + e.getMessage() + "]]>";
-      else
+      } else {
         description = e.getMessage();
+      }
     }
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -806,7 +814,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     printGridStructureGeneric(data, response, vars);
   }
 
-  private SQLReturnObject[] getHeadersDeleted(VariablesSecureApp vars, String tabId, String tableId) {
+  private SQLReturnObject[] getHeadersDeleted(VariablesSecureApp vars, String tabId,
+      String tableId) {
 
     List<SQLReturnObject> data = new ArrayList<SQLReturnObject>();
 
@@ -881,8 +890,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       gridCol.setData("isvisible", "true");
 
       // TODO: optimize fetch for translation
-      gridCol
-          .setData("name", getTranslatedFieldName(field, OBContext.getOBContext().getLanguage()));
+      gridCol.setData("name",
+          getTranslatedFieldName(field, OBContext.getOBContext().getLanguage()));
       gridCol.setData("type", "string");
 
       gridCol.setData("width", calculateColumnWidth(field.getDisplayedLength()));
@@ -955,8 +964,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     try {
       if (strNewFilter.equals("1") || strNewFilter.equals("")) {
         // New filter or first load
-        strNumRows = getCountRowsDeleted(vars, tabId, tableId, fkColumnName, fkId, offset,
-            pageSize, strDateFrom, strDateTo, userId);
+        strNumRows = getCountRowsDeleted(vars, tabId, tableId, fkColumnName, fkId, offset, pageSize,
+            strDateFrom, strDateTo, userId);
         vars.setSessionValue("AuditTrail.numrows", strNumRows);
       } else {
         strNumRows = vars.getSessionValue("AuditTrail.numrows");
@@ -969,18 +978,22 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       log4j.error("Error getting row data: ", e);
       type = "Error";
       title = "Error";
-      if (e.getMessage().startsWith("<![CDATA["))
+      if (e.getMessage().startsWith("<![CDATA[")) {
         description = "<![CDATA[" + e.getMessage() + "]]>";
-      else
+      } else {
         description = e.getMessage();
+      }
     }
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -1052,10 +1065,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       resRow.setData("rowkey", row.getField("rowkey"));
       resRow.setData("audittrailtime", getFormattedTime(vars, row.getField("audittrailtime")));
       resRow.setData("audittrailuser", getFormattedUser(vars, row.getField("audittrailuser")));
-      resRow.setData(
-          "audittrailprocess",
-          getFormattedProcess(row.getField("audittrailprocesstype"),
-              row.getField("audittrailprocessid")));
+      resRow.setData("audittrailprocess", getFormattedProcess(row.getField("audittrailprocesstype"),
+          row.getField("audittrailprocessid")));
       // copy and beautify data columns
       for (Field field : tab.getADFieldList()) {
         // no need to format hidden fields
@@ -1189,30 +1200,31 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     }
 
     switch (processType) {
-    case "X":
-      String formLabel = getTranslatedMessage(adMessageIdForForm);
-      return formLabel + ": " + getTranslatedFormName(process);
-    case "P":
-      String processLabel = getTranslatedMessage(adMessageIdForProcess);
-      return processLabel + ": " + getTranslatedProcessName(process);
-    case "S":
-      return "Reference: " + OBDal.getInstance().get(Reference.class, process).getName();
-    case "C":
-      String calloutLabel = getTranslatedMessage(adMessageIdForCallout);
-      return calloutLabel + ": " + OBDal.getInstance().get(Callout.class, process).getName();
-    case "CF":
-      String processCFLabel = getTranslatedMessage(adMessageIdForCF);
-      return processCFLabel + ": " + OBDal.getInstance().get(Table.class, process).getDBTableName();
-    case "PD":
-      String processPDLabel = getTranslatedMessage(adMessageIdForProcess);
-      return processPDLabel + ": "
-          + OBDal.getInstance().get(Process.class, process).getIdentifier();
-    case "W":
-      String windowLabel = getTranslatedMessage(adMessageIdForWindow);
-      return windowLabel + ": " + getTranslatedWindowName(process);
-    default:
-      return getTranslatedMessageByValue(processType)
-          + (!processType.equals(process) ? ": " + getTranslatedMessageByValue(process) : "");
+      case "X":
+        String formLabel = getTranslatedMessage(adMessageIdForForm);
+        return formLabel + ": " + getTranslatedFormName(process);
+      case "P":
+        String processLabel = getTranslatedMessage(adMessageIdForProcess);
+        return processLabel + ": " + getTranslatedProcessName(process);
+      case "S":
+        return "Reference: " + OBDal.getInstance().get(Reference.class, process).getName();
+      case "C":
+        String calloutLabel = getTranslatedMessage(adMessageIdForCallout);
+        return calloutLabel + ": " + OBDal.getInstance().get(Callout.class, process).getName();
+      case "CF":
+        String processCFLabel = getTranslatedMessage(adMessageIdForCF);
+        return processCFLabel + ": "
+            + OBDal.getInstance().get(Table.class, process).getDBTableName();
+      case "PD":
+        String processPDLabel = getTranslatedMessage(adMessageIdForProcess);
+        return processPDLabel + ": "
+            + OBDal.getInstance().get(Process.class, process).getIdentifier();
+      case "W":
+        String windowLabel = getTranslatedMessage(adMessageIdForWindow);
+        return windowLabel + ": " + getTranslatedWindowName(process);
+      default:
+        return getTranslatedMessageByValue(processType)
+            + (!processType.equals(process) ? ": " + getTranslatedMessageByValue(process) : "");
     }
   }
 
@@ -1269,8 +1281,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   }
 
   private String getTranslatedProcessName(String processId) {
-    org.openbravo.model.ad.ui.Process p = OBDal.getInstance().get(
-        org.openbravo.model.ad.ui.Process.class, processId);
+    org.openbravo.model.ad.ui.Process p = OBDal.getInstance()
+        .get(org.openbravo.model.ad.ui.Process.class, processId);
     OBCriteria<ProcessTrl> c = OBDal.getInstance().createCriteria(ProcessTrl.class);
     c.add(Restrictions.eq(ProcessTrl.PROPERTY_PROCESS, p));
     c.add(Restrictions.eq(ProcessTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
@@ -1297,12 +1309,13 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   private String getFormattedField(Map<String, Field> tabFields, AuditTrailRaw auditRow) {
     Field field = tabFields.get(auditRow.getColumn());
 
-    String fieldNameTranslated = getTranslatedFieldName(field, OBContext.getOBContext()
-        .getLanguage());
+    String fieldNameTranslated = getTranslatedFieldName(field,
+        OBContext.getOBContext().getLanguage());
     return fieldNameTranslated;
   }
 
-  private String getFormattedValue(VariablesSecureApp vars, AuditTrailRaw auditRow, boolean newValue) {
+  private String getFormattedValue(VariablesSecureApp vars, AuditTrailRaw auditRow,
+      boolean newValue) {
     String value = newValue ? getNew(auditRow) : getOld(auditRow);
     Column col = OBDal.getInstance().get(Column.class, auditRow.getColumn());
     return getFormattedValue(vars, col, value);
@@ -1438,8 +1451,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
    * @return translated name of the value in the listRef
    */
   private String getTranslatedListValueName(Reference listRef, String value) {
-    OBCriteria<org.openbravo.model.ad.domain.List> critList = OBDal.getInstance().createCriteria(
-        org.openbravo.model.ad.domain.List.class);
+    OBCriteria<org.openbravo.model.ad.domain.List> critList = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.ad.domain.List.class);
     critList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, listRef));
     critList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, value));
     org.openbravo.model.ad.domain.List list = (org.openbravo.model.ad.domain.List) critList
@@ -1450,8 +1463,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
     // check if we have a translation
     OBCriteria<ListTrl> critListTrl = OBDal.getInstance().createCriteria(ListTrl.class);
     critListTrl.add(Restrictions.eq(ListTrl.PROPERTY_LISTREFERENCE, list));
-    critListTrl.add(Restrictions.eq(ListTrl.PROPERTY_LANGUAGE, OBContext.getOBContext()
-        .getLanguage()));
+    critListTrl
+        .add(Restrictions.eq(ListTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));
     ListTrl trl = (ListTrl) critListTrl.uniqueResult();
     if (trl != null) {
       return trl.getName();
@@ -1506,8 +1519,9 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
    */
   private void printGridStructureGeneric(SQLReturnObject[] headers, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     String type = "Hidden";
     String title = "";

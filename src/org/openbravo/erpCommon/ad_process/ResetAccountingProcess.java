@@ -39,6 +39,7 @@ import org.quartz.JobExecutionException;
 @Deprecated
 public class ResetAccountingProcess extends DalBaseProcess {
 
+  @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
     try {
       String adClientId = (String) bundle.getParams().get("adClientId");
@@ -50,8 +51,8 @@ public class ResetAccountingProcess extends DalBaseProcess {
       String dateto = (String) bundle.getParams().get("dateto");
       HashMap<String, Integer> results = new HashMap<String, Integer>();
       if ("Y".equals(deletePosting)) {
-        results = ResetAccounting
-            .delete(adClientId, adOrgId, adTableId, recordId, datefrom, dateto);
+        results = ResetAccounting.delete(adClientId, adOrgId, adTableId, recordId, datefrom,
+            dateto);
       } else {
         List<String> tableIds = StringUtils.isEmpty(adTableId) ? null : Arrays.asList(adTableId);
         results = ResetAccounting.restore(adClientId, adOrgId, tableIds, datefrom, dateto);
@@ -61,9 +62,9 @@ public class ResetAccountingProcess extends DalBaseProcess {
       OBError myError = new OBError();
       myError.setType("Success");
       myError.setTitle("@Success@");
-      myError.setMessage(Utility.parseTranslation(bundle.getConnection(), bundle.getContext()
-          .toVars(), bundle.getContext().toVars().getLanguage(), "@UnpostedDocuments@ = " + counter
-          + ", @DeletedEntries@ = " + counterDeleted));
+      myError.setMessage(Utility.parseTranslation(bundle.getConnection(),
+          bundle.getContext().toVars(), bundle.getContext().toVars().getLanguage(),
+          "@UnpostedDocuments@ = " + counter + ", @DeletedEntries@ = " + counterDeleted));
 
       bundle.setResult(myError);
     } catch (OBException e) {

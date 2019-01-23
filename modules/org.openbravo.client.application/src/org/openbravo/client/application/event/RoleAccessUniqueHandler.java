@@ -58,8 +58,8 @@ public class RoleAccessUniqueHandler extends EntityPersistenceEventObserver {
       .getEntityByTableId(WIDGET_CLASS_ACCESS_TABLE_ID);
   private static final Entity PROCESS_DEF_ACCESS_ENTITY = ModelProvider.getInstance()
       .getEntityByTableId(PROCESS_DEF_ACCESS_TABLE_ID);
-  private static final Entity VIEW_ACCESS_ENTITY = ModelProvider.getInstance().getEntityByTableId(
-      VIEW_ACCESS_TALBLE_ID);
+  private static final Entity VIEW_ACCESS_ENTITY = ModelProvider.getInstance()
+      .getEntityByTableId(VIEW_ACCESS_TALBLE_ID);
 
   private static final Entity[] entities = { WIDGET_CLASS_ACCESS_ENTITY, PROCESS_DEF_ACCESS_ENTITY,
       VIEW_ACCESS_ENTITY };
@@ -110,8 +110,7 @@ public class RoleAccessUniqueHandler extends EntityPersistenceEventObserver {
     }
 
     if (q.count() > 0) {
-      throw new OBException(OBMessageUtils.getI18NMessage(
-          "OBUIAPP_DuplicateAccess",
+      throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_DuplicateAccess",
           new String[] {
               ((BaseOBObject) event.getCurrentState(securedObjectProperty)).getIdentifier(),
               newRole.getName() }));

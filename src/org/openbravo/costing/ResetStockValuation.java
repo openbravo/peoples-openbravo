@@ -72,8 +72,8 @@ public class ResetStockValuation extends BaseProcessActionHandler {
       storedProcedureParams.add(strOrgID);
       storedProcedureParams.add(null);
       try {
-        CallStoredProcedure.getInstance().call("M_INITIALIZE_STOCK_VALUATION",
-            storedProcedureParams, null, false, false);
+        CallStoredProcedure.getInstance()
+            .call("M_INITIALIZE_STOCK_VALUATION", storedProcedureParams, null, false, false);
       } catch (Exception e) {
         errorMessage = true;
         msg.put("severity", "error");

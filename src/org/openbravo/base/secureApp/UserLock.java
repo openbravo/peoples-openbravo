@@ -169,8 +169,8 @@ public class UserLock {
     }
     numberOfFails++;
     boolean lockUser = (lockAfterTrials != 0) && (numberOfFails >= lockAfterTrials);
-    log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:"
-        + numberOfFails + " - user:" + user);
+    log4j.debug("lock: " + lockUser + " -lock after:" + lockAfterTrials + "- fails:" + numberOfFails
+        + " - user:" + user);
     if (lockUser && user != null && !user.isLocked()) {
       try {
         OBContext.setAdminMode();

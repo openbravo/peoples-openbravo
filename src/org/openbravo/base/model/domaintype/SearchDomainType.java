@@ -35,6 +35,7 @@ public class SearchDomainType extends BaseForeignKeyDomainType {
   /**
    * @return the column based on the RefSearch ({@link #setRefSearch(RefSearch)}).
    */
+  @Override
   public Column getForeignKeyColumn(String columnName) {
     // handles a special case that reference value is not set in a column
     // in that case the reference is the search reference directly
@@ -59,6 +60,7 @@ public class SearchDomainType extends BaseForeignKeyDomainType {
    * org.openbravo.base.model.domaintype.BaseForeignKeyDomainType#getReferedTableName(java.lang.
    * String)
    */
+  @Override
   protected String getReferedTableName(String columnName) {
     if (getRefSearch() == null) {
       return super.getReferedTableName(columnName);

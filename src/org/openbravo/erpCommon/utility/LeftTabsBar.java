@@ -42,7 +42,8 @@ public class LeftTabsBar {
     String strClassEdition = "Main_LeftTabsBar_ButtonRight_Icon_edition" + (isNew ? "_new" : "")
         + "_selected";
     StringBuffer text = new StringBuffer();
-    text.append("<table cellpadding=\"0\" cellspacing=\"0\" class=\"Main_ContentPane_LeftTabsBar\" id=\"tdLeftTabsBars\">\n");
+    text.append(
+        "<table cellpadding=\"0\" cellspacing=\"0\" class=\"Main_ContentPane_LeftTabsBar\" id=\"tdLeftTabsBars\">\n");
 
     if (!Utility.isNewUI()) {
       // show only for old UI
@@ -55,7 +56,8 @@ public class LeftTabsBar {
       text.append("        </tr>\n");
       text.append("        <tr>\n");
       text.append("          <td>\n");
-      text.append("              <a class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
+      text.append(
+          "              <a class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
       text.append(
           "                <img class=\"Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide\" src=\"")
           .append(base_direction)
@@ -73,9 +75,9 @@ public class LeftTabsBar {
       text.append("                  <img class=\"Main_LeftTabsBar_ButtonRight_Icon ")
           .append(strClassEdition)
           .append(
-              "\" alt=\"" + Utility.messageBD(this.conn, "Form View", this.language)
-                  + "\" title=\"" + Utility.messageBD(this.conn, "Form View", this.language)
-                  + "\" src=\"").append(base_direction)
+              "\" alt=\"" + Utility.messageBD(this.conn, "Form View", this.language) + "\" title=\""
+                  + Utility.messageBD(this.conn, "Form View", this.language) + "\" src=\"")
+          .append(base_direction)
           .append("/images/blank.gif\" border=\"0\" id=\"linkButtonEdition\"></img>\n");
       text.append("                </div>\n");
       text.append("          </td>\n");
@@ -88,10 +90,10 @@ public class LeftTabsBar {
           .append("', '_self', null, true);return false;\" id=\"buttonRelation\">\n");
       text.append(
           "                  <img class=\"Main_LeftTabsBar_ButtonRight_Icon Main_LeftTabsBar_ButtonRight_Icon_relation\" alt=\""
-              + Utility.messageBD(this.conn, "Grid View", this.language)
-              + "\" title=\""
+              + Utility.messageBD(this.conn, "Grid View", this.language) + "\" title=\""
               + Utility.messageBD(this.conn, "Grid View", this.language) + "\" src=\"")
-          .append(base_direction).append("/images/blank.gif\" border=\"0\"></img>\n");
+          .append(base_direction)
+          .append("/images/blank.gif\" border=\"0\"></img>\n");
       text.append("                </a>\n");
       text.append("          </td>\n");
       text.append("        </tr>\n");
@@ -113,7 +115,8 @@ public class LeftTabsBar {
 
   public String relationTemplate() {
     StringBuffer text = new StringBuffer();
-    text.append("<table cellpadding=\"0\" cellspacing=\"0\" class=\"Main_ContentPane_LeftTabsBar\" id=\"tdLeftTabsBars\">\n");
+    text.append(
+        "<table cellpadding=\"0\" cellspacing=\"0\" class=\"Main_ContentPane_LeftTabsBar\" id=\"tdLeftTabsBars\">\n");
 
     if (!Utility.isNewUI()) {
       // show only for old UI
@@ -126,7 +129,8 @@ public class LeftTabsBar {
       text.append("        </tr>\n");
       text.append("        <tr>\n");
       text.append("          <td>\n");
-      text.append("              <a class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
+      text.append(
+          "              <a class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
       text.append(
           "                <img class=\"Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide\" src=\"")
           .append(base_direction)
@@ -146,10 +150,10 @@ public class LeftTabsBar {
           .append("', '_self', null, false);return false;\" id=\"buttonEdition\">\n");
       text.append(
           "                  <img class=\"Main_LeftTabsBar_ButtonRight_Icon Main_LeftTabsBar_ButtonRight_Icon_edition\" alt=\""
-              + Utility.messageBD(this.conn, "Form View", this.language)
-              + "\" title=\""
+              + Utility.messageBD(this.conn, "Form View", this.language) + "\" title=\""
               + Utility.messageBD(this.conn, "Form View", this.language) + "\" src=\"")
-          .append(base_direction).append("/images/blank.gif\" border=\"0\"></img>\n");
+          .append(base_direction)
+          .append("/images/blank.gif\" border=\"0\"></img>\n");
       text.append("                </a>\n");
       text.append("          </td>\n");
       text.append("        </tr>\n");
@@ -158,10 +162,10 @@ public class LeftTabsBar {
       text.append("                <div class=\"Main_LeftTabsBar_ButtonRight_selected\">\n");
       text.append(
           "                  <img class=\"Main_LeftTabsBar_ButtonRight_Icon Main_LeftTabsBar_ButtonRight_Icon_relation_selected\" alt=\""
-              + Utility.messageBD(this.conn, "Grid View", this.language)
-              + "\" title=\""
+              + Utility.messageBD(this.conn, "Grid View", this.language) + "\" title=\""
               + Utility.messageBD(this.conn, "Grid View", this.language) + "\" src=\"")
-          .append(base_direction).append("/images/blank.gif\" border=\"0\"></img>\n");
+          .append(base_direction)
+          .append("/images/blank.gif\" border=\"0\"></img>\n");
       text.append("                </div>\n");
       text.append("          </td>\n");
       text.append("        </tr>\n");
@@ -183,7 +187,8 @@ public class LeftTabsBar {
 
   public String manualTemplate() {
     StringBuffer text = new StringBuffer();
-    text.append("<table cellpadding=\"0\" cellspacing=\"0\" class=\"Main_ContentPane_LeftTabsBar\" id=\"tdLeftTabsBars\">\n");
+    text.append(
+        "<table cellpadding=\"0\" cellspacing=\"0\" class=\"Main_ContentPane_LeftTabsBar\" id=\"tdLeftTabsBars\">\n");
     if (!Utility.isNewUI()) {
       // show only for old UI
       text.append("  <tr>\n");
@@ -195,7 +200,8 @@ public class LeftTabsBar {
       text.append("        </tr>\n");
       text.append("        <tr>\n");
       text.append("          <td>\n");
-      text.append("              <a class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
+      text.append(
+          "              <a class=\"Main_LeftTabsBar_ButtonLeft\" href=\"#\" onclick=\"menuShowHide('buttonMenu');return false;\">\n");
       text.append(
           "                <img class=\"Main_LeftTabsBar_ButtonLeft_Icon Main_LeftTabsBar_ButtonLeft_Icon_arrow_hide\" src=\"")
           .append(base_direction)

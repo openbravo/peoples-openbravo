@@ -58,8 +58,9 @@ public abstract class DalThreadHandler extends ThreadHandler {
   }
 
   private void closeDefaultPoolSession(boolean errorOccured) {
-    SessionHandler sessionHandler = SessionHandler.isSessionHandlerPresent() ? SessionHandler
-        .getInstance() : null;
+    SessionHandler sessionHandler = SessionHandler.isSessionHandlerPresent()
+        ? SessionHandler.getInstance()
+        : null;
     if (sessionHandler != null && sessionHandler.doSessionInViewPatter()) {
       // application software can force a rollback
       if (sessionHandler.getDoRollback() || errorOccured) {

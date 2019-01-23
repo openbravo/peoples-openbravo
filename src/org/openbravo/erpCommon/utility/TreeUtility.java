@@ -81,8 +81,8 @@ public class TreeUtility {
 
   private List<Tree> getTreeIdsFromTreeType(String treeType) {
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
-    final String qryStr = "select t from " + Tree.class.getName() + " t where treetype='"
-        + treeType + "' and client.id='" + clientId + "'";
+    final String qryStr = "select t from " + Tree.class.getName() + " t where treetype='" + treeType
+        + "' and client.id='" + clientId + "'";
     final Query<Tree> qry = SessionHandler.getInstance().createQuery(qryStr, Tree.class);
     return qry.list();
   }

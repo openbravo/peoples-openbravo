@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportWorkRequirementJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -127,8 +128,9 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementJR").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementJR")
+        .createXmlDocument();
 
     // Use ReadOnly Connection Provider
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
@@ -179,15 +181,16 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("endDateTo", strEndDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(
-        readOnlyCP,
-        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportWorkRequirementJR"),
-        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportWorkRequirementJR")));
+    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure",
+        ProcessPlanComboData.select(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportWorkRequirementJR"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportWorkRequirementJR")));
 
     out.println(xmlDocument.print());
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportWorkRequirementJR.";
   } // end of getServletInfo() method

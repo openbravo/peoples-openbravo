@@ -175,10 +175,9 @@ public class ImportEntryArchiveManager {
             if (lastCreated != null) {
               additionalClause = " AND " + ImportEntry.PROPERTY_CREATIONDATE + ">:created";
             }
-            OBQuery<ImportEntry> entriesQry = OBDal.getInstance().createQuery(
-                ImportEntry.class,
-                ImportEntry.PROPERTY_IMPORTSTATUS + "='Processed' " + additionalClause
-                    + " order by " + ImportEntry.PROPERTY_CREATIONDATE);
+            OBQuery<ImportEntry> entriesQry = OBDal.getInstance()
+                .createQuery(ImportEntry.class, ImportEntry.PROPERTY_IMPORTSTATUS + "='Processed' "
+                    + additionalClause + " order by " + ImportEntry.PROPERTY_CREATIONDATE);
             entriesQry.setFilterOnReadableClients(false);
             entriesQry.setFilterOnReadableOrganization(false);
             if (lastCreated != null) {
@@ -272,7 +271,8 @@ public class ImportEntryArchiveManager {
         }
         Property targetProperty = archiveEntity.getProperty(sourceProperty.getName());
         // should be the same type
-        if (targetProperty.getDomainType().getClass() != sourceProperty.getDomainType().getClass()) {
+        if (targetProperty.getDomainType().getClass() != sourceProperty.getDomainType()
+            .getClass()) {
           continue;
         }
         archiveEntry.set(targetProperty.getName(), importEntry.getValue(sourceProperty.getName()));

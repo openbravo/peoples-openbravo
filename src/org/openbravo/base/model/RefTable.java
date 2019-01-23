@@ -58,8 +58,8 @@ public class RefTable extends ModelObject {
     this.reference = reference;
     final DomainType domainType = reference.getDomainType();
     if (!(domainType instanceof TableDomainType)) {
-      log.error("Domain type of reference " + reference.getId()
-          + " is not a TableDomainType but a " + domainType);
+      log.error("Domain type of reference " + reference.getId() + " is not a TableDomainType but a "
+          + domainType);
     } else {
       ((TableDomainType) domainType).setRefTable(this);
     }

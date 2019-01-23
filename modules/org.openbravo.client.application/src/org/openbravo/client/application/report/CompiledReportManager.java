@@ -24,12 +24,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
@@ -47,8 +47,9 @@ class CompiledReportManager {
 
   private CompiledReportManager() {
     compiledReports = new ConcurrentHashMap<>();
-    isDisabled = WeldUtils.getInstanceFromStaticBeanManager(
-        ApplicationDictionaryCachedStructures.class).isInDevelopment();
+    isDisabled = WeldUtils
+        .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class)
+        .isInDevelopment();
     log.info("CompiledReportManager initialized, use cache: {}", !isDisabled);
   }
 
@@ -97,7 +98,8 @@ class CompiledReportManager {
     return compiledReports.get(getKey(reportPath, language));
   }
 
-  private void putCompiledReport(String reportPath, String language, CompiledReport compiledReport) {
+  private void putCompiledReport(String reportPath, String language,
+      CompiledReport compiledReport) {
     if (isDisabled) {
       return;
     }

@@ -81,8 +81,8 @@ public class XMLBaseTest extends OBBaseTest {
 
   protected void cleanRefDataLoaded() {
     setSystemAdministratorContext();
-    final OBCriteria<ReferenceDataStore> obc = OBDal.getInstance().createCriteria(
-        ReferenceDataStore.class);
+    final OBCriteria<ReferenceDataStore> obc = OBDal.getInstance()
+        .createCriteria(ReferenceDataStore.class);
     obc.setFilterOnActive(false);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
@@ -94,8 +94,9 @@ public class XMLBaseTest extends OBBaseTest {
 
   protected <T extends BaseOBObject> List<T> getList(Class<T> clz, Organization org) {
     final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    if (org != null)
+    if (org != null) {
       obc.add(Restrictions.eq("organization", org));
+    }
     return obc.list();
   }
 
@@ -121,8 +122,9 @@ public class XMLBaseTest extends OBBaseTest {
     exc.setOptionIncludeReferenced(true);
     // exc.setOptionEmbedChildren(true);
     // exc.setOptionIncludeChildren(true);
-    if (!(o == null))
+    if (!(o == null)) {
       obc.add(Restrictions.eq("organization", o));
+    }
     return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
   }
 }

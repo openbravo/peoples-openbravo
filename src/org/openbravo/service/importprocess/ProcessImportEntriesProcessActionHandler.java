@@ -39,6 +39,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class ProcessImportEntriesProcessActionHandler extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
 
+  @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
       ImportEntryManager entryManager = WeldUtils
@@ -74,8 +75,8 @@ public class ProcessImportEntriesProcessActionHandler extends BaseProcessActionH
 
       msgTotal.put("msgType", "info");
       msgTotal.put("msgTitle", importProcessLbl);
-      msgTotal.put("msgText", entryManager.isExecutorRunning() ? importProcessRunningLbl
-          : importProcessNotRunningLbl);
+      msgTotal.put("msgText",
+          entryManager.isExecutorRunning() ? importProcessRunningLbl : importProcessNotRunningLbl);
 
       JSONObject msgTotalAction = new JSONObject();
       msgTotalAction.put("showMsgInProcessView", msgTotal);

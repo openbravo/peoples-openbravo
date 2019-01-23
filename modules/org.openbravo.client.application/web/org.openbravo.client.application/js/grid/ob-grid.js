@@ -96,8 +96,7 @@ isc.OBGrid.addProperties({
   cellHoverHTML: function (record, rowNum, colNum) {
 
     var ret, field = this.getField(colNum),
-        cellErrors,
-        prefix = '',
+        cellErrors, prefix = '',
         func = this.getGridSummaryFunction(field),
         isGroupOrSummary = record && (record[this.groupSummaryRecordProperty] || record[this.gridSummaryRecordProperty]);
 

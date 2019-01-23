@@ -90,8 +90,8 @@ public class TemplateInfo {
 
       // READ EMAIL DEFINITIONS!!!!
       _EmailDefinitions = new HashMap<String, EmailDefinition>();
-      final EmailDefinitionData[] emailDefinitionsData = EmailDefinitionData.getEmailDefinitions(
-          connectionProvider, orgId, template.id);
+      final EmailDefinitionData[] emailDefinitionsData = EmailDefinitionData
+          .getEmailDefinitions(connectionProvider, orgId, template.id);
       if (emailDefinitionsData.length > 0) {
         for (final EmailDefinitionData emailDefinitionData : emailDefinitionsData) {
           final EmailDefinition emailDefinition = new EmailDefinition(emailDefinitionData);
@@ -106,12 +106,14 @@ public class TemplateInfo {
         if (_DefaultEmailDefinition == null && !_EmailDefinitions.isEmpty()) {
           _DefaultEmailDefinition = _EmailDefinitions.values().iterator().next();
         }
-      } else
-        throw new ReportingException(Utility.messageBD(connectionProvider, "NoEmailDefinitions",
-            strLanguage) + template.id);
-    } else
-      throw new ServletException(Utility.messageBD(connectionProvider, "NoDocumentTypeTemplate",
-          strLanguage) + docTypeId);
+      } else {
+        throw new ReportingException(
+            Utility.messageBD(connectionProvider, "NoEmailDefinitions", strLanguage) + template.id);
+      }
+    } else {
+      throw new ServletException(
+          Utility.messageBD(connectionProvider, "NoDocumentTypeTemplate", strLanguage) + docTypeId);
+    }
   }
 
   private TemplateData getSelectedTemplate(TemplateData[] templateData, String templateId) {
@@ -144,10 +146,12 @@ public class TemplateInfo {
   void setTemplateLocation(String templateLocation) {
     _TemplateLocation = templateLocation;
     // Make sure the location always ends with a / character
-    if (!_TemplateLocation.endsWith("/"))
+    if (!_TemplateLocation.endsWith("/")) {
       _TemplateLocation = _TemplateLocation + "/";
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Template location is set to: " + _TemplateLocation);
+    }
   }
 
   String getTemplateLocation() {
@@ -182,8 +186,9 @@ public class TemplateInfo {
       emailDefinition = _DefaultEmailDefinition;
     }
 
-    if (emailDefinition == null)
+    if (emailDefinition == null) {
       throw new ReportingException("No email definition available.");
+    }
     return emailDefinition;
   }
 

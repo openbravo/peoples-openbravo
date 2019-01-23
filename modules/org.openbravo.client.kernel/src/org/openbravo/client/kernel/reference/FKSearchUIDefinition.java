@@ -56,8 +56,8 @@ public class FKSearchUIDefinition extends ForeignKeyUIDefinition {
       final JSONObject json = new JSONObject(super.getFieldProperties(field, getValueFromSession));
       if (json.has("value")) {
         final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-        final BaseOBObject target = OBDal.getInstance().get(prop.getTargetEntity().getName(),
-            json.getString("value"));
+        final BaseOBObject target = OBDal.getInstance()
+            .get(prop.getTargetEntity().getName(), json.getString("value"));
         if (target != null) {
           json.put("identifier", target.getIdentifier());
         }
@@ -78,10 +78,11 @@ public class FKSearchUIDefinition extends ForeignKeyUIDefinition {
       final JSONObject json = new JSONObject(
           superJsonStr != null && superJsonStr.startsWith("{") ? superJsonStr : "{}");
       final Property prop = KernelUtils.getInstance().getPropertyFromColumn(field.getColumn());
-      final Reference reference = OBDal.getInstance().get(Reference.class,
-          prop.getDomainType().getReference().getId());
+      final Reference reference = OBDal.getInstance()
+          .get(Reference.class, prop.getDomainType().getReference().getId());
       ModelImplementation modelImplementation = null;
-      for (ModelImplementation localModelImplementation : reference.getADModelImplementationList()) {
+      for (ModelImplementation localModelImplementation : reference
+          .getADModelImplementationList()) {
         if (localModelImplementation.isActive()) {
           modelImplementation = localModelImplementation;
           break;

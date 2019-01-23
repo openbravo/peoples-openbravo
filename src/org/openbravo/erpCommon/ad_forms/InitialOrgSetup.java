@@ -80,34 +80,37 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         OBContext.getOBContext().removeFromWritableOrganization(ios.getOrgId());
         OBDal.getInstance().rollbackAndClose();
       }
-      vars.setSessionValue("#USER_ORG", vars.getSessionValue("#USER_ORG") + ", '" + ios.getOrgId()
-          + "'");
+      vars.setSessionValue("#USER_ORG",
+          vars.getSessionValue("#USER_ORG") + ", '" + ios.getOrgId() + "'");
       vars.setSessionValue("#ORG_CLIENT",
           vars.getSessionValue("#ORG_CLIENT") + ", '" + ios.getOrgId() + "'");
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(vars.getClient());
       osp.reInitialize();
 
-      vars.setSessionValue("#AccessibleOrgTree",
-          StringCollectionUtils.commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
+      vars.setSessionValue("#AccessibleOrgTree", StringCollectionUtils
+          .commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
       printPageResult(response, vars, ios.getLog(), obeResult);
     } else if (vars.commandIn("CANCEL")) {
-    } else
+    } else {
       pageError(response);
+    }
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars)
+      throws IOException, ServletException {
     final ModuleReferenceDataOrgTree tree = new ModuleReferenceDataOrgTree(this, vars.getClient(),
         false, true);
     XmlDocument xmlDocument = null;
     final String[] discard = { "selEliminar" };
-    if (tree.getData() == null || tree.getData().length == 0)
+    if (tree.getData() == null || tree.getData().length == 0) {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialOrgSetup")
           .createXmlDocument();
-    else
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialOrgSetup",
-          discard).createXmlDocument();
+    } else {
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialOrgSetup", discard)
+          .createXmlDocument();
+    }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialOrgSetup", false, "", "",
@@ -158,16 +161,18 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
   }
 
   private static boolean isTrue(String s) {
-    if (s == null || s.equals(""))
+    if (s == null || s.equals("")) {
       return false;
-    else
+    } else {
       return true;
+    }
   }
 
   private void printPageResult(HttpServletResponse response, VariablesSecureApp vars,
       String strResult, OBError obeResult) throws IOException, ServletException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/Resultado").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/Resultado")
+        .createXmlDocument();
     String strLanguage = vars.getLanguage();
 
     xmlDocument.setParameter("resultado",

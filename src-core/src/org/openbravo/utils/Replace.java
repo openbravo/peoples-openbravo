@@ -17,12 +17,13 @@ public class Replace {
     String strReplaceWith = _strReplaceWith;
     int index = 0;
     int pos;
-    if (strInicial == null || strInicial.equals(""))
+    if (strInicial == null || strInicial.equals("")) {
       return strInicial;
-    else if (strReplaceWhat == null || strReplaceWhat.equals(""))
+    } else if (strReplaceWhat == null || strReplaceWhat.equals("")) {
       return strInicial;
-    else if (strReplaceWith == null)
+    } else if (strReplaceWith == null) {
       strReplaceWith = "";
+    }
     StringBuffer strFinal = new StringBuffer("");
     do {
       pos = strInicial.indexOf(strReplaceWhat, index);

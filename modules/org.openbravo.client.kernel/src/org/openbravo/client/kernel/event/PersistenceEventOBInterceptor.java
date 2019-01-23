@@ -55,6 +55,7 @@ public class PersistenceEventOBInterceptor extends EmptyInterceptor {
   @Inject
   private Event<TransactionCompletedEvent> transactionCompletedEventProducer;
 
+  @Override
   public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames,
       Type[] types) {
     final EntityDeleteEvent entityEvent = new EntityDeleteEvent();

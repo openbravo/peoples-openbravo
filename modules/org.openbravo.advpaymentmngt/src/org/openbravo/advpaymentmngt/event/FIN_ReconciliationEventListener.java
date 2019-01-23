@@ -31,8 +31,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 
 public class FIN_ReconciliationEventListener extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      FIN_Reconciliation.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(FIN_Reconciliation.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -43,8 +43,8 @@ public class FIN_ReconciliationEventListener extends EntityPersistenceEventObser
     if (!isValidEvent(event)) {
       return;
     }
-    FIN_Reconciliation rec = OBDal.getInstance().get(FIN_Reconciliation.class,
-        event.getTargetInstance().getId());
+    FIN_Reconciliation rec = OBDal.getInstance()
+        .get(FIN_Reconciliation.class, event.getTargetInstance().getId());
     if (!rec.isProcessed()) {
       updateNextReconciliationsBalance(rec);
     }

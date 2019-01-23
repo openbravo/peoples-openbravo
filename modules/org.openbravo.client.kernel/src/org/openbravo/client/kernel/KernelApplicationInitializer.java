@@ -27,8 +27,8 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.client.application.report.JmxReportCache;
-import org.openbravo.client.application.window.JmxApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.client.application.window.JmxApplicationDictionaryCachedStructures;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.jmx.MBeanRegistry;
@@ -61,6 +61,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   @Inject
   private JmxApplicationDictionaryCachedStructures adcsJmx;
 
+  @Override
   public void initialize() {
     checkDatabaseAndTomcatDateTime();
     registerMBeans();
@@ -81,8 +82,8 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
               + ", Database Time: " + dbDate);
         }
       } else {
-        log4j
-            .error("Received null as Database time. Not possible to check time differences with Tomcat.");
+        log4j.error(
+            "Received null as Database time. Not possible to check time differences with Tomcat.");
       }
     } catch (Exception ex) {
       log4j.error("Could not check if Tomcat and Database have the same time.", ex);
@@ -116,11 +117,10 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
   }
 
   private String getInstancePurpose() {
-    return (String) OBDal
-        .getInstance()
+    return (String) OBDal.getInstance()
         .getSession()
-        .createQuery(
-            "select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
-                + SystemInformation.ENTITY_NAME).uniqueResult();
+        .createQuery("select " + SystemInformation.PROPERTY_INSTANCEPURPOSE + " from "
+            + SystemInformation.ENTITY_NAME)
+        .uniqueResult();
   }
 }

@@ -128,24 +128,27 @@ public class Wad extends DefaultHandler {
 
       // the third parameter is the directory where the tab files are
       // created
-      if (argv.length <= 2)
+      if (argv.length <= 2) {
         dirFin = ".";
-      else
+      } else {
         dirFin = argv[2];
+      }
 
       // the fourth paramenter is the directory where the references are
       // created
       // (TableList_data.xsql y TableDir_data.xsql)
-      if (argv.length <= 3)
+      if (argv.length <= 3) {
         dirReference = dirFin;
-      else
+      } else {
         dirReference = argv[3];
+      }
 
       // the fifth parameter is the directory where web.xml is created
-      if (argv.length <= 4)
+      if (argv.length <= 4) {
         dirWebXml = dirFin;
-      else
+      } else {
         dirWebXml = argv[4];
+      }
 
       // the sixth parementer indicates whether web.xml has to be
       // generated or not
@@ -164,10 +167,11 @@ public class Wad extends DefaultHandler {
       }
 
       // Path to generate the action button
-      if (argv.length <= 6)
+      if (argv.length <= 6) {
         dirActionButton = dirFin;
-      else
+      } else {
         dirActionButton = argv[6];
+      }
 
       // Path to base translation generation
       // was argv[7] no longer used
@@ -182,38 +186,43 @@ public class Wad extends DefaultHandler {
       // was argv[10] no longer used
 
       // Path of the attach files
-      if (argv.length <= 11)
+      if (argv.length <= 11) {
         attachPath = dirFin;
-      else
+      } else {
         attachPath = argv[11];
+      }
 
       // Url to the static content
-      if (argv.length <= 12)
+      if (argv.length <= 12) {
         webPath = dirFin;
-      else
+      } else {
         webPath = argv[12];
+      }
 
       // Path to the src folder
       // was argv[13] no longer used
 
       // Boolean to indicate if we are doing a complete generation
-      if (argv.length <= 14)
+      if (argv.length <= 14) {
         complete = false;
-      else
+      } else {
         complete = ((argv[14].equals("true")) ? true : false);
+      }
 
       // Module to compile
-      if (argv.length <= 15)
+      if (argv.length <= 15) {
         module = "%";
-      else
-        module = argv[15].equals("%") ? "%" : "'"
-            + argv[15].replace(", ", ",").replace(",", "', '") + "'";
+      } else {
+        module = argv[15].equals("%") ? "%"
+            : "'" + argv[15].replace(", ", ",").replace(",", "', '") + "'";
+      }
 
       // Check for quick build
-      if (argv.length <= 16)
+      if (argv.length <= 16) {
         quick = false;
-      else
+      } else {
         quick = argv[16].equals("quick");
+      }
 
       if (quick) {
         module = "%";
@@ -290,12 +299,13 @@ public class Wad extends DefaultHandler {
       while (st.hasMoreTokens()) {
         strCurrentWindow = st.nextToken().trim();
         TabsData tabsDataAux[];
-        if (quick)
+        if (quick) {
           tabsDataAux = TabsData.selectQuick(wad.pool);
-        else if (module.equals("%") || complete)
+        } else if (module.equals("%") || complete) {
           tabsDataAux = TabsData.selectTabs(wad.pool, strCurrentWindow);
-        else
+        } else {
           tabsDataAux = TabsData.selectTabsinModules(wad.pool, strCurrentWindow, module);
+        }
         td.addAll(Arrays.asList(tabsDataAux));
       }
       TabsData[] tabsData = td.toArray(new TabsData[0]);
@@ -321,15 +331,17 @@ public class Wad extends DefaultHandler {
         if (!quick || FieldsData.buildActionButton(wad.pool)) {
           wad.processActionButtonXml(fileActionButton);
           wad.processActionButtonHtml(fileActionButton);
-        } else
+        } else {
           log4j.info("No changes in Action button for columns");
+        }
         if (!quick || ActionButtonRelationData.buildGenerics(wad.pool)) {
           wad.processActionButtonGenerics(fileActionButton);
           wad.processActionButtonXmlGenerics(fileActionButton);
           wad.processActionButtonHtmlGenerics(fileActionButton);
           wad.processActionButtonSQLDefaultGenerics(fileActionButton);
-        } else
+        } else {
           log4j.info("No changes in generic action button responser");
+        }
 
       }
 
@@ -350,14 +362,16 @@ public class Wad extends DefaultHandler {
       // generated
       if (generateWebXml) {
 
-        if (!quick || WadData.genereteWebXml(wad.pool))
+        if (!quick || WadData.genereteWebXml(wad.pool)) {
           wad.processWebXml(fileWebXml, attachPath, webPath);
-        else
+        } else {
           log4j.info("No changes in web.xml");
+        }
       }
 
-      if (tabsData.length == 0)
+      if (tabsData.length == 0) {
         log4j.info("No windows to compile");
+      }
 
       if (generateTabs) {
         for (int i = 0; i < tabsData.length; i++) {
@@ -391,17 +405,13 @@ public class Wad extends DefaultHandler {
         // new window -> check all tabs in that window
         boolean res = TabsData.selectShowWindowIn250ClassicMode(conn, tab.getField("key"));
         if (res) {
-          log4j
-              .error("Window: "
-                  + tab.getField("windowname")
-                  + " is needed in classic 2.50 mode. This is no longer supported. The module containing the window must be fixed.");
+          log4j.error("Window: " + tab.getField("windowname")
+              + " is needed in classic 2.50 mode. This is no longer supported. The module containing the window must be fixed.");
         } else {
           res = TabsData.selectShowWindowIn250ClassicModePreference(conn, tab.getField("key"));
           if (res) {
-            log4j
-                .error("Window: "
-                    + tab.getField("windowname")
-                    + " is configured for classic 2.50 mode via preferences. This is no longer supported...");
+            log4j.error("Window: " + tab.getField("windowname")
+                + " is configured for classic 2.50 mode via preferences. This is no longer supported...");
           }
         }
         oldWindowId = tab.getField("key");
@@ -440,8 +450,7 @@ public class Wad extends DefaultHandler {
     ActionButtonRelationData[] actBtns = ActionButtonRelationData.select(conn, tabId);
     ActionButtonRelationData[] actBtnsJava = ActionButtonRelationData.selectJava(conn, tabId);
 
-    if ((actBtns == null || actBtns.length == 0)
-        && (actBtnsJava == null || actBtnsJava.length == 0)
+    if ((actBtns == null || actBtns.length == 0) && (actBtnsJava == null || actBtnsJava.length == 0)
         && FieldsData.hasPostedButton(conn, tabId).equals("0")
         && FieldsData.hasCreateFromButton(conn, tabId).equals("0")) {
       // No action buttons
@@ -453,12 +462,13 @@ public class Wad extends DefaultHandler {
 
   private boolean allTabParentsActive(String tabId) {
     try {
-      if (!TabsData.isTabActive(pool, tabId))
+      if (!TabsData.isTabActive(pool, tabId)) {
         return false;
-      else {
+      } else {
         String parentTabId = TabsData.selectParentTab(pool, tabId);
-        if (parentTabId != null && !parentTabId.equals(""))
+        if (parentTabId != null && !parentTabId.equals("")) {
           return allTabParentsActive(parentTabId);
+        }
       }
       return true;
     } catch (Exception e) {
@@ -475,8 +485,9 @@ public class Wad extends DefaultHandler {
   private void processActionButton(File fileReference) {
     try {
       log4j.info("Processing ActionButton_data.xml");
-      final XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate(
-          "org/openbravo/wad/ActionButton_data").createXmlDocument();
+      final XmlDocument xmlDocumentData = xmlEngine
+          .readXmlTemplate("org/openbravo/wad/ActionButton_data")
+          .createXmlDocument();
       final ProcessRelationData ard[] = ProcessRelationData.select(pool);
 
       xmlDocumentData.setData("structure1", ard);
@@ -532,11 +543,13 @@ public class Wad extends DefaultHandler {
           if (dataReload != null && dataReload.length > 0) {
             for (int z = 0; z < dataReload.length; z++) {
               String code = dataReload[z].whereclause
-                  + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue
-                      .equals("")) ? " AND " : "") + dataReload[z].referencevalue;
+                  + ((!dataReload[z].whereclause.equals("")
+                      && !dataReload[z].referencevalue.equals("")) ? " AND " : "")
+                  + dataReload[z].referencevalue;
 
-              if (code.equals("") && dataReload[z].type.equals("R"))
+              if (code.equals("") && dataReload[z].type.equals("R")) {
                 code = "@AD_Org_ID@";
+              }
               WadUtility.getComboReloadText(code, vecFields, null, vecReloads, "",
                   dataReload[z].columnname);
             }
@@ -563,8 +576,9 @@ public class Wad extends DefaultHandler {
     try {
       // Generic action button for jasper and PL
       log4j.info("Processing ActionButton_Responser.xml");
-      XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate(
-          "org/openbravo/wad/ActionButton_Responser").createXmlDocument();
+      XmlDocument xmlDocumentData = xmlEngine
+          .readXmlTemplate("org/openbravo/wad/ActionButton_Responser")
+          .createXmlDocument();
 
       ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonCallGenerics(pool);
       xmlDocumentData.setData("structure1", abrd);
@@ -619,8 +633,9 @@ public class Wad extends DefaultHandler {
           }
           defaults[i].whereclause = parametros.toString();
         }
-        XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate(
-            "org/openbravo/wad/ActionButtonDefault_data").createXmlDocument();
+        XmlDocument xmlDocumentData = xmlEngine
+            .readXmlTemplate("org/openbravo/wad/ActionButtonDefault_data")
+            .createXmlDocument();
         xmlDocumentData.setData("structure16", defaults);
 
         WadUtility.writeFile(fileReference, "ActionButtonSQLDefault_data.xsql",
@@ -674,11 +689,13 @@ public class Wad extends DefaultHandler {
           if (dataReload != null && dataReload.length > 0) {
             for (int z = 0; z < dataReload.length; z++) {
               String code = dataReload[z].whereclause
-                  + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue
-                      .equals("")) ? " AND " : "") + dataReload[z].referencevalue;
+                  + ((!dataReload[z].whereclause.equals("")
+                      && !dataReload[z].referencevalue.equals("")) ? " AND " : "")
+                  + dataReload[z].referencevalue;
 
-              if (code.equals("") && dataReload[z].type.equals("R"))
+              if (code.equals("") && dataReload[z].type.equals("R")) {
                 code = "@AD_Org_ID@";
+              }
               WadUtility.getComboReloadText(code, vecFields, null, vecReloads, "",
                   dataReload[z].columnname);
             }
@@ -722,8 +739,9 @@ public class Wad extends DefaultHandler {
         for (int i = 0; i < filters.length; i++) {
           filterParams[i] = WadData.selectParams(pool, "F", filters[i].classname, filters[i].id);
         }
-      } else
+      } else {
         filterParams = new WadData[0][0];
+      }
       xmlDocument.setData("structureFilter", filters);
       xmlDocument.setDataArray("reportFilterParams", "structure1", filterParams);
 
@@ -747,13 +765,15 @@ public class Wad extends DefaultHandler {
       if (servlets != null && servlets.length > 0) {
         servletParams = new WadData[servlets.length][];
         for (int i = 0; i < servlets.length; i++) {
-          if (servlets[i].loadonstartup != null && !servlets[i].loadonstartup.equals(""))
+          if (servlets[i].loadonstartup != null && !servlets[i].loadonstartup.equals("")) {
             servlets[i].loadonstartup = "<load-on-startup>" + servlets[i].loadonstartup
                 + "</load-on-startup>";
+          }
           servletParams[i] = WadData.selectParams(pool, "S", servlets[i].classname, servlets[i].id);
         }
-      } else
+      } else {
         servletParams = new WadData[0][0];
+      }
 
       WadData[] timeout = WadData.selectSessionTimeOut(pool);
       if (timeout.length == 0) {
@@ -771,10 +791,8 @@ public class Wad extends DefaultHandler {
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
 
       String baseDesignFolder = getBaseDesignFolder(contextParams);
-      xmlDocument.setData(
-          "structureErrorExceptionPage",
-          prepareErrorPageData(WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES),
-              baseDesignFolder));
+      xmlDocument.setData("structureErrorExceptionPage", prepareErrorPageData(
+          WadData.selectErrorPages(pool, EXCEPTION_TYPE_PAGES), baseDesignFolder));
       xmlDocument.setData("structureErrorCodePage",
           prepareErrorPageData(WadData.selectErrorPages(pool, ERROR_CODE_PAGES), baseDesignFolder));
       xmlDocument.setData("structureGenericErrorPage",
@@ -870,8 +888,8 @@ public class Wad extends DefaultHandler {
         continue;
       }
 
-      String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage)
-          + tab.windowname + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.tabid);
+      String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage) + tab.windowname
+          + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.tabid);
 
       // Keeping mapping to *_Edition.html because it is the mapping used for processes
       WadData mapping2 = new WadData();
@@ -908,15 +926,16 @@ public class Wad extends DefaultHandler {
       /************************************************
        * The 2 tab lines generation
        *************************************************/
-      if (allTabs == null || allTabs.length == 0)
+      if (allTabs == null || allTabs.length == 0) {
         throw new Exception("No tabs found for AD_Tab_ID: " + tabsData.tabid + " - key: "
             + tabsData.key + " - level: " + tabsData.tablevel);
+      }
 
-      final String javaPackage = (!tabsData.javapackage.equals("") ? tabsData.javapackage.replace(
-          ".", "/") + "/" : "")
-          + windowName; // Take into account
-                        // java packages for
-                        // modules
+      final String javaPackage = (!tabsData.javapackage.equals("")
+          ? tabsData.javapackage.replace(".", "/") + "/"
+          : "") + windowName; // Take into account
+                              // java packages for
+                              // modules
       final File fileDir = new File(fileFin, javaPackage);
 
       String keyColumnName = "";
@@ -992,14 +1011,18 @@ public class Wad extends DefaultHandler {
 
     final String[] discard = { "", "", "", "", "" };
 
-    if (!hasCreateFrom)
+    if (!hasCreateFrom) {
       discard[0] = "sectionCreateFrom";
-    if (!hasPosted)
+    }
+    if (!hasPosted) {
       discard[1] = "sectionPosted";
-    if ((noPInstance) && (noActionButton))
+    }
+    if ((noPInstance) && (noActionButton)) {
       discard[2] = "hasAdPInstance";
-    if (noActionButton)
+    }
+    if (noActionButton) {
       discard[3] = "hasAdActionButton";
+    }
     if ((actBtns == null || actBtns.length == 0)
         && (actBtnsJava == null || actBtnsJava.length == 0)) {
       // No action buttons, service method is not neccessary
@@ -1011,8 +1034,8 @@ public class Wad extends DefaultHandler {
 
     fileDir.mkdirs();
     xmlDocument.setParameter("class", tabName);
-    xmlDocument.setParameter("package", (!javaPackage.equals("") ? javaPackage + "." : "")
-        + windowName);
+    xmlDocument.setParameter("package",
+        (!javaPackage.equals("") ? javaPackage + "." : "") + windowName);
     xmlDocument.setParameter("key", keyColumnName);
 
     xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
@@ -1065,8 +1088,8 @@ public class Wad extends DefaultHandler {
    * @throws IOException
    */
   private void processTabXSQL(File fileDir, String strTab, String tabName, String tableName,
-      String windowName, String keyColumnName, String javaPackage) throws ServletException,
-      IOException {
+      String windowName, String keyColumnName, String javaPackage)
+      throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasource").createXmlDocument();
@@ -1089,19 +1112,21 @@ public class Wad extends DefaultHandler {
         for (int i = 0; i < data.length; i++) {
           hasCode = true;
           String tableN = "";
-          if (data[i].adReferenceId.equals("28"))
+          if (data[i].adReferenceId.equals("28")) {
             tableN = "C_ValidCombination";
-          else if (data[i].adReferenceId.equals("31"))
+          } else if (data[i].adReferenceId.equals("31")) {
             tableN = "M_Locator";
-          else
+          } else {
             tableN = data[i].name.substring(0, data[i].searchname.length() - 3);
+          }
           String strName = "";
-          if (data[i].adReferenceId.equals("28"))
+          if (data[i].adReferenceId.equals("28")) {
             strName = "C_ValidCombination_ID";
-          else if (data[i].adReferenceId.equals("31"))
+          } else if (data[i].adReferenceId.equals("31")) {
             strName = "M_Locator_ID";
-          else
+          } else {
             strName = data[i].searchname;
+          }
           final String strColumnName = FieldsData.columnIdentifier(pool, tableN);
           final StringBuffer fields = new StringBuffer();
           fields.append("SELECT " + strColumnName);
@@ -1168,8 +1193,9 @@ public class Wad extends DefaultHandler {
       String processId = process.id;
 
       final FieldsData[] data = FieldsData.selectValidationProcess(pool, processId);
-      if (data == null || data.length == 0)
+      if (data == null || data.length == 0) {
         return;
+      }
 
       final boolean hasOrg = FieldsData.processHasOrgParam(pool, processId);
 
@@ -1192,25 +1218,25 @@ public class Wad extends DefaultHandler {
           }
           param.whereclause = "\"inpadOrgId\"";
         }
-        if (param.reference.equals("17") && param.whereclause.equals(""))
+        if (param.reference.equals("17") && param.whereclause.equals("")) {
           param.whereclause = "\"inp" + param.columnname + "\"";
-        if (!param.whereclause.equals("")
-            && (param.reference.equals("17") || param.reference.equals("18") || param.reference
-                .equals("19"))) {
+        }
+        if (!param.whereclause.equals("") && (param.reference.equals("17")
+            || param.reference.equals("18") || param.reference.equals("19"))) {
 
           param.orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
 
           if (param.reference.equals("18")) { // Table
             final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, param.id);
             if (tables == null || tables.length == 0) {
-              throw new ServletException("Not found Table reference for parameter with id: "
-                  + param.id);
+              throw new ServletException(
+                  "Not found Table reference for parameter with id: " + param.id);
             }
           } else if (param.reference.equals("19")) { // TableDir
             final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, param.id);
             if (tableDir == null || tableDir.length == 0) {
-              throw new ServletException("Not found TableDir reference for parameter with id "
-                  + param.id);
+              throw new ServletException(
+                  "Not found TableDir reference for parameter with id " + param.id);
             }
           }
           vecTotal.addElement(param);
@@ -1226,8 +1252,9 @@ public class Wad extends DefaultHandler {
     }
     if (generatedProcesses.size() > 0) {
       // create the helper class, it is a servlet that manages all combo reloads
-      XmlDocument xmlDocumentHelper = xmlEngine.readXmlTemplate(
-          "org/openbravo/wad/ComboReloadsProcessHelper").createXmlDocument();
+      XmlDocument xmlDocumentHelper = xmlEngine
+          .readXmlTemplate("org/openbravo/wad/ComboReloadsProcessHelper")
+          .createXmlDocument();
       FieldsData[] processesGenerated = new FieldsData[generatedProcesses.size()];
       generatedProcesses.copyInto(processesGenerated);
       FieldsData[][] processData = new FieldsData[generatedProcesses.size()][];

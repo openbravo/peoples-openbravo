@@ -18,11 +18,11 @@
  */
 package org.openbravo.client.application.process;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This class is a helper that can be used to build the standard response actions of a
@@ -79,7 +79,8 @@ public class ResponseActionsBuilder {
    *          The text of the message.
    * @return a ResponseActionsBuilder that contains a 'show message in view' response action.
    */
-  public ResponseActionsBuilder showMsgInView(MessageType msgType, String msgTitle, String msgText) {
+  public ResponseActionsBuilder showMsgInView(MessageType msgType, String msgTitle,
+      String msgText) {
     addResponseAction("showMsgInView", buildResponseMessage(msgType, msgTitle, msgText));
     return this;
   }
@@ -196,7 +197,8 @@ public class ResponseActionsBuilder {
    *          The identifier of the record to be set in the selector.
    * @return a ResponseActionsBuilder that contains a 'set selector value' response action.
    */
-  public ResponseActionsBuilder setSelectorValueFromRecord(String recordId, String recordIdentifier) {
+  public ResponseActionsBuilder setSelectorValueFromRecord(String recordId,
+      String recordIdentifier) {
     try {
       final JSONObject setSelectorValueFromRecord = new JSONObject();
       final JSONObject record = new JSONObject();
@@ -287,7 +289,8 @@ public class ResponseActionsBuilder {
    *          The text of the message.
    * @return a ResponseActionsBuilder configured to retry the process execution.
    */
-  public ResponseActionsBuilder retryExecution(MessageType msgType, String msgTitle, String msgText) {
+  public ResponseActionsBuilder retryExecution(MessageType msgType, String msgTitle,
+      String msgText) {
     try {
       retryExecution = true;
       retryExecutionMsg = new JSONObject();

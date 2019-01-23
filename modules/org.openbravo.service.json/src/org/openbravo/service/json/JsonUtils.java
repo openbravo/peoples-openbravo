@@ -194,8 +194,8 @@ public class JsonUtils {
 
   /**
    * Converts an exception to its json represention. Uses the Smartclient format for the json
-   * string, see here: <a
-   * href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
+   * string, see here:
+   * <a href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
    * RestDataSource</a>
    * 
    * @param throwable
@@ -229,8 +229,8 @@ public class JsonUtils {
         obError.setMessage(throwable.getMessage());
       } else {
         vars = RequestContext.get().getVariablesSecureApp();
-        obError = Utility.translateError(new DalConnectionProvider(), vars, OBContext
-            .getOBContext().getLanguage().getLanguage(), localThrowable.getMessage());
+        obError = Utility.translateError(new DalConnectionProvider(), vars,
+            OBContext.getOBContext().getLanguage().getLanguage(), localThrowable.getMessage());
       }
 
       if (localThrowable instanceof OBSecurityException) {
@@ -244,10 +244,8 @@ public class JsonUtils {
               .equals(((PSQLException) localThrowable.getCause()).getSQLState()))) {
         final JSONObject error = new JSONObject();
         if (vars != null) {
-          error.put(
-              "message",
-              Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_QueryTimeOut",
-                  vars.getLanguage()));
+          error.put("message", Utility.messageBD(new DalConnectionProvider(false),
+              "OBUIAPP_QueryTimeOut", vars.getLanguage()));
         } else {
           error.put("message", "OBUIAPP_QueryTimeOut");
         }

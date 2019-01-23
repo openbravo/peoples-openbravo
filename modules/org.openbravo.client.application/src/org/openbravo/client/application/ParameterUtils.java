@@ -70,8 +70,8 @@ public class ParameterUtils {
       }
       setValue(parameterValue, value);
     } catch (Exception e) {
-      log.error("Error trying to set value for paramter: "
-          + parameterValue.getParameter().getName(), e);
+      log.error(
+          "Error trying to set value for paramter: " + parameterValue.getParameter().getName(), e);
     }
   }
 
@@ -102,8 +102,8 @@ public class ParameterUtils {
         parameterValue.setValueString(stringValue);
       }
     } catch (Exception e) {
-      log.error("Error trying to set value for paramter: "
-          + parameterValue.getParameter().getName(), e);
+      log.error(
+          "Error trying to set value for paramter: " + parameterValue.getParameter().getName(), e);
     }
   }
 
@@ -194,8 +194,8 @@ public class ParameterUtils {
    * @throws ScriptException
    *           Error occurred executing the script to calculate the defaultValue of the parameter
    */
-  public static Object getParameterDefaultValue(Map<String, String> parameters,
-      Parameter parameter, HttpSession session, JSONObject _context) throws ScriptException {
+  public static Object getParameterDefaultValue(Map<String, String> parameters, Parameter parameter,
+      HttpSession session, JSONObject _context) throws ScriptException {
     JSONObject context = _context != null ? _context : new JSONObject();
     Reference reference = parameter.getReferenceSearchKey();
     if (reference == null) {
@@ -233,7 +233,9 @@ public class ParameterUtils {
         && domainType instanceof ForeignKeyDomainType) {
       // default value is ID of a FK, look for the identifier
       Entity referencedEntity = ((ForeignKeyDomainType) domainType)
-          .getForeignKeyColumn(parameter.getDBColumnName()).getProperty().getEntity();
+          .getForeignKeyColumn(parameter.getDBColumnName())
+          .getProperty()
+          .getEntity();
 
       BaseOBObject record = OBDal.getInstance().get(referencedEntity.getName(), defaultValue);
       if (record != null) {

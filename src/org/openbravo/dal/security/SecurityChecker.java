@@ -42,7 +42,8 @@ import org.openbravo.model.common.enterprise.Organization;
  * write access to the entity.</li>
  * <li>Write: is done in case of create and update actions. The following checks are performed: is
  * the organization writable, is the client of the object the same as is the entity writable (@see
- * EntityAccessChecker#isWritable(Entity))</ul>
+ * EntityAccessChecker#isWritable(Entity))
+ * </ul>
  * 
  * @author mtaal
  */
@@ -77,7 +78,8 @@ public class SecurityChecker implements OBSingleton {
    * OBContext#getCurrentClient())</li>
    * <li>is the Entity writable for this user (@see EntityAccessChecker#isWritable(Entity))
    * <li>are the client and organization correct from an access level perspective (@see
-   * AccessLevelChecker).</ul>
+   * AccessLevelChecker).
+   * </ul>
    * 
    * @param obj
    *          the object to check
@@ -123,7 +125,8 @@ public class SecurityChecker implements OBSingleton {
 
     String orgId = "";
     boolean isOrganization = false;
-    if (obj instanceof OrganizationEnabled && ((OrganizationEnabled) obj).getOrganization() != null) {
+    if (obj instanceof OrganizationEnabled
+        && ((OrganizationEnabled) obj).getOrganization() != null) {
       orgId = ((OrganizationEnabled) obj).getOrganization().getId();
     } else if (obj instanceof Organization) {
       orgId = ((Organization) obj).getId();
@@ -154,8 +157,8 @@ public class SecurityChecker implements OBSingleton {
         // user is inserting one record in table "AD_ORG_ACCESS" and the role of the user is the
         // client administrator and also is inserting the record in the same client
         boolean checkOrgAccess = !(entity.getTableName().equals("AD_Role_OrgAccess")
-            && OBContext.getOBContext().getRole().isClientAdmin() && OBContext.getOBContext()
-            .getRole().getClient().getId().equals(clientId));
+            && OBContext.getOBContext().getRole().isClientAdmin()
+            && OBContext.getOBContext().getRole().getClient().getId().equals(clientId));
         boolean notWritableOrganization = !obContext.getWritableOrganizations().contains(orgId);
         boolean isDisabledOrganization = isOrganization
             && obContext.getDeactivatedOrganizations().contains(orgId);
@@ -163,8 +166,9 @@ public class SecurityChecker implements OBSingleton {
         if (checkOrgAccess && notWritableOrganization && !isDisabledOrganization) {
           // TODO: maybe move rollback to exception throwing
           SessionHandler.getInstance().setDoRollback(true);
-          throw new OBSecurityException("Organization " + orgId + " of object (" + obj
-              + ") is not present in OrganizationList " + obContext.getWritableOrganizations(),
+          throw new OBSecurityException(
+              "Organization " + orgId + " of object (" + obj
+                  + ") is not present in OrganizationList " + obContext.getWritableOrganizations(),
               logError);
         }
       }
@@ -191,9 +195,9 @@ public class SecurityChecker implements OBSingleton {
     String readableOrganizations[] = obContext.getReadableOrganizations();
     List<String> organizations = Arrays.asList(readableOrganizations);
     if (!organizations.contains(orgId)) {
-      throw new OBSecurityException("Organization " + orgId + " of object ("
-          + organizationEnabledObject + ") is not present in OrganizationList "
-          + organizations.toString());
+      throw new OBSecurityException(
+          "Organization " + orgId + " of object (" + organizationEnabledObject
+              + ") is not present in OrganizationList " + organizations.toString());
     }
   }
 }

@@ -38,8 +38,8 @@ public class MultipartRequest implements FieldProvider {
     readSubmittedFile();
   }
 
-  public MultipartRequest(VariablesBase vars, InputStream in, boolean firstLineHeads,
-      String format, FieldProvider[] data) throws IOException {
+  public MultipartRequest(VariablesBase vars, InputStream in, boolean firstLineHeads, String format,
+      FieldProvider[] data) throws IOException {
     init(vars, "", firstLineHeads, format, data);
     readSubmittedFile(in);
   }
@@ -50,32 +50,36 @@ public class MultipartRequest implements FieldProvider {
     readSubmittedFile(in);
   }
 
+  @Override
   public String getField(String index) {
     int i = Integer.valueOf(index).intValue();
-    if (i >= vector.size())
+    if (i >= vector.size()) {
       return null;
+    }
     return ((String) vector.elementAt(i));
   }
 
   public void addField(String value) {
-    if (vector == null)
+    if (vector == null) {
       vector = new Vector<Object>();
+    }
     vector.addElement(value);
   }
 
   private String setFormatSeparator(String _format) {
-    if (_format.equalsIgnoreCase("F"))
+    if (_format.equalsIgnoreCase("F")) {
       return ("FIXED");
-    else if (_format.equalsIgnoreCase("T"))
+    } else if (_format.equalsIgnoreCase("T")) {
       return ("\t");
-    else if (_format.equalsIgnoreCase("S"))
+    } else if (_format.equalsIgnoreCase("S")) {
       return (";");
-    else if (_format.equalsIgnoreCase("P"))
+    } else if (_format.equalsIgnoreCase("P")) {
       return ("+");
-    else if (_format.equalsIgnoreCase("C"))
+    } else if (_format.equalsIgnoreCase("C")) {
       return (",");
-    else
+    } else {
       return ("");
+    }
   }
 
   public FieldProvider[] getFieldProvider() {
@@ -83,18 +87,20 @@ public class MultipartRequest implements FieldProvider {
   }
 
   public FieldProvider setFieldProvider(String linea) {
-    if (format.equalsIgnoreCase("FIXED"))
+    if (format.equalsIgnoreCase("FIXED")) {
       return lineFixedSize(linea);
-    else if (format.equals(""))
+    } else if (format.equals("")) {
       return lineComplete(linea);
-    else
+    } else {
       return lineSeparatorFormated(linea);
+    }
   }
 
   public void init(VariablesBase _vars, String _filename, boolean firstLineHeads, String _format,
       FieldProvider[] data) throws IOException {
-    if (_vars == null)
+    if (_vars == null) {
       throw new IllegalArgumentException("VariablesBase cannot be null");
+    }
     // if (filename==null || filename.equals("")) throw new
     // IllegalArgumentException("filename cannot be null");
     this.vars = _vars;
@@ -113,24 +119,27 @@ public class MultipartRequest implements FieldProvider {
   }
 
   public FieldProvider lineFixedSize(String linea) {
-    if (linea == null || linea.length() < 1)
+    if (linea == null || linea.length() < 1) {
       return null;
+    }
     MultipartRequest data = new MultipartRequest();
-    if (rows == null || rows.length == 0)
+    if (rows == null || rows.length == 0) {
       data.addField(linea);
-    else {
+    } else {
       for (int i = 0; i < rows.length; i++) {
         int init = Integer.valueOf(rows[i].getField("startno")).intValue();
         int end = Integer.valueOf(rows[i].getField("endno")).intValue();
         if (init > linea.length()) {
           data.addField("");
         } else {
-          if (init < 0)
+          if (init < 0) {
             init = 0;
-          if (end < 0 || end < init)
+          }
+          if (end < 0 || end < init) {
             end = init;
-          else if (end > linea.length())
+          } else if (end > linea.length()) {
             end = linea.length();
+          }
           String actual = linea.substring(init, end);
           data.addField(actual);
         }
@@ -144,8 +153,9 @@ public class MultipartRequest implements FieldProvider {
   }
 
   public FieldProvider lineComplete(String linea) {
-    if (linea == null || linea.length() < 1)
+    if (linea == null || linea.length() < 1) {
       return null;
+    }
     MultipartRequest data = new MultipartRequest();
     data.addField(linea);
     return data;
@@ -196,11 +206,13 @@ public class MultipartRequest implements FieldProvider {
 
   protected void readSubmittedFile() throws IOException {
     FileItem fi = vars.getMultiFile(filename);
-    if (fi == null)
+    if (fi == null) {
       throw new IOException("Invalid filename: " + filename);
+    }
     InputStream in = fi.getInputStream();
-    if (in == null)
+    if (in == null) {
       throw new IOException("Corrupted filename: " + filename);
+    }
     readSubmittedFile(in);
   }
 

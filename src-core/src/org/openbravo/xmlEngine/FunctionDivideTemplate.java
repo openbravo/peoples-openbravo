@@ -26,11 +26,13 @@ class FunctionDivideTemplate extends FunctionTemplate {
     super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionDivideTemplate.isDebugEnabled())
+      if (log4jFunctionDivideTemplate.isDebugEnabled()) {
         log4jFunctionDivideTemplate.debug("New FunctionDivideValue");
+      }
       functionValue = new FunctionDivideValue(this, xmlDocument);
     }
     return functionValue;

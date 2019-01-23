@@ -40,6 +40,7 @@ class SectionTemplate implements IDComponent {
     vecFunctionTemplate = new Vector<Object>();
   }
 
+  @Override
   public int type() {
     return SECTION;
   }

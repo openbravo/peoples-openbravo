@@ -69,9 +69,9 @@ public class SL_Project_Planned extends SimpleCallout {
     if (StringUtils.equals(strChanged, "inpplannedprice")
         || StringUtils.equals(strChanged, "inpplannedpoprice")) {
       if (plannedPrice.compareTo(BigDecimal.ZERO) != 0) {
-        plannedMargin = (((plannedPrice.subtract(plannedPurchasePrice)).multiply(new BigDecimal(
-            "100"))).divide(plannedPrice, 12, RoundingMode.HALF_EVEN)).setScale(2,
-            RoundingMode.HALF_UP);
+        plannedMargin = (((plannedPrice.subtract(plannedPurchasePrice))
+            .multiply(new BigDecimal("100"))).divide(plannedPrice, 12, RoundingMode.HALF_EVEN))
+                .setScale(2, RoundingMode.HALF_UP);
       } else {
         plannedMargin = BigDecimal.ZERO;
       }
@@ -80,11 +80,10 @@ public class SL_Project_Planned extends SimpleCallout {
 
     // Planned PO Price - PPP = PP*(1-PM/100)
     if (strChanged.equals("inpplannedmarginamt")) {
-      plannedPurchasePrice = plannedPrice.multiply((BigDecimal.ONE).subtract(plannedMargin.divide(
-          new BigDecimal("100"), 12, RoundingMode.HALF_EVEN)));
+      plannedPurchasePrice = plannedPrice.multiply((BigDecimal.ONE)
+          .subtract(plannedMargin.divide(new BigDecimal("100"), 12, RoundingMode.HALF_EVEN)));
       if (plannedPurchasePrice.scale() > stdPrecision) {
-        plannedPurchasePrice = plannedPurchasePrice
-            .setScale(stdPrecision, RoundingMode.HALF_UP);
+        plannedPurchasePrice = plannedPurchasePrice.setScale(stdPrecision, RoundingMode.HALF_UP);
       }
       info.addResult("inpplannedpoprice", plannedPurchasePrice);
     }

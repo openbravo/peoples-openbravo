@@ -20,6 +20,8 @@ package org.openbravo.costing;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -28,8 +30,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CostAdjustmentProcessHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -40,8 +40,8 @@ public class CostAdjustmentProcessHandler extends BaseActionHandler {
     try {
       JSONObject jsonContent = new JSONObject(content);
       final String strCostAdjustmentId = jsonContent.getString("M_CostAdjustment_ID");
-      final CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class,
-          strCostAdjustmentId);
+      final CostAdjustment costAdjustment = OBDal.getInstance()
+          .get(CostAdjustment.class, strCostAdjustmentId);
 
       JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustment);
       jsonResponse.put("message", message);

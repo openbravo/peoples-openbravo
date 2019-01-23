@@ -37,24 +37,25 @@ class TextInterfacesData implements FieldProvider {
   public String istranslated;
   public String orderseq;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("FILENAME"))
+    if (fieldName.equalsIgnoreCase("FILENAME")) {
       return filename;
-    else if (fieldName.equalsIgnoreCase("TEXT"))
+    } else if (fieldName.equalsIgnoreCase("TEXT")) {
       return text;
-    else if (fieldName.equalsIgnoreCase("ISUSED"))
+    } else if (fieldName.equalsIgnoreCase("ISUSED")) {
       return isused;
-    else if (fieldName.equalsIgnoreCase("MODULEID"))
+    } else if (fieldName.equalsIgnoreCase("MODULEID")) {
       return moduleid;
-    else if (fieldName.equalsIgnoreCase("TRLLANG"))
+    } else if (fieldName.equalsIgnoreCase("TRLLANG")) {
       return trllang;
-    else if (fieldName.equalsIgnoreCase("TRLTEXT"))
+    } else if (fieldName.equalsIgnoreCase("TRLTEXT")) {
       return trltext;
-    else if (fieldName.equalsIgnoreCase("ISTRANSLATED"))
+    } else if (fieldName.equalsIgnoreCase("ISTRANSLATED")) {
       return istranslated;
-    else if (fieldName.equalsIgnoreCase("ORDERSEQ"))
+    } else if (fieldName.equalsIgnoreCase("ORDERSEQ")) {
       return orderseq;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + fieldName);
       return null;
     }
@@ -66,38 +67,43 @@ class TextInterfacesData implements FieldProvider {
   public static TextInterfacesData[] selectText(ConnectionProvider connectionProvider,
       String htmlFile, String language) throws ServletException {
     String strSql = "";
-    strSql = strSql
-        + "      select "
+    strSql = strSql + "      select "
         + "		  text.filename as filename, text.text as text, text.isused as isUsed, text.ad_module_id as moduleId,"
         + "		  texttrl.ad_language as trlLang, texttrl.text as trlText, texttrl.istranslated as isTranslated, 1 as orderSeq"
-        + "		from " + "		  ad_textinterfaces text," + "		  ad_textinterfaces_trl texttrl"
-        + "		where" + "		  text.ad_textinterfaces_id = texttrl.ad_textinterfaces_id "
+        + "		from " + "		  ad_textinterfaces text,"
+        + "		  ad_textinterfaces_trl texttrl" + "		where"
+        + "		  text.ad_textinterfaces_id = texttrl.ad_textinterfaces_id "
         + "		  and text.filename = '";
     strSql = strSql + ((htmlFile == null || htmlFile.equals("")) ? "" : htmlFile);
-    strSql = strSql + "' " + "		  and text.isused = 'Y'" + "		  and texttrl.ad_language = '";
+    strSql = strSql + "' " + "		  and text.isused = 'Y'"
+        + "		  and texttrl.ad_language = '";
     strSql = strSql + ((language == null || language.equals("")) ? "" : language);
-    strSql = strSql
-        + "'"
-        + "		UNION"
-        + "		select "
+    strSql = strSql + "'" + "		UNION" + "		select "
         + "		  text.filename as filename, text.text as text, text.isused as isUsed, text.ad_module_id as moduleId,"
         + "		  texttrl.ad_language as trlLang, texttrl.text as trlText, texttrl.istranslated as isTranslated, 3 as orderSeq"
-        + "		from " + "		  ad_textinterfaces text," + "		  ad_textinterfaces_trl texttrl"
-        + "		where" + "		  text.ad_textinterfaces_id = texttrl.ad_textinterfaces_id "
-        + "		  and text.filename is null" + "		  and text.isused = 'Y' and texttrl.ad_language = '";
+        + "		from " + "		  ad_textinterfaces text,"
+        + "		  ad_textinterfaces_trl texttrl" + "		where"
+        + "		  text.ad_textinterfaces_id = texttrl.ad_textinterfaces_id "
+        + "		  and text.filename is null"
+        + "		  and text.isused = 'Y' and texttrl.ad_language = '";
     strSql = strSql + ((language == null || language.equals("")) ? "" : language);
     strSql = strSql + "'" + "		UNION" + "		select "
         + "		  text.filename as filename, text.text as text, text.isused as isUsed, "
         + "		  text.ad_module_id as moduleId, '";
     strSql = strSql + ((language == null || language.equals("")) ? "" : language);
     strSql = strSql + "' as trlLang, "
-        + "		  text.text as trlText, 'N' as isTranslated, 2 as orderSeq" + "		from "
-        + "		  ad_textinterfaces text" + "		where" + "		  text.ad_textinterfaces_id NOT IN "
-        + "			(SELECT t.ad_textinterfaces_id" + "			  FROM ad_textInterfaces t,"
-        + "				  ad_textinterfaces_trl trl" + "			  WHERE "
-        + "				t.ad_textinterfaces_id = trl.ad_textinterfaces_id" + "				and trl.ad_language = '";
+        + "		  text.text as trlText, 'N' as isTranslated, 2 as orderSeq"
+        + "		from " + "		  ad_textinterfaces text" + "		where"
+        + "		  text.ad_textinterfaces_id NOT IN "
+        + "			(SELECT t.ad_textinterfaces_id"
+        + "			  FROM ad_textInterfaces t,"
+        + "				  ad_textinterfaces_trl trl"
+        + "			  WHERE "
+        + "				t.ad_textinterfaces_id = trl.ad_textinterfaces_id"
+        + "				and trl.ad_language = '";
     strSql = strSql + ((language == null || language.equals("")) ? "" : language);
-    strSql = strSql + "')" + "		  and (text.filename is null" + "			OR text.filename = '";
+    strSql = strSql + "')" + "		  and (text.filename is null"
+        + "			OR text.filename = '";
     strSql = strSql + ((htmlFile == null || htmlFile.equals("")) ? "" : htmlFile);
     strSql = strSql + "' )" + "		  and text.isused = 'Y'" + "		order by orderSeq";
 
@@ -123,8 +129,8 @@ class TextInterfacesData implements FieldProvider {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:", e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:", ex);
       throw new ServletException("@CODE=@" + ex.getMessage());

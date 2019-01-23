@@ -45,10 +45,10 @@ public class TaxesTestData36 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes = new HashMap<String, String[]>();
-    lineTaxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "-1.50", "-0.15", "-1.50", "-0.15",
-        "-3.00", "-0.30", "-3.00", "-0.30" });
-    lineTaxes.put(TaxDataConstants.TAX_EXEMPT, new String[] { "-1.50", "0", "-1.50", "0", "-3.00",
-        "0", "-3.00", "0" });
+    lineTaxes.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "-1.50", "-0.15", "-1.50", "-0.15", "-3.00", "-0.30", "-3.00", "-0.30" });
+    lineTaxes.put(TaxDataConstants.TAX_EXEMPT,
+        new String[] { "-1.50", "0", "-1.50", "0", "-3.00", "0", "-3.00", "0" });
     line.setLinetaxes(lineTaxes);
 
     // Amounts for line level are provided
@@ -67,18 +67,18 @@ public class TaxesTestData36 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> taxes = new HashMap<String, String[]>();
-    taxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "-1.50", "-0.15", "-1.50", "-0.15",
-        "-3.00", "-0.30", "-3.00", "-0.30" });
-    taxes.put(TaxDataConstants.TAX_EXEMPT, new String[] { "-1.50", "0", "-1.50", "0", "-3.00", "0",
-        "-3.00", "0" });
+    taxes.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "-1.50", "-0.15", "-1.50", "-0.15", "-3.00", "-0.30", "-3.00", "-0.30" });
+    taxes.put(TaxDataConstants.TAX_EXEMPT,
+        new String[] { "-1.50", "0", "-1.50", "0", "-3.00", "0", "-3.00", "0" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided
     // {totalGrossDraftAfterInsert, totalNetDraftAfterInsert, totalGrossCompletedAfterInsert,
     // totalNetCompletedAfterInsert, totalGrossDraftAfterUpdate, totalNetDraftAfterUpdate,
     // totalGrossCompletedAfterUpdate, totalNetCompletedAfterUpdate}
-    String[] amounts = new String[] { "-3.15", "-3.00", "-3.15", "-3.00", "-6.30", "-6.00",
-        "-6.30", "-6.00" };
+    String[] amounts = new String[] { "-3.15", "-3.00", "-3.15", "-3.00", "-6.30", "-6.00", "-6.30",
+        "-6.00" };
     setDocAmounts(amounts);
   }
 }

@@ -87,17 +87,20 @@ public class LocationSettingsHandler extends EntityPersistenceEventObserver {
       }
     }
     try {
-      if (datetimeformat != null)
+      if (datetimeformat != null) {
         new SimpleDateFormat(datetimeformat);
+      }
     } catch (IllegalArgumentException iaex) {
       throw new OBException(OBMessageUtils.messageBD("InvalidDateTimeFormat"));
     }
     try {
-      if (dateformat != null)
-        if (checkDateFormat(dateformat))
+      if (dateformat != null) {
+        if (checkDateFormat(dateformat)) {
           new SimpleDateFormat(dateformat);
-        else
+        } else {
           throw new OBException(OBMessageUtils.messageBD("InvalidDateFormat"));
+        }
+      }
     } catch (IllegalArgumentException iaex) {
       throw new OBException(OBMessageUtils.messageBD("InvalidDateFormat"));
     }

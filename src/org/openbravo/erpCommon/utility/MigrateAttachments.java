@@ -23,13 +23,13 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.Task;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.application.attachment.CoreAttachImplementation;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.utils.FileUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Migration of attachments based on the new attachment model
@@ -43,7 +43,8 @@ public class MigrateAttachments extends Task {
 
   @Override
   public void execute() {
-    String attachPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String attachPath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("attach.path");
     log.info("Migrating Attachments");
     try {
@@ -77,12 +78,13 @@ public class MigrateAttachments extends Task {
   public static void migrateAttachments(String attachPath) throws Exception {
     int fileCount = 0;
     String[] names = null;
-    String tableId = null, recordId = null, attachmentDirectory = null, newDirectoryStructure = null;
+    String tableId = null, recordId = null, attachmentDirectory = null,
+        newDirectoryStructure = null;
     Connection connection = null;
     PreparedStatement statement = null;
     try {
-      connection = (new ConnectionProviderImpl(OBPropertiesProvider.getInstance()
-          .getOpenbravoProperties())).getConnection();
+      connection = (new ConnectionProviderImpl(
+          OBPropertiesProvider.getInstance().getOpenbravoProperties())).getConnection();
       boolean createDirectory = true;
       File files = new File(attachPath);
       if (files.isDirectory()) {

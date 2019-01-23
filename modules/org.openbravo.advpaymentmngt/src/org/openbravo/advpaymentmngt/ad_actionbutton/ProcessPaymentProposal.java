@@ -49,6 +49,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ProcessPaymentProposal extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -67,8 +68,9 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
 
         if (strProcessProposalAction.equals("GSP") || strProcessProposalAction.equals("GONEP")) {
           try {
-            List<FIN_PaymentPropDetail> ppd = new AdvPaymentMngtDao().getObject(
-                FIN_PaymentProposal.class, strFinPaymentProposalId).getFINPaymentPropDetailList();
+            List<FIN_PaymentPropDetail> ppd = new AdvPaymentMngtDao()
+                .getObject(FIN_PaymentProposal.class, strFinPaymentProposalId)
+                .getFINPaymentPropDetailList();
             if (ppd.isEmpty() || ppd == null) {
               throw new OBException(Utility.messageBD(this,
                   "It is not possible to process a Payment Proposal without line.",
@@ -106,8 +108,9 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
       }
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       vars.setMessage(strTabId, message);
       printPageClosePopUp(response, vars, strWindowPath);
@@ -121,8 +124,8 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
     log4j.debug("Output: Add Payment button pressed on Sales Invoice window");
 
     Map<String, String> filterActions = new HashMap<String, String>();
-    FIN_PaymentProposal fpp = OBDal.getInstance().get(FIN_PaymentProposal.class,
-        strFinPaymentProposalId);
+    FIN_PaymentProposal fpp = OBDal.getInstance()
+        .get(FIN_PaymentProposal.class, strFinPaymentProposalId);
 
     if (fpp == null) {
       String strMessage = "@APRM_PaymentNoLines@";
@@ -142,8 +145,9 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
       filterActions.put("GONEP", "GONEP");
       filterActions.put("GSP", "GSP");
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/ProcessPaymentProposal", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/ProcessPaymentProposal",
+            discard)
         .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -157,9 +161,9 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST",
           "PROCESS_PROPOSAL_ACTION", "79FDE7805FC84C2BB251EE57E96C0AEE",
-          "Process Proposal Window Reference Validation", Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "ProcessProposalWindow"), Utility.getContext(this, vars,
-              "#User_Client", "ProcessProposalWindow"), 0);
+          "Process Proposal Window Reference Validation",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ProcessProposalWindow"),
+          Utility.getContext(this, vars, "#User_Client", "ProcessProposalWindow"), 0);
 
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ProcessProposalWindow", null);
       FieldProvider[] filterApplied = filterComboTableData(comboTableData, filterActions, false);
@@ -199,8 +203,9 @@ public class ProcessPaymentProposal extends HttpSecureAppServlet {
           aux.addElement(fp[i]);
         }
       }
-      if (aux.size() == 0)
+      if (aux.size() == 0) {
         return fp;
+      }
     }
     FieldProvider[] clone = new FieldProvider[aux.size()];
     aux.copyInto(clone);

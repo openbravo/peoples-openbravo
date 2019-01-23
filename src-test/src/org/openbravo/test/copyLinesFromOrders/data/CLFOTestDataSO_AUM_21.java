@@ -102,14 +102,16 @@ public class CLFOTestDataSO_AUM_21 extends CopyLinesFromOrdersTestData {
      * created, BP Address, Organization, Attribute Value, Operative Qty, Operative UOM]>
      */
     HashMap<String, String[]> expectedOrderLines = new HashMap<String, String[]>();
-    expectedOrderLines.put("10", new String[] { CLFOTestConstants.FINAL_GOOD_A_PRODUCT_NAME, "10",
-        CLFOTestConstants.BAG_UOM_NAME, "2.00", "2.00", "0",
-        CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
-        BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME, "",
-        "1", CLFOTestConstants.UNIT_UOM_NAME, CLFOTestConstants.LINE1_DESCRIPTION });
+    expectedOrderLines.put("10",
+        new String[] { CLFOTestConstants.FINAL_GOOD_A_PRODUCT_NAME, "10",
+            CLFOTestConstants.BAG_UOM_NAME, "2.00", "2.00", "0",
+            CLFOTestConstants.VAT3_CHARGE05_TAX_NAME, TEST_ORDERFROM1_DOCUMENTNO,
+            BPartnerDataConstants.CUSTOMER_A_LOCATION, CLFOTestConstants.SPAIN_ORGANIZATION_NAME,
+            "", "1", CLFOTestConstants.UNIT_UOM_NAME, CLFOTestConstants.LINE1_DESCRIPTION });
     setExpectedOrderLines(expectedOrderLines);
   }
 
+  @Override
   public void applyTestSettings() {
     uomUtil.setUOMPreference(CLFOTestConstants.DISABLE_AUM, true);
     createAUMForProduct(CLFOTestConstants.FINAL_GOOD_A_PRODUCT_ID, CLFOTestConstants.UNIT_UOM_ID,
@@ -117,6 +119,7 @@ public class CLFOTestDataSO_AUM_21 extends CopyLinesFromOrdersTestData {
         CLFOTestConstants.PRIMARY_AUM);
   }
 
+  @Override
   public void applyTestSettingsBeforeExecuteProcess() {
     uomUtil.setUOMPreference(CLFOTestConstants.ENABLE_AUM, false);
   }

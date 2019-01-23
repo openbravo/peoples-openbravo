@@ -52,8 +52,11 @@ public class TranslationHandler {
 
   public void setLanguage(String lang) {
     if (lang != null && !lang.equals("")) {
-      language = lang.replace("defaultLang", "").replace("=", "").replace("\"", "")
-          .replace(";", "").trim();
+      language = lang.replace("defaultLang", "")
+          .replace("=", "")
+          .replace("\"", "")
+          .replace(";", "")
+          .trim();
     } else {
       continueTranslationProcess = false;
     }
@@ -251,8 +254,9 @@ public class TranslationHandler {
   }
 
   private void setBaseDesignPath(String baseDesignPath1) {
-    if (baseDesignPath1 != null)
+    if (baseDesignPath1 != null) {
       this.baseDesignPath = baseDesignPath1.replaceAll("//", "/");
+    }
   }
 
 }

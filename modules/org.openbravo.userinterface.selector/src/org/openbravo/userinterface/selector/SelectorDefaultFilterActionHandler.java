@@ -98,10 +98,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
 
       Map<String, Object> bindings = new HashMap<>();
 
-      bindings.put(
-          "OB",
-          new OBBindings(OBContext.getOBContext(), params, (HttpSession) parameters
-              .get(KernelConstants.HTTP_SESSION)));
+      bindings.put("OB", new OBBindings(OBContext.getOBContext(), params,
+          (HttpSession) parameters.get(KernelConstants.HTTP_SESSION)));
 
       boolean isFilterByIdSupported = params
           .containsKey(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED)
@@ -121,8 +119,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
               property = DalUtil.getPropertyFromPath(entity, f.getProperty());
             }
             if (property != null && property.getTargetEntity() != null && !property.isOneToMany()) {
-              final BaseOBObject bob = OBDal.getInstance().get(
-                  property.getTargetEntity().getName(), exprResult);
+              final BaseOBObject bob = OBDal.getInstance()
+                  .get(property.getTargetEntity().getName(), exprResult);
               bobId = exprResult;
               exprResult = bob.getIdentifier();
             }
@@ -140,9 +138,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
             }
           }
         } catch (Exception e) {
-          log.error(
-              "Error evaluating expression for property " + f.getProperty()
-                  + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
+          log.error("Error evaluating expression for property " + f.getProperty()
+              + f.getDisplayColumnAlias() + ": " + e.getMessage(), e);
         }
       }
 
@@ -153,8 +150,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       // https://issues.openbravo.com/view.php?id=21541
       Object dynamicFilterExpression = null;
       if (sel.getFilterExpression() != null) {
-        dynamicFilterExpression = OBScriptEngine.getInstance().eval(sel.getFilterExpression(),
-            bindings);
+        dynamicFilterExpression = OBScriptEngine.getInstance()
+            .eval(sel.getFilterExpression(), bindings);
         result.put(SelectorConstants.PARAM_FILTER_EXPRESSION, dynamicFilterExpression.toString());
       }
 

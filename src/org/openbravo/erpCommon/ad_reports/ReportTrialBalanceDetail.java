@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -85,8 +86,9 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strId,
           strcBpartnerId, strmProductId, strcProjectId, strcAcctSchemaId);
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
@@ -103,13 +105,14 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
     String strTreeAccount = ReportTrialBalanceDetailData.treeAccount(this, vars.getClient());
     ReportTrialBalanceDetailData[] data = null;
     if (strDateFrom.equals("") && strDateTo.equals("") || strId.equals("")) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportTrialBalanceDetail", discard)
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTrialBalanceDetail", discard)
           .createXmlDocument();
       data = ReportTrialBalanceDetailData.set();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportTrialBalanceDetail").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTrialBalanceDetail")
+          .createXmlDocument();
 
       String strIdFamily = getFamily(strTreeAccount, strId);
 
@@ -177,8 +180,8 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument
-        .setParameter("account", ReportTrialBalanceDetailData.selectAccountName(this, strId));
+    xmlDocument.setParameter("account",
+        ReportTrialBalanceDetailData.selectAccountName(this, strId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
@@ -188,6 +191,7 @@ public class ReportTrialBalanceDetail extends HttpSecureAppServlet {
     return Tree.getMembers(this, strTree, strChild);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportTrialBalanceDetail. This Servlet was made by mirurita";
   }

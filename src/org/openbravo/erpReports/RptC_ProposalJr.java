@@ -26,39 +26,44 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.erpCommon.utility.Utility;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 public class RptC_ProposalJr extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strClave = vars.getSessionValue("RptC_ProposalJr.inpcProjectproposalId_R");
-      if (strClave.equals(""))
+      if (strClave.equals("")) {
         strClave = vars.getSessionValue("RptC_ProposalJr.inpcProjectproposalId");
+      }
       printPagePartePDF(response, vars, strClave);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars,
       String strClave) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf - ID:" + strClave);
+    }
     RptCProposalJrData[] data = RptCProposalJrData.select(this, strClave,
         Utility.getContext(this, vars, "#User_Client", "RptC_ProposalJr"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "RptC_ProposalJr"));
@@ -67,8 +72,8 @@ public class RptC_ProposalJr extends HttpSecureAppServlet {
 
     JasperReport jasperReportLines;
     try {
-      jasperReportLines = ReportingUtils.compileReport(strBaseDesign
-          + "/org/openbravo/erpReports/SubreportLines.jrxml");
+      jasperReportLines = ReportingUtils
+          .compileReport(strBaseDesign + "/org/openbravo/erpReports/SubreportLines.jrxml");
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
@@ -81,6 +86,7 @@ public class RptC_ProposalJr extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the RptCOrders seeker";
   } // End of getServletInfo() method

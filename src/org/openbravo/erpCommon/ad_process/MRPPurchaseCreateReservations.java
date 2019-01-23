@@ -68,8 +68,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
     Map<String, String> createOrderParams = new HashMap<String, String>();
     createOrderParams.put("M_Warehouse_ID", strMWarehosueID);
     try {
-      final ProcessInstance pinstance = CallProcess.getInstance().call(process, strMRPRunId,
-          createOrderParams);
+      final ProcessInstance pinstance = CallProcess.getInstance()
+          .call(process, strMRPRunId, createOrderParams);
 
       if (pinstance.getResult() == 0L) {
         OBDal.getInstance().rollbackAndClose();
@@ -79,8 +79,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
       }
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      OBError messsage = OBMessageUtils.translateError(DbUtility.getUnderlyingSQLException(e)
-          .getMessage());
+      OBError messsage = OBMessageUtils
+          .translateError(DbUtility.getUnderlyingSQLException(e).getMessage());
       bundle.setResult(messsage);
       return;
     }
@@ -129,14 +129,16 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
           currentStock = currentStock.subtract(consumedQuantity);
           quantity = quantity.subtract(consumedQuantity);
           if (isSalesOrderLine) {
-            Reservation reservation = ReservationUtils.getReservationFromOrder(outgoingLine
-                .getSalesOrderLine());
+            Reservation reservation = ReservationUtils
+                .getReservationFromOrder(outgoingLine.getSalesOrderLine());
             if (reservation.getReservedQty().compareTo(reservation.getQuantity()) == -1) {
               if (incomingLine.getTransactionType().equals("PP")
                   && incomingLine.getSalesOrderLine() != null) {
                 ReservationUtils.reserveStockManual(reservation, incomingLine.getSalesOrderLine(),
-                    consumedQuantity, incomingLine.getSalesOrderLine().getSalesOrder()
-                        .getWarehouse().isAllocated() ? "Y" : "N");
+                    consumedQuantity,
+                    incomingLine.getSalesOrderLine().getSalesOrder().getWarehouse().isAllocated()
+                        ? "Y"
+                        : "N");
               }
 
               if (quantity.signum() < 1 && reservation.getRESStatus().equals("DR")) {
@@ -171,8 +173,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
         + PurchasingRunLine.PROPERTY_TRANSACTIONTYPE
         + " WHEN 'ST' THEN 0 WHEN 'MS' THEN 2 ELSE 1 END");
 
-    OBQuery<PurchasingRunLine> soQry = OBDal.getInstance().createQuery(PurchasingRunLine.class,
-        where.toString());
+    OBQuery<PurchasingRunLine> soQry = OBDal.getInstance()
+        .createQuery(PurchasingRunLine.class, where.toString());
     soQry.setNamedParameter("purchaserun", mrpPurchaseRun.getId());
     soQry.setFetchSize(1000);
     return soQry.scroll(ScrollMode.FORWARD_ONLY);
@@ -187,8 +189,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
         + PurchasingRunLine.PROPERTY_TRANSACTIONTYPE
         + " WHEN 'ST' THEN 0 WHEN 'MS' THEN 2 ELSE 3 END");
 
-    OBQuery<PurchasingRunLine> soQry = OBDal.getInstance().createQuery(PurchasingRunLine.class,
-        where.toString());
+    OBQuery<PurchasingRunLine> soQry = OBDal.getInstance()
+        .createQuery(PurchasingRunLine.class, where.toString());
     soQry.setNamedParameter("purchaserun", mrpPurchaseRun.getId());
     soQry.setFetchSize(1000);
     return soQry.scroll(ScrollMode.FORWARD_ONLY);
@@ -203,8 +205,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
       OBContext.restorePreviousMode();
     }
     try {
-      final ProcessInstance pinstance = CallProcess.getInstance().call(process, salesOrder.getId(),
-          null);
+      final ProcessInstance pinstance = CallProcess.getInstance()
+          .call(process, salesOrder.getId(), null);
 
       if (pinstance.getResult() == 0L) {
         OBError oberror = OBMessageUtils.getProcessInstanceMessage(pinstance);

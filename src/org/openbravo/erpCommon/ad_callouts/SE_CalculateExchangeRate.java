@@ -47,12 +47,14 @@ public class SE_CalculateExchangeRate extends SimpleCallout {
     BigDecimal rate = new BigDecimal(vars.getNumericParameter("inprate", "0"));
     BigDecimal foreignAmt = new BigDecimal(vars.getNumericParameter("inpforeignAmount", "0"));
     try {
-      if (strWindowId.equals(ADWINDOW_PurchaseInvoice) || strWindowId.equals(ADWINDOW_SalesInvoice)) {
+      if (strWindowId.equals(ADWINDOW_PurchaseInvoice)
+          || strWindowId.equals(ADWINDOW_SalesInvoice)) {
         String strcInvoiceId = info.vars.getStringParameter("inpcInvoiceId");
         Invoice invoice = OBDal.getInstance().get(Invoice.class, strcInvoiceId);
         originalAmt = invoice.getGrandTotalAmount();
 
-      } else if (strWindowId.equals(ADWINDOW_PaymentOut) || strWindowId.equals(ADWINDOW_PaymentIn)) {
+      } else if (strWindowId.equals(ADWINDOW_PaymentOut)
+          || strWindowId.equals(ADWINDOW_PaymentIn)) {
         String strfinPaymentId = info.vars.getStringParameter("inpfinPaymentId");
         FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strfinPaymentId);
         originalAmt = payment.getAmount();
@@ -61,8 +63,8 @@ public class SE_CalculateExchangeRate extends SimpleCallout {
         if ("".equals(strfinTransactionId)) {
           strfinTransactionId = info.vars.getStringParameter("inpfinFinaccTransactionId");
         }
-        APRM_FinaccTransactionV transaction = OBDal.getInstance().get(
-            APRM_FinaccTransactionV.class, strfinTransactionId);
+        APRM_FinaccTransactionV transaction = OBDal.getInstance()
+            .get(APRM_FinaccTransactionV.class, strfinTransactionId);
         originalAmt = transaction.getDepositAmount().subtract(transaction.getWithdrawalAmount());
       }
       if (strLastFieldChanged.equals("inprate")) {

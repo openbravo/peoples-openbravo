@@ -44,13 +44,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CreateTaxReport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     String process = CreateTaxReportData.processId(this, "CreateTaxReport");
@@ -68,29 +70,33 @@ public class CreateTaxReport extends HttpSecureAppServlet {
       String strDateTo = vars.getGlobalVariable("inpDateTo", "CreateTaxReport|dateTo", "");
       String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateTaxReport|orgId", "0");
       printPagePopUp(request, response, vars, strTaxReportId, strDateFrom, strDateTo, strOrg);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strTaxReportId, String strDateFrom, String strDateTo, String strOrg,
       String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: process CreateTaxReport");
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/CreateTaxReport").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/CreateTaxReport")
+        .createXmlDocument();
 
     // String strArray = arrayEntry(vars);
 
@@ -147,8 +153,8 @@ public class CreateTaxReport extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "", Utility.getContext(this, vars, "#User_Org", "CreateTaxReport"), Utility.getContext(
-              this, vars, "#User_Client", "CreateTaxReport"), 0);
+          "", Utility.getContext(this, vars, "#User_Org", "CreateTaxReport"),
+          Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CreateTaxReport", "");
       xmlDocument.setData("reportAD_ORG", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -156,9 +162,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData(
-        "reportC_TAX_REPORT",
-        "liststructure",
+    xmlDocument.setData("reportC_TAX_REPORT", "liststructure",
         CreateTaxReportData.selectC_TAX_REPORT(this,
             Utility.getContext(this, vars, "#User_Org", "CreateTaxReport"),
             Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"), ""));
@@ -172,10 +176,12 @@ public class CreateTaxReport extends HttpSecureAppServlet {
   private void printPagePopUp(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strTaxReportId, String strDateFrom, String strDateTo,
       String strOrg) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pop up CreateTaxReport");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/CreateTaxReportPopUp").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/CreateTaxReportPopUp")
+        .createXmlDocument();
     int level = 0;
 
     StringBuilder strTreeOrg = new StringBuilder(strOrg);
@@ -221,8 +227,9 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     for (int i = 0; i < dataOrg.length; i++) {
       treeOrg.append(",");
       treeOrg.append(dataOrg[i].id);
-      if (dataOrg[i].issummary.equals("Y"))
+      if (dataOrg[i].issummary.equals("Y")) {
         treeOrg(vars, dataOrg[i].id, treeOrg);
+      }
     }
     return;
   }
@@ -231,47 +238,59 @@ public class CreateTaxReport extends HttpSecureAppServlet {
       String strTaxReportId, String strPeriodFrom, String strPeriodTo, String strOrg, int level,
       String strParent, int rownum) throws IOException, ServletException {
     int localRownum = rownum;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strTaxReportId: " + strTaxReportId);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strPeriodFrom: " + strPeriodFrom);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strPeriodTo: " + strPeriodTo);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strOrg: " + strOrg);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************level: " + String.valueOf(level));
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************User_Client: "
           + Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"));
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************#User_Org: "
           + Utility.getContext(this, vars, "#User_Org", "CreateTaxReport"));
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Ouput: child tree data");
+    }
     // CreateTaxReportData[] dataTree = new
     // CreateTaxReportData[data.length];
     String strTaxId = CreateTaxReportData.selectTax(this, strTaxReportId);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strTaxId: " + strTaxId);
+    }
     CreateTaxReportData[] data = CreateTaxReportData.select(this, String.valueOf(localRownum),
         strParent, String.valueOf(level),
         Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"),
         Utility.stringList(strOrg), strPeriodFrom, DateTimeData.nDaysAfter(this, strPeriodTo, "1"),
         strTaxReportId);
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       data = CreateTaxReportData.set();
-    else
+    } else {
       localRownum++;
+    }
     vectorArray.addElement(data[0]);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************data[0]*********************data[0].id: " + data[0].id
           + "- data[0].name:" + data[0].name + "  data[0].total:" + data[0].total);
+    }
     CreateTaxReportData[] dataAux = CreateTaxReportData.selectChild(this,
         Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateTaxReport"), data[0].id);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************dataAux.length: " + dataAux.length);
+    }
     for (int i = 0; i < dataAux.length; i++) {
       // if (dataAux[i].issummary.equals("Y")){
       childData(vars, vectorArray, dataAux[i].id, strPeriodFrom, strPeriodTo, strOrg, level + 1,
@@ -292,21 +311,25 @@ public class CreateTaxReport extends HttpSecureAppServlet {
         vectorArrayDisplay.addElement(data[i]);
       }
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("***************************data.length: " + data.length);
+    }
     for (int i = data.length - 1; i >= 0; i--) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("*******************dataissummary: " + data[i].name + " " + data[i].issummary
             + " " + data[i].levelTax);
+      }
       if (data[i].issummary.equals("Y")) {
         for (int j = i + 1; j < data.length; j++) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("******************************data[j].name: " + data[j].name + " "
                 + data[j].levelTax + " " + data[i].levelTax);
+          }
           if (Integer.valueOf(data[j].levelTax).intValue() > Integer.valueOf(data[i].levelTax)
               .intValue() && data[j].parent.equals(data[i].id)) {
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("******************************issummary[j]: " + data[j].issummary);
+            }
             // if (!data[j].issummary.equals("Y")){
             String total = data[j].total;
             count = count.add(new BigDecimal(total));
@@ -329,6 +352,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     return dataShown;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet CreateTaxReport";
   } // end of getServletInfo() method

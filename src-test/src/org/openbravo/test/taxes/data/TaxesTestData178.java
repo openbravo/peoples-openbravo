@@ -45,11 +45,11 @@ public class TaxesTestData178 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes = new HashMap<String, String[]>();
-    lineTaxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "-6000000000000000000000000.00",
-        "-600000000000000000000000.00", "-6000000000000000000000000.00",
-        "-600000000000000000000000.00", "-12000000000000000000000000.00",
-        "-1200000000000000000000000.00", "-12000000000000000000000000.00",
-        "-1200000000000000000000000.00" });
+    lineTaxes.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "-6000000000000000000000000.00", "-600000000000000000000000.00",
+            "-6000000000000000000000000.00", "-600000000000000000000000.00",
+            "-12000000000000000000000000.00", "-1200000000000000000000000.00",
+            "-12000000000000000000000000.00", "-1200000000000000000000000.00" });
     line.setLinetaxes(lineTaxes);
 
     // Amounts for line level are provided
@@ -71,11 +71,11 @@ public class TaxesTestData178 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> taxes = new HashMap<String, String[]>();
-    taxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "-6000000000000000000000000.00",
-        "-600000000000000000000000.00", "-6000000000000000000000000.00",
-        "-600000000000000000000000.00", "-12000000000000000000000000.00",
-        "-1200000000000000000000000.00", "-12000000000000000000000000.00",
-        "-1200000000000000000000000.00" });
+    taxes.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "-6000000000000000000000000.00", "-600000000000000000000000.00",
+            "-6000000000000000000000000.00", "-600000000000000000000000.00",
+            "-12000000000000000000000000.00", "-1200000000000000000000000.00",
+            "-12000000000000000000000000.00", "-1200000000000000000000000.00" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided

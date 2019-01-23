@@ -84,8 +84,8 @@ public class ProductServiceConfigurationObserver extends EntityPersistenceEventO
     hql.append(" = :product ");
     hql.append("and ol." + OrderLine.PROPERTY_DELIVEREDQUANTITY + "<> ol."
         + OrderLine.PROPERTY_ORDEREDQUANTITY);
-    OBQuery<OrderLine> notDeliveredOrderLineQuery = OBDal.getInstance().createQuery(
-        OrderLine.class, hql.toString());
+    OBQuery<OrderLine> notDeliveredOrderLineQuery = OBDal.getInstance()
+        .createQuery(OrderLine.class, hql.toString());
     notDeliveredOrderLineQuery.setNamedParameter("product", product);
     notDeliveredOrderLineQuery.setMaxResult(1);
     OrderLine notDeliveredOrderLine = notDeliveredOrderLineQuery.uniqueResult();

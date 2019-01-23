@@ -33,16 +33,17 @@ class ProcessLabelsData implements FieldProvider {
   public String processparacolumnname;
   public String processparatrlname;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("PROCESSPARAID"))
+    if (fieldName.equalsIgnoreCase("PROCESSPARAID")) {
       return processparaid;
-    else if (fieldName.equalsIgnoreCase("PROCESSPARANAME"))
+    } else if (fieldName.equalsIgnoreCase("PROCESSPARANAME")) {
       return processparaname;
-    else if (fieldName.equalsIgnoreCase("PROCESSPARACOLUMNNAME"))
+    } else if (fieldName.equalsIgnoreCase("PROCESSPARACOLUMNNAME")) {
       return processparacolumnname;
-    else if (fieldName.equalsIgnoreCase("PROCESSPARATRLNAME"))
+    } else if (fieldName.equalsIgnoreCase("PROCESSPARATRLNAME")) {
       return processparatrlname;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + fieldName);
       return null;
     }
@@ -51,10 +52,12 @@ class ProcessLabelsData implements FieldProvider {
   public static ProcessLabelsData[] selectOriginalParameters(ConnectionProvider connectionProvider,
       String ad_process_id) throws ServletException {
     String strSql = "";
-    strSql = strSql + "		select " + "		  processPara.ad_process_para_id as processParaId "
+    strSql = strSql + "		select "
+        + "		  processPara.ad_process_para_id as processParaId "
         + "		  , processPara.name as processParaName "
         + "     , processPara.columnname as processParaColumnName  " + "		from "
-        + "		  ad_process_para processPara " + "		where " + "		  processPara.ad_process_id = ? ";
+        + "		  ad_process_para processPara " + "		where "
+        + "		  processPara.ad_process_id = ? ";
 
     ResultSet result;
     Vector<Object> vector = new Vector<Object>(0);
@@ -78,8 +81,8 @@ class ProcessLabelsData implements FieldProvider {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:", e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:", ex);
       throw new ServletException("@CODE=@" + ex.getMessage());
@@ -99,12 +102,14 @@ class ProcessLabelsData implements FieldProvider {
       ConnectionProvider connectionProvider, String ad_process_id, String language)
       throws ServletException {
     String strSql = "";
-    strSql = strSql + "		select " + "		  processPara.ad_process_para_id as processParaId"
+    strSql = strSql + "		select "
+        + "		  processPara.ad_process_para_id as processParaId"
         + "		  , processPara.name as processParaName"
         + "     , processPara.columnname as processParaColumnName"
         + "		  , processParaTrl.name as processParaTrlName" + "		from "
-        + "		  ad_process_para processPara" + "		  , ad_process_para_trl processParaTrl"
-        + "		where " + "		  processPara.ad_process_id = ?"
+        + "		  ad_process_para processPara"
+        + "		  , ad_process_para_trl processParaTrl" + "		where "
+        + "		  processPara.ad_process_id = ?"
         + "		  and processPara.ad_process_para_id = processParaTrl.ad_process_para_id"
         + "		  and processParaTrl.ad_language = ?";
 
@@ -133,8 +138,8 @@ class ProcessLabelsData implements FieldProvider {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:", e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:", ex);
       throw new ServletException("@CODE=@" + ex.getMessage());

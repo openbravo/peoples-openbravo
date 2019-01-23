@@ -39,10 +39,10 @@ public class SL_InvAmtUpd_AmtUnitCost extends SimpleCallout {
 
     if (info.getLastFieldChanged().equalsIgnoreCase("inpinventoryAmount")) {
       BigDecimal invAmount = info.getBigDecimalParameter("inpinventoryAmount");
-      info.addResult(
-          "inpunitcost",
-          onHandQty.intValue() == 0 ? BigDecimal.ZERO : invAmount.divide(onHandQty, currency
-              .getPricePrecision().intValue(), RoundingMode.HALF_UP));
+      info.addResult("inpunitcost",
+          onHandQty.intValue() == 0 ? BigDecimal.ZERO
+              : invAmount.divide(onHandQty, currency.getPricePrecision().intValue(),
+                  RoundingMode.HALF_UP));
     } else if (info.getLastFieldChanged().equalsIgnoreCase("inpunitcost")) {
       BigDecimal unitCost = info.getBigDecimalParameter("inpunitcost");
       info.addResult("inpinventoryAmount", unitCost.multiply(onHandQty));

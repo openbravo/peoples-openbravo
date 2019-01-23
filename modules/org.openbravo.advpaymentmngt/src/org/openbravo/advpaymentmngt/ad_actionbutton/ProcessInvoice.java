@@ -92,6 +92,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
   @Any
   private Instance<ProcessInvoiceHook> hooks;
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -102,8 +103,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessInvoice|Tab_ID",
           IsIDFilter.instance);
 
-      final String strC_Invoice_ID = vars.getGlobalVariable("inpcInvoiceId", strWindowId
-          + "|C_Invoice_ID", "", IsIDFilter.instance);
+      final String strC_Invoice_ID = vars.getGlobalVariable("inpcInvoiceId",
+          strWindowId + "|C_Invoice_ID", "", IsIDFilter.instance);
 
       final String strdocaction = vars.getStringParameter("inpdocaction");
       final String strProcessing = vars.getStringParameter("inpprocessing", "Y");
@@ -118,8 +119,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       if ((org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(),
           strTabId))
           || !(Utility.isElementInList(
-              Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel), strClient) && Utility
-              .isElementInList(
+              Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel), strClient)
+              && Utility.isElementInList(
                   Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel), strOrg))) {
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
             Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
@@ -134,8 +135,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           IsIDFilter.instance);
       final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessInvoice|Tab_ID",
           IsIDFilter.instance);
-      final String strC_Invoice_ID = vars.getGlobalVariable("inpKey",
-          strWindowId + "|C_Invoice_ID", "");
+      final String strC_Invoice_ID = vars.getGlobalVariable("inpKey", strWindowId + "|C_Invoice_ID",
+          "");
       final String strdocaction = vars.getStringParameter("inpdocaction");
       final String strVoidInvoiceDate = vars.getStringParameter("inpVoidedDocumentDate");
       final String strVoidInvoiceAcctDate = vars.getStringParameter("inpVoidedDocumentAcctDate");
@@ -156,8 +157,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           if (msg != null && "Error".equals(msg.getType())) {
             vars.setMessage(strTabId, msg);
             String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-            if (strWindowPath.equals(""))
+            if (strWindowPath.equals("")) {
               strWindowPath = strDefaultServlet;
+            }
             printPageClosePopUp(response, vars, strWindowPath);
             return;
           }
@@ -171,8 +173,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             msg = new OBError();
             msg.setType("Error");
             msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-            msg.setMessage(String.format(errorMSG, invoice.getBusinessPartner().getId(), invoice
-                .getBusinessPartner().getName()));
+            msg.setMessage(String.format(errorMSG, invoice.getBusinessPartner().getId(),
+                invoice.getBusinessPartner().getName()));
 
             vars.setMessage(strTabId, msg);
             printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
@@ -222,21 +224,19 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
             // Get default Financial Account as it is done in Add Payment
             FIN_FinancialAccount bpFinAccount = null;
-            if (isSOTrx
-                && invoice.getBusinessPartner().getAccount() != null
+            if (isSOTrx && invoice.getBusinessPartner().getAccount() != null
                 && FIN_Utility.getFinancialAccountPaymentMethod(invoice.getPaymentMethod().getId(),
-                    invoice.getBusinessPartner().getAccount().getId(), isSOTrx, invoice
-                        .getCurrency().getId(), invoice.getOrganization().getId()) != null) {
+                    invoice.getBusinessPartner().getAccount().getId(), isSOTrx,
+                    invoice.getCurrency().getId(), invoice.getOrganization().getId()) != null) {
               bpFinAccount = invoice.getBusinessPartner().getAccount();
-            } else if (!isSOTrx
-                && invoice.getBusinessPartner().getPOFinancialAccount() != null
+            } else if (!isSOTrx && invoice.getBusinessPartner().getPOFinancialAccount() != null
                 && FIN_Utility.getFinancialAccountPaymentMethod(invoice.getPaymentMethod().getId(),
-                    invoice.getBusinessPartner().getPOFinancialAccount().getId(), isSOTrx, invoice
-                        .getCurrency().getId(), invoice.getOrganization().getId()) != null) {
+                    invoice.getBusinessPartner().getPOFinancialAccount().getId(), isSOTrx,
+                    invoice.getCurrency().getId(), invoice.getOrganization().getId()) != null) {
               bpFinAccount = invoice.getBusinessPartner().getPOFinancialAccount();
             } else {
-              FinAccPaymentMethod fpm = FIN_Utility.getFinancialAccountPaymentMethod(invoice
-                  .getPaymentMethod().getId(), null, isSOTrx, invoice.getCurrency().getId(),
+              FinAccPaymentMethod fpm = FIN_Utility.getFinancialAccountPaymentMethod(
+                  invoice.getPaymentMethod().getId(), null, isSOTrx, invoice.getCurrency().getId(),
                   invoice.getOrganization().getId());
               if (fpm != null) {
                 bpFinAccount = fpm.getAccount();
@@ -261,15 +261,16 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             fpHQLQuery.append(" join fpsd.invoicePaymentSchedule fps");
             fpHQLQuery.append(" where fps.invoice.id = :invoiceId");
             fpHQLQuery.append(" and fp.status in ('RPAE', 'RPAP')");
-            OBQuery<FIN_Payment> paymentQuery = OBDal.getInstance().createQuery(FIN_Payment.class,
-                fpHQLQuery.toString());
+            OBQuery<FIN_Payment> paymentQuery = OBDal.getInstance()
+                .createQuery(FIN_Payment.class, fpHQLQuery.toString());
             paymentQuery.setNamedParameter("invoiceId", invoice.getId());
             paymentQuery.setMaxResult(1);
             if (paymentQuery.uniqueResult() != null) {
               msg = new OBError();
               msg.setType("Error");
               msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-              msg.setMessage(OBMessageUtils.messageBD("APRM_InvoiceAwaitingExcutionPaymentRelated"));
+              msg.setMessage(
+                  OBMessageUtils.messageBD("APRM_InvoiceAwaitingExcutionPaymentRelated"));
               vars.setMessage(strTabId, msg);
               printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
               return;
@@ -280,8 +281,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
             // Calculate Conversion Rate
             BigDecimal rate = null;
-            if (!StringUtils.equals(invoice.getCurrency().getId(), bpFinAccount.getCurrency()
-                .getId())) {
+            if (!StringUtils.equals(invoice.getCurrency().getId(),
+                bpFinAccount.getCurrency().getId())) {
               final ConversionRate conversionRate = FinancialUtils.getConversionRate(reversedDate,
                   invoice.getCurrency(), bpFinAccount.getCurrency(), invoice.getOrganization(),
                   invoice.getClient());
@@ -317,8 +318,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
             // Copy exchange rate from invoice
             for (ConversionRateDoc conversionRateDoc : invoice.getCurrencyConversionRateDocList()) {
-              ConversionRateDoc newConversionRateDoc = OBProvider.getInstance().get(
-                  ConversionRateDoc.class);
+              ConversionRateDoc newConversionRateDoc = OBProvider.getInstance()
+                  .get(ConversionRateDoc.class);
               newConversionRateDoc.setClient(conversionRateDoc.getClient());
               newConversionRateDoc.setOrganization(conversionRateDoc.getOrganization());
               newConversionRateDoc.setCurrency(conversionRateDoc.getCurrency());
@@ -332,8 +333,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
             OBDal.getInstance().save(dummyPayment);
           } catch (final Exception e) {
-            log4j.error("Exception while creating dummy payment for the invoice: "
-                + strC_Invoice_ID, e);
+            log4j.error(
+                "Exception while creating dummy payment for the invoice: " + strC_Invoice_ID, e);
           } finally {
             OBContext.restorePreviousMode();
           }
@@ -342,8 +343,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         boolean voidingPrepaidInvoice = "RC".equals(strdocaction)
             && invoice.getPrepaymentamt().compareTo(BigDecimal.ZERO) != 0;
 
-        final ProcessInstance pinstance = CallProcess.getInstance().call(process, strC_Invoice_ID,
-            parameters);
+        final ProcessInstance pinstance = CallProcess.getInstance()
+            .call(process, strC_Invoice_ID, parameters);
 
         OBDal.getInstance().getSession().refresh(invoice);
         invoice.setAPRMProcessinvoice(invoice.getDocumentAction());
@@ -353,10 +354,10 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             OBContext.setAdminMode(true);
 
             // Get reversed payment
-            OBCriteria<ReversedInvoice> revInvoiceCriteria = OBDal.getInstance().createCriteria(
-                ReversedInvoice.class);
-            revInvoiceCriteria.add(Restrictions.eq(ReversedInvoice.PROPERTY_REVERSEDINVOICE,
-                invoice));
+            OBCriteria<ReversedInvoice> revInvoiceCriteria = OBDal.getInstance()
+                .createCriteria(ReversedInvoice.class);
+            revInvoiceCriteria
+                .add(Restrictions.eq(ReversedInvoice.PROPERTY_REVERSEDINVOICE, invoice));
             revInvoiceCriteria.setMaxResults(1);
             ReversedInvoice revInvoice = (ReversedInvoice) revInvoiceCriteria.uniqueResult();
 
@@ -370,8 +371,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               orderPaymentHQLQuery.append(" join fpd.fINPaymentScheduleDetailList fpsd");
               orderPaymentHQLQuery.append(" join fpsd.invoicePaymentSchedule fps");
               orderPaymentHQLQuery.append(" where fps.invoice.id = :invoiceId");
-              OBQuery<FIN_Payment> paymentQuery = OBDal.getInstance().createQuery(
-                  FIN_Payment.class, orderPaymentHQLQuery.toString());
+              OBQuery<FIN_Payment> paymentQuery = OBDal.getInstance()
+                  .createQuery(FIN_Payment.class, orderPaymentHQLQuery.toString());
               paymentQuery.setNamedParameter("invoiceId", invoice.getId());
               paymentQuery.setMaxResult(1);
               FIN_Payment orderPayment = (FIN_Payment) paymentQuery.uniqueResult();
@@ -397,8 +398,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               psdHQLQuery.append(" join fpsd.invoicePaymentSchedule fps");
               psdHQLQuery.append(" where fps.invoice.id = :invoiceId");
               psdHQLQuery.append(" or fps.invoice.id = :revInvoiceId");
-              OBQuery<FIN_PaymentScheduleDetail> psdQuery = OBDal.getInstance().createQuery(
-                  FIN_PaymentScheduleDetail.class, psdHQLQuery.toString());
+              OBQuery<FIN_PaymentScheduleDetail> psdQuery = OBDal.getInstance()
+                  .createQuery(FIN_PaymentScheduleDetail.class, psdHQLQuery.toString());
               psdQuery.setNamedParameter("invoiceId", invoice.getId());
               psdQuery.setNamedParameter("revInvoiceId", revInvoice.getInvoice().getId());
 
@@ -435,8 +436,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                   orderPSDHQLQuery.append(" and fpsd.invoicePaymentSchedule is null");
                   OBQuery<FIN_PaymentScheduleDetail> orderPSDQuery = OBDal.getInstance()
                       .createQuery(FIN_PaymentScheduleDetail.class, orderPSDHQLQuery.toString());
-                  orderPSDQuery.setNamedParameter("paymentId", invoiceFPDOrder.getFinPayment()
-                      .getId());
+                  orderPSDQuery.setNamedParameter("paymentId",
+                      invoiceFPDOrder.getFinPayment().getId());
                   orderPSDQuery.setNamedParameter("invoicePSDId", fpsd.getId());
                   orderPSDQuery.setMaxResult(1);
                   FIN_PaymentScheduleDetail orderPSD = orderPSDQuery.uniqueResult();
@@ -502,19 +503,20 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               // Process dummy payment related with both actual invoice and reversed invoice
               OBError message = FIN_AddPayment.processPayment(vars, this, "P", dummyPayment);
               if ("Error".equals(message.getType())) {
-                message.setMessage(OBMessageUtils.messageBD("PaymentError") + " "
-                    + message.getMessage());
+                message.setMessage(
+                    OBMessageUtils.messageBD("PaymentError") + " " + message.getMessage());
                 vars.setMessage(strTabId, message);
                 String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-                if (strWindowPath.equals(""))
+                if (strWindowPath.equals("")) {
                   strWindowPath = strDefaultServlet;
+                }
                 printPageClosePopUp(response, vars, strWindowPath);
                 return;
               }
             }
           } catch (final Exception e) {
-            log4j.error("Exception while creating dummy payment for the invoice: "
-                + strC_Invoice_ID, e);
+            log4j.error(
+                "Exception while creating dummy payment for the invoice: " + strC_Invoice_ID, e);
           } finally {
             OBContext.restorePreviousMode();
           }
@@ -531,8 +533,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               for (final String line : invDesc.split("\n")) {
                 if (!line.startsWith(creditMsg.substring(0, creditMsg.lastIndexOf("%s")))) {
                   newDesc.append(line);
-                  if (!"".equals(line))
+                  if (!"".equals(line)) {
                     newDesc.append("\n");
+                  }
                 }
               }
               invoice.setDescription(newDesc.toString());
@@ -547,14 +550,15 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           // on error close popup and rollback
           if (pinstance.getResult() == 0L) {
             OBDal.getInstance().rollbackAndClose();
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), pinstance
-                .getErrorMsg().replaceFirst("@ERROR=", ""));
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                pinstance.getErrorMsg().replaceFirst("@ERROR=", ""));
             log4j.debug(myMessage.getMessage());
             vars.setMessage(strTabId, myMessage);
 
             String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-            if (strWindowPath.equals(""))
+            if (strWindowPath.equals("")) {
               strWindowPath = strDefaultServlet;
+            }
             printPageClosePopUp(response, vars, strWindowPath);
 
             return;
@@ -568,8 +572,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           if (msg != null && "Error".equals(msg.getType())) {
             vars.setMessage(strTabId, msg);
             String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-            if (strWindowPath.equals(""))
+            if (strWindowPath.equals("")) {
               strWindowPath = strDefaultServlet;
+            }
             printPageClosePopUp(response, vars, strWindowPath);
             OBDal.getInstance().rollbackAndClose();
             return;
@@ -587,8 +592,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         try {
           if (!"CO".equals(strdocaction)) {
             String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-            if (strWindowPath.equals(""))
+            if (strWindowPath.equals("")) {
               strWindowPath = strDefaultServlet;
+            }
             printPageClosePopUp(response, vars, strWindowPath);
             return;
           }
@@ -613,17 +619,15 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             // account or the business partner's currency is not equal to the invoice's currency do
             // not cancel credit
             if (BigDecimal.ZERO.compareTo(invoice.getGrandTotalAmount()) != 0
-                && isPaymentMethodConfigured(invoice)
-                && !isInvoiceWithPayments(invoice)
-                && (AcctServer.DOCTYPE_ARInvoice.equals(invoiceDocCategory) || AcctServer.DOCTYPE_APInvoice
-                    .equals(invoiceDocCategory))
-                && (invoice.getBusinessPartner().getCurrency() != null && StringUtils.equals(
-                    invoice.getCurrency().getId(), invoice.getBusinessPartner().getCurrency()
-                        .getId()))) {
-              creditPayments = dao
-                  .getCustomerPaymentsWithCredit(invoice.getOrganization(),
-                      invoice.getBusinessPartner(), invoice.isSalesTransaction(),
-                      invoice.getCurrency());
+                && isPaymentMethodConfigured(invoice) && !isInvoiceWithPayments(invoice)
+                && (AcctServer.DOCTYPE_ARInvoice.equals(invoiceDocCategory)
+                    || AcctServer.DOCTYPE_APInvoice.equals(invoiceDocCategory))
+                && (invoice.getBusinessPartner().getCurrency() != null
+                    && StringUtils.equals(invoice.getCurrency().getId(),
+                        invoice.getBusinessPartner().getCurrency().getId()))) {
+              creditPayments = dao.getCustomerPaymentsWithCredit(invoice.getOrganization(),
+                  invoice.getBusinessPartner(), invoice.isSalesTransaction(),
+                  invoice.getCurrency());
               if (creditPayments != null && !creditPayments.isEmpty()) {
                 printPageCreditPaymentGrid(response, vars, strC_Invoice_ID, strdocaction, strTabId,
                     strC_Invoice_ID, strdocaction, strWindowId, strTabId, invoice.getInvoiceDate(),
@@ -642,15 +646,16 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         if (!myMessage.isConnectionAvailable()) {
           bdErrorConnection(response);
           return;
-        } else
+        } else {
           vars.setMessage(strTabId, myMessage);
+        }
       }
 
     } else if (vars.commandIn("GRIDLIST")) {
       final String strWindowId = vars.getGlobalVariable("inpwindowId", "ProcessInvoice|Window_ID",
           IsIDFilter.instance);
-      final String strC_Invoice_ID = vars.getGlobalVariable("inpKey",
-          strWindowId + "|C_Invoice_ID", "", IsIDFilter.instance);
+      final String strC_Invoice_ID = vars.getGlobalVariable("inpKey", strWindowId + "|C_Invoice_ID",
+          "", IsIDFilter.instance);
 
       printGrid(response, vars, strC_Invoice_ID);
     } else if (vars.commandIn("USECREDITPAYMENTS") || vars.commandIn("CANCEL_USECREDITPAYMENTS")) {
@@ -658,8 +663,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           IsIDFilter.instance);
       final String strTabId = vars.getGlobalVariable("inpTabId", "ProcessInvoice|Tab_ID",
           IsIDFilter.instance);
-      final String strC_Invoice_ID = vars.getGlobalVariable("inpKey",
-          strWindowId + "|C_Invoice_ID", "");
+      final String strC_Invoice_ID = vars.getGlobalVariable("inpKey", strWindowId + "|C_Invoice_ID",
+          "");
       final String strPaymentDate = vars.getRequiredStringParameter("inpPaymentDate");
       final String strOrg = vars.getGlobalVariable("inpadOrgId", "ProcessInvoice|Org_ID",
           IsIDFilter.instance);
@@ -692,13 +697,15 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             creditPayment.setUsedCredit(usedCreditAmt.add(creditPayment.getUsedCredit()));
             final StringBuffer description = new StringBuffer();
             if (creditPayment.getDescription() != null
-                && !creditPayment.getDescription().equals(""))
+                && !creditPayment.getDescription().equals("")) {
               description.append(creditPayment.getDescription()).append("\n");
+            }
             description.append(String.format(
                 Utility.messageBD(this, "APRM_CreditUsedinInvoice", vars.getLanguage()),
                 invoice.getDocumentNo()));
-            String truncateDescription = (description.length() > 255) ? description
-                .substring(0, 251).concat("...").toString() : description.toString();
+            String truncateDescription = (description.length() > 255)
+                ? description.substring(0, 251).concat("...").toString()
+                : description.toString();
             creditPayment.setDescription(truncateDescription);
             totalUsedCreditAmt = totalUsedCreditAmt.add(usedCreditAmt);
             creditPaymentsIdentifiers.append(creditPayment.getDocumentNo());
@@ -734,14 +741,16 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               isSalesTransaction ? AcctServer.DOCTYPE_ARReceipt : AcctServer.DOCTYPE_APPayment);
           final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType,
               docType.getTable() != null ? docType.getTable().getDBTableName() : "");
-          final FIN_FinancialAccount bpFinAccount = isSalesTransaction ? invoice
-              .getBusinessPartner().getAccount() : invoice.getBusinessPartner()
-              .getPOFinancialAccount();
+          final FIN_FinancialAccount bpFinAccount = isSalesTransaction
+              ? invoice.getBusinessPartner().getAccount()
+              : invoice.getBusinessPartner().getPOFinancialAccount();
           // Calculate Conversion Rate
           final ConversionRate conversionRate = StringUtils.equals(invoice.getCurrency().getId(),
-              bpFinAccount.getCurrency().getId()) ? null : FinancialUtils.getConversionRate(
-              FIN_Utility.getDate(strPaymentDate), invoice.getCurrency(),
-              bpFinAccount.getCurrency(), invoice.getOrganization(), invoice.getClient());
+              bpFinAccount.getCurrency().getId())
+                  ? null
+                  : FinancialUtils.getConversionRate(FIN_Utility.getDate(strPaymentDate),
+                      invoice.getCurrency(), bpFinAccount.getCurrency(), invoice.getOrganization(),
+                      invoice.getClient());
           final FIN_Payment newPayment = FIN_AddPayment.savePayment(null, isSalesTransaction,
               docType, strPaymentDocumentNo, invoice.getBusinessPartner(),
               invoice.getPaymentMethod(), bpFinAccount, "0", FIN_Utility.getDate(strPaymentDate),
@@ -773,8 +782,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                 creditPaymentsIdentifiers.toString()));
             invoice.setDescription(invDesc.toString());
           } else {
-            message.setMessage(OBMessageUtils.messageBD("PaymentError") + " "
-                + message.getMessage());
+            message
+                .setMessage(OBMessageUtils.messageBD("PaymentError") + " " + message.getMessage());
             vars.setMessage(strTabId, message);
           }
 
@@ -805,14 +814,16 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       vars.setSessionValue("ExecutePayments|Tab_ID", strTabId);
       vars.setSessionValue("ExecutePayments|Org_ID", strOrg);
       vars.setSessionValue("ExecutePayments|payments", Utility.getInStrList(payments));
-      if (myMessage != null)
+      if (myMessage != null) {
         vars.setMessage("ExecutePayments|message", myMessage);
-      response.sendRedirect(strDireccion
-          + "/org.openbravo.advpaymentmngt.ad_actionbutton/ExecutePayments.html");
+      }
+      response.sendRedirect(
+          strDireccion + "/org.openbravo.advpaymentmngt.ad_actionbutton/ExecutePayments.html");
     } else {
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
       printPageClosePopUp(response, vars, strWindowPath);
     }
 
@@ -828,8 +839,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     String[] discard = { "newDiscard" };
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/DocAction", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/DocAction", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("key", strC_Invoice_ID);
     xmlDocument.setParameter("processing", strProcessing);
     xmlDocument.setParameter("form", "ProcessInvoice.html");
@@ -876,12 +888,14 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         dact.append("new Array(\"" + dataDocAction[i].getField("id") + "\", \""
             + dataDocAction[i].getField("name") + "\", \""
             + dataDocAction[i].getField("description") + "\")\n");
-        if (i < dataDocAction.length - 1)
+        if (i < dataDocAction.length - 1) {
           dact.append(",\n");
+        }
       }
       dact.append(");");
-    } else
+    } else {
       dact.append("var arrDocAction = null");
+    }
     xmlDocument.setParameter("array", dact.toString());
 
     out.println(xmlDocument.print());
@@ -897,8 +911,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     String[] discard = { "" };
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreditPaymentGrid", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreditPaymentGrid", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("css", vars.getTheme());
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -910,8 +925,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     xmlDocument.setParameter("messageTitle",
         Utility.messageBD(this, "InvoiceComplete", vars.getLanguage()));
 
-    xmlDocument.setParameter("invoiceGrossAmt", dao.getObject(Invoice.class, strC_Invoice_ID)
-        .getGrandTotalAmount().toString());
+    xmlDocument.setParameter("invoiceGrossAmt",
+        dao.getObject(Invoice.class, strC_Invoice_ID).getGrandTotalAmount().toString());
 
     OBError myMessage = vars.getMessage("ProcessInvoice|CreditPaymentGrid");
     vars.removeMessage("ProcessInvoice|CreditPaymentGrid");
@@ -937,8 +952,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     final Invoice invoice = dao.getObject(Invoice.class, invoiceId);
 
     String[] discard = {};
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/AddCreditPaymentGrid", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/AddCreditPaymentGrid", discard)
         .createXmlDocument();
 
     xmlDocument.setData("structure", getCreditPayments(invoice));
@@ -951,7 +966,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
   private FieldProvider[] getCreditPayments(Invoice invoice) {
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(creditPayments);
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
 
@@ -961,22 +977,21 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       for (int i = 0; i < data.length; i++) {
         FieldProviderFactory.setField(data[i], "finCreditPaymentId", creditPayments.get(i).getId());
         FieldProviderFactory.setField(data[i], "documentNo", creditPayments.get(i).getDocumentNo());
-        FieldProviderFactory.setField(data[i], "paymentDescription", creditPayments.get(i)
-            .getDescription());
+        FieldProviderFactory.setField(data[i], "paymentDescription",
+            creditPayments.get(i).getDescription());
         if (creditPayments.get(i).getPaymentDate() != null) {
           FieldProviderFactory.setField(data[i], "documentDate",
               dateFormater.format(creditPayments.get(i).getPaymentDate()).toString());
         }
 
-        final BigDecimal outStandingAmt = creditPayments.get(i).getGeneratedCredit()
+        final BigDecimal outStandingAmt = creditPayments.get(i)
+            .getGeneratedCredit()
             .subtract(creditPayments.get(i).getUsedCredit());
         FieldProviderFactory.setField(data[i], "outstandingAmount", outStandingAmt.toString());
 
-        FieldProviderFactory.setField(
-            data[i],
-            "paymentAmount",
-            pendingToPay.compareTo(outStandingAmt) > 0 ? outStandingAmt.toString() : (pendingToPay
-                .compareTo(BigDecimal.ZERO) > 0 ? pendingToPay.toString() : ""));
+        FieldProviderFactory.setField(data[i], "paymentAmount",
+            pendingToPay.compareTo(outStandingAmt) > 0 ? outStandingAmt.toString()
+                : (pendingToPay.compareTo(BigDecimal.ZERO) > 0 ? pendingToPay.toString() : ""));
         pendingToPay = pendingToPay.subtract(outStandingAmt);
 
         FieldProviderFactory.setField(data[i], "finSelectedCreditPaymentId",
@@ -991,10 +1006,14 @@ public class ProcessInvoice extends HttpSecureAppServlet {
   }
 
   private boolean isInvoiceWithPayments(Invoice invoice) {
-    for (FIN_PaymentSchedule ps : OBDao.getFilteredCriteria(FIN_PaymentSchedule.class,
-        Restrictions.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice)).list()) {
-      for (FIN_PaymentDetailV pdv : OBDao.getFilteredCriteria(FIN_PaymentDetailV.class,
-          Restrictions.eq(FIN_PaymentDetailV.PROPERTY_INVOICEPAYMENTPLAN, ps)).list()) {
+    for (FIN_PaymentSchedule ps : OBDao
+        .getFilteredCriteria(FIN_PaymentSchedule.class,
+            Restrictions.eq(FIN_PaymentSchedule.PROPERTY_INVOICE, invoice))
+        .list()) {
+      for (FIN_PaymentDetailV pdv : OBDao
+          .getFilteredCriteria(FIN_PaymentDetailV.class,
+              Restrictions.eq(FIN_PaymentDetailV.PROPERTY_INVOICEPAYMENTPLAN, ps))
+          .list()) {
         if (pdv.getPayment() != null && !"RPVOID".equals(pdv.getPayment().getStatus())) {
           return true;
         }
@@ -1014,8 +1033,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
    *         in other cases.
    */
   private boolean isPaymentMethodConfigured(Invoice invoice) {
-    final FIN_FinancialAccount bpFinAccount = invoice.isSalesTransaction() ? invoice
-        .getBusinessPartner().getAccount() : invoice.getBusinessPartner().getPOFinancialAccount();
+    final FIN_FinancialAccount bpFinAccount = invoice.isSalesTransaction()
+        ? invoice.getBusinessPartner().getAccount()
+        : invoice.getBusinessPartner().getPOFinancialAccount();
     if (bpFinAccount != null) {
       for (final FinAccPaymentMethod bpFinAccPaymentMethod : bpFinAccount
           .getFinancialMgmtFinAccPaymentMethodList()) {
@@ -1027,6 +1047,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     return false;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet to Process Invoice";
   }

@@ -54,13 +54,15 @@ public class CopyFromOrder extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final BigDecimal ZERO = BigDecimal.ZERO;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -100,13 +102,15 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       }
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       vars.setMessage(strTabId, myError);
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError copyLines(VariablesSecureApp vars, String strRownums, String strKey)
@@ -127,13 +131,14 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       CopyFromOrderRecordData[] orderData = CopyFromOrderRecordData.select(this, strKey);
       Order order = OBDal.getInstance().get(Order.class, strKey);
 
-      BigDecimal discount, priceActual, priceList, netPriceList, grossPriceList, priceStd, priceLimit, priceGross, amtGross, pricestdgross;
+      BigDecimal discount, priceActual, priceList, netPriceList, grossPriceList, priceStd,
+          priceLimit, priceGross, amtGross, pricestdgross;
       boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
       while (st.hasMoreTokens()) {
         String strRownum = st.nextToken().trim();
         String strmProductId = vars.getStringParameter("inpmProductId" + strRownum);
-        String strmAttributesetinstanceId = vars.getStringParameter("inpmAttributesetinstanceId"
-            + strRownum);
+        String strmAttributesetinstanceId = vars
+            .getStringParameter("inpmAttributesetinstanceId" + strRownum);
         String strLastpriceso = vars.getNumericParameter("inpLastpriceso" + strRownum);
         String strQty = vars.getNumericParameter("inpquantity" + strRownum);
         String strcTaxId = vars.getStringParameter("inpcTaxId" + strRownum);
@@ -206,8 +211,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
             unitPrice = priceActual;
           }
           // (PL-UP)/PL * 100
-          discount = ((priceList.subtract(unitPrice)).multiply(new BigDecimal("100")).divide(
-              priceList, stdPrecision, RoundingMode.HALF_UP));
+          discount = ((priceList.subtract(unitPrice)).multiply(new BigDecimal("100"))
+              .divide(priceList, stdPrecision, RoundingMode.HALF_UP));
         }
         log4j.debug("Discount: " + discount.toString());
         if (priceStd.scale() > pricePrecision) {
@@ -218,12 +223,14 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           CopyFromOrderData.insertCOrderline(conn, this, strCOrderlineID, orderData[0].adClientId,
               orderData[0].adOrgId, vars.getUser(), strKey, orderData[0].cBpartnerId,
               orderData[0].cBpartnerLocationId, orderData[0].dateordered, orderData[0].dateordered,
-              strmProductId, orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
-                  : orderData[0].mWarehouseId, strcUOMId, strQty, orderData[0].cCurrencyId,
-              netPriceList.toString(), priceActual.toString(), priceLimit.toString(), priceStd
-                  .toString(), discount.toString(), strcTaxId, strmAttributesetinstanceId,
-              grossPriceList.toString(), priceGross.toString(), amtGross.toString(), pricestdgross
-                  .toString(), strcAumId, strAumQty);
+              strmProductId,
+              orderData[0].mWarehouseId.equals("") ? vars.getWarehouse()
+                  : orderData[0].mWarehouseId,
+              strcUOMId, strQty, orderData[0].cCurrencyId, netPriceList.toString(),
+              priceActual.toString(), priceLimit.toString(), priceStd.toString(),
+              discount.toString(), strcTaxId, strmAttributesetinstanceId, grossPriceList.toString(),
+              priceGross.toString(), amtGross.toString(), pricestdgross.toString(), strcAumId,
+              strAumQty);
         } catch (ServletException ex) {
           myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);
@@ -254,8 +261,9 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       String strmPricelistId) throws IOException, ServletException {
     log4j.debug("Output: Shipment");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CopyFromOrder").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromOrder")
+        .createXmlDocument();
     CopyFromOrderRecordData[] dataOrder = CopyFromOrderRecordData.select(this, strKey);
     Order order = OBDal.getInstance().get(Order.class, strKey);
     CopyFromOrderData[] data = CopyFromOrderData.select(this, strBpartner, strmPricelistId,
@@ -264,8 +272,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     FieldProvider[][] dataAUM = new FieldProvider[data.length][];
     for (int i = 0; i < data.length; i++) {
       Product product = OBDal.getInstance().get(Product.class, data[i].mProductId);
-      data[i].lastpriceso = (PriceAdjustment.calculatePriceActual(order, product, new BigDecimal(
-          data[i].qty), new BigDecimal(data[i].lastpriceso))).toString();
+      data[i].lastpriceso = (PriceAdjustment.calculatePriceActual(order, product,
+          new BigDecimal(data[i].qty), new BigDecimal(data[i].lastpriceso))).toString();
 
       dataAUM[i] = UOMUtil.selectAUM(data[i].mProductId, data[i].cDoctypeId);
       if (dataAUM[i].length == 0) {
@@ -280,27 +288,27 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("tabId", strTabId);
     xmlDocument.setParameter("sotrx", strSOTrx);
     xmlDocument.setParameter("yearactual", DateTimeData.sysdateYear(this));
-    xmlDocument.setParameter("lastmonth", dataOrder[0].lastDays.equals("") ? "0"
-        : dataOrder[0].lastDays);
-    xmlDocument.setParameter(
-        "pendingdelivery",
-        strSOTrx.equals("Y") ? CopyFromOrderRecordData.pendingDeliverySales(this, strBpartner,
-            dataOrder[0].adOrgId, dataOrder[0].adClientId) : CopyFromOrderRecordData
-            .materialReceiptPending(this, strBpartner, dataOrder[0].adOrgId,
-                dataOrder[0].adClientId));
-    xmlDocument.setParameter(
-        "pendingInvoice",
-        strSOTrx.equals("Y") ? CopyFromOrderRecordData.pendingInvoiceSales(this, strBpartner,
-            dataOrder[0].adOrgId, dataOrder[0].adClientId) : CopyFromOrderRecordData
-            .purchasePendingInvoice(this, strBpartner, dataOrder[0].adOrgId,
-                dataOrder[0].adClientId));
+    xmlDocument.setParameter("lastmonth",
+        dataOrder[0].lastDays.equals("") ? "0" : dataOrder[0].lastDays);
+    xmlDocument.setParameter("pendingdelivery",
+        strSOTrx.equals("Y")
+            ? CopyFromOrderRecordData.pendingDeliverySales(this, strBpartner, dataOrder[0].adOrgId,
+                dataOrder[0].adClientId)
+            : CopyFromOrderRecordData.materialReceiptPending(this, strBpartner,
+                dataOrder[0].adOrgId, dataOrder[0].adClientId));
+    xmlDocument.setParameter("pendingInvoice",
+        strSOTrx.equals("Y")
+            ? CopyFromOrderRecordData.pendingInvoiceSales(this, strBpartner, dataOrder[0].adOrgId,
+                dataOrder[0].adClientId)
+            : CopyFromOrderRecordData.purchasePendingInvoice(this, strBpartner,
+                dataOrder[0].adOrgId, dataOrder[0].adClientId));
     xmlDocument.setParameter("debtpending", CopyFromOrderRecordData.debtPending(this, strBpartner,
         dataOrder[0].adOrgId, dataOrder[0].adClientId, strSOTrx));
     xmlDocument.setParameter("contact",
         CopyFromOrderRecordData.contact(this, dataOrder[0].adUserId));
-    xmlDocument.setParameter("lastOrder", CopyFromOrderRecordData.maxDateordered(this,
-        vars.getSqlDateFormat(), strBpartner, strSOTrx, dataOrder[0].adOrgId,
-        dataOrder[0].adClientId));
+    xmlDocument.setParameter("lastOrder",
+        CopyFromOrderRecordData.maxDateordered(this, vars.getSqlDateFormat(), strBpartner, strSOTrx,
+            dataOrder[0].adOrgId, dataOrder[0].adClientId));
     xmlDocument.setParameter("orgname", dataOrder[0].orgname);
     String strInvoicing = CopyFromOrderRecordData.invoicing(this, strSOTrx, strBpartner,
         dataOrder[0].adOrgId, dataOrder[0].adClientId);
@@ -344,6 +352,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
 
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet Copy from order";
   } // end of getServletInfo() method

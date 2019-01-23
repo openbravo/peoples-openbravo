@@ -27,6 +27,7 @@ public class CheckSumCondition extends Task {
   protected String type;
   protected String property;
 
+  @Override
   public void execute() {
     CheckSum cs = new CheckSum(obDir);
     // project.setProperty(property,

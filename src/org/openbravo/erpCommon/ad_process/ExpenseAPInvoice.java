@@ -53,13 +53,15 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
   private static final BigDecimal ZERO = BigDecimal.ZERO;
   private static final Logger expenseAPInvoiceLog4j = LogManager.getLogger();
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -70,7 +72,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           "ExpenseAPInvoice.reportdateto", "");
       String strDateInvoiced = vars.getGlobalVariable("inpDateinvoiced",
           "ExpenseAPInvoice.dateinvoiced", "");
-      printPage(response, vars, strcBpartnerId, strDatereportFrom, strDatereportTo, strDateInvoiced);
+      printPage(response, vars, strcBpartnerId, strDatereportFrom, strDatereportTo,
+          strDateInvoiced);
     } else if (vars.commandIn("SAVE")) {
       String strcBpartnerId = vars.getStringParameter("inpcBpartnerId", "");
       String strDatereportFrom = vars.getRequestGlobalVariable("inpReportDateFrom",
@@ -82,15 +85,18 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       OBError myMessage = processExpense(vars, strcBpartnerId, strDatereportFrom, strDatereportTo,
           strDateInvoiced);
       vars.setMessage("ExpenseAPInvoice", myMessage);
-      printPage(response, vars, strcBpartnerId, strDatereportFrom, strDatereportTo, strDateInvoiced);
-    } else
+      printPage(response, vars, strcBpartnerId, strDatereportFrom, strDatereportTo,
+          strDateInvoiced);
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError processExpense(VariablesSecureApp vars, String strcBpartnerId,
       String strDatereportFrom, String strDatereportTo, String strDateInvoiced) {
-    if (expenseAPInvoiceLog4j.isDebugEnabled())
+    if (expenseAPInvoiceLog4j.isDebugEnabled()) {
       expenseAPInvoiceLog4j.debug("Save: Expense AP Invoice");
+    }
 
     String strcInvoiceId = "";
     String strCCurrencyId = "";
@@ -142,15 +148,17 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         }
 
         strcBpartnerLocationId = ExpenseAPInvoiceData.bPartnerLocation(this, data[i].cBpartnerId);
-        if (strcBpartnerLocationId.equals(""))
+        if (strcBpartnerLocationId.equals("")) {
           throw new Exception("ShiptoNotdefined");
+        }
 
         strPaymentRule = ExpenseAPInvoiceData.paymentrule(this, data[i].cBpartnerId);
         if (strPaymentRule == null || "".equals(strPaymentRule)) {
           strPaymentRule = "P";
         }
-        if (strPaymentRule.equals(""))
+        if (strPaymentRule.equals("")) {
           throw new Exception("FormofPaymentNotdefined");
+        }
 
         strPaymentMethodId = ExpenseAPInvoiceData.paymentmethodId(this, data[i].cBpartnerId);
         if (strPaymentMethodId.equals("")) {
@@ -161,8 +169,9 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           strPaymentRule = "P";
         }
         strPaymentterm = ExpenseAPInvoiceData.paymentterm(this, data[i].cBpartnerId);
-        if (strPaymentterm.equals(""))
+        if (strPaymentterm.equals("")) {
           throw new Exception("PaymenttermNotdefined");
+        }
 
         // Checks if there are invoices not processed that full filled
         // the requirements
@@ -170,19 +179,20 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         // In order to make different purchase invoices for expense
         // lines assigned to different projects
         if (data[i].cProjectId.equals("")) {
-          strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(OBDal.getInstance()
-              .getConnection(), this, data[i].adClientId, data[i].adOrgId, strDateInvoiced,
-              data[i].cBpartnerId, strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId,
-              strcBpartnerLocationId, strPaymentRule, strPaymentMethodId, strPaymentterm,
-              data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id, data[i].user2Id);
-
-        } else {
-          strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(OBDal.getInstance()
-              .getConnection(), this, data[i].adClientId, data[i].adOrgId, strDateInvoiced,
-              data[i].cBpartnerId, strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId,
+          strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(
+              OBDal.getInstance().getConnection(), this, data[i].adClientId, data[i].adOrgId,
+              strDateInvoiced, data[i].cBpartnerId, strBPCCurrencyId, data[i].cActivityId,
               data[i].cCampaignId, strcBpartnerLocationId, strPaymentRule, strPaymentMethodId,
               strPaymentterm, data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id,
               data[i].user2Id);
+
+        } else {
+          strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(
+              OBDal.getInstance().getConnection(), this, data[i].adClientId, data[i].adOrgId,
+              strDateInvoiced, data[i].cBpartnerId, strBPCCurrencyId, data[i].cProjectId,
+              data[i].cActivityId, data[i].cCampaignId, strcBpartnerLocationId, strPaymentRule,
+              strPaymentMethodId, strPaymentterm, data[i].cCostcenterId, data[i].aAssetId,
+              data[i].user1Id, data[i].user2Id);
         }
 
         if (strcInvoiceIdOld.equals("")) {
@@ -200,10 +210,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 "N", "", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "",
                 strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced,
                 data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId,
-                strSalesrepId, "N", "", "", strPaymentRule, strPaymentMethodId, strPaymentterm,
-                "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId,
-                vars.getOrg(), data[i].user1Id, data[i].user2Id, "0", "0", "DR", strDocType, "N",
-                "CO", "N", vars.getUser(), vars.getUser(), data[i].cCostcenterId, data[i].aAssetId);
+                strSalesrepId, "N", "", "", strPaymentRule, strPaymentMethodId, strPaymentterm, "N",
+                "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(),
+                data[i].user1Id, data[i].user2Id, "0", "0", "DR", strDocType, "N", "CO", "N",
+                vars.getUser(), vars.getUser(), data[i].cCostcenterId, data[i].aAssetId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             OBDal.getInstance().rollbackAndClose();
@@ -212,19 +222,24 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
           textoMensaje
               .append(Utility.messageBD(this, "PurchaseInvoiceDocumentno", vars.getLanguage()))
-              .append(" ").append(strDocumentno).append(" ")
-              .append(Utility.messageBD(this, "beenCreated", vars.getLanguage())).append("<br>");
+              .append(" ")
+              .append(strDocumentno)
+              .append(" ")
+              .append(Utility.messageBD(this, "beenCreated", vars.getLanguage()))
+              .append("<br>");
           total++;
-        } else
+        } else {
           strcInvoiceId = strcInvoiceIdOld;
+        }
 
         // Determines the date of the expense (strDateExpense)
         strDateexpense = data[i].dateexpense.equals("") ? data[i].datereport : data[i].dateexpense;
         strDateexpense = strDateexpense.equals("") ? DateTimeData.today(this) : strDateexpense;
 
         String bpartnerLocationShip = ExpenseAPInvoiceData.shipto(this, data[i].cBpartnerId);
-        if (bpartnerLocationShip.equals(""))
+        if (bpartnerLocationShip.equals("")) {
           throw new Exception("ShiptoNotdefined");
+        }
 
         String strmProductUomId = ExpenseAPInvoiceData.mProductUomId(this, data[i].mProductId);
 
@@ -232,8 +247,9 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         strcTaxID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId,
             vars.getWarehouse(), strcBpartnerLocationId, bpartnerLocationShip, data[i].cProjectId,
             false);
-        if (strcTaxID.equals(""))
+        if (strcTaxID.equals("")) {
           throw new Exception("TaxNotFound");
+        }
 
         // Currency of the expense line
         strCCurrencyId = data[i].cCurrencyId;
@@ -262,8 +278,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           if (!strCCurrencyId.equals(strBPCCurrencyId)) {
             // Converts priceactual, pricelist and pricelimit to the
             // currency of the employee pricelist
-            strPricestd = ExpenseAPInvoiceData.selectConvertedAmt(this, strPricestd,
-                strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());
+            strPricestd = ExpenseAPInvoiceData.selectConvertedAmt(this, strPricestd, strCCurrencyId,
+                strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());
             strPricelist = ExpenseAPInvoiceData.selectConvertedAmt(this, strPricelist,
                 strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());
             strPricelimit = ExpenseAPInvoiceData.selectConvertedAmt(this, strPricelimit,
@@ -272,8 +288,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         }
 
         // Recalculates precisions for the employee pricelist currency
-        ExpenseAPInvoiceData[] data4 = ExpenseAPInvoiceData
-            .selectPrecisions(this, strBPCCurrencyId);
+        ExpenseAPInvoiceData[] data4 = ExpenseAPInvoiceData.selectPrecisions(this,
+            strBPCCurrencyId);
         if (data4 != null && data4.length > 0) {
           strPricePrecision = data4[0].priceprecision.equals("") ? "0" : data4[0].priceprecision;
           strStdPrecision = data4[0].stdprecision.equals("") ? "0" : data4[0].stdprecision;
@@ -290,22 +306,26 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         strPricelist = priceList.toString();
         strPricelimit = priceLimit.toString();
 
-        if (strPricestd.equals(""))
+        if (strPricestd.equals("")) {
           strPricestd = "0";
-        if (strPricelist.equals(""))
+        }
+        if (strPricelist.equals("")) {
           strPricelist = "0";
-        if (strPricelimit.equals(""))
+        }
+        if (strPricelimit.equals("")) {
           strPricelimit = "0";
+        }
 
         // Checks if there are lines with the same conditions in the
         // current invoice
-        ExpenseAPInvoiceData[] dataInvoiceline = ExpenseAPInvoiceData.selectInvoiceLine(OBDal
-            .getInstance().getConnection(), this, strcInvoiceId, data[i].adClientId,
+        ExpenseAPInvoiceData[] dataInvoiceline = ExpenseAPInvoiceData.selectInvoiceLine(
+            OBDal.getInstance().getConnection(), this, strcInvoiceId, data[i].adClientId,
             data[i].adOrgId, data[i].mProductId, data[i].cUomId, strPricestd, strPricelist,
             strPricelimit, data[i].description, strcTaxID);
 
-        if (expenseAPInvoiceLog4j.isDebugEnabled())
+        if (expenseAPInvoiceLog4j.isDebugEnabled()) {
           expenseAPInvoiceLog4j.debug("dataInvoiceline: " + dataInvoiceline.length);
+        }
         if (dataInvoiceline == null || dataInvoiceline.length == 0) {
           // If it is a new line, calculates c_invoiceline_id and qty
           strcInvoiceLineId = SequenceIdData.getUUID();
@@ -313,13 +333,14 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           String strLine = ExpenseAPInvoiceData.selectLine(OBDal.getInstance().getConnection(),
               this, strcInvoiceId);
 
-          if (expenseAPInvoiceLog4j.isDebugEnabled())
+          if (expenseAPInvoiceLog4j.isDebugEnabled()) {
             expenseAPInvoiceLog4j.debug("*****************+client: "
                 + (data[i].invoiceprice.equals("") ? dataPrice[0].pricestd : data[i].invoiceprice));
+          }
           // Calculate Acc and Def Plan from Product
           String isDeferred = "N";
-          HashMap<String, String> accDefPlanData = AccDefUtility.getDeferredPlanForInvoiceProduct(
-              strcInvoiceId, data[i].mProductId);
+          HashMap<String, String> accDefPlanData = AccDefUtility
+              .getDeferredPlanForInvoiceProduct(strcInvoiceId, data[i].mProductId);
           String planType = accDefPlanData.get("planType");
           String periodNumber = accDefPlanData.get("periodNumber");
           String startingPeriodId = accDefPlanData.get("startingPeriodId");
@@ -336,13 +357,14 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             int stdPrecision = Integer.parseInt(strStdPrecision);
             ExpenseAPInvoiceData.insertLine(OBDal.getInstance().getConnection(), this,
                 data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", strLine, "",
-                data[i].mProductId, "", data[i].description, "", strmProductUomId, String
-                    .valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID,
+                data[i].mProductId, "", data[i].description, "", strmProductUomId,
+                String.valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID,
                 ((new BigDecimal(strPricestd).setScale(stdPrecision, RoundingMode.HALF_UP))
-                    .multiply(qty)).toPlainString(), "", strPricestd, strPricelimit, "", "", "",
-                "Y", "0", "", "", strcInvoiceLineId, "N", vars.getUser(), vars.getUser(),
-                isDeferred, planType, periodNumber, startingPeriodId, data[i].cProjectId,
-                data[i].cCostcenterId, data[i].aAssetId, data[i].user1Id, data[i].user2Id);
+                    .multiply(qty)).toPlainString(),
+                "", strPricestd, strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId,
+                "N", vars.getUser(), vars.getUser(), isDeferred, planType, periodNumber,
+                startingPeriodId, data[i].cProjectId, data[i].cCostcenterId, data[i].aAssetId,
+                data[i].user1Id, data[i].user2Id);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             OBDal.getInstance().rollbackAndClose();
@@ -368,8 +390,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         if (!data[i].cProjectId.equals("")) {
           // If there are acctdimensions that full filled the
           // requirements
-          ExpenseAPInvoiceData[] dataAcctdimension = ExpenseAPInvoiceData.selectAcctdimension(OBDal
-              .getInstance().getConnection(), this, data[i].adClientId, data[i].adOrgId,
+          ExpenseAPInvoiceData[] dataAcctdimension = ExpenseAPInvoiceData.selectAcctdimension(
+              OBDal.getInstance().getConnection(), this, data[i].adClientId, data[i].adOrgId,
               strcInvoiceLineId, data[i].cProjectId, data[i].cCampaignId, data[i].cCostcenterId,
               data[i].aAssetId, data[i].user1Id, data[i].user2Id);
           int StdPrecision = Integer.valueOf(strStdPrecision).intValue();
@@ -379,11 +401,12 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             try {
               BigDecimal roundPriceStd = qty.multiply(new BigDecimal(strPricestd));
               roundPriceStd = roundPriceStd.setScale(StdPrecision, RoundingMode.HALF_UP);
-              ExpenseAPInvoiceData.insertInvoicelineAcctdimension(OBDal.getInstance()
-                  .getConnection(), this, strcInvoicelineAcctdimension, data[i].adClientId,
-                  data[i].adOrgId, "Y", vars.getUser(), vars.getUser(), strcInvoiceLineId,
-                  roundPriceStd.toPlainString(), data[i].cProjectId, data[i].cCampaignId,
-                  data[i].user1Id, data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId);
+              ExpenseAPInvoiceData.insertInvoicelineAcctdimension(
+                  OBDal.getInstance().getConnection(), this, strcInvoicelineAcctdimension,
+                  data[i].adClientId, data[i].adOrgId, "Y", vars.getUser(), vars.getUser(),
+                  strcInvoiceLineId, roundPriceStd.toPlainString(), data[i].cProjectId,
+                  data[i].cCampaignId, data[i].user1Id, data[i].user2Id, data[i].cCostcenterId,
+                  data[i].aAssetId);
             } catch (ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               OBDal.getInstance().rollbackAndClose();
@@ -392,8 +415,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           } else {
             // If there are more lines that full filled the
             // requirements, adds the new amount to the old
-            amount = new BigDecimal(dataAcctdimension[0].amt).add(new BigDecimal(data[i].qty)
-                .multiply(new BigDecimal(strPricestd)));
+            amount = new BigDecimal(dataAcctdimension[0].amt)
+                .add(new BigDecimal(data[i].qty).multiply(new BigDecimal(strPricestd)));
             amount = amount.setScale(StdPrecision, RoundingMode.HALF_UP);
             // Catch database error message
             try {
@@ -421,9 +444,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myMessage
-          .setMessage(textoMensaje.toString()
-              + Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
+      myMessage.setMessage(
+          textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": "
               + Integer.toString(total));
       return myMessage;
     } catch (ArrayIndexOutOfBoundsException f) {
@@ -456,13 +478,13 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' '
             + strEmpl + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("FormofPaymentNotdefined")) {
-        myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' '
-            + strEmpl + ' '
-            + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
+        myMessage
+            .setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + strEmpl
+                + ' ' + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("PayementMethodNotdefined")) {
-        myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' '
-            + strEmpl + ' '
-            + Utility.messageBD(this, "PayementMethodNotdefined", vars.getLanguage()));
+        myMessage
+            .setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' ' + strEmpl
+                + ' ' + Utility.messageBD(this, "PayementMethodNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("PaymenttermNotdefined")) {
         myMessage.setMessage(Utility.messageBD(this, "TheEmployee", vars.getLanguage()) + ' '
             + strEmpl + ' ' + Utility.messageBD(this, "PaymenttermNotdefined", vars.getLanguage()));
@@ -482,25 +504,29 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strcBpartnerId, String strDatereportFrom, String strDatereportTo,
       String strDateInvoiced) throws IOException, ServletException {
-    if (expenseAPInvoiceLog4j.isDebugEnabled())
+    if (expenseAPInvoiceLog4j.isDebugEnabled()) {
       expenseAPInvoiceLog4j.debug("Output: process ExpenseAPInvoice");
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "", strProcessId = "187";
     String[] discard = { "" };
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
+    }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/ExpenseAPInvoice").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/ExpenseAPInvoice")
+        .createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ExpenseAPInvoice", false, "", "", "",
         false, "ad_process", strReplaceWith, false, true);
@@ -519,9 +545,9 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID",
-          "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ExpenseAPInvoice"), Utility.getContext(this, vars, "#User_Client",
-              "ExpenseAPInvoice"), 0);
+          "C_BPartner Employee w Address", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ExpenseAPInvoice"),
+          Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseAPInvoice", "");
       xmlDocument.setData("reportC_BPARTNERID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -571,6 +597,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ExpenseAPInvoice";
   } // end of getServletInfo() method

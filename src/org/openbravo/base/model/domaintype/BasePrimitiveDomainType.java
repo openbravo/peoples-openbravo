@@ -30,7 +30,8 @@ import org.openbravo.base.validation.ValidationException;
  * 
  * @author mtaal
  */
-public abstract class BasePrimitiveDomainType extends BaseDomainType implements PrimitiveDomainType {
+public abstract class BasePrimitiveDomainType extends BaseDomainType
+    implements PrimitiveDomainType {
 
   private Constructor<Object> constructor;
 
@@ -39,6 +40,7 @@ public abstract class BasePrimitiveDomainType extends BaseDomainType implements 
    * 
    * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getHibernateType()
    */
+  @Override
   public Class<?> getHibernateType() {
     return getPrimitiveType();
   }
@@ -46,19 +48,19 @@ public abstract class BasePrimitiveDomainType extends BaseDomainType implements 
   /*
    * (non-Javadoc)
    * 
-   * @see
-   * org.openbravo.base.model.domaintype.DomainType#checkIsValidValue(org.openbravo.base.model.Property
-   * , java.lang.Object)
+   * @see org.openbravo.base.model.domaintype.DomainType#checkIsValidValue(org.openbravo.base.model.
+   * Property , java.lang.Object)
    */
+  @Override
   public void checkIsValidValue(Property property, Object value) throws ValidationException {
     if (value == null) {
       return;
     }
     if (!getPrimitiveType().isInstance(value)) {
       final ValidationException ve = new ValidationException();
-      ve.addMessage(property, "Property " + property + " only allows instances of "
-          + getPrimitiveType().getName() + " but the value is an instanceof "
-          + value.getClass().getName());
+      ve.addMessage(property,
+          "Property " + property + " only allows instances of " + getPrimitiveType().getName()
+              + " but the value is an instanceof " + value.getClass().getName());
       throw ve;
     }
   }
@@ -68,6 +70,7 @@ public abstract class BasePrimitiveDomainType extends BaseDomainType implements 
    * 
    * @see org.openbravo.base.model.domaintype.PrimitiveDomainType#getFormatId()
    */
+  @Override
   public String getFormatId() {
     return null;
   }

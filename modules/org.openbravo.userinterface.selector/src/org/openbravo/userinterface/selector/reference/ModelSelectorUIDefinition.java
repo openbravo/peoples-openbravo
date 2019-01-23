@@ -33,6 +33,7 @@ public class ModelSelectorUIDefinition extends FKSelectorUIDefinition {
     return getSuperGridFieldProperties(field);
   }
 
+  @Override
   protected String getGridFieldName(Field fld) {
     return super.getSuperGridFieldName(fld);
   }

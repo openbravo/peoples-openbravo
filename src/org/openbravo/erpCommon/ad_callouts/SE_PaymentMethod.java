@@ -30,8 +30,8 @@ public class SE_PaymentMethod extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     VariablesSecureApp vars = info.vars;
     String strfinPaymentmethodId = vars.getStringParameter("inpfinPaymentmethodId");
-    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-        strfinPaymentmethodId);
+    FIN_PaymentMethod paymentMethod = OBDal.getInstance()
+        .get(FIN_PaymentMethod.class, strfinPaymentmethodId);
     try {
       // IN
       info.addResult("inppayinAllow", paymentMethod.isPayinAllow() ? "Y" : "N");
@@ -39,15 +39,15 @@ public class SE_PaymentMethod extends SimpleCallout {
       info.addResult("inpautomaticDeposit", paymentMethod.isAutomaticDeposit() ? "Y" : "N");
       info.addResult("inppayinExecutionType", paymentMethod.getPayinExecutionType());
       info.addResult("inppayinExecutionProcessId",
-          paymentMethod.getPayinExecutionProcess() == null ? "" : paymentMethod
-              .getPayinExecutionProcess().getId());
+          paymentMethod.getPayinExecutionProcess() == null ? ""
+              : paymentMethod.getPayinExecutionProcess().getId());
       info.addResult("inppayinDeferred", paymentMethod.isPayinDeferred() ? "Y" : "N");
-      info.addResult("inpuponreceiptuse", paymentMethod.getUponReceiptUse() == null ? ""
-          : paymentMethod.getUponReceiptUse());
-      info.addResult("inpupondeposituse", paymentMethod.getUponDepositUse() == null ? ""
-          : paymentMethod.getUponDepositUse());
-      info.addResult("inpinuponclearinguse", paymentMethod.getINUponClearingUse() == null ? ""
-          : paymentMethod.getINUponClearingUse());
+      info.addResult("inpuponreceiptuse",
+          paymentMethod.getUponReceiptUse() == null ? "" : paymentMethod.getUponReceiptUse());
+      info.addResult("inpupondeposituse",
+          paymentMethod.getUponDepositUse() == null ? "" : paymentMethod.getUponDepositUse());
+      info.addResult("inpinuponclearinguse",
+          paymentMethod.getINUponClearingUse() == null ? "" : paymentMethod.getINUponClearingUse());
       info.addResult("inppayinIsmulticurrency", paymentMethod.isPayinIsMulticurrency() ? "Y" : "N");
       // OUT
       info.addResult("inppayoutAllow", paymentMethod.isPayoutAllow() ? "Y" : "N");
@@ -55,17 +55,17 @@ public class SE_PaymentMethod extends SimpleCallout {
       info.addResult("inpautomaticWithdrawn", paymentMethod.isAutomaticWithdrawn() ? "Y" : "N");
       info.addResult("inppayoutExecutionType", paymentMethod.getPayoutExecutionType());
       info.addResult("inppayoutExecutionProcessId",
-          paymentMethod.getPayoutExecutionProcess() == null ? "" : paymentMethod
-              .getPayoutExecutionProcess().getId());
+          paymentMethod.getPayoutExecutionProcess() == null ? ""
+              : paymentMethod.getPayoutExecutionProcess().getId());
       info.addResult("inppayoutDeferred", paymentMethod.isPayoutDeferred() ? "Y" : "N");
-      info.addResult("inpuponpaymentuse", paymentMethod.getUponPaymentUse() == null ? ""
-          : paymentMethod.getUponPaymentUse());
-      info.addResult("inpuponwithdrawaluse", paymentMethod.getUponWithdrawalUse() == null ? ""
-          : paymentMethod.getUponWithdrawalUse());
+      info.addResult("inpuponpaymentuse",
+          paymentMethod.getUponPaymentUse() == null ? "" : paymentMethod.getUponPaymentUse());
+      info.addResult("inpuponwithdrawaluse",
+          paymentMethod.getUponWithdrawalUse() == null ? "" : paymentMethod.getUponWithdrawalUse());
       info.addResult("inpoutuponclearinguse", paymentMethod.getOUTUponClearingUse() == null ? ""
           : paymentMethod.getOUTUponClearingUse());
-      info.addResult("inppayoutIsmulticurrency", paymentMethod.isPayoutIsMulticurrency() ? "Y"
-          : "N");
+      info.addResult("inppayoutIsmulticurrency",
+          paymentMethod.isPayoutIsMulticurrency() ? "Y" : "N");
     } catch (Exception e) {
       log4j.info("No default info for the selected payment method");
     }

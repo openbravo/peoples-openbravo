@@ -59,16 +59,16 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
     } catch (GenericJDBCException ge) {
       log4j.error("Exception processing variant generation", ge);
       msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+          bundle.getContext().getLanguage()));
       msg.setMessage(ge.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } catch (final Exception e) {
       log4j.error("Exception processing variant generation", e);
       msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+          bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
@@ -105,8 +105,8 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
         where.append("    where chv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTICVALUE
             + ".id = :chvid)");
       }
-      OBQuery<Product> productQuery = OBDal.getInstance().createQuery(Product.class,
-          where.toString());
+      OBQuery<Product> productQuery = OBDal.getInstance()
+          .createQuery(Product.class, where.toString());
       if (StringUtils.isNotBlank(strChValueId)) {
         productQuery.setNamedParameter("chvid", strChValueId);
       }
@@ -141,8 +141,8 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
     where.append(" as pch");
     where.append(" where pch." + ProductCharacteristic.PROPERTY_PRODUCT + " = :product");
     where.append(" order by pch." + ProductCharacteristic.PROPERTY_SEQUENCENUMBER);
-    OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance().createQuery(
-        ProductCharacteristic.class, where.toString());
+    OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance()
+        .createQuery(ProductCharacteristic.class, where.toString());
     pchQuery.setFilterOnActive(false);
     pchQuery.setFilterOnReadableOrganization(false);
     pchQuery.setNamedParameter("product", product);
@@ -153,11 +153,11 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       strChDesc += pch.getCharacteristic().getName() + ":";
       where = new StringBuffer();
       where.append(" as pchv");
-      where.append(" where pchv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC
-          + ".id = :ch");
+      where.append(
+          " where pchv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC + ".id = :ch");
       where.append("   and pchv." + ProductCharacteristicValue.PROPERTY_PRODUCT + ".id = :product");
-      OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance().createQuery(
-          ProductCharacteristicValue.class, where.toString());
+      OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance()
+          .createQuery(ProductCharacteristicValue.class, where.toString());
       pchvQuery.setFilterOnActive(false);
       pchvQuery.setFilterOnReadableOrganization(false);
       pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());

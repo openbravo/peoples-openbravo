@@ -37,8 +37,8 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 
 @SuppressWarnings("serial")
-public class DynamicOBObject extends BaseOBObject implements Traceable, ClientEnabled,
-    OrganizationEnabled {
+public class DynamicOBObject extends BaseOBObject
+    implements Traceable, ClientEnabled, OrganizationEnabled {
 
   private String entityName;
 
@@ -63,34 +63,42 @@ public class DynamicOBObject extends BaseOBObject implements Traceable, ClientEn
     set(Organization.PROPERTY_ID, id);
   }
 
+  @Override
   public User getUpdatedBy() {
     return (User) get(Organization.PROPERTY_UPDATEDBY);
   }
 
+  @Override
   public void setUpdatedBy(User updatedby) {
     set(Organization.PROPERTY_UPDATEDBY, updatedby);
   }
 
+  @Override
   public Date getUpdated() {
     return (Date) get(Organization.PROPERTY_UPDATED);
   }
 
+  @Override
   public void setUpdated(Date updated) {
     set(Organization.PROPERTY_UPDATED, updated);
   }
 
+  @Override
   public User getCreatedBy() {
     return (User) get(Organization.PROPERTY_CREATEDBY);
   }
 
+  @Override
   public void setCreatedBy(User createdby) {
     set(Organization.PROPERTY_CREATEDBY, createdby);
   }
 
+  @Override
   public Date getCreationDate() {
     return (Date) get(Organization.PROPERTY_CREATIONDATE);
   }
 
+  @Override
   public void setCreationDate(Date created) {
     set(Organization.PROPERTY_CREATIONDATE, created);
   }
@@ -122,18 +130,22 @@ public class DynamicOBObject extends BaseOBObject implements Traceable, ClientEn
     return IdentifierProvider.getInstance().getIdentifier(this);
   }
 
+  @Override
   public Client getClient() {
     return (Client) get(PROPERTY_CLIENT);
   }
 
+  @Override
   public void setClient(Client client) {
     set(PROPERTY_CLIENT, client);
   }
 
+  @Override
   public Organization getOrganization() {
     return (Organization) get(PROPERTY_ORGANIZATION);
   }
 
+  @Override
   public void setOrganization(Organization organization) {
     set(PROPERTY_ORGANIZATION, organization);
   }

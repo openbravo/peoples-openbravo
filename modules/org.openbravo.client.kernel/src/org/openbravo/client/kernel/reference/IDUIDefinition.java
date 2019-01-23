@@ -42,6 +42,7 @@ public class IDUIDefinition extends ForeignKeyUIDefinition {
     return "OBTextItem";
   }
 
+  @Override
   protected String getDisplayFieldName(Field field, Property prop) {
     return JsonConstants.IDENTIFIER;
   }

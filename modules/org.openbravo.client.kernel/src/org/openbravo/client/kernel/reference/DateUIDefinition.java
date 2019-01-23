@@ -83,7 +83,8 @@ public class DateUIDefinition extends UIDefinition {
         Long length = field.getColumn().getLength();
         if (length != null) {
           final String dateTimeFormat = (String) OBPropertiesProvider.getInstance()
-              .getOpenbravoProperties().get(KernelConstants.DATETIME_FORMAT_PROPERTY);
+              .getOpenbravoProperties()
+              .get(KernelConstants.DATETIME_FORMAT_PROPERTY);
           if (length.equals(19L) && dateTimeFormat.endsWith(" a")) {
             // If it is a DateTime (typical length of 19) and there is also the need to show the
             // " AM" or " PM" text, three characters more need to be added, so the length should be
@@ -177,6 +178,7 @@ public class DateUIDefinition extends UIDefinition {
     return "left";
   }
 
+  @Override
   public String getValueFromSQLDefault(ResultSet rs) throws SQLException {
     Date date = rs.getDate(1);
     return getClassicFormat().format(date);

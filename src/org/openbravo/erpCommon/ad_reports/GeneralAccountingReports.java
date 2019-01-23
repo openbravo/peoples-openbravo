@@ -76,8 +76,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String C_ELEMENT_VALUE_TABLE_ID = "188";
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -92,8 +93,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|asDateTo", "");
       String strAsDateToRef = vars.getGlobalVariable("inpAsDateToRef",
           "GeneralAccountingReports|asDateToRef", "");
-      String strPageNo = vars
-          .getGlobalVariable("inpPageNo", "GeneralAccountingReports|PageNo", "1");
+      String strPageNo = vars.getGlobalVariable("inpPageNo", "GeneralAccountingReports|PageNo",
+          "1");
       String strElementValue = vars.getGlobalVariable("inpcElementvalueId",
           "GeneralAccountingReports|C_ElementValue_ID", "");
       String strConImporte = vars.getGlobalVariable("inpConImporte",
@@ -141,8 +142,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|organizacion");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "GeneralAccountingReports|level");
       printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
-          strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
-          strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo, strCompareTo);
+          strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte,
+          strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo, strCompareTo);
     } else if (vars.commandIn("LEDGER")) {
       String strOrg = vars.getStringParameter("inpOrganizacion");
       if (StringUtils.isEmpty(strOrg)) {
@@ -172,8 +173,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         i++;
       }
       ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-      GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectOrgsDouble(
-          readOnlyCP, vars.getClient(), strOrgList, strAccSchema, strAcctRpt);
+      GeneralAccountingReportsData[] data = GeneralAccountingReportsData
+          .selectOrgsDouble(readOnlyCP, vars.getClient(), strOrgList, strAccSchema, strAcctRpt);
       String combobox = getJSONComboBox(data, strOrg, false);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -183,8 +184,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strOrg = vars.getStringParameter("inpOrganizacion", "");
       String strAgno = vars.getStringParameter("inpAgno", "");
       ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-      GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectYearsDouble(
-          readOnlyCP, vars.getUserClient(), strOrg);
+      GeneralAccountingReportsData[] data = GeneralAccountingReportsData
+          .selectYearsDouble(readOnlyCP, vars.getUserClient(), strOrg);
       String combobox = getJSONComboBox(data, strAgno, false);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -249,20 +250,20 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     String strCalculateOpening = localStrElementValue.substring(0, 1);
     localStrElementValue = localStrElementValue.substring(1, localStrElementValue.length());
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    GeneralAccountingReportsData[] strGroups = GeneralAccountingReportsData.selectGroups(
-        readOnlyCP, localStrElementValue);
+    GeneralAccountingReportsData[] strGroups = GeneralAccountingReportsData.selectGroups(readOnlyCP,
+        localStrElementValue);
 
     try {
       strGroups[strGroups.length - 1].pagebreak = "";
 
       String[][] strElementValueDes = new String[strGroups.length][];
       if (log4j.isDebugEnabled()) {
-        log4j.debug("strElementValue:" + localStrElementValue + " - strGroups.length:"
-            + strGroups.length);
+        log4j.debug(
+            "strElementValue:" + localStrElementValue + " - strGroups.length:" + strGroups.length);
       }
       for (int i = 0; i < strGroups.length; i++) {
-        GeneralAccountingReportsData[] strElements = GeneralAccountingReportsData.selectElements(
-            readOnlyCP, strGroups[i].id);
+        GeneralAccountingReportsData[] strElements = GeneralAccountingReportsData
+            .selectElements(readOnlyCP, strGroups[i].id);
         strElementValueDes[i] = new String[strElements.length];
         if (log4j.isDebugEnabled()) {
           log4j.debug("strElements.length:" + strElements.length);
@@ -340,14 +341,15 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           }
           // For each account with movements in the year, debit and credit total amounts are
           // calculated according to fact_acct movements.
-          AccountTreeData[] accounts = AccountTreeData.selectFactAcct(readOnlyCP, Utility
-              .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+          AccountTreeData[] accounts = AccountTreeData.selectFactAcct(readOnlyCP,
+              Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                  "GeneralAccountingReports"),
               Utility.getContext(readOnlyCP, vars, "#User_Client", "GeneralAccountingReports"),
               localStrDateFrom, DateTimeData.nDaysAfter(readOnlyCP, localStrDateTo, "1"),
               strcAcctSchemaId, Tree.getMembers(readOnlyCP, strTreeOrg, strOrg),
               "'" + year.getFiscalYear() + "'" + strYearsToClose, openingEntryOwner, strCompareTo,
-              localStrDateFromRef, DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef, "1"), "'"
-                  + yrRef + "'" + strYearsToCloseRef, openingEntryOwnerRef);
+              localStrDateFromRef, DateTimeData.nDaysAfter(readOnlyCP, localStrDateToRef, "1"),
+              "'" + yrRef + "'" + strYearsToCloseRef, openingEntryOwnerRef);
           {
             if (log4j.isDebugEnabled()) {
               log4j.debug("*********** strIncomeSummaryAccount: " + strIncomeSummaryAccount);
@@ -419,11 +421,11 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         parameters.put("agnoInitial", year.getFiscalYear());
         parameters.put("agnoRef", yrRef);
         parameters.put("compareTo", StringUtils.equals(strCompareTo, "Y") ? "Y" : "N");
-        parameters.put(
-            "principalTitle",
-            StringUtils.equals(strCalculateOpening, "Y") ? GeneralAccountingReportsData.rptTitle(
-                readOnlyCP, localStrElementValue) + " (Provisional)" : GeneralAccountingReportsData
-                .rptTitle(readOnlyCP, localStrElementValue));
+        parameters.put("principalTitle",
+            StringUtils.equals(strCalculateOpening, "Y")
+                ? GeneralAccountingReportsData.rptTitle(readOnlyCP, localStrElementValue)
+                    + " (Provisional)"
+                : GeneralAccountingReportsData.rptTitle(readOnlyCP, localStrElementValue));
 
         parameters.put("pageNo", strPageNo);
 
@@ -493,8 +495,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   private boolean isNotClosed(Year year, Organization org, String strcAcctSchemaId) {
     OBContext.setAdminMode(false);
     try {
-      OBCriteria<OrganizationClosing> obc = OBDal.getReadOnlyInstance().createCriteria(
-          OrganizationClosing.class);
+      OBCriteria<OrganizationClosing> obc = OBDal.getReadOnlyInstance()
+          .createCriteria(OrganizationClosing.class);
       obc.createAlias(OrganizationClosing.PROPERTY_ORGACCTSCHEMA, "oa");
       obc.add(Restrictions.eq("organization", org));
       obc.add(Restrictions.eq(OrganizationClosing.PROPERTY_YEAR, year));
@@ -512,8 +514,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     ArrayList<Year> result = new ArrayList<Year>();
     hqlString.append("select y");
     hqlString.append(" from FinancialMgmtYear y, FinancialMgmtPeriod as p");
-    hqlString
-        .append(" where p.year = y  and p.endingDate < :date and y.calendar = :calendar order by p.startingDate");
+    hqlString.append(
+        " where p.year = y  and p.endingDate < :date and y.calendar = :calendar order by p.startingDate");
     final Session session = OBDal.getReadOnlyInstance().getSession();
     final Query<Year> query = session.createQuery(hqlString.toString(), Year.class);
     query.setParameter("date", startingDate);
@@ -580,8 +582,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   }
 
   private String processIncomeSummary(String strDateFrom, String strDateTo, String strAgno,
-      String strTreeOrg, String strOrg, String strcAcctSchemaId) throws ServletException,
-      IOException {
+      String strTreeOrg, String strOrg, String strcAcctSchemaId)
+      throws ServletException, IOException {
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     String strISRevenue = GeneralAccountingReportsData.selectPyG(readOnlyCP, "R", strDateFrom,
         strDateTo, strcAcctSchemaId, strAgno, Tree.getMembers(readOnlyCP, strTreeOrg, strOrg));
@@ -600,16 +602,17 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strAgno, String strAgnoRef, String strDateFrom, String strDateTo, String strPageNo,
       String strDateFromRef, String strDateToRef, String strAsDateTo, String strAsDateToRef,
       String strElementValue, String strConImporte, String strOrg, String strLevel,
-      String strConCodigo, String strcAcctSchemaId, String strCompareTo) throws IOException,
-      ServletException {
+      String strConCodigo, String strcAcctSchemaId, String strCompareTo)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/GeneralAccountingReports").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/GeneralAccountingReports")
+        .createXmlDocument();
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "GeneralAccountingReports",
-        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "GeneralAccountingReports", false,
+        "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -671,16 +674,16 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("C_ElementValue_ID", strElementValue);
     xmlDocument.setParameter("level", strLevel);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(readOnlyCP,
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure",
+        AccountingSchemaMiscData.selectC_ACCTSCHEMA_ID(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
             Utility.getContext(readOnlyCP, vars, "#User_Client", "GeneralAccountingReports"),
             strcAcctSchemaId));
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
-          "C_ElementValue level", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "GeneralAccountingReports"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "GeneralAccountingReports"), 0);
+          "C_ElementValue level", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "GeneralAccountingReports"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "GeneralAccountingReports",
           "");
       xmlDocument.setData("reportLevel", "liststructure", comboTableData.select(false));
@@ -689,10 +692,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
     xmlDocument.setParameter("orgs", Utility.arrayDobleEntrada("arrOrgs", new FieldProvider[0]));
-    xmlDocument.setParameter(
-        "accountingReports",
-        Utility.arrayDobleEntrada("arrAccountingReports",
-            GeneralAccountingReportsData.selectRptDouble(readOnlyCP)));
+    xmlDocument.setParameter("accountingReports", Utility.arrayDobleEntrada("arrAccountingReports",
+        GeneralAccountingReportsData.selectRptDouble(readOnlyCP)));
     xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears", new FieldProvider[0]));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -707,7 +708,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       hqlString.append(" select " + RoleOrganization.PROPERTY_ORGANIZATION + ".id");
       hqlString.append(" from " + RoleOrganization.ENTITY_NAME);
       hqlString.append(" where " + RoleOrganization.PROPERTY_ROLE + ".id = :roleId");
-      Query<String> query = OBDal.getReadOnlyInstance().getSession()
+      Query<String> query = OBDal.getReadOnlyInstance()
+          .getSession()
           .createQuery(hqlString.toString(), String.class);
       query.setParameter("roleId", roleId);
       return query.list();
@@ -716,6 +718,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet GeneralAccountingReportsData";
   } // end of getServletInfo() method

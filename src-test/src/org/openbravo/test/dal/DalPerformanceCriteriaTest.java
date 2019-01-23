@@ -143,6 +143,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       this.doScroll = doScroll;
     }
 
+    @Override
     public int doCriteriaQry() {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
       obc.add(Restrictions.eq(Currency.PROPERTY_ISOCODE, DOLLAR));
@@ -158,6 +159,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public int doHqlQry() {
       final OBQuery<Currency> obq = OBDal.getInstance()
           .createQuery(Currency.class, "iSOCode='USD'");
@@ -166,10 +168,12 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public String getId() {
       return qryStr;
     }
 
+    @Override
     public boolean isDoScroll() {
       return doScroll;
     }
@@ -183,6 +187,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       this.doScroll = doScroll;
     }
 
+    @Override
     public int doCriteriaQry() {
       final OBCriteria<Currency> obc = OBDal.getInstance().createCriteria(Currency.class);
       if (doScroll) {
@@ -197,6 +202,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public int doHqlQry() {
       final OBQuery<Currency> obq = OBDal.getInstance().createQuery(Currency.class, "");
       final List<Currency> cs = obq.list();
@@ -204,10 +210,12 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public String getId() {
       return qryStr;
     }
 
+    @Override
     public boolean isDoScroll() {
       return doScroll;
     }
@@ -221,9 +229,10 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       this.doScroll = doScroll;
     }
 
+    @Override
     public int doCriteriaQry() {
-      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance().createCriteria(
-          MaterialTransaction.class);
+      final OBCriteria<MaterialTransaction> obc = OBDal.getInstance()
+          .createCriteria(MaterialTransaction.class);
       obc.add(Restrictions.isNotNull(MaterialTransaction.PROPERTY_UOM));
       obc.addOrderBy(MaterialTransaction.PROPERTY_PRODUCT + "." + Product.PROPERTY_NAME, false);
       obc.setMaxResults(10);
@@ -240,9 +249,10 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public int doHqlQry() {
-      final OBQuery<MaterialTransaction> obq = OBDal.getInstance().createQuery(
-          MaterialTransaction.class, " uOM <> null order by product.name desc");
+      final OBQuery<MaterialTransaction> obq = OBDal.getInstance()
+          .createQuery(MaterialTransaction.class, " uOM <> null order by product.name desc");
       obq.setMaxResult(10);
       obq.setFirstResult(0);
       final List<MaterialTransaction> cs = obq.list();
@@ -250,10 +260,12 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public String getId() {
       return qryStr;
     }
 
+    @Override
     public boolean isDoScroll() {
       return doScroll;
     }
@@ -267,6 +279,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       this.doScroll = doScroll;
     }
 
+    @Override
     public int doCriteriaQry() {
       OBCriteria<Table> c = OBDal.getInstance().createCriteria(Table.class);
       c.add(Restrictions.eq(Table.PROPERTY_ID, "100"));
@@ -282,6 +295,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public int doHqlQry() {
       OBQuery<Table> q = OBDal.getInstance().createQuery(Table.class, "id = :id");
       q.setNamedParameter("id", "100");
@@ -290,10 +304,12 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public String getId() {
       return qryStr;
     }
 
+    @Override
     public boolean isDoScroll() {
       return doScroll;
     }
@@ -307,6 +323,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       this.doScroll = doScroll;
     }
 
+    @Override
     public int doCriteriaQry() {
       OBCriteria<BusinessPartner> c = OBDal.getInstance().createCriteria(BusinessPartner.class);
       c.setFilterOnActive(false);
@@ -325,6 +342,7 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public int doHqlQry() {
       OBQuery<BusinessPartner> q = OBDal.getInstance().createQuery(BusinessPartner.class, "");
       q.setFilterOnActive(false);
@@ -344,10 +362,12 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
       return cs.size();
     }
 
+    @Override
     public String getId() {
       return qryStr;
     }
 
+    @Override
     public boolean isDoScroll() {
       return doScroll;
     }
@@ -357,8 +377,8 @@ public class DalPerformanceCriteriaTest extends OBBaseTest {
     try {
       setTestAdminContext();
 
-      final OBQuery<BusinessPartner> bps = OBDal.getInstance().createQuery(BusinessPartner.class,
-          "");
+      final OBQuery<BusinessPartner> bps = OBDal.getInstance()
+          .createQuery(BusinessPartner.class, "");
       bps.setFilterOnActive(false);
       bps.setFilterOnReadableClients(false);
       bps.setFilterOnReadableOrganization(false);

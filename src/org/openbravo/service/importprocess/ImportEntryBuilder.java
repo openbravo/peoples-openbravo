@@ -151,7 +151,7 @@ public class ImportEntryBuilder {
     try {
       validateImportEntryData();
       ImportEntry importEntry = createImportEntry();
-      processAndSave(importEntry, notifyManager);
+      preprocessAndSave(importEntry, notifyManager);
       return importEntry;
     } finally {
       OBContext.restorePreviousMode();
@@ -208,7 +208,8 @@ public class ImportEntryBuilder {
       return false;
     }
 
-    final Query<Number> qry = SessionHandler.getInstance().getSession()
+    final Query<Number> qry = SessionHandler.getInstance()
+        .getSession()
         .createQuery("select count(*) from C_IMPORT_ENTRY where id=:id", Number.class);
     qry.setParameter("id", entryId);
 
@@ -220,14 +221,15 @@ public class ImportEntryBuilder {
       return false;
     }
 
-    final Query<Number> qry = SessionHandler.getInstance().getSession()
+    final Query<Number> qry = SessionHandler.getInstance()
+        .getSession()
         .createQuery("select count(*) from C_Import_Entry_Archive where id=:id", Number.class);
     qry.setParameter("id", entryId);
 
     return qry.uniqueResult().intValue() > 0;
   }
 
-  private void processAndSave(ImportEntry importEntry, boolean notify) {
+  private void preprocessAndSave(ImportEntry importEntry, boolean notify) {
     for (ImportEntryPreProcessor processor : getEntryPreProcessors()) {
       processor.beforeCreate(importEntry);
     }

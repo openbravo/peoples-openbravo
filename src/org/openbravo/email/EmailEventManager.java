@@ -81,8 +81,8 @@ public class EmailEventManager {
 
     if (mailConfig == null) {
       log.warn("Couldn't find email configuarion");
-      throw new EmailEventException(OBMessageUtils.getI18NMessage("EmailConfigurationNotFound",
-          null));
+      throw new EmailEventException(
+          OBMessageUtils.getI18NMessage("EmailConfigurationNotFound", null));
     }
 
     try {

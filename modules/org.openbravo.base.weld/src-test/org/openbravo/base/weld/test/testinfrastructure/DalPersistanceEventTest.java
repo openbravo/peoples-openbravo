@@ -67,8 +67,8 @@ public class DalPersistanceEventTest extends ObserverBaseTest {
     OBDal.getInstance().commitAndClose();
 
     assertThat("initial end transaction observer executions", initiallyClosedTrxs, is(0));
-    assertThat("end transaction observer executions",
-        OrderLineTestObserver.getNumberOfClosedTrxs(), is(1));
+    assertThat("end transaction observer executions", OrderLineTestObserver.getNumberOfClosedTrxs(),
+        is(1));
   }
 
   @Test

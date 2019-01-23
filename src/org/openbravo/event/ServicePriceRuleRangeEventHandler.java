@@ -38,8 +38,8 @@ import org.openbravo.model.pricing.pricelist.ServicePriceRuleRange;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class ServicePriceRuleRangeEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ServicePriceRuleRange.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ServicePriceRuleRange.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -47,24 +47,21 @@ public class ServicePriceRuleRangeEventHandler extends EntityPersistenceEventObs
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     ruleTypePriceListValidation(event);
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     ruleTypePriceListValidation(event);
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

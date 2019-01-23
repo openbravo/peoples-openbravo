@@ -62,8 +62,8 @@ public class FinancialUtils {
   /**
    * @see #getProductStdPrice(Product, Date, boolean, PriceList, Currency, Organization)
    */
-  public static BigDecimal getProductStdPrice(Product product, Date date,
-      boolean useSalesPriceList, Currency currency, Organization organization) throws OBException {
+  public static BigDecimal getProductStdPrice(Product product, Date date, boolean useSalesPriceList,
+      Currency currency, Organization organization) throws OBException {
     return getProductStdPrice(product, date, useSalesPriceList, null, currency, organization);
   }
 
@@ -90,9 +90,8 @@ public class FinancialUtils {
    * @throws OBException
    *           when no valid ProductPrice is found.
    */
-  public static BigDecimal getProductStdPrice(Product product, Date date,
-      boolean useSalesPriceList, PriceList pricelist, Currency currency, Organization organization)
-      throws OBException {
+  public static BigDecimal getProductStdPrice(Product product, Date date, boolean useSalesPriceList,
+      PriceList pricelist, Currency currency, Organization organization) throws OBException {
     ProductPrice pp = getProductPrice(product, date, useSalesPriceList, pricelist);
     BigDecimal price = pp.getStandardPrice();
     if (!pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
@@ -168,8 +167,8 @@ public class FinancialUtils {
     where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
         + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
-    OBQuery<ProductPrice> ppQry = OBDal.getInstance().createQuery(ProductPrice.class,
-        where.toString());
+    OBQuery<ProductPrice> ppQry = OBDal.getInstance()
+        .createQuery(ProductPrice.class, where.toString());
     ppQry.setNamedParameter("product", product);
     ppQry.setNamedParameter("date", date);
     if (priceList != null) {
@@ -215,8 +214,8 @@ public class FinancialUtils {
     // Readable Client Org filters to false as organization is filtered explicitly.
     OBContext.setAdminMode(false);
     try {
-      final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance().createCriteria(
-          ConversionRate.class);
+      final OBCriteria<ConversionRate> obcConvRate = OBDal.getInstance()
+          .createCriteria(ConversionRate.class);
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_ORGANIZATION, org));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CLIENT, client));
       obcConvRate.add(Restrictions.eq(ConversionRate.PROPERTY_CURRENCY, fromCurrency));
@@ -232,8 +231,11 @@ public class FinancialUtils {
       if ("0".equals(org.getId())) {
         return null;
       } else {
-        return getConversionRate(date, fromCurrency, toCurrency, OBContext.getOBContext()
-            .getOrganizationStructureProvider(client.getId()).getParentOrg(org), client);
+        return getConversionRate(date, fromCurrency, toCurrency,
+            OBContext.getOBContext()
+                .getOrganizationStructureProvider(client.getId())
+                .getParentOrg(org),
+            client);
       }
     } catch (Exception e) {
       log4j.error("Exception calculating conversion rate.", e);
@@ -356,8 +358,8 @@ public class FinancialUtils {
     parameters.add(quantity);
 
     final String procedureName = "C_GET_NET_PRICE_FROM_GROSS";
-    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
-        procedureName, parameters, null);
+    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance()
+        .call(procedureName, parameters, null);
     return lineNetAmount;
   }
 
@@ -387,15 +389,16 @@ public class FinancialUtils {
     parameters.add(stdPrecision);
 
     final String procedureName = "C_GET_NET_AMOUNT_FROM_GROSS";
-    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance().call(
-        procedureName, parameters, null);
+    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance()
+        .call(procedureName, parameters, null);
     return lineNetAmount;
   }
 
   /**
    * Get all the payment details with available credit
    */
-  public static ScrollableResults getPaymentsWithCredit(String businessPartnerId, String currencyId) {
+  public static ScrollableResults getPaymentsWithCredit(String businessPartnerId,
+      String currencyId) {
     StringBuilder hql = new StringBuilder();
     hql.append(" SELECT t1." + FIN_Payment.PROPERTY_ID);
     hql.append(" FROM " + FIN_Payment.ENTITY_NAME + " as t1");
@@ -404,7 +407,8 @@ public class FinancialUtils {
     hql.append(" AND t1." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> 0");
     hql.append(" AND t1." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> t1."
         + FIN_Payment.PROPERTY_USEDCREDIT);
-    final Query<String> query = OBDal.getInstance().getSession()
+    final Query<String> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), String.class);
     query.setParameter("businessPartnerId", businessPartnerId);
     query.setParameter("currencyId", currencyId);

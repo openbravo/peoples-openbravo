@@ -70,24 +70,16 @@ public class QueryListWidgetProvider extends WidgetProvider {
         }
       }
     }
-    String gridProperties = (gridPropertiesObject == null ? "" : ", gridProperties: "
-        + gridPropertiesObject.toString());
-    final String result = "isc.defineClass('"
-        + KernelConstants.ID_PREFIX
-        + getWidgetClass().getId()
-        + "', isc.OBQueryListWidget).addProperties({widgetId: '"
-        + getWidgetClass().getId()
-        + "', "
-        + "gridDataSource: null,"
-        + "createGridDataSource: function() {"
-        + "return "
-        + getDataSourceJavaScript()
-        + ";}, fields:"
-        + QueryListUtils
-            .getWidgetClassFields(getWidgetClass(), QueryListUtils.IncludeIn.WidgetView)
-        + ", maximizedFields:"
-        + QueryListUtils.getWidgetClassFields(getWidgetClass(),
-            QueryListUtils.IncludeIn.MaximizedView) + gridProperties + "});";
+    String gridProperties = (gridPropertiesObject == null ? ""
+        : ", gridProperties: " + gridPropertiesObject.toString());
+    final String result = "isc.defineClass('" + KernelConstants.ID_PREFIX + getWidgetClass().getId()
+        + "', isc.OBQueryListWidget).addProperties({widgetId: '" + getWidgetClass().getId() + "', "
+        + "gridDataSource: null," + "createGridDataSource: function() {" + "return "
+        + getDataSourceJavaScript() + ";}, fields:"
+        + QueryListUtils.getWidgetClassFields(getWidgetClass(), QueryListUtils.IncludeIn.WidgetView)
+        + ", maximizedFields:" + QueryListUtils.getWidgetClassFields(getWidgetClass(),
+            QueryListUtils.IncludeIn.MaximizedView)
+        + gridProperties + "});";
     return result;
   }
 
@@ -113,6 +105,7 @@ public class QueryListWidgetProvider extends WidgetProvider {
     return dsJavaScript;
   }
 
+  @Override
   public JSONObject getWidgetInstanceDefinition(WidgetInstance widgetInstance) {
     try {
       final JSONObject jsonObject = super.getWidgetInstanceDefinition(widgetInstance);

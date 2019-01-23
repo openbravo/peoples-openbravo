@@ -57,8 +57,8 @@ public class SL_RequisitionLine_Conversion extends SimpleCallout {
 
       // Set message when no UOM Conversion exists
       if (StringUtils.isNotEmpty(strMProductUOMID)) {
-        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion",
-            info.vars.getLanguage())));
+        info.showMessage(FormatUtilities
+            .replaceJS(Utility.messageBD(this, "NoUOMConversion", info.vars.getLanguage())));
       }
     }
 

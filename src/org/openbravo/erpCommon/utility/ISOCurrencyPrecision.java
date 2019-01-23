@@ -39,8 +39,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Returns the standard currency precission for a specific currency defined in
- * ISO 4217. If not found in ISO, returns a standard precision of 2.
+ * Returns the standard currency precission for a specific currency defined in ISO 4217. If not
+ * found in ISO, returns a standard precision of 2.
  *
  * @see SL_Currency_StdPrecision
  *
@@ -85,8 +85,8 @@ public class ISOCurrencyPrecision {
     }
   }
 
-  private static Document getISOCurrencyDocument() throws IOException,
-      ParserConfigurationException, SAXException {
+  private static Document getISOCurrencyDocument()
+      throws IOException, ParserConfigurationException, SAXException {
     long t1 = System.currentTimeMillis();
     try (InputStream isoXMLDoc = ISOCurrencyPrecision.class
         .getResourceAsStream("../ad_callouts/ISO_4217.xml")) {
@@ -116,7 +116,8 @@ public class ISOCurrencyPrecision {
         String ccyIsoCode = getFirstValueWithTagName(ccyNode, CURRENCY_ISO_CODE_TAG_NAME);
         String ccyPrecision = getFirstValueWithTagName(ccyNode, CURRENCY_PRECISION_TAG_NAME);
 
-        if (isSameCurrencyAsParameterAndIsPrecisionDefined(paramISOCode, ccyIsoCode, ccyPrecision)) {
+        if (isSameCurrencyAsParameterAndIsPrecisionDefined(paramISOCode, ccyIsoCode,
+            ccyPrecision)) {
           return Integer.parseInt(ccyPrecision);
         }
       }

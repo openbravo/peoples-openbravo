@@ -55,7 +55,8 @@ public class WidgetInFormUIDefinition extends UIDefinition {
     WidgetClass widgetClass = wr.getWidgetClass();
 
     try {
-      JSONObject o = (fieldProperties == null || fieldProperties.trim().length() == 0) ? new JSONObject()
+      JSONObject o = (fieldProperties == null || fieldProperties.trim().length() == 0)
+          ? new JSONObject()
           : new JSONObject(fieldProperties);
       o.put("widgetClassId", widgetClass.getId());
       o.put("showTitle", wr.isShowFieldTitle());

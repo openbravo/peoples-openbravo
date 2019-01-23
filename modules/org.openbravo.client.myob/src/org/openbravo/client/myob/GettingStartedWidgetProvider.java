@@ -31,8 +31,8 @@ public class GettingStartedWidgetProvider extends WidgetProvider {
 
   @Override
   public String generate() {
-    throw new UnsupportedOperationException(WIDGETCLIENTCLASS
-        + " definition should be pre-loaded on the client");
+    throw new UnsupportedOperationException(
+        WIDGETCLIENTCLASS + " definition should be pre-loaded on the client");
   }
 
   @Override

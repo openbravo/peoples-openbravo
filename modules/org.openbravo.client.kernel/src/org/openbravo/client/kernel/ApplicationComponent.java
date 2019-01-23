@@ -46,8 +46,8 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
   private FormatDefinition getFormatDefinition() {
     if (formatDefinition == null) {
-      formatDefinition = UIDefinitionController.getInstance().getFormatDefinition("qty",
-          UIDefinitionController.INPUTFORMAT_QUALIFIER);
+      formatDefinition = UIDefinitionController.getInstance()
+          .getFormatDefinition("qty", UIDefinitionController.INPUTFORMAT_QUALIFIER);
     }
     return formatDefinition;
   }
@@ -73,7 +73,8 @@ public class ApplicationComponent extends BaseTemplateComponent {
   }
 
   public boolean isTestEnvironment() {
-    final String testEnvironmentStr = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String testEnvironmentStr = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("test.environment");
     return testEnvironmentStr != null && "true".equals(testEnvironmentStr);
   }

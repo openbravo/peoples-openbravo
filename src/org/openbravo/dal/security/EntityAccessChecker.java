@@ -123,7 +123,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   // User level:
   // "S";"System"
   // " C";"Client"
-  // "  O";"Organization"
+  // " O";"Organization"
   // " CO";"Client+Organization"
 
   private String roleId;
@@ -164,7 +164,8 @@ public class EntityAccessChecker implements OBNotSingleton {
     hqlQry = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
         + "c.referenceSearchKey r inner join r.oBUISELSelectorList s inner join s.processDefintion "
         + "p  where r.parentReference='" + SELECTOR_REFERENCE + "'";
-    processAccessSelectors = SessionHandler.getInstance().createQuery(hqlQry, Object[].class)
+    processAccessSelectors = SessionHandler.getInstance()
+        .createQuery(hqlQry, Object[].class)
         .list();
 
     hqlQry = "select p.id, c.table.id from ADColumn c inner join c.table t inner join "
@@ -174,17 +175,20 @@ public class EntityAccessChecker implements OBNotSingleton {
     hqlQry = "select t.table.id, p.obuiappProcess.id, t.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUIAPPRefWindowList rw inner join rw.window w inner join w.aDTabList t where p.reference.id in ('"
         + WINDOW_REFERENCE + "')";
     parameterOfWindowProcessReference = SessionHandler.getInstance()
-        .createQuery(hqlQry, Object[].class).list();
+        .createQuery(hqlQry, Object[].class)
+        .list();
 
     hqlQry = "select s.table.id, p.obuiappProcess.id from OBUIAPP_Parameter p inner join p.referenceSearchKey r inner join r.oBUISELSelectorList s where p.reference.id in('"
         + SELECTOR_REFERENCE + "','" + MULTI_SELECTOR_REFERENCE + "')";
     parameterOfSelectorProcessReference = SessionHandler.getInstance()
-        .createQuery(hqlQry, Object[].class).list();
+        .createQuery(hqlQry, Object[].class)
+        .list();
 
     hqlQry = "select f.tab.table.id, f.tab.id from ADField f inner join f.column c inner join c.referenceSearchKey r  where r.parentReference='"
         + SELECTOR_REFERENCE + "'";
     selectorsFromWindowReferences = SessionHandler.getInstance()
-        .createQuery(hqlQry, Object[].class).list();
+        .createQuery(hqlQry, Object[].class)
+        .list();
   }
 
   /**
@@ -234,8 +238,8 @@ public class EntityAccessChecker implements OBNotSingleton {
       // and take into account table access
       final String tafQryStr = "select ta from " + TableAccess.class.getName()
           + " ta where role.id= :roleId";
-      Query<TableAccess> tafQry = SessionHandler.getInstance().createQuery(tafQryStr,
-          TableAccess.class);
+      Query<TableAccess> tafQry = SessionHandler.getInstance()
+          .createQuery(tafQryStr, TableAccess.class);
       tafQry.setParameter("roleId", getRoleId());
 
       final List<TableAccess> tas = tafQry.list();
@@ -310,8 +314,8 @@ public class EntityAccessChecker implements OBNotSingleton {
       // and take into account explicit process access
       final String processAccessQryStr = "select p.obuiappProcess.id from "
           + ProcessAccess.class.getName() + " p where p.role.id= :roleId";
-      Query<String> processAccessQry = SessionHandler.getInstance().createQuery(
-          processAccessQryStr, String.class);
+      Query<String> processAccessQry = SessionHandler.getInstance()
+          .createQuery(processAccessQryStr, String.class);
       processAccessQry.setParameter("roleId", getRoleId());
 
       final List<String> processAccessQuery = processAccessQry.list();
@@ -338,7 +342,8 @@ public class EntityAccessChecker implements OBNotSingleton {
     return getProcessAccess(processTables, targetTablesIds);
   }
 
-  private Set<String> getProcessAccess(Set<String> processTables, List<Object[]> targetProcessAccess) {
+  private Set<String> getProcessAccess(Set<String> processTables,
+      List<Object[]> targetProcessAccess) {
     Set<String> targetProcesses = new HashSet<>();
     for (Object[] pa : targetProcessAccess) {
       if (processTables.contains(pa[TABLE_ID])) {
@@ -420,10 +425,9 @@ public class EntityAccessChecker implements OBNotSingleton {
     dumpSortedProcess(processes);
     log.info("");
     log.info("");
-    log.info(">>> Entities granted: "
-        + (processes.size() + readableNotWritable.size() + writableEntities.size()
-            + derivedEntitiesFromProcess.size() + derivedReadableEntities.size() + readableEntities
-              .size()));
+    log.info(">>> Entities granted: " + (processes.size() + readableNotWritable.size()
+        + writableEntities.size() + derivedEntitiesFromProcess.size()
+        + derivedReadableEntities.size() + readableEntities.size()));
 
   }
 
@@ -541,8 +545,8 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
 
     if (!readableEntities.contains(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not readable by the user "
-          + obContext.getUser().getId());
+      throw new OBSecurityException(
+          "Entity " + entity + " is not readable by the user " + obContext.getUser().getId());
     }
   }
 

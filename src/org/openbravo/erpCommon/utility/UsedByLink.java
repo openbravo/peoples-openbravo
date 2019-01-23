@@ -56,8 +56,8 @@ public class UsedByLink extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (isLinkedItemsSectionDisabled(vars)) {
@@ -73,15 +73,15 @@ public class UsedByLink extends HttpSecureAppServlet {
       final String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
       final String strTableId = vars.getRequiredStringParameter("inpTableId");
       final String strColumnName = Sqlc.TransformaNombreColumna(strKeyColumn);
-      final String strKeyId = vars.getGlobalVariable("inp" + strColumnName, strWindow + "|"
-          + strKeyColumn);
+      final String strKeyId = vars.getGlobalVariable("inp" + strColumnName,
+          strWindow + "|" + strKeyColumn);
       printPage(response, vars, strWindow, strTabId, strKeyColumn, strKeyId, strTableId);
     } else if (vars.commandIn("LINKS")) {
       final String strWindow = vars.getStringParameter("inpwindowId");
       final String strTabId = vars.getRequiredStringParameter("inpTabId");
       final String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
-      final String strKeyId = vars.getRequiredStringParameter("inp"
-          + Sqlc.TransformaNombreColumna(strKeyColumn));
+      final String strKeyId = vars
+          .getRequiredStringParameter("inp" + Sqlc.TransformaNombreColumna(strKeyColumn));
       final String strAD_TAB_ID = vars.getRequiredStringParameter("inpadTabIdKey");
       final String strTABLENAME = vars.getRequiredStringParameter("inptablename");
       final String strCOLUMNNAME = vars.getRequiredStringParameter("inpcolumnname");
@@ -132,11 +132,12 @@ public class UsedByLink extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow,
-      String TabId, String keyColumn, String keyId, String tableId) throws IOException,
-      ServletException {
+      String TabId, String keyColumn, String keyId, String tableId)
+      throws IOException, ServletException {
     String localTableId = tableId;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: UsedBy links for tab: " + TabId);
+    }
 
     // Special case: convert FinancialMgmtDebtPaymentGenerateV view into its
     // FinancialMgmtDebtPayment table. Fixes issue #0009973
@@ -144,8 +145,9 @@ public class UsedByLink extends HttpSecureAppServlet {
       localTableId = "800018";
     }
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/UsedByLink").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink")
+        .createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -184,10 +186,12 @@ public class UsedByLink extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId,
       String strAD_TAB_ID, String strTABLENAME, String strCOLUMNNAME, String adTableId)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: UsedBy links for tab: " + TabId);
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/UsedByLink_Detail").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink_Detail")
+        .createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -281,8 +285,8 @@ public class UsedByLink extends HttpSecureAppServlet {
       jsonObject = buildJsonObject(jsonObject, searchResult);
 
     } catch (Exception e) {
-      log4j.error(
-          "Error getting Categories for windowId: " + windowId + " - entity: " + entityName, e);
+      log4j.error("Error getting Categories for windowId: " + windowId + " - entity: " + entityName,
+          e);
       try {
         jsonObject.put("msg", "" + e.getMessage());
       } catch (JSONException jex) {
@@ -381,36 +385,44 @@ public class UsedByLink extends HttpSecureAppServlet {
       if (data != null && data.length > 0) {
         final Vector<UsedByLinkData> vecTotal = new Vector<UsedByLinkData>();
         for (int i = 0; i < data.length; i++) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("***Referenced tab: " + data[i].adTabId);
+          }
           try {
             final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
-            if (dataRef == null || dataRef.length == 0)
+            if (dataRef == null || dataRef.length == 0) {
               continue;
+            }
             String strWhereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("***   Referenced where clause (1): " + strWhereClause);
+            }
             strWhereClause += getAditionalWhereClause(vars, strWindow, data[i].adTabId,
                 data[i].tablename, keyColumn, data[i].columnname,
                 UsedByLinkData.getTabTableName(this, tableId));
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("***   Referenced where clause (2): " + strWhereClause);
+            }
             if (!nonAccessible) {
               final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("
                   + vars.getUserOrg() + ")";
-              if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
-                  strNonAccessibleWhere).equals("0")) {
+              if (!UsedByLinkData
+                  .countLinks(this, data[i].tablename, data[i].columnname, keyId,
+                      strNonAccessibleWhere)
+                  .equals("0")) {
                 nonAccessible = true;
               }
             }
             strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
                 + vars.getUserClient() + ")";
-            int total = Integer.valueOf(
-                UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
-                    strWhereClause)).intValue();
+            int total = Integer
+                .valueOf(UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname,
+                    keyId, strWhereClause))
+                .intValue();
 
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("***   Count: " + total);
+            }
 
             data[i].total = Integer.toString(total);
 
@@ -420,8 +432,9 @@ public class UsedByLink extends HttpSecureAppServlet {
               vecTotal.addElement(data[i]);
             }
           } catch (Exception ignore) {
-            log4j.warn("Coulnd't get linked items for " + data[i].tablename + "."
-                + data[i].columnname, ignore);
+            log4j.warn(
+                "Coulnd't get linked items for " + data[i].tablename + "." + data[i].columnname,
+                ignore);
           }
         }
         data = new UsedByLinkData[vecTotal.size()];
@@ -487,8 +500,8 @@ public class UsedByLink extends HttpSecureAppServlet {
     }
 
     UsedByLinkData[] usedByLinkData = UsedByLinkData.selectLinks(this, strSQL.toString(),
-        adTableName, adTableName + "." + data[0].name, vars.getLanguage(), adTabId, adTableName
-            + "." + strCOLUMNNAME, keyId, whereClause);
+        adTableName, adTableName + "." + data[0].name, vars.getLanguage(), adTabId,
+        adTableName + "." + strCOLUMNNAME, keyId, whereClause);
 
     return new SearchResult(usedByLinkData);
   }
@@ -522,14 +535,19 @@ public class UsedByLink extends HttpSecureAppServlet {
       if (i > 0) {
         strSQL.append(" || ', ' || ");
       }
-      strScript.append("frm.inp").append(Sqlc.TransformaNombreColumna(data[i].name))
-          .append(".value = arguments[").append(i).append("];\n");
+      strScript.append("frm.inp")
+          .append(Sqlc.TransformaNombreColumna(data[i].name))
+          .append(".value = arguments[")
+          .append(i)
+          .append("];\n");
       strSQL.append("'''' || ").append(data[i].name).append(" || ''''");
       strHiddens.append("<input type=\"hidden\" name=\"inp")
-          .append(Sqlc.TransformaNombreColumna(data[i].name)).append("\">\n");
+          .append(Sqlc.TransformaNombreColumna(data[i].name))
+          .append("\">\n");
     }
     final String windowRef = Utility.getTabURL(strAD_TAB_ID, "E", true);
-    strScript.append("top.opener.submitFormGetParams('DIRECT', '").append(windowRef)
+    strScript.append("top.opener.submitFormGetParams('DIRECT', '")
+        .append(windowRef)
         .append("', getParamsScript(document.forms[0]));\n");
     strScript.append("top.close();\n");
     strScript.append("return true;\n");
@@ -558,8 +576,8 @@ public class UsedByLink extends HttpSecureAppServlet {
         usedByLinkDataJsonObj.put("adWindowId", data.adWindowId);
         usedByLinkDataJsonObj.put("columnName", data.columnname);
         usedByLinkDataJsonObj.put("elementName", data.elementName);
-        usedByLinkDataJsonObj.put("fullElementName", data.elementName + " - " + data.tabname + " ("
-            + data.total + ")");
+        usedByLinkDataJsonObj.put("fullElementName",
+            data.elementName + " - " + data.tabname + " (" + data.total + ")");
         usedByLinkDataJsonObj.put("hasTree", data.hastree);
         usedByLinkDataJsonObj.put("id", data.id);
         usedByLinkDataJsonObj.put("name", data.name);
@@ -585,21 +603,25 @@ public class UsedByLink extends HttpSecureAppServlet {
   public String getWhereClause(VariablesSecureApp vars, String window, String strWhereClause)
       throws ServletException {
     String strWhere = strWhereClause;
-    if (strWhere.equals("") || strWhere.indexOf("@") == -1)
+    if (strWhere.equals("") || strWhere.indexOf("@") == -1) {
       return ((strWhere.equals("") ? "" : " AND ") + strWhere);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WHERE CLAUSE: " + strWhere);
+    }
     final StringBuffer where = new StringBuffer();
     String token = "";
     int i = 0;
     i = strWhere.indexOf("@");
     while (i != -1) {
       where.append(strWhere.substring(0, i));
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("WHERE ACTUAL: " + where.toString());
+      }
       strWhere = strWhere.substring(i + 1);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("WHERE COMPARATION: " + strWhere);
+      }
       if (strWhere.startsWith("SQL")) {
         strWhere.substring(4);
         where.append("(");
@@ -613,11 +635,13 @@ public class UsedByLink extends HttpSecureAppServlet {
         }
         token = strWhere.substring(0, i);
         strWhere = (i == strWhere.length()) ? "" : strWhere.substring(i + 1);
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("TOKEN: " + token);
+        }
         final String tokenResult = "'" + Utility.getContext(this, vars, token, window) + "'";
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("TOKEN PARSED: " + tokenResult);
+        }
         if (tokenResult.equalsIgnoreCase(token)) {
           log4j.error("Unable to parse the String " + strWhereClause + "\nNow parsing: "
               + where.toString());
@@ -637,22 +661,26 @@ public class UsedByLink extends HttpSecureAppServlet {
       String tableName, String keyColumn, String columnName, String parentTableName)
       throws ServletException {
     String result = "";
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("getAditionalWhereClause - ad_Tab_ID: " + adTabId);
+    }
     final UsedByLinkData[] data = UsedByLinkData.parentTabTableName(this, adTabId);
     if (data != null && data.length > 0) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("getAditionalWhereClause - parent tab: " + data[0].adTabId);
-      UsedByLinkData[] dataColumn = UsedByLinkData
-          .parentsColumnName(this, adTabId, data[0].adTabId);
+      }
+      UsedByLinkData[] dataColumn = UsedByLinkData.parentsColumnName(this, adTabId,
+          data[0].adTabId);
       if (dataColumn == null || dataColumn.length == 0) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("getAditionalWhereClause - searching parent Columns Real");
+        }
         dataColumn = UsedByLinkData.parentsColumnReal(this, adTabId, data[0].adTabId);
       }
       if (dataColumn == null || dataColumn.length == 0) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("getAditionalWhereClause - no parent columns found");
+        }
         return result;
       }
       result += " AND EXISTS (SELECT 1 FROM " + data[0].tablename + " WHERE " + data[0].tablename
@@ -660,16 +688,18 @@ public class UsedByLink extends HttpSecureAppServlet {
           + tableName + "." + ((!dataColumn[0].name.equals("")) ? dataColumn[0].name : columnName);
       final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[0].adTabId);
       String strAux = "";
-      if (dataRef != null && dataRef.length > 0)
+      if (dataRef != null && dataRef.length > 0) {
         strAux = getWhereClause(vars, strWindow, dataRef[0].whereclause);
+      }
       result += strAux;
       // Check where clause for parent tabs
-      result += getAditionalWhereClause(vars, strWindow, data[0].adTabId, data[0].tablename, "",
-          "", parentTableName);
+      result += getAditionalWhereClause(vars, strWindow, data[0].adTabId, data[0].tablename, "", "",
+          parentTableName);
       result += ")";
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("getAditionalWhereClause - result: " + result);
+    }
     return result;
   }
 

@@ -50,8 +50,8 @@ public abstract class DocInventoryTemplate {
    *          account schema
    * @return Fact
    */
-  public abstract Fact createFact(DocInventory docInventory, AcctSchema as,
-      ConnectionProvider conn, Connection con, VariablesSecureApp vars) throws ServletException;
+  public abstract Fact createFact(DocInventory docInventory, AcctSchema as, ConnectionProvider conn,
+      Connection con, VariablesSecureApp vars) throws ServletException;
 
   public String getServletInfo() {
     return "Servlet for the accounting";

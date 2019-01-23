@@ -28,6 +28,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.hibernate.ScrollMode;
@@ -45,8 +47,6 @@ import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.CallProcess;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CopyFromOrdersProcess {
   @Inject
@@ -137,7 +137,8 @@ public class CopyFromOrdersProcess {
   private int createOrderLinesFromSelectedOrder(final Order selectedOrder) {
     int createdOrderLinesCount = 0;
     // Iterate the Order Lines, excluding those ones that has been created from BOM explode Process
-    ScrollableResults orderLines = getOrderLinesExcludingDiscountsAndExplodedBOMLines(selectedOrder);
+    ScrollableResults orderLines = getOrderLinesExcludingDiscountsAndExplodedBOMLines(
+        selectedOrder);
     try {
       while (orderLines.next()) {
         OrderLine orderLine = (OrderLine) orderLines.get()[0];
@@ -218,8 +219,8 @@ public class CopyFromOrdersProcess {
     }
   }
 
-  private class CopyFromOrdersHookComparator implements
-      Comparator<CopyFromOrdersProcessImplementationInterface> {
+  private class CopyFromOrdersHookComparator
+      implements Comparator<CopyFromOrdersProcessImplementationInterface> {
     @Override
     public int compare(CopyFromOrdersProcessImplementationInterface a,
         CopyFromOrdersProcessImplementationInterface b) {
@@ -253,11 +254,11 @@ public class CopyFromOrdersProcess {
     long startTime = System.currentTimeMillis();
     for (OrderLine orderLine : explodeBOMOrderLines) {
       OBDal.getInstance().refresh(orderLine);
-      org.openbravo.model.ad.ui.Process process = OBDal.getInstance().getProxy(
-          org.openbravo.model.ad.ui.Process.class, EXPLODE_BOM_PROCESS);
+      org.openbravo.model.ad.ui.Process process = OBDal.getInstance()
+          .getProxy(org.openbravo.model.ad.ui.Process.class, EXPLODE_BOM_PROCESS);
 
-      final ProcessInstance pInstance = CallProcess.getInstance().call(process, orderLine.getId(),
-          null);
+      final ProcessInstance pInstance = CallProcess.getInstance()
+          .call(process, orderLine.getId(), null);
 
       if (pInstance.getResult() == 0) {
         throw new OBException("Error executing Explode process");

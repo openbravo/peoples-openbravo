@@ -31,14 +31,15 @@ public class UITableDir extends UIReference {
     super(reference, subreference);
   }
 
+  @Override
   public void setComboTableDataIdentifier(ComboTableData comboTableData, String tableName,
       FieldProvider field) throws Exception {
     String fieldName = field == null ? "" : field.getField("name");
     String parentFieldName = fieldName;
 
     int myIndex = comboTableData.index++;
-    String name = ((fieldName != null && !fieldName.equals("")) ? fieldName : comboTableData
-        .getObjectName());
+    String name = ((fieldName != null && !fieldName.equals("")) ? fieldName
+        : comboTableData.getObjectName());
 
     String tableDirName = null;
     if (name.equalsIgnoreCase("createdby") || name.equalsIgnoreCase("updatedby")) {
@@ -73,22 +74,24 @@ public class UITableDir extends UIReference {
         tables += "AND td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")";
       }
     } else {
-      comboTableData.addWhereField("td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER
-          + ")", "CLIENT_LIST");
+      comboTableData.addWhereField(
+          "td" + myIndex + ".AD_Client_ID IN (" + CLIENT_LIST_PARAM_HOLDER + ")", "CLIENT_LIST");
       if (!comboTableData.isAllowedCrossOrgReference()) {
-        comboTableData.addWhereField("td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER
-            + ")", "ORG_LIST");
+        comboTableData.addWhereField(
+            "td" + myIndex + ".AD_Org_ID IN (" + ORG_LIST_PARAM_HOLDER + ")", "ORG_LIST");
       }
     }
     comboTableData.addFromField(tables, "td" + myIndex);
     if (tableName == null || tableName.equals("")) {
       comboTableData.parseValidation();
-      comboTableData.addWhereField("(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + name
-          + " = (?) )", "ISACTIVE");
+      comboTableData.addWhereField(
+          "(td" + myIndex + ".isActive = 'Y' OR td" + myIndex + "." + name + " = (?) )",
+          "ISACTIVE");
       comboTableData.addWhereParameter("@ACTUAL_VALUE@", "ACTUAL_VALUE", "ISACTIVE");
     }
-    for (int i = 0; i < trd.length; i++)
+    for (int i = 0; i < trd.length; i++) {
       comboTableData.identifier("td" + myIndex, trd[i]);
+    }
     comboTableData.addOrderByField("2");
   }
 

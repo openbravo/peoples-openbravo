@@ -48,7 +48,8 @@ public class DataSourceUtils {
   public static String getOrgs(String orgId) {
     StringBuffer orgPart = new StringBuffer();
     if (StringUtils.isNotEmpty(orgId)) {
-      final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
+      final Set<String> orgSet = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
           .getNaturalTree(orgId);
       if (orgSet.size() > 0) {
         boolean addComma = false;

@@ -54,8 +54,9 @@ public class Login extends HttpBaseServlet {
   @Any
   private Instance<SignInProvider> signInProvider;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -154,17 +155,15 @@ public class Login extends HttpBaseServlet {
       showForgeLogo = !ActivationKey.getInstance().isActive()
           || (ActivationKey.getInstance().isActive() && sysInfo.isShowForgeLogoInLogin());
       itLink = sysInfo.getSupportContact() == null ? "" : sysInfo.getSupportContact();
-      if (!itLink.isEmpty()
-          && !(StringUtils.startsWithIgnoreCase(itLink, "http://")
-              || StringUtils.startsWithIgnoreCase(itLink, "https://") || StringUtils
-                .startsWithIgnoreCase(itLink, "ftp://"))) {
+      if (!itLink.isEmpty() && !(StringUtils.startsWithIgnoreCase(itLink, "http://")
+          || StringUtils.startsWithIgnoreCase(itLink, "https://")
+          || StringUtils.startsWithIgnoreCase(itLink, "ftp://"))) {
         itLink = "http://" + itLink;
       }
       companyLink = sysInfo.getYourCompanyURL() == null ? "" : sysInfo.getYourCompanyURL();
-      if (!companyLink.isEmpty()
-          && !(StringUtils.startsWithIgnoreCase(companyLink, "http://")
-              || StringUtils.startsWithIgnoreCase(companyLink, "https://") || StringUtils
-                .startsWithIgnoreCase(companyLink, "ftp://"))) {
+      if (!companyLink.isEmpty() && !(StringUtils.startsWithIgnoreCase(companyLink, "http://")
+          || StringUtils.startsWithIgnoreCase(companyLink, "https://")
+          || StringUtils.startsWithIgnoreCase(companyLink, "ftp://"))) {
         companyLink = "http://" + companyLink;
       }
     }
@@ -215,7 +214,8 @@ public class Login extends HttpBaseServlet {
           message = message.replace("%0",
               Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoCommunity", lang));
         }
-        message = message.replaceAll("&quot;", "\"").replaceAll("\"", "\\\\\"")
+        message = message.replaceAll("&quot;", "\"")
+            .replaceAll("\"", "\\\\\"")
             .replaceAll("'", "´");
 
         link += "<style type=\"text/css\">" //
@@ -250,8 +250,7 @@ public class Login extends HttpBaseServlet {
             + "  }" //
             + "</style>" //
             + "&nbsp;&nbsp;<div id=\"gSignInButtonDemo\" class=\"gSignInButtonDemo\" onclick='setLoginMessage(\"Error\", null, \""
-            + message
-            + "\")'>" //
+            + message + "\")'>" //
             + "  <span title=\""
             + Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoAltMsg", vars.getLanguage()) //
             + "\"></span>" //

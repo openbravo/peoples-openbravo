@@ -33,10 +33,10 @@ import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.role.inheritance.RoleInheritanceManager;
 
 /**
- * Test case for horizontal inheritance This test case is intended to simulate the
- * "Recalculate Permissions" process We remove an inherited access on purpose (this can not be done
- * from the UI), this way we can simulate the process of adding a permission without using DAL, like
- * for example, when using the "Grant Access" process which uses xsql to insert data.
+ * Test case for horizontal inheritance This test case is intended to simulate the "Recalculate
+ * Permissions" process We remove an inherited access on purpose (this can not be done from the UI),
+ * this way we can simulate the process of adding a permission without using DAL, like for example,
+ * when using the "Grant Access" process which uses xsql to insert data.
  */
 public class RecalculatePermissions extends WeldBaseTest {
 
@@ -52,9 +52,8 @@ public class RecalculatePermissions extends WeldBaseTest {
     Role role = null;
     try {
       OBContext.setAdminMode(true);
-      template = RoleInheritanceTestUtils.createRole("template",
-          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
-          true);
+      template = RoleInheritanceTestUtils.createRole("template", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
       String templateId = template.getId();
       role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
@@ -117,9 +116,8 @@ public class RecalculatePermissions extends WeldBaseTest {
     Role role2 = null;
     try {
       OBContext.setAdminMode(true);
-      template = RoleInheritanceTestUtils.createRole("template",
-          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
-          true);
+      template = RoleInheritanceTestUtils.createRole("template", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
       String templateId = template.getId();
       role1 = RoleInheritanceTestUtils.createRole("role1", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);

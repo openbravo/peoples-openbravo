@@ -67,8 +67,8 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
       // FIN_Doubtful_Debt_Run_ID instead because it always contains the id of the selected doubtful
       // debt run. Issue 20585: https://issues.openbravo.com/view.php?id=20585
       final String strDoubtFulDebtRunId = jsonRequest.getString("FIN_Doubtful_Debt_Run_ID");
-      final DoubtfulDebtRun doubtfulDebtRun = OBDal.getInstance().get(DoubtfulDebtRun.class,
-          strDoubtFulDebtRunId);
+      final DoubtfulDebtRun doubtfulDebtRun = OBDal.getInstance()
+          .get(DoubtfulDebtRun.class, strDoubtFulDebtRunId);
 
       if (doubtfulDebtRun != null) {
         List<String> idList = OBDao.getIDListFromOBObject(doubtfulDebtRun.getFINDoubtfulDebtList());
@@ -100,7 +100,8 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
 
   private JSONObject createDoubtfulDebt(DoubtfulDebtRun doubtfulDebtRun, JSONObject jsonRequest,
       List<String> idList) throws JSONException {
-    final JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+    final JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+        .getJSONObject("grid")
         .getJSONArray("_selection");
     DocumentType documentType = null;
     Currency currency = null;
@@ -118,8 +119,8 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
         String strDebtdId = selectedLine.getString("fINDoubtfulDebt");
         String strPaymentSchedule = selectedLine.getString("finPaymentSchedule");
         String strCurrency = selectedLine.getString("currency");
-        FIN_PaymentSchedule paymentSchedule = (FIN_PaymentSchedule) OBDal.getInstance().getProxy(
-            FIN_PaymentSchedule.ENTITY_NAME, strPaymentSchedule);
+        FIN_PaymentSchedule paymentSchedule = (FIN_PaymentSchedule) OBDal.getInstance()
+            .getProxy(FIN_PaymentSchedule.ENTITY_NAME, strPaymentSchedule);
         boolean notExistsDebtLine = idList.contains(strDebtdId);
         if (notExistsDebtLine) {
           newDoubtfulDebt = OBDal.getInstance().get(DoubtfulDebt.class, strDebtdId);
@@ -188,8 +189,8 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
     parameters.add(client.getId());
     parameters.add(organization.getId());
     parameters.add("DDB");
-    String strDocTypeId = (String) CallStoredProcedure.getInstance().call("AD_GET_DOCTYPE",
-        parameters, null);
+    String strDocTypeId = (String) CallStoredProcedure.getInstance()
+        .call("AD_GET_DOCTYPE", parameters, null);
     if (strDocTypeId == null || "".equals(strDocTypeId)) {
       throw new OBException("@APRM_DoubtfulDebtNoDocument@");
     }

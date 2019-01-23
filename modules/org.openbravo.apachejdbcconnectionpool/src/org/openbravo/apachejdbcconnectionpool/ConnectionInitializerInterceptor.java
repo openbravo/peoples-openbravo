@@ -35,14 +35,15 @@ import org.openbravo.database.SessionInfo;
  * This interceptor allows to act whenever a connection is requested from the pool and whenever any
  * operation is invoked on a connection provided by Apache JDBC Connection Pool.
  */
-public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
-    PoolInterceptorProvider {
+public class ConnectionInitializerInterceptor extends JdbcInterceptor
+    implements PoolInterceptorProvider {
 
   private static final String SESSION_CONFIG_APPLIED = "OB_INITIALIZED";
   private static final String SESSION_INFO_APPLIED = "SESSION_INFO_INITIALIZED";
   private static final String CACHED_CONNECTION = "CACHED_CONNECTION";
 
-  String rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
+  String rbdms = (String) OBPropertiesProvider.getInstance()
+      .getOpenbravoProperties()
       .get("bbdd.rdbms");
 
   /**

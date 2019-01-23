@@ -24,9 +24,9 @@ import java.util.Date;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.openbravo.service.db.DalConnectionProvider;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * This class will be extended by those classes that implements a service which supports working in

@@ -44,13 +44,15 @@ public class RichTextUIDefinition extends TextUIDefinition {
   public String getGridFieldProperties(Field field) {
     Long rowSpan = field.getObuiappRowspan();
     Long colSpan = field.getObuiappColspan();
-    if ((colSpan == null) || (colSpan < 2))
+    if ((colSpan == null) || (colSpan < 2)) {
       colSpan = 2L;
-    if ((rowSpan == null) || (rowSpan < 2))
+    }
+    if ((rowSpan == null) || (rowSpan < 2)) {
       rowSpan = 2L;
+    }
 
-    return super.getGridFieldProperties(field)
-        + ",  escapeHTML: true , canEdit: false , rowSpan : " + rowSpan + " , colSpan : " + colSpan;
+    return super.getGridFieldProperties(field) + ",  escapeHTML: true , canEdit: false , rowSpan : "
+        + rowSpan + " , colSpan : " + colSpan;
   }
 
 }

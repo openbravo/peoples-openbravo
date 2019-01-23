@@ -70,8 +70,8 @@ class TranslationUtils {
     info.setHelp(module.help);
   }
 
-  public static WindowLabel[] processWindowLabels(ConnectionProvider con, String tabId,
-      String lang, String moduleLang) {
+  public static WindowLabel[] processWindowLabels(ConnectionProvider con, String tabId, String lang,
+      String moduleLang) {
     FieldLabelsData[] fieldLabels;
     FieldGroupLabelsData[] fieldGroupLabels;
     try {
@@ -174,15 +174,16 @@ class TranslationUtils {
     return res;
   }
 
-  private static HashMap<String, String> retrieveLabelData(ConnectionProvider conn,
-      String fileName, String language) {
+  private static HashMap<String, String> retrieveLabelData(ConnectionProvider conn, String fileName,
+      String language) {
     HashMap<String, String> textmap = new HashMap<String, String>();
     try {
       TextInterfacesData[] textData = TextInterfacesData.selectText(conn, fileName, language);
       for (int i = 0; i < textData.length; i++) {
         // trim values, in some occasions there is a character 160 representing blank spaces
-        if (!textmap.containsKey(textData[i].text.replace((char) 160, ' ').trim()))
+        if (!textmap.containsKey(textData[i].text.replace((char) 160, ' ').trim())) {
           textmap.put(textData[i].text.replace((char) 160, ' ').trim(), textData[i].trltext);
+        }
       }
       return textmap;
     } catch (ServletException e) {

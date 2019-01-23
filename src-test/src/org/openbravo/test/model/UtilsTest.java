@@ -51,8 +51,8 @@ public class UtilsTest extends OBBaseTest {
     for (Entity e : ModelProvider.getInstance().getModel()) {
       for (Property p : e.getProperties()) {
         if (p.getColumnName() != null && p.getTargetEntity() != null) {
-          sb.append("\n" + e.getName() + "." + p.getColumnName() + " = "
-              + p.getTargetEntity().getName());
+          sb.append(
+              "\n" + e.getName() + "." + p.getColumnName() + " = " + p.getTargetEntity().getName());
         }
       }
     }
@@ -98,7 +98,8 @@ public class UtilsTest extends OBBaseTest {
 
       // query for all objects of the entity and iterate over them
       final List<BaseOBObject> businessObjects = OBDal.getInstance()
-          .createCriteria(entity.getName()).list();
+          .createCriteria(entity.getName())
+          .list();
       for (BaseOBObject businessObject : businessObjects) {
 
         final StringBuilder line = new StringBuilder();

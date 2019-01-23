@@ -71,8 +71,8 @@ public class TaxesTestData186 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes2 = new HashMap<String, String[]>();
-    lineTaxes2.put(TaxDataConstants.TAX_VAT_20, new String[] { "0.00", "0.00", "35.80", "7.16",
-        "0.00", "0.00", "71.60", "14.32" });
+    lineTaxes2.put(TaxDataConstants.TAX_VAT_20,
+        new String[] { "0.00", "0.00", "35.80", "7.16", "0.00", "0.00", "71.60", "14.32" });
     line2.setLinetaxes(lineTaxes2);
 
     // Amounts for line level are provided

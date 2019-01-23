@@ -42,14 +42,14 @@ public class ProcessGroup extends DalBaseProcess {
 
     ConnectionProvider conn = bundle.getConnection();
     final VariablesSecureApp vars = bundle.getContext().toVars();
-    final ProcessRequest processRequest = OBDal.getInstance().get(ProcessRequest.class,
-        bundle.getProcessRequestId());
-    final ProcessRun processRun = OBDal.getInstance().get(ProcessRun.class,
-        bundle.getProcessRunId());
+    final ProcessRequest processRequest = OBDal.getInstance()
+        .get(ProcessRequest.class, bundle.getProcessRequestId());
+    final ProcessRun processRun = OBDal.getInstance()
+        .get(ProcessRun.class, bundle.getProcessRunId());
     final org.openbravo.model.ad.ui.ProcessGroup group = processRequest.getProcessGroup();
 
-    OBCriteria<ProcessGroupList> processListcri = OBDal.getInstance().createCriteria(
-        ProcessGroupList.class);
+    OBCriteria<ProcessGroupList> processListcri = OBDal.getInstance()
+        .createCriteria(ProcessGroupList.class);
     processListcri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP, group));
     processListcri.addOrderBy(ProcessGroupList.PROPERTY_SEQUENCENUMBER, true);
     List<ProcessGroupList> processList = processListcri.list();

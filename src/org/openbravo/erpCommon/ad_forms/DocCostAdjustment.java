@@ -55,6 +55,7 @@ public class DocCostAdjustment extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn,
       @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocCostAdjustmentData.selectRegistro(conn, AD_Client_ID, Id));
@@ -65,6 +66,7 @@ public class DocCostAdjustment extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     C_Currency_ID = NO_CURRENCY;
 
@@ -119,6 +121,7 @@ public class DocCostAdjustment extends AcctServer {
    * 
    * @return Zero (always balanced)
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     return retValue;
@@ -143,17 +146,20 @@ public class DocCostAdjustment extends AcctServer {
    *          accounting schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
     if (StringUtils.isEmpty(strClassname)) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
     } else {
       try {
         DocCostAdjustmentTemplate newTemplate = (DocCostAdjustmentTemplate) Class
-            .forName(strClassname).getDeclaredConstructor().newInstance();
+            .forName(strClassname)
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocCostAdjustmentTemplate - ", e);
@@ -236,11 +242,11 @@ public class DocCostAdjustment extends AcctServer {
           amtDebit = "";
           amtCredit = amount.toPlainString();
         }
-        fact.createLine(
-            line,
+        fact.createLine(line,
             getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn), line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+                conn),
+            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, line.m_DateAcct, null, conn);
         fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, line.m_DateAcct, null, conn);
@@ -262,11 +268,11 @@ public class DocCostAdjustment extends AcctServer {
             line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, line.m_DateAcct, null, conn);
 
-        fact.createLine(
-            line,
+        fact.createLine(line,
             getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn), line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+                conn),
+            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, line.m_DateAcct, null, conn);
       } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INTERNALMOVEMENTTO)) {
         // Inventory Asset DR
         // Inventory Adjustment CR
@@ -281,11 +287,11 @@ public class DocCostAdjustment extends AcctServer {
           amtDebit = "";
           amtCredit = amount.toPlainString();
         }
-        fact.createLine(
-            line,
+        fact.createLine(line,
             getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn), line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+                conn),
+            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, line.m_DateAcct, null, conn);
         fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, line.m_DateAcct, null, conn);
@@ -307,11 +313,11 @@ public class DocCostAdjustment extends AcctServer {
             line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
             DocumentType, line.m_DateAcct, null, conn);
 
-        fact.createLine(
-            line,
+        fact.createLine(line,
             getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn), line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+                conn),
+            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, line.m_DateAcct, null, conn);
       } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_BOM)) {
         // Inventory Asset DR
         // Inventory Adjustment CR
@@ -326,11 +332,11 @@ public class DocCostAdjustment extends AcctServer {
           amtDebit = "";
           amtCredit = amount.toPlainString();
         }
-        fact.createLine(
-            line,
+        fact.createLine(line,
             getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn), line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+                conn),
+            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, line.m_DateAcct, null, conn);
 
         fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -349,11 +355,11 @@ public class DocCostAdjustment extends AcctServer {
           amtDebit = "";
           amtCredit = amount.toPlainString();
         }
-        fact.createLine(
-            line,
+        fact.createLine(line,
             getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn), line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+                conn),
+            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, line.m_DateAcct, null, conn);
 
         fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
             line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -425,12 +431,13 @@ public class DocCostAdjustment extends AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
-      log4jDocCostAdjustment.warn("AcctServer - getAccount - NO account Type=" + AcctType
-          + ", Record=" + Record_ID);
+      log4jDocCostAdjustment
+          .warn("AcctServer - getAccount - NO account Type=" + AcctType + ", Record=" + Record_ID);
       return null;
     }
     Account acct = null;
@@ -448,6 +455,7 @@ public class DocCostAdjustment extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     boolean isGeneratedAccounting = false;
 
@@ -484,8 +492,9 @@ public class DocCostAdjustment extends AcctServer {
     String Account_ID = "";
     if (data != null && data.length != 0) {
       Account_ID = data[0].accountId;
-    } else
+    } else {
       return null;
+    }
     // No account
     if (Account_ID.equals("")) {
       log4j.warn("AcctServer - getAccount - NO account Type=" + AcctType + ", Record=" + Record_ID);
@@ -502,6 +511,7 @@ public class DocCostAdjustment extends AcctServer {
 
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

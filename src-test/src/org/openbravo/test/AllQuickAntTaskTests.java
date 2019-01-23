@@ -69,7 +69,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-// dal
+    // dal
     DalPerformanceProxyTest.class, //
     DalTest.class, //
     CentralBrokerTest.class, //

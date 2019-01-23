@@ -110,13 +110,13 @@ public class GenerateEntityModelWiki extends OBBaseTest {
       content.put("ENTITY_NAME", entity.getName());
       content.put("ENTITY_HELP", (table.getHelpComment() != null ? table.getHelpComment() : ""));
       content.put("SOURCE", getJavaSourceCode(entity.getClassName()));
-      content.put("BACK_TO_ENTITY_MODEL", "ERP/2.50/Developers_Guide/Reference/Entity_Model#"
-          + entity.getName());
-      content.put(
-          "TABLE_LINK",
-          getLink("ERP/2.50/Developers_Guide/Database_Model/" + entity.getPackageName() + "/"
-              + entity.getTableName(), "To the database table (" + entity.getTableName()
-              + ") of this entity."));
+      content.put("BACK_TO_ENTITY_MODEL",
+          "ERP/2.50/Developers_Guide/Reference/Entity_Model#" + entity.getName());
+      content.put("TABLE_LINK",
+          getLink(
+              "ERP/2.50/Developers_Guide/Database_Model/" + entity.getPackageName() + "/"
+                  + entity.getTableName(),
+              "To the database table (" + entity.getTableName() + ") of this entity."));
 
       final String result = readApplyTemplate("entity_wiki.txt", content);
       writeToWiki(ENTITY_MODEL_PATH + "/" + entity.getName(), result);
@@ -223,9 +223,7 @@ public class GenerateEntityModelWiki extends OBBaseTest {
       sb.append("|-");
       sb.append("\n|");
       // entity name
-      sb.append("<span id=\""
-          + entity.getName()
-          + "\"></span>"
+      sb.append("<span id=\"" + entity.getName() + "\"></span>"
           + getLink("ERP/2.50/Developers_Guide/Reference/Entity_Model/" + entity.getName(),
               entity.getName()));
 
@@ -330,10 +328,11 @@ public class GenerateEntityModelWiki extends OBBaseTest {
   // }
 
   private String getJavaSourceCode(String className) throws Exception {
-    final String srcPath = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    final String srcPath = (String) OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .get("source.path");
-    final File sourceFile = new File(srcPath, "src-gen/" + className.replaceAll("\\.", "/")
-        + ".java");
+    final File sourceFile = new File(srcPath,
+        "src-gen/" + className.replaceAll("\\.", "/") + ".java");
     return readFile(sourceFile);
   }
 

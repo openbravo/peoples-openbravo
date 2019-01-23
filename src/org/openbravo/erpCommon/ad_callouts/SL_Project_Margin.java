@@ -60,7 +60,7 @@ public class SL_Project_Margin extends SimpleCallout {
       if (serviceRevenue.compareTo(BigDecimal.ZERO) != 0) {
         serviceMargin = (((serviceRevenue.subtract(serviceCost)).divide(serviceRevenue, 12,
             RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"))).setScale(2,
-            RoundingMode.HALF_UP);
+                RoundingMode.HALF_UP);
       } else {
         serviceMargin = BigDecimal.ZERO;
       }
@@ -69,8 +69,8 @@ public class SL_Project_Margin extends SimpleCallout {
 
     // Service Cost - SC = SR*(1-SM/100)
     if (StringUtils.equals(strChanged, "inpservmargin")) {
-      serviceCost = serviceRevenue.multiply((BigDecimal.ONE).subtract(serviceMargin
-          .divide(new BigDecimal("100"))));
+      serviceCost = serviceRevenue
+          .multiply((BigDecimal.ONE).subtract(serviceMargin.divide(new BigDecimal("100"))));
       if (serviceCost.scale() > stdPrecision) {
         serviceCost = serviceCost.setScale(stdPrecision, RoundingMode.HALF_UP);
       }
@@ -81,9 +81,9 @@ public class SL_Project_Margin extends SimpleCallout {
     if (StringUtils.equals(strChanged, "inpexpexpenses")
         || StringUtils.equals(strChanged, "inpexpreinvoicing")) {
       if (reinvoicedExpenses.compareTo(BigDecimal.ZERO) != 0) {
-        expensesMargin = (((reinvoicedExpenses.subtract(plannedExpenses)).multiply(new BigDecimal(
-            "100"))).divide(reinvoicedExpenses, 12, RoundingMode.HALF_EVEN)).setScale(2,
-            RoundingMode.HALF_UP);
+        expensesMargin = (((reinvoicedExpenses.subtract(plannedExpenses))
+            .multiply(new BigDecimal("100"))).divide(reinvoicedExpenses, 12,
+                RoundingMode.HALF_EVEN)).setScale(2, RoundingMode.HALF_UP);
       } else {
         expensesMargin = BigDecimal.ZERO;
       }
@@ -101,9 +101,10 @@ public class SL_Project_Margin extends SimpleCallout {
       }
       // Re-Invoiced Expenses - RE = PE/(1-EM/100)
       else {
-        reinvoicedExpenses = plannedExpenses.divide((BigDecimal.ONE).subtract(expensesMargin
-            .divide(new BigDecimal("100"), 12, RoundingMode.HALF_EVEN)), 12,
-            RoundingMode.HALF_EVEN);
+        reinvoicedExpenses = plannedExpenses.divide(
+            (BigDecimal.ONE)
+                .subtract(expensesMargin.divide(new BigDecimal("100"), 12, RoundingMode.HALF_EVEN)),
+            12, RoundingMode.HALF_EVEN);
         if (reinvoicedExpenses.scale() > stdPrecision) {
           reinvoicedExpenses = reinvoicedExpenses.setScale(stdPrecision, RoundingMode.HALF_UP);
         }

@@ -48,8 +48,9 @@ import net.sf.jasperreports.engine.JasperReport;
 public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
@@ -71,8 +72,8 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org");
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales,
-          "html", strCurrencyId);
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "html",
+          strCurrencyId);
     } else if (vars.commandIn("PRINT_PDF")) {
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId",
           "ReportTaxInvoiceJR|currency");
@@ -80,8 +81,9 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
           "ReportTaxInvoiceJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTaxInvoiceJR|DateTo");
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTaxInvoiceJR|Org");
-      if (strOrg.equals(""))
+      if (strOrg.equals("")) {
         strOrg = "0";
+      }
       String strDetail = vars.getStringParameter("inpDetalle");
       String strSales = vars.getStringParameter("inpSales");
       printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "pdf",
@@ -97,24 +99,28 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       String strSales = vars.getStringParameter("inpSales");
       printPageDataHtml(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales, "xls",
           strCurrencyId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales,
       String strOutput, String strCurrencyId) throws IOException, ServletException {
     String localStrOrg = strOrg;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     String strSale = "";
     String strPurchase = "";
-    if (localStrOrg.equals(""))
+    if (localStrOrg.equals("")) {
       localStrOrg = vars.getOrg();
-    if (log4j.isDebugEnabled())
-      log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom
-          + " fecha hasta: " + strDateTo + " detalle: " + strDetail);
+    }
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom + " fecha hasta: "
+          + strDateTo + " detalle: " + strDetail);
+    }
     /*
      * if (strSales.equals("S")) strSalesAux = "Y"; else strSalesAux = "N";
      */
@@ -122,8 +128,9 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, localStrOrg, strDetail, strSales,
           strCurrencyId);
     } else if (!strDetail.equals("-1")) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("****** not datailed");
+      }
       if (strSales.equals("S")) {
         strSale = Utility.messageBD(this, "Sale", vars.getLanguage());
       } else if (strSales.equals("P")) {
@@ -133,8 +140,9 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
         strPurchase = Utility.messageBD(this, "Purchase", vars.getLanguage());
       }
     } else {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("****** detailed");
+      }
       if (strSales.equals("S")) {
         strSale = Utility.messageBD(this, "Sale", vars.getLanguage());
       } else if (strSales.equals("P")) {
@@ -144,8 +152,9 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
         strPurchase = Utility.messageBD(this, "Purchase", vars.getLanguage());
       }
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("****** strSale: " + strSale + " strPurchase: " + strPurchase);
+    }
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTaxInvoice.jrxml";
 
@@ -175,16 +184,18 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
     try {
-      jasperSale = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSale.jrxml", vars.getLanguage());
-      jasperSaleForeign = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSaleForeign.jrxml",
+      jasperSale = ReportingUtils.getTranslatedJasperReport(this,
+          strBaseDesign + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSale.jrxml",
           vars.getLanguage());
-      jasperPurchase = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchase.jrxml",
+      jasperSaleForeign = ReportingUtils.getTranslatedJasperReport(this,
+          strBaseDesign + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoiceSaleForeign.jrxml",
           vars.getLanguage());
-      jasperPurchaseForeign = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchaseForeign.jrxml",
+      jasperPurchase = ReportingUtils.getTranslatedJasperReport(this,
+          strBaseDesign + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchase.jrxml",
+          vars.getLanguage());
+      jasperPurchaseForeign = ReportingUtils.getTranslatedJasperReport(this,
+          strBaseDesign
+              + "/org/openbravo/erpCommon/ad_reports/ReportTaxInvoicePurchaseForeign.jrxml",
           vars.getLanguage());
 
     } catch (JRException e) {
@@ -202,8 +213,9 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales,
       String strCurrencyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
@@ -212,19 +224,22 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     String strSale = "";
     String strPurchase = "";
     String discard[] = { "discard", "discard", "discard", "discard" };
-    if (log4j.isDebugEnabled())
-      log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom
-          + " fecha hasta: " + strDateTo + " detalle: " + strDetail);
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom + " fecha hasta: "
+          + strDateTo + " detalle: " + strDetail);
+    }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("****** xmlDocument");
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTaxInvoice",
-        discard).createXmlDocument();
+    }
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTaxInvoice", discard)
+        .createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTaxInvoiceJR", false, "", "",
-        "", false, "ad_reports", strReplaceWith, false, true);
-    toolbar
-        .prepareSimpleExcelToolBarTemplate("submitCommandForm('RELATION_XLS', false, null, 'ReportTaxInvoice_Excel.xls', 'EXCEL');return false;");
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTaxInvoiceJR", false, "", "", "",
+        false, "ad_reports", strReplaceWith, false, true);
+    toolbar.prepareSimpleExcelToolBarTemplate(
+        "submitCommandForm('RELATION_XLS', false, null, 'ReportTaxInvoice_Excel.xls', 'EXCEL');return false;");
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
@@ -282,8 +297,9 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("titlePurchase", strTitle);
     xmlDocument.setParameter("sale", strSale);
     xmlDocument.setParameter("purchase", strPurchase);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("****** setData reportAD_ORGID");
+    }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
           "", Utility.getContext(this, vars, "#User_Org", "ReportTaxInvoiceJR"),
@@ -300,6 +316,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportTaxInvoice.";
   }

@@ -50,13 +50,15 @@ public class ProductComplete extends HttpSecureAppServlet {
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
   private static final String ROWKEY_SEPARATOR = "@_##_@";
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -69,24 +71,28 @@ public class ProductComplete extends HttpSecureAppServlet {
       if (!strIDValue.equals("")) {
         String strNameAux = ProductData.existsActual(this, vars.getLanguage(), strNameValue,
             strIDValue);
-        if (!strNameAux.equals(""))
+        if (!strNameAux.equals("")) {
           strNameValue = strNameAux;
+        }
       }
       String windowId = vars.getRequestGlobalVariable("WindowID", "ProductComplete.windowId");
       String strWarehouse = vars.getRequestGlobalVariable("inpWarehouse",
           "ProductComplete.warehouse");
-      if (strWarehouse.equals(""))
+      if (strWarehouse.equals("")) {
         strWarehouse = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
+      }
       vars.setSessionValue("ProductComplete.warehouse", strWarehouse);
       String strBpartner = vars.getRequestGlobalVariable("inpBPartner", "ProductComplete.bpartner");
       vars.removeSessionValue("ProductComplete.key");
-      if (!strNameValue.equals(""))
+      if (!strNameValue.equals("")) {
         strNameValue = strNameValue + "%";
+      }
       vars.setSessionValue("ProductComplete.name", strNameValue);
       String strIsSOTrxTab = vars.getStringParameter("inpisSOTrxTab");
       String isSOTrx = strIsSOTrxTab;
-      if (strIsSOTrxTab.equals(""))
+      if (strIsSOTrxTab.equals("")) {
         isSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
+      }
       vars.setSessionValue("ProductComplete.isSOTrx", isSOTrx);
       String strStore = vars.getStringParameter("inpWithStoreLines", isSOTrx);
       vars.setSessionValue("ProductComplete.withstorelines", strStore);
@@ -101,24 +107,28 @@ public class ProductComplete extends HttpSecureAppServlet {
       if (!strIDValue.equals("")) {
         String strNameAux = ProductData.existsActualValue(this, vars.getLanguage(), strKeyValue,
             strIDValue);
-        if (!strNameAux.equals(""))
+        if (!strNameAux.equals("")) {
           strKeyValue = strNameAux;
+        }
       }
       String strWarehouse = vars.getRequestGlobalVariable("inpWarehouse",
           "ProductComplete.warehouse");
-      if (strWarehouse.equals(""))
+      if (strWarehouse.equals("")) {
         strWarehouse = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
+      }
       vars.setSessionValue("ProductComplete.warehouse", strWarehouse);
       String strBpartner = vars.getRequestGlobalVariable("inpBPartner", "ProductComplete.bpartner");
       String strIsSOTrxTab = vars.getStringParameter("inpisSOTrxTab");
       String isSOTrx = strIsSOTrxTab;
-      if (strIsSOTrxTab.equals(""))
+      if (strIsSOTrxTab.equals("")) {
         isSOTrx = Utility.getContext(this, vars, "isSOTrx", windowId);
+      }
       vars.setSessionValue("ProductComplete.isSOTrx", isSOTrx);
       String strStore = vars.getStringParameter("inpWithStoreLines", isSOTrx);
       vars.removeSessionValue("ProductComplete.name");
-      if (!strKeyValue.equals(""))
+      if (!strKeyValue.equals("")) {
         strKeyValue = strKeyValue + "%";
+      }
       vars.setSessionValue("ProductComplete.key", strKeyValue);
       vars.setSessionValue("ProductComplete.withstorelines", strStore);
 
@@ -148,28 +158,31 @@ public class ProductComplete extends HttpSecureAppServlet {
       }
 
       if (strStore.equals("Y")) {
-        if (vars.getLanguage().equals("en_US"))
+        if (vars.getLanguage().equals("en_US")) {
           data = ProductCompleteData.select(this, rownum, strKeyValue, "", strWarehouse,
               isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1", pgLimit,
               oraLimit1, oraLimit2);
-        else
+        } else {
           data = ProductCompleteData.selecttrl(this, vars.getLanguage(), rownum, strKeyValue, "",
               strWarehouse, isCalledFromProduction, vars.getRole(), strBpartner, strClients, "1",
               pgLimit, oraLimit1, oraLimit2);
+        }
       } else {
-        if (vars.getLanguage().equals("en_US"))
+        if (vars.getLanguage().equals("en_US")) {
           data = ProductCompleteData.selectNotStored(this, rownum, strKeyValue, "", strBpartner,
               strClients, strOrgs, isCalledFromProduction, "1", pgLimit, oraLimit1, oraLimit2);
-        else
+        } else {
           data = ProductCompleteData.selectNotStoredtrl(this, rownum, vars.getLanguage(),
               strKeyValue, "", strBpartner, strClients, strOrgs, isCalledFromProduction, "1",
               pgLimit, oraLimit1, oraLimit2);
+        }
       }
-      if (data != null && data.length == 1)
+      if (data != null && data.length == 1) {
         printPageKey(response, vars, data, strWarehouse);
-      else
+      } else {
         printPage(response, vars, strKeyValue, "", strWarehouse, strStore, strBpartner, strClients,
             strOrgs, "paramKey");
+      }
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -203,8 +216,9 @@ public class ProductComplete extends HttpSecureAppServlet {
       printGridData(response, vars, strKey, strName, strWarehouse, strBpartner, strStore,
           isCalledFromProduction, strOrgs, strClients, strSortCols, strSortDirs, strOffset,
           strPageSize, strNewFilter);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void removePageSessionVariables(VariablesSecureApp vars) {
@@ -218,10 +232,12 @@ public class ProductComplete extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
       String strNameValue, String strWarehouse, String strStore, String strBpartner,
       String strClients, String strOrgs, String focusedId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of the product seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/ProductComplete").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/ProductComplete")
+        .createXmlDocument();
 
     if (strKeyValue.equals("") && strNameValue.equals("")) {
       xmlDocument.setParameter("key", "%");
@@ -255,10 +271,12 @@ public class ProductComplete extends HttpSecureAppServlet {
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       ProductCompleteData[] data, String strWarehouse) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Product seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     DecimalFormat df = Utility.getFormat(vars, "qtyEdition");
 
@@ -278,8 +296,8 @@ public class ProductComplete extends HttpSecureAppServlet {
     html.append("var text = \"" + FormatUtilities.replaceJS(data[0].name) + "\";\n");
     html.append("var parameter = new Array(\n");
     html.append("new SearchElements(\"_LOC\", true, \"" + data[0].mLocatorId + "\"),\n");
-    html.append("new SearchElements(\"_ATR\", true, \"" + data[0].mAttributesetinstanceId
-        + "\"),\n");
+    html.append(
+        "new SearchElements(\"_ATR\", true, \"" + data[0].mAttributesetinstanceId + "\"),\n");
     html.append("new SearchElements(\"_PQTY\", true, \""
         + (data[0].qtyorder.equals("0") ? "" : df.format(new BigDecimal(data[0].qtyorder)))
         + "\"),\n");
@@ -296,10 +314,12 @@ public class ProductComplete extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -314,8 +334,9 @@ public class ProductComplete extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -357,8 +378,9 @@ public class ProductComplete extends HttpSecureAppServlet {
       String strOrderDirs, String strOffset, String strPageSize, String strNewFilter)
       throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
     int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -416,44 +438,48 @@ public class ProductComplete extends HttpSecureAppServlet {
           String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
 
           if (strStore.equals("Y")) {
-            if (vars.getLanguage().equals("en_US"))
+            if (vars.getLanguage().equals("en_US")) {
               data = ProductCompleteData.select(this, "ROWNUM", strKey, strName, strWarehouse,
                   strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, strOrderBy,
                   "", oraLimit1, oraLimit2);
-            else
+            } else {
               data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "ROWNUM", strKey,
                   strName, strWarehouse, strIsCalledFromProduction, vars.getRole(), strBpartner,
                   strClients, strOrderBy, "", oraLimit1, oraLimit2);
+            }
           } else {
-            if (vars.getLanguage().equals("en_US"))
+            if (vars.getLanguage().equals("en_US")) {
               data = ProductCompleteData.selectNotStored(this, "ROWNUM", strKey, strName,
                   strBpartner, strClients, strOrgs, strIsCalledFromProduction, strOrderBy, "",
                   oraLimit1, oraLimit2);
-            else
+            } else {
               data = ProductCompleteData.selectNotStoredtrl(this, "ROWNUM", vars.getLanguage(),
                   strKey, strName, strBpartner, strClients, strOrgs, strIsCalledFromProduction,
                   strOrderBy, "", oraLimit1, oraLimit2);
+            }
           }
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
 
           if (strStore.equals("Y")) {
-            if (vars.getLanguage().equals("en_US"))
+            if (vars.getLanguage().equals("en_US")) {
               data = ProductCompleteData.select(this, "1", strKey, strName, strWarehouse,
                   strIsCalledFromProduction, vars.getRole(), strBpartner, strClients, strOrderBy,
                   pgLimit, "", "");
-            else
+            } else {
               data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "1", strKey, strName,
                   strWarehouse, strIsCalledFromProduction, vars.getRole(), strBpartner, strClients,
                   strOrderBy, pgLimit, "", "");
+            }
           } else {
-            if (vars.getLanguage().equals("en_US"))
+            if (vars.getLanguage().equals("en_US")) {
               data = ProductCompleteData.selectNotStored(this, "1", strKey, strName, strBpartner,
                   strClients, strOrgs, strIsCalledFromProduction, strOrderBy, pgLimit, "", "");
-            else
+            } else {
               data = ProductCompleteData.selectNotStoredtrl(this, "1", vars.getLanguage(), strKey,
                   strName, strBpartner, strClients, strOrgs, strIsCalledFromProduction, strOrderBy,
                   pgLimit, "", "");
+            }
           }
 
         }
@@ -467,32 +493,38 @@ public class ProductComplete extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
 
     DecimalFormat df = Utility.getFormat(vars, "qtyEdition");
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -500,7 +532,8 @@ public class ProductComplete extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -522,8 +555,8 @@ public class ProductComplete extends HttpSecureAppServlet {
             rowKey.append(data[j].getField("name")).append(ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("mLocatorId")).append(ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("mAttributesetinstanceId")).append(ROWKEY_SEPARATOR);
-            rowKey.append(df.format(new BigDecimal(data[j].getField("qtyorder")))).append(
-                ROWKEY_SEPARATOR);
+            rowKey.append(df.format(new BigDecimal(data[j].getField("qtyorder"))))
+                .append(ROWKEY_SEPARATOR);
             rowKey.append(data[j].getField("cUom2Id")).append(ROWKEY_SEPARATOR);
             final String qty = data[j].getField("qty").equals("") ? "0" : data[j].getField("qty");
             rowKey.append(df.format(new BigDecimal(qty))).append(ROWKEY_SEPARATOR);
@@ -534,18 +567,28 @@ public class ProductComplete extends HttpSecureAppServlet {
               || columnname.equalsIgnoreCase("quantityorder_ref")) {
             strRowsData.append(df.format(new BigDecimal(data[j].getField(columnname))));
           } else if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -558,12 +601,14 @@ public class ProductComplete extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the products seeker";
   } // end of getServletInfo() method

@@ -38,14 +38,17 @@ class QueryParameterStructure {
   }
 
   public void setData(String name, String value) {
-    if (name == null)
+    if (name == null) {
       return;
-    if (this.data == null)
+    }
+    if (this.data == null) {
       this.data = new Hashtable<String, String>();
-    if (value == null || value.equals(""))
+    }
+    if (value == null || value.equals("")) {
       this.data.remove(name);
-    else
+    } else {
       this.data.put(name, value);
+    }
   }
 
   public String getData(String name) {
@@ -68,6 +71,7 @@ class QueryParameterStructure {
     return getData("realName");
   }
 
+  @Override
   public String toString() {
     StringBuffer text = new StringBuffer();
     text.append(getData("name"));

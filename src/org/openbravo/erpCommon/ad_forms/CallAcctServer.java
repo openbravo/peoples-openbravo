@@ -46,8 +46,9 @@ import org.quartz.SchedulerException;
 public class CallAcctServer extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String adProcessId = CallAcctServerData.processID(this);
     CallAcctServerData[] data = CallAcctServerData.selectByProcessId(this, adProcessId,
@@ -80,20 +81,24 @@ public class CallAcctServer extends HttpSecureAppServlet {
       String strAdOrgId = vars.getStringParameter("inpadOrgId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "CallAcctServer|dateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "CallAcctServer|dateTo");
-      if (strAdOrgId == null || strAdOrgId.equals(""))
+      if (strAdOrgId == null || strAdOrgId.equals("")) {
         strAdOrgId = "0";
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug(strTableId);
+      }
       runProcess(response, vars, strTableId, strAdOrgId, adProcessId, strDateFrom, strDateTo);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTableId,
-      String strOrgId, String strMessage, String strDateFrom, String strDateTo) throws IOException,
-      ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/CallAcctServer").createXmlDocument();
+      String strOrgId, String strMessage, String strDateFrom, String strDateTo)
+      throws IOException, ServletException {
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/CallAcctServer")
+        .createXmlDocument();
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "CallAcctServer", false, "", "", "",
         false, "ad_forms", strReplaceWith, false, true);
@@ -132,23 +137,27 @@ public class CallAcctServer extends HttpSecureAppServlet {
 
       AcctServerData[] data = AcctServerData.selectTables(this, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", ""));
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("select tables org:" + Utility.getContext(this, vars, "#User_Org", "")
             + ", Client:" + Utility.getContext(this, vars, "#User_Client", "") + ",lang:"
             + vars.getLanguage());
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("lenght:" + data.length);
+      }
       xmlDocument.setData("reportadTableId", "liststructure", data);
 
       xmlDocument.setParameter("adTableId", strTableId);
 
       data = AcctServerData.selectOrganizations(this,
           Utility.getContext(this, vars, "#User_Client", ""));
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("select organizations:" + Utility.getContext(this, vars, "#User_Org", "")
             + ", Client:" + Utility.getContext(this, vars, "#User_Client", ""));
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("lenght:" + data.length);
+      }
       xmlDocument.setData("reportadOrgId", "liststructure", data);
 
       xmlDocument.setParameter("adOrgId", strOrgId);
@@ -218,6 +227,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that calls the contabilization process";
   } // end of getServletInfo() method

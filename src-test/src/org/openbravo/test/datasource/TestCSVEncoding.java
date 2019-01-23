@@ -96,14 +96,10 @@ public class TestCSVEncoding extends BaseDataSourceTestDal {
     params.put("criteria", criteria.toString());
 
     JSONObject viewState = new JSONObject();
-    viewState
-        .put(
-            "field",
-            "[{name:\"_editLink\",frozen:true,width:56},{name:\"organization\",visible:false,width:200},{name:\"iSOCode\",visible:false,width:100},{name:\"symbol\",width:1572},{name:\"description\",visible:false,width:200},{name:\"standardPrecision\",visible:false,width:100},{name:\"costingPrecision\",visible:false,width:100},{name:\"pricePrecision\",visible:false,width:100},{name:\"currencySymbolAtTheRight\",visible:false,autoFitWidth:false,width:100},{name:\"active\",visible:false,autoFitWidth:false,width:100},{name:\"creationDate\",visible:false,width:100},{name:\"createdBy\",visible:false,width:100},{name:\"updated\",visible:false,width:100},{name:\"updatedBy\",visible:false,width:100}]");
-    viewState
-        .put(
-            "sort",
-            "({fieldName:null,sortDir:\"ascending\",sortSpecifiers:[{property:\"iSOCode\",direction:\"ascending\"}]})");
+    viewState.put("field",
+        "[{name:\"_editLink\",frozen:true,width:56},{name:\"organization\",visible:false,width:200},{name:\"iSOCode\",visible:false,width:100},{name:\"symbol\",width:1572},{name:\"description\",visible:false,width:200},{name:\"standardPrecision\",visible:false,width:100},{name:\"costingPrecision\",visible:false,width:100},{name:\"pricePrecision\",visible:false,width:100},{name:\"currencySymbolAtTheRight\",visible:false,autoFitWidth:false,width:100},{name:\"active\",visible:false,autoFitWidth:false,width:100},{name:\"creationDate\",visible:false,width:100},{name:\"createdBy\",visible:false,width:100},{name:\"updated\",visible:false,width:100},{name:\"updatedBy\",visible:false,width:100}]");
+    viewState.put("sort",
+        "({fieldName:null,sortDir:\"ascending\",sortSpecifiers:[{property:\"iSOCode\",direction:\"ascending\"}]})");
     viewState.put("hilite", "null");
 
     JSONObject group = new JSONObject();
@@ -133,7 +129,7 @@ public class TestCSVEncoding extends BaseDataSourceTestDal {
     OBDal.getInstance().commitAndClose();
 
     // Second assert
-    assertTrue("On delete CSV Text Preference Arabic characters are still showing", res2[1]
-        .substring(1, 4).equals("?.?"));
+    assertTrue("On delete CSV Text Preference Arabic characters are still showing",
+        res2[1].substring(1, 4).equals("?.?"));
   }
 }

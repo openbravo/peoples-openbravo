@@ -42,13 +42,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -88,12 +90,13 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
       String strComparative = vars.getStringParameter("inpComparative", "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportRefundSalesDimensionalAnalyses|currency", strUserCurrencyId);
-      printPagePdf(request, response, vars, strComparative, strDateFrom, strDateTo,
-          strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown,
-          strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strmWarehouseId, strOrder,
-          strMayor, strMenor, strRatioMayor, strRatioMenor, strCurrencyId);
-    } else
+      printPagePdf(request, response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup,
+          strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef,
+          strDateToRef, strOrg, strsalesrepId, strmWarehouseId, strOrder, strMayor, strMenor,
+          strRatioMayor, strRatioMenor, strCurrencyId);
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPagePdf(HttpServletRequest request, HttpServletResponse response,
@@ -101,52 +104,58 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
       String strPartnerGroup, String strcBpartnerId, String strProductCategory,
       String strmProductId, String strNotShown, String strShown, String strDateFromRef,
       String strDateToRef, String strOrg, String strsalesrepId, String strmWarehouseId,
-      String strOrder, String strMayor, String strMenor, String strRatioMayor,
-      String strRatioMenor, String strCurrencyId) throws IOException, ServletException {
+      String strOrder, String strMayor, String strMenor, String strRatioMayor, String strRatioMenor,
+      String strCurrencyId) throws IOException, ServletException {
     String localStrShown = strShown;
     String localStrOrg = strOrg;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print pdf");
+    }
     XmlDocument xmlDocument = null;
     String strOrderby = "";
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("********************************" + strComparative);
+    }
     String[] discard = { "", "", "", "", "", "", "" };
-    String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard",
+    String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
-        "discard", "discard" };
-    if (localStrOrg.equals(""))
+        "discard" };
+    if (localStrOrg.equals("")) {
       localStrOrg = vars.getOrg();
-    if (strComparative.equals("Y"))
+    }
+    if (strComparative.equals("Y")) {
       discard1[0] = "selEliminarBody2";
+    }
     String strTitle = "";
     strTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom + " "
         + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
-    if (!strPartnerGroup.equals(""))
+    if (!strPartnerGroup.equals("")) {
       strTitle = strTitle + ", " + Utility.messageBD(this, "ForBPartnerGroup", vars.getLanguage())
           + " " + ReportRefundSalesDimensionalAnalysesData.selectBpgroup(this, strPartnerGroup);
-    if (!strProductCategory.equals(""))
-      strTitle = strTitle
-          + ", "
-          + Utility.messageBD(this, "ProductCategory", vars.getLanguage())
-          + " "
-          + ReportRefundSalesDimensionalAnalysesData
-              .selectProductCategory(this, strProductCategory);
-    if (!strsalesrepId.equals(""))
+    }
+    if (!strProductCategory.equals("")) {
+      strTitle = strTitle + ", " + Utility.messageBD(this, "ProductCategory", vars.getLanguage())
+          + " " + ReportRefundSalesDimensionalAnalysesData.selectProductCategory(this,
+              strProductCategory);
+    }
+    if (!strsalesrepId.equals("")) {
       strTitle = strTitle + " " + Utility.messageBD(this, "And", vars.getLanguage()) + " "
           + Utility.messageBD(this, "TheSalesRep", vars.getLanguage()) + " "
           + ReportRefundSalesDimensionalAnalysesData.selectSalesrep(this, strsalesrepId);
-    if (!strmWarehouseId.equals(""))
+    }
+    if (!strmWarehouseId.equals("")) {
       strTitle = strTitle + " " + Utility.messageBD(this, "And", vars.getLanguage()) + " "
           + Utility.messageBD(this, "TheWarehouse", vars.getLanguage()) + " "
           + ReportRefundSalesDimensionalAnalysesData.selectMwarehouse(this, strmWarehouseId);
+    }
 
     ReportRefundSalesDimensionalAnalysesData[] data = null;
     String[] strShownArray = { "", "", "", "", "", "", "" };
-    if (localStrShown.startsWith("("))
+    if (localStrShown.startsWith("(")) {
       localStrShown = localStrShown.substring(1, localStrShown.length() - 1);
+    }
     if (!localStrShown.equals("")) {
       localStrShown = Replace.replace(localStrShown, "'", "");
       localStrShown = Replace.replace(localStrShown, " ", "");
@@ -302,14 +311,15 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
       }
     } else {
       try {
-        data = ReportRefundSalesDimensionalAnalysesData.selectNoComparative(this, strCurrencyId,
-            strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-            strTextShow[5], strTextShow[6],
-            Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
-            Utility.getContext(this, vars, "#User_Client", "ReportRefundSalesDimensionalAnalyses"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
-            strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId,
-            strOrderby);
+        data = ReportRefundSalesDimensionalAnalysesData
+            .selectNoComparative(this, strCurrencyId, strTextShow[0], strTextShow[1],
+                strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6],
+                Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
+                Utility.getContext(this, vars, "#User_Client",
+                    "ReportRefundSalesDimensionalAnalyses"),
+                strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+                strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId,
+                strOrderby);
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -322,14 +332,16 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
           Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()),
           strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("*******************PDF" + strOrderby);
+      }
       if (data.length == 0 || data == null) {
         data = ReportRefundSalesDimensionalAnalysesData.set();
       } else {
         int contador = intDiscard;
-        if (intAuxDiscard != -1)
+        if (intAuxDiscard != -1) {
           contador = intAuxDiscard;
+        }
         int k = 1;
         if (strComparative.equals("Y")) {
           for (int j = contador; j > 0; j--) {
@@ -350,9 +362,11 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
         }
 
       }
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportRefundSalesDimensionalAnalysesEditionPDF",
-          discard1).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate(
+              "org/openbravo/erpCommon/ad_reports/ReportRefundSalesDimensionalAnalysesEditionPDF",
+              discard1)
+          .createXmlDocument();
 
       xmlDocument.setParameter("eliminar2", discard[1]);
       xmlDocument.setParameter("eliminar3", discard[2]);
@@ -376,6 +390,7 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends HttpSecureAppServle
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportRefundSalesDimensionalAnalyses. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

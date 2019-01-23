@@ -45,8 +45,8 @@ public class SL_BankStmt_Amount extends SimpleCallout {
 
     boolean isConversion = false;
     if (StringUtils.isNotEmpty(strDP)) {
-      isConversion = StringUtils.equals(
-          SLBankStmtAmountData.isConversion(this, strCurrencyId, strDP), "Y");
+      isConversion = StringUtils
+          .equals(SLBankStmtAmountData.isConversion(this, strCurrencyId, strDP), "Y");
     }
 
     if (StringUtils.equals(strChanged, "inpstmtamt")) {

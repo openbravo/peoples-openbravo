@@ -48,21 +48,24 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     final String strManufacturingMRPID = (String) bundle.getParams().get("MRP_Run_Production_ID");
-    final ProductionRun productionRun = OBDal.getInstance().get(ProductionRun.class,
-        strManufacturingMRPID);
+    final ProductionRun productionRun = OBDal.getInstance()
+        .get(ProductionRun.class, strManufacturingMRPID);
     final String userId = OBContext.getOBContext().getUser().getId();
     final String orgId = productionRun.getOrganization().getId();
     final String clientId = productionRun.getClient().getId();
-    final String plannerId = productionRun.getPlanner() != null ? productionRun.getPlanner()
-        .getId() : NULL;
-    final String productId = productionRun.getProduct() != null ? productionRun.getProduct()
-        .getId() : NULL;
-    final String productCategoryId = productionRun.getProductCategory() != null ? productionRun
-        .getProductCategory().getId() : NULL;
-    final String bpId = productionRun.getBusinessPartner() != null ? productionRun
-        .getBusinessPartner().getId() : NULL;
-    final String bpCatId = productionRun.getBusinessPartnerCategory() != null ? productionRun
-        .getBusinessPartnerCategory().getId() : NULL;
+    final String plannerId = productionRun.getPlanner() != null ? productionRun.getPlanner().getId()
+        : NULL;
+    final String productId = productionRun.getProduct() != null ? productionRun.getProduct().getId()
+        : NULL;
+    final String productCategoryId = productionRun.getProductCategory() != null
+        ? productionRun.getProductCategory().getId()
+        : NULL;
+    final String bpId = productionRun.getBusinessPartner() != null
+        ? productionRun.getBusinessPartner().getId()
+        : NULL;
+    final String bpCatId = productionRun.getBusinessPartnerCategory() != null
+        ? productionRun.getBusinessPartnerCategory().getId()
+        : NULL;
     final long timeHorizon = productionRun.getTimeHorizon();
     final long safetyLeadTime = productionRun.getSafetyLeadTime();
     final Date docDate = productionRun.getDocumentDate();
@@ -178,8 +181,8 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     where.append(" where " + ProductionRunLine.PROPERTY_MANUFACTURINGPLAN + ".id = :prodRun");
     where.append("   and " + ProductionRunLine.PROPERTY_QUANTITY + " < 0");
     where.append("   and " + ProductionRunLine.PROPERTY_TRANSACTIONTYPE + " <> 'WR'");
-    OBQuery<ProductionRunLine> prlQry = OBDal.getInstance().createQuery(ProductionRunLine.class,
-        where.toString());
+    OBQuery<ProductionRunLine> prlQry = OBDal.getInstance()
+        .createQuery(ProductionRunLine.class, where.toString());
     prlQry.setNamedParameter("prodRun", productionRunId);
 
     prlQry.setFetchSize(1000);

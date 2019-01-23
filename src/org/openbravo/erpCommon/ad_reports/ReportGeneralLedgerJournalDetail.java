@@ -41,8 +41,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -68,8 +69,8 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
       ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
       String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
           "ReportGeneralLedgerJournalDetail");
-      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer
-          .parseInt(strRecordRange);
+      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0
+          : Integer.parseInt(strRecordRange);
       if (StringUtils.isEmpty(strInitRecord) || StringUtils.equals(strInitRecord, "0")) {
         vars.setSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber", "0");
       } else {
@@ -85,8 +86,8 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
           .getSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber");
       String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
           "ReportGeneralLedgerJournalDetail");
-      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0 : Integer
-          .parseInt(strRecordRange);
+      int intRecordRange = StringUtils.isEmpty(strRecordRange) ? 0
+          : Integer.parseInt(strRecordRange);
       int initRecord = (StringUtils.isEmpty(strInitRecord) ? 0 : Integer.parseInt(strInitRecord));
       if (initRecord == 0) {
         initRecord = 1;
@@ -106,12 +107,12 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     String strRecordRange = Utility.getContext(readOnlyCP, vars, "#RecordRange",
         "ReportGeneralLedgerJournalDetail");
-    int intRecordRange = (StringUtils.isEmpty(strRecordRange) ? 0 : Integer
-        .parseInt(strRecordRange));
+    int intRecordRange = (StringUtils.isEmpty(strRecordRange) ? 0
+        : Integer.parseInt(strRecordRange));
     String strInitRecord = vars
         .getSessionValue("ReportGeneralLedgerJournalDetail.initRecordNumber");
-    int initRecordNumber = (StringUtils.isEmpty(strInitRecord) ? 0 : Integer
-        .parseInt(strInitRecord));
+    int initRecordNumber = (StringUtils.isEmpty(strInitRecord) ? 0
+        : Integer.parseInt(strInitRecord));
 
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
@@ -134,8 +135,9 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
         "ReportGeneralLedgerJournalDetail", false, "", "", "", false, "ad_reports", strReplaceWith,
         false, true);
     toolbar.prepareRelationBarTemplate(hasPrevious, hasNext);
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournalDetail").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournalDetail")
+        .createXmlDocument();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
       WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
@@ -167,8 +169,8 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setData("structure1", data);
-    vars.setSessionValue("ReportGeneralLedgerJournalDetail|FactAcctGroupId", strDateacct + "/"
-        + strFactAcctGroupId);
+    vars.setSessionValue("ReportGeneralLedgerJournalDetail|FactAcctGroupId",
+        strDateacct + "/" + strFactAcctGroupId);
     out.println(xmlDocument.print());
     out.close();
   }
@@ -180,6 +182,7 @@ public class ReportGeneralLedgerJournalDetail extends HttpSecureAppServlet {
     return tokens[index];
   } // end of getServletInfo() method
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportGeneralLedgerJournalDetail.";
   } // end of getServletInfo() method

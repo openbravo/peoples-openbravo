@@ -20,14 +20,14 @@ package org.openbravo.client.application.report;
 
 import java.util.concurrent.Semaphore;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyConflictException;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * A class which can be used to limit the number of parallel processes running. If no semaphore is
@@ -88,7 +88,8 @@ public class ReportSemaphoreHandling implements OBSingleton {
       maxThreads = DEFAULT_MAX_THREADS;
     } catch (NumberFormatException e) {
       // Value of preference is not numeric, use default value.
-      log.warn("The value of OBUIAPP_MaxReportThreads property is not a valid number {}.", value, e);
+      log.warn("The value of OBUIAPP_MaxReportThreads property is not a valid number {}.", value,
+          e);
       maxThreads = DEFAULT_MAX_THREADS;
     }
 

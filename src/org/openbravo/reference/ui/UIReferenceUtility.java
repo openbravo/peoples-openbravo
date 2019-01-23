@@ -46,24 +46,22 @@ public class UIReferenceUtility {
    */
   static public boolean checkTableTranslation(ComboTableData comboTableData, String tableName,
       FieldProvider field, String reference) throws Exception {
-    if (tableName == null || tableName.equals("") || field == null)
+    if (tableName == null || tableName.equals("") || field == null) {
       return false;
+    }
     ComboTableQueryData[] data = ComboTableQueryData.selectTranslatedColumn(
         comboTableData.getPool(), field.getField("tablename"), field.getField("name"));
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return false;
+    }
     int myIndex = comboTableData.index++;
-    comboTableData.addSelectField(
-        "(CASE WHEN td_trl"
-            + myIndex
-            + "."
-            + data[0].columnname
-            + " IS NULL THEN "
+    comboTableData
+        .addSelectField("(CASE WHEN td_trl" + myIndex + "." + data[0].columnname + " IS NULL THEN "
             + formatField(comboTableData.getVars(), reference,
                 (tableName + "." + field.getField("name")))
-            + " ELSE "
-            + formatField(comboTableData.getVars(), reference,
-                ("td_trl" + myIndex + "." + data[0].columnname)) + " END)", "NAME");
+            + " ELSE " + formatField(comboTableData.getVars(), reference,
+                ("td_trl" + myIndex + "." + data[0].columnname))
+            + " END)", "NAME");
     comboTableData.addFromField(data[0].tablename + " td_trl" + myIndex + " on " + tableName + "."
         + data[0].reference + " = td_trl" + myIndex + "." + data[0].reference + " AND td_trl"
         + myIndex + ".AD_Language = ?", "td_trl" + myIndex);
@@ -76,10 +74,11 @@ public class UIReferenceUtility {
    */
   static String formatField(VariablesSecureApp vars, String reference, String field) {
     String result = "";
-    if (field == null)
+    if (field == null) {
       return "";
-    else if (reference == null || reference.length() == 0)
+    } else if (reference == null || reference.length() == 0) {
       return field;
+    }
 
     if (reference.equals("11") /* INTEGER */
         || reference.equals("12")/* AMOUNT */
@@ -104,7 +103,7 @@ public class UIReferenceUtility {
     } else if (reference.equals("20")) {
       // YESNO
       result = "COALESCE(" + field + ", 'N')";
-    } else if (reference.equals("23") /* Binary */|| reference.equals("14")/* Text */) {
+    } else if (reference.equals("23") /* Binary */ || reference.equals("14")/* Text */) {
       result = field;
     } else {
       result = "COALESCE(TO_CHAR(" + field + "),'')";

@@ -36,18 +36,16 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  * Unbox less quantity than reserved one. Reservation is fully in box. Box movement should have 2
  * lines, while unbox movement just one
  */
-public class ReferencedInventoryPartialUnboxPartialReservation1MovementLineUnboxTest extends
-    ReferencedInventoryUnboxReservationTest {
+public class ReferencedInventoryPartialUnboxPartialReservation1MovementLineUnboxTest
+    extends ReferencedInventoryUnboxReservationTest {
   @Rule
   public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsUnboxReservationTest>(
-      Arrays
-          .asList(new ParamsUnboxReservationTest[] {
-              new ParamsUnboxReservationTest(
-                  "Unbox less quantity than reserved one. Reservation is fully in box", "10", "1",
-                  "9"),
-              new ParamsUnboxReservationTest(
-                  "Unbox less quantity than reserved one. Reservation is fully in box", "10", "3",
-                  "1") }));
+      Arrays.asList(new ParamsUnboxReservationTest[] {
+          new ParamsUnboxReservationTest(
+              "Unbox less quantity than reserved one. Reservation is fully in box", "10", "1", "9"),
+          new ParamsUnboxReservationTest(
+              "Unbox less quantity than reserved one. Reservation is fully in box", "10", "3",
+              "1") }));
 
   protected @ParameterCdiTest ParamsUnboxReservationTest params;
 
@@ -70,11 +68,11 @@ public class ReferencedInventoryPartialUnboxPartialReservation1MovementLineUnbox
   void assertsGoodsMovementNumberOfLines(final InternalMovement boxMovement,
       final int expectedNumberOfLines) {
     if (StringUtils.contains(boxMovement.getName(), "UNBOX")) {
-      assertThat("Unbox Movement has 1 line", boxMovement.getMaterialMgmtInternalMovementLineList()
-          .size(), equalTo(1));
+      assertThat("Unbox Movement has 1 line",
+          boxMovement.getMaterialMgmtInternalMovementLineList().size(), equalTo(1));
     } else {
-      assertThat("Box Movement has two lines", boxMovement
-          .getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
+      assertThat("Box Movement has two lines",
+          boxMovement.getMaterialMgmtInternalMovementLineList().size(), equalTo(2));
     }
   }
 }

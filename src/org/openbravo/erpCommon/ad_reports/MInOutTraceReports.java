@@ -49,8 +49,9 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
 
   private static final BigDecimal ZERO = new BigDecimal(0.0);
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Counter maintained as Vector to ensure thread safety
@@ -76,10 +77,10 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     } else if (vars.commandIn("FIND")) {
       strmProductIdGlobal = vars.getRequestGlobalVariable("inpmProductId",
           "MInOutTraceReports|M_Product_Id");
-      strmAttributesetinstanceIdGlobal = vars.getRequestGlobalVariable(
-          "inpmAttributeSetInstanceId", "MInOutTraceReports|M_AttributeSetInstance_Id");
-      String strIn = StringUtils.isEmpty(vars.getStringParameter("inpInOut")) ? "N" : vars
-          .getStringParameter("inpInOut");
+      strmAttributesetinstanceIdGlobal = vars.getRequestGlobalVariable("inpmAttributeSetInstanceId",
+          "MInOutTraceReports|M_AttributeSetInstance_Id");
+      String strIn = StringUtils.isEmpty(vars.getStringParameter("inpInOut")) ? "N"
+          : vars.getStringParameter("inpInOut");
       printPageDataSheet(response, vars, strIn, strmProductIdGlobal,
           strmAttributesetinstanceIdGlobal, calculated, count);
     } else if (vars.commandIn("INVERSE")) {
@@ -100,13 +101,14 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strIn, String strmProductIdGlobal, String strmAttributesetinstanceIdGlobal,
-      Hashtable<String, Integer> calculated, Vector<Integer> count) throws IOException,
-      ServletException {
+      Hashtable<String, Integer> calculated, Vector<Integer> count)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "/org/openbravo/erpCommon/ad_reports/MInOutTraceReports").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("/org/openbravo/erpCommon/ad_reports/MInOutTraceReports")
+        .createXmlDocument();
     MInOutTraceReportsData[] data = null;
     calculated.clear();
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
@@ -122,8 +124,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage());
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("mProduct", strmProductIdGlobal);
-    xmlDocument
-        .setParameter("parameterM_ATTRIBUTESETINSTANCE_ID", strmAttributesetinstanceIdGlobal);
+    xmlDocument.setParameter("parameterM_ATTRIBUTESETINSTANCE_ID",
+        strmAttributesetinstanceIdGlobal);
     xmlDocument.setData("reportM_ATTRIBUTESETINSTANCE_ID", "liststructure",
         AttributeSetInstanceComboData.select(readOnlyCP, vars.getLanguage(), strmProductIdGlobal,
             Utility.getContext(readOnlyCP, vars, "#User_Client", "MInOutTraceReports"),
@@ -224,8 +226,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     strHtmlHeader.append(insertHeaderHtml(false, "0"));
     strHtmlHeader.append("<tr style=\"background: #CFDDE8\">");
     strHtmlHeader.append("<td >\n");
-    strHtmlHeader
-        .append("<table class=\"DataGrid_Header_Table\" border=\"0\" cellspacing=0 cellpadding=0 width=\"100%\">");
+    strHtmlHeader.append(
+        "<table class=\"DataGrid_Header_Table\" border=\"0\" cellspacing=0 cellpadding=0 width=\"100%\">");
     strHtmlHeader.append("  <tr>");
     strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"70\">Date</th>");
     strHtmlHeader.append("    <th class=\"DataGrid_Header_Cell\" width=\"100\">Movement Type</th>");
@@ -247,7 +249,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
   private String insertTabHtml(boolean border) {
     return "    <td width=\"20px\" class=\"DataGrid_Body_Cell\""
         + (border ? " style=\"border-bottom: 0px !important;\""
-            : " style=\"border-top: 0px !important;\"") + ">&nbsp;</td>\n";
+            : " style=\"border-top: 0px !important;\"")
+        + ">&nbsp;</td>\n";
   }
 
   private String insertHeaderHtml(boolean isClose, String border) {
@@ -271,7 +274,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     resultado.append("</td>\n");
     if (totalPedido.intValue() != 0) {
       resultado.append("<td class=\"DataGrid_Body_Cell_Amount\">\n");
-      resultado.append(totalPedido.toString()).append(" ")
+      resultado.append(totalPedido.toString())
+          .append(" ")
           .append(StringEscapeUtils.escapeHtml(strUnitPedido));
       resultado.append("</td>\n");
     }
@@ -303,7 +307,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     strHtml.append(insertHeaderHtml(false, "0"));
     for (int i = 0; i < dataChild.length; i++) {
 
-      strHtml.append("<tr style=\"background: ").append((colorbg ? "#CFDDE8" : "#FFFFFF"))
+      strHtml.append("<tr style=\"background: ")
+          .append((colorbg ? "#CFDDE8" : "#FFFFFF"))
           .append("\">");
       colorbg = !colorbg;
 
@@ -322,8 +327,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
         log4j.debug("****** New line, qty: " + dataChild[i].movementqty + " "
             + getData(dataChild[i], "TraceSubTable"));
       }
-      strHtml.append(processExternalChilds(vars, dataChild[i], strIn, colorbg2,
-          strmProductIdGlobal, calculated, count));
+      strHtml.append(processExternalChilds(vars, dataChild[i], strIn, colorbg2, strmProductIdGlobal,
+          calculated, count));
     }
     strHtml.append(insertHeaderHtml(true, ""));
     return strHtml.toString();
@@ -363,7 +368,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
         strHtml.append("    <td colspan=\"3\">\n");
         strHtml.append(insertHeaderHtml(false, "0"));
         for (int j = 0; j < dataProduction.length; j++) {
-          strHtml.append("  <tr style=\"background: ").append((colorbg ? "#CCCCCC" : "#AAAAAA"))
+          strHtml.append("  <tr style=\"background: ")
+              .append((colorbg ? "#CCCCCC" : "#AAAAAA"))
               .append("\">\n");
           strHtml.append(insertTabHtml(true));
           strHtml.append("    <td >\n");
@@ -372,26 +378,29 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
           strHtml.append("<table border=\"0\" cellspacing=0 cellpadding=0 width=\"100%\">\n");
           strHtml.append("  <tr>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">")
-              .append(dataProduction[j].movementdate).append("</td>\n");
+              .append(dataProduction[j].movementdate)
+              .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
               .append(StringEscapeUtils.escapeHtml(dataProduction[j].movementtypeName))
               .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
-              .append(dataProduction[j].locatorName).append("</td>\n");
+              .append(dataProduction[j].locatorName)
+              .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
-              .append(dataProduction[j].movementqty).append("&nbsp;")
-              .append(StringEscapeUtils.escapeHtml(dataProduction[j].uomName)).append("</td>\n");
+              .append(dataProduction[j].movementqty)
+              .append("&nbsp;")
+              .append(StringEscapeUtils.escapeHtml(dataProduction[j].uomName))
+              .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
-              .append(dataProduction[j].quantityorder).append("&nbsp;")
+              .append(dataProduction[j].quantityorder)
+              .append("&nbsp;")
               .append(StringEscapeUtils.escapeHtml(dataProduction[j].productUomName))
               .append("</td>\n");
           resultado2 = dataProduction[j].productName;
-          strHtml
-              .append("    <td class=\"DataGrid_Body_Cell\"><a href=\"#\" onclick=\"submitCommandForm('INVERSE', true, null, 'MInOutTraceReports.html?inpmProductId2="
-                  + dataProduction[j].mProductId
-                  + "&inpmAttributeSetInstanceId2="
-                  + dataProduction[j].mAttributesetinstanceId
-                  + "&inpIn2="
+          strHtml.append(
+              "    <td class=\"DataGrid_Body_Cell\"><a href=\"#\" onclick=\"submitCommandForm('INVERSE', true, null, 'MInOutTraceReports.html?inpmProductId2="
+                  + dataProduction[j].mProductId + "&inpmAttributeSetInstanceId2="
+                  + dataProduction[j].mAttributesetinstanceId + "&inpIn2="
                   + (StringUtils.equals(strIn, "Y") ? "N" : "Y")
                   + "', '_self');return true;\" class=\"LabelLink\">");
           if (StringUtils.isNotEmpty(resultado2)) {
@@ -412,8 +421,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                 + dataProduction[j].mAttributesetinstanceId + "&" + dataProduction[j].mLocatorId;
             if (log4j.isDebugEnabled()) {
               log4j.debug("******** Hashtable.production: " + strCalculate);
-              log4j.debug("******** Production, hashtable calculated: "
-                  + calculated.get(strCalculate));
+              log4j.debug(
+                  "******** Production, hashtable calculated: " + calculated.get(strCalculate));
             }
             Integer isnull = calculated.get(strCalculate);
             if (isnull == null
@@ -425,13 +434,14 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                   dataProduction[j].mProductId, dataProduction[j].mLocatorId,
                   StringUtils.equals(strIn, "Y") ? "plusQty" : "minusQty",
                   StringUtils.equals(strIn, "N") ? "minusQty" : "plusQty");
-              String strPartial = data == null || data.length == 0 ? "" : processChilds(vars, data,
-                  dataProduction[j].mAttributesetinstanceId, dataProduction[j].mProductId,
-                  dataProduction[j].mLocatorId, strIn, !colorbg, strmProductIdGlobal, calculated,
-                  count);
+              String strPartial = data == null || data.length == 0 ? ""
+                  : processChilds(vars, data, dataProduction[j].mAttributesetinstanceId,
+                      dataProduction[j].mProductId, dataProduction[j].mLocatorId, strIn, !colorbg,
+                      strmProductIdGlobal, calculated, count);
               if (StringUtils.isNotEmpty(strPartial)) {
                 strHtml.append("  <tr style=\"background: ")
-                    .append((colorbg ? "#CCCCCC" : "#AAAAAA")).append("\">\n");
+                    .append((colorbg ? "#CCCCCC" : "#AAAAAA"))
+                    .append("\">\n");
                 strHtml.append(insertTabHtml(false));
                 strHtml.append("    <td>\n");
                 strHtml.append(strPartial);
@@ -459,7 +469,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
         strHtml.append("    <td colspan=\"3\">\n");
         strHtml.append(insertHeaderHtml(false, "1"));
         for (int j = 0; j < dataMovement.length; j++) {
-          strHtml.append("  <tr style=\"background: ").append((colorbg ? "#CCCCCC" : "#AAAAAA"))
+          strHtml.append("  <tr style=\"background: ")
+              .append((colorbg ? "#CCCCCC" : "#AAAAAA"))
               .append("\">\n");
           strHtml.append(insertTabHtml(true));
           strHtml.append("    <td >\n");
@@ -468,17 +479,24 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
           strHtml.append("<table border=\"0\" cellspacing=0 cellpadding=0 width=\"100%\">\n");
           strHtml.append("  <tr>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">")
-              .append(dataMovement[j].movementdate).append("</td>\n");
+              .append(dataMovement[j].movementdate)
+              .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
-              .append(dataMovement[j].movementtypeName).append("</td>\n");
+              .append(dataMovement[j].movementtypeName)
+              .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
-              .append(dataMovement[j].locatorName).append("</td>\n");
+              .append(dataMovement[j].locatorName)
+              .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
-              .append(dataMovement[j].movementqty).append("&nbsp;").append(dataMovement[j].uomName)
+              .append(dataMovement[j].movementqty)
+              .append("&nbsp;")
+              .append(dataMovement[j].uomName)
               .append("</td>\n");
           strHtml.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
-              .append(dataMovement[j].quantityorder).append("&nbsp;")
-              .append(dataMovement[j].productUomName).append("</td>\n");
+              .append(dataMovement[j].quantityorder)
+              .append("&nbsp;")
+              .append(dataMovement[j].productUomName)
+              .append("</td>\n");
           resultado2 = dataMovement[j].productName;
           strHtml.append("    <td class=\"DataGrid_Body_Cell\">");
           if (StringUtils.isNotEmpty(resultado2)) {
@@ -506,8 +524,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
               String strCalculate = dataMovement[j].mProductId + "&"
                   + dataMovement[j].mAttributesetinstanceId + "&" + dataMovement[j].mLocatorId;
               if (log4j.isDebugEnabled()) {
-                log4j.debug("******** Movement, hashtable calculated: "
-                    + calculated.get(strCalculate));
+                log4j.debug(
+                    "******** Movement, hashtable calculated: " + calculated.get(strCalculate));
               }
               if (calculated.get(strCalculate) == null
                   && !StringUtils.equals(dataMovement[j].mAttributesetinstanceId, "0")) {
@@ -519,15 +537,16 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                     dataMovement[j].mProductId, dataMovement[j].mLocatorId,
                     StringUtils.equals(strIn, "Y") ? "plusQty" : "minusQty",
                     StringUtils.equals(strIn, "N") ? "minusQty" : "plusQty");
-                strPartial = data == null || data.length == 0 ? "" : processChilds(vars, data,
-                    dataMovement[j].mAttributesetinstanceId, dataMovement[j].mProductId,
-                    dataMovement[j].mLocatorId, strIn, !colorbg, strmProductIdGlobal, calculated,
-                    count);
+                strPartial = data == null || data.length == 0 ? ""
+                    : processChilds(vars, data, dataMovement[j].mAttributesetinstanceId,
+                        dataMovement[j].mProductId, dataMovement[j].mLocatorId, strIn, !colorbg,
+                        strmProductIdGlobal, calculated, count);
               }
             }
             if (StringUtils.isNotEmpty(strPartial)) {
               strHtml.append("  <tr style=\"background: ")
-                  .append((colorbg ? "#CCCCCC" : "#AAAAAA")).append("\">\n");
+                  .append((colorbg ? "#CCCCCC" : "#AAAAAA"))
+                  .append("\">\n");
               strHtml.append(insertTabHtml(false));
               strHtml.append("    <td>\n");
               strHtml.append(strPartial);
@@ -547,21 +566,29 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     String resultado2 = "";
     resultado.append("<table border=\"0\" cellspacing=0 cellpadding=0 width=\"100%\" class=\"")
-        .append(strClassName).append("\">\n");
+        .append(strClassName)
+        .append("\">\n");
     resultado.append("  <tr>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"70\">")
-        .append(data.movementdate).append("</td>\n");
+        .append(data.movementdate)
+        .append("</td>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
-        .append(data.movementtypeName).append("</td>\n");
+        .append(data.movementtypeName)
+        .append("</td>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"100\">")
-        .append(data.locatorName).append("</td>\n");
+        .append(data.locatorName)
+        .append("</td>\n");
     resultado.append("    <td class=\"DataGrid_Body_Cell_Amount\" width=\"90\">")
-        .append(data.movementqty).append("&nbsp;")
-        .append(StringEscapeUtils.escapeHtml(data.uomName)).append("</td>\n");
+        .append(data.movementqty)
+        .append("&nbsp;")
+        .append(StringEscapeUtils.escapeHtml(data.uomName))
+        .append("</td>\n");
     if (StringUtils.isNotEmpty(data.quantityorder)) {
       resultado.append("    <td class=\"DataGrid_Body_Cell\" width=\"90\">")
-          .append(data.quantityorder).append("&nbsp;")
-          .append(StringEscapeUtils.escapeHtml(data.productUomName)).append("</td>\n");
+          .append(data.quantityorder)
+          .append("&nbsp;")
+          .append(StringEscapeUtils.escapeHtml(data.productUomName))
+          .append("</td>\n");
     }
     if (StringUtils.equalsIgnoreCase(data.movementtype, "W+")) {
       // resultado2 = data.productionName;
@@ -600,6 +627,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     return resultado.toString();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet MInOutTraceReports. This Servlet was made by Fernando Iriazabal";
   } // end of getServletInfo() method

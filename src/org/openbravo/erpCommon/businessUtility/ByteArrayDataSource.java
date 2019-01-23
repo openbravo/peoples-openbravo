@@ -59,16 +59,20 @@ class ByteArrayDataSource implements DataSource {
     g_type = type;
   }
 
+  @Override
   public InputStream getInputStream() throws IOException {
-    if (g_data == null)
+    if (g_data == null) {
       throw new IOException("no data");
+    }
     return new ByteArrayInputStream(g_data);
   }
 
+  @Override
   public OutputStream getOutputStream() throws IOException {
     throw new IOException("cannot do this");
   }
 
+  @Override
   public String getContentType() {
     return g_type;
   }
@@ -78,9 +82,11 @@ class ByteArrayDataSource implements DataSource {
     return this;
   }
 
+  @Override
   public String getName() {
-    if (g_name != null)
+    if (g_name != null) {
       return g_name;
+    }
     return "ByteArrayDataStream " + g_type;
   }
 }

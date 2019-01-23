@@ -60,11 +60,11 @@ public class SL_Order_UpdateLinesDate extends SimpleCallout {
         fieldCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, orderLineTab));
         for (Field field : fieldCriteria.list()) {
           if ((field.isDisplayed()
-              && field.getColumn().getDBColumnName().toUpperCase().equals("DATEORDERED") && lastChanged
-                .equals("inpdateordered"))
+              && field.getColumn().getDBColumnName().toUpperCase().equals("DATEORDERED")
+              && lastChanged.equals("inpdateordered"))
               || (field.isDisplayed()
-                  && field.getColumn().getDBColumnName().toUpperCase().equals("DATEPROMISED") && lastChanged
-                    .equals("inpdatepromised"))) {
+                  && field.getColumn().getDBColumnName().toUpperCase().equals("DATEPROMISED")
+                  && lastChanged.equals("inpdatepromised"))) {
             if (fieldsToCompare == null) {
               fieldsToCompare = field.getName();
             } else {
@@ -78,8 +78,8 @@ public class SL_Order_UpdateLinesDate extends SimpleCallout {
        * Set dateordered and datepromised in orderlines with dateordered and datepromised in order
        */
       OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
-      orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
-          OBDal.getInstance().get(Order.class, id)));
+      orderLineCriteria.add(
+          Restrictions.eq(OrderLine.PROPERTY_SALESORDER, OBDal.getInstance().get(Order.class, id)));
       if (fieldsToCompare != null && orderLineCriteria.count() > 0) {
         String message = String.format(
             Utility.messageBD(this, "OrderLineUpdate", info.vars.getLanguage()), fieldsToCompare,

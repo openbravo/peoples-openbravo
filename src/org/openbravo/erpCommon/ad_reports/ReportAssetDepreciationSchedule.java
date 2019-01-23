@@ -47,8 +47,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
@@ -70,8 +71,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
           "ReportAssetDepreciationSchedule|DateTo");
       String strValue = vars.getStringParameter("inpValue", "");
       String strDescription = vars.getStringParameter("inpDescription", "");
-      String strOrg = vars
-          .getRequestGlobalVariable("inpOrg", "ReportAssetDepreciationSchedule|Org");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportAssetDepreciationSchedule|Org");
       String strcAssetCategoryId = vars.getRequestGlobalVariable("inpcAssetCategoryId",
           "ReportAssetDepreciationSchedule|cAssetCategoryId");
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
@@ -85,8 +86,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
           "ReportAssetDepreciationSchedule|DateTo", "");
       String strValue = vars.getStringParameter("inpValue", "");
       String strDescription = vars.getStringParameter("inpDescription", "");
-      String strOrg = vars
-          .getRequestGlobalVariable("inpOrg", "ReportAssetDepreciationSchedule|Org");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg",
+          "ReportAssetDepreciationSchedule|Org");
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportAssetDepreciationSchedule|cAcctSchemaId");
       String strcAssetCategoryId = vars.getRequestGlobalVariable("inpcAssetCategoryId",
@@ -105,8 +106,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strValue, String strDescription,
-      String strcAssetCategoryId, String strcAcctSchemaId, String strOrg) throws IOException,
-      ServletException {
+      String strcAssetCategoryId, String strcAcctSchemaId, String strOrg)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -119,21 +120,22 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     ReportAssetDepreciationScheduleData[] data = null;
     if (StringUtils.isEmpty(strOrg)) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule", discard)
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule",
+              discard)
           .createXmlDocument();
       data = ReportAssetDepreciationScheduleData.set();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportAssetDepreciationSchedule")
+          .createXmlDocument();
       data = ReportAssetDepreciationScheduleData.select(readOnlyCP, vars.getClient(), strDateFrom,
           strDateTo, strValue, strDescription, strcAssetCategoryId, strcAcctSchemaId,
           Tree.getMembers(readOnlyCP, TreeData.getTreeOrg(readOnlyCP, vars.getClient()), strOrg));
     }
 
-    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(),
-        "ReportAssetDepreciationSchedule", false, "", "", "", false, "ad_reports", strReplaceWith,
-        false, true);
+    ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportAssetDepreciationSchedule",
+        false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -167,8 +169,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
           "A_Asset_Group_ID", "", "",
-          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""), Utility.getContext(
-              readOnlyCP, vars, "#User_Client", ""), 0);
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", ""),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "", "");
       xmlDocument.setData("reportA_ASSET_GROUP_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -195,21 +197,22 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_ORG_ID",
-          "", "", Utility.getContext(readOnlyCP, vars, "#User_Org",
-              "ReportAssetDepreciationSchedule"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportAssetDepreciationSchedule"), '*');
+          "", "",
+          Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportAssetDepreciationSchedule"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportAssetDepreciationSchedule"),
+          '*');
       comboTableData.fillParameters(null, "ReportAssetDepreciationSchedule", "");
       xmlDocument.setData("reportAD_ORG_ID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
 
-    xmlDocument
-        .setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-            .selectC_ACCTSCHEMA_ID(readOnlyCP, Utility.getContext(readOnlyCP, vars,
-                "#AccessibleOrgTree", "ReportAssetDepreciationSchedule"), Utility.getContext(
-                readOnlyCP, vars, "#User_Client", "ReportAssetDepreciationSchedule"),
-                strcAcctSchemaId));
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure",
+        AccountingSchemaMiscData.selectC_ACCTSCHEMA_ID(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+                "ReportAssetDepreciationSchedule"),
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportAssetDepreciationSchedule"),
+            strcAcctSchemaId));
 
     out.println(xmlDocument.print());
     out.close();
@@ -222,8 +225,8 @@ public class ReportAssetDepreciationSchedule extends HttpSecureAppServlet {
 
   private void printPageDataPdf(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strValue, String strDescription,
-      String strcAssetCategoryId, String strcAcctSchemaId, String strOrg) throws IOException,
-      ServletException {
+      String strcAssetCategoryId, String strcAcctSchemaId, String strOrg)
+      throws IOException, ServletException {
 
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");

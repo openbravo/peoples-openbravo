@@ -59,13 +59,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CopyFromInvoice extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -81,14 +83,16 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       String strTab = vars.getStringParameter("inpTabId");
       String strPriceListCheck = vars.getStringParameter("inpPriceList");
       String strWindowPath = Utility.getTabURL(strTab, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       OBError myError = processButton(vars, strKey, strInvoice, strWindow, strPriceListCheck);
       vars.setMessage(strTab, myError);
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private OBError processButton(VariablesSecureApp vars, String strKey, String strInvoice,
@@ -129,7 +133,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           String strBPartnerId = "";
           String strmProductId = "";
 
-          BigDecimal priceActual, priceStd, priceList, priceLimit, priceGross, priceListGross, priceStdGross;
+          BigDecimal priceActual, priceStd, priceList, priceLimit, priceGross, priceListGross,
+              priceStdGross;
           priceActual = priceStd = priceList = priceLimit = priceGross = priceListGross = priceStdGross = BigDecimal.ZERO;
           BigDecimal lineNetAmt, lineGrossAmt;
           lineNetAmt = lineGrossAmt = BigDecimal.ZERO;
@@ -144,45 +149,46 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
           if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
               && data[i].aumqty.isEmpty()) {
-            String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].productId, invToCopy
-                .getTransactionDocument().getId());
+            String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].productId,
+                invToCopy.getTransactionDocument().getId());
             data[i].aumqty = data[i].qtyinvoiced;
             data[i].cAum = defaultAum;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].qtyinvoiced = UOMUtil.getConvertedQty(data[i].productId,
-                  new BigDecimal(data[i].aumqty), defaultAum).toString();
+              data[i].qtyinvoiced = UOMUtil
+                  .getConvertedQty(data[i].productId, new BigDecimal(data[i].aumqty), defaultAum)
+                  .toString();
             }
           }
 
           String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
               dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
-              dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId,
-              strIsSOTrx.equals("Y"), data[i].accountId);
+              dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId, strIsSOTrx.equals("Y"),
+              data[i].accountId);
 
           // force get price list price if mixing tax including price lists.
-          boolean forcePriceList = (invoice.getPriceList().isPriceIncludesTax() != invToCopy
-              .getPriceList().isPriceIncludesTax());
+          boolean forcePriceList = (invoice.getPriceList()
+              .isPriceIncludesTax() != invToCopy.getPriceList().isPriceIncludesTax());
           if ("Y".equals(strPriceListCheck) || forcePriceList) {
 
-            CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(
-                this, strmProductId, strInvPriceList);
+            CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(this,
+                strmProductId, strInvPriceList);
             for (int j = 0; invoicelineprice != null && j < invoicelineprice.length; j++) {
-              if (invoicelineprice[j].validfrom == null
-                  || invoicelineprice[j].validfrom.equals("")
-                  || !DateTimeData.compare(this, DateTimeData.today(this),
-                      invoicelineprice[j].validfrom).equals("-1")) {
+              if (invoicelineprice[j].validfrom == null || invoicelineprice[j].validfrom.equals("")
+                  || !DateTimeData
+                      .compare(this, DateTimeData.today(this), invoicelineprice[j].validfrom)
+                      .equals("-1")) {
                 priceList = new BigDecimal(invoicelineprice[j].pricelist);
                 priceLimit = new BigDecimal(invoicelineprice[j].pricelimit);
                 priceStd = (invoicelineprice[j].pricestd.equals("") ? BigDecimal.ZERO
                     : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
-                    RoundingMode.HALF_UP);
+                        RoundingMode.HALF_UP);
                 priceListGross = BigDecimal.ZERO;
                 priceStdGross = BigDecimal.ZERO;
 
                 if (invoice.getPriceList().isPriceIncludesTax()) {
                   priceGross = priceStd;
-                  lineGrossAmt = priceGross.multiply(invLine.getInvoicedQuantity()).setScale(
-                      stdPrecision, RoundingMode.HALF_UP);
+                  lineGrossAmt = priceGross.multiply(invLine.getInvoicedQuantity())
+                      .setScale(stdPrecision, RoundingMode.HALF_UP);
                   priceActual = BigDecimal.ZERO;
                   ProductPrice prices = FinancialUtils.getProductPrice(
                       OBDal.getInstance().get(Product.class, strmProductId),
@@ -195,8 +201,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 } else {
                   // Calculate price adjustments (offers)
                   priceActual = new BigDecimal(CopyFromInvoiceData.getOffersStdPrice(this,
-                      strBPartnerId, priceStd.toString(), strmProductId, strDateInvoiced, invLine
-                          .getInvoicedQuantity().toString(), strInvPriceList, strKey));
+                      strBPartnerId, priceStd.toString(), strmProductId, strDateInvoiced,
+                      invLine.getInvoicedQuantity().toString(), strInvPriceList, strKey));
                   if (priceActual.scale() > pricePrecision) {
                     priceActual = priceActual.setScale(pricePrecision, RoundingMode.HALF_UP);
                   }
@@ -296,8 +302,9 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
     if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CopyFromInvoice", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromInvoice", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
@@ -324,9 +331,9 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
       List<TaxRate> taxRates = obcriteria.list();
       if (taxRates.size() == 0) {
-        throw new OBException(String.format(OBMessageUtils
-            .messageBD("NotExistTaxRateForTaxCategory"), glItem.getTaxCategory().getIdentifier(),
-            glItem.getIdentifier()));
+        throw new OBException(
+            String.format(OBMessageUtils.messageBD("NotExistTaxRateForTaxCategory"),
+                glItem.getTaxCategory().getIdentifier(), glItem.getIdentifier()));
       } else {
         Location location = OBDal.getInstance().get(Location.class, cBpartnerLocationId);
         throw new OBException(String.format(OBMessageUtils.messageBD("NotExistTaxRateForTaxZone"),
@@ -341,9 +348,9 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       obcriteria.add(Restrictions.eq(TaxRate.PROPERTY_ACTIVE, Boolean.TRUE));
       List<TaxRate> taxRates = obcriteria.list();
       if (taxRates.size() == 0) {
-        throw new OBException(String.format(OBMessageUtils
-            .messageBD("NotExistTaxRateForTaxCategory"), product.getTaxCategory().getIdentifier(),
-            product.getIdentifier()));
+        throw new OBException(
+            String.format(OBMessageUtils.messageBD("NotExistTaxRateForTaxCategory"),
+                product.getTaxCategory().getIdentifier(), product.getIdentifier()));
       } else {
         Location location = OBDal.getInstance().get(Location.class, cBpartnerLocationId);
         throw new OBException(String.format(OBMessageUtils.messageBD("NotExistTaxRateForTaxZone"),
@@ -356,8 +363,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
   private String getOrganizationForNewLine(CopyFromInvoiceData[] dataInvoice, InvoiceLine invLine) {
     String copiedLineOrganizationId = dataInvoice[0].adOrgId;
-    Set<String> parentOrgTree = new OrganizationStructureProvider().getChildTree(
-        dataInvoice[0].adOrgId, true);
+    Set<String> parentOrgTree = new OrganizationStructureProvider()
+        .getChildTree(dataInvoice[0].adOrgId, true);
     // If the Organization of the line that is being copied belongs to the child tree of the
     // Organization of the document header of the new line, use the organization of the line being
     // copied, else use the organization of the document header of the new line
@@ -367,6 +374,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
     return copiedLineOrganizationId;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet Copy from invoice";
   } // end of getServletInfo() method

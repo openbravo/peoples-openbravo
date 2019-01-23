@@ -50,8 +50,10 @@ public class ViewGeneration extends ViewGenerationTest {
 
     adcs.init();
 
-    List<String> allTabs = OBDal.getInstance().getSession()
-        .createQuery("select id from ADTab where active = true order by id", String.class).list();
+    List<String> allTabs = OBDal.getInstance()
+        .getSession()
+        .createQuery("select id from ADTab where active = true order by id", String.class)
+        .list();
 
     log.info("Initializing ADCS");
     for (String tab : allTabs) {
@@ -93,17 +95,17 @@ public class ViewGeneration extends ViewGenerationTest {
   }
 
   private List<String> getAllViewIds() {
-    List<String> allViews = OBDal.getInstance().getSession()
+    List<String> allViews = OBDal.getInstance()
+        .getSession()
         .createQuery("select id from ADWindow where active = true order by id", String.class)
         .list();
 
-    allViews
-        .addAll(OBDal
-            .getInstance()
-            .getSession()
-            .createQuery(
-                "select concat('processDefinition_', id) from OBUIAPP_Process where active = true order by id",
-                String.class).list());
+    allViews.addAll(OBDal.getInstance()
+        .getSession()
+        .createQuery(
+            "select concat('processDefinition_', id) from OBUIAPP_Process where active = true order by id",
+            String.class)
+        .list());
 
     return allViews;
   }

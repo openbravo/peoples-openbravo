@@ -104,8 +104,8 @@ public class DataSourceJavaScriptTest extends WeldBaseTest {
 
     int i = 0;
     for (Entity entity : ModelProvider.getInstance().getModel()) {
-      final DataSourceService dataSourceService = dataSourceServiceProvider.getDataSource(entity
-          .getName());
+      final DataSourceService dataSourceService = dataSourceServiceProvider
+          .getDataSource(entity.getName());
       final DataSourceComponent component = (DataSourceComponent) dataSourceComponentProvider
           .getComponent(dataSourceService.getName(), new HashMap<String, Object>());
       component.setDataSourceService(dataSourceService);

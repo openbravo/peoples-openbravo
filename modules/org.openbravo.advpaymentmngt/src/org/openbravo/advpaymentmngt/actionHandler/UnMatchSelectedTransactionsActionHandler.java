@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
@@ -40,8 +42,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.json.OBStaleObjectException;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class UnMatchSelectedTransactionsActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -70,8 +70,8 @@ public class UnMatchSelectedTransactionsActionHandler extends BaseActionHandler 
         } else {
           try {
             Date date = xmlDateTimeFormat.parse(bankStatementLine.getString("bslUpdated"));
-            final FIN_BankStatementLine bsline = OBDal.getInstance().get(
-                FIN_BankStatementLine.class, bankStatementLine.getString("id"));
+            final FIN_BankStatementLine bsline = OBDal.getInstance()
+                .get(FIN_BankStatementLine.class, bankStatementLine.getString("id"));
             Date bbddBSLUpdated = bsline.getUpdated();
             // Remove milis
             Calendar calendar = Calendar.getInstance();

@@ -233,8 +233,8 @@ public class ImportEntryManager {
     } catch (Exception e) {
       // except for logging we can ignore the exception
       // as the import entry will be offered again for reprocessing later anyway
-      log.warn("Exception while trying to add runnable " + runnable
-          + " to the list of tasks to run", e);
+      log.warn(
+          "Exception while trying to add runnable " + runnable + " to the list of tasks to run", e);
     }
   }
 
@@ -569,7 +569,8 @@ public class ImportEntryManager {
                     + ImportEntry.PROPERTY_CREATIONDATE + ", "
                     + ImportEntry.PROPERTY_CREATEDTIMESTAMP;
 
-                final Query<ImportEntry> entriesQry = OBDal.getInstance().getSession()
+                final Query<ImportEntry> entriesQry = OBDal.getInstance()
+                    .getSession()
                     .createQuery(importEntryQryStr, ImportEntry.class);
                 entriesQry.setFirstResult(0);
                 entriesQry.setFetchSize(100);
@@ -622,7 +623,8 @@ public class ImportEntryManager {
                   // in case of test don't wait minimal 2 seconds
                   Thread.sleep(300 + ((1000 * entryCount) / 30));
                 } else {
-                  log.debug("Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
+                  log.debug(
+                      "Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
                   // wait minimal 2 seconds or based on entry count
                   Thread.sleep(Math.max(2000, 300 + ((1000 * entryCount) / 30)));
                 }
@@ -689,6 +691,7 @@ public class ImportEntryManager {
       this.entity = entity;
     }
 
+    @Override
     public String entity() {
       return entity;
     }
@@ -732,8 +735,8 @@ public class ImportEntryManager {
     @Override
     public Thread newThread(Runnable runnable) {
 
-      final Thread thread = new Thread(group, runnable, "Import Entry - "
-          + threadNumber.getAndIncrement(), 0);
+      final Thread thread = new Thread(group, runnable,
+          "Import Entry - " + threadNumber.getAndIncrement(), 0);
 
       if (thread.getPriority() != Thread.NORM_PRIORITY) {
         thread.setPriority(Thread.NORM_PRIORITY);

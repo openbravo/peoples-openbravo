@@ -23,6 +23,8 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
@@ -31,8 +33,6 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.ad.ui.Window;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 @RequestScoped
 // Public class to allow extend the functionality, for example Add Payment popup opening from menu
@@ -136,8 +136,8 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
 
     try {
       String value = org.openbravo.erpCommon.businessUtility.Preferences.getPreferenceValue(
-          "NotAllowChangeExchange", true, OBContext.getOBContext().getCurrentClient(), OBContext
-              .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          "NotAllowChangeExchange", true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), window);
       return Preferences.YES.equals(value);
     } catch (PropertyNotFoundException e) {
@@ -175,8 +175,8 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
 
     try {
       String value = org.openbravo.erpCommon.businessUtility.Preferences.getPreferenceValue(
-          "NotAllowChangeExchange", true, OBContext.getOBContext().getCurrentClient(), OBContext
-              .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          "NotAllowChangeExchange", true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), window);
       return Preferences.YES.equals(value);
     } catch (PropertyNotFoundException e) {

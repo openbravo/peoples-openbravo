@@ -39,21 +39,22 @@ public class TestIssue37033 extends TestCostingBase {
   @Test
   public void testIssue37033_NoCostAdjustment() throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
-      Product costingProduct = TestCostingUtils.createProduct("product37033-A", new BigDecimal(
-          "10.00"));
+      Product costingProduct = TestCostingUtils.createProduct("product37033-A",
+          new BigDecimal("10.00"));
 
-      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct, new BigDecimal(
-          "10.00"), BigDecimal.ONE, 0);
+      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct,
+          new BigDecimal("10.00"), BigDecimal.ONE, 0);
       ShipmentInOut goodsReceipt = TestCostingUtils.createMovementFromOrder(purchaseOrder.getId(),
           false, BigDecimal.ONE, TestCostingConstants.LOCATOR_L01_ID, 0);
       TestCostingUtils.completeDocument(goodsReceipt);
 
-      Invoice firstInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(),
-          false, new BigDecimal("10.00"), BigDecimal.ONE, 0);
+      Invoice firstInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(), false,
+          new BigDecimal("10.00"), BigDecimal.ONE, 0);
       Invoice secondInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(),
           false, new BigDecimal("10.00"), BigDecimal.ONE, 0);
 
@@ -105,21 +106,22 @@ public class TestIssue37033 extends TestCostingBase {
   @Test
   public void testIssue37033_CostAdjustmentToIncreaseCost() throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
-      Product costingProduct = TestCostingUtils.createProduct("product37033-B", new BigDecimal(
-          "10.00"));
+      Product costingProduct = TestCostingUtils.createProduct("product37033-B",
+          new BigDecimal("10.00"));
 
-      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct, new BigDecimal(
-          "10.00"), BigDecimal.ONE, 0);
+      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct,
+          new BigDecimal("10.00"), BigDecimal.ONE, 0);
       ShipmentInOut goodsReceipt = TestCostingUtils.createMovementFromOrder(purchaseOrder.getId(),
           false, BigDecimal.ONE, TestCostingConstants.LOCATOR_L01_ID, 0);
       TestCostingUtils.completeDocument(goodsReceipt);
 
-      Invoice firstInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(),
-          false, new BigDecimal("10.00"), BigDecimal.ONE, 0);
+      Invoice firstInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(), false,
+          new BigDecimal("10.00"), BigDecimal.ONE, 0);
       Invoice secondInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(),
           false, new BigDecimal("20.00"), BigDecimal.ONE, 0);
 
@@ -171,21 +173,22 @@ public class TestIssue37033 extends TestCostingBase {
   @Test
   public void testIssue37033_CostAdjustmentToDecreaseCost() throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
-      Product costingProduct = TestCostingUtils.createProduct("product37033-C", new BigDecimal(
-          "10.00"));
+      Product costingProduct = TestCostingUtils.createProduct("product37033-C",
+          new BigDecimal("10.00"));
 
-      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct, new BigDecimal(
-          "10.00"), BigDecimal.ONE, 0);
+      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct,
+          new BigDecimal("10.00"), BigDecimal.ONE, 0);
       ShipmentInOut goodsReceipt = TestCostingUtils.createMovementFromOrder(purchaseOrder.getId(),
           false, BigDecimal.ONE, TestCostingConstants.LOCATOR_L01_ID, 0);
       TestCostingUtils.completeDocument(goodsReceipt);
 
-      Invoice firstInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(),
-          false, new BigDecimal("10.00"), BigDecimal.ONE, 0);
+      Invoice firstInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(), false,
+          new BigDecimal("10.00"), BigDecimal.ONE, 0);
       Invoice secondInvoice = TestCostingUtils.createInvoiceFromMovement(goodsReceipt.getId(),
           false, new BigDecimal("5.00"), BigDecimal.ONE, 0);
 
@@ -236,15 +239,16 @@ public class TestIssue37033 extends TestCostingBase {
   public void testIssue37033_CostAdjustmentToIncreaseCostWithReceiptPartiallyInvoiced()
       throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
-      Product costingProduct = TestCostingUtils.createProduct("product37033-D", new BigDecimal(
-          "10.00"));
+      Product costingProduct = TestCostingUtils.createProduct("product37033-D",
+          new BigDecimal("10.00"));
 
-      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct, new BigDecimal(
-          "10.00"), new BigDecimal("2"), 0);
+      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct,
+          new BigDecimal("10.00"), new BigDecimal("2"), 0);
       ShipmentInOut goodsReceipt = TestCostingUtils.createMovementFromOrder(purchaseOrder.getId(),
           false, new BigDecimal("2"), TestCostingConstants.LOCATOR_L01_ID, 0);
       TestCostingUtils.completeDocument(goodsReceipt);
@@ -295,15 +299,16 @@ public class TestIssue37033 extends TestCostingBase {
   public void testIssue37033_CostAdjustmentToDecreaseCostWithReceiptPartiallyInvoiced()
       throws Exception {
     try {
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
       OBContext.setAdminMode(true);
 
-      Product costingProduct = TestCostingUtils.createProduct("product37033-E", new BigDecimal(
-          "10.00"));
+      Product costingProduct = TestCostingUtils.createProduct("product37033-E",
+          new BigDecimal("10.00"));
 
-      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct, new BigDecimal(
-          "10.00"), new BigDecimal("2"), 0);
+      Order purchaseOrder = TestCostingUtils.createPurchaseOrder(costingProduct,
+          new BigDecimal("10.00"), new BigDecimal("2"), 0);
       ShipmentInOut goodsReceipt = TestCostingUtils.createMovementFromOrder(purchaseOrder.getId(),
           false, new BigDecimal("2"), TestCostingConstants.LOCATOR_L01_ID, 0);
       TestCostingUtils.completeDocument(goodsReceipt);

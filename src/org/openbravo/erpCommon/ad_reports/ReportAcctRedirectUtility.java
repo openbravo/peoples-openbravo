@@ -33,13 +33,15 @@ import org.openbravo.erpCommon.utility.Utility;
 public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -49,23 +51,26 @@ public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
       strTableId = convertTableException(strTableId);
       ReportAcctRedirectUtilityData[] data = ReportAcctRedirectUtilityData.select(this, strTableId,
           strDocBaseType, vars.getClient());
-      if (data == null || data.length == 0)
+      if (data == null || data.length == 0) {
         bdError(request, response, "RecordError", vars.getLanguage());
-      else {
+      } else {
         String inputName = "inp" + Sqlc.TransformaNombreColumna(data[0].columnname);
 
         String strWindowPath = Utility.getTabURL(data[0].adTabId, "R", true);
-        if (strWindowPath.equals(""))
+        if (strWindowPath.equals("")) {
           strWindowPath = strDefaultServlet;
-        if (!"FAT".equals(strDocBaseType))
-          response.sendRedirect(strWindowPath + "?" + "Command=DIRECT&" + inputName + "="
-              + strRecordId);
-        else
+        }
+        if (!"FAT".equals(strDocBaseType)) {
+          response.sendRedirect(
+              strWindowPath + "?" + "Command=DIRECT&" + inputName + "=" + strRecordId);
+        } else {
           response.sendRedirect(strWindowPath + "?" + "Command=TAB");
+        }
 
       }
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   /*
@@ -76,10 +81,12 @@ public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
     if ("B1B7075C46934F0A9FD4C4D0F1457B42".equals(strTableId)) {
       // Reconciliation as tab is built through a view and not directly with a table
       return "0DFF5BACFB964FDABAA5042C8809C813";
-    } else
+    } else {
       return strTableId;
+    }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportAcctRedirectUtility";
   } // end of getServletInfo() method

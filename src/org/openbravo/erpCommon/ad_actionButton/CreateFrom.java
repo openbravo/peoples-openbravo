@@ -60,17 +60,17 @@ public class CreateFrom extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       final String strKey = vars.getGlobalVariable("inpKey", "CreateFrom|key");
       final String strTableId = vars.getGlobalVariable("inpTableId", "CreateFrom|tableId");
-      final String strProcessId = vars
-          .getGlobalVariable("inpProcessId", "CreateFrom|processId", "");
-      final String strPath = vars.getGlobalVariable("inpPath", "CreateFrom|path", strDireccion
-          + request.getServletPath());
+      final String strProcessId = vars.getGlobalVariable("inpProcessId", "CreateFrom|processId",
+          "");
+      final String strPath = vars.getGlobalVariable("inpPath", "CreateFrom|path",
+          strDireccion + request.getServletPath());
       final String strWindowId = vars.getGlobalVariable("inpWindowId", "CreateFrom|windowId", "");
       final String strTabName = vars.getGlobalVariable("inpTabName", "CreateFrom|tabName", "");
       final String strDateInvoiced = vars.getGlobalVariable("inpDateInvoiced",
@@ -79,20 +79,22 @@ public class CreateFrom extends HttpSecureAppServlet {
           "CreateFrom|bpartnerLocation", "");
       final String strMPriceList = vars.getGlobalVariable("inpMPricelist", "CreateFrom|pricelist",
           "");
-      final String strBPartner = vars
-          .getGlobalVariable("inpcBpartnerId", "CreateFrom|bpartner", "");
+      final String strBPartner = vars.getGlobalVariable("inpcBpartnerId", "CreateFrom|bpartner",
+          "");
       final String strStatementDate = vars.getGlobalVariable("inpstatementdate",
           "CreateFrom|statementDate", "");
       final String strBankAccount = vars.getGlobalVariable("inpcBankaccountId",
           "CreateFrom|bankAccount", "");
       final String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
-      final String strIsreceipt = vars
-          .getGlobalVariable("inpisreceipt", "CreateFrom|isreceipt", "");
+      final String strIsreceipt = vars.getGlobalVariable("inpisreceipt", "CreateFrom|isreceipt",
+          "");
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("doPost - inpadOrgId = " + strOrg);
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("doPost - inpisreceipt = " + strIsreceipt);
+      }
 
       // 26-06-07
       vars.setSessionValue("CreateFrom|default", "1");
@@ -104,35 +106,37 @@ public class CreateFrom extends HttpSecureAppServlet {
       final String strTableId = vars.getGlobalVariable("inpTableId", "CreateFrom|tableId");
       final String strType = pageType(strTableId);
       final String strKey = vars.getGlobalVariable("inpKey", "CreateFrom" + strType + "|key");
-      final String strProcessId = vars.getGlobalVariable("inpProcessId", "CreateFrom" + strType
-          + "|processId", "");
+      final String strProcessId = vars.getGlobalVariable("inpProcessId",
+          "CreateFrom" + strType + "|processId", "");
       final String strPath = vars.getGlobalVariable("inpPath", "CreateFrom" + strType + "|path",
           strDireccion + request.getServletPath());
-      final String strWindowId = vars.getGlobalVariable("inpWindowId", "CreateFrom" + strType
-          + "|windowId");
-      final String strTabName = vars.getGlobalVariable("inpTabName", "CreateFrom" + strType
-          + "|tabName");
-      final String strDateInvoiced = vars.getGlobalVariable("inpDateInvoiced", "CreateFrom"
-          + strType + "|dateInvoiced", "");
+      final String strWindowId = vars.getGlobalVariable("inpWindowId",
+          "CreateFrom" + strType + "|windowId");
+      final String strTabName = vars.getGlobalVariable("inpTabName",
+          "CreateFrom" + strType + "|tabName");
+      final String strDateInvoiced = vars.getGlobalVariable("inpDateInvoiced",
+          "CreateFrom" + strType + "|dateInvoiced", "");
       final String strBPartnerLocation = vars.getGlobalVariable("inpcBpartnerLocationId",
           "CreateFrom" + strType + "|bpartnerLocation", "");
-      final String strPriceList = vars.getGlobalVariable("inpMPricelist", "CreateFrom" + strType
-          + "|pricelist", "");
-      final String strBPartner = vars.getGlobalVariable("inpcBpartnerId", "CreateFrom" + strType
-          + "|bpartner", "");
-      final String strStatementDate = vars.getGlobalVariable("inpstatementdate", "CreateFrom"
-          + strType + "|statementDate", "");
-      final String strBankAccount = vars.getGlobalVariable("inpcBankaccountId", "CreateFrom"
-          + strType + "|bankAccount", "");
-      final String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateFrom" + strType
-          + "|adOrgId", "");
-      final String strIsreceipt = vars.getGlobalVariable("inpisreceipt", "CreateFrom" + strType
-          + "|isreceipt", "");
+      final String strPriceList = vars.getGlobalVariable("inpMPricelist",
+          "CreateFrom" + strType + "|pricelist", "");
+      final String strBPartner = vars.getGlobalVariable("inpcBpartnerId",
+          "CreateFrom" + strType + "|bpartner", "");
+      final String strStatementDate = vars.getGlobalVariable("inpstatementdate",
+          "CreateFrom" + strType + "|statementDate", "");
+      final String strBankAccount = vars.getGlobalVariable("inpcBankaccountId",
+          "CreateFrom" + strType + "|bankAccount", "");
+      final String strOrg = vars.getGlobalVariable("inpadOrgId",
+          "CreateFrom" + strType + "|adOrgId", "");
+      final String strIsreceipt = vars.getGlobalVariable("inpisreceipt",
+          "CreateFrom" + strType + "|isreceipt", "");
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("doPost - inpadOrgId = " + strOrg);
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("doPost - inpisreceipt = " + strIsreceipt);
+      }
 
       vars.removeSessionValue("CreateFrom" + strType + "|key");
       vars.removeSessionValue("CreateFrom" + strType + "|processId");
@@ -168,10 +172,12 @@ public class CreateFrom extends HttpSecureAppServlet {
       final String strBankAccount = vars.getStringParameter("inpcBankaccountId");
       final String strOrg = vars.getStringParameter("inpadOrgId");
       final String strIsreceipt = vars.getStringParameter("inpisreceipt");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("doPost - inpadOrgId = " + strOrg);
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("doPost - inpisreceipt = " + strIsreceipt);
+      }
 
       callPrintPage(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
           strTabName, strDateInvoiced, strBPartnerLocation, strPriceList, strBPartner,
@@ -209,8 +215,9 @@ public class CreateFrom extends HttpSecureAppServlet {
       vars.removeSessionValue("CreateFrom|adOrgId");
       vars.removeSessionValue("CreateFrom|isreceipt");
       // response.sendRedirect(strPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPage_FS(HttpServletResponse response, VariablesSecureApp vars, String strPath,
@@ -218,10 +225,12 @@ public class CreateFrom extends HttpSecureAppServlet {
       String strDateInvoiced, String strBPartnerLocation, String strPriceList, String strBPartner,
       String strStatementDate, String strBankAccount, String strOrg, String strIsreceipt)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: FrameSet");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFrom_FS").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_FS")
+        .createXmlDocument();
     final String strType = pageType(strTableId);
     vars.setSessionValue("CreateFrom" + strType + "|path", strPath);
     vars.setSessionValue("CreateFrom" + strType + "|key", strKey);
@@ -243,16 +252,17 @@ public class CreateFrom extends HttpSecureAppServlet {
   }
 
   private String pageType(String strTableId) {
-    if (strTableId.equals("392"))
+    if (strTableId.equals("392")) {
       return "Bank";
-    else if (strTableId.equals("319"))
+    } else if (strTableId.equals("319")) {
       return "Shipment";
-    else if (strTableId.equals("426"))
+    } else if (strTableId.equals("426")) {
       return "Pay";
-    else if (strTableId.equals("800019"))
+    } else if (strTableId.equals("800019")) {
       return "Settlement";
-    else
+    } else {
       return "";
+    }
   }
 
   void callPrintPage(HttpServletResponse response, VariablesSecureApp vars, String strPath,
@@ -278,8 +288,8 @@ public class CreateFrom extends HttpSecureAppServlet {
         printPageDPManagement(response, vars, strPath, strKey, strTableId, strProcessId,
             strWindowId, strTabName, strBPartner);
       } else if (strTableId.equals("800179")) { // C_Remittance
-        printPageCRemittance(response, vars, strPath, strKey, strTableId, strProcessId,
-            strWindowId, strTabName, strBPartner, strOrg, strIsreceipt);
+        printPageCRemittance(response, vars, strPath, strKey, strTableId, strProcessId, strWindowId,
+            strTabName, strBPartner, strOrg, strIsreceipt);
       } else {
         pageError(response);
       }
@@ -290,10 +300,11 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   protected void printPageBank(HttpServletResponse response, VariablesSecureApp vars,
       String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
-      String strTabName, String strStatementDate, String strBank) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strTabName, String strStatementDate, String strBank)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Bank");
+    }
     final String strcBPartner = vars.getStringParameter("inpcBpartnerId");
     final String strPaymentRule = vars.getStringParameter("inppaymentrule");
     final String strPlannedDateFrom = vars.getStringParameter("inpplanneddateFrom");
@@ -309,8 +320,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strDocumentNo = vars.getStringParameter("inpDocumentNo");
     final String strStatus = vars.getStringParameter("inpStatusPayment");
     CreateFromBankData[] data = null;
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Bank").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Bank")
+        .createXmlDocument();
 
     final int numRows = Integer.valueOf(CreateFromBankData.countRows(this,
         Utility.getContext(this, vars, "#User_Client", strWindowId),
@@ -367,10 +379,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("paymentRule", strPaymentRule);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateFrom"), Utility.getContext(
-              this, vars, "#User_Client", "CreateFrom"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateFrom"),
+          Utility.getContext(this, vars, "#User_Client", "CreateFrom"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "CreateFrom", strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -383,8 +394,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("plannedDateFrom", strPlannedDateFrom);
     xmlDocument.setParameter("plannedDateFromdisplayFormat",
         vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument
-        .setParameter("plannedDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateFromsaveFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateTo", strPlannedDateTo);
     xmlDocument.setParameter("plannedDateTodisplayFormat",
         vars.getSessionValue("#AD_SqlDateFormat"));
@@ -406,9 +417,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("charge", strCharge);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "C_BankAccount_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BankAccount_ID",
+          "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strBank);
       xmlDocument.setData("reportC_BankAccount_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -429,9 +440,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "Status - Exclude In Remittance", Utility.getContext(this,
-              vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(this, vars,
-              "#User_Client", strWindowId), 0);
+          "C_DP_Management_Status", "Status - Exclude In Remittance",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strStatus);
       xmlDocument.setData("reportStatus_S", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -449,36 +460,43 @@ public class CreateFrom extends HttpSecureAppServlet {
   protected void printPageShipment(HttpServletResponse response, VariablesSecureApp vars,
       String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
       String strTabName, String strBPartner) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Shipment");
+    }
     CreateFromShipmentData[] data = null;
     XmlDocument xmlDocument;
     String strPO = vars.getStringParameter("inpPurchaseOrder");
     String strInvoice = vars.getStringParameter("inpInvoice");
     final String strLocator = vars.getStringParameter("inpmLocatorId");
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-    if (vars.commandIn("FIND_PO"))
+    if (vars.commandIn("FIND_PO")) {
       strInvoice = "";
-    else if (vars.commandIn("FIND_INVOICE"))
+    } else if (vars.commandIn("FIND_INVOICE")) {
       strPO = "";
+    }
     if (strPO.equals("") && strInvoice.equals("")) {
       final String[] discard = { "sectionDetail" };
-      if (isSOTrx.equals("Y"))
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Shipment", discard)
+      if (isSOTrx.equals("Y")) {
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Shipment", discard)
             .createXmlDocument();
-      else
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_actionButton/CreateFrom_ShipmentPO", discard)
+      } else {
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_ShipmentPO",
+                discard)
             .createXmlDocument();
+      }
       data = CreateFromShipmentData.set();
     } else {
-      if (isSOTrx.equals("Y"))
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Shipment").createXmlDocument();
-      else
-        xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/erpCommon/ad_actionButton/CreateFrom_ShipmentPO").createXmlDocument();
+      if (isSOTrx.equals("Y")) {
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Shipment")
+            .createXmlDocument();
+      } else {
+        xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_ShipmentPO")
+            .createXmlDocument();
+      }
       if (strInvoice.equals("")) {
         if (vars.getLanguage().equals("en_US")) {
           if (isSOTrx.equals("Y")) {
@@ -491,34 +509,37 @@ public class CreateFrom extends HttpSecureAppServlet {
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
           }
         } else {
-          if (isSOTrx.equals("Y"))
+          if (isSOTrx.equals("Y")) {
             data = CreateFromShipmentData.selectFromPOTrlSOTrx(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
-          else
+          } else {
             data = CreateFromShipmentData.selectFromPOTrl(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
+          }
         }
       } else {
         if (vars.getLanguage().equals("en_US")) {
-          if (isSOTrx.equals("Y"))
+          if (isSOTrx.equals("Y")) {
             data = CreateFromShipmentData.selectFromInvoiceTrx(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
-          else
+          } else {
             data = CreateFromShipmentData.selectFromInvoice(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
+          }
         } else {
-          if (isSOTrx.equals("Y"))
+          if (isSOTrx.equals("Y")) {
             data = CreateFromShipmentData.selectFromInvoiceTrx(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
-          else
+          } else {
             data = CreateFromShipmentData.selectFromInvoiceTrl(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
+          }
         }
       }
     }
@@ -538,8 +559,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("M_Locator_ID_DES",
         CreateFromShipmentData.selectLocator(this, strLocator));
     xmlDocument.setParameter("Invoice", strInvoice);
-    xmlDocument.setParameter("pType", (!strInvoice.equals("") ? "INVOICE"
-        : (!strPO.equals("")) ? "PO" : ""));
+    xmlDocument.setParameter("pType",
+        (!strInvoice.equals("") ? "INVOICE" : (!strPO.equals("")) ? "PO" : ""));
     xmlDocument.setParameter("windowId", strWindowId);
     xmlDocument.setParameter("tabName", strTabName);
 
@@ -548,28 +569,20 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromShipmentData[0]);
     } else {
       if (isSOTrx.equals("Y")) {
-        xmlDocument.setData(
-            "reportInvoice",
-            "liststructure",
+        xmlDocument.setData("reportInvoice", "liststructure",
             CreateFromShipmentData.selectFromInvoiceTrxCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
-        xmlDocument.setData(
-            "reportPurchaseOrder",
-            "liststructure",
+        xmlDocument.setData("reportPurchaseOrder", "liststructure",
             CreateFromShipmentData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
       } else {
-        xmlDocument.setData(
-            "reportInvoice",
-            "liststructure",
+        xmlDocument.setData("reportInvoice", "liststructure",
             CreateFromShipmentData.selectFromInvoiceCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
-        xmlDocument.setData(
-            "reportPurchaseOrder",
-            "liststructure",
+        xmlDocument.setData("reportPurchaseOrder", "liststructure",
             CreateFromShipmentData.selectFromPOCombo(this, vars.getLanguage(),
                 Utility.getContext(this, vars, "#User_Client", strWindowId),
                 Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
@@ -596,15 +609,18 @@ public class CreateFrom extends HttpSecureAppServlet {
           if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
             FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
                 data[i].cDoctypeId);
-            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
-                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
+            String defaultAum = (defaultAumData.length > 0)
+                ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
+                : data[i].cUomId;
             data[i].cAum = defaultAum;
-            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
-                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
+            data[i].aumname = (defaultAumData.length > 0)
+                ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_NAME)
+                : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
-                  new BigDecimal(data[i].qty), defaultAum).toString();
+              data[i].aumqty = UOMUtil
+                  .getConvertedAumQty(data[i].mProductId, new BigDecimal(data[i].qty), defaultAum)
+                  .toString();
             } else {
               data[i].aumqty = data[i].qty;
             }
@@ -661,15 +677,18 @@ public class CreateFrom extends HttpSecureAppServlet {
               && data[i].secProductUomId.isEmpty() && data[i].secqty.isEmpty()) {
             FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
                 data[i].cDoctypeId);
-            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
-                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
+            String defaultAum = (defaultAumData.length > 0)
+                ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
+                : data[i].cUomId;
             data[i].cAum = defaultAum;
-            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
-                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
+            data[i].aumname = (defaultAumData.length > 0)
+                ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_NAME)
+                : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
-                  new BigDecimal(data[i].qty), defaultAum).toString();
+              data[i].aumqty = UOMUtil
+                  .getConvertedAumQty(data[i].mProductId, new BigDecimal(data[i].qty), defaultAum)
+                  .toString();
             } else {
               data[i].aumqty = data[i].qty;
             }
@@ -684,15 +703,18 @@ public class CreateFrom extends HttpSecureAppServlet {
           if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
             FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
                 data[i].cDoctypeId);
-            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
-                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
+            String defaultAum = (defaultAumData.length > 0)
+                ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
+                : data[i].cUomId;
             data[i].cAum = defaultAum;
-            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
-                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
+            data[i].aumname = (defaultAumData.length > 0)
+                ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_NAME)
+                : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
-                  new BigDecimal(data[i].qty), defaultAum).toString();
+              data[i].aumqty = UOMUtil
+                  .getConvertedAumQty(data[i].mProductId, new BigDecimal(data[i].qty), defaultAum)
+                  .toString();
             } else {
               data[i].aumqty = data[i].qty;
             }
@@ -717,10 +739,12 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   void printPageInvoiceCombo(HttpServletResponse response, VariablesSecureApp vars,
       String strBPartner, String strWindowId, String strKey) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Refresh Invoices");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFrom_F0").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_F0")
+        .createXmlDocument();
     String strArray = "";
     String strArray2 = "";
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
@@ -734,19 +758,16 @@ public class CreateFrom extends HttpSecureAppServlet {
         // CreateFrom
         if (isSOTrx.equals("Y")) {
           strArray = Utility.arrayEntradaSimple("arrDatos", new CreateFromShipmentData[0]);
-          strArray2 = Utility.arrayEntradaSimple(
-              "arrDatos2",
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2",
               CreateFromShipmentData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
         } else {
-          strArray = Utility.arrayEntradaSimple(
-              "arrDatos",
+          strArray = Utility.arrayEntradaSimple("arrDatos",
               CreateFromShipmentData.selectFromInvoiceCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
-          strArray2 = Utility.arrayEntradaSimple(
-              "arrDatos2",
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2",
               CreateFromShipmentData.selectFromPOCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner));
@@ -757,24 +778,24 @@ public class CreateFrom extends HttpSecureAppServlet {
         String invoiceCurrencyId = invoice.getCurrency().getId();
 
         if (isSOTrx.equals("Y")) {
-          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
-              .selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
+          strArray = Utility.arrayEntradaSimple("arrDatos",
+              CreateFromInvoiceData.selectFromShipmentSOTrxCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
                   strIsTaxIncluded, invoiceCurrencyId));
-          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
-              .selectFromPOSOTrxCombo(this, vars.getLanguage(),
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2",
+              CreateFromInvoiceData.selectFromPOSOTrxCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
                   strIsTaxIncluded, invoiceCurrencyId));
         } else {
-          strArray = Utility.arrayEntradaSimple("arrDatos", CreateFromInvoiceData
-              .selectFromShipmentCombo(this, vars.getLanguage(),
+          strArray = Utility.arrayEntradaSimple("arrDatos",
+              CreateFromInvoiceData.selectFromShipmentCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
                   strIsTaxIncluded, invoiceCurrencyId));
-          strArray2 = Utility.arrayEntradaSimple("arrDatos2", CreateFromInvoiceData
-              .selectFromPOCombo(this, vars.getLanguage(),
+          strArray2 = Utility.arrayEntradaSimple("arrDatos2",
+              CreateFromInvoiceData.selectFromPOCombo(this, vars.getLanguage(),
                   Utility.getContext(this, vars, "#User_Client", strWindowId),
                   Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), strBPartner,
                   strIsTaxIncluded, invoiceCurrencyId));
@@ -790,13 +811,15 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  protected void printPagePay(HttpServletResponse response, VariablesSecureApp vars,
-      String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
-      String strTabName, String strBPartner) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+  protected void printPagePay(HttpServletResponse response, VariablesSecureApp vars, String strPath,
+      String strKey, String strTableId, String strProcessId, String strWindowId, String strTabName,
+      String strBPartner) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Pay");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Pay").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Pay")
+        .createXmlDocument();
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     response.setContentType("text/html; charset=UTF-8");
@@ -809,10 +832,12 @@ public class CreateFrom extends HttpSecureAppServlet {
       String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
       String strTabName, String strBPartner) throws IOException, ServletException {
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Settlement");
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug(vars.commandIn("DEFAULT"));
+    }
 
     String strcBPartner = vars.getStringParameter("inpcBpartnerId");
     final String strPaymentRule = vars.getStringParameter("inppaymentrule");
@@ -822,20 +847,23 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strAmountTo = vars.getNumericParameter("inpamountTo");
     final String strTotalAmount = vars.getNumericParameter("inpamount");
     String strIsReceipt = vars.getStringParameter("inpisreceipt");
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("IsReceipt: " + strIsReceipt);
+    }
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     final String strAutoCalc = vars.getStringParameter("inpAutoClaculated");
     String strAutoCalcSelect = "AMOUNT";
 
-    if (strAutoCalc.equals(""))
+    if (strAutoCalc.equals("")) {
       strAutoCalcSelect = "WRITEOFFAMT";
+    }
 
     final String strOrg = vars.getStringParameter("inpadOrgId");
     final String strMarcarTodos = vars.getStringParameter("inpTodos", "N");
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFrom_Settlement").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Settlement")
+        .createXmlDocument();
     CreateFromSettlementData[] data = null;
 
     if (vars.getSessionValue("CreateFrom|default").equals("1")) {
@@ -849,8 +877,9 @@ public class CreateFrom extends HttpSecureAppServlet {
        */
 
       // Modified 26-06-07
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("strIsReceipt: \"\"");
+      }
 
       data = new CreateFromSettlementData[0];
 
@@ -861,8 +890,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     } else {
 
       // Modified 26-06-07
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("strIsReceipt: " + strIsReceipt);
+      }
 
       final int numRows = Integer.valueOf(CreateFromSettlementData.countRows(this,
           Utility.getContext(this, vars, "#User_Client", strWindowId),
@@ -918,10 +948,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("paymentRule", strPaymentRule);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
-              this, vars, "#User_Client", strWindowId), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -940,12 +969,15 @@ public class CreateFrom extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("strcBPartner: " + strcBPartner);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("strPlannedDateFrom: " + strPlannedDateFrom);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("strPlannedDateTo: " + strPlannedDateTo);
+    }
 
     xmlDocument.setParameter("inpcBpartnerId", strcBPartner);
     xmlDocument.setParameter("inpBpartnerId_DES",
@@ -953,8 +985,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("plannedDateFromdisplayFormat",
         vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument
-        .setParameter("plannedDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateFromsaveFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateFromValue", strPlannedDateFrom);
 
     xmlDocument.setParameter("plannedDateTodisplayFormat",
@@ -986,8 +1018,9 @@ public class CreateFrom extends HttpSecureAppServlet {
   protected void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars,
       String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
       String strTabName, String strBPartner) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: DPManagement");
+    }
     String strcBPartner = vars.getStringParameter("inpcBpartnerId");
     final String strPaymentRule = vars.getStringParameter("inppaymentrule");
     final String strPlannedDateFrom = vars.getStringParameter("inpplanneddateFrom");
@@ -1007,8 +1040,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     final String strMarcarTodos = vars.getStringParameter("inpTodos", "N");
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFrom_DPManagement").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_DPManagement")
+        .createXmlDocument();
     CreateFromDPManagementData[] data = null;
     if (strcBPartner.equals("") && strPaymentRule.equals("") && strPlannedDateFrom.equals("")
         && strPlannedDateTo.equals("") && strIsReceipt.equals("") && strTotalAmount.equals("")
@@ -1037,8 +1071,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
       // different limit/offset syntax in oracle and postgresql
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        data = CreateFromDPManagementData.select(this, vars.getLanguage(), "ROWNUM",
-            strMarcarTodos, Utility.getContext(this, vars, "#User_Client", strWindowId),
+        data = CreateFromDPManagementData.select(this, vars.getLanguage(), "ROWNUM", strMarcarTodos,
+            Utility.getContext(this, vars, "#User_Client", strWindowId),
             Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule,
             strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo,
             strTotalAmount, strStatusFrom, strOrg, String.valueOf(maxRows), null);
@@ -1050,13 +1084,14 @@ public class CreateFrom extends HttpSecureAppServlet {
             strTotalAmount, strStatusFrom, strOrg, null, String.valueOf(maxRows));
       }
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("DPSelect: lineas" + data.length + "client "
             + Utility.getContext(this, vars, "#User_Client", strWindowId) + "userOrg "
             + Utility.getContext(this, vars, "#User_Org", strWindowId) + " partner:" + strcBPartner
             + " rule:" + strPaymentRule + "df" + strPlannedDateFrom + " dt:" + strPlannedDateTo
             + " rec:" + strIsReceipt + "amtF:" + strAmountFrom + "amt T:" + strAmountTo + "ttlamt:"
             + strTotalAmount + "org " + strOrg);
+      }
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
@@ -1082,10 +1117,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("paymentRule", strPaymentRule);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
-              this, vars, "#User_Client", strWindowId), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1106,8 +1140,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
+          "C_DP_Management_Status", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strStatusFrom);
       xmlDocument.setData("reportStatusFrom", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1117,8 +1152,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
+          "C_DP_Management_Status", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strStatusFrom);
       xmlDocument.setData("reportStatusTo", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1134,8 +1170,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("plannedDateFromdisplayFormat",
         vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument
-        .setParameter("plannedDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateFromsaveFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
 
     xmlDocument.setParameter("plannedDateTodisplayFormat",
         vars.getSessionValue("#AD_SqlDateFormat"));
@@ -1156,8 +1192,9 @@ public class CreateFrom extends HttpSecureAppServlet {
       String strPath, String strKey, String strTableId, String strProcessId, String strWindowId,
       String strTabName, String strBPartner, String stradOrgId, String isReceipt)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: CRemittance");
+    }
     String strcBPartner = vars.getStringParameter("inpcBpartnerId");
     final String strPaymentRule = vars.getStringParameter("inppaymentrule");
     final String strPlannedDateFrom = vars.getStringParameter("inpplanneddateFrom");
@@ -1179,8 +1216,9 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     final String strOrgFamily = Tree.getMembers(this, strTreeOrg, strOrg);
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateFrom_CRemittance").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_CRemittance")
+        .createXmlDocument();
     // XmlDocument xmlDocument = null;
     CreateFromCRemittanceData[] data = null;
     if (vars.commandIn("FRAME1")) {
@@ -1244,18 +1282,17 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("plannedDateFromdisplayFormat",
         vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument
-        .setParameter("plannedDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("plannedDateFromsaveFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
 
     xmlDocument.setParameter("plannedDateTodisplayFormat",
         vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("plannedDateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "All_Payment Rule", "",
-          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId), Utility.getContext(
-              this, vars, "#User_Client", strWindowId), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule",
+          "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strPaymentRule);
       xmlDocument.setData("reportPaymentRule", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1276,8 +1313,9 @@ public class CreateFrom extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "C_DP_Management_Status", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              strWindowId), Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
+          "C_DP_Management_Status", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
+          Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strStatusFrom);
       xmlDocument.setData("reportStatusFrom", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -1302,24 +1340,25 @@ public class CreateFrom extends HttpSecureAppServlet {
     out.close();
   }
 
-  OBError saveMethod(VariablesSecureApp vars, String strKey, String strTableId,
-      String strProcessId, String strWindowId) throws IOException, ServletException {
+  OBError saveMethod(VariablesSecureApp vars, String strKey, String strTableId, String strProcessId,
+      String strWindowId) throws IOException, ServletException {
     OBContext.setAdminMode();
     try {
-      if (strTableId.equals("392"))
+      if (strTableId.equals("392")) {
         return saveBank(vars, strKey, strTableId, strProcessId);
-      else if (strTableId.equals("319"))
+      } else if (strTableId.equals("319")) {
         return saveShipment(vars, strKey, strTableId, strProcessId, strWindowId);
-      else if (strTableId.equals("426"))
+      } else if (strTableId.equals("426")) {
         return savePay(vars, strKey, strTableId, strProcessId);
-      else if (strTableId.equals("800019"))
+      } else if (strTableId.equals("800019")) {
         return saveSettlement(vars, strKey, strTableId, strProcessId);
-      else if (strTableId.equals("800176"))
+      } else if (strTableId.equals("800176")) {
         return saveDPManagement(vars, strKey, strTableId, strProcessId);
-      else if (strTableId.equals("800179"))
+      } else if (strTableId.equals("800179")) {
         return saveCRemittance(vars, strKey, strTableId, strProcessId);
-      else
+      } else {
         return null;
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -1327,26 +1366,30 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   protected OBError saveBank(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Bank");
+    }
     String strPayment = vars.getInStringParameter("inpcPaymentId", IsIDFilter.instance);
     final String strStatementDate = vars.getStringParameter("inpstatementdate");
     String strDateplanned = "";
     String strChargeamt = "";
     String strProposedAmt = "";
-    if (strPayment.equals(""))
+    if (strPayment.equals("")) {
       return null;
+    }
     OBError myMessage = null;
     Connection conn = null;
-    if (strPayment.equals(""))
+    if (strPayment.equals("")) {
       return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    }
     String[] ids = restrictParameter(strPayment);
 
     try {
       conn = this.getTransactionConnection();
       for (int k = 0; k < ids.length; k++) {
-        if (ids[k].startsWith("("))
+        if (ids[k].startsWith("(")) {
           ids[k] = ids[k].substring(1, ids[k].length() - 1);
+        }
         if (!ids[k].equals("")) {
           ids[k] = Replace.replace(ids[k], "'", "");
           final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
@@ -1354,8 +1397,8 @@ public class CreateFrom extends HttpSecureAppServlet {
             String strDebtPaymentId = st.nextToken().trim();
             if (!CreateFromBankData.NotIsReconcilied(conn, this, strDebtPaymentId)) {
               releaseRollbackConnection(conn);
-              log4j.warn("CreateFrom.saveBank - debt_payment " + strDebtPaymentId
-                  + " is reconcilied");
+              log4j.warn(
+                  "CreateFrom.saveBank - debt_payment " + strDebtPaymentId + " is reconcilied");
               myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                   "DebtPaymentReconcilied");
               return myMessage;
@@ -1416,23 +1459,26 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   protected OBError saveShipment(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId, String strWindowId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Shipment");
+    }
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-    if (isSOTrx.equals("Y"))
+    if (isSOTrx.equals("Y")) {
       return saveShipmentSO(vars, strKey, strTableId, strProcessId, strWindowId);
-    else
+    } else {
       return saveShipmentPO(vars, strKey, strTableId, strProcessId, strWindowId);
+    }
   }
 
   protected OBError saveShipmentPO(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId, String strWindowId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Shipment");
+    }
     final String strLocatorCommon = vars.getStringParameter("inpmLocatorId");
     final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId",
-        IsIDFilter.instance));
+    final String strClaves = Utility
+        .stringList(vars.getRequiredInParameter("inpId", IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strInvoice = "", strPO = "";
     CreateFromShipmentData[] data = null;
@@ -1444,17 +1490,19 @@ public class CreateFrom extends HttpSecureAppServlet {
       for (int k = 0; k < ids.length; k++) {
         if (strType.equals("INVOICE")) {
           strInvoice = vars.getStringParameter("inpInvoice");
-          if (!isSOTrx.equals("Y"))
+          if (!isSOTrx.equals("Y")) {
             data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, vars.getLanguage(),
                 ids[k]);
+          }
         } else {
           strPO = vars.getStringParameter("inpPurchaseOrder");
-          if (isSOTrx.equals("Y"))
+          if (isSOTrx.equals("Y")) {
             data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, vars.getLanguage(),
                 ids[k]);
-          else
-            data = CreateFromShipmentData
-                .selectFromPOUpdate(conn, this, vars.getLanguage(), ids[k]);
+          } else {
+            data = CreateFromShipmentData.selectFromPOUpdate(conn, this, vars.getLanguage(),
+                ids[k]);
+          }
         }
         if (data != null) {
           for (int i = 0; i < data.length; i++) {
@@ -1486,8 +1534,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                 strAumQty = qtyAum.toString();
                 strMovementqty = qtyAum.toString();
                 if (!data[i].cUomId.equals(data[i].cAum)) {
-                  strMovementqty = UOMUtil
-                      .getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum).toString();
+                  strMovementqty = UOMUtil.getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum)
+                      .toString();
                 }
               } catch (NumberFormatException e) {
                 log4j.debug(e.getMessage());
@@ -1537,12 +1585,14 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
               final String strInitUOM = dataUomIdConversion[0].cUomIdConversion;
               final String strUOM = data[i].cUomId;
-              if (strInitUOM.equals(strUOM))
+              if (strInitUOM.equals(strUOM)) {
                 strMultiplyRate = "1";
-              else
+              } else {
                 strMultiplyRate = CreateFromShipmentData.multiplyRate(this, strInitUOM, strUOM);
-              if (strMultiplyRate.equals(""))
+              }
+              if (strMultiplyRate.equals("")) {
                 strMultiplyRate = CreateFromShipmentData.divideRate(this, strUOM, strInitUOM);
+              }
               if (strMultiplyRate.equals("")) {
                 strMultiplyRate = "1";
                 releaseRollbackConnection(conn);
@@ -1561,8 +1611,9 @@ public class CreateFrom extends HttpSecureAppServlet {
                 qty = qty.negate();
               }
               quantity = qty.multiply(multiplyRate);
-              if (quantity.scale() > stdPrecision)
+              if (quantity.scale() > stdPrecision) {
                 quantity = quantity.setScale(stdPrecision, RoundingMode.HALF_UP);
+              }
               while (qty.compareTo(ZERO) > 0) {
                 String total = "1";
                 BigDecimal conversion;
@@ -1576,8 +1627,9 @@ public class CreateFrom extends HttpSecureAppServlet {
                   if (conversion.compareTo(qty) > 0) {
                     conversion = qty;
                     qty = ZERO;
-                  } else
+                  } else {
                     qty = qty.subtract(conversion);
+                  }
                   quantity = quantity.subtract(BigDecimal.ONE);
                 }
                 final String strConversion = conversion.toString();
@@ -1600,12 +1652,13 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.insertAcctDimension(conn, this, strSequence,
                         vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].cOrderlineId);
                   }
-                  if (!strInvoice.equals(""))
+                  if (!strInvoice.equals("")) {
                     CreateFromShipmentData.updateInvoice(conn, this, strSequence,
                         data[i].cInvoicelineId);
-                  else
+                  } else {
                     CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                         data[i].cOrderlineId);
+                  }
                 } catch (final ServletException ex) {
                   myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                       ex.getMessage());
@@ -1621,9 +1674,9 @@ public class CreateFrom extends HttpSecureAppServlet {
                     data[i].cUomId, strMovementqty, strAumQty, data[i].cAum, data[i].cOrderlineId,
                     strLocator,
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
-                    strQuantityorder, strProductUomId, strmAttributesetinstanceId,
-                    data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
-                    data[i].user2Id, data[i].cBpartnerId, data[i].explode, data[i].isorder);
+                    strQuantityorder, strProductUomId, strmAttributesetinstanceId, data[i].aAssetId,
+                    data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id, data[i].user2Id,
+                    data[i].cBpartnerId, data[i].explode, data[i].isorder);
 
                 if (strType.equals("INVOICE") && !data[i].cInvoicelineId.isEmpty()) {
                   CreateFromShipmentData.insertInvoiceAcctDimension(conn, this, strSequence,
@@ -1643,9 +1696,10 @@ public class CreateFrom extends HttpSecureAppServlet {
                     CreateFromShipmentData.insertMatchInv(conn, this, vars.getUser(),
                         data[i].cInvoicelineId, strSequence, data[i].cInvoiceId);
                   }
-                } else
+                } else {
                   CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                       data[i].cOrderlineId);
+                }
               } catch (final ServletException ex) {
                 myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
                 releaseRollbackConnection(conn);
@@ -1659,8 +1713,8 @@ public class CreateFrom extends HttpSecureAppServlet {
           try {
             final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
             if (total == 0) {
-              int noOfOrders = Integer.valueOf(CreateFromShipmentData.countOrders(conn, this,
-                  strKey));
+              int noOfOrders = Integer
+                  .valueOf(CreateFromShipmentData.countOrders(conn, this, strKey));
               if (noOfOrders == 1) {
                 CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
               }
@@ -1675,8 +1729,9 @@ public class CreateFrom extends HttpSecureAppServlet {
           try {
             final int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey,
                 strInvoice);
-            if (total == 0)
+            if (total == 0) {
               CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
+            }
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -1685,8 +1740,9 @@ public class CreateFrom extends HttpSecureAppServlet {
         }
       }
       releaseCommitConnection(conn);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Save commit");
+      }
       myMessage = new OBError();
       myMessage.setType("Success");
       myMessage.setTitle("");
@@ -1716,12 +1772,13 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   protected OBError saveShipmentSO(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId, String strWindowId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Shipment");
+    }
     final String strLocator = vars.getRequiredStringParameter("inpmLocatorId");
     final String strType = vars.getRequiredStringParameter("inpType");
-    final String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId",
-        IsIDFilter.instance));
+    final String strClaves = Utility
+        .stringList(vars.getRequiredInParameter("inpId", IsIDFilter.instance));
     final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strInvoice = "", strPO = "";
     CreateFromShipmentData[] data = null;
@@ -1733,20 +1790,22 @@ public class CreateFrom extends HttpSecureAppServlet {
       for (int k = 0; k < ids.length; k++) {
         if (strType.equals("INVOICE")) {
           strInvoice = vars.getStringParameter("inpInvoice");
-          if (isSOTrx.equals("Y"))
-            data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this,
-                vars.getLanguage(), ids[k]);
-          else
+          if (isSOTrx.equals("Y")) {
+            data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this, vars.getLanguage(),
+                ids[k]);
+          } else {
             data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, vars.getLanguage(),
                 ids[k]);
+          }
         } else {
           strPO = vars.getStringParameter("inpPurchaseOrder");
-          if (isSOTrx.equals("Y"))
+          if (isSOTrx.equals("Y")) {
             data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, vars.getLanguage(),
                 ids[k]);
-          else
-            data = CreateFromShipmentData
-                .selectFromPOUpdate(conn, this, vars.getLanguage(), ids[k]);
+          } else {
+            data = CreateFromShipmentData.selectFromPOUpdate(conn, this, vars.getLanguage(),
+                ids[k]);
+          }
         }
         if (data != null) {
           for (int i = 0; i < data.length; i++) {
@@ -1761,12 +1820,14 @@ public class CreateFrom extends HttpSecureAppServlet {
               }
               final String strInitUOM = data[i].cUomIdConversion;
               final String strUOM = data[i].cUomId;
-              if (strInitUOM.equals(strUOM))
+              if (strInitUOM.equals(strUOM)) {
                 strMultiplyRate = "1";
-              else
+              } else {
                 strMultiplyRate = CreateFromShipmentData.multiplyRate(this, strInitUOM, strUOM);
-              if (strMultiplyRate.equals(""))
+              }
+              if (strMultiplyRate.equals("")) {
                 strMultiplyRate = CreateFromShipmentData.divideRate(this, strUOM, strInitUOM);
+              }
               if (strMultiplyRate.equals("")) {
                 strMultiplyRate = "1";
                 releaseRollbackConnection(conn);
@@ -1785,8 +1846,9 @@ public class CreateFrom extends HttpSecureAppServlet {
                 qty = qty.negate();
               }
               quantity = qty.multiply(multiplyRate);
-              if (quantity.scale() > stdPrecision)
+              if (quantity.scale() > stdPrecision) {
                 quantity = quantity.setScale(stdPrecision, RoundingMode.HALF_UP);
+              }
               while (qty.compareTo(ZERO) > 0) {
                 String total = "1";
                 BigDecimal conversion;
@@ -1800,8 +1862,9 @@ public class CreateFrom extends HttpSecureAppServlet {
                   if (conversion.compareTo(qty) > 0) {
                     conversion = qty;
                     qty = ZERO;
-                  } else
+                  } else {
                     qty = qty.subtract(conversion);
+                  }
                   quantity = quantity.subtract(BigDecimal.ONE);
                 }
                 final String strConversion = conversion.toString();
@@ -1825,12 +1888,13 @@ public class CreateFrom extends HttpSecureAppServlet {
                         vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].cOrderlineId);
                   }
 
-                  if (!strInvoice.equals(""))
+                  if (!strInvoice.equals("")) {
                     CreateFromShipmentData.updateInvoice(conn, this, strSequence,
                         data[i].cInvoicelineId);
-                  else
+                  } else {
                     CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                         data[i].cOrderlineId);
+                  }
                 } catch (final ServletException ex) {
                   myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                       ex.getMessage());
@@ -1862,9 +1926,10 @@ public class CreateFrom extends HttpSecureAppServlet {
                   CreateFromShipmentData.updateInvoice(conn, this, strSequence,
                       data[i].cInvoicelineId);
                   CreateFromShipmentData.updateBOMStructure(conn, this, strKey, strSequence);
-                } else
+                } else {
                   CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence,
                       data[i].cOrderlineId);
+                }
               } catch (final ServletException ex) {
                 myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
                 releaseRollbackConnection(conn);
@@ -1877,8 +1942,9 @@ public class CreateFrom extends HttpSecureAppServlet {
         if (!strPO.equals("")) {
           try {
             final int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
-            if (total == 0)
+            if (total == 0) {
               CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+            }
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -1889,8 +1955,9 @@ public class CreateFrom extends HttpSecureAppServlet {
           try {
             final int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey,
                 strInvoice);
-            if (total == 0)
+            if (total == 0) {
               CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
+            }
           } catch (final ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -1899,8 +1966,9 @@ public class CreateFrom extends HttpSecureAppServlet {
         }
       }
       releaseCommitConnection(conn);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Save commit");
+      }
       myMessage = new OBError();
       myMessage.setType("Success");
       myMessage.setTitle("");
@@ -1919,26 +1987,30 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   protected OBError savePay(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Pay");
+    }
     return null;
   }
 
   protected OBError saveSettlement(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Settlement");
+    }
     String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
-    if (strDebtPayment.equals(""))
+    if (strDebtPayment.equals("")) {
       return null;
+    }
     OBError myMessage = null;
     Connection conn = null;
     String[] ids = restrictParameter(strDebtPayment);
     try {
       conn = this.getTransactionConnection();
       for (int k = 0; k < ids.length; k++) {
-        if (ids[k].startsWith("("))
+        if (ids[k].startsWith("(")) {
           ids[k] = ids[k].substring(1, ids[k].length() - 1);
+        }
         if (!ids[k].equals("")) {
           ids[k] = Replace.replace(ids[k], "'", "");
           final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
@@ -1948,8 +2020,8 @@ public class CreateFrom extends HttpSecureAppServlet {
             final String strIsPaid = vars.getStringParameter("inpispaid" + strDebtPaymentId, "N");
             if (!CreateFromSettlementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
               releaseRollbackConnection(conn);
-              log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
-                  + " is cancelled");
+              log4j.warn(
+                  "CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId + " is cancelled");
               myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                   "DebtPaymentCancelled");
               return myMessage;
@@ -1984,11 +2056,13 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   protected OBError saveDPManagement(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: DPManagement");
+    }
     String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
-    if (strDebtPayment.equals(""))
+    if (strDebtPayment.equals("")) {
       return null;
+    }
     OBError myMessage = null;
     Connection conn = null;
     String[] ids = restrictParameter(strDebtPayment);
@@ -1996,8 +2070,9 @@ public class CreateFrom extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       final String strStatusTo = vars.getStringParameter("inpStatusTo");
       for (int k = 0; k < ids.length; k++) {
-        if (ids[k].startsWith("("))
+        if (ids[k].startsWith("(")) {
           ids[k] = ids[k].substring(1, ids[k].length() - 1);
+        }
         if (!ids[k].equals("")) {
           ids[k] = Replace.replace(ids[k], "'", "");
           Integer line = Integer.valueOf(CreateFromDPManagementData.getLine(this, strKey));
@@ -2006,8 +2081,8 @@ public class CreateFrom extends HttpSecureAppServlet {
             final String strDebtPaymentId = st.nextToken().trim();
             if (!CreateFromDPManagementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
               releaseRollbackConnection(conn);
-              log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
-                  + " is cancelled");
+              log4j.warn(
+                  "CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId + " is cancelled");
               myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                   "DebtPaymentCancelled");
               return myMessage;
@@ -2016,9 +2091,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
             line += 10;
             try {
-              CreateFromDPManagementData.insert(conn, this, strDPManagementLineID,
-                  vars.getClient(), vars.getUser(), strKey, strStatusTo, line.toString(),
-                  strDebtPaymentId);
+              CreateFromDPManagementData.insert(conn, this, strDPManagementLineID, vars.getClient(),
+                  vars.getUser(), strKey, strStatusTo, line.toString(), strDebtPaymentId);
             } catch (final ServletException ex) {
               myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
               releaseRollbackConnection(conn);
@@ -2046,11 +2120,13 @@ public class CreateFrom extends HttpSecureAppServlet {
 
   protected OBError saveCRemittance(VariablesSecureApp vars, String strKey, String strTableId,
       String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Save: Cremittance");
+    }
     String strDebtPayment = vars.getInStringParameter("inpcDebtPaymentId", IsIDFilter.instance);
-    if (strDebtPayment.equals(""))
+    if (strDebtPayment.equals("")) {
       return null;
+    }
     OBError myMessage = null;
     Connection conn = null;
     String[] ids = restrictParameter(strDebtPayment);
@@ -2060,8 +2136,9 @@ public class CreateFrom extends HttpSecureAppServlet {
           .intValue();
       for (int k = 0; k < ids.length; k++) {
         // String strStatusTo = vars.getStringParameter("inpStatusTo");
-        if (ids[k].startsWith("("))
+        if (ids[k].startsWith("(")) {
           ids[k] = ids[k].substring(1, ids[k].length() - 1);
+        }
         if (!ids[k].equals("")) {
           ids[k] = Replace.replace(ids[k], "'", "");
           final StringTokenizer st = new StringTokenizer(ids[k], ",", false);
@@ -2070,8 +2147,8 @@ public class CreateFrom extends HttpSecureAppServlet {
 
             if (!CreateFromDPManagementData.NotIsCancelled(conn, this, strDebtPaymentId)) {
               releaseRollbackConnection(conn);
-              log4j.warn("CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId
-                  + " is cancelled");
+              log4j.warn(
+                  "CreateFrom.saveSettlement - debt_payment " + strDebtPaymentId + " is cancelled");
               myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                   "DebtPaymentCancelled");
               return myMessage;

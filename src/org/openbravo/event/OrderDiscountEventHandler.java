@@ -34,8 +34,8 @@ import org.openbravo.model.common.order.OrderDiscount;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class OrderDiscountEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OrderDiscount.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OrderDiscount.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -43,8 +43,7 @@ public class OrderDiscountEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

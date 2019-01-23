@@ -106,10 +106,9 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
 
     doErrorTextParserTest(1);
 
-    assertThat(
-        "Stack trace shouldn't be included in log",
-        getTestLogAppender().getMessages(Level.ERROR),
-        not(hasItem(containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK"))));
+    assertThat("Stack trace shouldn't be included in log",
+        getTestLogAppender().getMessages(Level.ERROR), not(hasItem(
+            containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK"))));
   }
 
   @Test
@@ -124,10 +123,9 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
 
       doErrorTextParserTest(1);
 
-      assertThat(
-          "Stack trace should be included in log",
-          getTestLogAppender().getMessages(Level.ERROR),
-          hasItem(containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK")));
+      assertThat("Stack trace should be included in log",
+          getTestLogAppender().getMessages(Level.ERROR), hasItem(
+              containsString("at org.openbravo.test.system.ErrorTextParserTestData.insertUserPK")));
     } finally {
       setLoggerLevel(sqlcLogger, originalLogLevel);
     }
@@ -158,42 +156,42 @@ public class ErrorTextParserIntegrationTest extends OBBaseTest {
     String expectedErrorMessage = "";
     try {
       switch (testCase) {
-      case 1:
-        expectedErrorMessage = "Internal Error: Duplicate primary key/uuid. Your record has not been saved into the table User/Contact";
-        ErrorTextParserTestData.insertUserPK(con, conn, "0", "N", "name");
-        break;
-      case 2:
-        expectedErrorMessage = "The column Active is mandatory and cannot be left empty.";
-        ErrorTextParserTestData.insertUser(con, conn, null, "name");
-        break;
-      case 3:
-        expectedErrorMessage = "Only values 'Y'or 'N' may be entered into the field Active.";
-        ErrorTextParserTestData.insertUser(con, conn, "B", "name");
-        break;
-      case 4:
-        expectedErrorMessage = "There is already a Client with the same Name. Name must be unique. You must change the values entered.";
-        ErrorTextParserTestData.insertClientWithName(con, conn, "System", "System");
-        break;
-      case 5:
-        expectedErrorMessage = "There is already a Month Translation with the same (Language, Month). (Language, Month) must be unique. You must change the values entered.";
-        ErrorTextParserTestData.insertMonthTrl(con, conn);
-        break;
-      case 6:
-        expectedErrorMessage = "This record cannot be deleted because it is associated with other existing elements. Please see Linked Items";
-        ErrorTextParserTestData.insertUserWithClient(con, conn, "42", "Y", "Openbravo");
-        break;
-      case 7:
-        expectedErrorMessage = "This record cannot be deleted because it is associated with other existing elements. Please see Linked Items";
-        ErrorTextParserTestData.deleteClient(con, conn, "0");
-        break;
-      case 8:
-        expectedErrorMessage = "There is a constraint defined that was not satisfied. Please check the data entered";
-        ErrorTextParserTestData.insertProcess(con, conn, "value", "name", "test");
-        break;
-      case 9:
-        expectedErrorMessage = "Cannot update an object in a module not in development and without an active template";
-        ErrorTextParserTestData.updateTableDescription(con, conn, "description", "146");
-        break;
+        case 1:
+          expectedErrorMessage = "Internal Error: Duplicate primary key/uuid. Your record has not been saved into the table User/Contact";
+          ErrorTextParserTestData.insertUserPK(con, conn, "0", "N", "name");
+          break;
+        case 2:
+          expectedErrorMessage = "The column Active is mandatory and cannot be left empty.";
+          ErrorTextParserTestData.insertUser(con, conn, null, "name");
+          break;
+        case 3:
+          expectedErrorMessage = "Only values 'Y'or 'N' may be entered into the field Active.";
+          ErrorTextParserTestData.insertUser(con, conn, "B", "name");
+          break;
+        case 4:
+          expectedErrorMessage = "There is already a Client with the same Name. Name must be unique. You must change the values entered.";
+          ErrorTextParserTestData.insertClientWithName(con, conn, "System", "System");
+          break;
+        case 5:
+          expectedErrorMessage = "There is already a Month Translation with the same (Language, Month). (Language, Month) must be unique. You must change the values entered.";
+          ErrorTextParserTestData.insertMonthTrl(con, conn);
+          break;
+        case 6:
+          expectedErrorMessage = "This record cannot be deleted because it is associated with other existing elements. Please see Linked Items";
+          ErrorTextParserTestData.insertUserWithClient(con, conn, "42", "Y", "Openbravo");
+          break;
+        case 7:
+          expectedErrorMessage = "This record cannot be deleted because it is associated with other existing elements. Please see Linked Items";
+          ErrorTextParserTestData.deleteClient(con, conn, "0");
+          break;
+        case 8:
+          expectedErrorMessage = "There is a constraint defined that was not satisfied. Please check the data entered";
+          ErrorTextParserTestData.insertProcess(con, conn, "value", "name", "test");
+          break;
+        case 9:
+          expectedErrorMessage = "Cannot update an object in a module not in development and without an active template";
+          ErrorTextParserTestData.updateTableDescription(con, conn, "description", "146");
+          break;
       }
 
     } catch (ServletException se) {

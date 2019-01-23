@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
@@ -52,8 +54,6 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorField;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This class caches some AD structures used by the Form Initialization component. Basically, it
@@ -111,7 +111,8 @@ public class ApplicationDictionaryCachedStructures {
 
   private Set<String> getModulesInDevelopment() {
     final String query = "select m.id from ADModule m where m.inDevelopment=true";
-    final Query<String> indevelMods = OBDal.getInstance().getSession()
+    final Query<String> indevelMods = OBDal.getInstance()
+        .getSession()
         .createQuery(query, String.class);
     return new HashSet<>(indevelMods.list());
   }
@@ -341,7 +342,8 @@ public class ApplicationDictionaryCachedStructures {
     initializeDALObject(p);
     initializeDALObject(p.getModule());
     initializeDALObject(p.getADModelImplementationList());
-    p.getADModelImplementationList().stream()
+    p.getADModelImplementationList()
+        .stream()
         //
         .filter(ModelImplementation::isDefault)
         .forEach(m -> initializeDALObject(m.getADModelImplementationMappingList()));
@@ -459,8 +461,8 @@ public class ApplicationDictionaryCachedStructures {
         + ".id = :tab)");
     where.append(" order by CASE WHEN " + Parameter.PROPERTY_FIXED + " is true THEN 1 ELSE 2 END");
     where.append(" , " + Parameter.PROPERTY_SEQUENCENUMBER);
-    final OBQuery<Parameter> qryParams = OBDal.getInstance().createQuery(Parameter.class,
-        where.toString());
+    final OBQuery<Parameter> qryParams = OBDal.getInstance()
+        .createQuery(Parameter.class, where.toString());
     qryParams.setNamedParameter("attMethod", strAttMethodId);
     qryParams.setNamedParameter("tab", strTabId);
     List<Parameter> metadatas = qryParams.list();
@@ -527,8 +529,7 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   private void setAllModulesAsNotInDevelopment() {
-    OBDal
-        .getInstance()
+    OBDal.getInstance()
         .getSession()
         .createQuery(
             "update " + Module.ENTITY_NAME + " set " + Module.PROPERTY_INDEVELOPMENT + " = false")
@@ -536,7 +537,8 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   Collection<String> getCachedWindows() {
-    return windowMap.values().stream() //
+    return windowMap.values()
+        .stream() //
         .map(Window::toString) //
         .collect(Collectors.toList());
   }

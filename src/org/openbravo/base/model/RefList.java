@@ -44,8 +44,8 @@ public class RefList extends ModelObject {
     this.reference = reference;
     final DomainType domainType = reference.getDomainType();
     if (!(domainType instanceof StringEnumerateDomainType)) {
-      log.error("Domain type of reference " + reference.getId()
-          + " is not a TableDomainType but a " + domainType);
+      log.error("Domain type of reference " + reference.getId() + " is not a TableDomainType but a "
+          + domainType);
     } else {
       ((StringEnumerateDomainType) domainType).addEnumerateValue(value);
     }

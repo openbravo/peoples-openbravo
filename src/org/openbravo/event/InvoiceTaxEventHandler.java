@@ -31,8 +31,8 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.InvoiceTax;
 
 public class InvoiceTaxEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance()
-      .getEntity(InvoiceTax.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(InvoiceTax.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override

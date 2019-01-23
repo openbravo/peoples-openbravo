@@ -79,8 +79,9 @@ public class WindowTabs {
   public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId,
       String _windowId) throws Exception {
     if (_conn == null || _vars == null || _tabId == null || _tabId.equals("") || _windowId == null
-        || _windowId.equals(""))
+        || _windowId.equals("")) {
       throw new Exception("Missing parameters");
+    }
     this.conn = _conn;
     this.vars = _vars;
     this.TabID = _tabId;
@@ -103,8 +104,9 @@ public class WindowTabs {
    */
   public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, String _className)
       throws Exception {
-    if (_conn == null || _vars == null || _className == null || _className.equals(""))
+    if (_conn == null || _vars == null || _className == null || _className.equals("")) {
       throw new Exception("Missing parameters");
+    }
     this.conn = _conn;
     this.vars = _vars;
     this.className = _className;
@@ -125,8 +127,9 @@ public class WindowTabs {
    */
   public WindowTabs(ConnectionProvider _conn, VariablesSecureApp _vars, int adProcessId)
       throws Exception {
-    if (_conn == null || _vars == null)
+    if (_conn == null || _vars == null) {
       throw new Exception("Missing parameters");
+    }
     this.conn = _conn;
     this.vars = _vars;
     this.className = "";
@@ -190,10 +193,11 @@ public class WindowTabs {
    * @throws Exception
    */
   private String getMenuInfo() throws Exception {
-    if (this.action.equals("W"))
+    if (this.action.equals("W")) {
       return WindowTabsData.selectMenu(this.conn, this.vars.getLanguage(), this.WindowID);
-    else
+    } else {
       return WindowTabsData.selectMenuManual(this.conn, this.vars.getLanguage(), this.ID);
+    }
   }
 
   /**
@@ -203,11 +207,12 @@ public class WindowTabs {
    */
   private void getTabs() throws Exception {
     WindowTabsData[] tabsAux = null;
-    if (this.action.equals("W"))
+    if (this.action.equals("W")) {
       tabsAux = WindowTabsData.select(this.conn, this.vars.getLanguage(), this.WindowID);
-    else
-      tabsAux = WindowTabsData
-          .selectManual(this.conn, this.TabID, this.vars.getLanguage(), this.ID);
+    } else {
+      tabsAux = WindowTabsData.selectManual(this.conn, this.TabID, this.vars.getLanguage(),
+          this.ID);
+    }
     int pos = -1;
     if (tabsAux == null || tabsAux.length == 0) {
       log4j.debug("Error while trying to obtain tabs for id: " + this.TabID);
@@ -220,15 +225,18 @@ public class WindowTabs {
         break;
       }
     }
-    if (pos == -1)
+    if (pos == -1) {
       throw new Exception("Error while trying to locate the tab: " + this.TabID);
+    }
     if (pos < tabsAux.length - 1) {
-      if (Integer.valueOf(tabsAux[pos + 1].tablevel).intValue() > this.level)
+      if (Integer.valueOf(tabsAux[pos + 1].tablevel).intValue() > this.level) {
         getTabsByLevel(tabsAux, pos + 1, false);
-      else
+      } else {
         getTabsByLevel(tabsAux, pos, true);
-    } else
+      }
+    } else {
       getTabsByLevel(tabsAux, pos, true);
+    }
   }
 
   /**
@@ -242,7 +250,8 @@ public class WindowTabs {
    *          Boolean to indicates if the actual position must be saved in the breadcrumb.
    * @throws Exception
    */
-  private void getTabsByLevel(WindowTabsData[] tabsAux, int pos, boolean register) throws Exception {
+  private void getTabsByLevel(WindowTabsData[] tabsAux, int pos, boolean register)
+      throws Exception {
     if (register) {
       tabsAux[pos].isbreadcrumb = "Y";
       this.breadcrumb.push(tabsAux[pos]);
@@ -251,31 +260,35 @@ public class WindowTabs {
     aux.push(tabsAux[pos]);
     final String actualLevel = tabsAux[pos].tablevel;
     for (int i = pos + 1; i < tabsAux.length; i++) {
-      if (tabsAux[pos].tablevel.equals(tabsAux[i].tablevel))
+      if (tabsAux[pos].tablevel.equals(tabsAux[i].tablevel)) {
         aux.push(tabsAux[i]);
-      else if (Integer.valueOf(tabsAux[pos].tablevel).intValue() > Integer.valueOf(
-          tabsAux[i].tablevel).intValue())
+      } else if (Integer.valueOf(tabsAux[pos].tablevel)
+          .intValue() > Integer.valueOf(tabsAux[i].tablevel).intValue()) {
         break;
+      }
     }
     int nextPos = -1;
     final Stack<WindowTabsData> result = new Stack<WindowTabsData>();
-    while (!aux.empty())
+    while (!aux.empty()) {
       result.push(aux.pop());
+    }
     for (int i = pos - 1; i >= 0; i--) {
-      if (tabsAux[pos].tablevel.equals(tabsAux[i].tablevel))
+      if (tabsAux[pos].tablevel.equals(tabsAux[i].tablevel)) {
         result.push(tabsAux[i]);
-      else if (Integer.valueOf(tabsAux[pos].tablevel).intValue() > Integer.valueOf(
-          tabsAux[i].tablevel).intValue()) {
+      } else if (Integer.valueOf(tabsAux[pos].tablevel)
+          .intValue() > Integer.valueOf(tabsAux[i].tablevel).intValue()) {
         nextPos = i;
         break;
       }
     }
-    if (result.empty())
-      throw new Exception("Level missed for tab: " + this.TabID + " in level: "
-          + tabsAux[pos].tablevel);
+    if (result.empty()) {
+      throw new Exception(
+          "Level missed for tab: " + this.TabID + " in level: " + tabsAux[pos].tablevel);
+    }
     this.tabs.put(actualLevel, result);
-    if (nextPos != -1)
+    if (nextPos != -1) {
       getTabsByLevel(tabsAux, nextPos, true);
+    }
   }
 
   /**
@@ -285,8 +298,9 @@ public class WindowTabs {
    */
   public String parentTabs() {
     final StringBuffer text = new StringBuffer();
-    if (this.tabs == null)
+    if (this.tabs == null) {
       return text.toString();
+    }
     String strShowAcct = "N";
     String strShowTrl = "N";
     try {
@@ -298,48 +312,66 @@ public class WindowTabs {
     }
     boolean isFirst = true;
     final boolean hasParent = (this.level > 0);
-    if (!hasParent)
+    if (!hasParent) {
       return text.append("<td class=\"tabBackGroundInit\"></td>").toString();
+    }
     for (int i = 0; i < this.level; i++) {
       final Stack<WindowTabsData> aux = this.tabs.get(Integer.toString(i));
-      if (aux == null)
+      if (aux == null) {
         continue;
-      if (!isFirst)
+      }
+      if (!isFirst) {
         text.append("</tr>\n<tr>\n");
+      }
 
-      if (isFirst)
+      if (isFirst) {
         text.append("<td class=\"tabBackGroundInit\">\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("  <div>\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("  <span class=\"tabTitle\">\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("    <div class=\"tabTitle_background\">\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("      <span class=\"tabTitle_elements_container\">\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">")
-            .append(this.Title).append("</span>\n");
-      if (isFirst)
-        text.append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
-      if (isFirst)
-        text.append("        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
-      if (isFirst)
+            .append(this.Title)
+            .append("</span>\n");
+      }
+      if (isFirst) {
+        text.append(
+            "        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
+      }
+      if (isFirst) {
+        text.append(
+            "        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
+      }
+      if (isFirst) {
         text.append("      </span>\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("    </div>\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("  </span>\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("</div>\n");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("</td></tr><tr><td class=\"tabBackGround\">");
-
-      else
+      } else {
         text.append("<td class=\"tabBackGround\">");
-      if (isFirst)
+      }
+      if (isFirst) {
         text.append("  <div class=\"marginLeft\">\n");
-      else {
+      } else {
         text.append("  <table class=\"tabTable\"><tr>\n");
         text.append("    <td valign=\"top\"><span class=\"tabLeft\">&nbsp;</span></td>\n");
         text.append("    <td class=\"tabPaneBackGround\">\n");
@@ -349,38 +381,40 @@ public class WindowTabs {
         while (!aux.empty()) {
           final WindowTabsData data = aux.pop();
           if (!data.adTabId.equals(this.TabID) && strShowAcct.equals("N")
-              && data.isinfotab.equals("Y"))
+              && data.isinfotab.equals("Y")) {
             continue;
-          else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
-              && data.istranslationtab.equals("Y"))
+          } else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
+              && data.istranslationtab.equals("Y")) {
             continue;
-          else if (data.isactive.equals("N")
-              || data.enabled.equals("N")
-              || ActivationKey.getInstance().hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION)
+          } else if (data.isactive.equals("N") || data.enabled.equals("N")
+              || ActivationKey.getInstance()
+                  .hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION) {
             continue;
-          if (!isFirstTab)
+          }
+          if (!isFirstTab) {
             text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
+          }
           text.append(
-              (isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")))) ? "<div class=\"marginLeft1\">"
+              (isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))))
+                  ? "<div class=\"marginLeft1\">"
                   : "<div>")
               .append("<span class=\"dojoTab")
-              .append(
-                  ((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")) ? (isFirst ? "NULL dojoTabparentfirst"
-                      : " dojoTabparent")
-                      : "")).append("\">");
+              .append(((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))
+                  ? (isFirst ? "NULL dojoTabparentfirst" : " dojoTabparent")
+                  : ""))
+              .append("\">");
           text.append("<div><span><a class=\"dojoTabLink\" href=\"#\" onclick=\"");
-          text.append(getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel)
-              .intValue()));
           text.append(
-              "\" onMouseOver=\"return true;\" onMouseOut=\"return true;\" id=\"" + data.tabnameid
-                  + "\">").append(data.tabname).append("</a></span></div></span>\n");
+              getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel).intValue()));
+          text.append("\" onMouseOver=\"return true;\" onMouseOut=\"return true;\" id=\""
+              + data.tabnameid + "\">").append(data.tabname).append("</a></span></div></span>\n");
           isFirstTab = false;
         }
         text.append("  </div>\n");
       }
-      if (isFirst)
+      if (isFirst) {
         text.append("  </div>\n");
-      else {
+      } else {
         text.append("    <td valign=\"top\"><span class=\"tabRight\">&nbsp;</span></td>\n");
         text.append("  </tr></table>\n");
       }
@@ -397,8 +431,9 @@ public class WindowTabs {
    */
   public String mainTabs() {
     final StringBuffer text = new StringBuffer();
-    if (this.tabs == null)
+    if (this.tabs == null) {
       return text.toString();
+    }
     String strShowAcct = "N";
     String strShowTrl = "N";
     try {
@@ -410,40 +445,57 @@ public class WindowTabs {
     }
     final boolean hasParent = (this.level > 0);
     final Stack<WindowTabsData> aux = this.tabs.get(Integer.toString(this.level));
-    if (aux == null)
+    if (aux == null) {
       return text.toString();
+    }
 
-    if (!hasParent)
+    if (!hasParent) {
       text.append("<td class=\"tabBackGroundInit\">\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("  <div>\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("  <span class=\"tabTitle\">\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("    <div class=\"tabTitle_background\">\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("      <span class=\"tabTitle_elements_container\">\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("        <span class=\"tabTitle_elements_text\" id=\"tabTitle_text\">")
-          .append(this.Title).append("</span>\n");
-    if (!hasParent)
-      text.append("        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
-    if (!hasParent)
-      text.append("        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
-    if (!hasParent)
+          .append(this.Title)
+          .append("</span>\n");
+    }
+    if (!hasParent) {
+      text.append(
+          "        <span class=\"tabTitle_elements_separator\"><div class=\"tabTitle_elements_separator_icon\"></div></span>\n");
+    }
+    if (!hasParent) {
+      text.append(
+          "        <span class=\"tabTitle_elements_image\"><div class=\"tabTitle_elements_image_normal_icon\" id=\"TabStatusIcon\"></div></span>\n");
+    }
+    if (!hasParent) {
       text.append("      </span>\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("    </div>\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("  </span>\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("</div>\n");
-    if (!hasParent)
+    }
+    if (!hasParent) {
       text.append("</td></tr><tr>");
+    }
     text.append("<td class=\"tabBackGround\">\n");
-    if (!hasParent)
+    if (!hasParent) {
       text.append("  <div class=\"marginLeft\">\n");
-    else {
+    } else {
       text.append("  <table class=\"tabTable\"><tr>\n");
       text.append("    <td valign=\"top\"><span class=\"tabLeft\">&nbsp;</span></td>\n");
       text.append("    <td class=\"tabPaneBackGround\">\n");
@@ -453,39 +505,41 @@ public class WindowTabs {
       while (!aux.empty()) {
         final WindowTabsData data = aux.pop();
         if (!data.adTabId.equals(this.TabID) && strShowAcct.equals("N")
-            && data.isinfotab.equals("Y"))
+            && data.isinfotab.equals("Y")) {
           continue;
-        else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
-            && data.istranslationtab.equals("Y"))
+        } else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
+            && data.istranslationtab.equals("Y")) {
           continue;
-        else if (data.isactive.equals("N")
-            || data.enabled.equals("N")
-            || ActivationKey.getInstance().hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION)
+        } else if (data.isactive.equals("N") || data.enabled.equals("N")
+            || ActivationKey.getInstance()
+                .hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION) {
           continue;
-        if (!isFirstTab)
+        }
+        if (!isFirstTab) {
           text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
+        }
         text.append(
-            (isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")))) ? "<div class=\"marginLeft1\">"
+            (isFirstTab && !((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))))
+                ? "<div class=\"marginLeft1\">"
                 : "<div>")
             .append("<span class=\"")
-            .append(
-                ((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")) ? (!hasParent ? "dojoTabcurrentfirst"
-                    : "dojoTabcurrent")
-                    : "dojoTab")).append("\">");
+            .append(((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))
+                ? (!hasParent ? "dojoTabcurrentfirst" : "dojoTabcurrent")
+                : "dojoTab"))
+            .append("\">");
         text.append("<div><span><a class=\"dojoTabLink\" href=\"#\" onclick=\"");
-        text.append(getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel)
-            .intValue()));
         text.append(
-            "\" onMouseOver=\"return true;\" onMouseOut=\"return true;\" id=\"" + data.tabnameid
-                + "\">").append(data.tabname).append("</a></span></div></span>\n");
+            getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel).intValue()));
+        text.append("\" onMouseOver=\"return true;\" onMouseOut=\"return true;\" id=\""
+            + data.tabnameid + "\">").append(data.tabname).append("</a></span></div></span>\n");
         isFirstTab = false;
       }
       text.append("  </div>\n");
     }
 
-    if (!hasParent)
+    if (!hasParent) {
       text.append("  </div>\n");
-    else {
+    } else {
       text.append("    <td valign=\"top\"><span class=\"tabRight\">&nbsp;</span></td>\n");
       text.append("  </tr></table>\n");
     }
@@ -500,8 +554,9 @@ public class WindowTabs {
    */
   public String childTabs(boolean readOnly) {
     final StringBuffer text = new StringBuffer();
-    if (this.tabs == null)
+    if (this.tabs == null) {
       return text.append("<td class=\"tabTabbarBackGround\"></td>").toString();
+    }
     String strShowAcct = "N";
     String strShowTrl = "N";
     try {
@@ -512,8 +567,9 @@ public class WindowTabs {
       log4j.error(ex);
     }
     final Stack<WindowTabsData> aux = this.tabs.get(Integer.toString(this.level + 1));
-    if (aux == null)
+    if (aux == null) {
       return text.append("<td class=\"tabTabbarBackGround\"></td>").toString();
+    }
     text.append("<td class=\"tabBackGround\">\n");
     text.append("  <table class=\"tabTable\"><tr>\n");
     text.append("    <td valign=\"top\"><span class=\"tabLeft\">&nbsp;</span></td>\n");
@@ -521,31 +577,34 @@ public class WindowTabs {
     boolean isFirst = true;
     while (!aux.empty()) {
       final WindowTabsData data = aux.pop();
-      if (!data.adTabId.equals(this.TabID) && strShowAcct.equals("N") && data.isinfotab.equals("Y"))
+      if (!data.adTabId.equals(this.TabID) && strShowAcct.equals("N")
+          && data.isinfotab.equals("Y")) {
         continue;
-      else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
-          && data.istranslationtab.equals("Y"))
+      } else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
+          && data.istranslationtab.equals("Y")) {
         continue;
-      else if (data.isactive.equals("N")
-          || data.enabled.equals("N")
-          || ActivationKey.getInstance().hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION)
+      } else if (data.isactive.equals("N") || data.enabled.equals("N")
+          || ActivationKey.getInstance()
+              .hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION) {
         continue;
-      if (!isFirst)
+      }
+      if (!isFirst) {
         text.append("<span class=\"tabSeparator\">&nbsp;</span>\n");
+      }
       isFirst = false;
       text.append("<span class=\"dojoTab")
-          .append(
-              ((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")) ? " current" : ""))
+          .append(((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y")) ? " current"
+              : ""))
           .append("\">");
       text.append("<div><a class=\"dojoTabLink\" href=\"#\" onclick=\"");
-      if (readOnly)
+      if (readOnly) {
         text.append("return false;");
-      else
-        text.append(getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel)
-            .intValue()));
-      text.append(
-          "\" onMouseOver=\"return true;\" onMouseOut=\"return true;\"  id=\"" + data.tabnameid
-              + "\">").append(data.tabname).append("</a></div></span>\n");
+      } else {
+        text.append(
+            getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel).intValue()));
+      }
+      text.append("\" onMouseOver=\"return true;\" onMouseOut=\"return true;\"  id=\""
+          + data.tabnameid + "\">").append(data.tabname).append("</a></div></span>\n");
     }
     text.append("    </div></td><td valign=\"top\"><span class=\"tabRight\">&nbsp;</span></td>\n");
     text.append("  </tr></table>\n");
@@ -586,8 +645,9 @@ public class WindowTabs {
    */
   public String breadcrumb() {
     final StringBuffer text = new StringBuffer();
-    if (this.breadcrumb == null || this.breadcrumb.empty())
+    if (this.breadcrumb == null || this.breadcrumb.empty()) {
       return text.toString();
+    }
     boolean isFirst = true;
     try {
       text.append("<span>").append(getMenuInfo()).append("</span>\n");
@@ -598,17 +658,19 @@ public class WindowTabs {
     }
     while (!this.breadcrumb.empty()) {
       final WindowTabsData data = this.breadcrumb.pop();
-      if (!isFirst)
+      if (!isFirst) {
         text.append("&nbsp;&gt;&gt;&nbsp;\n");
-      else
+      } else {
         isFirst = false;
+      }
       if (!this.breadcrumb.empty()) {
         text.append("<a class=\"Link\" onmouseover=\"return true;\" href=\"#\" onclick=\"");
-        text.append(getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel)
-            .intValue()));
+        text.append(
+            getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel).intValue()));
         text.append("\" onmouseout=\"return true;\">").append(data.tabname).append("</a>\n");
-      } else
+      } else {
         text.append(data.tabname).append("\n");
+      }
     }
     return text.toString();
   }
@@ -631,7 +693,8 @@ public class WindowTabs {
         // Log user click when is NEW record and clicking a child tab
         text.append("logClick(null);");
       }
-      text.append("submitCommandForm('").append(((this.level > _level) ? "DEFAULT" : "TAB"))
+      text.append("submitCommandForm('")
+          .append(((this.level > _level) ? "DEFAULT" : "TAB"))
           .append("', ");
 
       if (this.editView) {

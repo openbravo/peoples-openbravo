@@ -36,10 +36,10 @@ public class ReferencedInventoryPartialBoxTest extends ReferencedInventoryBoxTes
 
   @Rule
   public ParameterCdiTestRule<ParamsBoxTest> parameterValuesRule = new ParameterCdiTestRule<ParamsBoxTest>(
-      Arrays
-          .asList(new ParamsBoxTest[] { new ParamsBoxTest("Box of " + QTYTOBOX
+      Arrays.asList(new ParamsBoxTest[] { new ParamsBoxTest(
+          "Box of " + QTYTOBOX
               + " unit of the 10 units available in the storage detail without reservations",
-              QTYTOBOX) }));
+          QTYTOBOX) }));
 
   protected @ParameterCdiTest ParamsBoxTest params;
 

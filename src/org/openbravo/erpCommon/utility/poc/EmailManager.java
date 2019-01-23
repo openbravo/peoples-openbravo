@@ -83,10 +83,11 @@ public class EmailManager {
       String recipientBCC, String replyTo, String subject, String content, String contentType,
       List<File> attachments, Date sentDate, List<String> headerExtras) throws Exception {
 
-    EmailServerConfiguration configuration = EmailUtils.getEmailConfiguration(OBContext
-        .getOBContext().getCurrentOrganization());
-    Long timeoutMillis = (configuration != null) ? TimeUnit.SECONDS.toMillis(configuration
-        .getSmtpConnectionTimeout()) : DEFAULT_SMTP_TIMEOUT;
+    EmailServerConfiguration configuration = EmailUtils
+        .getEmailConfiguration(OBContext.getOBContext().getCurrentOrganization());
+    Long timeoutMillis = (configuration != null)
+        ? TimeUnit.SECONDS.toMillis(configuration.getSmtpConnectionTimeout())
+        : DEFAULT_SMTP_TIMEOUT;
 
     sendEmail(host, auth, username, password, connSecurity, port, senderAddress, recipientTO,
         recipientCC, recipientBCC, replyTo, subject, content, contentType, attachments, sentDate,
@@ -242,6 +243,7 @@ public class EmailManager {
       _password = password;
     }
 
+    @Override
     public PasswordAuthentication getPasswordAuthentication() {
       return new PasswordAuthentication(_username, _password);
     }
@@ -319,8 +321,9 @@ public class EmailManager {
 
       message.setRecipients(Message.RecipientType.TO, getAddressesFrom(to.split(",")));
 
-      if (bcc != null)
+      if (bcc != null) {
         message.setRecipients(Message.RecipientType.BCC, getAddressesFrom(bcc.split(",")));
+      }
 
       message.setSubject(subject);
 
@@ -369,9 +372,10 @@ public class EmailManager {
       try {
         internetAddresses[index] = new InternetAddress(textualAddresses[index]);
       } catch (AddressException e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Could not create a valid email for: " + textualAddresses[index]
               + ". Address ignored");
+        }
       }
     }
     return internetAddresses;

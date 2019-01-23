@@ -51,8 +51,8 @@ public class NewUserEmailGenerator implements EmailEventContentGenerator {
     } else {
       msg = "Portal_UserWelcomeSubject";
     }
-    return OBMessageUtils.getI18NMessage(msg, new String[] { OBContext.getOBContext()
-        .getCurrentClient().getName() });
+    return OBMessageUtils.getI18NMessage(msg,
+        new String[] { OBContext.getOBContext().getCurrentClient().getName() });
   }
 
   @SuppressWarnings("unchecked")

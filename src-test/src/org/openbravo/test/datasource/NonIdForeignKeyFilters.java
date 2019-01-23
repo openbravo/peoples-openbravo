@@ -70,8 +70,9 @@ public class NonIdForeignKeyFilters extends BaseDataSourceTestDal {
   private JSONObject requestCountry(String criteria) throws Exception {
     Map<String, String> params = this.getParameters(criteria);
 
-    return new JSONObject(this.doRequest("/org.openbravo.service.datasource/Country", params, 200,
-        "POST")).getJSONObject("response");
+    return new JSONObject(
+        this.doRequest("/org.openbravo.service.datasource/Country", params, 200, "POST"))
+            .getJSONObject("response");
   }
 
   private Map<String, String> getParameters(String criteria) {

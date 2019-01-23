@@ -43,18 +43,19 @@ public class UpdatePaymentPlan implements org.openbravo.scheduling.Process {
   public void execute(ProcessBundle bundle) throws Exception {
     OBContext.setAdminMode(true);
     try {
-      final String strPaymentScheduleInvId = (String) bundle.getParams().get(
-          "Fin_Payment_Sched_Inv_V_ID");
-      final String strPaymentScheduleOrdId = (String) bundle.getParams().get(
-          "Fin_Payment_Sched_Ord_V_ID");
+      final String strPaymentScheduleInvId = (String) bundle.getParams()
+          .get("Fin_Payment_Sched_Inv_V_ID");
+      final String strPaymentScheduleOrdId = (String) bundle.getParams()
+          .get("Fin_Payment_Sched_Ord_V_ID");
       final String strPaymentPriority = (String) bundle.getParams().get("finPaymentPriorityId");
       final String strDueDate = (String) bundle.getParams().get("duedate");
 
-      final String strPaymentScheduleId = (strPaymentScheduleOrdId == null) ? strPaymentScheduleInvId
+      final String strPaymentScheduleId = (strPaymentScheduleOrdId == null)
+          ? strPaymentScheduleInvId
           : strPaymentScheduleOrdId;
 
-      FIN_PaymentSchedule ps = OBDal.getInstance().get(FIN_PaymentSchedule.class,
-          strPaymentScheduleId);
+      FIN_PaymentSchedule ps = OBDal.getInstance()
+          .get(FIN_PaymentSchedule.class, strPaymentScheduleId);
       ps.setDueDate(getDate(strDueDate));
 
       ps.setFINPaymentPriority(OBDal.getInstance().get(PaymentPriority.class, strPaymentPriority));
@@ -63,8 +64,8 @@ public class UpdatePaymentPlan implements org.openbravo.scheduling.Process {
 
       final OBError msg = new OBError();
       ConnectionProvider conn = new DalConnectionProvider(false);
-      msg.setTitle(Utility.messageBD(conn, "Success", OBContext.getOBContext().getLanguage()
-          .getLanguage()));
+      msg.setTitle(
+          Utility.messageBD(conn, "Success", OBContext.getOBContext().getLanguage().getLanguage()));
       msg.setType("Success");
       bundle.setResult(msg);
 
@@ -89,10 +90,12 @@ public class UpdatePaymentPlan implements org.openbravo.scheduling.Process {
    * @return the date
    */
   private static Date getDate(String strDate) {
-    if (strDate.equals(""))
+    if (strDate.equals("")) {
       return null;
+    }
     try {
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       return (outputFormat.parse(strDate));

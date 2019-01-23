@@ -169,8 +169,8 @@ public class XMLEntityConverter extends BaseXMLEntityConverter {
       BaseOBObject bob = resolve(entityName, id, false, filterOrganizations);
 
       // should never be null at this point
-      Check.isNotNull(bob, "The business object " + entityName + " (" + id
-          + ") can not be resolved");
+      Check.isNotNull(bob,
+          "The business object " + entityName + " (" + id + ") can not be resolved");
 
       // warn/error is logged below if the entity is updated
       // update is prevented below

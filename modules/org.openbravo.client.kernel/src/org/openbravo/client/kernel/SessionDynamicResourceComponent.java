@@ -25,9 +25,9 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.openbravo.model.ad.module.Module;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.model.ad.module.Module;
 
 /**
  * This class generates other components called session dynamic resources. This kind of resources

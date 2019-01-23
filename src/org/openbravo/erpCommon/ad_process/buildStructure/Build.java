@@ -61,8 +61,9 @@ public class Build {
 
     FieldProvider[] fps = new FieldProvider[fieldProviderList.size()];
     int i = 0;
-    for (FieldProvider fp : fieldProviderList)
+    for (FieldProvider fp : fieldProviderList) {
       fps[i++] = fp;
+    }
     return fps;
   }
 
@@ -75,8 +76,8 @@ public class Build {
 
     beanReader.getBindingConfiguration().setMapIDs(false);
 
-    beanReader.getXMLIntrospector().register(
-        new InputSource(new FileReader(new File(mappingFilePath))));
+    beanReader.getXMLIntrospector()
+        .register(new InputSource(new FileReader(new File(mappingFilePath))));
 
     beanReader.registerBeanClass("Build", Build.class);
 
@@ -87,19 +88,23 @@ public class Build {
   public BuildMainStep mainStepOfCode(String state) {
 
     for (BuildMainStep mstep : getMainSteps()) {
-      if (mstep.getCode().equals(state))
+      if (mstep.getCode().equals(state)) {
         return mstep;
+      }
       for (BuildStep step : mstep.getStepList()) {
         if (step.getCode().equals(state)) {
           return mstep;
         }
       }
-      if (state.equals(mstep.getSuccessCode()))
+      if (state.equals(mstep.getSuccessCode())) {
         return mstep;
-      if (state.equals(mstep.getWarningCode()))
+      }
+      if (state.equals(mstep.getWarningCode())) {
         return mstep;
-      if (state.equals(mstep.getErrorCode()))
+      }
+      if (state.equals(mstep.getErrorCode())) {
         return mstep;
+      }
     }
     return null;
   }

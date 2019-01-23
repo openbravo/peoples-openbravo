@@ -112,8 +112,8 @@ public class TabAccessInjector extends AccessTypeInjector {
   @Override
   public void removeReferenceInParentList(InheritedAccessEnabled access) {
     TabAccess ta = (TabAccess) access;
-    boolean accessExists = OBDal.getInstance().exists(WindowAccess.ENTITY_NAME,
-        ta.getWindowAccess().getId());
+    boolean accessExists = OBDal.getInstance()
+        .exists(WindowAccess.ENTITY_NAME, ta.getWindowAccess().getId());
     if (accessExists) {
       ta.getWindowAccess().getADTabAccessList().remove(ta);
     }

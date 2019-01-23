@@ -143,14 +143,16 @@ public class DatasetExportTest extends OBBaseTest {
     // exclude the Order.project and Order.selfService
     final DataSetTable dst = ds.getDataSetTableList().get(0);
     assertTrue(dst.getTable().getDBTableName().toLowerCase().equals("c_order"));
-    dst.getDataSetColumnList().add(
-        createDataSetColumn(dst, getProperty(Order.ENTITY_NAME, Order.PROPERTY_PROJECT), true));
-    dst.getDataSetColumnList().add(
-        createDataSetColumn(dst, getProperty(Order.ENTITY_NAME, Order.PROPERTY_SELFSERVICE), true));
+    dst.getDataSetColumnList()
+        .add(
+            createDataSetColumn(dst, getProperty(Order.ENTITY_NAME, Order.PROPERTY_PROJECT), true));
+    dst.getDataSetColumnList()
+        .add(createDataSetColumn(dst, getProperty(Order.ENTITY_NAME, Order.PROPERTY_SELFSERVICE),
+            true));
 
     String xml = DataExportService.getInstance().exportDataSetToXML(ds);
-    checkPropsPresent(ds, xml, false, false, new String[] { Order.PROPERTY_PROJECT,
-        Order.PROPERTY_SELFSERVICE });
+    checkPropsPresent(ds, xml, false, false,
+        new String[] { Order.PROPERTY_PROJECT, Order.PROPERTY_SELFSERVICE });
   }
 
   /**
@@ -174,29 +176,29 @@ public class DatasetExportTest extends OBBaseTest {
     // exclude the Order.project and Order.selfService
     final DataSetTable dst = ds.getDataSetTableList().get(0);
     assertTrue(dst.getTable().getDBTableName().toLowerCase().equals("c_order"));
-    dst.getDataSetColumnList().add(
-        createDataSetColumn(dst, getProperty(Order.ENTITY_NAME, Order.PROPERTY_PROJECT), false));
     dst.getDataSetColumnList()
-        .add(
-            createDataSetColumn(dst, getProperty(Order.ENTITY_NAME, Order.PROPERTY_SELFSERVICE),
-                false));
+        .add(createDataSetColumn(dst, getProperty(Order.ENTITY_NAME, Order.PROPERTY_PROJECT),
+            false));
+    dst.getDataSetColumnList()
+        .add(createDataSetColumn(dst, getProperty(Order.ENTITY_NAME, Order.PROPERTY_SELFSERVICE),
+            false));
 
     final List<String> excludeList = new ArrayList<String>();
-    addAllPropertiesExcept(Order.ENTITY_NAME, excludeList, new String[] { Order.PROPERTY_PROJECT,
-        Order.PROPERTY_SELFSERVICE });
-    addAllPropertiesExcept(Organization.ENTITY_NAME, excludeList, new String[] {
-        Order.PROPERTY_PROJECT, Order.PROPERTY_SELFSERVICE });
+    addAllPropertiesExcept(Order.ENTITY_NAME, excludeList,
+        new String[] { Order.PROPERTY_PROJECT, Order.PROPERTY_SELFSERVICE });
+    addAllPropertiesExcept(Organization.ENTITY_NAME, excludeList,
+        new String[] { Order.PROPERTY_PROJECT, Order.PROPERTY_SELFSERVICE });
 
     String xml = DataExportService.getInstance().exportDataSetToXML(ds);
     checkPropsPresent(ds, xml, false, false, excludeList.toArray(new String[excludeList.size()]));
   }
 
-  private void checkPropsPresent(DataSet ds, String xml, boolean auditInfo,
-      boolean includeChildren, String[] excluded) {
+  private void checkPropsPresent(DataSet ds, String xml, boolean auditInfo, boolean includeChildren,
+      String[] excluded) {
     final List<String> excludedList = Arrays.asList(excluded);
     for (DataSetTable dst : ds.getDataSetTableList()) {
-      final Entity e = ModelProvider.getInstance().getEntityByTableName(
-          dst.getTable().getDBTableName());
+      final Entity e = ModelProvider.getInstance()
+          .getEntityByTableName(dst.getTable().getDBTableName());
       for (Property p : e.getProperties()) {
         if (p.isClientOrOrganization()) {
           continue;
@@ -278,15 +280,16 @@ public class DatasetExportTest extends OBBaseTest {
     if (tableName.equals(Order.TABLE_NAME)) {
       // selected arbitrary order ids of F&B of completed orders which are part of sample data
       // these orders have enough hierarchy to be a valid testcase for business objects
-      dst.setSQLWhereClause("id in ('C56A4B27B49941AB8B9F35396CB15C12','8ED7AAEB268848F88C3AA215B8457B3D',"
-          + "'510DD91466964C1CB23441F7288B355D','896E0588D1FC4FB9B8A62C204C08C213',"
-          + "'B75A5CF209B74B37BFF0A8CC21B1B15A','029FB113350249BEB492B86F53FF70CF',"
-          + "'FBF47A639DB64E23946CABEAB5C77B08','7CD40D3BD143468DAA466E501D4FCBFF',"
-          + "'B900C76C06BB4EA38E2242363320647D','F3D780AF3CB24CA4AA6A74ABA5D39EBD',"
-          + "'D4FFBDF80B0E4FEA961488B1304BF9D1','12124C88BB944A4CB3AF5C31847CC364',"
-          + "'6DA22F7D51E945DE9D2EEB38EADEB76C','35FBEAB092424B509A4261DD78CDC097',"
-          + "'C5B948B6C51B404F97864B0880B1DCFD','C7C9522EF68A46F884932AB16139E42A',"
-          + "'7623359D4ABE47A9B1AD9FE646C2F231','7B697CAAF177484F9B4FCF6102B2060F')");
+      dst.setSQLWhereClause(
+          "id in ('C56A4B27B49941AB8B9F35396CB15C12','8ED7AAEB268848F88C3AA215B8457B3D',"
+              + "'510DD91466964C1CB23441F7288B355D','896E0588D1FC4FB9B8A62C204C08C213',"
+              + "'B75A5CF209B74B37BFF0A8CC21B1B15A','029FB113350249BEB492B86F53FF70CF',"
+              + "'FBF47A639DB64E23946CABEAB5C77B08','7CD40D3BD143468DAA466E501D4FCBFF',"
+              + "'B900C76C06BB4EA38E2242363320647D','F3D780AF3CB24CA4AA6A74ABA5D39EBD',"
+              + "'D4FFBDF80B0E4FEA961488B1304BF9D1','12124C88BB944A4CB3AF5C31847CC364',"
+              + "'6DA22F7D51E945DE9D2EEB38EADEB76C','35FBEAB092424B509A4261DD78CDC097',"
+              + "'C5B948B6C51B404F97864B0880B1DCFD','C7C9522EF68A46F884932AB16139E42A',"
+              + "'7623359D4ABE47A9B1AD9FE646C2F231','7B697CAAF177484F9B4FCF6102B2060F')");
     }
     return dst;
   }
@@ -305,8 +308,7 @@ public class DatasetExportTest extends OBBaseTest {
 
   private Column getColumn(DataSetTable dst, Property p) {
     final OBCriteria<Column> obcColumn = OBDal.getInstance().createCriteria(Column.class);
-    obcColumn.add(Restrictions.and(
-        Restrictions.eq(Column.PROPERTY_DBCOLUMNNAME, p.getColumnName()),
+    obcColumn.add(Restrictions.and(Restrictions.eq(Column.PROPERTY_DBCOLUMNNAME, p.getColumnName()),
         Restrictions.eq(Column.PROPERTY_TABLE, dst.getTable())));
     assertTrue(obcColumn.list().size() == 1);
     return obcColumn.list().get(0);

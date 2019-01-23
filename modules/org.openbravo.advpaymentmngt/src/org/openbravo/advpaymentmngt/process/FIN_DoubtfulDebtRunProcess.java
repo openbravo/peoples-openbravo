@@ -38,12 +38,13 @@ public class FIN_DoubtfulDebtRunProcess implements org.openbravo.scheduling.Proc
   private static AdvPaymentMngtDao dao;
   private static final Logger log4j = LogManager.getLogger();
 
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
     dao = new AdvPaymentMngtDao();
     OBError msg = new OBError();
     msg.setType("Success");
-    msg.setTitle(Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext()
-        .getLanguage()));
+    msg.setTitle(
+        Utility.messageBD(bundle.getConnection(), "Success", bundle.getContext().getLanguage()));
 
     OBContext.setAdminMode(false);
     try {
@@ -105,8 +106,8 @@ public class FIN_DoubtfulDebtRunProcess implements org.openbravo.scheduling.Proc
       OBDal.getInstance().rollbackAndClose();
       log4j.error("FIN_DoubtfulDebtRunProcess error: " + e.getMessage(), e);
       msg.setType("Error");
-      msg.setTitle(Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext()
-          .getLanguage()));
+      msg.setTitle(
+          Utility.messageBD(bundle.getConnection(), "Error", bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
     } finally {

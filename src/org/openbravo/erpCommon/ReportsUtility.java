@@ -41,13 +41,13 @@ import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
 public class ReportsUtility {
 
-  public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId,
-      String bpartnerId, String dateFrom) {
+  public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId, String bpartnerId,
+      String dateFrom) {
     return getBeginningBalance(orgId, acctSchemaId, bpartnerId, dateFrom, true);
   }
 
-  public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId,
-      String bpartnerId, String dateFrom, boolean isCustomer) {
+  public static BigDecimal getBeginningBalance(String orgId, String acctSchemaId, String bpartnerId,
+      String dateFrom, boolean isCustomer) {
     if (dateFrom == null || "".equals(dateFrom)) {
       return BigDecimal.ZERO;
     }
@@ -58,7 +58,8 @@ public class ReportsUtility {
         OBDal.getInstance().get(BusinessPartner.class, bpartnerId)));
     obc.add(Restrictions.in(AccountingFact.PROPERTY_ORGANIZATION, getOrgList(orgId)));
     try {
-      obc.add(Restrictions.lt(AccountingFact.PROPERTY_ACCOUNTINGDATE, OBDateUtils.getDate(dateFrom)));
+      obc.add(
+          Restrictions.lt(AccountingFact.PROPERTY_ACCOUNTINGDATE, OBDateUtils.getDate(dateFrom)));
     } catch (ParseException pe) {
       // do nothing
     }

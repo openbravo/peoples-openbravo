@@ -53,8 +53,13 @@ class AgingData implements Comparable<AgingData> {
     this.credit = credit;
     this.doubtfulDebt = doubtfulDebt;
     this.percentage = calculatePercentage(total.subtract(credit).add(doubtfulDebt), doubtfulDebt);
-    this.net = current.add(amount1).add(amount2).add(amount3).add(amount4).add(amount5)
-        .subtract(credit).add(doubtfulDebt);
+    this.net = current.add(amount1)
+        .add(amount2)
+        .add(amount3)
+        .add(amount4)
+        .add(amount5)
+        .subtract(credit)
+        .add(doubtfulDebt);
   }
 
   public AgingData(String BPartnerID, String BPartner, BigDecimal amount, int index) {
@@ -67,33 +72,33 @@ class AgingData implements Comparable<AgingData> {
     this.amount4 = BigDecimal.ZERO;
     this.amount5 = BigDecimal.ZERO;
     switch (index) {
-    case 0: {
-      this.current = amount;
-      break;
-    }
-    case 1: {
-      this.amount1 = amount;
-      break;
-    }
-    case 2: {
-      this.amount2 = amount;
-      break;
-    }
-    case 3: {
-      this.amount3 = amount;
-      break;
-    }
-    case 4: {
-      this.amount4 = amount;
-      break;
-    }
-    case 5: {
-      this.amount5 = amount;
-      break;
-    }
-    default: {
-      break;
-    }
+      case 0: {
+        this.current = amount;
+        break;
+      }
+      case 1: {
+        this.amount1 = amount;
+        break;
+      }
+      case 2: {
+        this.amount2 = amount;
+        break;
+      }
+      case 3: {
+        this.amount3 = amount;
+        break;
+      }
+      case 4: {
+        this.amount4 = amount;
+        break;
+      }
+      case 5: {
+        this.amount5 = amount;
+        break;
+      }
+      default: {
+        break;
+      }
     }
     this.total = amount;
     this.credit = BigDecimal.ZERO;
@@ -112,33 +117,33 @@ class AgingData implements Comparable<AgingData> {
 
   public void addAmount(BigDecimal amt, int index) {
     switch (index) {
-    case 0: {
-      this.current = this.current.add(amt);
-      break;
-    }
-    case 1: {
-      this.amount1 = this.amount1.add(amt);
-      break;
-    }
-    case 2: {
-      this.amount2 = this.amount2.add(amt);
-      break;
-    }
-    case 3: {
-      this.amount3 = this.amount3.add(amt);
-      break;
-    }
-    case 4: {
-      this.amount4 = this.amount4.add(amt);
-      break;
-    }
-    case 5: {
-      this.amount5 = this.amount5.add(amt);
-      break;
-    }
-    default: {
-      break;
-    }
+      case 0: {
+        this.current = this.current.add(amt);
+        break;
+      }
+      case 1: {
+        this.amount1 = this.amount1.add(amt);
+        break;
+      }
+      case 2: {
+        this.amount2 = this.amount2.add(amt);
+        break;
+      }
+      case 3: {
+        this.amount3 = this.amount3.add(amt);
+        break;
+      }
+      case 4: {
+        this.amount4 = this.amount4.add(amt);
+        break;
+      }
+      case 5: {
+        this.amount5 = this.amount5.add(amt);
+        break;
+      }
+      default: {
+        break;
+      }
     }
     this.total = total.add(amt);
     this.net = net.add(amt);
@@ -217,8 +222,8 @@ class AgingData implements Comparable<AgingData> {
     if (doubtfulDebtAmount.compareTo(BigDecimal.ZERO) == 0) {
       return BigDecimal.ZERO;
     }
-    return doubtfulDebtAmount.divide(totalAmount, 5, RoundingMode.HALF_UP).multiply(
-        new BigDecimal("100"));
+    return doubtfulDebtAmount.divide(totalAmount, 5, RoundingMode.HALF_UP)
+        .multiply(new BigDecimal("100"));
   }
 
   @Override

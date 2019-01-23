@@ -49,9 +49,9 @@ public class SE_ExternalPOS_BPartner extends SimpleCallout {
     }
 
     // Update the price list
-    info.addResult(
-        "inpmPricelistId",
-        StringUtils.isEmpty(strBPPriceList) ? Utility.getContext(this, info.vars,
-            "#M_PriceList_ID", strWindowId) : strBPPriceList);
+    info.addResult("inpmPricelistId",
+        StringUtils.isEmpty(strBPPriceList)
+            ? Utility.getContext(this, info.vars, "#M_PriceList_ID", strWindowId)
+            : strBPPriceList);
   }
 }

@@ -42,13 +42,15 @@ import org.openbravo.utils.FormatUtilities;
 public class DynamicJS extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     printPageDataSheet(response, vars);
   }
@@ -66,8 +68,9 @@ public class DynamicJS extends HttpSecureAppServlet {
   @SuppressWarnings("unchecked")
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page");
+    }
     OBError myError = null;
     DynamicJSData[] data = null;
     try {
@@ -99,10 +102,15 @@ public class DynamicJS extends HttpSecureAppServlet {
           arrayType.append(",\n");
           array.append(",\n");
         }
-        arrayType.append("new messageType(\"").append(num).append("\",")
-            .append(data[i].msgtype.equals("C") ? "1" : "0").append(")");
+        arrayType.append("new messageType(\"")
+            .append(num)
+            .append("\",")
+            .append(data[i].msgtype.equals("C") ? "1" : "0")
+            .append(")");
         array.append("new messagesTexts(\"").append(vars.getLanguage()).append("\", \"");
-        array.append(num).append("\", \"").append(FormatUtilities.replaceJS(data[i].msgtext))
+        array.append(num)
+            .append("\", \"")
+            .append(FormatUtilities.replaceJS(data[i].msgtext))
             .append("\", null)");
       }
 
@@ -113,8 +121,9 @@ public class DynamicJS extends HttpSecureAppServlet {
     response.setContentType("text/javascript; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(arrayType.toString() + array.toString());
+    }
     out.println(arrayType.toString() + array.toString());
 
     String globals = "";

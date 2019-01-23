@@ -51,8 +51,8 @@ public class StaticResourceTest extends WeldBaseTest {
   public void testStaticResourceGeneration() throws Exception {
     setSystemAdministratorContext();
 
-    final Component component = componentProvider.getComponent(
-        KernelConstants.RESOURCE_COMPONENT_ID, new HashMap<String, Object>());
+    final Component component = componentProvider
+        .getComponent(KernelConstants.RESOURCE_COMPONENT_ID, new HashMap<String, Object>());
 
     final String output = ComponentGenerator.getInstance().generate(component);
     System.err.println(output);

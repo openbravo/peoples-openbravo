@@ -49,7 +49,8 @@ public class SL_BPartnerLocation extends SimpleCallout {
    * <li>More than 1 country set as Tax Location</li>
    * <li>Other country is declared as Tax Location and the user is trying to set a new country as
    * Tax Location</li>
-   * <li>The business partner has several countries and neither of them is declared as Tax Location</li>
+   * <li>The business partner has several countries and neither of them is declared as Tax
+   * Location</li>
    * </ul>
    * 
    */
@@ -71,7 +72,8 @@ public class SL_BPartnerLocation extends SimpleCallout {
             "where bpl.businessPartner.id = :bPartnerId " + //
             "and bpl.taxLocation = true " + //
             "and c.id <> :countryId "; //
-        Query<Long> query = OBDal.getInstance().getSession()
+        Query<Long> query = OBDal.getInstance()
+            .getSession()
             .createQuery(hql.toString(), Long.class);
         query.setParameter("bPartnerId", bPartnerId);
         query.setParameter("countryId", location.getCountry().getId());

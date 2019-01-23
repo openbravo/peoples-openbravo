@@ -37,13 +37,14 @@ public class InventoryStatusValidatorHookNegativeStock implements InventoryStatu
       return;
     }
     if (storageDetail.getQuantityOnHand().compareTo(BigDecimal.ZERO) < 0
-        || (storageDetail.getOnHandOrderQuanity() != null && storageDetail.getOnHandOrderQuanity()
-            .compareTo(BigDecimal.ZERO) < 0)) {
-      throw new OBException(String.format(
-          OBMessageUtils.messageBD("InventoryStatusChangeNegStock"), storageDetail.getProduct()
-              .getIdentifier(), (StringUtils.equals("0", storageDetail.getAttributeSetValue()
-              .getId()) ? OBMessageUtils.messageBD("Empty") : storageDetail.getAttributeSetValue()
-              .getIdentifier()), storageDetail.getUOM().getIdentifier()));
+        || (storageDetail.getOnHandOrderQuanity() != null
+            && storageDetail.getOnHandOrderQuanity().compareTo(BigDecimal.ZERO) < 0)) {
+      throw new OBException(String.format(OBMessageUtils.messageBD("InventoryStatusChangeNegStock"),
+          storageDetail.getProduct().getIdentifier(),
+          (StringUtils.equals("0", storageDetail.getAttributeSetValue().getId())
+              ? OBMessageUtils.messageBD("Empty")
+              : storageDetail.getAttributeSetValue().getIdentifier()),
+          storageDetail.getUOM().getIdentifier()));
     }
   }
 }

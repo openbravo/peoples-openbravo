@@ -45,7 +45,8 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    String policy = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String policy = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("background.policy", "default");
     if ("no-execute".equals(policy)) {
       log.info("Not scheduling process because current context background policy is 'no-execute'");

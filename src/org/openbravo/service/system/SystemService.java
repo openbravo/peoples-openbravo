@@ -230,8 +230,9 @@ public class SystemService implements OBSingleton {
       killConnectionsAndSafeMode(con);
       try {
         if (OBScheduler.getInstance() != null && OBScheduler.getInstance().getScheduler() != null
-            && OBScheduler.getInstance().getScheduler().isStarted())
+            && OBScheduler.getInstance().getScheduler().isStarted()) {
           OBScheduler.getInstance().getScheduler().standby();
+        }
       } catch (Exception e) {
         throw new RuntimeException("Could not shutdown scheduler", e);
       }
@@ -364,9 +365,9 @@ public class SystemService implements OBSingleton {
     Properties obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     // We disable check constraints before inserting reference data
     String driver = obProp.getProperty("bbdd.driver");
-    String url = obProp.getProperty("bbdd.rdbms").equals("POSTGRE") ? obProp
-        .getProperty("bbdd.url") + "/" + obProp.getProperty("bbdd.sid") : obProp
-        .getProperty("bbdd.url");
+    String url = obProp.getProperty("bbdd.rdbms").equals("POSTGRE")
+        ? obProp.getProperty("bbdd.url") + "/" + obProp.getProperty("bbdd.sid")
+        : obProp.getProperty("bbdd.url");
     String user = obProp.getProperty("bbdd.user");
     String password = obProp.getProperty("bbdd.password");
     BasicDataSource datasource = DBSMOBUtil.getDataSource(driver, url, user, password);
@@ -410,8 +411,9 @@ public class SystemService implements OBSingleton {
    * should be done
    */
   public Database getModelFromDatabase(Platform platform, boolean doPlSqlStandardization) {
-    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
-        new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance()
+        .getExcludeFilter(new File(OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties()
             .getProperty("source.path")));
     return platform.loadModelFromDatabase(excludeFilter, doPlSqlStandardization);
   }

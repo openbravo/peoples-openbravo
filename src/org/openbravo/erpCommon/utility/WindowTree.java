@@ -66,13 +66,15 @@ public class WindowTree extends HttpSecureAppServlet {
   @Inject
   GlobalMenu menu;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Checking the window invoking the tree is accessible
@@ -147,16 +149,17 @@ public class WindowTree extends HttpSecureAppServlet {
       throw new ServletException("WindowTree.loadNodes() - Unknown TreeNode");
     }
     StringBuilder nodesMenu = new StringBuilder();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WindowTree.loadNodes() - TreeType: " + treeData.treeType + " || TreeID: "
           + treeData.treeId);
+    }
     nodesMenu.append("\n<ul class=\"dhtmlgoodies_tree\">\n");
     nodesMenu.append(WindowTreeUtility.addNodeElement(treeData.treeName, treeData.treeDescription,
         CHILD_SHEETS, true, "", strDireccion,
         "clickItem(0, '" + Replace.replace(treeData.treeName, "'", "\\'") + "', 'N');",
         "dblClickItem(0);", true, "0", ""));
-    WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, treeData.treeType,
-        treeData.treeId, editable, "", "", treeData.tabId);
+    WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, treeData.treeType, treeData.treeId,
+        editable, "", "", treeData.tabId);
     Map<String, List<WindowTreeData>> wtdTree = buildTree(wtd);
     nodesMenu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, treeData.tabId));
     nodesMenu.append("\n</ul>\n");
@@ -181,12 +184,15 @@ public class WindowTree extends HttpSecureAppServlet {
       String direccion, String indice, boolean isFirst, String strTabId) {
     boolean localIsFirst = isFirst;
     String localIndice = indice;
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       return "";
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("WindowTree.generateTree() - data: " + data.length);
-    if (localIndice == null)
+    }
+    if (localIndice == null) {
       localIndice = "0";
+    }
     boolean hayDatos = false;
     StringBuilder strResultado = new StringBuilder();
     strResultado.append("<ul>");
@@ -200,12 +206,13 @@ public class WindowTree extends HttpSecureAppServlet {
             strTabId);
         // if elem is present in filtered sublist click action is allowed, else disabled
         if (filteredSubList.contains(elem)) {
-          strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
-              CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
-              direccion,
-              "clickItem('" + elem.nodeId + "', '" + Replace.replace(elem.name, "'", "\\'")
-                  + "', '" + elem.issummary + "');", "dblClickItem('" + elem.nodeId + "');",
-              !strHijos.equals(""), elem.nodeId, elem.action));
+          strResultado
+              .append(WindowTreeUtility.addNodeElement(elem.name, elem.description, CHILD_SHEETS,
+                  elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action), direccion,
+                  "clickItem('" + elem.nodeId + "', '" + Replace.replace(elem.name, "'", "\\'")
+                      + "', '" + elem.issummary + "');",
+                  "dblClickItem('" + elem.nodeId + "');", !strHijos.equals(""), elem.nodeId,
+                  elem.action));
         } else {
           strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
               CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
@@ -241,8 +248,8 @@ public class WindowTree extends HttpSecureAppServlet {
     List<WindowTreeData> newSubList = new ArrayList<WindowTreeData>();
     if (hqlWhereClause != null && !hqlWhereClause.trim().isEmpty()) {
       hqlWhereClause = hqlWhereClause.replaceAll("\\be.", "");
-      OBQuery<BaseOBObject> entityResults = OBDal.getInstance().createQuery("" + entityName + "",
-          hqlWhereClause);
+      OBQuery<BaseOBObject> entityResults = OBDal.getInstance()
+          .createQuery("" + entityName + "", hqlWhereClause);
       if (nodeIdList == null) {
         nodeIdList = new ArrayList<>();
       }
@@ -307,16 +314,18 @@ public class WindowTree extends HttpSecureAppServlet {
    */
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       ADTreeData treeData) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Tree's screen for the tab: " + treeData.tabId);
+    }
     OBError defaultInfo = new OBError();
     defaultInfo.setType("INFO");
     defaultInfo.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
     defaultInfo.setMessage(Utility.messageBD(this, "TreeInfo", vars.getLanguage()));
     vars.setMessage("WindowTree", defaultInfo);
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/WindowTree").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/WindowTree")
+        .createXmlDocument();
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -397,8 +406,8 @@ public class WindowTree extends HttpSecureAppServlet {
       Table table = tab.getTable();
       OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
       adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-      adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
-          .getCurrentClient()));
+      adTreeCriteria
+          .add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext().getCurrentClient()));
       adTreeCriteria.setFilterOnReadableOrganization(false);
       Tree adTree = (Tree) adTreeCriteria.uniqueResult();
 
@@ -432,8 +441,9 @@ public class WindowTree extends HttpSecureAppServlet {
       if (!data[0].issummary.equals("Y") || !strChild.equals("Y")) {
         strParent = data[0].parentId;
       }
-    } else
+    } else {
       strParent = strTop;
+    }
     WindowTreeData[] data = WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable,
         strParent, "", strTabId);
     int seqNo = 0;
@@ -475,31 +485,36 @@ public class WindowTree extends HttpSecureAppServlet {
               int j = 0;
 
               for (j = i + 1; j < data.length
-                  && (data[j].isindevelopment == null || data[j].isindevelopment.equals("") || data[j].isindevelopment
-                      .equals("Y")); j++)
+                  && (data[j].isindevelopment == null || data[j].isindevelopment.equals("")
+                      || data[j].isindevelopment.equals("Y")); j++) {
                 ;
-              if (j == data.length)
+              }
+              if (j == data.length) {
                 add = 10; // it is at the end it can be expanded
-              // without problem
-              else
-                add = Float.valueOf(
-                    ((Integer.valueOf(data[j].seqno) - Integer.valueOf(data[i].seqno)) / (j - i + 1)))
+                // without problem
+              } else {
+                add = Float
+                    .valueOf(((Integer.valueOf(data[j].seqno) - Integer.valueOf(data[i].seqno))
+                        / (j - i + 1)))
                     .intValue();
+              }
 
               // Set the current node in its posisiton
-              if (i == 0)
+              if (i == 0) {
                 seqNo = 10;
-              else
+              } else {
                 seqNo = Integer.parseInt(data[i].seqno) + add;
+              }
               WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink,
                   Integer.toString(seqNo));
               updated = true;
             }
           }
         }
-        if (!updated)
+        if (!updated) {
           WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink,
               Integer.toString(seqNo));
+        }
       }
     } catch (ServletException e) {
       log4j.error("WindowTree.changeNode() - Couldn't change the node: " + strLink);
@@ -508,6 +523,7 @@ public class WindowTree extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the tree of a TreeNode windo windoww";
   } // end of getServletInfo() method
@@ -547,8 +563,8 @@ public class WindowTree extends HttpSecureAppServlet {
         Table table = tab.getTable();
         OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
         adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
-        adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext()
-            .getCurrentClient()));
+        adTreeCriteria.add(
+            Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext().getCurrentClient()));
         adTreeCriteria.setFilterOnReadableOrganization(false);
         Tree adTree = (Tree) adTreeCriteria.uniqueResult();
         if (adTree == null) {

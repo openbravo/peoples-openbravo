@@ -48,8 +48,8 @@ public class Tree {
     return strText;
   }
 
-  public static String getTreeOrgs(ConnectionProvider conn, String client) throws IOException,
-      ServletException {
+  public static String getTreeOrgs(ConnectionProvider conn, String client)
+      throws IOException, ServletException {
     log4jTree.debug("Tree.getTreeOrg");
     TreeData[] data = TreeData.getTreeOrgs(conn, client);
 
@@ -73,8 +73,8 @@ public class Tree {
     return TreeData.getTreeTable(conn, client, tableId);
   }
 
-  public static String getTreeAccounts(ConnectionProvider conn, String client) throws IOException,
-      ServletException {
+  public static String getTreeAccounts(ConnectionProvider conn, String client)
+      throws IOException, ServletException {
     log4jTree.debug("Tree.getTreeOrg");
     TreeData[] data = TreeData.getTreeAccounts(conn, client);
 

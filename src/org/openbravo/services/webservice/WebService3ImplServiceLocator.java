@@ -1,3 +1,5 @@
+// @formatter:off
+
 /**
  * WebService3ImplServiceLocator.java
  *
@@ -25,6 +27,7 @@ public class WebService3ImplServiceLocator extends org.apache.axis.client.Servic
     // Use to get a proxy class for WebService3
     private java.lang.String WebService3_address = "http://centralrepository.openbravo.com/openbravo/services/WebService3";
 
+    @Override
     public java.lang.String getWebService3Address() {
         return WebService3_address;
     }
@@ -40,6 +43,7 @@ public class WebService3ImplServiceLocator extends org.apache.axis.client.Servic
         WebService3WSDDServiceName = name;
     }
 
+    @Override
     public org.openbravo.services.webservice.WebService3Impl getWebService3() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
@@ -51,6 +55,7 @@ public class WebService3ImplServiceLocator extends org.apache.axis.client.Servic
         return getWebService3(endpoint);
     }
 
+    @Override
     public org.openbravo.services.webservice.WebService3Impl getWebService3(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
             org.openbravo.services.webservice.WebService3SoapBindingStub _stub = new org.openbravo.services.webservice.WebService3SoapBindingStub(portAddress, this);
@@ -71,6 +76,7 @@ public class WebService3ImplServiceLocator extends org.apache.axis.client.Servic
      * If this service has no port for the given interface,
      * then ServiceException is thrown.
      */
+    @Override
     public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
             if (org.openbravo.services.webservice.WebService3Impl.class.isAssignableFrom(serviceEndpointInterface)) {
@@ -90,6 +96,7 @@ public class WebService3ImplServiceLocator extends org.apache.axis.client.Servic
      * If this service has no port for the given interface,
      * then ServiceException is thrown.
      */
+    @Override
     public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         if (portName == null) {
             return getPort(serviceEndpointInterface);
@@ -105,12 +112,14 @@ public class WebService3ImplServiceLocator extends org.apache.axis.client.Servic
         }
     }
 
+    @Override
     public javax.xml.namespace.QName getServiceName() {
         return new javax.xml.namespace.QName("http://centralrepository.openbravo.com/openbravo/services/WebService3", "WebService3ImplService");
     }
 
     private java.util.HashSet ports = null;
 
+    @Override
     public java.util.Iterator getPorts() {
         if (ports == null) {
             ports = new java.util.HashSet();

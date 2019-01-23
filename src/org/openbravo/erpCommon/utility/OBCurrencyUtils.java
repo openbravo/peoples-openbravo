@@ -59,15 +59,16 @@ public class OBCurrencyUtils {
         return org.getCurrency().getId();
       } else {
         final Organization legalEntity = OBContext.getOBContext()
-            .getOrganizationStructureProvider().getLegalEntity(org);
+            .getOrganizationStructureProvider()
+            .getLegalEntity(org);
         if (legalEntity != null && legalEntity.getCurrency() != null) {
           // Get currency from legal entity of organization
           return legalEntity.getCurrency().getId();
         } else {
           // Get client base currency
-          return Utility.stringBaseCurrencyId(new DalConnectionProvider(false), StringUtils.equals(
-              orgId, "0") ? OBContext.getOBContext().getCurrentClient().getId() : org.getClient()
-              .getId());
+          return Utility.stringBaseCurrencyId(new DalConnectionProvider(false),
+              StringUtils.equals(orgId, "0") ? OBContext.getOBContext().getCurrentClient().getId()
+                  : org.getClient().getId());
         }
       }
     } catch (Exception e) {

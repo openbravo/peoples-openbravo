@@ -76,6 +76,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
    * 
    * @see org.openbravo.client.kernel.BaseComponent#getId()
    */
+  @Override
   public String getId() {
     return COMPONENT_ID;
   }
@@ -145,7 +146,8 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     if (!StringUtils.isEmpty(additionalWhereClause)) {
       hql.append(additionalWhereClause);
     }
-    Query<String> query = OBDal.getInstance().getSession()
+    Query<String> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), String.class);
     if (StringUtils.isEmpty(roleId)) {
       query.setParameter("roleId", OBContext.getOBContext().getRole().getId());
@@ -206,8 +208,8 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
       final JSONObject valueMap = new JSONObject();
       final JSONObject jsonLevels = new JSONObject();
 
-      final Role currentRole = OBDal.getInstance().get(Role.class,
-          OBContext.getOBContext().getRole().getId());
+      final Role currentRole = OBDal.getInstance()
+          .get(Role.class, OBContext.getOBContext().getRole().getId());
 
       if (currentRole.getId().equals("0")) {
         Map<String, String> systemLevel = new HashMap<String, String>();
@@ -235,13 +237,13 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
       valueMap.put("level", jsonLevels);
 
       final Map<String, String> client = new HashMap<String, String>();
-      client.put(OBContext.getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentClient().getName());
+      client.put(OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentClient().getName());
 
       final Map<String, String> org = new HashMap<String, String>();
       for (RoleOrganization currentRoleOrg : adminOrgs) {
-        org.put(currentRoleOrg.getOrganization().getId(), currentRoleOrg.getOrganization()
-            .getName());
+        org.put(currentRoleOrg.getOrganization().getId(),
+            currentRoleOrg.getOrganization().getName());
       }
 
       final Map<String, String> role = new HashMap<String, String>();
@@ -270,8 +272,9 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     final List<String> accessibleWidgetClasses = getAccessibleWidgetClassIds(role.getId(), null);
     final List<WidgetInstance> userWidgets = getWidgetInstances(client, role, user,
         accessibleWidgetClasses);
-    final List<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(OBContext.getOBContext()
-        .getRole(), client.getId(), OBContext.getOBContext().getWritableOrganizations());
+    final List<WidgetInstance> defaultWidgets = getRoleDefaultWidgets(
+        OBContext.getOBContext().getRole(), client.getId(),
+        OBContext.getOBContext().getWritableOrganizations());
 
     final List<WidgetInstance> contextWidgets = new ArrayList<WidgetInstance>();
     final List<WidgetInstance> copiedWidgets = new ArrayList<WidgetInstance>();

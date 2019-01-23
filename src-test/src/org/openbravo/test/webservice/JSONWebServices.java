@@ -133,8 +133,8 @@ public class JSONWebServices extends BaseWSTest {
     final StringBuilder sb = new StringBuilder();
     try {
 
-      final HttpURLConnection hc = createConnection("/org.openbravo.service.json.jsonrest/"
-          + wsPart, method);
+      final HttpURLConnection hc = createConnection(
+          "/org.openbravo.service.json.jsonrest/" + wsPart, method);
       hc.connect();
       final InputStream is = hc.getInputStream();
       BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));

@@ -91,12 +91,12 @@ public class LogDatasource extends ReadOnlyDataSourceService {
 
   private Comparator<Logger> getComparatorForSortKey(String sortKey) {
     switch (sortKey) {
-    case "logger":
-      return Comparator.comparing(AbstractLogger::getName);
-    case "level":
-      return Comparator.comparing(Logger::getLevel);
-    default:
-      throw new IllegalArgumentException("Unkown field to sort " + sortKey);
+      case "logger":
+        return Comparator.comparing(AbstractLogger::getName);
+      case "level":
+        return Comparator.comparing(Logger::getLevel);
+      default:
+        throw new IllegalArgumentException("Unkown field to sort " + sortKey);
     }
   }
 
@@ -134,7 +134,8 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     return Optional.empty();
   }
 
-  private static boolean filterRow(Logger r, Optional<JSONArray> criteria, String criteriaOperator) {
+  private static boolean filterRow(Logger r, Optional<JSONArray> criteria,
+      String criteriaOperator) {
     if (!criteria.isPresent()) {
       return true;
     }
@@ -155,7 +156,8 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     return meetsCriteria;
   }
 
-  private static boolean applyOperator(boolean firstOperand, boolean secondOperand, String operation) {
+  private static boolean applyOperator(boolean firstOperand, boolean secondOperand,
+      String operation) {
     if (operation.equals("or")) {
       return firstOperand || secondOperand;
     }
@@ -170,14 +172,14 @@ public class LogDatasource extends ReadOnlyDataSourceService {
       String value = criterion.getString("value").toLowerCase();
 
       switch (field) {
-      case "id":
-      case "logger":
-        return matchStrings(r.getName().toLowerCase(), value, operator);
-      case "level":
-        List<String> values = convertJsonArrayToStringList(new JSONArray(value));
-        return values.contains(r.getLevel().toString().toLowerCase());
-      default:
-        return true;
+        case "id":
+        case "logger":
+          return matchStrings(r.getName().toLowerCase(), value, operator);
+        case "level":
+          List<String> values = convertJsonArrayToStringList(new JSONArray(value));
+          return values.contains(r.getLevel().toString().toLowerCase());
+        default:
+          return true;
       }
     } else if (operator.equals("and") || operator.equals("or")) {
       return filterRow(r, getCriteria(criterion), operator);
@@ -230,8 +232,8 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     dsProperty.setName("logger");
 
     Reference loggerReference = OBDal.getInstance().get(Reference.class, STRING_REFERENCE_ID);
-    UIDefinition stringUiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-        loggerReference);
+    UIDefinition stringUiDefinition = UIDefinitionController.getInstance()
+        .getUIDefinition(loggerReference);
     dsProperty.setUIDefinition(stringUiDefinition);
 
     return dsProperty;
@@ -243,8 +245,8 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     dsProperty.setId(true);
 
     Reference loggerReference = OBDal.getInstance().get(Reference.class, STRING_REFERENCE_ID);
-    UIDefinition stringUiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-        loggerReference);
+    UIDefinition stringUiDefinition = UIDefinitionController.getInstance()
+        .getUIDefinition(loggerReference);
     dsProperty.setUIDefinition(stringUiDefinition);
 
     return dsProperty;
@@ -254,16 +256,16 @@ public class LogDatasource extends ReadOnlyDataSourceService {
     final DataSourceProperty dsProperty = new DataSourceProperty();
     dsProperty.setName("level");
 
-    Reference logLevelReference = OBDal.getInstance().get(Reference.class,
-        LOG_LEVEL_LIST_REFERENCE_ID);
-    UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-        logLevelReference);
+    Reference logLevelReference = OBDal.getInstance()
+        .get(Reference.class, LOG_LEVEL_LIST_REFERENCE_ID);
+    UIDefinition uiDefinition = UIDefinitionController.getInstance()
+        .getUIDefinition(logLevelReference);
     dsProperty.setUIDefinition(uiDefinition);
 
     Set<String> allowedValues = DataSourceProperty.getAllowedValues(logLevelReference);
     dsProperty.setAllowedValues(allowedValues);
-    dsProperty.setValueMap(DataSourceProperty.createValueMap(allowedValues,
-        LOG_LEVEL_LIST_REFERENCE_ID));
+    dsProperty
+        .setValueMap(DataSourceProperty.createValueMap(allowedValues, LOG_LEVEL_LIST_REFERENCE_ID));
 
     return dsProperty;
   }

@@ -99,11 +99,11 @@ public class CancelCostAdjustment extends BaseActionHandler {
     OBDal.getInstance().save(costAdjustmentCancel);
     OBDal.getInstance().flush();
 
-    CostAdjustment cacProxy = (CostAdjustment) OBDal.getInstance().getProxy(
-        CostAdjustment.ENTITY_NAME, costAdjustmentCancel.getId());
+    CostAdjustment cacProxy = (CostAdjustment) OBDal.getInstance()
+        .getProxy(CostAdjustment.ENTITY_NAME, costAdjustmentCancel.getId());
     // Call cost
-    OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance().createCriteria(
-        CostAdjustmentLine.class);
+    OBCriteria<CostAdjustmentLine> qLines = OBDal.getInstance()
+        .createCriteria(CostAdjustmentLine.class);
     qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, costAdjustmentOrig));
     qLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISSOURCE, true));
     ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
@@ -142,8 +142,8 @@ public class CancelCostAdjustment extends BaseActionHandler {
     message.put("text", OBMessageUtils.parseTranslation(strResult, map));
 
     CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentCancel);
-    CostAdjustment costAdjCancel = OBDal.getInstance().get(CostAdjustment.class,
-        costAdjustmentCancel.getId());
+    CostAdjustment costAdjCancel = OBDal.getInstance()
+        .get(CostAdjustment.class, costAdjustmentCancel.getId());
     costAdjCancel.setDocumentStatus("VO");
     costAdjCancel.setPosted("N");
     OBDal.getInstance().save(costAdjCancel);

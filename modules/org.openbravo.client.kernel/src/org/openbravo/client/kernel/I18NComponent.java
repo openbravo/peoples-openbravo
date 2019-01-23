@@ -72,8 +72,8 @@ public class I18NComponent extends SessionDynamicTemplateComponent {
     OBContext.setAdminMode();
     try {
       // first read the labels from the base table
-      final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
-          "module.id!='0' or includeInI18N='Y'");
+      final OBQuery<Message> messages = OBDal.getInstance()
+          .createQuery(Message.class, "module.id!='0' or includeInI18N='Y'");
       for (Message message : messages.list()) {
         final Label label = new Label();
         label.setKey(message.getSearchKey());
@@ -81,10 +81,8 @@ public class I18NComponent extends SessionDynamicTemplateComponent {
         labels.put(message.getSearchKey(), label);
       }
 
-      final OBQuery<MessageTrl> messagesTrl = OBDal
-          .getInstance()
-          .createQuery(
-              MessageTrl.class,
+      final OBQuery<MessageTrl> messagesTrl = OBDal.getInstance()
+          .createQuery(MessageTrl.class,
               "(message.module.id!='0' or message.includeInI18N='Y') and message.active = true and language.id=:languageId");
       messagesTrl.setNamedParameter("languageId", OBContext.getOBContext().getLanguage().getId());
       for (MessageTrl message : messagesTrl.list()) {

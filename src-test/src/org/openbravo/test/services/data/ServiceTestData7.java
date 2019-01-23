@@ -33,11 +33,11 @@ public class ServiceTestData7 extends ServiceTestData {
     setPrice(new BigDecimal("10.00"));
     setProductChangedQty(new BigDecimal("10.00"));
     setServices(new String[][] {
-    // ProductId, quantity, price, amount
-    { SERVICE_WARRANTY, "1", "200.00", "2000.00" } });
+        // ProductId, quantity, price, amount
+        { SERVICE_WARRANTY, "1", "200.00", "2000.00" } });
     setServicesResults(new String[][] {
-    // ProductId, quantity, price, amount
-    { SERVICE_WARRANTY, "10", "202.00", "2020.00" } });
+        // ProductId, quantity, price, amount
+        { SERVICE_WARRANTY, "10", "202.00", "2020.00" } });
     setPricelistId(PRICELIST_SALES);
   }
 }

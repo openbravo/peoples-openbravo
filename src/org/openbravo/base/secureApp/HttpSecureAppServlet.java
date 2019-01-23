@@ -162,8 +162,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   @Override
-  public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void service(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     final boolean sessionExists = request.getSession(false) != null;
 
@@ -181,8 +181,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     // bdErrorGeneral(response, "Error", "No access");
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("class info type: " + classInfo.type + " - ID: " + classInfo.id);
+    }
     String strAjax = "";
     String strHidden = "";
     String strPopUp = "";
@@ -268,8 +269,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
           SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
           boolean correctSystemStatus = sysInfo.getSystemStatus() == null
-              || this.globalParameters.getOBProperty("safe.mode", "false")
-                  .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
+              || this.globalParameters.getOBProperty("safe.mode", "false").equalsIgnoreCase("false")
+              || sysInfo.getSystemStatus().equals("RB70");
 
           final VariablesSecureApp vars = new VariablesSecureApp(request, false);
           if (!correctSystemStatus
@@ -279,8 +280,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             if (strRole == null || strRole.equals("")) {
               final OBError roleError = new OBError();
               roleError.setType("Error");
-              roleError.setMessage(Utility.messageBD(cp, "SystemLoginRequired",
-                  variables.getLanguage()));
+              roleError.setMessage(
+                  Utility.messageBD(cp, "SystemLoginRequired", variables.getLanguage()));
               invalidLogin(request, response, roleError);
 
               return;
@@ -313,8 +314,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
           // note fill session arguments will set the LOGGINGIN session var
           // to N
-          if (LoginUtils.fillSessionArguments(cp, vars, strUserAuth, strLanguage, strIsRTL,
-              strRole, strClient, strOrg, strWarehouse)) {
+          if (LoginUtils.fillSessionArguments(cp, vars, strUserAuth, strLanguage, strIsRTL, strRole,
+              strClient, strOrg, strWarehouse)) {
             readProperties(vars);
             readNumberFormat(vars, globalParameters.getFormatPath());
             LoginUtils.saveLoginBD(request, vars, "0", "0");
@@ -363,8 +364,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     } finally {
       final boolean sessionCreated = !sessionExists && null != request.getSession(false);
       if (AuthenticationManager.isStatelessRequest(request) && sessionCreated) {
-        log4j.warn("Stateless request, still a session was created " + request.getRequestURL()
-            + " " + request.getQueryString());
+        log4j.warn("Stateless request, still a session was created " + request.getRequestURL() + " "
+            + request.getQueryString());
       }
       OBContext.restorePreviousMode();
     }
@@ -383,14 +384,15 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           || vars1.getCommand().indexOf("POPUP") != -1
           || !vars1.getStringParameter("inpProcessId").equals("");
 
-      FeatureRestriction featureRestriction = ActivationKey.getInstance().hasLicenseAccess(
-          classInfo.type, classInfo.id);
+      FeatureRestriction featureRestriction = ActivationKey.getInstance()
+          .hasLicenseAccess(classInfo.type, classInfo.id);
       if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
         licenseError(classInfo.type, classInfo.id, featureRestriction, response, request, vars1,
             isPopup);
       } else if (vars1.getRole().equals("") || hasAccess(vars1)) {
 
-        if (classInfo.id != null && !classInfo.id.equals("") && SessionInfo.getProcessId() == null) {
+        if (classInfo.id != null && !classInfo.id.equals("")
+            && SessionInfo.getProcessId() == null) {
           // Set process id in session in case there is info for that and it has not been already
           // set by the Servlet itself
           SessionInfo.setProcessId(classInfo.id);
@@ -424,8 +426,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             }
 
             if (log4j.isDebugEnabled()) {
-              log4j.debug(this.getClass().getCanonicalName() + " - hash: "
-                  + vars1.getPostDataHash());
+              log4j.debug(
+                  this.getClass().getCanonicalName() + " - hash: " + vars1.getPostDataHash());
             }
 
             final String servletMappingName = request.getParameter("mappingName");
@@ -443,9 +445,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               // the hash of the post data
               if (!hash.equals(vars1.getPostDataHash())) {
                 request.setAttribute("autosave", true);
-                if (isPopup)
+                if (isPopup) {
                   // Adding pop-up window attribute to close the window on failed auto-save
                   request.setAttribute("popupWindow", true);
+                }
                 // forward request
                 if (!forwardRequest(request, response)) {
                   return; // failed save
@@ -475,16 +478,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       final VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
       final OBError myError = Utility.translateError(this, vars1, variables.getLanguage(),
           ex.getMessage());
-      if (strAjax != null && !strAjax.equals(""))
+      if (strAjax != null && !strAjax.equals("")) {
         bdErrorAjax(response, myError.getType(), myError.getTitle(), myError.getMessage());
-      else if (strHidden != null && !strHidden.equals(""))
+      } else if (strHidden != null && !strHidden.equals("")) {
         bdErrorHidden(response, myError.getType(), myError.getTitle(), myError.getMessage());
-      else if (!myError.isConnectionAvailable())
+      } else if (!myError.isConnectionAvailable()) {
         bdErrorConnection(response);
-      else if (strPopUp != null && !strPopUp.equals(""))
+      } else if (strPopUp != null && !strPopUp.equals("")) {
         bdErrorGeneralPopUp(request, response, myError.getTitle(), myError.getMessage());
-      else
+      } else {
         bdErrorGeneral(request, response, myError.getTitle(), myError.getMessage());
+      }
     } catch (final OBException e) {
       final Boolean isAutosaving = (Boolean) request.getAttribute("autosave");
       if (isAutosaving != null && isAutosaving) {
@@ -493,17 +497,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         throw e;
       } else {
         log4j.error("Error captured: ", e);
-        if (strPopUp != null && !strPopUp.equals(""))
+        if (strPopUp != null && !strPopUp.equals("")) {
           bdErrorGeneralPopUp(request, response, "Error", e.toString());
-        else
+        } else {
           bdErrorGeneral(request, response, "Error", e.toString());
+        }
       }
     } catch (final Exception e) {
       log4j.error("Error captured: ", e);
-      if (strPopUp != null && !strPopUp.equals(""))
+      if (strPopUp != null && !strPopUp.equals("")) {
         bdErrorGeneralPopUp(request, response, "Error", e.toString());
-      else
+      } else {
         bdErrorGeneral(request, response, "Error", e.toString());
+      }
     }
   }
 
@@ -528,11 +534,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             && !SeguridadData.selectAccess(cp, vars.getRole(), type, id).equals("0");
       } else if (type.equals("S")) {
         return !SeguridadData.selectAccessSearch(cp, vars.getRole(), id).equals("0");
-      } else if (type.equals("C"))
+      } else if (type.equals("C")) {
         return true;
-      else
+      } else {
         return hasLevelAccess(vars, accessLevel)
             && !SeguridadData.selectAccess(cp, vars.getRole(), type, id).equals("0");
+      }
     } catch (final Exception e) {
       log4j.error("Error checking access: ", e);
       return false;
@@ -542,11 +549,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   /**
    * Checks if the user has access to the window
-   * */
+   */
   private boolean hasAccess(VariablesSecureApp vars) {
     try {
-      if (classInfo == null || classInfo.id.equals("") || classInfo.type.equals(""))
+      if (classInfo == null || classInfo.id.equals("") || classInfo.type.equals("")) {
         return true;
+      }
       return hasGeneralAccess(vars, classInfo.type, classInfo.id);
 
     } catch (final Exception e) {
@@ -571,16 +579,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     // NOTE: if the logic here changes then also the logic in the
     // EntityAccessChecker.hasCorrectAccessLevel needs to be updated
     // Centralizing the logic seemed difficult because of build dependencies
-    if (accessLevel.equals("4") && userLevel.indexOf("S") == -1)
+    if (accessLevel.equals("4") && userLevel.indexOf("S") == -1) {
       retValue = false;
-    else if (accessLevel.equals("1") && userLevel.indexOf("O") == -1)
+    } else if (accessLevel.equals("1") && userLevel.indexOf("O") == -1) {
       retValue = false;
-    else if (accessLevel.equals("3")
-        && (!(userLevel.indexOf("C") != -1 || userLevel.indexOf("O") != -1)))
+    } else if (accessLevel.equals("3")
+        && (!(userLevel.indexOf("C") != -1 || userLevel.indexOf("O") != -1))) {
       retValue = false;
-    else if (accessLevel.equals("6")
-        && (!(userLevel.indexOf("S") != -1 || userLevel.indexOf("C") != -1)))
+    } else if (accessLevel.equals("6")
+        && (!(userLevel.indexOf("S") != -1 || userLevel.indexOf("C") != -1))) {
       retValue = false;
+    }
 
     return retValue;
   }
@@ -626,8 +635,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     String discard[] = { "continueButton" };
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/HtmlErrorLogin", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("messageType", error.getType());
     xmlDocument.setParameter("messageTitle", error.getTitle());
@@ -649,13 +659,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strTitulo, String strTexto) throws IOException {
 
     String myTheme;
-    if (request != null)
+    if (request != null) {
       myTheme = new Variables(request).getSessionValue("#Theme");
-    else
+    } else {
       myTheme = "Default";
+    }
 
-    final XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/base/secureApp/Advise").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Advise")
+        .createXmlDocument();
 
     xmlDocument.setParameter("theme", myTheme);
     xmlDocument.setParameter("ParamTipo", strTipo.toUpperCase());
@@ -674,14 +685,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void advisePopUp(HttpServletRequest request, HttpServletResponse response,
       String strTipo, String strTitulo, String strTexto) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/AdvisePopUp").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/AdvisePopUp")
+        .createXmlDocument();
 
     String myTheme;
-    if (request != null)
+    if (request != null) {
       myTheme = new Variables(request).getSessionValue("#Theme");
-    else
+    } else {
       myTheme = "Default";
+    }
     xmlDocument.setParameter("theme", myTheme);
     xmlDocument.setParameter("PopupTitle",
         OBMessageUtils.getI18NMessage("OBUIAPP_" + strTipo, null));
@@ -710,14 +723,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    */
   protected void advisePopUpRefresh(HttpServletRequest request, HttpServletResponse response,
       String strType, String strTitle, String strText) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/AdvisePopUpRefresh").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/AdvisePopUpRefresh")
+        .createXmlDocument();
 
     String myTheme;
-    if (request != null)
+    if (request != null) {
       myTheme = new Variables(request).getSessionValue("#Theme");
-    else
+    } else {
       myTheme = "Default";
+    }
 
     xmlDocument.setParameter("theme", myTheme);
     xmlDocument.setParameter("ParamType", strType.toUpperCase());
@@ -735,10 +750,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         .createXmlDocument();
 
     String myTheme;
-    if (request != null)
+    if (request != null) {
       myTheme = new Variables(request).getSessionValue("#Theme");
-    else
+    } else {
       myTheme = "Default";
+    }
 
     xmlDocument.setParameter("theme", myTheme);
     xmlDocument.setParameter("ParamTitulo", strCode);
@@ -751,14 +767,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void bdErrorGeneralPopUp(HttpServletRequest request, HttpServletResponse response,
       String strTitle, String strText) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/ErrorPopUp").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/ErrorPopUp")
+        .createXmlDocument();
 
     String myTheme;
-    if (request != null)
+    if (request != null) {
       myTheme = new Variables(request).getSessionValue("#Theme");
-    else
+    } else {
       myTheme = "Default";
+    }
 
     xmlDocument.setParameter("theme", myTheme);
     xmlDocument.setParameter("ParamTipo", "ERROR");
@@ -777,14 +795,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       discard[0] = "backButton";
     }
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error",
-        discard).createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/Error", discard)
+        .createXmlDocument();
 
     String myTheme;
-    if (request != null)
+    if (request != null) {
       myTheme = new Variables(request).getSessionValue("#Theme");
-    else
+    } else {
       myTheme = "Default";
+    }
 
     xmlDocument.setParameter("theme", myTheme);
     xmlDocument.setParameter("ParamTitulo", strTitle);
@@ -797,10 +817,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   protected void bdErrorConnection(HttpServletResponse response) throws IOException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Error connection");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/ErrorConnection").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/ErrorConnection")
+        .createXmlDocument();
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -825,8 +847,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void bdErrorHidden(HttpServletResponse response, String strType, String strTitle,
       String strText) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut")
+        .createXmlDocument();
 
     final StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='';\n\n");
@@ -845,8 +868,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   protected void pageError(HttpServletResponse response) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlError").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/HtmlError")
+        .createXmlDocument();
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -855,8 +879,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   protected void pageErrorPopUp(HttpServletResponse response) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorPopUp").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/HtmlErrorPopUp")
+        .createXmlDocument();
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -880,43 +905,44 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     String msg;
 
     switch (featureRestriction) {
-    case TIER1_RESTRICTION:
-      editionType = "OBPSAnyEdition";
-      // do not break continue with next tier restriction
-    case TIER2_RESTRICTION:
-      if (editionType == null) {
-        editionType = "OBPSStandardEdition";
-      }
-      // <p> in java, to allow multi-paragraph text via the parameter
-      infoText = "<p>"
-          + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
-              .replace("@ProfessionalEditionType@",
-                  Utility.messageBD(this, editionType, vars.getLanguage())) + "</p>";
-      completeWindowMsg = infoText + "\n"
-          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
-      break;
-    case GOLDEN_RESTRICTION:
-      discard[0] = "links";
-      msg = Utility.messageBD(this, "OBPSGoldenKeyRestricted", vars.getLanguage());
-      infoText = msg;
-      completeWindowMsg = msg;
-      break;
-    case DISABLED_MODULE_RESTRICTION:
-      discard[0] = "links";
-      msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
-      infoText = msg;
-      completeWindowMsg = msg;
-      break;
-    default:
-      break;
+      case TIER1_RESTRICTION:
+        editionType = "OBPSAnyEdition";
+        // do not break continue with next tier restriction
+      case TIER2_RESTRICTION:
+        if (editionType == null) {
+          editionType = "OBPSStandardEdition";
+        }
+        // <p> in java, to allow multi-paragraph text via the parameter
+        infoText = "<p>" + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
+            .replace("@ProfessionalEditionType@",
+                Utility.messageBD(this, editionType, vars.getLanguage()))
+            + "</p>";
+        completeWindowMsg = infoText + "\n"
+            + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
+        break;
+      case GOLDEN_RESTRICTION:
+        discard[0] = "links";
+        msg = Utility.messageBD(this, "OBPSGoldenKeyRestricted", vars.getLanguage());
+        infoText = msg;
+        completeWindowMsg = msg;
+        break;
+      case DISABLED_MODULE_RESTRICTION:
+        discard[0] = "links";
+        msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
+        infoText = msg;
+        completeWindowMsg = msg;
+        break;
+      default:
+        break;
     }
 
     String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
     String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
 
     if (isPopup) {
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly", discard).createXmlDocument();
+      XmlDocument xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly", discard)
+          .createXmlDocument();
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -982,8 +1008,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   protected void whitePage(HttpServletResponse response, String strAlert) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlWhitePage").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/HtmlWhitePage")
+        .createXmlDocument();
 
     xmlDocument.setParameter("body", strAlert == null ? "" : strAlert);
 
@@ -995,10 +1022,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void printPageClosePopUp(HttpServletResponse response, VariablesSecureApp vars,
       String path) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PopUp Response");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/PopUp_Response").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/PopUp_Response")
+        .createXmlDocument();
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("href", path.equals("") ? "null" : "'" + path + "'");
@@ -1010,10 +1039,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void printPageClosePopUp(HttpServletResponse response, VariablesSecureApp vars,
       String path, String tabTitle) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PopUp Response");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/PopUp_Response").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/PopUp_Response")
+        .createXmlDocument();
     JSONObject js = new JSONObject();
     try {
       js.put("tabTitle", tabTitle);
@@ -1023,8 +1054,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("href", path.equals("") ? "null" : "'" + path + "'");
-    xmlDocument.setParameter("details", js == null ? "var newTabParams={};" : "var newTabParams="
-        + js.toString() + ";");
+    xmlDocument.setParameter("details",
+        js == null ? "var newTabParams={};" : "var newTabParams=" + js.toString() + ";");
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -1038,12 +1069,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void printPagePopUpDownload(ServletOutputStream os, String fileName)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PopUp Download");
+    }
     String href = getServletContext().getContextPath() + "/utility/DownloadReport.html?report="
         + fileName;
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/PopUp_Download").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/PopUp_Download")
+        .createXmlDocument();
     xmlDocument.setParameter("href", href);
     os.println(xmlDocument.print());
     os.close();
@@ -1051,12 +1084,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void printPagePopUpDownloadAndRefresh(ServletOutputStream os, String fileName)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PopUp Download");
+    }
     String href = getServletContext().getContextPath() + "/utility/DownloadReport.html?report="
         + fileName;
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/PopUp_DownloadAndRefresh").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/PopUp_DownloadAndRefresh")
+        .createXmlDocument();
     xmlDocument.setParameter("href", href);
     os.println(xmlDocument.print());
     os.close();
@@ -1064,10 +1099,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   private void printPageClosePopUpAndRefresh(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PopUp Response");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/PopUp_Close_Refresh").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/PopUp_Close_Refresh")
+        .createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -1077,10 +1114,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
   protected void printPageClosePopUpAndRefreshParent(HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PopUp Response");
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/PopUp_Close_And_Refresh").createXmlDocument();
+    }
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/PopUp_Close_And_Refresh")
+        .createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -1089,8 +1128,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   }
 
   protected void pageErrorCallOut(HttpServletResponse response) throws IOException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/base/secureApp/HtmlErrorCallOut").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/base/secureApp/HtmlErrorCallOut")
+        .createXmlDocument();
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();
@@ -1151,8 +1191,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strReportName, String strFileName, String strOutputType,
       HashMap<String, Object> designParameters, FieldProvider[] data,
       Map<Object, Object> exportParameters) throws ServletException {
-    renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters,
-        data, exportParameters, false);
+    renderJR(variables, response, strReportName, strFileName, strOutputType, designParameters, data,
+        exportParameters, false);
   }
 
   protected void renderJR(VariablesSecureApp variables, HttpServletResponse response,
@@ -1193,8 +1233,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     String localStrFileName = strFileName;
     Map<Object, Object> localExportParameters = exportParameters;
     HashMap<String, Object> localDesignParameters = designParameters;
-    if (localStrReportName == null || localStrReportName.equals(""))
+    if (localStrReportName == null || localStrReportName.equals("")) {
       localStrReportName = PrintJRData.getReportName(this, classInfo.id);
+    }
 
     final String strAttach = globalParameters.strFTPDirectory + "/284-" + classInfo.id;
 
@@ -1212,8 +1253,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     ServletOutputStream os = null;
     UUID reportId = null;
     try {
-      if (localDesignParameters == null)
+      if (localDesignParameters == null) {
         localDesignParameters = new HashMap<String, Object>();
+      }
 
       localDesignParameters.put("BASE_WEB", strReplaceWithFull);
       localDesignParameters.put("BASE_DESIGN", strBaseDesign);
@@ -1234,21 +1276,23 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       localDesignParameters.put("NUMBERFORMAT", numberFormat);
 
       os = response.getOutputStream();
-      if (localExportParameters == null)
+      if (localExportParameters == null) {
         localExportParameters = new HashMap<Object, Object>();
+      }
 
       final ExportType expType = ExportType.getExportType(localStrOutputType);
       ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
 
       if (expType == ExportType.HTML) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("JR: Print HTML");
-        response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "."
-            + localStrOutputType);
+        }
+        response.setHeader("Content-disposition",
+            "inline" + "; filename=" + localStrFileName + "." + localStrOutputType);
         HttpServletRequest request = RequestContext.get().getRequest();
         String localAddress = HttpBaseUtils.getLocalAddress(request);
-        localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
-            + "/servlets/image?image={0}");
+        localExportParameters.put(ReportingUtils.IMAGES_URI,
+            localAddress + "/servlets/image?image={0}");
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, os, false,
             readOnlyCP, data, localExportParameters);
       } else if (expType != ExportType.XML) {
@@ -1258,23 +1302,24 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, outputFile,
             false, readOnlyCP, data, localExportParameters);
         response.setContentType("text/html;charset=UTF-8");
-        response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "-"
-            + (reportId) + ".html");
+        response.setHeader("Content-disposition",
+            "inline" + "; filename=" + localStrFileName + "-" + (reportId) + ".html");
         if (forceRefresh) {
-          printPagePopUpDownloadAndRefresh(response.getOutputStream(), localStrFileName + "-"
-              + (reportId) + "." + localStrOutputType);
+          printPagePopUpDownloadAndRefresh(response.getOutputStream(),
+              localStrFileName + "-" + (reportId) + "." + localStrOutputType);
         } else {
-          printPagePopUpDownload(response.getOutputStream(), localStrFileName + "-" + (reportId)
-              + "." + localStrOutputType);
+          printPagePopUpDownload(response.getOutputStream(),
+              localStrFileName + "-" + (reportId) + "." + localStrOutputType);
         }
       }
 
     } catch (IOException ioe) {
       try {
-        FileUtility f = new FileUtility(globalParameters.strFTPDirectory, localStrFileName + "-"
-            + (reportId) + "." + localStrOutputType, false, true);
-        if (f.exists())
+        FileUtility f = new FileUtility(globalParameters.strFTPDirectory,
+            localStrFileName + "-" + (reportId) + "." + localStrOutputType, false, true);
+        if (f.exists()) {
           f.deleteFile();
+        }
       } catch (IOException ioex) {
         log4j.error("Error trying to delete temporary report file " + localStrFileName + "-"
             + (reportId) + "." + localStrOutputType + " : " + ioex.getMessage());
@@ -1331,11 +1376,12 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     } catch (IOException e) {
       try {
         FileUtility f = new FileUtility(globalParameters.strFTPDirectory, fileName, false, true);
-        if (f.exists())
+        if (f.exists()) {
           f.deleteFile();
+        }
       } catch (IOException ioex) {
-        log4j.error("Error trying to delete temporary report file " + fileName + " : "
-            + ioex.getMessage());
+        log4j.error(
+            "Error trying to delete temporary report file " + fileName + " : " + ioex.getMessage());
       }
     }
   }
@@ -1355,8 +1401,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     final String forwardTo = request.getParameter("mappingName");
     final String autoSave = request.getParameter("autosave");
     final String commandType = request.getParameter("inpCommandType");
-    final Boolean popupWindow = request.getAttribute("popupWindow") != null ? (Boolean) request
-        .getAttribute("popupWindow") : false;
+    final Boolean popupWindow = request.getAttribute("popupWindow") != null
+        ? (Boolean) request.getAttribute("popupWindow")
+        : false;
 
     // Forwarding request to save the modified record
     if (autoSave != null && autoSave.equalsIgnoreCase("Y")) {
@@ -1365,12 +1412,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         if (rd != null) {
           final long time = System.currentTimeMillis();
           try {
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("forward request to: " + forwardTo);
+            }
             rd.include(request, response);
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("Request forward took: "
                   + String.valueOf(System.currentTimeMillis() - time) + " ms");
+            }
           } catch (final OBException e) {
 
             request.removeAttribute("autosave");

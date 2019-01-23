@@ -85,7 +85,8 @@ public class IdentifierProvider implements OBSingleton {
     final StringBuilder sb = new StringBuilder();
     final DynamicEnabled dob = (DynamicEnabled) o;
     final String entityName = ((Identifiable) dob).getEntityName();
-    final List<Property> identifiers = ModelProvider.getInstance().getEntity(entityName)
+    final List<Property> identifiers = ModelProvider.getInstance()
+        .getEntity(entityName)
         .getIdentifierProperties();
 
     for (final Property identifier : identifiers) {
@@ -96,8 +97,8 @@ public class IdentifierProvider implements OBSingleton {
       Object value;
 
       if (property.hasDisplayColumn()) {
-        Property displayColumnProperty = DalUtil.getPropertyFromPath(property
-            .getReferencedProperty().getEntity(), property.getDisplayPropertyName());
+        Property displayColumnProperty = DalUtil.getPropertyFromPath(
+            property.getReferencedProperty().getEntity(), property.getDisplayPropertyName());
         BaseOBObject referencedObject = (BaseOBObject) dob.get(property.getName());
         if (referencedObject == null) {
           continue;
@@ -174,10 +175,12 @@ public class IdentifierProvider implements OBSingleton {
       return "";
     }
     if (dateFormat == null) {
-      final String dateFormatString = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      final String dateFormatString = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       final String dateTimeFormatString = OBPropertiesProvider.getInstance()
-          .getOpenbravoProperties().getProperty("dateTimeFormat.java");
+          .getOpenbravoProperties()
+          .getProperty("dateTimeFormat.java");
       dateFormat = new SimpleDateFormat(dateFormatString);
       dateTimeFormat = new SimpleDateFormat(dateTimeFormatString);
     }
@@ -194,7 +197,8 @@ public class IdentifierProvider implements OBSingleton {
     }
     if (timeFormat == null) {
       final String dateTimeFormatString = OBPropertiesProvider.getInstance()
-          .getOpenbravoProperties().getProperty("dateTimeFormat.java");
+          .getOpenbravoProperties()
+          .getProperty("dateTimeFormat.java");
       if (dateTimeFormatString.toUpperCase().endsWith("A")) {
         timeFormat = new SimpleDateFormat("hh:mm:ss a");
       } else {

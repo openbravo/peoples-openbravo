@@ -44,8 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -73,14 +74,15 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strCurrencyId) throws IOException,
-      ServletException {
+      String strDateFrom, String strDateTo, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
     XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorFilterJR").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorFilterJR")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportInvoiceVendorFilterJR",
@@ -130,9 +132,9 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("projectName", "");
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "M_Warehouse_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "InvoiceVendorJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "InvoiceVendorJR"), 0);
+          "M_Warehouse_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "InvoiceVendorJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "InvoiceVendorJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "InvoiceVendorFilter", "");
       xmlDocument.setData("reportM_WAREHOUSEID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -143,9 +145,9 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportInvoiceVendorJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportInvoiceVendorJR"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportInvoiceVendorJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportInvoiceVendorJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportInvoiceVendorJR",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -162,8 +164,8 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
 
   private void printPageHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnetId,
-      String strcProjectId, String strissotrx, String strCurrencyId) throws IOException,
-      ServletException {
+      String strcProjectId, String strissotrx, String strCurrencyId)
+      throws IOException, ServletException {
 
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print html");
@@ -211,6 +213,7 @@ public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
     }
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet PurchaseOrderFilter. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

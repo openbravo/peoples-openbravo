@@ -55,10 +55,10 @@ public class MatchStatementTransformer extends HqlQueryTransformer {
     if (StringUtils.isNotBlank(financialAccountId)) {
       try {
         OBContext.setAdminMode(true);
-        final FIN_FinancialAccount finAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            financialAccountId);
-        final FIN_Reconciliation lastReconciliation = TransactionsDao.getLastReconciliation(
-            finAccount, "N");
+        final FIN_FinancialAccount finAccount = OBDal.getInstance()
+            .get(FIN_FinancialAccount.class, financialAccountId);
+        final FIN_Reconciliation lastReconciliation = TransactionsDao
+            .getLastReconciliation(finAccount, "N");
 
         whereClause.append(" (fat is null ");
 

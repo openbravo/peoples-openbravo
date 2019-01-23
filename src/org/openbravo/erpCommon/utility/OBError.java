@@ -34,8 +34,9 @@ public class OBError implements Serializable {
 
   public void setType(String _data) {
     String localData = _data;
-    if (localData == null)
+    if (localData == null) {
       localData = "";
+    }
     this.type = localData;
   }
 
@@ -45,8 +46,9 @@ public class OBError implements Serializable {
 
   public void setTitle(String _data) {
     String localData = _data;
-    if (localData == null)
+    if (localData == null) {
       localData = "";
+    }
     this.title = localData;
   }
 
@@ -56,8 +58,9 @@ public class OBError implements Serializable {
 
   public void setMessage(String _data) {
     String localData = _data;
-    if (localData == null)
+    if (localData == null) {
       localData = "";
+    }
     this.message = localData;
   }
 

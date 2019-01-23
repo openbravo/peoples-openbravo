@@ -86,8 +86,8 @@ public class AttachmentUtils {
     String strAttachmentConfigId = clientConfigs.get(clientId);
     if (strAttachmentConfigId == null) {
       // Only one active AttachmentConfig is allowed per client.
-      OBCriteria<AttachmentConfig> critAttConf = OBDal.getInstance().createCriteria(
-          AttachmentConfig.class);
+      OBCriteria<AttachmentConfig> critAttConf = OBDal.getInstance()
+          .createCriteria(AttachmentConfig.class);
       critAttConf.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT + ".id", clientId));
       if (!OBDal.getInstance().isActiveFilterEnabled()) {
         critAttConf.setFilterOnActive(true);
@@ -179,8 +179,8 @@ public class AttachmentUtils {
       try {
         attachmentobj.put("id", attachment.getId());
         attachmentobj.put("name", attachment.getName());
-        attachmentobj.put("age", (new Date().getTime() - getLastUpdateOfAttachment(attachment)
-            .getTime()));
+        attachmentobj.put("age",
+            (new Date().getTime() - getLastUpdateOfAttachment(attachment).getTime()));
         attachmentobj.put("updatedby", attachment.getUpdatedBy().getName());
         String attachmentMethod = DEFAULT_METHOD_ID;
         if (attachment.getAttachmentConf() != null) {
@@ -200,7 +200,8 @@ public class AttachmentUtils {
     final StringBuilder hql = new StringBuilder();
     hql.append("SELECT MAX(pv.updated) FROM OBUIAPP_ParameterValue pv");
     hql.append(" WHERE pv.file.id =:fileId");
-    final Query<Date> query = OBDal.getInstance().getSession()
+    final Query<Date> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), Date.class);
     query.setParameter("fileId", attachment.getId());
     query.setMaxResults(1);
@@ -239,7 +240,8 @@ public class AttachmentUtils {
     }
   }
 
-  private static String buildDescription(Attachment attachment, String strAttMethodId, String tabId) {
+  private static String buildDescription(Attachment attachment, String strAttMethodId,
+      String tabId) {
     StringBuilder description = new StringBuilder();
     try {
       OBContext.setAdminMode(true);
@@ -250,8 +252,8 @@ public class AttachmentUtils {
           continue;
         }
 
-        final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance().createCriteria(
-            ParameterValue.class);
+        final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance()
+            .createCriteria(ParameterValue.class);
         critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
         critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, param));
         critStoredMetadata.setMaxResults(1);
@@ -277,8 +279,8 @@ public class AttachmentUtils {
         } else {
           description.append(DESCRIPTION_DELIMITER);
         }
-        description.append((String) param.get(Parameter.PROPERTY_NAME, OBContext.getOBContext()
-            .getLanguage()));
+        description.append(
+            (String) param.get(Parameter.PROPERTY_NAME, OBContext.getOBContext().getLanguage()));
         description.append(": ");
         description.append(value);
       }

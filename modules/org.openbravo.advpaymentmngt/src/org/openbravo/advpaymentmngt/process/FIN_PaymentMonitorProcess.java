@@ -60,12 +60,13 @@ import org.quartz.JobExecutionException;
 public class FIN_PaymentMonitorProcess extends DalBaseProcess {
   private static ProcessLogger logger;
 
+  @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
     logger = bundle.getLogger();
     // Check to know if PaymentMonitor property is set in the system.
     try {
-      Preferences.getPreferenceValue("PaymentMonitor", true, null, null, OBContext.getOBContext()
-          .getUser(), null, null);
+      Preferences.getPreferenceValue("PaymentMonitor", true, null, null,
+          OBContext.getOBContext().getUser(), null, null);
     } catch (PropertyNotFoundException e) {
       logger.log("Property not found \n");
       return;
@@ -85,8 +86,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     ScrollableResults invoiceScroller = null;
     try {
       int counter = 0;
-      final Module migration = OBDal.getInstance().get(Module.class,
-          "4BD3D4B262B048518FE62496EF09D549");
+      final Module migration = OBDal.getInstance()
+          .get(Module.class, "4BD3D4B262B048518FE62496EF09D549");
 
       StringBuilder whereClause = new StringBuilder();
       whereClause.append(" as i");
@@ -103,8 +104,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         whereClause.append(" or i.finalSettlementDate is null)");
       }
 
-      final OBQuery<Invoice> obc = OBDal.getInstance().createQuery(Invoice.class,
-          whereClause.toString());
+      final OBQuery<Invoice> obc = OBDal.getInstance()
+          .createQuery(Invoice.class, whereClause.toString());
 
       // For Background process execution at system level
       if (OBContext.getOBContext().isInAdministratorMode()) {
@@ -123,8 +124,9 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
           logger.log("Invoices updated: " + counter + "\n");
         }
       }
-      if (counter % 100 != 0)
+      if (counter % 100 != 0) {
         logger.log("Invoices updated: " + counter + "\n");
+      }
     } catch (Exception e) {
       // catch any possible exception and throw it as a Quartz
       // JobExecutionException
@@ -149,8 +151,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       // If the invoice has old flow's related payments calculate its statuses and amounts
       if (invoice.getFinancialMgmtDebtPaymentList() != null
           && invoice.getFinancialMgmtDebtPaymentList().size() > 0) {
-        oldFlowAmounts = getOldflowAmounts(invoice.getFinancialMgmtDebtPaymentList(), invoice
-            .getCurrency().getId(), invoice.getAccountingDate());
+        oldFlowAmounts = getOldflowAmounts(invoice.getFinancialMgmtDebtPaymentList(),
+            invoice.getCurrency().getId(), invoice.getAccountingDate());
       } else {
         oldFlowAmounts.put("paidAmt", BigDecimal.ZERO);
         oldFlowAmounts.put("outstandingAmt", BigDecimal.ZERO);
@@ -159,8 +161,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
 
       HashMap<String, BigDecimal> amounts = calculateAmounts(invoice);
       invoice.setTotalPaid(amounts.get("paidAmt").add(oldFlowAmounts.get("paidAmt")));
-      invoice.setOutstandingAmount(amounts.get("outstandingAmt").add(
-          oldFlowAmounts.get("outstandingAmt")));
+      invoice.setOutstandingAmount(
+          amounts.get("outstandingAmt").add(oldFlowAmounts.get("outstandingAmt")));
       invoice.setPaymentComplete(invoice.getOutstandingAmount().compareTo(BigDecimal.ZERO) == 0);
       invoice.setDueAmount(amounts.get("overdueAmt").add(oldFlowAmounts.get("overdueAmt")));
       invoice.setDaysTillDue(getDaysTillDue(invoice));
@@ -169,8 +171,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         // If date is null invoice amount = 0 then nothing to set
         if (finalSettlementDate != null) {
           invoice.setFinalSettlementDate(finalSettlementDate);
-          invoice.setDaysSalesOutstanding(FIN_Utility.getDaysBetween(invoice.getInvoiceDate(),
-              finalSettlementDate));
+          invoice.setDaysSalesOutstanding(
+              FIN_Utility.getDaysBetween(invoice.getInvoiceDate(), finalSettlementDate));
         }
       }
       BigDecimal grandTotalAmount = invoice.getGrandTotalAmount();
@@ -178,8 +180,10 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       if (grandTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
         grandTotalAmount = BigDecimal.ONE;
       }
-      invoice.setPercentageOverdue(amounts.get("overdue").multiply(new BigDecimal(100))
-          .divide(grandTotalAmount, RoundingMode.HALF_UP).longValue());
+      invoice.setPercentageOverdue(amounts.get("overdue")
+          .multiply(new BigDecimal(100))
+          .divide(grandTotalAmount, RoundingMode.HALF_UP)
+          .longValue());
       invoice.setLastCalculatedOnDate(new Date());
 
       OBDal.getInstance().save(invoice);
@@ -194,8 +198,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
    * Returns the date in which last payment for this invoice took place
    */
   private static Date getFinalSettlementDate(Invoice invoice) {
-    final OBCriteria<FIN_PaymentSchedInvV> obc = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedInvV.class);
+    final OBCriteria<FIN_PaymentSchedInvV> obc = OBDal.getInstance()
+        .createCriteria(FIN_PaymentSchedInvV.class);
     // For Background process execution at system level
     if (OBContext.getOBContext().isInAdministratorMode()) {
       obc.setFilterOnReadableClients(false);
@@ -219,13 +223,14 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     BigDecimal overdueAmt = BigDecimal.ZERO;
     for (DebtPayment debtPayment : debtPayments) {
       // Calculate paid amount.
-      BigDecimal paid = calculatePaidAmount(debtPayment, currencyTo, conversionDate, BigDecimal.ONE);
+      BigDecimal paid = calculatePaidAmount(debtPayment, currencyTo, conversionDate,
+          BigDecimal.ONE);
       paidAmt = paidAmt.add(paid);
       // Calculate outstanding amount.
       outstandingAmt = outstandingAmt.add(debtPayment.getAmount().subtract(paid));
       // Calculate overdue amount.
-      overdueAmt = overdueAmt.add(calculateOverdueAmount(debtPayment, currencyTo, conversionDate,
-          BigDecimal.ONE));
+      overdueAmt = overdueAmt
+          .add(calculateOverdueAmount(debtPayment, currencyTo, conversionDate, BigDecimal.ONE));
     }
     HashMap<String, BigDecimal> amounts = new HashMap<String, BigDecimal>();
     amounts.put("paidAmt", paidAmt);
@@ -247,9 +252,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
           // If payment scheduled is cancelled don't consider its amount.
           continue;
         }
-        if (psd.getPaymentDetails() != null
-            && FIN_Utility.isPaymentConfirmed(psd.getPaymentDetails().getFinPayment().getStatus(),
-                psd)) {
+        if (psd.getPaymentDetails() != null && FIN_Utility
+            .isPaymentConfirmed(psd.getPaymentDetails().getFinPayment().getStatus(), psd)) {
           paid = paid.add(psd.getAmount().add(psd.getWriteoffAmount()));
           // If an amount has been paid, let's check if any amount was paid late
           Date paymentDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
@@ -270,8 +274,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         paymentSchedule.setPaidAmount(paid);
         OBDal.getInstance().save(paymentSchedule);
       }
-      if (paymentSchedule.getOutstandingAmount().compareTo(
-          paymentSchedule.getAmount().subtract(paid)) != 0) {
+      if (paymentSchedule.getOutstandingAmount()
+          .compareTo(paymentSchedule.getAmount().subtract(paid)) != 0) {
         if (logger != null) {
           logger.log("ERROR Invoice " + invoice.getDocumentNo()
               + ": wrong payment plan info, outstanding amount is "
@@ -299,8 +303,8 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
 
   private static Long getDaysTillDue(Invoice invoice) {
     // Calculate days till due
-    final OBCriteria<FIN_PaymentSchedule> obc = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedule.class);
+    final OBCriteria<FIN_PaymentSchedule> obc = OBDal.getInstance()
+        .createCriteria(FIN_PaymentSchedule.class);
     // For Background process execution at system level
     if (OBContext.getOBContext().isInAdministratorMode()) {
       obc.setFilterOnReadableClients(false);
@@ -361,18 +365,19 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     BigDecimal paidAmount = BigDecimal.ZERO;
     String finPaymentStatus = getMigratedPaymentStatus(payment);
     if ("PAID".equals(finPaymentStatus)) {
-      return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
-          .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
-          .getOrganization().getId());
+      return getConvertedAmt(payment.getAmount().multiply(multiplier),
+          payment.getCurrency().getId(), strCurrencyTo, conversionDate, payment.getClient().getId(),
+          payment.getOrganization().getId());
     } else if ("NOTPAID".equals(finPaymentStatus)) {
       return BigDecimal.ZERO;
     } else if (payment.getSettlementCancelled() == null) {
       return paidAmount;
     } else if (payment.getSettlementCancelled().getProcessed().equals("Y")) {
-      if (payment.isPaymentComplete())
-        return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
-            .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
-            .getOrganization().getId());
+      if (payment.isPaymentComplete()) {
+        return getConvertedAmt(payment.getAmount().multiply(multiplier),
+            payment.getCurrency().getId(), strCurrencyTo, conversionDate,
+            payment.getClient().getId(), payment.getOrganization().getId());
+      }
 
       boolean paymentCompletelyPaid = true;
       for (DebtPayment cancelledPayment : payment.getSettlementCancelled()
@@ -392,48 +397,50 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
         // The sum of all canceled not paid payments in the settlement is zero. This means that the
         // payment has been paid completely, as it was canceled with some other pending payments
         // (for example, the ones comming from a credit memo)
-        return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
-            .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
-            .getOrganization().getId());
+        return getConvertedAmt(payment.getAmount().multiply(multiplier),
+            payment.getCurrency().getId(), strCurrencyTo, conversionDate,
+            payment.getClient().getId(), payment.getOrganization().getId());
       }
 
       List<DebtPayment> generatedPayments = payment.getSettlementCancelled()
           .getFinancialMgmtDebtPaymentCSettlementGenerateIDList();
       if (generatedPayments == null || generatedPayments.size() == 0) {
-        return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
-            .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
-            .getOrganization().getId());
+        return getConvertedAmt(payment.getAmount().multiply(multiplier),
+            payment.getCurrency().getId(), strCurrencyTo, conversionDate,
+            payment.getClient().getId(), payment.getOrganization().getId());
       }
       BigDecimal generatedPaymentTotalAmount = BigDecimal.ZERO;
       BigDecimal generatedPaymentPaidAmount = BigDecimal.ZERO;
       for (DebtPayment generatedPayment : generatedPayments) {
-        BigDecimal signMultiplier = generatedPayment.isReceipt() == payment.isReceipt() ? BigDecimal.ONE
+        BigDecimal signMultiplier = generatedPayment.isReceipt() == payment.isReceipt()
+            ? BigDecimal.ONE
             : BigDecimal.ONE.negate();
-        generatedPaymentTotalAmount = generatedPaymentTotalAmount.add(getConvertedAmt(
-            generatedPayment.getAmount(), generatedPayment.getCurrency().getId(), strCurrencyTo,
-            conversionDate, generatedPayment.getClient().getId(),
-            generatedPayment.getOrganization().getId()).multiply(signMultiplier));
-        generatedPaymentPaidAmount = generatedPaymentPaidAmount.add(calculatePaidAmount(
-            generatedPayment, strCurrencyTo,
-            generatedPayment.getSettlementGenerate().getAccountingDate(), BigDecimal.ONE).multiply(
-            signMultiplier));
+        generatedPaymentTotalAmount = generatedPaymentTotalAmount.add(
+            getConvertedAmt(generatedPayment.getAmount(), generatedPayment.getCurrency().getId(),
+                strCurrencyTo, conversionDate, generatedPayment.getClient().getId(),
+                generatedPayment.getOrganization().getId()).multiply(signMultiplier));
+        generatedPaymentPaidAmount = generatedPaymentPaidAmount
+            .add(calculatePaidAmount(generatedPayment, strCurrencyTo,
+                generatedPayment.getSettlementGenerate().getAccountingDate(), BigDecimal.ONE)
+                    .multiply(signMultiplier));
       }
       if (generatedPaymentTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
-        return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
-            .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
-            .getOrganization().getId());
+        return getConvertedAmt(payment.getAmount().multiply(multiplier),
+            payment.getCurrency().getId(), strCurrencyTo, conversionDate,
+            payment.getClient().getId(), payment.getOrganization().getId());
       }
       // payment amount * (generatedPaymentPaidAmount / generatedPaymentTotalAmount)
-      BigDecimal paidAmountTmp = payment.getAmount().subtract(payment.getWriteoffAmount())
+      BigDecimal paidAmountTmp = payment.getAmount()
+          .subtract(payment.getWriteoffAmount())
           .multiply(generatedPaymentPaidAmount)
           .divide(generatedPaymentTotalAmount, RoundingMode.HALF_UP);
       // set scale of the currency using standard precision
-      paidAmount = paidAmount.add(paidAmountTmp.setScale(payment.getCurrency()
-          .getStandardPrecision().intValue(), RoundingMode.HALF_UP));
+      paidAmount = paidAmount.add(paidAmountTmp
+          .setScale(payment.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_UP));
       // Add payment's write off amount to the paid amount
-      paidAmount = paidAmount.add(getConvertedAmt(payment.getWriteoffAmount(), payment
-          .getCurrency().getId(), strCurrencyTo, conversionDate, payment.getClient().getId(),
-          payment.getOrganization().getId()));
+      paidAmount = paidAmount.add(
+          getConvertedAmt(payment.getWriteoffAmount(), payment.getCurrency().getId(), strCurrencyTo,
+              conversionDate, payment.getClient().getId(), payment.getOrganization().getId()));
     }
     return paidAmount;
   }
@@ -447,13 +454,13 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     } else if ("PAID".equals(getMigratedPaymentStatus(payment))) {
       return BigDecimal.ZERO;
     } else if ("NOTPAID".equals(getMigratedPaymentStatus(payment))) {
-      return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
-          .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
-          .getOrganization().getId());
+      return getConvertedAmt(payment.getAmount().multiply(multiplier),
+          payment.getCurrency().getId(), strCurrencyTo, conversionDate, payment.getClient().getId(),
+          payment.getOrganization().getId());
     } else if (payment.getSettlementCancelled() == null) {
-      return getConvertedAmt(payment.getAmount().multiply(multiplier), payment.getCurrency()
-          .getId(), strCurrencyTo, conversionDate, payment.getClient().getId(), payment
-          .getOrganization().getId());
+      return getConvertedAmt(payment.getAmount().multiply(multiplier),
+          payment.getCurrency().getId(), strCurrencyTo, conversionDate, payment.getClient().getId(),
+          payment.getOrganization().getId());
     } else if (payment.isPaymentComplete()) {
       return BigDecimal.ZERO;
     } else if (payment.getSettlementCancelled() != null
@@ -487,40 +494,44 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       BigDecimal generatedPaymentTotalAmount = BigDecimal.ZERO;
       BigDecimal generatedPaymentOverdueAmount = BigDecimal.ZERO;
       for (DebtPayment generatedPayment : generatedPayments) {
-        BigDecimal signMultiplier = generatedPayment.isReceipt() == payment.isReceipt() ? BigDecimal.ONE
+        BigDecimal signMultiplier = generatedPayment.isReceipt() == payment.isReceipt()
+            ? BigDecimal.ONE
             : BigDecimal.ONE.negate();
-        generatedPaymentTotalAmount = generatedPaymentTotalAmount.add(getConvertedAmt(
-            generatedPayment.getAmount(), generatedPayment.getCurrency().getId(), strCurrencyTo,
-            conversionDate, generatedPayment.getClient().getId(),
-            generatedPayment.getOrganization().getId()).multiply(signMultiplier));
+        generatedPaymentTotalAmount = generatedPaymentTotalAmount.add(
+            getConvertedAmt(generatedPayment.getAmount(), generatedPayment.getCurrency().getId(),
+                strCurrencyTo, conversionDate, generatedPayment.getClient().getId(),
+                generatedPayment.getOrganization().getId()).multiply(signMultiplier));
         if (generatedPayment.isPaymentComplete()) {
           continue;
         }
-        generatedPaymentOverdueAmount = generatedPaymentOverdueAmount.add(calculateOverdueAmount(
-            generatedPayment, strCurrencyTo,
-            generatedPayment.getSettlementGenerate().getAccountingDate(), BigDecimal.ONE).multiply(
-            signMultiplier));
+        generatedPaymentOverdueAmount = generatedPaymentOverdueAmount
+            .add(calculateOverdueAmount(generatedPayment, strCurrencyTo,
+                generatedPayment.getSettlementGenerate().getAccountingDate(), BigDecimal.ONE)
+                    .multiply(signMultiplier));
       }
       if (generatedPaymentTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
         return BigDecimal.ZERO;
       }
       // payment amount * (generatedPaymentOverdueAmount / generatedPaymentTotalAmount)
-      BigDecimal overdueAmountTmp = payment.getAmount().multiply(generatedPaymentOverdueAmount)
+      BigDecimal overdueAmountTmp = payment.getAmount()
+          .multiply(generatedPaymentOverdueAmount)
           .divide(generatedPaymentTotalAmount, RoundingMode.HALF_UP);
       // set scale of the currency using standard precision
-      overdueAmount = overdueAmount.add(overdueAmountTmp.setScale(payment.getCurrency()
-          .getStandardPrecision().intValue(), RoundingMode.HALF_UP));
+      overdueAmount = overdueAmount.add(overdueAmountTmp
+          .setScale(payment.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_UP));
     }
     return overdueAmount;
   }
 
   public static BigDecimal getConvertedAmt(BigDecimal Amt, String CurFrom_ID, String CurTo_ID,
       Date ConvDate, String client, String org) {
-    if (CurFrom_ID == null || CurTo_ID == null || CurFrom_ID.equals(CurTo_ID))
+    if (CurFrom_ID == null || CurTo_ID == null || CurFrom_ID.equals(CurTo_ID)) {
       return Amt;
+    }
     ConnectionProvider conn = new DalConnectionProvider(false);
 
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     String strConvertedAmount = AcctServer.getConvertedAmt(Amt.toString(), CurFrom_ID, CurTo_ID,

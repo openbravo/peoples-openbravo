@@ -125,8 +125,8 @@ public class TaxesTestData123 extends TaxesTestData {
     HashMap<String, String[]> taxes = new HashMap<String, String[]>();
     taxes.put(TaxDataConstants.TAX_IEPS_53_16, new String[] { "432709.87", "69233.58", "432709.87",
         "69233.58", "865419.71", "138467.16", "865419.71", "138467.16" });
-    taxes.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "282816.90", "149892.97",
-        "282816.90", "149892.97", "565633.80", "299785.91", "565633.80", "299785.91" });
+    taxes.put(TaxDataConstants.TAX_IEPS_53_53, new String[] { "282816.90", "149892.97", "282816.90",
+        "149892.97", "565633.80", "299785.91", "565633.80", "299785.91" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided

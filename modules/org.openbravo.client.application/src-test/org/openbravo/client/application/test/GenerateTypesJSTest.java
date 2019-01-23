@@ -23,6 +23,8 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.kernel.Component;
@@ -30,8 +32,6 @@ import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.userinterface.smartclient.SmartClientComponentProvider;
 import org.openbravo.userinterface.smartclient.TypesComponent;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test the {@link TypesComponent} and its template.
@@ -52,8 +52,8 @@ public class GenerateTypesJSTest extends WeldBaseTest {
   public void testComponentGeneration() throws Exception {
     setSystemAdministratorContext();
 
-    final Component component = componentProvider.getComponent(
-        TypesComponent.SC_TYPES_COMPONENT_ID, new HashMap<String, Object>());
+    final Component component = componentProvider.getComponent(TypesComponent.SC_TYPES_COMPONENT_ID,
+        new HashMap<String, Object>());
 
     final String output = ComponentGenerator.getInstance().generate(component);
     log.debug(output);

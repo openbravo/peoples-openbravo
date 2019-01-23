@@ -25,11 +25,13 @@ class FunctionEqualTemplate extends FunctionTemplate {
     super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, null);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionEqualTemplate.isDebugEnabled())
+      if (log4jFunctionEqualTemplate.isDebugEnabled()) {
         log4jFunctionEqualTemplate.debug("New FunctionEqualValue");
+      }
       functionValue = new FunctionEqualValue(this, xmlDocument);
     }
     return functionValue;

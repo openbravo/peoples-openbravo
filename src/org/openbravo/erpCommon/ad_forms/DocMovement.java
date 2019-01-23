@@ -57,6 +57,7 @@ public class DocMovement extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
+  @Override
   public void loadObjectFieldProvider(ConnectionProvider conn, String stradClientId, String Id)
       throws ServletException {
     setObjectFieldProvider(DocMovementData.select(conn, stradClientId, Id));
@@ -67,6 +68,7 @@ public class DocMovement extends AcctServer {
    * 
    * @return true if loadDocumentType was set
    */
+  @Override
   public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
     DocumentType = AcctServer.DOCTYPE_MatMovement;
     C_Currency_ID = NO_CURRENCY;
@@ -124,6 +126,7 @@ public class DocMovement extends AcctServer {
    * 
    * @return balance (ZERO) - always balanced
    */
+  @Override
   public BigDecimal getBalance() {
     BigDecimal retValue = ZERO;
     return retValue;
@@ -142,18 +145,21 @@ public class DocMovement extends AcctServer {
    *          account schema
    * @return Fact
    */
+  @Override
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     C_Currency_ID = as.getC_Currency_ID();
     // Select specific definition
-    String strClassname = AcctServerData
-        .selectTemplateDoc(conn, as.m_C_AcctSchema_ID, DocumentType);
-    if (strClassname.equals(""))
+    String strClassname = AcctServerData.selectTemplateDoc(conn, as.m_C_AcctSchema_ID,
+        DocumentType);
+    if (strClassname.equals("")) {
       strClassname = AcctServerData.selectTemplate(conn, as.m_C_AcctSchema_ID, AD_Table_ID);
+    }
     if (!strClassname.equals("")) {
       try {
         DocMovementTemplate newTemplate = (DocMovementTemplate) Class.forName(strClassname)
-            .getDeclaredConstructor().newInstance();
+            .getDeclaredConstructor()
+            .newInstance();
         return newTemplate.createFact(this, as, conn, con, vars);
       } catch (Exception e) {
         log4j.error("Error while creating new instance for DocInvoiceTemplate - " + e);
@@ -170,8 +176,8 @@ public class DocMovement extends AcctServer {
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       log4jDocMovement.debug("DocMovement - Before calculating the costs for line i = " + i);
-      Currency costCurrency = FinancialUtils.getLegalEntityCurrency(OBDal.getInstance().get(
-          Organization.class, line.m_AD_Org_ID));
+      Currency costCurrency = FinancialUtils
+          .getLegalEntityCurrency(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
       if (!CostingStatus.getInstance().isMigrated()) {
         costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
       } else if (line.transaction != null && line.transaction.getCurrency() != null) {
@@ -194,8 +200,8 @@ public class DocMovement extends AcctServer {
       }
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          costCurrency.getId(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn); // from
+          costCurrency.getId(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, conn); // from
       // (-)
       // CR
       if (dr != null) {
@@ -250,6 +256,7 @@ public class DocMovement extends AcctServer {
    * 
    * not used
    */
+  @Override
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     if (CostingStatus.getInstance().isMigrated()) {
       StringBuilder where = new StringBuilder();
@@ -258,8 +265,8 @@ public class DocMovement extends AcctServer {
       where.append(" where ml." + InternalMovementLine.PROPERTY_MOVEMENT + ".id = :recordId");
       where.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
       where.append(" or trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " <> 0)");
-      OBQuery<MaterialTransaction> qry = OBDal.getInstance().createQuery(MaterialTransaction.class,
-          where.toString());
+      OBQuery<MaterialTransaction> qry = OBDal.getInstance()
+          .createQuery(MaterialTransaction.class, where.toString());
       qry.setNamedParameter("recordId", strRecordId);
       qry.setMaxResult(1);
       if (qry.uniqueResult() == null) {
@@ -270,6 +277,7 @@ public class DocMovement extends AcctServer {
     return true;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method

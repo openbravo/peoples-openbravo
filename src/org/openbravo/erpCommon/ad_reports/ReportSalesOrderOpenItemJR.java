@@ -40,8 +40,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -52,14 +53,16 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
       String strWarehouse = vars.getRequestGlobalVariable("inpWarehouse",
           "ReportSalesOrderOpenItemJR|Warehouse");
       printPageDataHtml(response, vars, strWarehouse);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strWarehouse) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesOrderOpenItemEdit.jrxml";
@@ -75,18 +78,20 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strWarehouse) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
     XmlDocument xmlDocument;
 
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportSalesOrderOpenItemJR").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesOrderOpenItemJR")
+        .createXmlDocument();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportSalesOrderOpenItemJR", false,
-        "", "", "", false, "ad_reports", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportSalesOrderOpenItemJR", false, "",
+        "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -127,8 +132,8 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderOpenItemJR"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderOpenItemJR",
           strWarehouse);
-      xmlDocument
-          .setData("reportM_WAREHOUSESHIPPER", "liststructure", comboTableData.select(false));
+      xmlDocument.setData("reportM_WAREHOUSESHIPPER", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -187,6 +192,7 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
    * 
    * }
    */
+  @Override
   public String getServletInfo() {
     return "Servlet ReportSalesOrderOpenItem. This Servlet was made by Jon Alegría";
   } // end of getServletInfo() method

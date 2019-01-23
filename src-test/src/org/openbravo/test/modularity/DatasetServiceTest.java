@@ -152,8 +152,8 @@ public class DatasetServiceTest extends OBBaseTest {
   }
 
   private List<DataSet> getDatasetsOfModulesInOb3Distribution() {
-    OBQuery<DataSet> query = OBDal.getInstance().createQuery(DataSet.class,
-        " as e where e.module.id in (:moduleList)");
+    OBQuery<DataSet> query = OBDal.getInstance()
+        .createQuery(DataSet.class, " as e where e.module.id in (:moduleList)");
     query.setNamedParameter("moduleList", ModulesInOB3Distribution.getModules());
     return query.list();
   }
