@@ -1,0 +1,10 @@
+*.hg*
+*node_modules*
+*qunit*
+*docs*
+*LAB*
+*benchmark*
+*BigDecimal*
+*scopeleaks*
+*smartclient*
+*isomorphic*

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 files=$(./modules/org.openbravo.client.kernel/jscheck/jsfiles $(pwd)/modules)
-echo $files | xargs ./modules/org.openbravo.client.kernel/jslint/jslint || exit 1
+./modules/org.openbravo.client.kernel/jslint/jslint $files || exit 1
