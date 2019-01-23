@@ -1,3 +1,5 @@
+// @formatter:off
+
 /**
  * Module2.java
  *
