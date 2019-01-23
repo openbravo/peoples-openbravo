@@ -67,8 +67,8 @@ enyo.kind({
     onCancelChanges: ''
   },
   tap: function () {
-    this.doHideThisPopup();
     this.doCancelChanges();
+    this.doHideThisPopup();
   }
 });
 
@@ -121,19 +121,17 @@ enyo.kind({
   applyChanges: function (inSender, inEvent) {
     OB.POS.hwserver.setActiveURL(this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
-    while (this.successCallbackArray.length > 0) {
+    while (this.successCallbackArray.length !== 0) {
       this.successCallbackArray.pop()();
     }
-    this.cleanBuffers();
     return true;
   },
 
   cancelChanges: function (inSender, inEvent) {
     this.args.actionExecuted = true;
-    while (this.cancellCallbackArray.length > 0) {
+    while (this.cancellCallbackArray.length !== 0) {
       this.cancellCallbackArray.pop()();
     }
-    this.cleanBuffers();
   },
 
   initComponents: function () {
@@ -176,7 +174,7 @@ enyo.kind({
   },
 
   executeOnHide: function () {
-    while (!this.args.actionExecuted && this.hideCallbackArray.length > 0) {
+    while (!this.args.actionExecuted && this.hideCallbackArray.length !== 0) {
       this.hideCallbackArray.pop()();
     }
     this.cleanBuffers();
@@ -269,19 +267,17 @@ enyo.kind({
   applyChanges: function (inSender, inEvent) {
     OB.POS.hwserver.setActivePDFURL(this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
-    while (this.successCallbackArray.length > 0) {
+    while (this.successCallbackArray.length !== 0) {
       this.successCallbackArray.pop()();
     }
-    this.cleanBuffers();
     return true;
   },
 
   cancelChanges: function (inSender, inEvent) {
     this.args.actionExecuted = true;
-    while (this.cancellCallbackArray.length > 0) {
+    while (this.cancellCallbackArray.length !== 0) {
       this.cancellCallbackArray.pop()();
     }
-    this.cleanBuffers();
   },
 
   initComponents: function () {
@@ -324,7 +320,7 @@ enyo.kind({
   },
 
   executeOnHide: function () {
-    while (!this.args.actionExecuted && this.hideCallbackArray.length > 0) {
+    while (!this.args.actionExecuted && this.hideCallbackArray.length !== 0) {
       this.hideCallbackArray.pop()();
     }
     this.cleanBuffers();

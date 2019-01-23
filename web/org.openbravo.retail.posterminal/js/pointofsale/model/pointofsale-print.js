@@ -559,7 +559,8 @@
               serverURLSetter: isPdf ? 'setActivePDFURL' : 'setActiveURL',
               onSuccess: successfunc,
               onCancel: cancelfunc,
-              onHide: hidefunc
+              onHide: hidefunc,
+              isRetry: true
             }
           });
           return true;
