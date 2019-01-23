@@ -33,8 +33,8 @@ public class DiscountFilterProduct extends Discount {
 
   @Override
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
-    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-        .getString("pos"));
+    final OBRETCOProductList productList = POSUtils
+        .getProductListByPosterminalId(jsonsent.getString("pos"));
     HQLPropertyList regularDiscFilProductPropertyExtensionHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
     String hql = "select" + regularDiscFilProductPropertyExtensionHQLProperties.getHqlSelect();

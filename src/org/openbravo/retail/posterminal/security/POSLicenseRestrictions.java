@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -28,8 +30,6 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -53,7 +53,8 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
 
   public POSLicenseRestrictions() {
     // initializing cache, keep last count for 10 minutes
-    countCache = CacheBuilder.newBuilder().expireAfterWrite(10L, TimeUnit.MINUTES)
+    countCache = CacheBuilder.newBuilder()
+        .expireAfterWrite(10L, TimeUnit.MINUTES)
         .build(new CacheLoader<String, Integer>() {
           @Override
           public Integer load(String key) throws Exception {
@@ -66,8 +67,7 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
   public LicenseRestriction checkRestrictions(ActivationKey activationKey, String currentSession) {
     Long allowedNumberOfTerminals = activationKey.getAllowedPosTerminals();
 
-    if (allowedNumberOfTerminals != null
-        && !allowedNumberOfTerminals.equals(ActivationKey.NO_LIMIT)
+    if (allowedNumberOfTerminals != null && !allowedNumberOfTerminals.equals(ActivationKey.NO_LIMIT)
         && getNumberOfActiveTerminals() > allowedNumberOfTerminals) {
       return LicenseRestriction.POS_TERMINALS_EXCEEDED;
     } else {
@@ -77,8 +77,8 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
 
   @Override
   public List<AdditionalInfo> getAdditionalMessage() {
-    return Arrays.asList(new AdditionalInfo("OBPOS_ActivePosTerminals", String
-        .valueOf(getNumberOfActiveTerminals())));
+    return Arrays.asList(new AdditionalInfo("OBPOS_ActivePosTerminals",
+        String.valueOf(getNumberOfActiveTerminals())));
   }
 
   @Override
@@ -99,14 +99,16 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
 
   @Override
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
-    if (checkRestrictions(ActivationKey.getInstance(), null) != LicenseRestriction.POS_TERMINALS_EXCEEDED) {
+    if (checkRestrictions(ActivationKey.getInstance(),
+        null) != LicenseRestriction.POS_TERMINALS_EXCEEDED) {
       return "";
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/retail/posterminal/security/DeactivateAllTerminalsButton")
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/retail/posterminal/security/DeactivateAllTerminalsButton")
         .createXmlDocument();
-    return xmlDocument.print().replace("<HTML><BODY><TABLE>", "")
+    return xmlDocument.print()
+        .replace("<HTML><BODY><TABLE>", "")
         .replace("</TABLE></BODY></HTML>", "");
   }
 
@@ -116,8 +118,8 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
    */
   public void checkRestrictionForNewTerminal() {
     ActivationKey activationKey = ActivationKey.getInstance();
-    String msg = getPOSTerminalRestrictionMsg(activationKey, OBContext.getOBContext().getLanguage()
-        .getLanguage(), 1);
+    String msg = getPOSTerminalRestrictionMsg(activationKey,
+        OBContext.getOBContext().getLanguage().getLanguage(), 1);
     if (StringUtils.isNotBlank(msg)) {
       throw new OBException(msg);
     }
@@ -149,7 +151,8 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
   private String getPOSTerminalRestrictionMsg(ActivationKey activationKey, String lang,
       int addingTerminals) {
     Long allowedNumberOfTerminals = activationKey.getAllowedPosTerminals();
-    if (allowedNumberOfTerminals == null || allowedNumberOfTerminals.equals(ActivationKey.NO_LIMIT)) {
+    if (allowedNumberOfTerminals == null
+        || allowedNumberOfTerminals.equals(ActivationKey.NO_LIMIT)) {
       return "";
     }
 
@@ -158,8 +161,9 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
       return OBMessageUtils.messageBD(new DalConnectionProvider(false), "OBPOS_TerminalNotAllowed",
           lang);
     } else if (actualNumberOfTerminals > allowedNumberOfTerminals) {
-      return OBMessageUtils.messageBD(new DalConnectionProvider(false),
-          "OBPOS_TerminalLimitExceeded", lang).replace("%0", allowedNumberOfTerminals.toString());
+      return OBMessageUtils
+          .messageBD(new DalConnectionProvider(false), "OBPOS_TerminalLimitExceeded", lang)
+          .replace("%0", allowedNumberOfTerminals.toString());
     }
     return "";
   }

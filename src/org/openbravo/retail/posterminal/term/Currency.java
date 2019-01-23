@@ -24,7 +24,8 @@ public class Currency extends QueryTerminalProperty {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String currId = POSUtils.getPriceListByTerminalId(jsonsent.getString("pos")).getCurrency()
+    String currId = POSUtils.getPriceListByTerminalId(jsonsent.getString("pos"))
+        .getCurrency()
         .getId();
     return Arrays.asList(new String[] { "from Currency where id ='" + currId
         + "' and $readableSimpleCriteria and $activeCriteria" });

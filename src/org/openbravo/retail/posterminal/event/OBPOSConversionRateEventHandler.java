@@ -22,6 +22,8 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -35,12 +37,10 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.OBPOSConversionRate;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class OBPOSConversionRateEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OBPOSConversionRate.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OBPOSConversionRate.ENTITY_NAME) };
 
   protected Logger logger = LogManager.getLogger();
 
@@ -91,7 +91,8 @@ public class OBPOSConversionRateEventHandler extends EntityPersistenceEventObser
     hql.append(" OR (:validFrom < t." + OBPOSConversionRate.PROPERTY_VALIDFROMDATE
         + " AND :validTo > t." + OBPOSConversionRate.PROPERTY_VALIDTODATE + "))");
 
-    final Query<Object> query = OBDal.getInstance().getSession()
+    final Query<Object> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), Object.class);
     query.setParameter("id", id);
     query.setParameter("client", client);

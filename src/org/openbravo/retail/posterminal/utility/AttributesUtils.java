@@ -37,8 +37,8 @@ public class AttributesUtils {
 
   private static final Logger log = LogManager.getLogger();
 
-  public static AttributeSetInstance fetchAttributeSetValue(String attributeValue,
-      String productId, String posTerminalOrganizationId) {
+  public static AttributeSetInstance fetchAttributeSetValue(String attributeValue, String productId,
+      String posTerminalOrganizationId) {
     AttributeSetInstance attrSetInst = null;
     String validatedAttributeSetInstanceDescription = "";
     Product product = OBDal.getInstance().get(Product.class, productId);
@@ -50,16 +50,16 @@ public class AttributesUtils {
           validatedAttributeSetInstanceDescription = AttributesUtils
               .generateValidAttSetInstanceDescription(attributeValue, product);
           // Try to find an Att Set Intance Id with given description
-          OBCriteria<AttributeSetInstance> attrSICrit = OBDal.getInstance().createCriteria(
-              AttributeSetInstance.class);
+          OBCriteria<AttributeSetInstance> attrSICrit = OBDal.getInstance()
+              .createCriteria(AttributeSetInstance.class);
           attrSICrit.add(Restrictions.eq(AttributeSetInstance.PROPERTY_DESCRIPTION,
               validatedAttributeSetInstanceDescription));
           attrSICrit.addOrderBy("id", false);
           List<AttributeSetInstance> attrSIList = attrSICrit.list();
           if (attrSIList.isEmpty() && attrSIList.size() == 0) {
             // Att Set instance Id not found -> Create New One
-            attrSetInst = AttributesUtils.createAttributeSetValue(
-                validatedAttributeSetInstanceDescription, product);
+            attrSetInst = AttributesUtils
+                .createAttributeSetValue(validatedAttributeSetInstanceDescription, product);
             return attrSetInst;
           } else if (attrSIList.size() == 1) {
             // Just one Att Set instance Id found -> Use it
@@ -81,8 +81,8 @@ public class AttributesUtils {
             stDetailWhereClause.append("  where orgwh.organization.id = :orgid ");
             stDetailWhereClause.append(") ");
             stDetailWhereClause.append("ORDER BY e.quantityOnHand desc, e.attributeSetValue.id ");
-            OBQuery<StorageDetail> querySdetail = OBDal.getInstance().createQuery(
-                StorageDetail.class, stDetailWhereClause.toString());
+            OBQuery<StorageDetail> querySdetail = OBDal.getInstance()
+                .createQuery(StorageDetail.class, stDetailWhereClause.toString());
             querySdetail.setNamedParameter("attsetdescription",
                 validatedAttributeSetInstanceDescription);
             querySdetail.setNamedParameter("orgid", posTerminalOrganizationId);
@@ -105,16 +105,17 @@ public class AttributesUtils {
       }
     } else {
       // Product is not configured to use attributes
-      log.warn("Warning: Trying to fetch an Attribute Set instance for a product which is not configured to use attributes. ("
-          + product.getIdentifier() + ")");
+      log.warn(
+          "Warning: Trying to fetch an Attribute Set instance for a product which is not configured to use attributes. ("
+              + product.getIdentifier() + ")");
       return null;
     }
   }
 
   public static String generateValidAttSetInstanceDescription(
       String receivedAttSetInstanceDescription, String productId) {
-    return generateValidAttSetInstanceDescription(receivedAttSetInstanceDescription, OBDal
-        .getInstance().get(Product.class, productId));
+    return generateValidAttSetInstanceDescription(receivedAttSetInstanceDescription,
+        OBDal.getInstance().get(Product.class, productId));
   }
 
   public static String generateValidAttSetInstanceDescription(
@@ -139,12 +140,14 @@ public class AttributesUtils {
     int numberOfParts = receivedAttSetInstanceDescription_parts.length;
     log.debug("Number of parts of Att Description: " + numberOfParts);
 
-    List<Attribute> lstAttributes = getInstanciableAndMandatoryAttributesUsedByAttributeSetSortedBySeqNoAsc(attSet);
+    List<Attribute> lstAttributes = getInstanciableAndMandatoryAttributesUsedByAttributeSetSortedBySeqNoAsc(
+        attSet);
     for (Attribute att : lstAttributes) {
       if (currentPart >= numberOfParts) {
-        throw new OBException(String.format(
-            OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"), product.getIdentifier(),
-            attSet.getIdentifier(), (currentPart + 1), numberOfParts), true);
+        throw new OBException(
+            String.format(OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"),
+                product.getIdentifier(), attSet.getIdentifier(), (currentPart + 1), numberOfParts),
+            true);
       }
       if (att.isList()) {
         log.debug("Value for attribute (with restricted list of vaules) -" + att.getIdentifier()
@@ -155,9 +158,10 @@ public class AttributesUtils {
         if (isValidValueForAttribute(att, valueToValidate)) {
           result += receivedAttSetInstanceDescription_parts[currentPart] + "_";
         } else {
-          throw new OBException(String.format(
-              OBMessageUtils.messageBD("OBPOS_ProductAttrDefinedAsList"), product.getIdentifier(),
-              valueToValidate), true);
+          throw new OBException(
+              String.format(OBMessageUtils.messageBD("OBPOS_ProductAttrDefinedAsList"),
+                  product.getIdentifier(), valueToValidate),
+              true);
         }
       } else {
         log.debug("Value for attribute (without valid list of vaules) -" + att.getIdentifier()
@@ -173,9 +177,10 @@ public class AttributesUtils {
 
     if (attSet.isLot()) {
       if (currentPart >= numberOfParts) {
-        throw new OBException(String.format(
-            OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"), product.getIdentifier(),
-            attSet.getIdentifier(), (currentPart + 1), numberOfParts), true);
+        throw new OBException(
+            String.format(OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"),
+                product.getIdentifier(), attSet.getIdentifier(), (currentPart + 1), numberOfParts),
+            true);
       }
       log.debug("Att Set (" + attSet.getIdentifier() + ") uses lot. lot value is -"
           + receivedAttSetInstanceDescription_parts[currentPart] + "-");
@@ -189,13 +194,14 @@ public class AttributesUtils {
 
     if (attSet.isSerialNo()) {
       if (currentPart >= numberOfParts) {
-        throw new OBException(String.format(
-            OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"), product.getIdentifier(),
-            attSet.getIdentifier(), (currentPart + 1), numberOfParts), true);
+        throw new OBException(
+            String.format(OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"),
+                product.getIdentifier(), attSet.getIdentifier(), (currentPart + 1), numberOfParts),
+            true);
       }
-      log.debug("Att Set (" + attSet.getIdentifier()
-          + ") uses serialNo. It must be the first part ("
-          + receivedAttSetInstanceDescription_parts[currentPart] + ")");
+      log.debug(
+          "Att Set (" + attSet.getIdentifier() + ") uses serialNo. It must be the first part ("
+              + receivedAttSetInstanceDescription_parts[currentPart] + ")");
       if (attSet.getSerialNoControl() != null) {
         result += receivedAttSetInstanceDescription_parts[currentPart] + "_";
       } else {
@@ -206,9 +212,10 @@ public class AttributesUtils {
 
     if (attSet.isExpirationDate()) {
       if (currentPart >= numberOfParts) {
-        throw new OBException(String.format(
-            OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"), product.getIdentifier(),
-            attSet.getIdentifier(), (currentPart + 1), numberOfParts), true);
+        throw new OBException(
+            String.format(OBMessageUtils.messageBD("OBPOS_ProductAttrValuesNotFound"),
+                product.getIdentifier(), attSet.getIdentifier(), (currentPart + 1), numberOfParts),
+            true);
       }
       String receivedExpirationDateStrValue = receivedAttSetInstanceDescription_parts[currentPart];
       Date receivedExpirationDate;
@@ -218,14 +225,15 @@ public class AttributesUtils {
           + receivedExpirationDateStrValue + "-");
 
       final String dateFormatForDescription = (String) OBPropertiesProvider.getInstance()
-          .getOpenbravoProperties().get("dateFormat.java");
+          .getOpenbravoProperties()
+          .get("dateFormat.java");
       try {
         receivedExpirationDate = new SimpleDateFormat(dateFormatForDescription)
             .parse(receivedExpirationDateStrValue);
       } catch (Exception e) {
-        throw new OBException(String.format(
-            OBMessageUtils.messageBD("OBPOS_ProductAttrExpirationDateFormat"),
-            product.getIdentifier(), dateFormatForDescription, receivedExpirationDateStrValue),
+        throw new OBException(
+            String.format(OBMessageUtils.messageBD("OBPOS_ProductAttrExpirationDateFormat"),
+                product.getIdentifier(), dateFormatForDescription, receivedExpirationDateStrValue),
             true);
       }
       final String validatedExpirationDateStrValue = new SimpleDateFormat(dateFormatForDescription)
@@ -237,8 +245,9 @@ public class AttributesUtils {
     }
 
     if (StringUtils.isEmpty(result)) {
-      throw new OBException(String.format(
-          OBMessageUtils.messageBD("OBPOS_ProductAttributeNotDefined"), product.getIdentifier()),
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_ProductAttributeNotDefined"),
+              product.getIdentifier()),
           true);
     } else {
       result = result.substring(0, result.length() - 1);
@@ -257,22 +266,22 @@ public class AttributesUtils {
         int numberOfParts = receivedAttSetInstanceDescriptionWithSymbols_parts.length;
 
         // Create Att Set Instance
-        AttributeSetInstance newAttrSetInst = OBProvider.getInstance().get(
-            AttributeSetInstance.class);
+        AttributeSetInstance newAttrSetInst = OBProvider.getInstance()
+            .get(AttributeSetInstance.class);
         newAttrSetInst.setAttributeSet(product.getAttributeSet());
         newAttrSetInst.setDescription(receivedAttSetInstanceDescriptionWithSymbols);
         OBDal.getInstance().save(newAttrSetInst);
 
         // If attSet uses other attributes, Att instance must be created
-        List<Attribute> lstAttributes = getInstanciableAndMandatoryAttributesUsedByAttributeSetSortedBySeqNoAsc(product
-            .getAttributeSet());
+        List<Attribute> lstAttributes = getInstanciableAndMandatoryAttributesUsedByAttributeSetSortedBySeqNoAsc(
+            product.getAttributeSet());
         if (lstAttributes != null && lstAttributes.size() > 0) {
           // We are using attributes -> Att Instance must be created for each attribute used
           for (Attribute att : lstAttributes) {
             String attValue = "";
             attValue = receivedAttSetInstanceDescriptionWithSymbols_parts[currentPart];
-            final AttributeInstance attInstance = (AttributeInstance) OBProvider.getInstance().get(
-                AttributeInstance.ENTITY_NAME);
+            final AttributeInstance attInstance = (AttributeInstance) OBProvider.getInstance()
+                .get(AttributeInstance.ENTITY_NAME);
             attInstance.setAttribute(att);
             attInstance.setSearchKey(attValue);
             attInstance.setAttributeSetValue(newAttrSetInst);
@@ -315,14 +324,16 @@ public class AttributesUtils {
           Date receivedExpirationDate;
 
           final String dateFormatForDescription = (String) OBPropertiesProvider.getInstance()
-              .getOpenbravoProperties().get("dateFormat.java");
+              .getOpenbravoProperties()
+              .get("dateFormat.java");
           try {
             receivedExpirationDate = new SimpleDateFormat(dateFormatForDescription)
                 .parse(receivedExpirationDateStrValue);
           } catch (Exception e) {
-            throw new OBException(String.format(
-                OBMessageUtils.messageBD("OBPOS_ProductAttrExpirationDateFormat"),
-                product.getIdentifier(), dateFormatForDescription, receivedExpirationDateStrValue),
+            throw new OBException(
+                String.format(OBMessageUtils.messageBD("OBPOS_ProductAttrExpirationDateFormat"),
+                    product.getIdentifier(), dateFormatForDescription,
+                    receivedExpirationDateStrValue),
                 true);
           }
 
@@ -349,8 +360,8 @@ public class AttributesUtils {
       StringBuilder hqlQueryString = new StringBuilder();
       hqlQueryString.append("attributeSet.id = :attSetId ");
       hqlQueryString.append("ORDER BY seqNo asc");
-      OBQuery<AttributeUse> attUseQuery = OBDal.getInstance().createQuery(AttributeUse.class,
-          hqlQueryString.toString());
+      OBQuery<AttributeUse> attUseQuery = OBDal.getInstance()
+          .createQuery(AttributeUse.class, hqlQueryString.toString());
       attUseQuery.setNamedParameter("attSetId", attributeSet.getId());
       List<AttributeUse> lstAttUse = attUseQuery.list();
       for (AttributeUse attUse : lstAttUse) {
@@ -366,15 +377,16 @@ public class AttributesUtils {
 
   private static boolean isValidValueForAttribute(Attribute att, String value) {
     if (!att.isList()) {
-      log.warn("isValidValueForAttribute function is being called for attribute not marked as list -"
-          + att.getIdentifier() + "-");
+      log.warn(
+          "isValidValueForAttribute function is being called for attribute not marked as list -"
+              + att.getIdentifier() + "-");
       return true;
     }
     StringBuilder hqlQueryString = new StringBuilder();
     hqlQueryString.append("attribute.id = :attId AND ");
     hqlQueryString.append("name = :nameValue ");
-    OBQuery<AttributeValue> attValueQuery = OBDal.getInstance().createQuery(AttributeValue.class,
-        hqlQueryString.toString());
+    OBQuery<AttributeValue> attValueQuery = OBDal.getInstance()
+        .createQuery(AttributeValue.class, hqlQueryString.toString());
     attValueQuery.setNamedParameter("attId", att.getId());
     attValueQuery.setNamedParameter("nameValue", value);
     List<AttributeValue> lstAttValues = attValueQuery.list();

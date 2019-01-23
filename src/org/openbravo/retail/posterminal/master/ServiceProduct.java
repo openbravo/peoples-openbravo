@@ -49,8 +49,7 @@ public class ServiceProduct extends ProcessHQLQuery {
     HQLPropertyList regularServiceProductsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries.add("select"
-        + regularServiceProductsHQLProperties.getHqlSelect() //
+    hqlQueries.add("select" + regularServiceProductsHQLProperties.getHqlSelect() //
         + "from ServiceProduct sp " //
         + "where $filtersCriteria and $naturalOrgCriteria and $incrementalUpdateCriteria "
         + "order by sp.id");

@@ -46,8 +46,8 @@ public class Characteristic extends ProcessHQLQuery {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     Map<String, Object> args = new HashMap<String, Object>();
-    HQLPropertyList characteristicsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
-        extensions, args);
+    HQLPropertyList characteristicsHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions, args);
     propertiesList.add(characteristicsHQLProperties);
 
     return propertiesList;
@@ -63,9 +63,10 @@ public class Characteristic extends ProcessHQLQuery {
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
     } finally {
@@ -73,23 +74,18 @@ public class Characteristic extends ProcessHQLQuery {
     }
 
     String assortmentFilter = "";
-    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-        .getString("pos"));
+    final OBRETCOProductList productList = POSUtils
+        .getProductListByPosterminalId(jsonsent.getString("pos"));
     if (!isRemote) {
       assortmentFilter = "exists (select 1 from  ProductCharacteristicValue pcv, OBRETCO_Prol_Product assort "
-          + " where pcv.characteristic.id=ch.id "
-          + " and pcv.product.id= assort.product.id "
+          + " where pcv.characteristic.id=ch.id " + " and pcv.product.id= assort.product.id "
           + " and assort.obretcoProductlist.id= '" + productList.getId() + "'" + ") and";
     }
-    hqlQueries
-        .add("select"
-            + regularProductsChValueHQLProperties.getHqlSelect()
-            + "from Characteristic ch "
-            + "where  $filtersCriteria AND $hqlCriteria and "
-            + "ch.obposFilteronwebpos=true AND "
-            + assortmentFilter
-            + " ch.$naturalOrgCriteria and ch.$readableSimpleClientCriteria and (ch.$incrementalUpdateCriteria) "
-            + " order by ch.name, ch.id");
+    hqlQueries.add("select" + regularProductsChValueHQLProperties.getHqlSelect()
+        + "from Characteristic ch " + "where  $filtersCriteria AND $hqlCriteria and "
+        + "ch.obposFilteronwebpos=true AND " + assortmentFilter
+        + " ch.$naturalOrgCriteria and ch.$readableSimpleClientCriteria and (ch.$incrementalUpdateCriteria) "
+        + " order by ch.name, ch.id");
 
     return hqlQueries;
   }

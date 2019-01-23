@@ -8,8 +8,8 @@
  */
 package org.openbravo.retail.posterminal;
 
-public abstract class ProcessHQLQueryValidated extends
-    org.openbravo.mobile.core.process.ProcessHQLQueryValidated {
+public abstract class ProcessHQLQueryValidated
+    extends org.openbravo.mobile.core.process.ProcessHQLQueryValidated {
   final String WEBPOS_FORM_ID = "B7B7675269CD4D44B628A2C6CF01244F";
 
   @Override

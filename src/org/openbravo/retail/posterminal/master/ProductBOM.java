@@ -38,12 +38,10 @@ public class ProductBOM extends ProcessHQLQuery {
     List<String> hqlQueries = new ArrayList<String>();
     HQLPropertyList productBOMProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
 
-    hqlQueries
-        .add("select"
-            + productBOMProperties.getHqlSelect() //
-            + "from ProductBOM bom "
-            + "where (bom.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableClientCriteria AND bom.active=true "
-            + "order by bom.id asc");
+    hqlQueries.add("select" + productBOMProperties.getHqlSelect() //
+        + "from ProductBOM bom "
+        + "where (bom.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableClientCriteria AND bom.active=true "
+        + "order by bom.id asc");
 
     return hqlQueries;
   }

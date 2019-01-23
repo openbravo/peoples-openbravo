@@ -108,8 +108,8 @@ public class Invoices extends JSONProcessSimple {
           invoiceLine.put("priceIncludesTax", invoice.getBoolean("priceIncludesTax"));
 
           // promotions per line
-          OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
-              OrderLineOffer.class);
+          OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance()
+              .createCriteria(OrderLineOffer.class);
           qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
               (String) invoiceLine.getString("orderlineId")));
           qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
@@ -122,8 +122,9 @@ public class Invoices extends JSONProcessSimple {
             }
 
             JSONObject jsonPromo = new JSONObject();
-            String name = promotion.getPriceAdjustment().getPrintName() != null ? promotion
-                .getPriceAdjustment().getPrintName() : promotion.getPriceAdjustment().getName();
+            String name = promotion.getPriceAdjustment().getPrintName() != null
+                ? promotion.getPriceAdjustment().getPrintName()
+                : promotion.getPriceAdjustment().getName();
             jsonPromo.put("ruleId", promotion.getPriceAdjustment().getId());
             jsonPromo.put("name", name);
             jsonPromo.put("amt", displayedAmount);
@@ -149,8 +150,8 @@ public class Invoices extends JSONProcessSimple {
           invoiceLine.put("promotions", promotions);
 
           // taxes per line
-          OBCriteria<InvoiceLineTax> qTaxes = OBDal.getInstance().createCriteria(
-              InvoiceLineTax.class);
+          OBCriteria<InvoiceLineTax> qTaxes = OBDal.getInstance()
+              .createCriteria(InvoiceLineTax.class);
           qTaxes.add(Restrictions.eq(InvoiceLineTax.PROPERTY_INVOICELINE + ".id",
               (String) invoiceLine.getString("lineId")));
           qTaxes.addOrder(Order.asc(InvoiceLineTax.PROPERTY_LINENO));
@@ -224,9 +225,9 @@ public class Invoices extends JSONProcessSimple {
             JSONObject objectType = (JSONObject) listPaymentsType.get(j);
             if (objectIn.get("account").equals(objectType.get("account"))) {
               JSONObject invoicePayment = new JSONObject();
-              invoicePayment.put("amount", new BigDecimal((String) objectIn.get("amount")
-                  .toString()).multiply(new BigDecimal((String) objectType.get("mulrate")
-                  .toString())));
+              invoicePayment.put("amount",
+                  new BigDecimal((String) objectIn.get("amount").toString())
+                      .multiply(new BigDecimal((String) objectType.get("mulrate").toString())));
               invoicePayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
                 invoicePayment.put("paymentData", objectIn.get("paymentData"));
@@ -268,9 +269,9 @@ public class Invoices extends JSONProcessSimple {
               paymentsType.put("openDrawer", "N");
 
               JSONObject invoicePayment = new JSONObject();
-              invoicePayment.put("amount", new BigDecimal((String) objectIn.get("amount")
-                  .toString()).multiply(new BigDecimal((String) paymentsType.get("mulrate")
-                  .toString())));
+              invoicePayment.put("amount",
+                  new BigDecimal((String) objectIn.get("amount").toString())
+                      .multiply(new BigDecimal((String) paymentsType.get("mulrate").toString())));
               invoicePayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
                 invoicePayment.put("paymentData", objectIn.get("paymentData"));

@@ -30,8 +30,8 @@ import org.openbravo.retail.posterminal.OBPOS_OrgWarehouseExtra;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class ADOrgWarehouseEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OrgWarehouse.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OrgWarehouse.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -39,8 +39,7 @@ public class ADOrgWarehouseEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -48,8 +47,7 @@ public class ADOrgWarehouseEventHandler extends EntityPersistenceEventObserver {
     warehouseAddedInCCWarehouses(orgWarehouse);
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -60,14 +58,14 @@ public class ADOrgWarehouseEventHandler extends EntityPersistenceEventObserver {
   private void warehouseAddedInCCWarehouses(OrgWarehouse orgWarehouse) {
     ConnectionProvider conn = new DalConnectionProvider(false);
     String language = OBContext.getOBContext().getLanguage().getLanguage();
-    final OBCriteria<OBPOS_OrgWarehouseExtra> criteria = OBDal.getInstance().createCriteria(
-        OBPOS_OrgWarehouseExtra.class);
+    final OBCriteria<OBPOS_OrgWarehouseExtra> criteria = OBDal.getInstance()
+        .createCriteria(OBPOS_OrgWarehouseExtra.class);
     criteria.add(Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_ORGANIZATION,
         orgWarehouse.getOrganization()));
     criteria
         .add(Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_CLIENT, orgWarehouse.getClient()));
-    criteria.add(Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_WAREHOUSE,
-        orgWarehouse.getWarehouse()));
+    criteria.add(
+        Restrictions.eq(OBPOS_OrgWarehouseExtra.PROPERTY_WAREHOUSE, orgWarehouse.getWarehouse()));
     criteria.setMaxResults(1);
     if (criteria.uniqueResult() != null) {
       logger.error("ad_org_warehouse with m_warehouse_id " + orgWarehouse.getId()

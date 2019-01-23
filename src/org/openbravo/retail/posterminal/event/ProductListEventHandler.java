@@ -32,8 +32,8 @@ import org.openbravo.retail.config.OBRETCOProductcategory;
 import org.openbravo.retail.config.OBRETCOProlProduct;
 
 public class ProductListEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OBRETCOProlProduct.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OBRETCOProlProduct.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -59,9 +59,10 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       logger.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
     } finally {
@@ -72,8 +73,8 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
       ProductCategory productCategory = assortmentProduct.getProduct().getProductCategory();
       OBRETCOProductList assortment = assortmentProduct.getObretcoProductlist();
       if (isNewProductCategory(assortment, productCategory, assortmentProduct.getClient())) {
-        final OBRETCOProductcategory assortmentProdCat = OBProvider.getInstance().get(
-            OBRETCOProductcategory.class);
+        final OBRETCOProductcategory assortmentProdCat = OBProvider.getInstance()
+            .get(OBRETCOProductcategory.class);
         assortmentProdCat.setOrganization(assortmentProduct.getOrganization());
         assortmentProdCat.setProductCategory(productCategory);
         assortmentProdCat.setObretcoProductlist(assortment);
@@ -87,9 +88,11 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
     StringBuilder hql = new StringBuilder();
     hql.append("select id from ").append(OBRETCOProductcategory.ENTITY_NAME);
     hql.append(" where ").append(OBRETCOProductcategory.PROPERTY_CLIENT).append(" = :client");
-    hql.append("  and ").append(OBRETCOProductcategory.PROPERTY_PRODUCTCATEGORY)
+    hql.append("  and ")
+        .append(OBRETCOProductcategory.PROPERTY_PRODUCTCATEGORY)
         .append(" = :prodCat");
-    hql.append(" and ").append(OBRETCOProductcategory.PROPERTY_OBRETCOPRODUCTLIST)
+    hql.append(" and ")
+        .append(OBRETCOProductcategory.PROPERTY_OBRETCOPRODUCTLIST)
         .append(" = :assortment");
     Query<Object> qry = OBDal.getInstance().getSession().createQuery(hql.toString(), Object.class);
     qry.setParameter("client", client);

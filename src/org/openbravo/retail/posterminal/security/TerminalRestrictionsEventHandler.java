@@ -28,8 +28,8 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
  *
  */
 public class TerminalRestrictionsEventHandler extends EntityPersistenceEventObserver {
-  private static final Entity terminalEntity = ModelProvider.getInstance().getEntity(
-      OBPOSApplications.ENTITY_NAME);
+  private static final Entity terminalEntity = ModelProvider.getInstance()
+      .getEntity(OBPOSApplications.ENTITY_NAME);
   private static final Entity[] entities = { terminalEntity };
   private static final Property activeProperty = terminalEntity
       .getProperty(OBPOSApplications.PROPERTY_ACTIVE);

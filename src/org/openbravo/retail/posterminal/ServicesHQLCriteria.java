@@ -23,6 +23,7 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 @Qualifier("Services_Filter")
 public class ServicesHQLCriteria extends HQLCriteriaProcess {
 
+  @Override
   public String getHQLFilter(String params) {
     try {
       JSONArray paramsArray = new JSONArray(params);

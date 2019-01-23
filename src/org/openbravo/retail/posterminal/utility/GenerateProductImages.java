@@ -38,6 +38,7 @@ public class GenerateProductImages extends DalBaseProcess {
   private static final Logger log4j = LogManager.getLogger();
   private boolean generateAllImages;
 
+  @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
     try {
 
@@ -48,14 +49,14 @@ public class GenerateProductImages extends DalBaseProcess {
 
       // implement your process here
 
-      final OBRETCOProductList assortment = OBDal.getInstance().get(OBRETCOProductList.class,
-          assortmentId);
+      final OBRETCOProductList assortment = OBDal.getInstance()
+          .get(OBRETCOProductList.class, assortmentId);
 
       ConfigParameters confParam = ConfigParameters
           .retrieveFrom(RequestContext.getServletContext());
 
-      File imagesDir = new File(confParam.prefix
-          + "web/org.openbravo.retail.posterminal/productImages/");
+      File imagesDir = new File(
+          confParam.prefix + "web/org.openbravo.retail.posterminal/productImages/");
       if (!imagesDir.exists()) {
         imagesDir.mkdirs();
       }
@@ -64,29 +65,27 @@ public class GenerateProductImages extends DalBaseProcess {
       int errorCounter = 0;
       int imageCounter = 0;
 
-      OBCriteria<OBRETCOProlProduct> prolProductCrit = OBDal.getInstance().createCriteria(
-          OBRETCOProlProduct.class);
-      prolProductCrit.add(Restrictions.eq(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST,
-          assortment));
+      OBCriteria<OBRETCOProlProduct> prolProductCrit = OBDal.getInstance()
+          .createCriteria(OBRETCOProlProduct.class);
+      prolProductCrit
+          .add(Restrictions.eq(OBRETCOProlProduct.PROPERTY_OBRETCOPRODUCTLIST, assortment));
       ScrollableResults prolProductScroll = prolProductCrit.scroll();
       try {
         while (prolProductScroll.next()) {
           OBRETCOProlProduct prolProduct = (OBRETCOProlProduct) prolProductScroll.get(0);
           if (prolProduct.getProduct().getImage() != null) {
             try {
-              if (generateAllImages
-                  || (!generateAllImages && !fileExists(prolProduct.getProduct().getId(),
-                      imagesDir, false))) {
-                generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
-                    .getImage().getId(), imagesDir);
+              if (generateAllImages || (!generateAllImages
+                  && !fileExists(prolProduct.getProduct().getId(), imagesDir, false))) {
+                generateImageFile(prolProduct.getProduct().getId(),
+                    prolProduct.getProduct().getImage().getId(), imagesDir);
               } else {
                 log4j.debug("Image not generated " + prolProduct.getProduct().getId());
               }
-              if (generateAllImages
-                  || (!generateAllImages && !fileExists(prolProduct.getProduct().getId(),
-                      imagesDir, true))) {
-                generateImageFile(prolProduct.getProduct().getId(), prolProduct.getProduct()
-                    .getImage().getId(), imagesDir, 49, true);
+              if (generateAllImages || (!generateAllImages
+                  && !fileExists(prolProduct.getProduct().getId(), imagesDir, true))) {
+                generateImageFile(prolProduct.getProduct().getId(),
+                    prolProduct.getProduct().getImage().getId(), imagesDir, 49, true);
               } else {
                 log4j.debug("Small image not generated " + prolProduct.getProduct().getId());
               }
@@ -97,8 +96,7 @@ public class GenerateProductImages extends DalBaseProcess {
             } catch (Exception ex) {
               if (errorCounter < 30) {
                 String error = OBMessageUtils.getI18NMessage("OBPOS_ProductCanNotBeResized",
-                    new String[] { prolProduct.getProduct().getIdentifier() })
-                    + " - "
+                    new String[] { prolProduct.getProduct().getIdentifier() }) + " - "
                     + ex.getMessage();
                 errors.append(error + "<br/>");
                 log4j.error(error, ex);
@@ -149,15 +147,15 @@ public class GenerateProductImages extends DalBaseProcess {
       // Finally, we copy productImages folder to the sources folder. This way, smartbuild will not
       // remove the folder deployed in the context
 
-      String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String sourcePath = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("source.path");
       if (sourcePath == null || sourcePath.equals("")) {
-        log4j
-            .error("source.path property is not configured. Images will not be copied to sources, so next smartbuild will remove them");
+        log4j.error(
+            "source.path property is not configured. Images will not be copied to sources, so next smartbuild will remove them");
       } else {
-        File imagesDirInSourceFolder = new File(
-            sourcePath
-                + "/modules/org.openbravo.retail.posterminal/web/org.openbravo.retail.posterminal/productImages/");
+        File imagesDirInSourceFolder = new File(sourcePath
+            + "/modules/org.openbravo.retail.posterminal/web/org.openbravo.retail.posterminal/productImages/");
         try {
           if (imagesDirInSourceFolder.exists()) {
             imagesDirInSourceFolder.delete();
@@ -165,10 +163,9 @@ public class GenerateProductImages extends DalBaseProcess {
           imagesDirInSourceFolder.mkdir();
           FileUtils.copyDirectory(imagesDir, imagesDirInSourceFolder);
         } catch (Exception e) {
-          log4j
-              .error(
-                  "We couldn't create the images folder in the source.path directory, so next smartbuild will remove them",
-                  e);
+          log4j.error(
+              "We couldn't create the images folder in the source.path directory, so next smartbuild will remove them",
+              e);
         }
       }
 

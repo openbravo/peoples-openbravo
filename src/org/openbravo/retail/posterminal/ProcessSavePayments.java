@@ -61,21 +61,21 @@ public class ProcessSavePayments extends JSONProcessSimple {
     Order order = OBDal.getInstance().get(Order.class, jsonsent.getString("order"));
     Organization org = order.getOrganization();
     BusinessPartner bp = order.getBusinessPartner();
-    DocumentType docType = OBDal.getInstance().get(DocumentType.class,
-        jsonsent.getString("docType"));
+    DocumentType docType = OBDal.getInstance()
+        .get(DocumentType.class, jsonsent.getString("docType"));
     String documentNo = "xx"; // Utility.getDocumentNoByDocumentType(conn, vars.getClient(),
                               // jsonsent.getString("docType"), true);
-    FIN_PaymentMethod paymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
-        jsonsent.getString("paymentMethod"));
-    FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        jsonsent.getString("account"));
+    FIN_PaymentMethod paymentMethod = OBDal.getInstance()
+        .get(FIN_PaymentMethod.class, jsonsent.getString("paymentMethod"));
+    FIN_FinancialAccount account = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, jsonsent.getString("account"));
     String amount = Double.toString(jsonsent.getDouble("amount"));
     Date paymentDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATE,
         jsonsent.getString("paymentDate"));
 
     // Payment Scheduled
-    OBCriteria<FIN_PaymentSchedule> crPaymentSched = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedule.class);
+    OBCriteria<FIN_PaymentSchedule> crPaymentSched = OBDal.getInstance()
+        .createCriteria(FIN_PaymentSchedule.class);
     crPaymentSched.add(Restrictions.eq("order", order));
     List<FIN_PaymentSchedule> paymentScheds = crPaymentSched.list();
     if (paymentScheds.size() != 1) {
@@ -84,8 +84,8 @@ public class ProcessSavePayments extends JSONProcessSimple {
     FIN_PaymentSchedule paymentSched = paymentScheds.get(0);
 
     // Payments Scheduled Details
-    OBCriteria<FIN_PaymentScheduleDetail> crProcess = OBDal.getInstance().createCriteria(
-        FIN_PaymentScheduleDetail.class);
+    OBCriteria<FIN_PaymentScheduleDetail> crProcess = OBDal.getInstance()
+        .createCriteria(FIN_PaymentScheduleDetail.class);
     crProcess.add(Restrictions.eq("orderPaymentSchedule", paymentSched));
     crProcess.add(Restrictions.isNull("paymentDetails"));
 

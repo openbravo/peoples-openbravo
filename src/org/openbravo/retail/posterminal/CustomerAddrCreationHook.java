@@ -15,8 +15,8 @@ import org.openbravo.model.common.businesspartner.Location;
 
 public abstract class CustomerAddrCreationHook {
 
-  public abstract void exec(JSONObject jsonCustomerAddr, BusinessPartner customer, Location location)
-      throws Exception;
+  public abstract void exec(JSONObject jsonCustomerAddr, BusinessPartner customer,
+      Location location) throws Exception;
 
 }
 

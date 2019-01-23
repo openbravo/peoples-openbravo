@@ -56,15 +56,11 @@ public class SalesRepresentative extends ProcessHQLQuery {
 
     String operator = lastUpdated == null ? " AND " : " OR ";
 
-    hqlQueries
-        .add("select"
-            + regularSalesRepresentativeHQLProperties.getHqlSelect() //
-            + "from ADUser user "
-            + "where $filtersCriteria AND"
-            + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true AND (bp.$naturalOrgCriteria)) "
-            + "AND ((user.$incrementalUpdateCriteria) "
-            + operator
-            + " (user.businessPartner.$incrementalUpdateCriteria)) AND (user.$naturalOrgCriteria) AND (user.$readableSimpleClientCriteria) order by user.name asc, user.id");
+    hqlQueries.add("select" + regularSalesRepresentativeHQLProperties.getHqlSelect() //
+        + "from ADUser user " + "where $filtersCriteria AND"
+        + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true AND (bp.$naturalOrgCriteria)) "
+        + "AND ((user.$incrementalUpdateCriteria) " + operator
+        + " (user.businessPartner.$incrementalUpdateCriteria)) AND (user.$naturalOrgCriteria) AND (user.$readableSimpleClientCriteria) order by user.name asc, user.id");
 
     return hqlQueries;
   }

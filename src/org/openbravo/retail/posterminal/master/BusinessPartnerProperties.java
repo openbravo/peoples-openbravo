@@ -55,7 +55,8 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bp.birthDay", "birthDay"));
         add(new HQLProperty("bp.birthPlace", "birthPlace"));
         add(new HQLProperty("bp.active", "active"));
-        String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        String curDbms = OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties()
             .getProperty("bbdd.rdbms");
         if (curDbms.equals("POSTGRE")) {
           add(new HQLProperty("now()", "loaded"));

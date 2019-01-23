@@ -61,8 +61,8 @@ public class OBPOSPrintTemplateReader {
 
   private String readTemplateFile(String templatePath) throws IOException {
     ConfigParameters confParam = ConfigParameters.retrieveFrom(RequestContext.getServletContext());
-    final File file = new File(confParam.prefix + "web/org.openbravo.retail.posterminal/"
-        + templatePath);
+    final File file = new File(
+        confParam.prefix + "web/org.openbravo.retail.posterminal/" + templatePath);
     if (!file.exists() || !file.canRead()) {
       log.error(templatePath + " cannot be read");
       return "";

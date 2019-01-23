@@ -27,8 +27,8 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
  */
 
 public class POSTerminalEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OBPOSApplications.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OBPOSApplications.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -45,8 +45,8 @@ public class POSTerminalEventHandler extends EntityPersistenceEventObserver {
     OBPOSApplications posTerminalMaster = posTerminal.getMasterterminal();
     boolean isMaster = posTerminal.isMaster();
     if (isMaster && posTerminalMaster != null) {
-      final Entity masterterminalEntity = ModelProvider.getInstance().getEntity(
-          OBPOSApplications.ENTITY_NAME);
+      final Entity masterterminalEntity = ModelProvider.getInstance()
+          .getEntity(OBPOSApplications.ENTITY_NAME);
       final Property masterterminalProperty = masterterminalEntity.getProperty("masterterminal");
       event.setCurrentState(masterterminalProperty, null);
     }
@@ -62,8 +62,8 @@ public class POSTerminalEventHandler extends EntityPersistenceEventObserver {
     OBPOSApplications posTerminalMaster = posTerminal.getMasterterminal();
     boolean isMaster = posTerminal.isMaster();
     if (isMaster && posTerminalMaster != null) {
-      final Entity masterterminalEntity = ModelProvider.getInstance().getEntity(
-          OBPOSApplications.ENTITY_NAME);
+      final Entity masterterminalEntity = ModelProvider.getInstance()
+          .getEntity(OBPOSApplications.ENTITY_NAME);
       final Property masterterminalProperty = masterterminalEntity.getProperty("masterterminal");
       event.setCurrentState(masterterminalProperty, null);
     }

@@ -23,7 +23,8 @@ public class Labels extends JSONProcessSimple {
     try {
       if (jsonsent.has("parameters") && jsonsent.getJSONObject("parameters").has("languageId")) {
         if (jsonsent.getJSONObject("parameters").get("languageId") instanceof JSONObject) {
-          languageId = jsonsent.getJSONObject("parameters").getJSONObject("languageId")
+          languageId = jsonsent.getJSONObject("parameters")
+              .getJSONObject("languageId")
               .getString("value");
         } else {
           languageId = null;
