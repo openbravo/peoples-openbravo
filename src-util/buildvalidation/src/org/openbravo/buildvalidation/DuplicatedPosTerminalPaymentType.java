@@ -38,17 +38,15 @@ public class DuplicatedPosTerminalPaymentType extends BuildValidation {
       String msg = "";
       boolean error = false;
       if ("Y".equals(DuplicatedPosTerminalPaymentTypeData.tableExists(cp))) {
-        for (DuplicatedPosTerminalPaymentTypeData err : DuplicatedPosTerminalPaymentTypeData
-            .duplicatedPaymentType(cp)) {
+        for (DuplicatedPosTerminalPaymentTypeData err : DuplicatedPosTerminalPaymentTypeData.duplicatedPaymentType(cp)) {
           msg += "\nPOS Terminal name:" + err.terminalTypeName + " - Payment Method:"
               + err.paymentMethod;
           error = true;
         }
       }
       if (error) {
-        errors.add(
-            "You can not apply this RMP because your instance fails in a pre-validation: from Openbravo Retail 3.0RMP31 it is not allowed to have more than one payment methods with the same search key in a Pos Terminal. Below you can find the list of Pos Terminals with duplicated Payment Methods. Once they are fixed you should be able to apply this RMP."
-                + msg);
+        errors.add("You can not apply this RMP because your instance fails in a pre-validation: from Openbravo Retail 3.0RMP31 it is not allowed to have more than one payment methods with the same search key in a Pos Terminal. Below you can find the list of Pos Terminals with duplicated Payment Methods. Once they are fixed you should be able to apply this RMP."
+            + msg);
       }
     } catch (Exception e) {
       return handleError(e);

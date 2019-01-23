@@ -18,8 +18,8 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.RejectReason;
 import org.openbravo.service.json.JsonConstants;
 
-public class QuotationsReject extends POSDataSynchronizationProcess
-    implements DataSynchronizationImportProcess {
+public class QuotationsReject extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   @Override
   public JSONObject saveRecord(JSONObject jsonRecord) throws Exception {

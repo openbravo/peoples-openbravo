@@ -54,8 +54,8 @@ public class UpdateCashup {
     // to get the lock on the record. The reason for this is to prevent the same cash up from being
     // processed twice in case of very quick duplicated requests.
     // These shouldn't happen in general but may happen specifically in case of unreliable networks
-    OBPOSApplications posTerminal = OBDal.getInstance()
-        .get(OBPOSApplications.class, jsonCashup.getString("posterminal"));
+    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+        jsonCashup.getString("posterminal"));
     Date cashUpReportDate = null;
     Date lastCashUpReportDate = null;
     OBPOSAppCashup cashUp = null;
@@ -79,8 +79,8 @@ public class UpdateCashup {
             PropertyByType.DATETIME,
             (cashUpReportString).subSequence(0, (cashUpReportString).lastIndexOf("Z")) + ":00");
       } else {
-        cashUpReportDate = (Date) JsonToDataConverter
-            .convertJsonToPropertyValue(PropertyByType.DATETIME, cashUpReportString);
+        cashUpReportDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(
+            PropertyByType.DATETIME, cashUpReportString);
       }
     }
 
@@ -122,8 +122,9 @@ public class UpdateCashup {
     }
 
     // If the cashup is new or the incoming cashup report is newer, update the cashUp info
-    if (cashUp.getLastcashupreportdate() == null || (lastCashUpReportDate != null
-        && lastCashUpReportDate.getTime() >= cashUp.getLastcashupreportdate().getTime())) {
+    if (cashUp.getLastcashupreportdate() == null
+        || (lastCashUpReportDate != null && lastCashUpReportDate.getTime() >= cashUp.getLastcashupreportdate()
+            .getTime())) {
       if (jsonCashup.has("objToSend")) {
         JSONObject jsonInfoCashUp = new JSONObject(jsonCashup.getString("objToSend"));
         // JSONObject jsonInfoCashUp = (JSONObject) jsonCashup.get("objToSend");
@@ -140,8 +141,8 @@ public class UpdateCashup {
     }
 
     // Associate master/slave cashup
-    if ((posTerminal.isMaster() && posTerminal.getOBPOSApplicationsMasterterminalIDList()
-        .size() != cashUp.getOBPOSAppCashupObposParentCashupIDList().size())
+    if ((posTerminal.isMaster() && posTerminal.getOBPOSApplicationsMasterterminalIDList().size() != cashUp.getOBPOSAppCashupObposParentCashupIDList()
+        .size())
         || (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null)) {
       associateMasterSlave(cashUp, posTerminal);
     }
@@ -162,8 +163,8 @@ public class UpdateCashup {
    * @throws JSONException
    */
   private static void updateCashUpInfo(OBPOSAppCashup cashup, JSONObject jsonCashup,
-      Date cashUpDate, Date cashUpReportDate, Date lastCashUpReportDate)
-      throws JSONException, OBException {
+      Date cashUpDate, Date cashUpReportDate, Date lastCashUpReportDate) throws JSONException,
+      OBException {
 
     if (cashup.isProcessed() && jsonCashup.getString("isprocessed").equalsIgnoreCase("N")) {
       throw new OBException("The cashup is processed, and it can not be set as unprocessed");
@@ -172,8 +173,8 @@ public class UpdateCashup {
     cashup.setGrosssales(new BigDecimal(jsonCashup.getString("grossSales")));
     cashup.setNetreturns(new BigDecimal(jsonCashup.getString("netReturns")));
     cashup.setGrossreturns(new BigDecimal(jsonCashup.getString("grossReturns")));
-    cashup.setTotalretailtransactions(
-        new BigDecimal(jsonCashup.getString("totalRetailTransactions")));
+    cashup.setTotalretailtransactions(new BigDecimal(
+        jsonCashup.getString("totalRetailTransactions")));
     cashup.setProcessed(jsonCashup.getString("isprocessed").equalsIgnoreCase("Y"));
     cashup.setCashUpDate(cashUpDate);
     cashup.setLastcashupreportdate(lastCashUpReportDate);
@@ -182,10 +183,16 @@ public class UpdateCashup {
       // In case of Slave/Master Check if slave is processed or not
       for (OBPOSAppCashup slaveCashup : cashup.getOBPOSAppCashupObposParentCashupIDList()) {
         if (!slaveCashup.isProcessed()) {
-          log.debug("Master/Slave association (" + new Date() + "): Unlink slave terminal: "
-              + slaveCashup.getPOSTerminal().getName() + " and Cashup id: " + slaveCashup.getId()
-              + " linked with master terminal: " + cashup.getPOSTerminal().getName()
-              + " and Cashup id: " + cashup.getId()
+          log.debug("Master/Slave association ("
+              + new Date()
+              + "): Unlink slave terminal: "
+              + slaveCashup.getPOSTerminal().getName()
+              + " and Cashup id: "
+              + slaveCashup.getId()
+              + " linked with master terminal: "
+              + cashup.getPOSTerminal().getName()
+              + " and Cashup id: "
+              + cashup.getId()
               + " because slave terminal has no transactions and it will be associated with the next master terminal cashup");
           slaveCashup.setObposParentCashup(null);
           OBDal.getInstance().save(slaveCashup);
@@ -196,8 +203,8 @@ public class UpdateCashup {
   }
 
   private static void updateOrCreateCashupInfo(String cashUpId, JSONObject jsonCashup,
-      Date cashUpDate, Date cashUpReportDate, Date lastCashUpReportDate)
-      throws JSONException, OBException {
+      Date cashUpDate, Date cashUpReportDate, Date lastCashUpReportDate) throws JSONException,
+      OBException {
     OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     // Update cashup info
     updateCashUpInfo(cashup, jsonCashup, cashUpDate, cashUpReportDate, lastCashUpReportDate);
@@ -216,18 +223,18 @@ public class UpdateCashup {
       JSONArray paymentCashupInfo = jsonCashup.getJSONArray("cashPaymentMethodInfo");
       for (int i = 0; i < paymentCashupInfo.length(); ++i) {
         JSONObject payment = paymentCashupInfo.getJSONObject(i);
-        if ((payment.has("newPaymentMethod")
-            && payment.getString("newPaymentMethod").equals("true"))
-            || (payment.has("usedInCurrentTrx")
-                && payment.getString("usedInCurrentTrx").equals("true"))) {
+        if ((payment.has("newPaymentMethod") && payment.getString("newPaymentMethod")
+            .equals("true"))
+            || (payment.has("usedInCurrentTrx") && payment.getString("usedInCurrentTrx").equals(
+                "true"))) {
           // Set Amount To Keep
           if (jsonCashup.has("cashCloseInfo")) {
             // Get the paymentMethod id
             JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
             for (int j = 0; j < cashCloseInfo.length(); ++j) {
               JSONObject paymentMethod = cashCloseInfo.getJSONObject(j);
-              if (paymentMethod.getString("paymentTypeId")
-                  .equals(payment.getString("paymentMethodId"))) {
+              if (paymentMethod.getString("paymentTypeId").equals(
+                  payment.getString("paymentMethodId"))) {
                 payment.put("amountToKeep",
                     paymentMethod.getJSONObject("paymentMethod").getString("amountToKeep"));
                 BigDecimal expected = BigDecimal.ZERO;
@@ -238,9 +245,9 @@ public class UpdateCashup {
                   difference = new BigDecimal(paymentMethod.getString("difference"));
                 } else if (paymentMethod.has("foreignExpected")) {
                   expected = new BigDecimal(paymentMethod.getString("foreignExpected"));
-                  difference = new BigDecimal(paymentMethod.has("foreignDifference")
-                      ? paymentMethod.getString("foreignDifference")
-                      : paymentMethod.getString("difference"));
+                  difference = new BigDecimal(
+                      paymentMethod.has("foreignDifference") ? paymentMethod.getString("foreignDifference")
+                          : paymentMethod.getString("difference"));
                 }
                 payment.put("totalCounted", expected.add(difference));
               }
@@ -260,8 +267,8 @@ public class UpdateCashup {
    */
   private static void createPaymentMethodCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup)
       throws JSONException {
-    OBPOSPaymentMethodCashup newPaymentMethodCashUp = OBDal.getInstance()
-        .get(OBPOSPaymentMethodCashup.class, jsonCashup.get("id"));
+    OBPOSPaymentMethodCashup newPaymentMethodCashUp = OBDal.getInstance().get(
+        OBPOSPaymentMethodCashup.class, jsonCashup.get("id"));
 
     if (newPaymentMethodCashUp == null) {
       newPaymentMethodCashUp = OBProvider.getInstance().get(OBPOSPaymentMethodCashup.class);
@@ -269,8 +276,8 @@ public class UpdateCashup {
       newPaymentMethodCashUp.setId(jsonCashup.get("id"));
       cashup.getOBPOSPaymentmethodcashupList().add(newPaymentMethodCashUp);
     }
-    JSONPropertyToEntity.fillBobFromJSON(newPaymentMethodCashUp.getEntity(), newPaymentMethodCashUp,
-        jsonCashup);
+    JSONPropertyToEntity.fillBobFromJSON(newPaymentMethodCashUp.getEntity(),
+        newPaymentMethodCashUp, jsonCashup);
     newPaymentMethodCashUp.setCashUp(cashup);
 
     newPaymentMethodCashUp.setOrganization(cashup.getOrganization());
@@ -284,17 +291,15 @@ public class UpdateCashup {
     newPaymentMethodCashUp.setTotalreturns(new BigDecimal(jsonCashup.getString("totalReturns")));
     newPaymentMethodCashUp.setTotalDeposits(new BigDecimal(jsonCashup.getString("totalDeposits")));
     newPaymentMethodCashUp.setTotalDrops(new BigDecimal(jsonCashup.getString("totalDrops")));
-    newPaymentMethodCashUp.setTotalCounted(
-        jsonCashup.has("totalCounted") ? new BigDecimal(jsonCashup.getString("totalCounted"))
-            : BigDecimal.ZERO);
-    newPaymentMethodCashUp.setAmountToKeep(
-        jsonCashup.has("amountToKeep") ? new BigDecimal(jsonCashup.getString("amountToKeep"))
-            : BigDecimal.ZERO);
+    newPaymentMethodCashUp.setTotalCounted(jsonCashup.has("totalCounted") ? new BigDecimal(
+        jsonCashup.getString("totalCounted")) : BigDecimal.ZERO);
+    newPaymentMethodCashUp.setAmountToKeep(jsonCashup.has("amountToKeep") ? new BigDecimal(
+        jsonCashup.getString("amountToKeep")) : BigDecimal.ZERO);
     newPaymentMethodCashUp.setRate(new BigDecimal(jsonCashup.getString("rate")));
     newPaymentMethodCashUp.setIsocode((String) jsonCashup.get("isocode"));
 
-    OBPOSAppPayment appPayment = OBDal.getInstance()
-        .get(OBPOSAppPayment.class, jsonCashup.getString("paymentMethodId"));
+    OBPOSAppPayment appPayment = OBDal.getInstance().get(OBPOSAppPayment.class,
+        jsonCashup.getString("paymentMethodId"));
     newPaymentMethodCashUp.setPaymentType(appPayment);
 
     String name = appPayment.getCommercialName();
@@ -310,8 +315,8 @@ public class UpdateCashup {
    */
   private static void createTaxCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup)
       throws JSONException {
-    OBPOSTaxCashup newTax = OBDal.getInstance()
-        .get(OBPOSTaxCashup.class, jsonCashup.getString("id"));
+    OBPOSTaxCashup newTax = OBDal.getInstance().get(OBPOSTaxCashup.class,
+        jsonCashup.getString("id"));
     if (newTax == null) {
       newTax = OBProvider.getInstance().get(OBPOSTaxCashup.class);
       newTax.setNewOBObject(true);
@@ -336,8 +341,8 @@ public class UpdateCashup {
           + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
           + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' and "
           + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is null";
-      OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance()
-          .createQuery(OBPOSAppCashup.class, query);
+      OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
+          OBPOSAppCashup.class, query);
       appCashupQuery.setNamedParameter("terminalId", posTerminal.getId());
       List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
       for (OBPOSAppCashup appCashup : appCashupList) {
@@ -371,8 +376,8 @@ public class UpdateCashup {
         query = OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = :terminalId and "
             + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
             + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' ";
-        OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance()
-            .createQuery(OBPOSAppCashup.class, query);
+        OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
+            OBPOSAppCashup.class, query);
         appCashupQuery.setNamedParameter("terminalId", posTerminal.getMasterterminal().getId());
         List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
         if (appCashupList.size() > 0 && cashUp.getObposParentCashup() == null) {
@@ -407,11 +412,10 @@ public class UpdateCashup {
     Long averageDownloadBandwidth;
 
     // Terminal Status History record
-    OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance()
-        .createCriteria(OBPOSAppTermStatHist.class);
+    OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
+        OBPOSAppTermStatHist.class);
     termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_CASHUP, cashUp));
-    termStatHistCriteria
-        .add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_POSTERMINAL, posTerminal));
+    termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_POSTERMINAL, posTerminal));
     terminalStatusHistory = (OBPOSAppTermStatHist) termStatHistCriteria.uniqueResult();
 
     if (terminalStatusHistory == null) {

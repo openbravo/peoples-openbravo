@@ -1,12 +1,12 @@
 /*
-************************************************************************************
-* Copyright (C) 2018 Openbravo S.L.U.
-* Licensed under the Openbravo Commercial License version 1.0
-* You may obtain a copy of the License at
+ ************************************************************************************
+ * Copyright (C) 2018 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at
 http://www.openbravo.com/legal/obcl.html
-* or in the legal folder of this module distribution.
-************************************************************************************
-*/
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
 package org.openbravo.retail.posterminal.buildvalidation;
 
 import java.util.ArrayList;
@@ -30,7 +30,8 @@ public class I38194ValidateRefreshMasterData extends BuildValidation {
       ConnectionProvider cp = getConnectionProvider();
       I38194ValidateRefreshMasterDataData[] data = I38194ValidateRefreshMasterDataData.validate(cp);
       for (int i = 0; i < data.length; i++) {
-        String msg = "\nPOS Terminal name: " + data[i].name
+        String msg = "\nPOS Terminal name: "
+            + data[i].name
             + " - 'Time to Incrementally Refresh Masterdata' must be greater than 'Time to Show Incremental Refresh Popup'"
             + "\nCurrent values - Time to Incrementally Refresh Masterdata: "
             + data[i].minutestorefreshdatainc + ", Time to Show Incremental Refresh Popup: 5";
@@ -49,7 +50,7 @@ public class I38194ValidateRefreshMasterData extends BuildValidation {
 
   @Override
   protected ExecutionLimits getBuildValidationLimits() {
-    return new ExecutionLimits("FF808181326CC34901326D53DBCF0018", null,
-        new OpenbravoVersion(1, 2, 5500));
+    return new ExecutionLimits("FF808181326CC34901326D53DBCF0018", null, new OpenbravoVersion(1, 2,
+        5500));
   }
 }

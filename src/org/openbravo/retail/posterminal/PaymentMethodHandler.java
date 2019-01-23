@@ -25,8 +25,8 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class PaymentMethodHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = {
-      ModelProvider.getInstance().getEntity(TerminalTypePaymentMethod.ENTITY_NAME) };
+  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
+      TerminalTypePaymentMethod.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override

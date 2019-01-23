@@ -45,7 +45,6 @@ public class AddDefaultChannel extends ModuleScript {
 
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits(RETAIL_MODULE_ID, null,
-        new OpenbravoVersion(1, 2, 5900));
+    return new ModuleScriptExecutionLimits(RETAIL_MODULE_ID, null, new OpenbravoVersion(1, 2, 5900));
   }
 }

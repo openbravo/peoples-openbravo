@@ -52,8 +52,7 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.organization.id", "organization"));
         add(new HQLProperty("ord.client.id", "client"));
         add(new HQLProperty(
-            "(case when ord.documentType.sOSubType = 'OB' then true else false end)",
-            "isQuotation"));
+            "(case when ord.documentType.sOSubType = 'OB' then true else false end)", "isQuotation"));
         add(new HQLProperty("ord.summedLineAmount", "totalNetAmount"));
         add(new HQLProperty("ord.obposIslayaway", "isLayaway"));
         add(new HQLProperty("ord.priceList.priceIncludesTax", "priceIncludesTax"));

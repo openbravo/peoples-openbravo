@@ -96,16 +96,14 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     hqlPaidReceipts.append("where $filtersCriteria and $hqlCriteria ");
     hqlPaidReceipts.append(orderTypeHql);
     hqlPaidReceipts.append(" and ord.client.id =  $clientId and ord.$orgId");
-    hqlPaidReceipts.append(
-        " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
+    hqlPaidReceipts.append(" and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
     hqlPaidReceipts.append(" and ord.documentStatus <> 'CA' ");
     if (!isVerifiedReturns && !isPayOpenTicket) {
       // verified returns is already filtering by delivered = true
       hqlPaidReceipts.append(" and (ord.documentStatus <> 'CL' or ord.delivered = true) ");
     }
     if ((jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL)
-        || (jsonsent.has("orderByProperties")
-            && jsonsent.get("orderByProperties") != JSONObject.NULL)) {
+        || (jsonsent.has("orderByProperties") && jsonsent.get("orderByProperties") != JSONObject.NULL)) {
       hqlPaidReceipts.append(" $orderByCriteria");
     }
 
@@ -144,9 +142,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       JSONObject result = new JSONObject("{" + w.toString() + "}");
       if (MobileServerController.getInstance().isThisAStoreServer() && isScanning(jsonsent)
           && result.optLong("totalRows") == 0) {
-        JSONObject centralResult = MobileServerRequestExecutor.getInstance()
-            .executeCentralRequest(MobileServerUtils.OBWSPATH + PaidReceiptsFilter.class.getName(),
-                jsonsent);
+        JSONObject centralResult = MobileServerRequestExecutor.getInstance().executeCentralRequest(
+            MobileServerUtils.OBWSPATH + PaidReceiptsFilter.class.getName(), jsonsent);
         data = centralResult.toString().substring(1, centralResult.toString().length() - 1);
       }
     } catch (JSONException e) {
@@ -159,10 +156,13 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
 
   private boolean isScanning(JSONObject jsonsent) {
     try {
-      if ("documentNo".equals(
-          jsonsent.getJSONArray("remoteFilters").getJSONObject(0).getJSONArray("columns").get(0))
-          && "=".equals(
-              jsonsent.getJSONArray("remoteFilters").getJSONObject(0).getString("operator"))) {
+      if ("documentNo".equals(jsonsent.getJSONArray("remoteFilters")
+          .getJSONObject(0)
+          .getJSONArray("columns")
+          .get(0))
+          && "=".equals(jsonsent.getJSONArray("remoteFilters")
+              .getJSONObject(0)
+              .getString("operator"))) {
         return true;
       } else {
         return false;

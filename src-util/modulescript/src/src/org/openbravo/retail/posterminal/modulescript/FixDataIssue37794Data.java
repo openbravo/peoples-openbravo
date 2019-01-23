@@ -74,8 +74,8 @@ class FixDataIssue37794Data implements FieldProvider {
       } else {
         log4j.error("SQL error in query: " + strSql + " :" + e);
       }
-      throw new ServletException(
-          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
+          + e.getMessage());
     } catch (Exception ex) {
       if (log4j.isDebugEnabled()) {
         log4j.error("Exception in query: " + strSql, ex);
@@ -121,8 +121,8 @@ class FixDataIssue37794Data implements FieldProvider {
       } else {
         log4j.error("SQL error in query: " + strSql + " :" + e);
       }
-      throw new ServletException(
-          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
+          + e.getMessage());
     } catch (Exception ex) {
       if (log4j.isDebugEnabled()) {
         log4j.error("Exception in query: " + strSql, ex);

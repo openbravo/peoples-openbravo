@@ -32,8 +32,8 @@ public class WebServiceLoginServlet extends WebServiceAbstractServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
 
     if (OBContext.getOBContext() != null) {
       log.warn("Already logged in.");

@@ -40,8 +40,8 @@ public class FixDataIssue27695 extends ModuleScript {
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
     // lower than 3.0RR14Q2.4 (Retail pack)(1.8.402)
-    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
-        new OpenbravoVersion(1, 8, 402));
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null, new OpenbravoVersion(1, 8,
+        402));
   }
 
   @Override

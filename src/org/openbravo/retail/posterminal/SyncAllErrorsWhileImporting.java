@@ -56,8 +56,8 @@ public class SyncAllErrorsWhileImporting extends DalBaseProcess {
   protected void doExecute(ProcessBundle bundle) throws Exception {
     logger = bundle.getLogger();
     try {
-      OBCriteria<OBPOSErrors> queryListErrors = OBDal.getInstance()
-          .createCriteria(OBPOSErrors.class);
+      OBCriteria<OBPOSErrors> queryListErrors = OBDal.getInstance().createCriteria(
+          OBPOSErrors.class);
       queryListErrors.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
       queryListErrors.add(Restrictions.le(OBPOSErrors.PROPERTY_ATTEMPTS, 3L));
       queryListErrors.addOrderBy(OBPOSErrors.PROPERTY_CREATIONDATE, true);
@@ -87,8 +87,8 @@ public class SyncAllErrorsWhileImporting extends DalBaseProcess {
         try {
           OBContext.setAdminMode(true);
           error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-          if (result.get(JsonConstants.RESPONSE_STATUS)
-              .equals(JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
+          if (result.get(JsonConstants.RESPONSE_STATUS).equals(
+              JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
             logger.logln("Record has not been synced: " + error.getIdentifier());
           } else {
             error.setOrderstatus("Y");

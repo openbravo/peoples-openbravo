@@ -97,8 +97,7 @@ public class VoidLayaway {
 
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order) {
     try {
-      for (Iterator<? extends Object> layawayhookiter = hooks.iterator(); layawayhookiter
-          .hasNext();) {
+      for (Iterator<? extends Object> layawayhookiter = hooks.iterator(); layawayhookiter.hasNext();) {
         Object layawayhook = layawayhookiter.next();
         if (layawayhook instanceof VoidLayawayHook) {
           ((VoidLayawayHook) layawayhook).exec(jsonorder, order);

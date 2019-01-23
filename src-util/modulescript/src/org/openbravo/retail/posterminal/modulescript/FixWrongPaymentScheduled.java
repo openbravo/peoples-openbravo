@@ -33,8 +33,8 @@ public class FixWrongPaymentScheduled extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      CallableStatement cs = cp.getConnection()
-          .prepareCall("{call OBPOS_fixwrongpaymentscheduled()}");
+      CallableStatement cs = cp.getConnection().prepareCall(
+          "{call OBPOS_fixwrongpaymentscheduled()}");
       cs.execute();
       cs.close();
     } catch (Exception e) {
@@ -47,8 +47,8 @@ public class FixWrongPaymentScheduled extends ModuleScript {
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
     // lower than RMP27.4 (Retail pack)(1.7.1150)
-    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
-        new OpenbravoVersion(1, 7, 1150));
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null, new OpenbravoVersion(1, 7,
+        1150));
   }
 
   @Override

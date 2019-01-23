@@ -35,8 +35,8 @@ public class UpdateIsLayaway extends ModuleScript {
 
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
-        new OpenbravoVersion(1, 8, 3302));
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null, new OpenbravoVersion(1, 8,
+        3302));
   }
 
   @Override

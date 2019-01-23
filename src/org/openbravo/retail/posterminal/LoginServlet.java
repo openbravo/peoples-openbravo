@@ -47,27 +47,28 @@ public class LoginServlet extends WebServiceAbstractServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
     doGetOrPost(request, response, request.getParameter("content"));
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
     doGetOrPost(request, response, getRequestContent(request));
   }
 
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    writeResult(response, JsonUtils
-        .convertExceptionToJson(new InvalidRequestException("Method not supported: DELETE")));
+    writeResult(
+        response,
+        JsonUtils.convertExceptionToJson(new InvalidRequestException("Method not supported: DELETE")));
   }
 
   @Override
-  public void doPut(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
     writeResult(response,
         JsonUtils.convertExceptionToJson(new InvalidRequestException("Method not supported: PUT")));
   }

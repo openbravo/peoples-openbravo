@@ -54,10 +54,8 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
 
       String exists1 = EnableTerminalAuthForNewInstancesData.selectIsNewInstance(cp);
-      String exists2 = EnableTerminalAuthForNewInstancesData
-          .selectCurrentTerminalAuthenticationPreferences(cp);
-      String exists3 = EnableTerminalAuthForNewInstancesData
-          .selectCurrentTerminalAuthenticationPreferencesEnabled(cp);
+      String exists2 = EnableTerminalAuthForNewInstancesData.selectCurrentTerminalAuthenticationPreferences(cp);
+      String exists3 = EnableTerminalAuthForNewInstancesData.selectCurrentTerminalAuthenticationPreferencesEnabled(cp);
       int numberOfTerminals = Integer.parseInt(exists1);
       int definedPrefs = Integer.parseInt(exists2);
       int prefsWithValueTrue = Integer.parseInt(exists3);
@@ -65,31 +63,28 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
       // authentication are NOT defined
       if (numberOfTerminals > 0) {
         if (definedPrefs == 1) {
-          EnableTerminalAuthForNewInstancesData[] clientIds = EnableTerminalAuthForNewInstancesData
-              .selectClientIds(cp);
+          EnableTerminalAuthForNewInstancesData[] clientIds = EnableTerminalAuthForNewInstancesData.selectClientIds(cp);
           for (int i = 0; i < clientIds.length; i++) {
             String clientId = clientIds[i].clientid;
-            int prefs = EnableTerminalAuthForNewInstancesData
-                .insertNewTerminalAuthenticationPreference(cp, clientId, "N", "0");
-            log4j.debug("-EnableTerminalAuthForNewInstances- " + prefs
+            int prefs = EnableTerminalAuthForNewInstancesData.insertNewTerminalAuthenticationPreference(
+                cp, clientId, "N", "0");
+            log4j.debug("-EnableTerminalAuthForNewInstances- "
+                + prefs
                 + " Preference -OBPOS_TerminalAuthentication- with value 'Y' have been created for client "
                 + clientId + ".");
           }
         } else if (definedPrefs == 0) {
           // Should not happen
-          int prefs = EnableTerminalAuthForNewInstancesData
-              .insertNewTerminalAuthenticationPreference(cp, "0", "Y", null);
-          log4j.debug(
-              "-EnableTerminalAuthForNewInstances- There are no preferences for property -OBPOS_TerminalAuthentication- Defaut one was created.");
+          int prefs = EnableTerminalAuthForNewInstancesData.insertNewTerminalAuthenticationPreference(
+              cp, "0", "Y", null);
+          log4j.debug("-EnableTerminalAuthForNewInstances- There are no preferences for property -OBPOS_TerminalAuthentication- Defaut one was created.");
         } else {
           // Customer has already defined preference for this functionality. The MS will not do
           // nothing.
-          log4j.debug(
-              "-EnableTerminalAuthForNewInstances- There are preferences for property -OBPOS_TerminalAuthentication- alredy defined. Nothing was done.");
+          log4j.debug("-EnableTerminalAuthForNewInstances- There are preferences for property -OBPOS_TerminalAuthentication- alredy defined. Nothing was done.");
         }
       } else {
-        log4j.debug(
-            "-EnableTerminalAuthForNewInstances- Module script executed but nothing was done because there are no terminals in this instance.");
+        log4j.debug("-EnableTerminalAuthForNewInstances- Module script executed but nothing was done because there are no terminals in this instance.");
       }
     } catch (Exception e) {
       handleError(e);
@@ -100,8 +95,8 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
     // lower than 16Q1 (Retail pack)(1.8.1703)
-    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
-        new OpenbravoVersion(1, 8, 1703));
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null, new OpenbravoVersion(1, 8,
+        1703));
   }
 
   @Override

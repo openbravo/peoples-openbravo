@@ -28,15 +28,13 @@ public class OrderLoaderPreAddShipmentLineHook_Response {
   }
 
   public void setNewLocator(Locator _newLocator) {
-    if (this.isValid() && !(this.getAction()
-        .equals(OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE))) {
+    if (this.isValid()
+        && !(this.getAction().equals(OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE))) {
       this.newLocator = _newLocator;
     } else {
       this.newLocator = null;
-      log.warn(
-          "New Locator only will be taken into account when response is valid and action is not "
-              + OrderLoaderPreAddShipmentLineHook
-                  .getActionString(OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE));
+      log.warn("New Locator only will be taken into account when response is valid and action is not "
+          + OrderLoaderPreAddShipmentLineHook.getActionString(OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE));
     }
   }
 
@@ -58,9 +56,8 @@ public class OrderLoaderPreAddShipmentLineHook_Response {
     } else {
       this.cancelExecution = true;
       if (!_cancelExecution) {
-        log.warn(
-            "Cancel Execution MUST BE true except for action " + OrderLoaderPreAddShipmentLineHook
-                .getActionString(OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE));
+        log.warn("Cancel Execution MUST BE true except for action "
+            + OrderLoaderPreAddShipmentLineHook.getActionString(OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE));
       }
     }
   }
@@ -100,7 +97,6 @@ public class OrderLoaderPreAddShipmentLineHook_Response {
       default:
         this.setCancelExecution(true);
     }
-    this.setMsg(
-        "This is a generic error message comming from the execution of -OrderLoaderPreAddShipmentLineHook- Hook");
+    this.setMsg("This is a generic error message comming from the execution of -OrderLoaderPreAddShipmentLineHook- Hook");
   }
 }

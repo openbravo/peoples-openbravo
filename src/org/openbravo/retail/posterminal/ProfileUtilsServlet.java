@@ -46,8 +46,8 @@ public class ProfileUtilsServlet extends ProfileUtils {
       hqlQuery.append(") AND ");
       hqlQuery.append("organization.active=true ");
       hqlQuery.append("order by name");
-      final OBQuery<Warehouse> warehouses = OBDal.getInstance()
-          .createQuery(Warehouse.class, hqlQuery.toString());
+      final OBQuery<Warehouse> warehouses = OBDal.getInstance().createQuery(Warehouse.class,
+          hqlQuery.toString());
       warehouses.setNamedParameter("orgList", osp.getNaturalTree(org.getId()));
       warehouses.setNamedParameter("orgId", org.getId());
       warehouses.setNamedParameter("clientId", clientId);
@@ -76,8 +76,8 @@ public class ProfileUtilsServlet extends ProfileUtils {
         + " and o.organization.id = :orgId)"//
         + " order by role.name ASC";
 
-    final OBQuery<UserRoles> rolesQuery = OBDal.getInstance()
-        .createQuery(UserRoles.class, whereClause);
+    final OBQuery<UserRoles> rolesQuery = OBDal.getInstance().createQuery(UserRoles.class,
+        whereClause);
     rolesQuery.setFilterOnReadableClients(false);
     rolesQuery.setFilterOnReadableOrganization(false);
     rolesQuery.setNamedParameter("user", OBContext.getOBContext().getUser().getId());

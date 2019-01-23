@@ -42,8 +42,8 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   public static final String WEB_POS_SESSION = "OBPOS_POS";
 
   @Override
-  protected RoleDefaults getDefaults(HttpServletRequest req, HttpServletResponse res, String userId,
-      String roleId, Session session) {
+  protected RoleDefaults getDefaults(HttpServletRequest req, HttpServletResponse res,
+      String userId, String roleId, Session session) {
     final VariablesSecureApp vars = new VariablesSecureApp(req);
     final String terminalSearchKey = vars.getStringParameter("terminalName");
 
@@ -126,8 +126,8 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     OBContext.setAdminMode(false);
     try {
       // Terminal access will be checked to ensure that the user has access to the terminal
-      OBQuery<TerminalAccess> accessCrit = OBDal.getInstance()
-          .createQuery(TerminalAccess.class, "where userContact.id= :userId ");
+      OBQuery<TerminalAccess> accessCrit = OBDal.getInstance().createQuery(TerminalAccess.class,
+          "where userContact.id= :userId ");
       accessCrit.setFilterOnReadableClients(false);
       accessCrit.setFilterOnReadableOrganization(false);
       accessCrit.setNamedParameter("userId", userId);
@@ -156,13 +156,12 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
       }
       // Issue 28142: We also need to check if the organization of the user belongs to the natural
       // organization tree of the Terminal
-      OBQuery<OBPOSApplications> appQry = OBDal.getInstance()
-          .createQuery(OBPOSApplications.class,
-              "where searchKey = :terminalSearchKey  and ((ad_isorgincluded("
-                  + "(select organization from ADUser where id= :userId)"
-                  + ", organization, client.id) <> -1) or " + "(ad_isorgincluded(organization, "
-                  + "(select organization from ADUser where id= :userId)"
-                  + ", client.id) <> -1)) ");
+      OBQuery<OBPOSApplications> appQry = OBDal.getInstance().createQuery(
+          OBPOSApplications.class,
+          "where searchKey = :terminalSearchKey  and ((ad_isorgincluded("
+              + "(select organization from ADUser where id= :userId)"
+              + ", organization, client.id) <> -1) or " + "(ad_isorgincluded(organization, "
+              + "(select organization from ADUser where id= :userId)" + ", client.id) <> -1)) ");
       appQry.setFilterOnReadableClients(false);
       appQry.setFilterOnReadableOrganization(false);
       appQry.setNamedParameter("terminalSearchKey", terminalSearchKey);
@@ -213,8 +212,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   public static Role getNearestRoleValidToLoginInWebPosTerminalForCertainUser(User currentUser,
       OBPOSApplications terminal) {
     StringBuilder hqlQueryStr = new StringBuilder();
-    hqlQueryStr.append(
-        "SELECT rolOrg.role.id, to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) as distance ");
+    hqlQueryStr.append("SELECT rolOrg.role.id, to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) as distance ");
     hqlQueryStr.append("FROM ADRoleOrganization rolOrg ");
     hqlQueryStr.append("WHERE rolOrg.active = true and ");
     hqlQueryStr.append("      rolOrg.role.active = true and ");
@@ -229,10 +227,8 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     hqlQueryStr.append("              frmacc.active = true and ");
     hqlQueryStr.append("              frmacc.specialForm.id = :formId");
     hqlQueryStr.append("      ) and ");
-    hqlQueryStr.append(
-        "      to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) > 0 ");
-    hqlQueryStr.append(
-        "ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC");
+    hqlQueryStr.append("      to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) > 0 ");
+    hqlQueryStr.append("ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC");
     final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
     final Query<Object[]> query = hibernateSession.createQuery(hqlQueryStr.toString(),
         Object[].class);
@@ -259,14 +255,11 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
       OBPOSApplications terminal) {
     if (hasMobileAccess(currentRole, POSConstants.APP_NAME)) {
       StringBuilder hqlQueryStr = new StringBuilder();
-      hqlQueryStr.append(
-          "SELECT to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) as distance ");
+      hqlQueryStr.append("SELECT to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) as distance ");
       hqlQueryStr.append("FROM ADRoleOrganization rolOrg ");
       hqlQueryStr.append("WHERE rolOrg.role.id = :roleId and ");
-      hqlQueryStr.append(
-          "      to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) > 0 ");
-      hqlQueryStr.append(
-          "ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC");
+      hqlQueryStr.append("      to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) > 0 ");
+      hqlQueryStr.append("ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC");
       final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
       final Query<BigDecimal> query = hibernateSession.createQuery(hqlQueryStr.toString(),
           BigDecimal.class);

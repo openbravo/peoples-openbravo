@@ -31,8 +31,8 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
       }
       oldOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
       inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-      final OBPOSApplications posTerminal = OBDal.getInstance()
-          .get(OBPOSApplications.class, jsonorder.getString("posTerminal"));
+      final OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          jsonorder.getString("posTerminal"));
       inverseOrder.setObposApplications(posTerminal);
     }
   }

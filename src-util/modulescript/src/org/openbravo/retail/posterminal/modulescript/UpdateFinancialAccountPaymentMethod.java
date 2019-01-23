@@ -25,8 +25,7 @@ public class UpdateFinancialAccountPaymentMethod extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      int count = UpdateFinancialAccountPaymentMethodData
-          .updateFinancialAccountPaymentMethodAutomaticDeposit(cp);
+      int count = UpdateFinancialAccountPaymentMethodData.updateFinancialAccountPaymentMethodAutomaticDeposit(cp);
       log4j.debug("Fixed " + count
           + " financial account payment methods with automatic deposit different to Y");
     } catch (Exception e) {
@@ -36,8 +35,8 @@ public class UpdateFinancialAccountPaymentMethod extends ModuleScript {
 
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
-        new OpenbravoVersion(1, 8, 2700));
+    return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null, new OpenbravoVersion(1, 8,
+        2700));
   }
 
 }

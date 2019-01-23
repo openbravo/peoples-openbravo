@@ -43,14 +43,14 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
   private static String SERVLET_PATH = "org.openbravo.retail.posterminal.service.jsonrest";
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
     doGetOrPost(request, response, null);
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
+      ServletException {
     doGetOrPost(request, response, getRequestContent(request));
   }
 
@@ -63,9 +63,8 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
       return;
     }
     try {
-      final Object jsonsent = getContentAsJSON((content == null && pathparts.length == 3)
-          ? java.net.URLDecoder.decode(pathparts[2], "UTF-8")
-          : content);
+      final Object jsonsent = getContentAsJSON((content == null && pathparts.length == 3) ? java.net.URLDecoder.decode(
+          pathparts[2], "UTF-8") : content);
 
       response.setContentType("application/json");
       response.setCharacterEncoding("UTF-8");
@@ -85,13 +84,13 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
             w.write("}}");
             w.close();
           } else {
-            writeResult(response, JsonUtils.convertExceptionToJson(
-                new InvalidRequestException("Content is not a JSON object.")));
+            writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
+                "Content is not a JSON object.")));
           }
         } catch (ClassNotFoundException e) {
           log.error(e.getMessage(), e);
-          writeResult(response, JsonUtils.convertExceptionToJson(
-              new InvalidRequestException("Command class not found: " + pathparts[1])));
+          writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
+              "Command class not found: " + pathparts[1])));
         }
       }
     } catch (JSONException e) {
@@ -125,8 +124,7 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
       execThing(w, (JSONObject) jsonContent);
       w.write("}}");
     } else {
-      w.write(
-          JsonUtils.convertExceptionToJson(new JSONException("Expected JSON object or array.")));
+      w.write(JsonUtils.convertExceptionToJson(new JSONException("Expected JSON object or array.")));
     }
   }
 
@@ -176,8 +174,10 @@ public class TerminalServlet extends WebServiceAuthenticatedServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(SERVLET_PATH)) {
-      writeResult(response, JsonUtils.convertExceptionToJson(
-          new InvalidRequestException("Invalid url: " + request.getRequestURI())));
+      writeResult(
+          response,
+          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
+              + request.getRequestURI())));
       return null;
     }
 
