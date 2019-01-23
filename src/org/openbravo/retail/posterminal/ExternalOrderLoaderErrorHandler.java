@@ -30,6 +30,7 @@ public class ExternalOrderLoaderErrorHandler extends POSDataSynchronizationError
     super.handleError(t, entity, result, jsonRecord);
   }
 
+  @Override
   public boolean setImportEntryStatusToError() {
     return true;
   }

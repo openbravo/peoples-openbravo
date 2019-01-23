@@ -37,7 +37,8 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
           result.put("orderCancelled", true);
         } else {
           result.put("orderCancelled", false);
-          if (jsonData.has("checkNotEditableLines") && jsonData.getBoolean("checkNotEditableLines")) {
+          if (jsonData.has("checkNotEditableLines")
+              && jsonData.getBoolean("checkNotEditableLines")) {
             // Find the deferred services or the products that have related deferred services in the
             // order that is being canceled
             final StringBuffer hql = new StringBuffer();
@@ -49,7 +50,8 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             hql.append("WHERE so.id <> :orderId ");
             hql.append("AND pol.salesOrder.id = :orderId ");
             hql.append("AND so.iscancelled = false");
-            final Query<Long> query = OBDal.getInstance().getSession()
+            final Query<Long> query = OBDal.getInstance()
+                .getSession()
                 .createQuery(hql.toString(), Long.class);
             query.setParameter("orderId", orderId);
             result.put("deferredLines", query.list());
@@ -70,7 +72,8 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
             hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
             hql.append("AND so.documentStatus <> 'CL' ");
-            final Query<String> query = OBDal.getInstance().getSession()
+            final Query<String> query = OBDal.getInstance()
+                .getSession()
                 .createQuery(hql.toString(), String.class);
             query.setParameter("orderId", orderId);
             result.put("notDeliveredDeferredServices", query.list());
@@ -78,8 +81,8 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
         }
       } else {
         // The layaway was not found in the database.
-        throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_OrderNotFound",
-            new String[] { documentNo }));
+        throw new OBException(
+            OBMessageUtils.getI18NMessage("OBPOS_OrderNotFound", new String[] { documentNo }));
       }
       result.put("status", JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } catch (JSONException e) {

@@ -45,8 +45,8 @@ public class CustomerAddrImportEntryProcessor extends ImportEntryProcessor {
     return importEntry.getOrganization().getId();
   }
 
-  private static class BusinessPartnerLocationRunnable extends
-      SerializedByTermImportEntryProcessorRunnable {
+  private static class BusinessPartnerLocationRunnable
+      extends SerializedByTermImportEntryProcessorRunnable {
     @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return CustomerAddrLoader.class;

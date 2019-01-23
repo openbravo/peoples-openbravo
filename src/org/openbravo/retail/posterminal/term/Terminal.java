@@ -90,30 +90,33 @@ public class Terminal extends JSONProcessSimple {
       // getLastDocumentNumberForPOS
       String returnsDocTypeId = organization.getObposCDoctyperet().getId();
       List<String> doctypeIds = new ArrayList<String>();
+
       doctypeIds.add(organization.getObposCDoctype().getId());
       if (pOSTerminal.getReturndocnoPrefix() == null)
         doctypeIds.add(organization.getObposCDoctyperet().getId());
+
       int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
           doctypeIds);
       int lastQuotationDocumentNumber = 0;
       if (quotationsDocTypeId != null) {
-        lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberQuotationForPOS(
-            pOSTerminal.getSearchKey(), quotationsDocTypeId);
+        lastQuotationDocumentNumber = POSUtils
+            .getLastDocumentNumberQuotationForPOS(pOSTerminal.getSearchKey(), quotationsDocTypeId);
       }
       int lastReturnDocumentNumber = 0;
       if (returnsDocTypeId != null) {
-        lastReturnDocumentNumber = POSUtils.getLastDocumentNumberReturnForPOS(
-            pOSTerminal.getSearchKey(), returnsDocTypeId);
+        lastReturnDocumentNumber = POSUtils
+            .getLastDocumentNumberReturnForPOS(pOSTerminal.getSearchKey(), returnsDocTypeId);
       }
       String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
       final org.openbravo.model.pricing.pricelist.PriceList priceList = POSUtils
           .getPriceListByTerminal(pOSTerminal.getSearchKey());
 
-      HQLPropertyList regularTerminalHQLProperties = ModelExtensionUtils.getPropertyExtensions(
-          extensions, jsonsent);
+      HQLPropertyList regularTerminalHQLProperties = ModelExtensionUtils
+          .getPropertyExtensions(extensions, jsonsent);
 
       final OrganizationInformation myOrgInfo = pOSTerminal.getOrganization()
-          .getOrganizationInformationList().get(0);
+          .getOrganizationInformationList()
+          .get(0);
 
       String storeAddress = "";
       String regionId = "";
@@ -146,9 +149,9 @@ public class Terminal extends JSONProcessSimple {
       int serverTimeout;
       try {
         String sessionShouldExpire = Preferences.getPreferenceValue("OBPOS_SessionTimeout", true,
-            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                .getOBContext().getRole(), null);
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null);
         try {
           sessionTimeout = sessionShouldExpire == null ? 0 : Integer.parseInt(sessionShouldExpire);
         } catch (NumberFormatException nfe) {
@@ -160,57 +163,34 @@ public class Terminal extends JSONProcessSimple {
 
       serverTimeout = getSessionTimeoutFromDatabase();
 
-      Object currencyFormat = POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
-          .getCurrentOrganization(), Organization.PROPERTY_OBPOSCURRENCYFORMAT);
+      Object currencyFormat = POSUtils.getPropertyInOrgTree(
+          OBContext.getOBContext().getCurrentOrganization(),
+          Organization.PROPERTY_OBPOSCURRENCYFORMAT);
 
       if (currencyFormat == null) {
         currencyFormat = "";
       }
 
-      String terminalhqlquery = "select " + "'"
-          + currencyFormat
-          + "' as currencyFormat, "
-          + "pricelist.id as priceList, "
-          + "pricelist.currency.id as currency, "
-          + "'"
-          + priceList.getCurrency().getIdentifier()
-          + "' as "
-          + getIdentifierAlias("currency")
-          + ", "
-          + "pricelist.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
-          + "pricelist.currency.symbol as symbol, "
-          + "'"
-          + warehouseId
-          + "' as warehouse, "
-          + lastDocumentNumber
-          + " as lastDocumentNumber, "
-          + lastQuotationDocumentNumber
-          + " as lastQuotationDocumentNumber, "
-          + lastReturnDocumentNumber
-          + " as lastReturnDocumentNumber, "
-          + "'"
-          + regionId
-          + "'"
-          + " as organizationRegionId, "
-          + "'"
-          + countryId
-          + "'"
-          + " as organizationCountryId, '"
-          + ProcessHQLQuery.escape(storeAddress)
-          + "' as organizationAddressIdentifier, "
-          + sessionTimeout
-          + " as sessionTimeout, "
-          + selectOrgImage
+      String terminalhqlquery = "select " + "'" + currencyFormat + "' as currencyFormat, "
+          + "pricelist.id as priceList, " + "pricelist.currency.id as currency, " + "'"
+          + priceList.getCurrency().getIdentifier() + "' as " + getIdentifierAlias("currency")
+          + ", " + "pricelist.currency.currencySymbolAtTheRight as currencySymbolAtTheRight, "
+          + "pricelist.currency.symbol as symbol, " + "'" + warehouseId + "' as warehouse, "
+          + lastDocumentNumber + " as lastDocumentNumber, " + lastQuotationDocumentNumber
+          + " as lastQuotationDocumentNumber, " + lastReturnDocumentNumber
+          + " as lastReturnDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
+          + "'" + countryId + "'" + " as organizationCountryId, '"
+          + ProcessHQLQuery.escape(storeAddress) + "' as organizationAddressIdentifier, "
+          + sessionTimeout + " as sessionTimeout, " + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()
           + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype inner join pos.organization AS org, "
-          + "PricingPriceList pricelist "
-          + fromOrgImage
+          + "PricingPriceList pricelist " + fromOrgImage
           + " where pos.$readableSimpleCriteria and pos.$activeCriteria and pos.searchKey =:searchKey and pricelist.id =:pricelistId "
           + whereOrgImage;
 
-      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(terminalhqlquery, OBContext
-          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-          .getCurrentOrganization().getId(), null, null, null);
+      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(terminalhqlquery,
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
 
       @SuppressWarnings("rawtypes")
       final Query terminalquery = querybuilder.getDalQuery();
@@ -234,8 +214,9 @@ public class Terminal extends JSONProcessSimple {
       JSONArray arrayresult = new JSONArray();
       JSONObject aux = new JSONObject();
       arrayresult.put(aux.put("terminal",
-          (new JSONArray(new JSONTokener(new JSONObject("{" + w.toString() + "}").get("data")
-              .toString())).get(0))));
+          (new JSONArray(
+              new JSONTokener(new JSONObject("{" + w.toString() + "}").get("data").toString()))
+                  .get(0))));
 
       for (Iterator<QueryTerminalProperty> queryIter = queryterminalproperties.iterator(); queryIter
           .hasNext();) {
@@ -246,8 +227,8 @@ public class Terminal extends JSONProcessSimple {
 
         JSONObject jsonQueryVal = new JSONObject("{" + queryWriter.toString() + "}");
         if (jsonQueryVal.has("data")) {
-          JSONArray arrayQueryVal = new JSONArray(new JSONTokener(jsonQueryVal.get("data")
-              .toString()));
+          JSONArray arrayQueryVal = new JSONArray(
+              new JSONTokener(jsonQueryVal.get("data").toString()));
 
           if (queryterminal.returnList()) {
             queryaux.put(queryterminal.getProperty(),
@@ -258,7 +239,8 @@ public class Terminal extends JSONProcessSimple {
         } else {
           String errorMessage = "Error while loading query terminal property of "
               + queryterminal.getProperty();
-          if (jsonQueryVal.has("error") && ((JSONObject) jsonQueryVal.get("error")).has("message")) {
+          if (jsonQueryVal.has("error")
+              && ((JSONObject) jsonQueryVal.get("error")).has("message")) {
             errorMessage = ((JSONObject) jsonQueryVal.get("error")).get("message").toString();
           }
           throw new OBException(errorMessage);
@@ -286,8 +268,8 @@ public class Terminal extends JSONProcessSimple {
       return result;
 
     } catch (Exception e) {
-      log.error("Terminal exception: " + e.getMessage() + "Stacktrace: "
-          + e.getStackTrace().toString());
+      log.error(
+          "Terminal exception: " + e.getMessage() + "Stacktrace: " + e.getStackTrace().toString());
       throw new OBException(e.getMessage());
     } finally {
       OBContext.restorePreviousMode();
@@ -304,12 +286,13 @@ public class Terminal extends JSONProcessSimple {
   }
 
   private int getSessionTimeoutFromDatabase() {
-    OBCriteria<ModelImplementation> timeoutModelObjectCrit = OBDal.getInstance().createCriteria(
-        ModelImplementation.class);
+    OBCriteria<ModelImplementation> timeoutModelObjectCrit = OBDal.getInstance()
+        .createCriteria(ModelImplementation.class);
     timeoutModelObjectCrit.add(Restrictions.eq(ModelImplementation.PROPERTY_OBJECTTYPE, "ST"));
     ModelImplementation timeoutModelObj = (ModelImplementation) timeoutModelObjectCrit
         .uniqueResult();
-    for (ModelImplementationParameter param : timeoutModelObj.getModelImplementationParameterList()) {
+    for (ModelImplementationParameter param : timeoutModelObj
+        .getModelImplementationParameterList()) {
       if (param.getName().equalsIgnoreCase("Timeout")) {
         return Integer.parseInt(param.getSearchKey());
       }

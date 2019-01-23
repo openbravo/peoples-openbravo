@@ -41,7 +41,7 @@ public class FixDataIssue25555 extends ModuleScript {
       handleError(e);
     }
   }
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
@@ -49,7 +49,7 @@ public class FixDataIssue25555 extends ModuleScript {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
         new OpenbravoVersion(1, 8, 220));
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
     return false;

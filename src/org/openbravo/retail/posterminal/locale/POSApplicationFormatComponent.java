@@ -25,8 +25,9 @@ import org.openbravo.retail.posterminal.POSUtils;
 public class POSApplicationFormatComponent extends ApplicationComponent {
   @Override
   public String getDefaultDecimalSymbol() {
-    String decimalSymbol = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
-        .getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATDECIMAL);
+    String decimalSymbol = (String) POSUtils.getPropertyInOrgTree(
+        OBContext.getOBContext().getCurrentOrganization(),
+        Organization.PROPERTY_OBPOSFORMATDECIMAL);
     if (StringUtils.isEmpty(decimalSymbol)) {
       return super.getDefaultDecimalSymbol();
     } else {
@@ -36,8 +37,8 @@ public class POSApplicationFormatComponent extends ApplicationComponent {
 
   @Override
   public String getDefaultGroupingSymbol() {
-    String groupSymbol = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
-        .getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATGROUP);
+    String groupSymbol = (String) POSUtils.getPropertyInOrgTree(
+        OBContext.getOBContext().getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATGROUP);
     if (StringUtils.isEmpty(groupSymbol)) {
       return super.getDefaultGroupingSymbol();
     } else {
@@ -47,8 +48,8 @@ public class POSApplicationFormatComponent extends ApplicationComponent {
 
   @Override
   public String getDateFormat() {
-    String dateFormat = (String) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
-        .getCurrentOrganization(), Organization.PROPERTY_OBPOSDATEFORMAT);
+    String dateFormat = (String) POSUtils.getPropertyInOrgTree(
+        OBContext.getOBContext().getCurrentOrganization(), Organization.PROPERTY_OBPOSDATEFORMAT);
     if (StringUtils.isEmpty(dateFormat)) {
       return super.getDateFormat();
     } else {

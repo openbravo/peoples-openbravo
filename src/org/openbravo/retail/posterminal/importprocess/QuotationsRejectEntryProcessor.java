@@ -31,26 +31,31 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ApplicationScoped
 public class QuotationsRejectEntryProcessor extends ImportEntryProcessor {
 
+  @Override
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(QuotationsRejectRunnable.class);
   }
 
+  @Override
   protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
     return "OBPOS_RejectQuotation".equals(importEntryInformation.getTypeofdata());
   }
 
+  @Override
   protected String getProcessSelectionKey(ImportEntry importEntry) {
     return importEntry.getOrganization().getId();
   }
 
-  private static class QuotationsRejectRunnable extends
-      SerializedByTermImportEntryProcessorRunnable {
+  private static class QuotationsRejectRunnable
+      extends SerializedByTermImportEntryProcessorRunnable {
     private static final String REJECT_QUOTATION_AUDIT_TYPE = "OBPOS_RejectQuotation";
 
+    @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return QuotationsReject.class;
     }
 
+    @Override
     protected void processEntry(ImportEntry importEntry) throws Exception {
       try {
         OBContext.setAdminMode(false);

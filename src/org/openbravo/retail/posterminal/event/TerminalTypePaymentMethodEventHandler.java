@@ -31,8 +31,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      TerminalTypePaymentMethod.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(TerminalTypePaymentMethod.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -59,8 +59,9 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
   private void checkNoAutomaticDepositNotInCashup(EntityPersistenceEvent event) {
     TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
     if (!ttpm.isCountpaymentincashup() && !ttpm.getPaymentMethod().isAutomaticDeposit()) {
-      throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-          "OBPOS_NotAutoPayNotDepositCashup", OBContext.getOBContext().getLanguage().getLanguage()));
+      throw new OBException(
+          Utility.messageBD(new DalConnectionProvider(false), "OBPOS_NotAutoPayNotDepositCashup",
+              OBContext.getOBContext().getLanguage().getLanguage()));
     }
   }
 
@@ -75,7 +76,8 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
         hql.append(" where " + OBPOSCurrencyRounding.PROPERTY_CURRENCY + ".id = :currencyId");
         hql.append(" and " + OBPOSCurrencyRounding.PROPERTY_ACTIVE + " = true");
         hql.append(" and ad_isorgincluded(:organizationId, cr.organization.id, :clientId) <> -1");
-        Query<String> qry = OBDal.getInstance().getSession()
+        Query<String> qry = OBDal.getInstance()
+            .getSession()
             .createQuery(hql.toString(), String.class);
         qry.setParameter("currencyId", ttpm.getCurrency().getId());
         qry.setParameter("organizationId", ttpm.getOrganization().getId());
@@ -83,8 +85,9 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
         qry.setMaxResults(1);
         String currencyRoundingId = qry.uniqueResult();
         if (currencyRoundingId != null) {
-          throw new OBException(String.format(OBMessageUtils
-              .messageBD("OBPOS_ChangeLogicNotAllowed"), ttpm.getCurrency().getISOCode()));
+          throw new OBException(
+              String.format(OBMessageUtils.messageBD("OBPOS_ChangeLogicNotAllowed"),
+                  ttpm.getCurrency().getISOCode()));
         }
       }
     } finally {

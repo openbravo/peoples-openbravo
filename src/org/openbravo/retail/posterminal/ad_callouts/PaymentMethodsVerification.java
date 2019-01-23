@@ -29,8 +29,8 @@ public class PaymentMethodsVerification extends SimpleCallout {
     if (noDifferentPayments > 0) {
       Map<String, String> map = new HashMap<String, String>();
       map.put("noPayments", Integer.toString(noDifferentPayments));
-      info.addResult("WARNING", OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("OBPOS_CALLOUT_PAYMENTMETHODS"), map));
+      info.addResult("WARNING", OBMessageUtils
+          .parseTranslation(OBMessageUtils.messageBD("OBPOS_CALLOUT_PAYMENTMETHODS"), map));
     }
 
   }
@@ -39,9 +39,9 @@ public class PaymentMethodsVerification extends SimpleCallout {
    * Search for those payments with an active property different from the POS Terminal Type
    */
   private int getNoDifferentPayments(String paymentType, Boolean status) {
-    OBQuery<OBPOSAppPayment> terminalPaymentQuery = OBDal.getInstance().createQuery(
-        OBPOSAppPayment.class,
-        " as obap where obap.active = :status and obap.paymentMethod.id = :paymentType");
+    OBQuery<OBPOSAppPayment> terminalPaymentQuery = OBDal.getInstance()
+        .createQuery(OBPOSAppPayment.class,
+            " as obap where obap.active = :status and obap.paymentMethod.id = :paymentType");
     terminalPaymentQuery.setFilterOnActive(false);
     terminalPaymentQuery.setNamedParameter("status", status ? false : true);
     terminalPaymentQuery.setNamedParameter("paymentType", paymentType);

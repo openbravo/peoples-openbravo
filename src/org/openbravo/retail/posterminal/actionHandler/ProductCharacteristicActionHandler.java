@@ -10,14 +10,14 @@ package org.openbravo.retail.posterminal.actionHandler;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.retail.posterminal.POSConstants;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class ProductCharacteristicActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -60,10 +60,10 @@ public class ProductCharacteristicActionHandler extends BaseActionHandler {
 
       if (numberOfChToUseAsFilterInPOS > limit) {
         result.put("warn", true);
-        result.put("warnMessageBody", OBMessageUtils.getI18NMessage(
-            "OBPOS_nrOfChToUseAsFilterInWebPOSExceedTheLimit_body", arrLimit));
-        result.put("warnMessageTitle", OBMessageUtils.getI18NMessage(
-            "OBPOS_nrOfChToUseAsFilterInWebPOSExceedTheLimit_title", arrEmpty));
+        result.put("warnMessageBody", OBMessageUtils
+            .getI18NMessage("OBPOS_nrOfChToUseAsFilterInWebPOSExceedTheLimit_body", arrLimit));
+        result.put("warnMessageTitle", OBMessageUtils
+            .getI18NMessage("OBPOS_nrOfChToUseAsFilterInWebPOSExceedTheLimit_title", arrEmpty));
       }
     } catch (Exception e) {
       log.error(

@@ -38,13 +38,9 @@ public class ReturnReason extends QueryTerminalProperty {
     HQLPropertyList regularReturnReasonHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    hqlQueries
-        .add("select"
-            + regularReturnReasonHQLProperties.getHqlSelect() //
-            + "from ReturnReason reason "
-            + "where "
-            + " reason.isrfc = true "
-            + "and (reason.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableSimpleClientCriteria order by reason.name asc, reason.id");
+    hqlQueries.add("select" + regularReturnReasonHQLProperties.getHqlSelect() //
+        + "from ReturnReason reason " + "where " + " reason.isrfc = true "
+        + "and (reason.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableSimpleClientCriteria order by reason.name asc, reason.id");
 
     return hqlQueries;
   }

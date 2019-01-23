@@ -22,11 +22,9 @@ public class TaxCategoryBOM extends ProcessHQLQuery {
 
     List<String> hqlQueries = new ArrayList<String>();
 
-    hqlQueries
-        .add("select taxcategory.id as id "
-            + "from FinancialMgmtTaxCategory taxcategory "
-            + "where (taxcategory.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableClientCriteria "
-            + "AND taxcategory.asbom=true AND taxcategory.active=true order by taxcategory.id asc");
+    hqlQueries.add("select taxcategory.id as id " + "from FinancialMgmtTaxCategory taxcategory "
+        + "where (taxcategory.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableClientCriteria "
+        + "AND taxcategory.asbom=true AND taxcategory.active=true order by taxcategory.id asc");
 
     return hqlQueries;
   }

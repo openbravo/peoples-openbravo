@@ -13,6 +13,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public abstract class QueryTerminalProperty extends ProcessHQLQuery {
 
+  @Override
   public abstract String getProperty();
 
   public abstract boolean returnList();

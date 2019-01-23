@@ -28,13 +28,13 @@ import org.openbravo.modulescript.ModuleScriptExecutionLimits;
 
 /**
  * 
- * @author adrian
- * insert a new preference to versions updated lower than 1.2.750 version
+ * @author adrian insert a new preference to versions updated lower than 1.2.750 version
  */
 public class InsertDiscountPreference extends ModuleScript {
 
   private static final Logger log4j = LogManager.getLogger();
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
+
   @Override
   public void execute() {
 
@@ -42,10 +42,11 @@ public class InsertDiscountPreference extends ModuleScript {
       ConnectionProvider cp = getConnectionProvider();
 
       String exists2 = InsertDiscountPreferenceData.selectIsNewInstance(cp);
-      // if preference not exists and it is not a new instance then preference "discount to button" is inserted
+      // if preference not exists and it is not a new instance then preference "discount to button"
+      // is inserted
       if (!exists2.equals("0")) {
-    	int prefs = InsertDiscountPreferenceData.insert(cp);
-        log4j.debug("Inserted " + prefs + " preference -open discount button-");  
+        int prefs = InsertDiscountPreferenceData.insert(cp);
+        log4j.debug("Inserted " + prefs + " preference -open discount button-");
       } else {
         log4j.debug("No need to insert preference -open discount button-");
       }
@@ -54,8 +55,7 @@ public class InsertDiscountPreference extends ModuleScript {
       handleError(e);
     }
   }
-  
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
@@ -63,7 +63,7 @@ public class InsertDiscountPreference extends ModuleScript {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
         new OpenbravoVersion(1, 7, 1110));
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
     return false;
@@ -73,7 +73,7 @@ public class InsertDiscountPreference extends ModuleScript {
 
     // This method is provided for testing purposes.
 
-	InsertDiscountPreference t = new InsertDiscountPreference();
+    InsertDiscountPreference t = new InsertDiscountPreference();
     t.execute();
   }
 }

@@ -38,9 +38,9 @@ public class CharacteristicValueProperties extends ModelExtension {
           add(new HQLProperty("cv.characteristic.id", "characteristic_id"));
           boolean isRemote = false;
           isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                  .getOBContext().getRole(), null));
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null));
           if (!isRemote) {
             add(new HQLProperty("node.reportSet", "parent"));
           } else {

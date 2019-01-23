@@ -53,14 +53,14 @@ public class ProductStock extends Product {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      final Date terminalDate = OBMOBCUtils
-          .calculateServerDate(
-              jsonsent.getJSONObject("parameters").getString("terminalTime"),
-              jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
-                  .getLong("value"));
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-          .getString("pos"));
+      final OBRETCOProductList productList = POSUtils
+          .getProductListByPosterminalId(jsonsent.getString("pos"));
       final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
           terminalDate);
 
@@ -82,6 +82,7 @@ public class ProductStock extends Product {
 
   }
 
+  @Override
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
 
     List<String> products = new ArrayList<String>();
@@ -91,18 +92,15 @@ public class ProductStock extends Product {
       String regularProductHql = getRegularProductHql(false, false, jsonsent, false, false);
       HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
-      String hql = "SELECT "
-          + regularProductStockHQLProperties.getHqlSelect() //
+      String hql = "SELECT " + regularProductStockHQLProperties.getHqlSelect() //
           + "FROM MaterialMgmtStorageDetail AS storagedetail " //
           + "JOIN storagedetail.storageBin AS locator " //
           + "WHERE EXISTS (" //
-          + "  SELECT 1 " + regularProductHql
-          + " AND pli.product.id = storagedetail.product.id) " //
+          + "  SELECT 1 " + regularProductHql + " AND pli.product.id = storagedetail.product.id) " //
           + "AND EXISTS ( " //
           + "  SELECT 1 " //
           + "  FROM OrganizationWarehouse ow " //
-          + "  WHERE ow.organization.id = :orgId"
-          + "  AND ow.warehouse.id = locator.warehouse.id) " //
+          + "  WHERE ow.organization.id = :orgId" + "  AND ow.warehouse.id = locator.warehouse.id) " //
           + "GROUP BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id " //
           + "ORDER BY storagedetail.product.id, storagedetail.product.searchKey, locator.warehouse.id ";
 

@@ -24,30 +24,31 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
 public class ValidationUnlinkDeviceActionHandler extends BaseActionHandler {
   public static final Logger log = LogManager.getLogger();
 
-        @Override protected JSONObject execute(Map<String, Object> parameters,String content){
-          try {
-            JSONObject result = new JSONObject();
-            final JSONObject jsonData = new JSONObject(content);
-            final String terminalId = jsonData.getString("id");
-            final OBPOSApplications terminal = OBDal.getInstance().get(OBPOSApplications.class,
-                terminalId);
-            final OBCriteria<OBPOSAppCashup> qApp = OBDal.getInstance().createCriteria(
-                OBPOSAppCashup.class);
-            qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL, terminal));
-            qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ISPROCESSEDBO, false));
-            qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ISPROCESSED, false));
-            
-            qApp.setMaxResults(1);
+  @Override
+  protected JSONObject execute(Map<String, Object> parameters, String content) {
+    try {
+      JSONObject result = new JSONObject();
+      final JSONObject jsonData = new JSONObject(content);
+      final String terminalId = jsonData.getString("id");
+      final OBPOSApplications terminal = OBDal.getInstance()
+          .get(OBPOSApplications.class, terminalId);
+      final OBCriteria<OBPOSAppCashup> qApp = OBDal.getInstance()
+          .createCriteria(OBPOSAppCashup.class);
+      qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL, terminal));
+      qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ISPROCESSEDBO, false));
+      qApp.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ISPROCESSED, false));
 
-            final int num = qApp.count();
+      qApp.setMaxResults(1);
 
-            if (num > 0) {
-              result.put("hasNotClosedCashup","Y");
-            }
+      final int num = qApp.count();
 
-            return result;
-          } catch (Exception e) {
-            throw new OBException(e);
-          }
-        }
+      if (num > 0) {
+        result.put("hasNotClosedCashup", "Y");
+      }
+
+      return result;
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
 }

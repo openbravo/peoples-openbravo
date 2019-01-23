@@ -101,8 +101,8 @@ public class POSOrderCashupPerformanceTest extends OBBaseRetailTest {
   private void testCashupPerformance(boolean groupOrders, boolean generateInvoices)
       throws Exception {
 
-    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-        TEST_POS_TERMINAL_ID);
+    OBPOSApplications posTerminal = OBDal.getInstance()
+        .get(OBPOSApplications.class, TEST_POS_TERMINAL_ID);
     boolean oldGroupOrders = posTerminal.getObposTerminaltype().isGroupingOrders();
     boolean oldGenerateInvoices = posTerminal.getObposTerminaltype().isGenerateInvoice();
     posTerminal.getObposTerminaltype().setGenerateInvoice(generateInvoices);
@@ -149,13 +149,13 @@ public class POSOrderCashupPerformanceTest extends OBBaseRetailTest {
       // should remain under 750 average
       // MatcherAssert.assertThat(avg, Matchers.lessThan(750l));
 
-      System.err.println("Doing " + CASHUP_CNT + " cashups with each " + (ORDER_CNT * 2)
-          + " orders, took " + timing + " millis, is " + avg
-          + " millis per cashup, parameters: grouping: " + groupOrders
-          + ", generate invoice for order: " + generateInvoices);
+      System.err.println(
+          "Doing " + CASHUP_CNT + " cashups with each " + (ORDER_CNT * 2) + " orders, took "
+              + timing + " millis, is " + avg + " millis per cashup, parameters: grouping: "
+              + groupOrders + ", generate invoice for order: " + generateInvoices);
     } finally {
-      OBPOSApplications posTerminal2 = OBDal.getInstance().get(OBPOSApplications.class,
-          TEST_POS_TERMINAL_ID);
+      OBPOSApplications posTerminal2 = OBDal.getInstance()
+          .get(OBPOSApplications.class, TEST_POS_TERMINAL_ID);
       posTerminal2.getObposTerminaltype().setGenerateInvoice(oldGenerateInvoices);
       posTerminal2.getObposTerminaltype().setGroupingOrders(oldGroupOrders);
       OBDal.getInstance().save(posTerminal2);
@@ -164,13 +164,15 @@ public class POSOrderCashupPerformanceTest extends OBBaseRetailTest {
   }
 
   private long countOrders() {
-    Query<Long> qry = OBDal.getInstance().getSession()
+    Query<Long> qry = OBDal.getInstance()
+        .getSession()
         .createQuery("select count(*) from " + Order.ENTITY_NAME, Long.class);
     return qry.uniqueResult();
   }
 
   private long countCashups() {
-    Query<Long> qry = OBDal.getInstance().getSession()
+    Query<Long> qry = OBDal.getInstance()
+        .getSession()
         .createQuery("select count(*) from " + OBPOSAppCashup.ENTITY_NAME, Long.class);
     return qry.uniqueResult();
   }

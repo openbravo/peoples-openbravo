@@ -48,8 +48,8 @@ public class CharacteristicVerification extends SimpleCallout {
    */
   private String getRelatedDiscounts(VariablesSecureApp vars, String strCharacteristicId) {
 
-    final org.openbravo.model.common.plm.Characteristic characteristics = OBDal.getInstance().get(
-        org.openbravo.model.common.plm.Characteristic.class, strCharacteristicId);
+    final org.openbravo.model.common.plm.Characteristic characteristics = OBDal.getInstance()
+        .get(org.openbravo.model.common.plm.Characteristic.class, strCharacteristicId);
 
     String names = new String();
     for (Characteristic offercharactheristic : characteristics

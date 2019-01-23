@@ -8,7 +8,8 @@
  */
 package org.openbravo.retail.posterminal;
 
-public abstract class JSONProcessSimple extends org.openbravo.mobile.core.process.JSONProcessSimple {
+public abstract class JSONProcessSimple
+    extends org.openbravo.mobile.core.process.JSONProcessSimple {
   final String WEBPOS_FORM_ID = "B7B7675269CD4D44B628A2C6CF01244F";
 
   @Override

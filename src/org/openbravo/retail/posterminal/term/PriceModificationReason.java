@@ -23,8 +23,8 @@ public class PriceModificationReason extends QueryTerminalProperty {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    return Arrays
-        .asList(new String[] { "from OBPOS_PriceReason where $readableSimpleCriteria and $activeCriteria order by sequenceNumber" });
+    return Arrays.asList(new String[] {
+        "from OBPOS_PriceReason where $readableSimpleCriteria and $activeCriteria order by sequenceNumber" });
   }
 
   @Override

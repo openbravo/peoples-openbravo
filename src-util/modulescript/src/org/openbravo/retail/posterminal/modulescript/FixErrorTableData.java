@@ -8,7 +8,6 @@
  */
 package org.openbravo.retail.posterminal.modulescript;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
@@ -20,9 +19,9 @@ public class FixErrorTableData extends ModuleScript {
 
   private static final Logger log4j = LogManager.getLogger();
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
-  
+
   @Override
-  //Will fix data error types in Q3 and subsequent releases
+  // Will fix data error types in Q3 and subsequent releases
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
@@ -35,8 +34,7 @@ public class FixErrorTableData extends ModuleScript {
       handleError(e);
     }
   }
-  
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
@@ -44,7 +42,7 @@ public class FixErrorTableData extends ModuleScript {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
         new OpenbravoVersion(1, 8, 903));
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
     return false;

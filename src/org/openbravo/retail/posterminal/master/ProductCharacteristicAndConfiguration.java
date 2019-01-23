@@ -56,8 +56,8 @@ public class ProductCharacteristicAndConfiguration extends Product {
       if (jsonsent.getJSONObject("parameters").has("filterProductList")
           && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
           && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
-        JSONArray filterProductList = jsonsent.getJSONObject("parameters").getJSONArray(
-            "filterProductList");
+        JSONArray filterProductList = jsonsent.getJSONObject("parameters")
+            .getJSONArray("filterProductList");
         paramValues.put("filterProductList", filterProductList);
       }
 

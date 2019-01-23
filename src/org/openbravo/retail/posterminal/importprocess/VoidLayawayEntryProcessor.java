@@ -31,14 +31,17 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ApplicationScoped
 public class VoidLayawayEntryProcessor extends ImportEntryProcessor {
 
+  @Override
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
     return WeldUtils.getInstanceFromStaticBeanManager(VoidLayawayRunnable.class);
   }
 
+  @Override
   protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
     return "OBPOS_VoidLayaway".equals(importEntryInformation.getTypeofdata());
   }
 
+  @Override
   protected String getProcessSelectionKey(ImportEntry importEntry) {
     return importEntry.getOrganization().getId();
   }
@@ -46,10 +49,12 @@ public class VoidLayawayEntryProcessor extends ImportEntryProcessor {
   private static class VoidLayawayRunnable extends SerializedByTermImportEntryProcessorRunnable {
     private static final String VOID_LAYAWAY_AUDIT_TYPE = "OBPOS_VoidLayaway";
 
+    @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return ProcessVoidLayaway.class;
     }
 
+    @Override
     protected void processEntry(ImportEntry importEntry) throws Exception {
       try {
         OBContext.setAdminMode(false);

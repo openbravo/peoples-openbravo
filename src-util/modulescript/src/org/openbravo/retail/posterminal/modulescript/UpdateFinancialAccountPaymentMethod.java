@@ -25,8 +25,10 @@ public class UpdateFinancialAccountPaymentMethod extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      int count =  UpdateFinancialAccountPaymentMethodData.updateFinancialAccountPaymentMethodAutomaticDeposit(cp);
-      log4j.debug("Fixed " + count + " financial account payment methods with automatic deposit different to Y");
+      int count = UpdateFinancialAccountPaymentMethodData
+          .updateFinancialAccountPaymentMethodAutomaticDeposit(cp);
+      log4j.debug("Fixed " + count
+          + " financial account payment methods with automatic deposit different to Y");
     } catch (Exception e) {
       handleError(e);
     }

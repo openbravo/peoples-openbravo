@@ -39,8 +39,8 @@ public class InitialValidations {
     // Check POS Cache Cash up is processed
     final JSONObject jsonCashUp = jsonsent.getJSONObject("parameters").optJSONObject("cashUpId");
     if (jsonCashUp != null && jsonCashUp.has("value")) {
-      OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class,
-          jsonCashUp.optString("value"));
+      OBPOSAppCashup appCashup = OBDal.getInstance()
+          .get(OBPOSAppCashup.class, jsonCashUp.optString("value"));
       if (appCashup != null && appCashup.isProcessed()) {
         throw new JSONException("OBPOS_CashupCacheAlreadyProcessed");
       }
@@ -76,11 +76,15 @@ public class InitialValidations {
       throw new JSONException("OBPOS_OrgCurrencyConfigured");
     }
 
-    if (posTerminal.getOrganization().getOrganizationInformationList().get(0).getLocationAddress() == null) {
+    if (posTerminal.getOrganization()
+        .getOrganizationInformationList()
+        .get(0)
+        .getLocationAddress() == null) {
       throw new JSONException("OBPOS_OrgLocationConfigured");
     }
 
-    if (!posTerminal.getOrganization().getId()
+    if (!posTerminal.getOrganization()
+        .getId()
         .equals(OBContext.getOBContext().getCurrentOrganization().getId())) {
       throw new JSONException("OBPOS_OrgDesynchronization");
     }
@@ -130,8 +134,8 @@ public class InitialValidations {
         + "and not exists (select 1 from FinancialMgmtFinAccPaymentMethod as pmacc where "
         + "pmacc.paymentMethod = e.paymentMethod.paymentMethod and pmacc.account = e.financialAccount"
         + ")";
-    OBQuery<OBPOSAppPayment> queryFinAccounts = OBDal.getInstance().createQuery(
-        OBPOSAppPayment.class, whereclausePM);
+    OBQuery<OBPOSAppPayment> queryFinAccounts = OBDal.getInstance()
+        .createQuery(OBPOSAppPayment.class, whereclausePM);
     queryFinAccounts.setNamedParameter("terminal", posTerminal);
     if (queryFinAccounts.list().size() > 0) {
       throw new JSONException("OBPOS_PayMethodNotConfiguredInAccount");
@@ -140,8 +144,8 @@ public class InitialValidations {
     String whereclauseCMEV = " as e where e.obposApplications=:terminal and e.financialAccount is not null and exists "
         + "(select 1 from OBRETCO_CashManagementEvents as cmev where "
         + "cmev.financialAccount = e.financialAccount)";
-    OBQuery<OBPOSAppPayment> queryEventAccounts = OBDal.getInstance().createQuery(
-        OBPOSAppPayment.class, whereclauseCMEV);
+    OBQuery<OBPOSAppPayment> queryEventAccounts = OBDal.getInstance()
+        .createQuery(OBPOSAppPayment.class, whereclauseCMEV);
     queryEventAccounts.setNamedParameter("terminal", posTerminal);
     if (queryEventAccounts.list().size() > 0) {
       throw new JSONException("OBPOS_CMEVAccountIsUsedInPayMethod");
@@ -150,8 +154,8 @@ public class InitialValidations {
     String whereclauseRCDR = " as e where e.obposApplications=:terminal and e.financialAccount is not null and exists "
         + "(select 1 from FIN_Reconciliation as finrc where "
         + "finrc.account = e.financialAccount and finrc.documentStatus = 'DR')";
-    OBQuery<OBPOSAppPayment> queryReconcilliation = OBDal.getInstance().createQuery(
-        OBPOSAppPayment.class, whereclauseRCDR);
+    OBQuery<OBPOSAppPayment> queryReconcilliation = OBDal.getInstance()
+        .createQuery(OBPOSAppPayment.class, whereclauseRCDR);
     queryReconcilliation.setMaxResult(1);
     queryReconcilliation.setNamedParameter("terminal", posTerminal);
     if (queryReconcilliation.count() > 0) {
@@ -160,15 +164,16 @@ public class InitialValidations {
 
     String whereclauseLAC = " as e where e.obposApplications=:terminal and ((e.financialAccount is null "
         + "and e.paymentMethod.leaveascredit = false) or (e.financialAccount is not null and e.paymentMethod.leaveascredit = true))";
-    OBQuery<OBPOSAppPayment> queryLeaveAsCredit = OBDal.getInstance().createQuery(
-        OBPOSAppPayment.class, whereclauseLAC);
+    OBQuery<OBPOSAppPayment> queryLeaveAsCredit = OBDal.getInstance()
+        .createQuery(OBPOSAppPayment.class, whereclauseLAC);
     queryLeaveAsCredit.setNamedParameter("terminal", posTerminal);
     if (queryLeaveAsCredit.list().size() > 0) {
       throw new JSONException("OBPOS_LeaveAsCreditNotConfigured");
     }
 
     for (OBPOSAppPayment obposAppPayment : posTerminal.getOBPOSAppPaymentList()) {
-      if (!obposAppPayment.getFinancialAccount().getCurrency()
+      if (!obposAppPayment.getFinancialAccount()
+          .getCurrency()
           .equals(obposAppPayment.getPaymentMethod().getCurrency())) {
         throw new JSONException("OBPOS_FinAcctCurrDiffWithPayMethodCurr");
       }
@@ -177,8 +182,8 @@ public class InitialValidations {
     if (posTerminal.getMasterterminal() != null) {
       String whereclauseAppPayment = " as e where e.obposApplications=:terminal and "
           + " e.paymentMethod.isshared = 'Y' ";
-      OBQuery<OBPOSAppPayment> queryAppPayment = OBDal.getInstance().createQuery(
-          OBPOSAppPayment.class, whereclauseAppPayment);
+      OBQuery<OBPOSAppPayment> queryAppPayment = OBDal.getInstance()
+          .createQuery(OBPOSAppPayment.class, whereclauseAppPayment);
       queryAppPayment.setNamedParameter("terminal", posTerminal.getMasterterminal());
       List<OBPOSAppPayment> sharedPayments = queryAppPayment.list();
       for (int i = 0; i < posTerminal.getOBPOSAppPaymentList().size(); i++) {
@@ -209,11 +214,11 @@ public class InitialValidations {
 
     if (posTerminal.getObposTerminaltype().isLayawayorder()) {
       try {
-        String generateLayawaysPref = Preferences
-            .getPreferenceValue("OBPOS_receipt.layawayReceipt", true, OBContext.getOBContext()
-                .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization()
-                .getId(), OBContext.getOBContext().getUser().getId(), OBContext.getOBContext()
-                .getRole().getId(), null);
+        String generateLayawaysPref = Preferences.getPreferenceValue("OBPOS_receipt.layawayReceipt",
+            true, OBContext.getOBContext().getCurrentClient().getId(),
+            OBContext.getOBContext().getCurrentOrganization().getId(),
+            OBContext.getOBContext().getUser().getId(), OBContext.getOBContext().getRole().getId(),
+            null);
         if (generateLayawaysPref.equals("N")) {
           throw new JSONException("OBPOS_LayawayTerminalNoLayawayPermission");
         }
@@ -223,8 +228,8 @@ public class InitialValidations {
     }
 
     if (posTerminal.isMaster()) {
-      OBCriteria<OBPOSApplications> obCriteria = OBDal.getInstance().createCriteria(
-          OBPOSApplications.class);
+      OBCriteria<OBPOSApplications> obCriteria = OBDal.getInstance()
+          .createCriteria(OBPOSApplications.class);
       obCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL, posTerminal));
       obCriteria.addOrderBy(OBPOSApplications.PROPERTY_SEARCHKEY, true);
       if (obCriteria.list().size() == 0) {

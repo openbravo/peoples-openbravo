@@ -64,8 +64,8 @@ public class CashUpReport extends HttpSecureAppServlet {
   public static final Logger log = LogManager.getLogger();
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     FieldProvider[] data;
     VariablesSecureApp vars;
     HashMap<String, String> psData;
@@ -124,7 +124,8 @@ public class CashUpReport extends HttpSecureAppServlet {
       // Check for slave
       if (isSlave) {
         // Check if master cashup is closed
-        if (cashup.getObposParentCashup() == null || !cashup.getObposParentCashup().isProcessedbo()) {
+        if (cashup.getObposParentCashup() == null
+            || !cashup.getObposParentCashup().isProcessedbo()) {
           throw new ServletException(
               OBMessageUtils.messageBD("OBPOS_ErrCashupReportMasterNotFinish"));
         }
@@ -152,36 +153,39 @@ public class CashUpReport extends HttpSecureAppServlet {
       Collections.sort(paymentMethodCashupList, new PaymentMethodComparator());
       for (int i = 0; i < paymentMethodCashupList.size(); i++) {
         OBPOSPaymentMethodCashup paymentMethodCashup = paymentMethodCashupList.get(i);
-        if ((isMaster || (!isMaster && !isSlave) || !paymentMethodCashup.getPaymentType()
-            .getPaymentMethod().isShared())
+        if ((isMaster || (!isMaster && !isSlave)
+            || !paymentMethodCashup.getPaymentType().getPaymentMethod().isShared())
             && paymentMethodCashup.getPaymentType().getPaymentMethod().isCountpaymentincashup()) {
           conversionRate = paymentMethodCashup.getRate() == null ? BigDecimal.ONE
               : paymentMethodCashup.getRate();
           isoCode = paymentMethodCashup.getIsocode();
           expected = BigDecimal.ZERO;
-          String label = getPaymentNameLabel(paymentMethodCashup.getPaymentType()
-              .getCommercialName(), isMaster, paymentMethodCashup.getPaymentType()
-              .getPaymentMethod().isShared());
+          String label = getPaymentNameLabel(
+              paymentMethodCashup.getPaymentType().getCommercialName(), isMaster,
+              paymentMethodCashup.getPaymentType().getPaymentMethod().isShared());
 
-          /******************************* STARTING CASH ***************************************************************/
+          /*******************************
+           * STARTING CASH
+           ***************************************************************/
           final BigDecimal startingbalance = paymentMethodCashup.getStartingcash();
-          expected = expected.add(startingbalance.multiply(conversionRate).setScale(2,
-              RoundingMode.HALF_UP));
+          expected = expected
+              .add(startingbalance.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP));
 
-          psData = fillReportRow(
-              "STARTING",
-              paymentMethodCashup.getPaymentType().getSearchKey(),
-              "OBPOS_LblStarting",
-              label,
+          psData = fillReportRow("STARTING", paymentMethodCashup.getPaymentType().getSearchKey(),
+              "OBPOS_LblStarting", label,
               startingbalance.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP).toString(),
               startingbalance.toString(), "OBPOS_LblSTARTING", "OBPOS_LblTotalStarting",
               conversionRate, isoCode);
           hashMapStartingsList.add(psData);
 
-          /******************************* DROPS DEPOSIT ***************************************************************/
-          final BigDecimal drop = paymentMethodCashup.getTotalreturns().multiply(conversionRate)
+          /*******************************
+           * DROPS DEPOSIT
+           ***************************************************************/
+          final BigDecimal drop = paymentMethodCashup.getTotalreturns()
+              .multiply(conversionRate)
               .setScale(2, RoundingMode.HALF_UP);
-          final BigDecimal deposit = paymentMethodCashup.getTotalsales().multiply(conversionRate)
+          final BigDecimal deposit = paymentMethodCashup.getTotalsales()
+              .multiply(conversionRate)
               .setScale(2, RoundingMode.HALF_UP);
 
           // Withdrawals
@@ -204,12 +208,14 @@ public class CashUpReport extends HttpSecureAppServlet {
               .getOBPOSPaymentcashupEventsList();
           for (OBPOSPaymentcashupEvents paymentcashupEvent : paymentcashupEventsList) {
             BigDecimal amount = paymentcashupEvent.getAmount()
-                .multiply(paymentcashupEvent.getRate()).setScale(2, RoundingMode.HALF_UP);
+                .multiply(paymentcashupEvent.getRate())
+                .setScale(2, RoundingMode.HALF_UP);
             if (paymentcashupEvent.getType().equals("drop")) {
               expected = expected.subtract(amount);
               totalDrops = totalDrops.add(amount);
-              psData = fillReportRow("WITHDRAWAL", paymentMethodCashup.getPaymentType()
-                  .getSearchKey(), null, paymentcashupEvent.getName(), amount.toString(),
+              psData = fillReportRow("WITHDRAWAL",
+                  paymentMethodCashup.getPaymentType().getSearchKey(), null,
+                  paymentcashupEvent.getName(), amount.toString(),
                   paymentcashupEvent.getAmount().toString(), "OBPOS_LblWithdrawal",
                   "OBPOS_LblTotalWithdrawals", conversionRate, isoCode);
               hashMapWithdrawalsList.add(psData);
@@ -217,81 +223,85 @@ public class CashUpReport extends HttpSecureAppServlet {
               expected = expected.add(amount);
               totalDeposits = totalDeposits.add(amount);
               psData = fillReportRow("SALE", paymentMethodCashup.getPaymentType().getSearchKey(),
-                  null, paymentcashupEvent.getName(), amount.toString(), paymentcashupEvent
-                      .getAmount().toString(), "OBPOS_LblDeposit", "OBPOS_LblTotalDeposits",
-                  conversionRate, isoCode);
+                  null, paymentcashupEvent.getName(), amount.toString(),
+                  paymentcashupEvent.getAmount().toString(), "OBPOS_LblDeposit",
+                  "OBPOS_LblTotalDeposits", conversionRate, isoCode);
               hashMapSalesList.add(psData);
             }
           }
 
-          /******************************* EXPECTED, COUNTED, DIFFERENCE ***************************************************************/
+          /*******************************
+           * EXPECTED, COUNTED, DIFFERENCE
+           ***************************************************************/
           // -- EXPECTED --
-          psData = fillReportRow(
-              "EXPECTED",
-              paymentMethodCashup.getPaymentType().getSearchKey(),
-              "OBPOS_LblExpected",
-              label,
-              expected.toString(),
+          psData = fillReportRow("EXPECTED", paymentMethodCashup.getPaymentType().getSearchKey(),
+              "OBPOS_LblExpected", label, expected.toString(),
               expected.divide(conversionRate, 5, RoundingMode.HALF_UP)
-                  .setScale(2, RoundingMode.HALF_UP).toString(), "OBPOS_LblEXPECTED",
-              "OBPOS_LblTotalExpected", conversionRate, isoCode);
+                  .setScale(2, RoundingMode.HALF_UP)
+                  .toString(),
+              "OBPOS_LblEXPECTED", "OBPOS_LblTotalExpected", conversionRate, isoCode);
           hashMapExpectedList.add(psData);
 
           // -- COUNTED --
-          psData = fillReportRow(
-              "COUNTED",
-              paymentMethodCashup.getPaymentType().getSearchKey(),
-              "OBPOS_LblCounted",
-              label,
-              paymentMethodCashup.getTotalCounted().multiply(conversionRate)
-                  .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
-                  .getTotalCounted().toString(), "OBPOS_LblCOUNTED", "OBPOS_LblTotalCounted",
-              conversionRate, isoCode);
+          psData = fillReportRow("COUNTED", paymentMethodCashup.getPaymentType().getSearchKey(),
+              "OBPOS_LblCounted", label,
+              paymentMethodCashup.getTotalCounted()
+                  .multiply(conversionRate)
+                  .setScale(2, RoundingMode.HALF_UP)
+                  .toString(),
+              paymentMethodCashup.getTotalCounted().toString(), "OBPOS_LblCOUNTED",
+              "OBPOS_LblTotalCounted", conversionRate, isoCode);
           hashMapCountedList.add(psData);
 
           // -- DIFFERENCE --
-          psData = fillReportRow(
-              "DIFFERENCE",
-              paymentMethodCashup.getPaymentType().getSearchKey(),
-              "OBPOS_LblDifference",
-              label,
-              paymentMethodCashup.getTotalCounted().multiply(conversionRate)
-                  .setScale(2, RoundingMode.HALF_UP).subtract(expected).toString(),
+          psData = fillReportRow("DIFFERENCE", paymentMethodCashup.getPaymentType().getSearchKey(),
+              "OBPOS_LblDifference", label,
               paymentMethodCashup.getTotalCounted()
-                  .subtract(expected.divide(conversionRate, 5, RoundingMode.HALF_UP)).toString(),
+                  .multiply(conversionRate)
+                  .setScale(2, RoundingMode.HALF_UP)
+                  .subtract(expected)
+                  .toString(),
+              paymentMethodCashup.getTotalCounted()
+                  .subtract(expected.divide(conversionRate, 5, RoundingMode.HALF_UP))
+                  .toString(),
               "OBPOS_LblDIFFERENCE", "OBPOS_LblTotalDifference", conversionRate, isoCode);
           hashMapDifferenceList.add(psData);
 
-          /******************************* CASH TO KEEP,CASH TO DEPOSIT ***************************************************************/
+          /*******************************
+           * CASH TO KEEP,CASH TO DEPOSIT
+           ***************************************************************/
           // -- TODEPOSIT --
-          cashToDeposit = paymentMethodCashup.getTotalCounted().subtract(
-              paymentMethodCashup.getAmountToKeep());
+          cashToDeposit = paymentMethodCashup.getTotalCounted()
+              .subtract(paymentMethodCashup.getAmountToKeep());
           psData = fillReportRow("TODEPOSIT", paymentMethodCashup.getPaymentType().getSearchKey(),
-              null, label, cashToDeposit.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP)
-                  .toString(), cashToDeposit.toString(), "OBPOS_LblTotal_To_Deposit",
-              "OBPOS_LblTotalQtyToDepo", conversionRate, isoCode);
+              null, label,
+              cashToDeposit.multiply(conversionRate).setScale(2, RoundingMode.HALF_UP).toString(),
+              cashToDeposit.toString(), "OBPOS_LblTotal_To_Deposit", "OBPOS_LblTotalQtyToDepo",
+              conversionRate, isoCode);
           hashMapCashToDepositList.add(psData);
 
           // -- TOKEEP --
-          psData = fillReportRow(
-              "TOKEEP",
-              paymentMethodCashup.getPaymentType().getSearchKey(),
-              null,
-              label,
-              paymentMethodCashup.getAmountToKeep().multiply(conversionRate)
-                  .setScale(2, RoundingMode.HALF_UP).toString(), paymentMethodCashup
-                  .getAmountToKeep().toString(), "OBPOS_LblTotal_To_Keep",
+          psData = fillReportRow("TOKEEP", paymentMethodCashup.getPaymentType().getSearchKey(),
+              null, label,
+              paymentMethodCashup.getAmountToKeep()
+                  .multiply(conversionRate)
+                  .setScale(2, RoundingMode.HALF_UP)
+                  .toString(),
+              paymentMethodCashup.getAmountToKeep().toString(), "OBPOS_LblTotal_To_Keep",
               "OBPOS_LblTotalQtyToKeep", conversionRate, isoCode);
           hashMapCashToKeepList.add(psData);
 
         }
       }
 
-      /******************************* SALES AREA ***************************************************************/
+      /*******************************
+       * SALES AREA
+       ***************************************************************/
       final String hqlCashup = "SELECT netsales, grosssales, netreturns, grossreturns, totalretailtransactions " //
           + " FROM OBPOS_App_Cashup " //
           + " WHERE id = '" + cashupId + "' "; //
-      final Query<Object[]> cashupQuery = OBDal.getReadOnlyInstance().getSession()
+      final Query<Object[]> cashupQuery = OBDal.getReadOnlyInstance()
+          .getSession()
           .createQuery(hqlCashup, Object[].class);
       final Object[] arrayOfCashupResults = cashupQuery.list().get(0);
       final BigDecimal totalNetSalesAmount = (BigDecimal) arrayOfCashupResults[0];
@@ -305,7 +315,8 @@ public class CashUpReport extends HttpSecureAppServlet {
           + " FROM OBPOS_Taxcashup " //
           + " WHERE obpos_app_cashup_id='%s' AND ordertype='0' " //
           + " ORDER BY name ", cashupId);
-      final Query<Object[]> salesTaxesQuery = OBDal.getReadOnlyInstance().getSession()
+      final Query<Object[]> salesTaxesQuery = OBDal.getReadOnlyInstance()
+          .getSession()
           .createQuery(hqlTaxes, Object[].class);
       final JRDataSource salesTaxesDataSource = new ListOfArrayDataSource(salesTaxesQuery.list(),
           new String[] { "LABEL", "VALUE" });
@@ -315,18 +326,20 @@ public class CashUpReport extends HttpSecureAppServlet {
           + " FROM OBPOS_Taxcashup " //
           + " WHERE obpos_app_cashup_id='%s' AND ordertype='1'  " //
           + " ORDER BY name ", cashupId);
-      final Query<Object[]> returnsTaxesQuery = OBDal.getReadOnlyInstance().getSession()
+      final Query<Object[]> returnsTaxesQuery = OBDal.getReadOnlyInstance()
+          .getSession()
           .createQuery(hqlReturnTaxes, Object[].class);
-      final JRDataSource returnTaxesDatasource = new ListOfArrayDataSource(
-          returnsTaxesQuery.list(), new String[] { "LABEL", "VALUE" });
+      final JRDataSource returnTaxesDatasource = new ListOfArrayDataSource(returnsTaxesQuery.list(),
+          new String[] { "LABEL", "VALUE" });
 
-      /******************************* BUILD REPORT ***************************************************************/
+      /*******************************
+       * BUILD REPORT
+       ***************************************************************/
 
       parameters.put("STORE", OBMessageUtils.getI18NMessage("OBPOS_LblStore", new String[] {})
           + ": " + cashup.getPOSTerminal().getOrganization().getIdentifier());
-      parameters.put("TERMINAL",
-          OBMessageUtils.getI18NMessage("OBPOS_LblTerminal", new String[] {}) + ": "
-              + cashup.getPOSTerminal().getIdentifier());
+      parameters.put("TERMINAL", OBMessageUtils.getI18NMessage("OBPOS_LblTerminal", new String[] {})
+          + ": " + cashup.getPOSTerminal().getIdentifier());
       parameters.put("USER", OBMessageUtils.getI18NMessage("OBPOS_LblUser", new String[] {}) + ": "
           + cashup.getUserContact().getName());
       parameters.put("TERMINAL_ORGANIZATION", cashup.getPOSTerminal().getOrganization().getId());
@@ -379,7 +392,8 @@ public class CashUpReport extends HttpSecureAppServlet {
           if (result.getMessage() != null && !result.getMessage().equals("")) {
             messages.put(result.getMessage());
           }
-          if (next == null && result.getNextAction() != null && !result.getNextAction().equals("")) {
+          if (next == null && result.getNextAction() != null
+              && !result.getNextAction().equals("")) {
             next = result.getNextAction();
           }
         }

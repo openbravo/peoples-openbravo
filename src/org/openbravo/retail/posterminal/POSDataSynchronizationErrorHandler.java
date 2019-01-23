@@ -67,17 +67,17 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     }
 
     if (cashupId != null) {
-      OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
-          OBPOSAppTermStatHist.class);
-      termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_CASHUP, OBDal
-          .getInstance().get(OBPOSAppCashup.class, cashupId)));
+      OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance()
+          .createCriteria(OBPOSAppTermStatHist.class);
+      termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_CASHUP,
+          OBDal.getInstance().get(OBPOSAppCashup.class, cashupId)));
       terminalStatusHistory = (OBPOSAppTermStatHist) termStatHistCriteria.uniqueResult();
     } else {
       if (posTerminalId != null) {
-        OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance().createCriteria(
-            OBPOSAppTermStatHist.class);
-        termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_POSTERMINAL, OBDal
-            .getInstance().get(OBPOSApplications.class, posTerminalId)));
+        OBCriteria<OBPOSAppTermStatHist> termStatHistCriteria = OBDal.getInstance()
+            .createCriteria(OBPOSAppTermStatHist.class);
+        termStatHistCriteria.add(Restrictions.eq(OBPOSAppTermStatHist.PROPERTY_POSTERMINAL,
+            OBDal.getInstance().get(OBPOSApplications.class, posTerminalId)));
         termStatHistCriteria.addOrderBy(OBPOSAppTermStatHist.PROPERTY_CREATIONDATE, false);
         termStatHistCriteria.setMaxResults(1);
         terminalStatusHistory = (OBPOSAppTermStatHist) termStatHistCriteria.uniqueResult();
@@ -126,8 +126,8 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
         for (int i = 0; i < orderlines.length(); i++) {
           JSONObject jsonOrderLine = orderlines.optJSONObject(i);
           if (jsonOrderLine != null && jsonOrderLine.has("originalOrderLineId")) {
-            OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
-                jsonOrderLine.optString("originalOrderLineId"));
+            OrderLine orderLine = OBDal.getInstance()
+                .get(OrderLine.class, jsonOrderLine.optString("originalOrderLineId"));
             recordIdList.add(orderLine.getSalesOrder().getId());
           }
         }
@@ -152,6 +152,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
    * 
    * @see org.openbravo.mobile.core.process.DataSynchronizationErrorHandler#setImportStatusToError()
    */
+  @Override
   public boolean setImportEntryStatusToError() {
     return false;
   }

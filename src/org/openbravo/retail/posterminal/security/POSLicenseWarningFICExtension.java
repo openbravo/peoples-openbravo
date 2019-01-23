@@ -15,6 +15,8 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -23,8 +25,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.retail.posterminal.OBPOSApplications;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Computes warning message to be displayed if number of terminals has exceeded the warning
@@ -49,10 +49,8 @@ public class POSLicenseWarningFICExtension implements FICExtension {
     restrictions.resetNumberOfTerminals();
     try {
       JSONObject msg = new JSONObject();
-      msg.put(
-          "text",
-          restrictions.getPOSTerminalsWarningMsg(ActivationKey.getInstance(), OBContext
-              .getOBContext().getLanguage().getLanguage()));
+      msg.put("text", restrictions.getPOSTerminalsWarningMsg(ActivationKey.getInstance(),
+          OBContext.getOBContext().getLanguage().getLanguage()));
       msg.put("severity", "TYPE_WARNING");
       calloutMessages.add(msg);
     } catch (Exception e) {
@@ -61,7 +59,8 @@ public class POSLicenseWarningFICExtension implements FICExtension {
   }
 
   private boolean isValidEvent(String mode, Tab tab) {
-    return ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId())
+    return ModelProvider.getInstance()
+        .getEntityByTableId(tab.getTable().getId())
         .getMappingClass() == OBPOSApplications.class
         && (mode.equals("EDIT") || mode.equals("NEW"));
   }

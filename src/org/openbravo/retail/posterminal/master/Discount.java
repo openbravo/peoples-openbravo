@@ -51,8 +51,8 @@ public class Discount extends ProcessHQLQuery {
           && jsonsent.getJSONObject("parameters").has("filterPromotionList")
           && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("undefined")
           && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("null")) {
-        JSONArray filterPromotionList = jsonsent.getJSONObject("parameters").getJSONArray(
-            "filterPromotionList");
+        JSONArray filterPromotionList = jsonsent.getJSONObject("parameters")
+            .getJSONArray("filterPromotionList");
         paramValues.put("filterPromotionList", filterPromotionList);
       }
 
@@ -70,8 +70,8 @@ public class Discount extends ProcessHQLQuery {
       throws JSONException {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
 
-    final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-        .getString("pos"));
+    final OBRETCOProductList productList = POSUtils
+        .getProductListByPosterminalId(jsonsent.getString("pos"));
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = priceList.getId();
 
@@ -91,9 +91,9 @@ public class Discount extends ProcessHQLQuery {
     boolean multiPrices = false;
     try {
       multiPrices = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null));
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e1) {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }

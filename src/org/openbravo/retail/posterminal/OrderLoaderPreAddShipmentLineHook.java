@@ -26,16 +26,16 @@ public abstract class OrderLoaderPreAddShipmentLineHook {
 
   public static String getActionString(OrderLoaderPreAddShipmentLineHook_Actions _action) {
     switch (_action) {
-    case ACTION_SINGLEBIN:
-      return CONST_ACTION_SINGLEBIN;
-    case ACTION_RETURN:
-      return CONST_ACTION_RETURN;
-    case ACTION_STANDARD_SALE:
-      return CONST_ACTION_STANDARD_SALE;
-    case ACTION_LAST_ATTEMPT:
-      return CONST_ACTION_LAST_ATTEMPT;
-    default:
-      return "";
+      case ACTION_SINGLEBIN:
+        return CONST_ACTION_SINGLEBIN;
+      case ACTION_RETURN:
+        return CONST_ACTION_RETURN;
+      case ACTION_STANDARD_SALE:
+        return CONST_ACTION_STANDARD_SALE;
+      case ACTION_LAST_ATTEMPT:
+        return CONST_ACTION_LAST_ATTEMPT;
+      default:
+        return "";
     }
   }
 

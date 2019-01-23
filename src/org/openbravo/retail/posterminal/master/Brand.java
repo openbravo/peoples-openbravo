@@ -49,9 +49,10 @@ public class Brand extends ProcessHQLQuery {
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
     } finally {
@@ -63,8 +64,8 @@ public class Brand extends ProcessHQLQuery {
       forceRemote = true;
       args.put("forceRemote", forceRemote);
     }
-    HQLPropertyList brandHQLProperties = ModelExtensionUtils
-        .getPropertyExtensions(extensions, args);
+    HQLPropertyList brandHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        args);
     propertiesList.add(brandHQLProperties);
     return propertiesList;
   }
@@ -73,16 +74,16 @@ public class Brand extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(jsonsent
-          .getString("pos"));
+      final OBRETCOProductList productList = POSUtils
+          .getProductListByPosterminalId(jsonsent.getString("pos"));
       boolean forceRemote = false;
       boolean isRemote = false;
       try {
         OBContext.setAdminMode(false);
         isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
-            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                .getOBContext().getRole(), null));
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null));
       } catch (PropertyException e) {
         log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
       } finally {
@@ -111,9 +112,10 @@ public class Brand extends ProcessHQLQuery {
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
     } finally {
@@ -129,26 +131,20 @@ public class Brand extends ProcessHQLQuery {
       regularBrandsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
     }
     if (isRemote || forceRemote) {
-      hqlQueries
-          .add("select"
-              + regularBrandsHQLProperties.getHqlSelect() //
-              + "from Brand brand " //
-              + "where "
-              + " exists (select 1 from  Product p, OBRETCO_Prol_Product assort "
-              + " where brand.id=p.brand.id "
-              + " and p.id= assort.product.id "
-              + " and assort.obretcoProductlist.id= :productListId)"
-              + " AND $filtersCriteria AND $hqlCriteria and  $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
-              + "order by brand.name, brand.id");
+      hqlQueries.add("select" + regularBrandsHQLProperties.getHqlSelect() //
+          + "from Brand brand " //
+          + "where " + " exists (select 1 from  Product p, OBRETCO_Prol_Product assort "
+          + " where brand.id=p.brand.id " + " and p.id= assort.product.id "
+          + " and assort.obretcoProductlist.id= :productListId)"
+          + " AND $filtersCriteria AND $hqlCriteria and  $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
+          + "order by brand.name, brand.id");
     } else {
-      hqlQueries
-          .add("select"
-              + regularBrandsHQLProperties.getHqlSelect() //
-              + "from Product product " //
-              + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist.id= :productListId "
-              + "and assort.product = product) "
-              + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
-              + "order by product.brand.name, product.brand.id");
+      hqlQueries.add("select" + regularBrandsHQLProperties.getHqlSelect() //
+          + "from Product product " //
+          + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist.id= :productListId "
+          + "and assort.product = product) "
+          + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
+          + "order by product.brand.name, product.brand.id");
     }
 
     return hqlQueries;

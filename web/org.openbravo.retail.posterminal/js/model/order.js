@@ -4856,7 +4856,11 @@
       if (loadedFromBackend) {
         isNegative = OB.DEC.compare(this.getGross()) === -1;
       } else {
-        isNegative = processedPaymentsAmount > this.getGross();
+        if (OB.DEC.compare(this.getGross()) === -1) {
+          isNegative = processedPaymentsAmount >= this.getGross();
+        } else {
+          isNegative = processedPaymentsAmount > this.getGross();
+        }
       }
       if (OB.UTIL.isNullOrUndefined(this.get('isNegative')) || this.get('isNegative') !== isNegative) {
         this.set('isNegative', isNegative);

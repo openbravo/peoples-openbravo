@@ -54,10 +54,8 @@ public class Warehouses extends QueryTerminalProperty {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     HQLPropertyList warehousesHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
-    return Arrays
-        .asList(new String[] { "select "
-            + warehousesHQLProperties.getHqlSelect()
-            + " from OrganizationWarehouse as ow where ow.warehouse.active = true and ow.$readableSimpleCriteria and ow.$activeCriteria and ow.organization.id = :orgId order by priority asc" });
+    return Arrays.asList(new String[] { "select " + warehousesHQLProperties.getHqlSelect()
+        + " from OrganizationWarehouse as ow where ow.warehouse.active = true and ow.$readableSimpleCriteria and ow.$activeCriteria and ow.organization.id = :orgId order by priority asc" });
   }
 
   @Override

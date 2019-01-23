@@ -53,9 +53,10 @@ public class BusinessPartner extends ProcessHQLQuery {
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
-      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.customer", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.customer", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e) {
       isRemote = false;
     } finally {
@@ -64,12 +65,10 @@ public class BusinessPartner extends ProcessHQLQuery {
 
     HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    String hql = "SELECT "
-        + regularBusinessPartnerHQLProperties.getHqlSelect() //
+    String hql = "SELECT " + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartner AS bp " //
         + "join bp.priceList AS plist " //
-        + "left outer join bp.aDUserList AS ulist "
-        + "WHERE $filtersCriteria AND " //
+        + "left outer join bp.aDUserList AS ulist " + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "(bp.$incrementalUpdateCriteria) AND "
         + "bp.$readableSimpleClientCriteria AND " + "bp.$naturalOrgCriteria AND "
         + "(not exists (select 1 from ADUser usr where usr.businessPartner = bp)) ";
@@ -79,16 +78,12 @@ public class BusinessPartner extends ProcessHQLQuery {
       hql += "ORDER BY bp.id";
     }
 
-    String hql2 = "SELECT"
-        + regularBusinessPartnerHQLProperties.getHqlSelect() //
+    String hql2 = "SELECT" + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartner AS bp " //
         + "join bp.priceList AS plist " //
-        + "left outer join bp.aDUserList AS ulist "
-        + "WHERE $filtersCriteria AND " //
-        + "bp.customer = true AND "
-        + "bp.$readableSimpleClientCriteria AND "
-        + "bp.$naturalOrgCriteria AND "
-        + "(bp.$incrementalUpdateCriteria) AND "
+        + "left outer join bp.aDUserList AS ulist " + "WHERE $filtersCriteria AND " //
+        + "bp.customer = true AND " + "bp.$readableSimpleClientCriteria AND "
+        + "bp.$naturalOrgCriteria AND " + "(bp.$incrementalUpdateCriteria) AND "
         + "(ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp)) ";
     if (isRemote) {
       hql2 += "ORDER BY bp.name, bp.id";

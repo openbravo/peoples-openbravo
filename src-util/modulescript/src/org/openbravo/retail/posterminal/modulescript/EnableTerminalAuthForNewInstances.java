@@ -29,22 +29,25 @@ import org.openbravo.modulescript.OpenbravoVersion;
  *
  * @author galvarez
  * 
- * By default there is a preference introduced in 16Q1 which enables terminal authentication. 
- * The aim of this MS is to create a preference with value = 'N' for those instances which are already running without terminal authentication.
- * We are doing that because we don't want to enforce to that instances to use terminal authentication.
+ *         By default there is a preference introduced in 16Q1 which enables terminal
+ *         authentication. The aim of this MS is to create a preference with value = 'N' for those
+ *         instances which are already running without terminal authentication. We are doing that
+ *         because we don't want to enforce to that instances to use terminal authentication.
  * 
- * - For new instances the default preference will be used, so Terminal Authentication will be enabled.
- * - For instances which already have preferences related to terminal authentication, the module script will not do nothing.
+ *         - For new instances the default preference will be used, so Terminal Authentication will
+ *         be enabled. - For instances which already have preferences related to terminal
+ *         authentication, the module script will not do nothing.
  * 
- * update (jan 2017): This module script will just be executed when the coming from version is lower than 16Q1.
- * the use of a preference to check if the MS has been already executed is not longer needed.
+ *         update (jan 2017): This module script will just be executed when the coming from version
+ *         is lower than 16Q1. the use of a preference to check if the MS has been already executed
+ *         is not longer needed.
  *
  */
 public class EnableTerminalAuthForNewInstances extends ModuleScript {
 
   private static final Logger log4j = LogManager.getLogger();
   private static final String RETAIL_PACK_MODULE_ID = "03FAB282A7BF47D3B1B242AC67F7845B";
-  
+
   @Override
   public void execute() {
     try {
@@ -58,7 +61,8 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
       int numberOfTerminals = Integer.parseInt(exists1);
       int definedPrefs = Integer.parseInt(exists2);
       int prefsWithValueTrue = Integer.parseInt(exists3);
-      // This MS just will be executed when terminals are defined and new preferences for terminal authentication are NOT defined
+      // This MS just will be executed when terminals are defined and new preferences for terminal
+      // authentication are NOT defined
       if (numberOfTerminals > 0) {
         if (definedPrefs == 1) {
           EnableTerminalAuthForNewInstancesData[] clientIds = EnableTerminalAuthForNewInstancesData
@@ -67,30 +71,31 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
             String clientId = clientIds[i].clientid;
             int prefs = EnableTerminalAuthForNewInstancesData
                 .insertNewTerminalAuthenticationPreference(cp, clientId, "N", "0");
-            log4j
-                .debug("-EnableTerminalAuthForNewInstances- " + prefs + " Preference -OBPOS_TerminalAuthentication- with value 'Y' have been created for client "
-                    + clientId + ".");
+            log4j.debug("-EnableTerminalAuthForNewInstances- " + prefs
+                + " Preference -OBPOS_TerminalAuthentication- with value 'Y' have been created for client "
+                + clientId + ".");
           }
         } else if (definedPrefs == 0) {
-          //Should not happen
+          // Should not happen
           int prefs = EnableTerminalAuthForNewInstancesData
               .insertNewTerminalAuthenticationPreference(cp, "0", "Y", null);
-          log4j
-          .debug("-EnableTerminalAuthForNewInstances- There are no preferences for property -OBPOS_TerminalAuthentication- Defaut one was created.");
+          log4j.debug(
+              "-EnableTerminalAuthForNewInstances- There are no preferences for property -OBPOS_TerminalAuthentication- Defaut one was created.");
         } else {
-          //Customer has already defined preference for this functionality. The MS will not do nothing.
-          log4j
-              .debug("-EnableTerminalAuthForNewInstances- There are preferences for property -OBPOS_TerminalAuthentication- alredy defined. Nothing was done.");
+          // Customer has already defined preference for this functionality. The MS will not do
+          // nothing.
+          log4j.debug(
+              "-EnableTerminalAuthForNewInstances- There are preferences for property -OBPOS_TerminalAuthentication- alredy defined. Nothing was done.");
         }
       } else {
-        log4j
-            .debug("-EnableTerminalAuthForNewInstances- Module script executed but nothing was done because there are no terminals in this instance.");
+        log4j.debug(
+            "-EnableTerminalAuthForNewInstances- Module script executed but nothing was done because there are no terminals in this instance.");
       }
     } catch (Exception e) {
       handleError(e);
     }
   }
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     // The module script needs to be executed only when updating from a version
@@ -98,7 +103,7 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
     return new ModuleScriptExecutionLimits(RETAIL_PACK_MODULE_ID, null,
         new OpenbravoVersion(1, 8, 1703));
   }
-  
+
   @Override
   protected boolean executeOnInstall() {
     return false;

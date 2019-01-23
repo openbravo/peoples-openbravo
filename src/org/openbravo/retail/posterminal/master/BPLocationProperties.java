@@ -41,8 +41,10 @@ public class BPLocationProperties extends ModelExtension {
             "COALESCE(bplocAddress.addressLine1 || CASE WHEN bplocAddress.addressLine2 IS NOT NULL THEN ' ' END || bplocAddress.addressLine2, bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName)",
             "_identifier"));
         add(new HQLProperty(
-            "(case when bploc.active = 'Y' and bp.active = 'Y' then true else false end)", "active"));
-        String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            "(case when bploc.active = 'Y' and bp.active = 'Y' then true else false end)",
+            "active"));
+        String curDbms = OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties()
             .getProperty("bbdd.rdbms");
         if (curDbms.equals("POSTGRE")) {
           add(new HQLProperty("now()", "loaded"));

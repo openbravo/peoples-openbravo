@@ -19,15 +19,14 @@ import org.openbravo.service.importprocess.ImportEntry;
  * @author migueldejuana
  *
  */
-public abstract class SerializedByTermImportEntryProcessorRunnable extends
-    MobileImportEntryProcessorRunnable {
+public abstract class SerializedByTermImportEntryProcessorRunnable
+    extends MobileImportEntryProcessorRunnable {
   public int countEntries(String importStatus, ImportEntry importEntry) {
     final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='" + importStatus + "' and "
         + ImportEntry.PROPERTY_CREATIONDATE + "<=:creationDate and "
         + ImportEntry.PROPERTY_CREATEDTIMESTAMP + "<:createdtimestamp and "
         + ImportEntry.PROPERTY_OBPOSPOSTERMINAL + "=:terminal and id!=:id";
-    final Query<Object> qry = OBDal
-        .getInstance()
+    final Query<Object> qry = OBDal.getInstance()
         .getSession()
         .createQuery("select 1 from " + ImportEntry.ENTITY_NAME + " where " + whereClause,
             Object.class);

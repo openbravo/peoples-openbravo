@@ -21,8 +21,8 @@ public class ProcessCashCloseSlave extends JSONProcessSimple {
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     OBContext.setAdminMode(true);
     try {
-      OBPOSAppCashup appCashup = OBDal.getInstance().get(OBPOSAppCashup.class,
-          jsonsent.getString("cashUpId"));
+      OBPOSAppCashup appCashup = OBDal.getInstance()
+          .get(OBPOSAppCashup.class, jsonsent.getString("cashUpId"));
 
       UpdateCashup.associateMasterSlave(appCashup, appCashup.getPOSTerminal());
       OBDal.getInstance().flush();

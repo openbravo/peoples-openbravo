@@ -35,6 +35,7 @@ public class EmailSender implements Runnable {
     runner.start(); // Start the thread.
   }
 
+  @Override
   public void run() {
     try {
       sendDocumentEmail();

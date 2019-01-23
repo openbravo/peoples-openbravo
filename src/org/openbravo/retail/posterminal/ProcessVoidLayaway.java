@@ -29,8 +29,8 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
-public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class ProcessVoidLayaway extends POSDataSynchronizationProcess
+    implements DataSynchronizationImportProcess {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   String paymentDescription = null;
@@ -43,8 +43,8 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
     Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
     if (order != null) {
-      final String loaded = jsonorder.getString("loaded"), updated = OBMOBCUtils
-          .convertToUTCDateComingFromServer(order.getUpdated());
+      final String loaded = jsonorder.getString("loaded"),
+          updated = OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated());
       if (!(loaded.compareTo(updated) >= 0)) {
         throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
             "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
@@ -61,7 +61,8 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
       hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
       hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
       hql.append("AND so.documentStatus <> 'CL' ");
-      Query<String> query = OBDal.getInstance().getSession()
+      Query<String> query = OBDal.getInstance()
+          .getSession()
           .createQuery(hql.toString(), String.class);
       query.setParameter("orderId", order.getId());
       List<String> documentNoList = query.list();
@@ -94,6 +95,7 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
 
   }
 
+  @Override
   protected String getImportQualifier() {
     return "OBPOS_VoidLayaway";
   }

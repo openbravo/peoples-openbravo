@@ -40,8 +40,8 @@ import org.openbravo.service.db.DalConnectionProvider;
  */
 
 public class PaymentMethodEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      OBPOSAppPayment.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(OBPOSAppPayment.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -56,14 +56,14 @@ public class PaymentMethodEventHandler extends EntityPersistenceEventObserver {
 
     validateActivePayment((OBPOSAppPayment) event.getTargetInstance());
 
-    FIN_FinancialAccount financialAccount = (FIN_FinancialAccount) event.getTargetInstance().get(
-        "financialAccount");
+    FIN_FinancialAccount financialAccount = (FIN_FinancialAccount) event.getTargetInstance()
+        .get("financialAccount");
     TerminalTypePaymentMethod paymentMethod = (TerminalTypePaymentMethod) event.getTargetInstance()
         .get("paymentMethod");
     Boolean leaveascredit = paymentMethod.isLeaveascredit();
     if (leaveascredit && financialAccount != null) {
-      final Entity appPaymentEntity = ModelProvider.getInstance().getEntity(
-          OBPOSAppPayment.ENTITY_NAME);
+      final Entity appPaymentEntity = ModelProvider.getInstance()
+          .getEntity(OBPOSAppPayment.ENTITY_NAME);
       final Property financialAccountProperty = appPaymentEntity.getProperty("financialAccount");
       event.setCurrentState(financialAccountProperty, null);
     } else if (!leaveascredit && financialAccount == null) {
@@ -78,14 +78,14 @@ public class PaymentMethodEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    FIN_FinancialAccount financialAccount = (FIN_FinancialAccount) event.getTargetInstance().get(
-        "financialAccount");
+    FIN_FinancialAccount financialAccount = (FIN_FinancialAccount) event.getTargetInstance()
+        .get("financialAccount");
     TerminalTypePaymentMethod paymentMethod = (TerminalTypePaymentMethod) event.getTargetInstance()
         .get("paymentMethod");
     Boolean leaveascredit = paymentMethod.isLeaveascredit();
     if (leaveascredit && financialAccount != null) {
-      final Entity appPaymentEntity = ModelProvider.getInstance().getEntity(
-          OBPOSAppPayment.ENTITY_NAME);
+      final Entity appPaymentEntity = ModelProvider.getInstance()
+          .getEntity(OBPOSAppPayment.ENTITY_NAME);
       final Property financialAccountProperty = appPaymentEntity.getProperty("financialAccount");
       event.setCurrentState(financialAccountProperty, null);
     } else if (!leaveascredit && financialAccount == null) {
@@ -106,18 +106,19 @@ public class PaymentMethodEventHandler extends EntityPersistenceEventObserver {
     validateActiveOrRemovePayment(paymentTerminal, false);
   }
 
-  private void validateActiveOrRemovePayment(OBPOSAppPayment paymentTerminal, boolean removePayment) {
+  private void validateActiveOrRemovePayment(OBPOSAppPayment paymentTerminal,
+      boolean removePayment) {
     if (!paymentTerminal.isActive() || removePayment) {
-      OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance().createCriteria(
-          OBPOSAppCashup.class);
-      obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id", paymentTerminal
-          .getObposApplications().getId()));
+      OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance()
+          .createCriteria(OBPOSAppCashup.class);
+      obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id",
+          paymentTerminal.getObposApplications().getId()));
       obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_ISPROCESSED, false));
       List<OBPOSAppCashup> cashUp = obCriteria.list();
       if (cashUp.size() > 0) {
         throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-            (removePayment == true) ? "OBPOS_PaymentRemove" : "OBPOS_PaymentDeactive", OBContext
-                .getOBContext().getLanguage().getLanguage()));
+            (removePayment == true) ? "OBPOS_PaymentRemove" : "OBPOS_PaymentDeactive",
+            OBContext.getOBContext().getLanguage().getLanguage()));
       }
     }
   }

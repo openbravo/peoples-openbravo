@@ -103,8 +103,8 @@ public class ShipmentUtils {
 
       // Stock manipulation
       org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
-      CallableStatement updateStockStatement = cp.getConnection().prepareCall(
-          "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+      CallableStatement updateStockStatement = cp.getConnection()
+          .prepareCall("{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
       try {
         // Stock manipulation
         handleStock(shipment, updateStockStatement);
@@ -129,8 +129,8 @@ public class ShipmentUtils {
     JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
         jsonorder.getLong("timezoneOffset"));
     if (jsonorder.has("id")) {
-      ShipmentInOut oldShipment = OBDal.getInstance().get(ShipmentInOut.class,
-          jsonorder.getString("id"));
+      ShipmentInOut oldShipment = OBDal.getInstance()
+          .get(ShipmentInOut.class, jsonorder.getString("id"));
       if (oldShipment == null) {
         shipment.setId(jsonorder.getString("id"));
       } else {
@@ -157,8 +157,8 @@ public class ShipmentUtils {
       shipment.setAccountingDate(order.getOrderDate());
     }
 
-    shipment.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
-        jsonorder.getJSONObject("bp").getString("shipLocId")));
+    shipment.setPartnerAddress(OBDal.getInstance()
+        .getProxy(Location.class, jsonorder.getJSONObject("bp").getString("shipLocId")));
     shipment.setSalesTransaction(true);
     shipment.setDocumentStatus("CO");
     shipment.setDocumentAction("--");
@@ -192,8 +192,8 @@ public class ShipmentUtils {
       BigDecimal pendingQty = orderLine.getDeliveredQuantity().abs();
       if (orderlines.getJSONObject(i).has("deliveredQuantity")
           && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
-        pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
-            "deliveredQuantity")).abs());
+        pendingQty = pendingQty.subtract(
+            new BigDecimal(orderlines.getJSONObject(i).getLong("deliveredQuantity")).abs());
       }
       if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
         boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
@@ -225,8 +225,9 @@ public class ShipmentUtils {
                 OrderLoaderPreAddShipmentLineHook_Actions.ACTION_RETURN,
                 orderlines.getJSONObject(i), orderLine, jsonorder, order, binForReturn);
           } catch (Exception e) {
-            log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for Return action "
-                + e.getMessage());
+            log.error(
+                "An error happened executing hook OrderLoaderPreAddShipmentLineHook for Return action "
+                    + e.getMessage());
             returnBinHookResponse = null;
           }
           if (returnBinHookResponse != null) {
@@ -236,9 +237,9 @@ public class ShipmentUtils {
               binForReturn = returnBinHookResponse.getNewLocator();
             }
           }
-          createdShipmentLines.add(addShipmentline(shipment, shplineentity,
-              orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty.negate(),
-              binForReturn, null, i));
+          createdShipmentLines
+              .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                  jsonorder, lineNo, pendingQty.negate(), binForReturn, null, i));
         } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
           lineNo += 10;
@@ -248,8 +249,9 @@ public class ShipmentUtils {
                 OrderLoaderPreAddShipmentLineHook_Actions.ACTION_SINGLEBIN,
                 orderlines.getJSONObject(i), orderLine, jsonorder, order, foundSingleBin);
           } catch (Exception e) {
-            log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SingleBin action"
-                + e.getMessage());
+            log.error(
+                "An error happened executing hook OrderLoaderPreAddShipmentLineHook for SingleBin action"
+                    + e.getMessage());
             singleBinHookResponse = null;
           }
           if (singleBinHookResponse != null) {
@@ -259,22 +261,24 @@ public class ShipmentUtils {
               foundSingleBin = singleBinHookResponse.getNewLocator();
             }
           }
-          createdShipmentLines.add(addShipmentline(shipment, shplineentity,
-              orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty,
-              foundSingleBin, null, i));
+          createdShipmentLines
+              .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                  jsonorder, lineNo, pendingQty, foundSingleBin, null, i));
         } else {
           HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
           if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
 
             String id = callProcessGetStock(orderLine.getId(), orderLine.getClient().getId(),
-                orderLine.getOrganization().getId(), orderLine.getProduct().getId(), orderLine
-                    .getUOM().getId(), warehouse.getId(),
+                orderLine.getOrganization().getId(), orderLine.getProduct().getId(),
+                orderLine.getUOM().getId(), warehouse.getId(),
                 orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue().getId()
-                    : null, pendingQty, orderLine.getWarehouseRule() != null ? orderLine
-                    .getWarehouseRule().getId() : null, null);
+                    : null,
+                pendingQty,
+                orderLine.getWarehouseRule() != null ? orderLine.getWarehouseRule().getId() : null,
+                null);
 
-            OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
-                StockProposed.class);
+            OBCriteria<StockProposed> stockProposed = OBDal.getInstance()
+                .createCriteria(StockProposed.class);
             stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, id));
             stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
 
@@ -291,11 +295,12 @@ public class ShipmentUtils {
                   standardSaleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
                       preAddShipmentLine,
                       OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE,
-                      orderlines.getJSONObject(i), orderLine, jsonorder, order, stock
-                          .getStorageDetail().getStorageBin());
+                      orderlines.getJSONObject(i), orderLine, jsonorder, order,
+                      stock.getStorageDetail().getStorageBin());
                 } catch (Exception e) {
-                  log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSale action "
-                      + e.getMessage());
+                  log.error(
+                      "An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSale action "
+                          + e.getMessage());
                   standardSaleBinHookResponse = null;
                 }
                 if (standardSaleBinHookResponse != null) {
@@ -323,9 +328,9 @@ public class ShipmentUtils {
                   qty = qty.negate();
                 }
                 ShipmentInOutLine objShipmentLine = addShipmentline(shipment, shplineentity,
-                    orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty, stock
-                        .getStorageDetail().getStorageBin(), stock.getStorageDetail()
-                        .getAttributeSetValue(), i);
+                    orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty,
+                    stock.getStorageDetail().getStorageBin(),
+                    stock.getStorageDetail().getAttributeSetValue(), i);
                 createdShipmentLines.add(objShipmentLine);
 
                 usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
@@ -349,12 +354,12 @@ public class ShipmentUtils {
 
             try {
               lastAttemptBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
-                  preAddShipmentLine,
-                  OrderLoaderPreAddShipmentLineHook_Actions.ACTION_LAST_ATTEMPT,
+                  preAddShipmentLine, OrderLoaderPreAddShipmentLineHook_Actions.ACTION_LAST_ATTEMPT,
                   orderlines.getJSONObject(i), orderLine, jsonorder, order, loc);
             } catch (Exception e) {
-              log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSaleLastAttempt action "
-                  + e.getMessage());
+              log.error(
+                  "An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSaleLastAttempt action "
+                      + e.getMessage());
               lastAttemptBinHookResponse = null;
             }
             if (lastAttemptBinHookResponse != null) {
@@ -371,28 +376,28 @@ public class ShipmentUtils {
             }
             ShipmentInOutLine objShipmentInOutLine = usedBins.get(loc.getId());
             if (objShipmentInOutLine != null) {
-              objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
-                  .add(pendingQty));
+              objShipmentInOutLine
+                  .setMovementQuantity(objShipmentInOutLine.getMovementQuantity().add(pendingQty));
               OBDal.getInstance().save(objShipmentInOutLine);
             } else {
-              createdShipmentLines.add(addShipmentline(shipment, shplineentity,
-                  orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty, loc, null,
-                  i));
+              createdShipmentLines
+                  .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i),
+                      orderLine, jsonorder, lineNo, pendingQty, loc, null, i));
             }
           }
         }
       }
       if (createdShipmentLines.size() != 0) {
         // Check if there's already an invoice line that is not related to any shipment
-        final OBCriteria<InvoiceLine> invoiceLineCriteria = OBDal.getInstance().createCriteria(
-            InvoiceLine.class);
+        final OBCriteria<InvoiceLine> invoiceLineCriteria = OBDal.getInstance()
+            .createCriteria(InvoiceLine.class);
         invoiceLineCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE, orderLine));
         invoiceLineCriteria.add(Restrictions.isNull(InvoiceLine.PROPERTY_GOODSSHIPMENTLINE));
         final List<InvoiceLine> invoiceLineList = invoiceLineCriteria.list();
         if (invoiceLineList.size() != 0) {
-          final int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order
-              .getCurrency().getPricePrecision().intValue() : order.getCurrency()
-              .getObposPosprecision().intValue();
+          final int pricePrecision = order.getCurrency().getObposPosprecision() == null
+              ? order.getCurrency().getPricePrecision().intValue()
+              : order.getCurrency().getObposPosprecision().intValue();
           final Invoice invoice = invoiceLineList.get(0).getInvoice();
           for (final ShipmentInOutLine shipmentLine : createdShipmentLines) {
             BigDecimal qtyToShip = shipmentLine.getMovementQuantity();
@@ -411,9 +416,11 @@ public class ShipmentUtils {
                     true);
                 invoice.getInvoiceLineList().add(newInvoiceLine);
                 invoiceLine.setInvoicedQuantity(qtyToShip);
-                invoiceLine.setLineNetAmount(orderLine.getUnitPrice().multiply(qtyToShip)
+                invoiceLine.setLineNetAmount(orderLine.getUnitPrice()
+                    .multiply(qtyToShip)
                     .setScale(pricePrecision, RoundingMode.HALF_UP));
-                invoiceLine.setGrossAmount(orderLine.getGrossUnitPrice().multiply(qtyToShip)
+                invoiceLine.setGrossAmount(orderLine.getGrossUnitPrice()
+                    .multiply(qtyToShip)
                     .setScale(pricePrecision, RoundingMode.HALF_UP));
                 newInvoiceLine.setLineNo(invoice.getInvoiceLineList().size() * 10L);
                 newInvoiceLine.setInvoicedQuantity(invoicedQty.subtract(qtyToShip));
@@ -427,15 +434,17 @@ public class ShipmentUtils {
                 OBDal.getInstance().save(newInvoiceLine);
                 // Split the taxes
                 for (final InvoiceLineTax invoiceLineTax : invoiceLine.getInvoiceLineTaxList()) {
-                  final InvoiceLineTax newInvoiceLineTax = (InvoiceLineTax) DalUtil.copy(
-                      invoiceLineTax, false, true);
+                  final InvoiceLineTax newInvoiceLineTax = (InvoiceLineTax) DalUtil
+                      .copy(invoiceLineTax, false, true);
                   newInvoiceLineTax.setInvoiceLine(newInvoiceLine);
                   newInvoiceLine.getInvoiceLineTaxList().add(newInvoiceLineTax);
                   invoiceLineTax.setTaxableAmount(invoiceLineTax.getTaxableAmount()
-                      .divide(invoicedQty, 32, RoundingMode.HALF_UP).multiply(qtyToShip)
+                      .divide(invoicedQty, 32, RoundingMode.HALF_UP)
+                      .multiply(qtyToShip)
                       .setScale(pricePrecision, RoundingMode.HALF_UP));
                   invoiceLineTax.setTaxAmount(invoiceLineTax.getTaxAmount()
-                      .divide(invoicedQty, 32, RoundingMode.HALF_UP).multiply(qtyToShip)
+                      .divide(invoicedQty, 32, RoundingMode.HALF_UP)
+                      .multiply(qtyToShip)
                       .setScale(pricePrecision, RoundingMode.HALF_UP));
                   newInvoiceLineTax.setTaxableAmount(newInvoiceLineTax.getTaxableAmount()
                       .subtract(invoiceLineTax.getTaxableAmount())
@@ -449,12 +458,13 @@ public class ShipmentUtils {
                 // Split the discounts
                 for (final InvoiceLineOffer invoiceLineOffer : invoiceLine
                     .getInvoiceLineOfferList()) {
-                  final InvoiceLineOffer newInvoiceLineOffer = (InvoiceLineOffer) DalUtil.copy(
-                      invoiceLineOffer, false, true);
+                  final InvoiceLineOffer newInvoiceLineOffer = (InvoiceLineOffer) DalUtil
+                      .copy(invoiceLineOffer, false, true);
                   newInvoiceLineOffer.setInvoiceLine(newInvoiceLine);
                   newInvoiceLine.getInvoiceLineOfferList().add(newInvoiceLineOffer);
                   invoiceLineOffer.setTotalAmount(invoiceLineOffer.getBaseGrossUnitPrice()
-                      .multiply(qtyToShip).setScale(pricePrecision, RoundingMode.HALF_UP));
+                      .multiply(qtyToShip)
+                      .setScale(pricePrecision, RoundingMode.HALF_UP));
                   newInvoiceLineOffer.setTotalAmount(newInvoiceLineOffer.getTotalAmount()
                       .subtract(invoiceLineOffer.getTotalAmount())
                       .setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -487,8 +497,8 @@ public class ShipmentUtils {
 
   private Locator getBinForReturns(String posTerminalId) {
     if (binForRetuns == null) {
-      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          posTerminalId);
+      OBPOSApplications posTerminal = OBDal.getInstance()
+          .get(OBPOSApplications.class, posTerminalId);
       binForRetuns = POSUtils.getBinForReturns(posTerminal);
     }
     return binForRetuns;
@@ -522,14 +532,14 @@ public class ShipmentUtils {
     line.setStorageBin(bin);
     if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
         "attSetInstanceDesc")) {
-      line.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
-          jsonOrderLine.get("attSetInstanceDesc").toString(), jsonOrderLine
-              .getJSONObject("product").get("id").toString(), orderOrganizationId));
+      line.setAttributeSetValue(
+          AttributesUtils.fetchAttributeSetValue(jsonOrderLine.get("attSetInstanceDesc").toString(),
+              jsonOrderLine.getJSONObject("product").get("id").toString(), orderOrganizationId));
     } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
         "attributeValue")) {
-      line.setAttributeSetValue(AttributesUtils.fetchAttributeSetValue(
-          jsonOrderLine.get("attributeValue").toString(), jsonOrderLine.getJSONObject("product")
-              .get("id").toString(), orderOrganizationId));
+      line.setAttributeSetValue(
+          AttributesUtils.fetchAttributeSetValue(jsonOrderLine.get("attributeValue").toString(),
+              jsonOrderLine.getJSONObject("product").get("id").toString(), orderOrganizationId));
     } else {
       line.setAttributeSetValue(attributeSetInstance);
     }
@@ -609,8 +619,9 @@ public class ShipmentUtils {
       // locator
       updateStockStatement.setString(5, transaction.getStorageBin().getId());
       // attributesetinstance
-      updateStockStatement.setString(6, transaction.getAttributeSetValue() != null ? transaction
-          .getAttributeSetValue().getId() : null);
+      updateStockStatement.setString(6,
+          transaction.getAttributeSetValue() != null ? transaction.getAttributeSetValue().getId()
+              : null);
       // uom
       updateStockStatement.setString(7, transaction.getUOM().getId());
       // product uom
@@ -626,8 +637,10 @@ public class ShipmentUtils {
       // p_preqty
       updateStockStatement.setBigDecimal(12, BigDecimal.ZERO);
       // p_preqtyorder
-      updateStockStatement.setBigDecimal(13, transaction.getOrderQuantity() != null ? transaction
-          .getOrderQuantity().multiply(NEGATIVE_ONE) : null);
+      updateStockStatement.setBigDecimal(13,
+          transaction.getOrderQuantity() != null
+              ? transaction.getOrderQuantity().multiply(NEGATIVE_ONE)
+              : null);
 
       updateStockStatement.execute();
 

@@ -51,7 +51,8 @@ public class TaxZone extends ProcessHQLQuery {
       OBContext.setAdminMode(true);
       OBPOSApplications posDetail = POSUtils.getTerminalById(jsonsent.getString("pos"));
       final OrganizationInformation storeInfo = posDetail.getOrganization()
-          .getOrganizationInformationList().get(0);
+          .getOrganizationInformationList()
+          .get(0);
       final Country fromCountry = storeInfo.getLocationAddress().getCountry();
       final Region fromRegion = storeInfo.getLocationAddress().getRegion();
       Map<String, Object> paramValues = new HashMap<String, Object>();
@@ -81,8 +82,9 @@ public class TaxZone extends ProcessHQLQuery {
 
     // FROM
     final OrganizationInformation storeInfo = posDetail.getOrganization()
-        .getOrganizationInformationList().get(0); // FIXME: expected org info?
-                                                  // IndexOutOfBoundsException?
+        .getOrganizationInformationList()
+        .get(0); // FIXME: expected org info?
+                 // IndexOutOfBoundsException?
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
@@ -90,8 +92,7 @@ public class TaxZone extends ProcessHQLQuery {
         + " financialMgmtTaxRate.salesPurchaseType in ('S', 'B') ";
 
     if (fromCountry != null) {
-      hqlTax = hqlTax
-          + "and (financialMgmtTaxRate.country.id = :fromCountryId "
+      hqlTax = hqlTax + "and (financialMgmtTaxRate.country.id = :fromCountryId "
           + "  or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = :fromCountryId )"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
@@ -99,8 +100,7 @@ public class TaxZone extends ProcessHQLQuery {
       hqlTax = hqlTax + "and financialMgmtTaxRate.country is null ";
     }
     if (fromRegion != null) {
-      hqlTax = hqlTax
-          + "and (financialMgmtTaxRate.region.id = :fromRegionId "
+      hqlTax = hqlTax + "and (financialMgmtTaxRate.region.id = :fromRegionId "
           + " or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id =  :fromRegionId )"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null)))";
@@ -117,8 +117,8 @@ public class TaxZone extends ProcessHQLQuery {
         + " join financialMgmtTaxZone.tax as tax where "
         + "financialMgmtTaxZone.$readableSimpleClientCriteria AND "
         + "financialMgmtTaxZone.$naturalOrgCriteria AND "
-        + "(financialMgmtTaxZone.$incrementalUpdateCriteria) "
-        + "and financialMgmtTaxZone.tax in (" + hqlTax + ")";
+        + "(financialMgmtTaxZone.$incrementalUpdateCriteria) " + "and financialMgmtTaxZone.tax in ("
+        + hqlTax + ")";
 
     if (fromCountry != null) {
       hql = hql
