@@ -64,9 +64,9 @@ public class ETagGeneration extends BaseDataSourceTestDal {
       String oldEtag = getEtag(Windows.SALES_ORDER);
 
       if (!Preferences.existsPreference("UomManagement", true, "0", "0", null, null, null)) {
-        newPref = Preferences.setPreferenceValue("UomManagement", "Y", true, OBDal.getInstance()
-            .getProxy(Client.class, "0"), OBDal.getInstance().getProxy(Organization.class, "0"),
-            null, null, null, null);
+        newPref = Preferences.setPreferenceValue("UomManagement", "Y", true,
+            OBDal.getInstance().getProxy(Client.class, "0"),
+            OBDal.getInstance().getProxy(Organization.class, "0"), null, null, null, null);
       }
       OBDal.getInstance().commitAndClose();
 
@@ -112,7 +112,8 @@ public class ETagGeneration extends BaseDataSourceTestDal {
   }
 
   private Boolean hasModulesInDevelopment() {
-    final Query<Object> indevelMods = OBDal.getInstance().getSession()
+    final Query<Object> indevelMods = OBDal.getInstance()
+        .getSession()
         .createQuery("select 1 from ADModule m where m.inDevelopment=true", Object.class);
     indevelMods.setMaxResults(1);
     return indevelMods.list().size() > 0;

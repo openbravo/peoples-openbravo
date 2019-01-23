@@ -105,8 +105,9 @@ public class Table extends ModelObject {
       primaryKeyColumns = new ArrayList<Column>();
 
       for (final Column c : getColumns()) {
-        if (c.isKey())
+        if (c.isKey()) {
           primaryKeyColumns.add(c);
+        }
       }
     }
     return primaryKeyColumns;
@@ -120,8 +121,9 @@ public class Table extends ModelObject {
     if (identifierColumns == null) {
       identifierColumns = new ArrayList<Column>();
       for (final Column c : getColumns()) {
-        if (c.isIdentifier())
+        if (c.isIdentifier()) {
           identifierColumns.add(c);
+        }
       }
     }
     return identifierColumns;
@@ -135,8 +137,9 @@ public class Table extends ModelObject {
     if (parentColumns == null) {
       parentColumns = new ArrayList<Column>();
       for (final Column c : getColumns()) {
-        if (c.isParent())
+        if (c.isParent()) {
           parentColumns.add(c);
+        }
       }
     }
     return parentColumns;
@@ -171,8 +174,9 @@ public class Table extends ModelObject {
 
   public void setReferenceTypes(ModelProvider modelProvider) {
     for (final Column c : columns) {
-      if (!c.isPrimitiveType())
+      if (!c.isPrimitiveType()) {
         c.setReferenceType();
+      }
     }
   }
 

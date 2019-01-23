@@ -25,11 +25,13 @@ class FunctionCountTemplate extends FunctionTemplate {
     super(fieldName, field, format, format, dataTemplate);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionCountTemplate.isDebugEnabled())
+      if (log4jFunctionCountTemplate.isDebugEnabled()) {
         log4jFunctionCountTemplate.debug("New FunctionCountValue: " + fieldName);
+      }
       functionValue = new FunctionCountValue(this, xmlDocument);
     }
     return functionValue;

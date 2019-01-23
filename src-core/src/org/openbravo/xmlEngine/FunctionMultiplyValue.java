@@ -24,9 +24,10 @@ class FunctionMultiplyValue extends FunctionEvaluationValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
-    log4jFunctionMultiplyValue.debug("Arg1: " + arg1Value.printSimple() + " Arg2: "
-        + arg2Value.printSimple());
+    log4jFunctionMultiplyValue
+        .debug("Arg1: " + arg1Value.printSimple() + " Arg2: " + arg2Value.printSimple());
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
@@ -36,9 +37,10 @@ class FunctionMultiplyValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
-    log4jFunctionMultiplyValue.debug("Arg1: " + arg1Value.printSimple() + " Arg2: "
-        + arg2Value.printSimple());
+    log4jFunctionMultiplyValue
+        .debug("Arg1: " + arg1Value.printSimple() + " Arg2: " + arg2Value.printSimple());
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;

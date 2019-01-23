@@ -70,8 +70,8 @@ public class AutologonAuthenticationManager extends AuthenticationManager {
       if (m_sAutologonUsername == null || m_sAutologonUsername.equals("")) {
         throw new AuthenticationException("Autologon user emtpy.");
       } else {
-        throw new AuthenticationException("Autologon user is not an Openbravo ERP user: "
-            + m_sAutologonUsername);
+        throw new AuthenticationException(
+            "Autologon user is not an Openbravo ERP user: " + m_sAutologonUsername);
       }
     } else {
       return m_sUserId;

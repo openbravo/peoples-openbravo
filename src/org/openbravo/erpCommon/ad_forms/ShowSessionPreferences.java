@@ -40,8 +40,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ShowSessionPreferences extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("SAVE_PREFERENCES")) {
@@ -79,9 +80,9 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
           "ShowTrl");
       ShowSessionPreferencesData.updateRange(this, vars.getUser(), strRecordRange,
           strRecordRangeInfo, strTransactionalRange, strTheme);
-      if (!strPreference.equals(""))
+      if (!strPreference.equals("")) {
         ShowSessionPreferencesData.update(this, vars.getUser(), strTranslate, strPreference);
-      else {
+      } else {
         strPreference = SequenceIdData.getUUID();
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(),
             vars.getUser(), "ShowTrl", strTranslate);
@@ -91,9 +92,9 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"),
           Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(),
           "ShowAcct");
-      if (!strPreference.equals(""))
+      if (!strPreference.equals("")) {
         ShowSessionPreferencesData.update(this, vars.getUser(), strAccounting, strPreference);
-      else {
+      } else {
         strPreference = SequenceIdData.getUUID();
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(),
             vars.getUser(), "ShowAcct", strAccounting);
@@ -105,9 +106,9 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
           "ShowTest");
       ShowSessionPreferencesData.updateRange(this, vars.getUser(), strRecordRange,
           strRecordRangeInfo, strTransactionalRange, strTheme);
-      if (!strPreference.equals(""))
+      if (!strPreference.equals("")) {
         ShowSessionPreferencesData.update(this, vars.getUser(), strTest, strPreference);
-      else {
+      } else {
         strPreference = SequenceIdData.getUUID();
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(),
             vars.getUser(), "ShowTest", strTest);
@@ -117,9 +118,9 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"),
           Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(),
           "ShowAuditDefault");
-      if (!strPreference.equals(""))
+      if (!strPreference.equals("")) {
         ShowSessionPreferencesData.update(this, vars.getUser(), strAudit, strPreference);
-      else {
+      } else {
         strPreference = SequenceIdData.getUUID();
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(),
             vars.getUser(), "ShowAuditDefault", strAudit);
@@ -132,11 +133,13 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
 
   private void printPagePreferences(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("ShowSession - printPagePreferences - Output: preferences");
+    }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/ShowSessionPreferences").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/ShowSessionPreferences")
+        .createXmlDocument();
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -148,25 +151,24 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     xmlDocument.setParameter("fecha", vars.getSessionValue("#Date", ""));
     xmlDocument.setParameter("fechadisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("fechasaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument
-        .setParameter("transactionalRange", vars.getSessionValue("#Transactional$Range", ""));
+    xmlDocument.setParameter("transactionalRange",
+        vars.getSessionValue("#Transactional$Range", ""));
     xmlDocument.setParameter("test", vars.getSessionValue("#ShowTest", "N"));
     xmlDocument.setParameter("recordRange", vars.getSessionValue("#RecordRange"));
     xmlDocument.setParameter("recordRangeInfo", vars.getSessionValue("#RecordRangeInfo"));
     xmlDocument.setParameter("info", getInfo(vars));
     xmlDocument.setParameter("Theme", vars.getTheme().substring(4));
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ShowSessionPreferences", false, "",
-        "", "", false, "ad_forms", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ShowSessionPreferences", false, "", "",
+        "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
       WindowTabs tabs = new WindowTabs(this, vars,
           "org.openbravo.erpCommon.ad_forms.ShowSessionPreferences");
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "ShowSessionPreferences.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ShowSessionPreferences.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ShowSessionPreferences.html",
           strReplaceWith);
@@ -203,45 +205,80 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
 
   private String getInfo(VariablesSecureApp vars) throws ServletException {
     StringBuffer script = new StringBuffer();
-    script.append(Utility.messageBD(this, "User", vars.getLanguage())).append(": ")
-        .append(ShowSessionPreferencesData.usuario(this, vars.getUser())).append("\n");
-    script.append(Utility.messageBD(this, "Role", vars.getLanguage())).append(": ")
-        .append(ShowSessionPreferencesData.rol(this, vars.getRole())).append("\n");
-    script.append(Utility.messageBD(this, "Client", vars.getLanguage())).append(": ")
-        .append(ShowSessionPreferencesData.cliente(this, vars.getClient())).append("\n");
-    script.append(Utility.messageBD(this, "Org", vars.getLanguage())).append(": ")
-        .append(ShowSessionPreferencesData.organizacion(this, vars.getOrg())).append("\n");
-    script.append(Utility.messageBD(this, "Web", vars.getLanguage())).append(": ")
-        .append(strReplaceWith).append("\n");
-    script.append(Utility.messageBD(this, "DB", vars.getLanguage())).append(": ")
-        .append(globalParameters.strBBDD).append("\n");
-    script.append(Utility.messageBD(this, "RecordRange", vars.getLanguage())).append(": ")
-        .append(vars.getSessionValue("#RecordRange")).append("\n");
-    script.append(Utility.messageBD(this, "SearchsRecordRange", vars.getLanguage())).append(": ")
-        .append(vars.getSessionValue("#RecordRangeInfo")).append("\n");
-    if (globalParameters.strVersion != null && !globalParameters.strVersion.equals(""))
-      script.append(Utility.messageBD(this, "SourceVersion", vars.getLanguage())).append(": ")
-          .append(globalParameters.strVersion).append("\n");
-    if (globalParameters.strParentVersion != null && !globalParameters.strParentVersion.equals(""))
+    script.append(Utility.messageBD(this, "User", vars.getLanguage()))
+        .append(": ")
+        .append(ShowSessionPreferencesData.usuario(this, vars.getUser()))
+        .append("\n");
+    script.append(Utility.messageBD(this, "Role", vars.getLanguage()))
+        .append(": ")
+        .append(ShowSessionPreferencesData.rol(this, vars.getRole()))
+        .append("\n");
+    script.append(Utility.messageBD(this, "Client", vars.getLanguage()))
+        .append(": ")
+        .append(ShowSessionPreferencesData.cliente(this, vars.getClient()))
+        .append("\n");
+    script.append(Utility.messageBD(this, "Org", vars.getLanguage()))
+        .append(": ")
+        .append(ShowSessionPreferencesData.organizacion(this, vars.getOrg()))
+        .append("\n");
+    script.append(Utility.messageBD(this, "Web", vars.getLanguage()))
+        .append(": ")
+        .append(strReplaceWith)
+        .append("\n");
+    script.append(Utility.messageBD(this, "DB", vars.getLanguage()))
+        .append(": ")
+        .append(globalParameters.strBBDD)
+        .append("\n");
+    script.append(Utility.messageBD(this, "RecordRange", vars.getLanguage()))
+        .append(": ")
+        .append(vars.getSessionValue("#RecordRange"))
+        .append("\n");
+    script.append(Utility.messageBD(this, "SearchsRecordRange", vars.getLanguage()))
+        .append(": ")
+        .append(vars.getSessionValue("#RecordRangeInfo"))
+        .append("\n");
+    if (globalParameters.strVersion != null && !globalParameters.strVersion.equals("")) {
+      script.append(Utility.messageBD(this, "SourceVersion", vars.getLanguage()))
+          .append(": ")
+          .append(globalParameters.strVersion)
+          .append("\n");
+    }
+    if (globalParameters.strParentVersion != null
+        && !globalParameters.strParentVersion.equals("")) {
       script.append(Utility.messageBD(this, "VerticalSourceVersion", vars.getLanguage()))
-          .append(": ").append(globalParameters.strParentVersion).append("\n");
-    script.append(Utility.messageBD(this, "JavaVM", vars.getLanguage())).append(": ")
-        .append(System.getProperty("java.vm.name")).append("\n");
-    script.append(Utility.messageBD(this, "VersionJavaVM", vars.getLanguage())).append(": ")
-        .append(System.getProperty("java.vm.version")).append("\n");
-    script.append(Utility.messageBD(this, "SystemLanguage", vars.getLanguage())).append(": ")
-        .append(globalParameters.strSystemLanguage).append("\n");
-    script.append(Utility.messageBD(this, "JavaTMP", vars.getLanguage())).append(": ")
-        .append(System.getProperty("java.io.tmpdir")).append("\n");
+          .append(": ")
+          .append(globalParameters.strParentVersion)
+          .append("\n");
+    }
+    script.append(Utility.messageBD(this, "JavaVM", vars.getLanguage()))
+        .append(": ")
+        .append(System.getProperty("java.vm.name"))
+        .append("\n");
+    script.append(Utility.messageBD(this, "VersionJavaVM", vars.getLanguage()))
+        .append(": ")
+        .append(System.getProperty("java.vm.version"))
+        .append("\n");
+    script.append(Utility.messageBD(this, "SystemLanguage", vars.getLanguage()))
+        .append(": ")
+        .append(globalParameters.strSystemLanguage)
+        .append("\n");
+    script.append(Utility.messageBD(this, "JavaTMP", vars.getLanguage()))
+        .append(": ")
+        .append(System.getProperty("java.io.tmpdir"))
+        .append("\n");
     // script.append(Utility.messageBD(this, "UserFolder",
     // vars.getLanguage())).append(": ").append(globalParameters.strFileProperties).append("\n");
-    script.append(Utility.messageBD(this, "OS", vars.getLanguage())).append(": ")
-        .append(System.getProperty("os.name")).append(" ").append(System.getProperty("os.version"));
+    script.append(Utility.messageBD(this, "OS", vars.getLanguage()))
+        .append(": ")
+        .append(System.getProperty("os.name"))
+        .append(" ")
+        .append(System.getProperty("os.version"));
     script.append(" ").append(System.getProperty("sun.os.patch.level"));
 
     return script.toString();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ShowSession. This Servlet was made by Wad constructor";
   } // end of getServletInfo() method

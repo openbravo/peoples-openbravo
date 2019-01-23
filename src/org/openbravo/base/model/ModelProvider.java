@@ -165,6 +165,7 @@ public class ModelProvider implements OBSingleton {
 
       tables = list(initsession, Table.class);
       Collections.sort(tables, new Comparator<Table>() {
+        @Override
         public int compare(Table t1, Table t2) {
           return t1.getName().compareTo(t2.getName());
         }
@@ -289,8 +290,8 @@ public class ModelProvider implements OBSingleton {
             // tables
             if (!e.isView() && p.getColumnName() != null && !e.isDataSourceBased()
                 && !e.isHQLBased() && !e.isVirtualEntity()) {
-              final Boolean mandatory = colMandatories.get(createColumnMandatoryKey(
-                  e.getTableName(), p.getColumnName()));
+              final Boolean mandatory = colMandatories
+                  .get(createColumnMandatoryKey(e.getTableName(), p.getColumnName()));
               if (mandatory != null) {
                 p.setMandatory(mandatory);
               } else if (!p.isComputedColumn() && !p.isProxy() && !e.isVirtualEntity()) {
@@ -357,15 +358,15 @@ public class ModelProvider implements OBSingleton {
     try {
       con = ConnectionProviderContextListener.getPool();
       if (con == null) {
-        con = new ConnectionProviderImpl(OBPropertiesProvider.getInstance()
-            .getOpenbravoProperties());
+        con = new ConnectionProviderImpl(
+            OBPropertiesProvider.getInstance().getOpenbravoProperties());
         createdNewPool = true;
       }
       connection = con.getConnection();
       PreparedStatement ps = null;
       try {
-        ps = connection
-            .prepareStatement("select distinct model_impl from ad_reference where model_impl is not null");
+        ps = connection.prepareStatement(
+            "select distinct model_impl from ad_reference where model_impl is not null");
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
           String classname = rs.getString(1);
@@ -532,8 +533,8 @@ public class ModelProvider implements OBSingleton {
         continue;
       }
 
-      Entity baseEntity = entitiesByTableId.get(entity.getTableId().substring(0,
-          entity.getTableId().indexOf("_CC")));
+      Entity baseEntity = entitiesByTableId
+          .get(entity.getTableId().substring(0, entity.getTableId().indexOf("_CC")));
       if (baseEntity == null) {
         log.warn("Not found base entity for computed column entity " + entity);
         continue;
@@ -568,8 +569,7 @@ public class ModelProvider implements OBSingleton {
         final Column thatColumn = c.getReferenceType();
         if (thatColumn == null) {
           if (!OBPropertiesProvider.isFriendlyWarnings()) {
-            log.error("Property "
-                + thisProp
+            log.error("Property " + thisProp
                 + " is mapped incorrectly, there is no referenced column for it, removing from the mapping");
           }
           thisProp.getEntity().getProperties().remove(thisProp);
@@ -652,8 +652,8 @@ public class ModelProvider implements OBSingleton {
   // Build unique constraints
   private void buildUniqueConstraints(Session session,
       SessionFactoryController sessionFactoryController) {
-    final List<UniqueConstraintColumn> uniqueConstraintColumns = getUniqueConstraintColumns(
-        session, sessionFactoryController);
+    final List<UniqueConstraintColumn> uniqueConstraintColumns = getUniqueConstraintColumns(session,
+        sessionFactoryController);
     Entity entity = null;
     UniqueConstraint uniqueConstraint = null;
     for (final UniqueConstraintColumn uniqueConstraintColumn : uniqueConstraintColumns) {
@@ -668,9 +668,8 @@ public class ModelProvider implements OBSingleton {
       }
 
       // the uniqueconstraint
-      if (uniqueConstraint == null
-          || !uniqueConstraint.getName().equalsIgnoreCase(
-              uniqueConstraintColumn.getUniqueConstraintName())) {
+      if (uniqueConstraint == null || !uniqueConstraint.getName()
+          .equalsIgnoreCase(uniqueConstraintColumn.getUniqueConstraintName())) {
         // note uniqueconstraint should be set to null, because the
         // for loop my not find another one
         uniqueConstraint = null;
@@ -700,8 +699,8 @@ public class ModelProvider implements OBSingleton {
       SessionFactoryController sessionFactoryController) {
     final List<UniqueConstraintColumn> result = new ArrayList<>();
     @SuppressWarnings("rawtypes")
-    final NativeQuery sqlQuery = session.createNativeQuery(sessionFactoryController
-        .getUniqueConstraintQuery());
+    final NativeQuery sqlQuery = session
+        .createNativeQuery(sessionFactoryController.getUniqueConstraintQuery());
     for (final Object row : sqlQuery.list()) {
       // cast to an array of strings!
       // 0: tablename
@@ -752,12 +751,8 @@ public class ModelProvider implements OBSingleton {
     // this assumes that the column in the target entity is itself
     // not a foreign key!
     final Property targetIdProp = idProperty.getTargetEntity().getIdProperties().get(0);
-    Check
-        .isTrue(
-            targetIdProp.isPrimitive(),
-            "Entity "
-                + e
-                + ", The ID property of the referenced class should be primitive, an other case is not supported");
+    Check.isTrue(targetIdProp.isPrimitive(), "Entity " + e
+        + ", The ID property of the referenced class should be primitive, an other case is not supported");
     idProperty.setDomainType(targetIdProp.getDomainType());
     idProperty.setIdBasedOnProperty(newProp);
     idProperty.setIdentifier(false);
@@ -766,8 +761,8 @@ public class ModelProvider implements OBSingleton {
   }
 
   private void createCompositeId(Entity e) {
-    Check.isTrue(e.getIdProperties().size() > 1, "Expect that entity " + e
-        + " has more than one id property ");
+    Check.isTrue(e.getIdProperties().size() > 1,
+        "Expect that entity " + e + " has more than one id property ");
     final Property compId = new Property();
     compId.setEntity(e);
     compId.setId(true);
@@ -788,8 +783,8 @@ public class ModelProvider implements OBSingleton {
       toRemove.add(p);
     }
     e.getIdProperties().removeAll(toRemove);
-    Check.isTrue(e.getIdProperties().size() == 0, "There should not be any id properties (entity "
-        + e + ") at this point");
+    Check.isTrue(e.getIdProperties().size() == 0,
+        "There should not be any id properties (entity " + e + ") at this point");
 
     // and now add the id property again
     e.addProperty(compId);
@@ -799,20 +794,17 @@ public class ModelProvider implements OBSingleton {
     try {
       List<Property> props = new ArrayList<Property>(e.getProperties());
       for (final Property p : props) {
-        if (!p.isParent()
-            && (p.isOneToMany()
-                || p.isId()
-                || p.getColumnName().equalsIgnoreCase("createdby")
-                || p.getColumnName().equalsIgnoreCase("updatedby")
-                || p.getReferencedProperty() == null
-                || entitiesByClassName.get("org.openbravo.model.ad.system.Client").equals(
-                    p.getReferencedProperty().getEntity())
-                || entitiesByClassName.get("org.openbravo.model.common.enterprise.Organization")
-                    .equals(p.getReferencedProperty().getEntity())
-                || entitiesByClassName.get("org.openbravo.model.ad.module.Module").equals(
-                    p.getReferencedProperty().getEntity()) || entitiesByClassName.get(
-                "org.openbravo.model.ad.system.Language").equals(
-                p.getReferencedProperty().getEntity()))) {
+        if (!p.isParent() && (p.isOneToMany() || p.isId()
+            || p.getColumnName().equalsIgnoreCase("createdby")
+            || p.getColumnName().equalsIgnoreCase("updatedby") || p.getReferencedProperty() == null
+            || entitiesByClassName.get("org.openbravo.model.ad.system.Client")
+                .equals(p.getReferencedProperty().getEntity())
+            || entitiesByClassName.get("org.openbravo.model.common.enterprise.Organization")
+                .equals(p.getReferencedProperty().getEntity())
+            || entitiesByClassName.get("org.openbravo.model.ad.module.Module")
+                .equals(p.getReferencedProperty().getEntity())
+            || entitiesByClassName.get("org.openbravo.model.ad.system.Language")
+                .equals(p.getReferencedProperty().getEntity()))) {
           continue;
         }
 
@@ -920,8 +912,8 @@ public class ModelProvider implements OBSingleton {
     if (table == null) {
       if (OBPropertiesProvider.isFriendlyWarnings()) {
         // this error won't be logged...
-        throw new IllegalArgumentException("Table: " + tableName
-            + " not found in runtime model, is it maybe inactive?");
+        throw new IllegalArgumentException(
+            "Table: " + tableName + " not found in runtime model, is it maybe inactive?");
       } else {
         Check.fail("Table: " + tableName + " not found in runtime model, is it maybe inactive?");
       }
@@ -935,8 +927,9 @@ public class ModelProvider implements OBSingleton {
    * @return Table if exists, otherwise null.
    */
   public Table getTableWithoutCheck(String tableName) {
-    if (tablesByTableName == null)
+    if (tablesByTableName == null) {
       getModel();
+    }
     return tablesByTableName.get(tableName.toLowerCase());
   }
 
@@ -965,8 +958,9 @@ public class ModelProvider implements OBSingleton {
    * @throws CheckException
    */
   public Entity getEntity(String entityName, boolean checkIfNotExists) throws CheckException {
-    if (model == null)
+    if (model == null) {
       getModel();
+    }
     final Entity entity = entitiesByName.get(entityName);
     if (entity == null && checkIfNotExists) {
       Check.fail("Mapping name: " + entityName + " not found in runtime model");
@@ -1028,12 +1022,14 @@ public class ModelProvider implements OBSingleton {
    * @throws CheckException
    */
   public Entity getEntity(Class<?> clz) throws CheckException {
-    if (model == null)
+    if (model == null) {
       getModel();
+    }
     // TODO: handle subclasses, so if not found then try to find superclass!
     final Entity entity = entitiesByClassName.get(clz.getName());
-    if (entity == null)
+    if (entity == null) {
       Check.fail("Class name: " + clz.getName() + " not found in runtime model");
+    }
     return entity;
   }
 

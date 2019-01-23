@@ -73,14 +73,15 @@ public class InventoryStatusUtils {
     }
   }
 
-  private static boolean statusOfBinEquasGivenStatusID(Locator storageBin, String inventoryStatusID) {
+  private static boolean statusOfBinEquasGivenStatusID(Locator storageBin,
+      String inventoryStatusID) {
     return StringUtils.equals(storageBin.getInventoryStatus().getId(), inventoryStatusID);
   }
 
   private static void throwExceptionIfBinIsVirtual(Locator storageBin) {
     if (storageBin.isVirtual()) {
-      throw new OBException(OBMessageUtils.messageBD("M_VirtualBinCanNotChangeInvStatus").concat(
-          "<br/>"));
+      throw new OBException(
+          OBMessageUtils.messageBD("M_VirtualBinCanNotChangeInvStatus").concat("<br/>"));
     }
   }
 

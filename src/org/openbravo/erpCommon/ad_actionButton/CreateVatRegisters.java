@@ -48,13 +48,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CreateVatRegisters extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -88,8 +90,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
 
       String strWindowPath = Utility.getTabURL(strTabId, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       // if (!message.equals("")) vars.setSessionValue(strWindowId + "|" +
       // strTabName + ".message", message);
@@ -97,11 +100,12 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       vars.setMessage(strTabId, myMessage);
 
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
-    // advisePopUp(response,"INFO","Create VAT Register",message);
-    // bdErrorGeneralPopUp(response, "SAVE", vars
-    // .getStringParameter("inpcTaxpaymentId"));
+      // advisePopUp(response,"INFO","Create VAT Register",message);
+      // bdErrorGeneralPopUp(response, "SAVE", vars
+      // .getStringParameter("inpcTaxpaymentId"));
+    }
   }
 
   /*
@@ -127,17 +131,17 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     OBError myMessage = null;
     TaxPayment[] taxpayment = TaxPayment.select(this, strTaxpaymentID);
     String strUser = vars.getUser();
-    log4j.info("strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom
-        + "strDateto: " + strDateto + "strProcessed: " + strProcessed + "strGeneratePayment: "
+    log4j.info("strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom + "strDateto: "
+        + strDateto + "strProcessed: " + strProcessed + "strGeneratePayment: "
         + strGeneratePayment);
     // If processing=n then i deleted all old record of tax register and
     // register lines
     if (strProcessed.equalsIgnoreCase("N")) {
       // check for already used periods)
-      BigDecimal CrossPeriodCount = new BigDecimal(
-          TaxPayment.selectCrossPeriodCount(this, vars.getClient(), Tree.getMembers(this,
-              TreeData.getTreeOrg(this, vars.getClient()), taxpayment[0].adOrgId), strDatefrom,
-              strDateto));
+      BigDecimal CrossPeriodCount = new BigDecimal(TaxPayment.selectCrossPeriodCount(this,
+          vars.getClient(),
+          Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), taxpayment[0].adOrgId),
+          strDatefrom, strDateto));
       if (CrossPeriodCount.intValue() > 0) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(),
             Utility.messageBD(this, "PeriodsDontMatch", vars.getLanguage()));
@@ -190,9 +194,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       TaxRegister[] taxregisters = TaxRegister.selectChild(this, strTaxpaymentID);
       for (TaxRegister taxRegister : taxregisters) {
         CreateVatRegistersData[] invoices = CreateVatRegistersData.select(this, strTaxpaymentID,
-            taxRegister.cTaxregisterTypeId, strDatefrom, DateTimeData.nDaysAfter(this, strDateto,
-                "1"), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-                taxpayment[0].adOrgId));
+            taxRegister.cTaxregisterTypeId, strDatefrom,
+            DateTimeData.nDaysAfter(this, strDateto, "1"), Tree.getMembers(this,
+                TreeData.getTreeOrg(this, vars.getClient()), taxpayment[0].adOrgId));
         for (CreateVatRegistersData myinvoice : invoices) {
           String strTaxBaseAmt = "0";
           String strTaxAmt = "0";
@@ -225,7 +229,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
             // ^ (myinvoice.istaxundeductable.equals("Y"))
             // ^ (myinvoice.isnovat.equals("Y"))))) {
             // return
-            // "InvoiceTax Error: istaxexempt, istaxundeduc or isnovat could have wrong values,  C_InvoiceTax_ID="+myinvoice.cInvoicetaxId;
+            // "InvoiceTax Error: istaxexempt, istaxundeduc or isnovat could have wrong values,
+            // C_InvoiceTax_ID="+myinvoice.cInvoicetaxId;
             myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                 Utility.messageBD(this, "TaxCriteriaNotFound", vars.getLanguage()));
             return myMessage;
@@ -242,11 +247,12 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 
           // Calculate totalamt
           log4j.info("4strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom
-              + "strDateto: " + strDateto + "strProcessed: " + strProcessed
-              + "strGeneratePayment: " + strGeneratePayment);
+              + "strDateto: " + strDateto + "strProcessed: " + strProcessed + "strGeneratePayment: "
+              + strGeneratePayment);
 
           BigDecimal dbTotalAmt = new BigDecimal(strTaxBaseAmt).add(new BigDecimal(strTaxAmt))
-              .add(new BigDecimal(strTaxUndeducAmt)).add(new BigDecimal(strExemptAmt))
+              .add(new BigDecimal(strTaxUndeducAmt))
+              .add(new BigDecimal(strExemptAmt))
               .add(new BigDecimal(strNoVatAmt));
 
           strTotalAmt = dbTotalAmt.toPlainString();
@@ -268,7 +274,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 
         try {
           String orgList = Utility.getInStrSet(OBContext.getOBContext()
-              .getOrganizationStructureProvider().getChildTree(taxRegister.adOrgId, true));
+              .getOrganizationStructureProvider()
+              .getChildTree(taxRegister.adOrgId, true));
           TaxRegister.updateTaxTotalAmt(this, taxRegister.cTaxregisterId);
           TaxRegister.updateRegAccumAmt(this, taxRegister.cTaxregisterId,
               taxRegister.cTaxregisterTypeId, strDatefrom, orgList);
@@ -291,8 +298,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
         if (new BigDecimal(TaxPayment.calculateVatPayment(this, strTaxpaymentID))
             .compareTo(BigDecimal.ZERO) > 0) {
           TaxPayment.updateGeneratePayment(this, "Y", strUser, strTaxpaymentID);
-        } else
+        } else {
           TaxPayment.updateGeneratePayment(this, "N", strUser, strTaxpaymentID);
+        }
       } catch (NumberFormatException e) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(),
             Utility.messageBD(this, "NoDataSelected", vars.getLanguage()));
@@ -306,11 +314,10 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
       }
       return myMessage;
 
-    }
-
-    else
+    } else {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(),
           Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+    }
     return myMessage;
 
     // Select all active Register Type Lines of Tax Register
@@ -324,10 +331,11 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindowId,
       String strTabId, String strDatefrom, String strDateto, String strGeneratePayment,
-      String strProcessed, String strProcessing, String strTaxpaymentID) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+      String strProcessed, String strProcessing, String strTaxpaymentID)
+      throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Print Vat Registers confirm window");
+    }
     /*
      * ActionButtonDefaultData[] data = null; String strHelp="", strDescription=""; if
      * (vars.getLanguage().equals("en_US")) data = ActionButtonDefaultData.select(this,
@@ -340,8 +348,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     String[] discard = { "" };
     // if (strHelp.equals("")) discard[0] = new String("helpDiscard");
     discard[0] = new String("helpDiscard");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/CreateVatRegisters", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateVatRegisters", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("windowId", strWindowId);
     xmlDocument.setParameter("tabId", strTabId);
     xmlDocument.setParameter("Datefrom", strDatefrom);
@@ -365,8 +374,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 
   private OBError validateTaxRegisterType(TaxRegisterType taxRegisterType) {
     OBError myMessage = new OBError();
-    OBCriteria<TaxRegisterTypeLines> obCriteria = OBDal.getInstance().createCriteria(
-        TaxRegisterTypeLines.class);
+    OBCriteria<TaxRegisterTypeLines> obCriteria = OBDal.getInstance()
+        .createCriteria(TaxRegisterTypeLines.class);
     obCriteria.add(Restrictions.eq(TaxRegisterTypeLines.PROPERTY_TAXREGISTERTYPE + ".id",
         taxRegisterType.cTaxregisterTypeId));
     obCriteria.add(Restrictions.isNull(TaxRegisterTypeLines.PROPERTY_DOCUMENTTYPE));
@@ -379,6 +388,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
     return null;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet Project set Type";
   } // end of getServletInfo() method

@@ -47,8 +47,8 @@ class XmlThreeTemplate implements XmlComponentTemplate {
     stringBegin = characterBegin;
     stringEnd = characterEnd;
     xmlMiddle = xmlComponentTemplate;
-    log4jXmlThreeTemplate.debug("constructor with stringBegin: " + stringBegin + " stringEnd: "
-        + stringEnd);
+    log4jXmlThreeTemplate
+        .debug("constructor with stringBegin: " + stringBegin + " stringEnd: " + stringEnd);
   }
 
   public String printStringBegin() {
@@ -67,8 +67,8 @@ class XmlThreeTemplate implements XmlComponentTemplate {
         int index = stringBegin.indexOf(attributeComponentTemplate.replace());
         if (index != -1) {
           xmlBegin = new XmlThreeTemplate(stringBegin.substring(0, index),
-              attributeComponentTemplate.xmlComponentTemplate(), stringBegin.substring(index
-                  + attributeComponentTemplate.replace().length()));
+              attributeComponentTemplate.xmlComponentTemplate(),
+              stringBegin.substring(index + attributeComponentTemplate.replace().length()));
           isBeginXmlThreeTemplate = true;
         }
       }
@@ -80,8 +80,8 @@ class XmlThreeTemplate implements XmlComponentTemplate {
         int index = stringEnd.indexOf(attributeComponentTemplate.replace());
         if (index != -1) {
           xmlEnd = new XmlThreeTemplate(stringEnd.substring(0, index),
-              attributeComponentTemplate.xmlComponentTemplate(), stringEnd.substring(index
-                  + attributeComponentTemplate.replace().length()));
+              attributeComponentTemplate.xmlComponentTemplate(),
+              stringEnd.substring(index + attributeComponentTemplate.replace().length()));
           isEndXmlThreeTemplate = true;
         }
       }
@@ -92,6 +92,7 @@ class XmlThreeTemplate implements XmlComponentTemplate {
     return new XmlThreeValue(this, xmlDocument);
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     return new XmlThreeValue(this, xmlDocument);
   }

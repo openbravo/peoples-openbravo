@@ -25,6 +25,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -34,8 +36,6 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class CheckRecordChangedActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -55,8 +55,8 @@ public class CheckRecordChangedActionHandler extends BaseActionHandler {
         date = xmlDateTimeFormat.parse(dateStr);
       } catch (ParseException e) {
       }
-      final FIN_BankStatementLine bsline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-          strBankStatementLineId);
+      final FIN_BankStatementLine bsline = OBDal.getInstance()
+          .get(FIN_BankStatementLine.class, strBankStatementLineId);
       Date bbddBSLUpdated = bsline.getUpdated();
       // Remove milliseconds to compare against updated from UI
       Calendar calendar = Calendar.getInstance();

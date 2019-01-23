@@ -30,6 +30,7 @@ public class UIAmount extends UINumber {
     relationFormat = "euroRelation";
   }
 
+  @Override
   public String formatGridValue(VariablesSecureApp vars, String value) {
     String rt = value;
     try {

@@ -71,20 +71,20 @@ public class DocDoubtfulDebt extends AcctServer {
     FieldProviderFactory.setField(data[0], "Processed", dd.isProcessed() ? "Y" : "N");
     FieldProviderFactory.setField(data[0], "Processing", dd.isProcessNow() ? "Y" : "N");
     // Accounting dimensions
-    FieldProviderFactory.setField(data[0], "cProjectId", dd.getProject() != null ? dd.getProject()
-        .getId() : "");
-    FieldProviderFactory.setField(data[0], "cCampaignId", dd.getSalesCampaign() != null ? dd
-        .getSalesCampaign().getId() : "");
-    FieldProviderFactory.setField(data[0], "cActivityId", dd.getActivity() != null ? dd
-        .getActivity().getId() : "");
-    FieldProviderFactory.setField(data[0], "user1Id", dd.getStDimension() != null ? dd
-        .getStDimension().getId() : "");
-    FieldProviderFactory.setField(data[0], "user2Id", dd.getNdDimension() != null ? dd
-        .getNdDimension().getId() : "");
-    FieldProviderFactory.setField(data[0], "cCostcenterId", dd.getCostCenter() != null ? dd
-        .getCostCenter().getId() : "");
-    FieldProviderFactory.setField(data[0], "aAssetId", dd.getAsset() != null ? dd.getAsset()
-        .getId() : "");
+    FieldProviderFactory.setField(data[0], "cProjectId",
+        dd.getProject() != null ? dd.getProject().getId() : "");
+    FieldProviderFactory.setField(data[0], "cCampaignId",
+        dd.getSalesCampaign() != null ? dd.getSalesCampaign().getId() : "");
+    FieldProviderFactory.setField(data[0], "cActivityId",
+        dd.getActivity() != null ? dd.getActivity().getId() : "");
+    FieldProviderFactory.setField(data[0], "user1Id",
+        dd.getStDimension() != null ? dd.getStDimension().getId() : "");
+    FieldProviderFactory.setField(data[0], "user2Id",
+        dd.getNdDimension() != null ? dd.getNdDimension().getId() : "");
+    FieldProviderFactory.setField(data[0], "cCostcenterId",
+        dd.getCostCenter() != null ? dd.getCostCenter().getId() : "");
+    FieldProviderFactory.setField(data[0], "aAssetId",
+        dd.getAsset() != null ? dd.getAsset().getId() : "");
 
     setObjectFieldProvider(data);
 
@@ -118,8 +118,8 @@ public class DocDoubtfulDebt extends AcctServer {
       whereClause.append(" and astdt.acctschemaTable.table.id = :tableID");
       whereClause.append(" and astdt.documentCategory = :documentType");
 
-      final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance().createQuery(
-          AcctSchemaTableDocType.class, whereClause.toString());
+      final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance()
+          .createQuery(AcctSchemaTableDocType.class, whereClause.toString());
       obqParameters.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
       obqParameters.setNamedParameter("tableID", AD_Table_ID);
       obqParameters.setNamedParameter("documentType", DocumentType);
@@ -136,28 +136,31 @@ public class DocDoubtfulDebt extends AcctServer {
         whereClause2.append(" where ast.accountingSchema.id = :acctSchemaID");
         whereClause2.append(" and ast.table.id = :tableID");
 
-        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance().createQuery(
-            AcctSchemaTable.class, whereClause2.toString());
+        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance()
+            .createQuery(AcctSchemaTable.class, whereClause2.toString());
         obqParameters2.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
         obqParameters2.setNamedParameter("tableID", AD_Table_ID);
         final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
         if (acctSchemaTables != null && acctSchemaTables.size() > 0
-            && acctSchemaTables.get(0).getCreatefactTemplate() != null)
+            && acctSchemaTables.get(0).getCreatefactTemplate() != null) {
           strClassname = acctSchemaTables.get(0).getCreatefactTemplate().getClassname();
+        }
       }
       if (!strClassname.equals("")) {
         try {
           DocDoubtfulDebtTemplate newTemplate = (DocDoubtfulDebtTemplate) Class
-              .forName(strClassname).getDeclaredConstructor().newInstance();
+              .forName(strClassname)
+              .getDeclaredConstructor()
+              .newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
           log4j.error("Error while creating new instance for DocUnbilledRevenueTemplate - ", e);
         }
       }
       DoubtfulDebt dd = OBDal.getInstance().get(DoubtfulDebt.class, Record_ID);
-      BigDecimal bpAmountConverted = convertAmount(new BigDecimal(Amounts[AMTTYPE_Gross]), !dd
-          .getFINPaymentSchedule().getInvoice().isSalesTransaction(), DateAcct, TABLEID_Invoice, dd
-          .getFINPaymentSchedule().getInvoice().getId(), C_Currency_ID, as.m_C_Currency_ID, null,
+      BigDecimal bpAmountConverted = convertAmount(new BigDecimal(Amounts[AMTTYPE_Gross]),
+          !dd.getFINPaymentSchedule().getInvoice().isSalesTransaction(), DateAcct, TABLEID_Invoice,
+          dd.getFINPaymentSchedule().getInvoice().getId(), C_Currency_ID, as.m_C_Currency_ID, null,
           as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false);
       // Doubtful debt recognition
       fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, true, conn),
@@ -171,8 +174,8 @@ public class DocDoubtfulDebt extends AcctServer {
 
       // Assign expense to the dimensions of the invoice lines
       BigDecimal assignedAmount = BigDecimal.ZERO;
-      DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn, dd.getFINPaymentSchedule()
-          .getInvoice().getId());
+      DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn,
+          dd.getFINPaymentSchedule().getInvoice().getId());
       Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
       for (int i = 0; i < data.length; i++) {
         BigDecimal lineAmount = bpAmountConverted.multiply(new BigDecimal(data[i].percentage))

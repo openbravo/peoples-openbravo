@@ -28,7 +28,8 @@ class ToolBar_Button implements HTMLElement {
   String imageClass;
   boolean selected = false;
 
-  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick) {
+  public ToolBar_Button(String _base_direction, String _name, String _description,
+      String _onclick) {
     this(_base_direction, _name, _description, _onclick, "#");
   }
 
@@ -61,29 +62,35 @@ class ToolBar_Button implements HTMLElement {
         this.imageClass);
   }
 
+  @Override
   public String getWidth() {
     return "2%";
   }
 
+  @Override
   public String elementType() {
     return "BUTTON";
   }
 
+  @Override
   public String toString() {
     StringBuffer toolbar = new StringBuffer();
     toolbar.append("<a href=\"");
     toolbar.append(href);
     toolbar.append("\" onClick=\"");
     toolbar.append(click);
-    if ((click != null && !click.equals("")) || href == null || href.equals("") || href.equals("#"))
+    if ((click != null && !click.equals("")) || href == null || href.equals("")
+        || href.equals("#")) {
       toolbar.append("return false;");
+    }
     toolbar.append("\" ");
-    toolbar.append("class=\"Main_ToolBar_Button").append(selected ? "_Selected" : "")
+    toolbar.append("class=\"Main_ToolBar_Button")
+        .append(selected ? "_Selected" : "")
         .append("\" onMouseOver=\"window.status='");
     toolbar.append(description);
     toolbar.append("';return true;\" ");
-    toolbar
-        .append("onMouseOut=\"window.status='';return true;\" onclick=\"this.hideFocus=true\" onblur=\"this.hideFocus=false\" ");
+    toolbar.append(
+        "onMouseOut=\"window.status='';return true;\" onclick=\"this.hideFocus=true\" onblur=\"this.hideFocus=false\" ");
     // Needed to build the HTML tag id as refresh has in classic layout
     if (name.equals("Refresh") || name.equals("Edition") || name.equals("Relation")) {
       toolbar.append("id=\"button").append(name).append("\">");

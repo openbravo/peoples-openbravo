@@ -61,6 +61,7 @@ public class ApplyModuleTask extends DalInitializingTask {
     }
   }
 
+  @Override
   public void execute() {
     // always do friendly warnings for the dal layer during apply module
     // the unfriendly warnings are shown in generate.entities anyway
@@ -117,10 +118,12 @@ public class ApplyModuleTask extends DalInitializingTask {
   @Override
   public void doExecute() {
     try {
-      if (obDir == null || obDir.equals(""))
+      if (obDir == null || obDir.equals("")) {
         obDir = getProject().getBaseDir().toString();
-      if (propertiesFile == null || propertiesFile.equals(""))
+      }
+      if (propertiesFile == null || propertiesFile.equals("")) {
         propertiesFile = obDir + "/config/Openbravo.properties";
+      }
       final ApplyModule am = new ApplyModule(new CPStandAlone(propertiesFile), obDir, forceRefData);
       am.execute();
     } catch (final Exception e) {

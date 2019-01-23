@@ -23,6 +23,8 @@ import java.io.File;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.exception.OBException;
@@ -39,8 +41,6 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The component responsible for generating the content of the function used to determine if the
@@ -88,12 +88,12 @@ public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
       }
 
       switch (getPopUpToShow()) {
-      case InstancePurpose:
-        return "OB.Layout.ClassicOBCompatibility.Popup.openInstancePurpose()";
-      case HeartBeat:
-        return "OB.Layout.ClassicOBCompatibility.Popup.openHeartbeat()";
-      default:
-        return "return";
+        case InstancePurpose:
+          return "OB.Layout.ClassicOBCompatibility.Popup.openInstancePurpose()";
+        case HeartBeat:
+          return "OB.Layout.ClassicOBCompatibility.Popup.openHeartbeat()";
+        default:
+          return "return";
       }
     } catch (Exception e) {
       throw new OBException(e);
@@ -103,8 +103,8 @@ public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
   private boolean isUpgrading() {
     boolean isUpgrading;
     try {
-      isUpgrading = Preferences.YES.equals(Preferences.getPreferenceValue("isUpgrading", true, "0",
-          "0", null, null, null));
+      isUpgrading = Preferences.YES
+          .equals(Preferences.getPreferenceValue("isUpgrading", true, "0", "0", null, null, null));
     } catch (PropertyException ignore) {
       isUpgrading = false;
     }
@@ -121,7 +121,8 @@ public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
     qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
     qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
     qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
-    String obDir = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String obDir = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("source.path");
     String oldScripts = "";
     for (Module mod : qMod.list()) {
@@ -148,7 +149,7 @@ public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
     HttpSession session = (HttpSession) sessionObject;
     String roleId = (String) session.getAttribute("#AD_ROLE_ID");
     String javaDateFormat = (String) session.getAttribute("#AD_JAVADATEFORMAT");
-    return HeartbeatProcess.isLoginPopupRequired(roleId, javaDateFormat, new DalConnectionProvider(
-        false));
+    return HeartbeatProcess.isLoginPopupRequired(roleId, javaDateFormat,
+        new DalConnectionProvider(false));
   }
 }

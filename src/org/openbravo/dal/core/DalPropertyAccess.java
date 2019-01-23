@@ -23,6 +23,8 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.property.access.spi.Getter;
@@ -33,8 +35,6 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Describes access to a particular DAL entity property in terms of getting and setting its value.
@@ -131,7 +131,8 @@ class DalPropertyAccess implements PropertyAccess {
     }
 
     @Override
-    public Object getForInsert(Object owner, Map mergeMap, SharedSessionContractImplementor session) {
+    public Object getForInsert(Object owner, Map mergeMap,
+        SharedSessionContractImplementor session) {
       return get(owner);
     }
   }

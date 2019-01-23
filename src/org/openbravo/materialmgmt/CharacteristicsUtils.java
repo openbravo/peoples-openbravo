@@ -58,21 +58,21 @@ public class CharacteristicsUtils {
 
   private static ProductCharacteristicValue getProductCharacteristicValue(Product product,
       Characteristic characteristic) throws OBException {
-    OBCriteria<ProductCharacteristicValue> obCriteria = OBDal.getInstance().createCriteria(
-        ProductCharacteristicValue.class);
+    OBCriteria<ProductCharacteristicValue> obCriteria = OBDal.getInstance()
+        .createCriteria(ProductCharacteristicValue.class);
     obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, product));
-    obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
-        characteristic));
+    obCriteria
+        .add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC, characteristic));
     obCriteria.setMaxResults(1);
     return (ProductCharacteristicValue) obCriteria.uniqueResult();
   }
 
   private static void setCharacteristic(Product product, Characteristic characteristic) {
-    OBCriteria<ProductCharacteristic> obCriteria = OBDal.getInstance().createCriteria(
-        ProductCharacteristic.class);
+    OBCriteria<ProductCharacteristic> obCriteria = OBDal.getInstance()
+        .createCriteria(ProductCharacteristic.class);
     obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_PRODUCT, product));
-    obCriteria.add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC,
-        characteristic));
+    obCriteria
+        .add(Restrictions.eq(ProductCharacteristicValue.PROPERTY_CHARACTERISTIC, characteristic));
     obCriteria.setMaxResults(1);
     if (obCriteria.count() > 0) {
       return;

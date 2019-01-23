@@ -25,12 +25,12 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.ADClusterService;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * An standard MBean that allows to display and manage some of the cluster services settings through
@@ -63,8 +63,8 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
     Map<String, String> leaders = new HashMap<>();
     try {
       OBContext.setAdminMode(true);
-      OBCriteria<ADClusterService> criteria = OBDal.getInstance().createCriteria(
-          ADClusterService.class);
+      OBCriteria<ADClusterService> criteria = OBDal.getInstance()
+          .createCriteria(ADClusterService.class);
       for (ADClusterService service : criteria.list()) {
         StringBuilder serviceInfo = new StringBuilder();
         serviceInfo.append("leader ID: " + service.getNodeID());
@@ -100,7 +100,8 @@ public class JmxClusterServiceManager implements JmxClusterServiceManagerMBean {
       return;
     }
     if (!clusterService.isDisabled()) {
-      log.info("Ping for service {} in node {} is already enabled", serviceName, getCurrentNodeId());
+      log.info("Ping for service {} in node {} is already enabled", serviceName,
+          getCurrentNodeId());
       return;
     }
     // Enable the ping for the service

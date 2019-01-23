@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.test.base.OBBaseTest;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Base for tests performing requests to a live Openbravo instance. Allows to work with DAL, in case
@@ -87,7 +87,7 @@ public class BaseDataSourceTestDal extends OBBaseTest {
    * Performs a request to authenticate with current settings if already not authenticated.
    *
    * @return a {@code String} representing the cookie with authenticated session id
-   * */
+   */
   protected String authenticate() throws Exception {
     if (!authenticated) {
       cookie = DatasourceTestUtil.authenticate(getOpenbravoURL(), getLogin(), getPassword());

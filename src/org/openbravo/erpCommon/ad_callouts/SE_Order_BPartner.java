@@ -55,8 +55,9 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
     if (data != null && data.length > 0) {
-      strDeliveryRule = data[0].deliveryrule.equals("") ? info.vars
-          .getStringParameter("inpdeliveryrule") : data[0].deliveryrule;
+      strDeliveryRule = data[0].deliveryrule.equals("")
+          ? info.vars.getStringParameter("inpdeliveryrule")
+          : data[0].deliveryrule;
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
       if (StringUtils.isEmpty(strUserRep)) {
         strUserRep = info.vars.getUser();
@@ -66,9 +67,11 @@ public class SE_Order_BPartner extends SimpleCallout {
         docSubTypeSO = docTypeData[0].docsubtypeso;
       }
       // Incase of purchase flow set Invoice Rule as "I":Immediate
-      strInvoiceRule = strIsSOTrx.equals("Y") ? (docSubTypeSO.equals("PR")
-          || docSubTypeSO.equals("WI") || data[0].invoicerule.equals("") ? info.vars
-          .getStringParameter("inpinvoicerule") : data[0].invoicerule) : "I";
+      strInvoiceRule = strIsSOTrx.equals("Y")
+          ? (docSubTypeSO.equals("PR") || docSubTypeSO.equals("WI")
+              || data[0].invoicerule.equals("") ? info.vars.getStringParameter("inpinvoicerule")
+                  : data[0].invoicerule)
+          : "I";
 
       strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
       strPaymentrule = strPaymentrule.equals("") ? info.vars.getStringParameter("inppaymentrule")
@@ -83,29 +86,30 @@ public class SE_Order_BPartner extends SimpleCallout {
               : strPaymentterm;
         }
       }
-      strPaymentterm = strPaymentterm.equals("") ? info.vars
-          .getStringParameter("inpcPaymenttermId") : strPaymentterm;
+      strPaymentterm = strPaymentterm.equals("") ? info.vars.getStringParameter("inpcPaymenttermId")
+          : strPaymentterm;
 
       strFinPaymentMethodId = (strIsSOTrx.equals("Y") ? data[0].finPaymentmethodId
           : data[0].poPaymentmethodId);
 
       strPriceList = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
       if (strPriceList.equalsIgnoreCase("")) {
-        strPriceList = SEOrderBPartnerData
-            .defaultPriceList(this, strIsSOTrx, info.vars.getClient());
+        strPriceList = SEOrderBPartnerData.defaultPriceList(this, strIsSOTrx,
+            info.vars.getClient());
       }
       strPriceList = strPriceList.equals("") ? info.vars.getStringParameter("inpmPricelistId")
           : strPriceList;
-      strDeliveryViaRule = data[0].deliveryviarule.equals("") ? info.vars
-          .getStringParameter("inpdeliveryviarule") : data[0].deliveryviarule;
+      strDeliveryViaRule = data[0].deliveryviarule.equals("")
+          ? info.vars.getStringParameter("inpdeliveryviarule")
+          : data[0].deliveryviarule;
     }
 
     // Price list
 
-    info.addResult(
-        "inpmPricelistId",
-        strPriceList.equals("") ? Utility.getContext(this, info.vars, "#M_PriceList_ID",
-            info.getWindowId()) : strPriceList);
+    info.addResult("inpmPricelistId",
+        strPriceList.equals("")
+            ? Utility.getContext(this, info.vars, "#M_PriceList_ID", info.getWindowId())
+            : strPriceList);
 
     // BPartner Location
 
@@ -133,8 +137,9 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     if (td != null && td.length > 0) {
       info.addSelect("inpmWarehouseId");
-      String strMwarehouse = strIsSOTrx.equals("N") ? SEOrderBPartnerData.mWarehouse(this,
-          strBPartner) : SEOrderBPartnerData.mWarehouseOnhand(this, strOrgId);
+      String strMwarehouse = strIsSOTrx.equals("N")
+          ? SEOrderBPartnerData.mWarehouse(this, strBPartner)
+          : SEOrderBPartnerData.mWarehouseOnhand(this, strOrgId);
 
       if (strMwarehouse.equals("")) {
         strMwarehouse = info.vars.getWarehouse();
@@ -146,8 +151,8 @@ public class SE_Order_BPartner extends SimpleCallout {
         if (td[i].getField("id").equals(info.vars.getWarehouse())) {
           strMwarehouse = info.vars.getWarehouse();
         }
-        info.addSelectResult(td[i].getField("id"), td[i].getField("name"), td[i].getField("id")
-            .equalsIgnoreCase(strMwarehouse));
+        info.addSelectResult(td[i].getField("id"), td[i].getField("name"),
+            td[i].getField("id").equalsIgnoreCase(strMwarehouse));
       }
       info.endSelect();
     } else {
@@ -158,9 +163,9 @@ public class SE_Order_BPartner extends SimpleCallout {
     FieldProvider[] tld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "AD_User SalesRep", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              "SEOrderBPartner"), Utility.getContext(this, info.vars, "#User_Client",
-              "SEOrderBPartner"), 0);
+          "AD_User SalesRep", "",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SEOrderBPartner"),
+          Utility.getContext(this, info.vars, "#User_Client", "SEOrderBPartner"), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SEOrderBPartner", "");
       tld = comboTableData.select(false);
       comboTableData = null;
@@ -171,8 +176,8 @@ public class SE_Order_BPartner extends SimpleCallout {
     if (tld != null && tld.length > 0) {
       info.addSelect("inpsalesrepId");
       for (int i = 0; i < tld.length; i++) {
-        info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"), tld[i].getField("id")
-            .equalsIgnoreCase(strUserRep));
+        info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"),
+            tld[i].getField("id").equalsIgnoreCase(strUserRep));
       }
 
       info.endSelect();
@@ -188,9 +193,9 @@ public class SE_Order_BPartner extends SimpleCallout {
       ComboTableData comboTableData = null;
       if ("WR".equals(docSubTypeSO)) {
         comboTableData = new ComboTableData(info.vars, this, "LIST", "", "C_Order InvoiceRule",
-            "Values for Invoice Rules for POS Sales orders", Utility.getContext(this, info.vars,
-                "#AccessibleOrgTree", "SEOrderBPartner"), Utility.getContext(this, info.vars,
-                "#User_Client", "SEOrderBPartner"), 0);
+            "Values for Invoice Rules for POS Sales orders",
+            Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SEOrderBPartner"),
+            Utility.getContext(this, info.vars, "#User_Client", "SEOrderBPartner"), 0);
       } else {
         comboTableData = new ComboTableData(info.vars, this, "LIST", "", "C_Order InvoiceRule", "",
             Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SEOrderBPartner"),
@@ -206,8 +211,8 @@ public class SE_Order_BPartner extends SimpleCallout {
     if (l != null && l.length > 0) {
       info.addSelect("inpinvoicerule");
       for (int i = 0; i < l.length; i++) {
-        info.addSelectResult(l[i].getField("id"), l[i].getField("name"), l[i].getField("id")
-            .equalsIgnoreCase(strInvoiceRule));
+        info.addSelectResult(l[i].getField("id"), l[i].getField("name"),
+            l[i].getField("id").equalsIgnoreCase(strInvoiceRule));
       }
 
       info.endSelect();
@@ -256,9 +261,9 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "LIST", "",
-          "C_Order DeliveryRule", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              "SEOrderBPartner"), Utility.getContext(this, info.vars, "#User_Client",
-              "SEOrderBPartner"), 0);
+          "C_Order DeliveryRule", "",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SEOrderBPartner"),
+          Utility.getContext(this, info.vars, "#User_Client", "SEOrderBPartner"), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SEOrderBPartner", "");
       l = comboTableData.select(false);
       comboTableData = null;
@@ -276,8 +281,8 @@ public class SE_Order_BPartner extends SimpleCallout {
         info.addSelect("inpdeliveryrule");
 
         for (int i = 0; i < l.length; i++) {
-          info.addSelectResult(l[i].getField("id"), l[i].getField("name"), l[i].getField("id")
-              .equalsIgnoreCase(strDeliveryRule));
+          info.addSelectResult(l[i].getField("id"), l[i].getField("name"),
+              l[i].getField("id").equalsIgnoreCase(strDeliveryRule));
         }
 
         info.endSelect();
@@ -290,9 +295,9 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR", "AD_User_ID",
-          "", "AD_User C_BPartner User/Contacts", Utility.getContext(this, info.vars,
-              "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this, info.vars,
-              "#User_Client", info.getWindowId()), 0);
+          "", "AD_User C_BPartner User/Contacts",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", info.getWindowId()),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tdv = comboTableData.select(false);
       comboTableData = null;
@@ -312,8 +317,8 @@ public class SE_Order_BPartner extends SimpleCallout {
         }
       } else {
         for (int i = 0; i < tdv.length; i++) {
-          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i]
-              .getField("id").equalsIgnoreCase(info.vars.getStringParameter("inpcBpartnerId_CON")));
+          info.addSelectResult(tdv[i].getField("id"), tdv[i].getField("name"), tdv[i].getField("id")
+              .equalsIgnoreCase(info.vars.getStringParameter("inpcBpartnerId_CON")));
         }
       }
       info.endSelect();
@@ -350,8 +355,8 @@ public class SE_Order_BPartner extends SimpleCallout {
         message.append("<br>");
       }
       String creditLimitExceed = "" + Double.parseDouble(data[0].creditavailable) * -1;
-      message.append(Utility.messageBD(this, "CreditLimitOver", info.vars.getLanguage())
-          + creditLimitExceed);
+      message.append(
+          Utility.messageBD(this, "CreditLimitOver", info.vars.getLanguage()) + creditLimitExceed);
     }
 
     info.addResult("MESSAGE", message.toString());

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -34,8 +36,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -48,8 +48,8 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
       OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
       final JSONObject params = jsonData.getJSONObject("_params");
-      final JSONArray selection = params.getJSONObject("findtransactiontomatch").getJSONArray(
-          "_selection");
+      final JSONArray selection = params.getJSONObject("findtransactiontomatch")
+          .getJSONArray("_selection");
 
       if (selection.length() > 0) {
         final String strBankLineId = params.getString("bankStatementLineId");
@@ -58,18 +58,18 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
           selectedTransactionIds.add(selection.getJSONObject(i).getString("id"));
         }
 
-        final FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            jsonData.getString("inpfinFinancialAccountId"));
+        final FIN_FinancialAccount account = OBDal.getInstance()
+            .get(FIN_FinancialAccount.class, jsonData.getString("inpfinFinancialAccountId"));
         final FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(account,
             "N");
-        final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
-            FIN_BankStatementLine.class, strBankLineId);
-        APRM_MatchingUtility.matchBankStatementLine(bankStatementLine,
-            selectedTransactionIds, reconciliation, null, true);
+        final FIN_BankStatementLine bankStatementLine = OBDal.getInstance()
+            .get(FIN_BankStatementLine.class, strBankLineId);
+        APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, selectedTransactionIds,
+            reconciliation, null, true);
 
       } else {
-        final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(
-            "@APRM_SELECT_RECORD_ERROR@", "error");
+        final JSONArray actions = APRM_MatchingUtility
+            .createMessageInProcessView("@APRM_SELECT_RECORD_ERROR@", "error");
         result.put("responseActions", actions);
         result.put("retryExecution", true);
       }

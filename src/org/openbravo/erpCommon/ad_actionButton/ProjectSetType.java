@@ -41,13 +41,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ProjectSetType extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -56,10 +58,11 @@ public class ProjectSetType extends HttpSecureAppServlet {
       String strTab = vars.getStringParameter("inpTabId");
       String strProjectType = vars.getStringParameter("inpcProjecttypeId", "");
       String strKey = vars.getGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
-      if (!ProjectSetTypeData.hasProjectType(this, strKey))
+      if (!ProjectSetTypeData.hasProjectType(this, strKey)) {
         printPage(response, vars, strKey, strProjectType, strWindow, strTab, strProcessId);
-      else
+      } else {
         bdError(request, response, "ProjectSetTypeError", vars.getLanguage());
+      }
     } else if (vars.commandIn("SAVE")) {
       String strWindow = vars.getStringParameter("inpwindowId");
       String strProjectType = vars.getStringParameter("inpcProjecttypeId");
@@ -68,14 +71,16 @@ public class ProjectSetType extends HttpSecureAppServlet {
       String strTab = vars.getStringParameter("inpTabId");
 
       String strWindowPath = Utility.getTabURL(strTab, "R", true);
-      if (strWindowPath.equals(""))
+      if (strWindowPath.equals("")) {
         strWindowPath = strDefaultServlet;
+      }
 
       OBError myMessage = processButton(vars, strKey, strProjectType, strDateFrom, strWindow);
       vars.setMessage(strTab, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   @SuppressWarnings("resource")
@@ -123,11 +128,10 @@ public class ProjectSetType extends HttpSecureAppServlet {
               DateFormatter);
 
           try {
-            if (ProjectSetTypeData.insertProjectPhase(conn, this, strKey,
-                dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(),
-                data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase,
-                data[i].help, data[i].name, data[i].standardqty, strPhaseStartDate,
-                strPhaseContractDate, data[i].seqno) == 1) {
+            if (ProjectSetTypeData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId,
+                dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
+                data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].standardqty,
+                strPhaseStartDate, strPhaseContractDate, data[i].seqno) == 1) {
               strLastContractDate = strPhaseContractDate;
               ProjectSetTypeData[] data1 = ProjectSetTypeData.selectTask(this, data[i].cPhaseId);
               int firstProjectTask = 0;
@@ -145,11 +149,11 @@ public class ProjectSetType extends HttpSecureAppServlet {
                     DateFormatter);
 
                 try {
-                  ProjectSetTypeData.insertProjectTask(conn, this, strProjectTask,
-                      data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId,
-                      vars.getUser(), data1[j].seqno, data1[j].name, data1[j].description,
-                      data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].standardqty,
-                      strTaskStartDate, strTaskContractDate);
+                  ProjectSetTypeData.insertProjectTask(conn, this, strProjectTask, data1[j].cTaskId,
+                      dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(),
+                      data1[j].seqno, data1[j].name, data1[j].description, data1[j].help,
+                      data1[j].mProductId, strProjectPhase, data1[j].standardqty, strTaskStartDate,
+                      strTaskContractDate);
                 } catch (ServletException ex) {
                   myMessage = Utility.translateError(this, vars, vars.getLanguage(),
                       ex.getMessage());
@@ -213,25 +217,29 @@ public class ProjectSetType extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey,
       String strProjectType, String windowId, String strTab, String strProcessId)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Button process Project set Type");
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
 
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
     String[] discard = { "" };
-    if (strHelp.equals(""))
+    if (strHelp.equals("")) {
       discard[0] = new String("helpDiscard");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_actionButton/ProjectSetType", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ProjectSetType", discard)
+        .createXmlDocument();
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("window", windowId);
     xmlDocument.setParameter("tab", strTab);
@@ -245,9 +253,9 @@ public class ProjectSetType extends HttpSecureAppServlet {
     xmlDocument.setParameter("help", strHelp);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "C_ProjectType_ID", "", "Project type service", Utility.getContext(this, vars,
-              "#AccessibleOrgTree", ""), Utility.getContext(this, vars, "#User_Client", ""), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_ProjectType_ID",
+          "", "Project type service", Utility.getContext(this, vars, "#AccessibleOrgTree", ""),
+          Utility.getContext(this, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "", strProjectType);
       xmlDocument.setData("reportcProjecttypeId", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -314,14 +322,16 @@ public class ProjectSetType extends HttpSecureAppServlet {
         // Date
         // plus one day until the standard
         // duration in days is reached
-        if (!Utility.isWeekendDay(strContractDate, DateFormatter))
+        if (!Utility.isWeekendDay(strContractDate, DateFormatter)) {
           DaysLeft--; // If strContractDate is a weekend day, looks
-        // for the next labor day
+          // for the next labor day
+        }
       }
     }
     return strContractDate;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet Project set Type";
   } // end of getServletInfo() method

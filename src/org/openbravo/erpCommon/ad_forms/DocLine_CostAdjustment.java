@@ -73,8 +73,8 @@ public class DocLine_CostAdjustment extends DocLine {
   }
 
   public void setTrxType(String transactionId) {
-    MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
-        transactionId);
+    MaterialTransaction transaction = OBDal.getInstance()
+        .get(MaterialTransaction.class, transactionId);
     TrxType trxTypeLocal = TrxType.getTrxType(transaction);
     setTransactionType(trxTypeLocal);
     this.trxType = trxTypeLocal;
@@ -86,94 +86,94 @@ public class DocLine_CostAdjustment extends DocLine {
 
   public void setTransactionType(TrxType trxType) {
     switch (trxType) {
-    case Shipment:
-      transactionType = TRXTYPE_SHIPMENT;
-      transactionNegative = false;
-      break;
-    case ShipmentReturn:
-      transactionType = TRXTYPE_SHIPMENT;
-      transactionNegative = true;
-      break;
-    case ShipmentVoid:
-      transactionType = TRXTYPE_SHIPMENT;
-      transactionNegative = true;
-      break;
-    case ShipmentNegative:
-      transactionType = TRXTYPE_SHIPMENT;
-      transactionNegative = true;
-      break;
-    case Receipt:
-      transactionType = TRXTYPE_RECEIPT;
-      transactionNegative = false;
-      break;
-    case ReceiptReturn:
-      transactionType = TRXTYPE_RECEIPT;
-      transactionNegative = true;
-      break;
-    case ReceiptVoid:
-      transactionType = TRXTYPE_RECEIPT;
-      transactionNegative = true;
-      break;
-    case ReceiptNegative:
-      transactionType = TRXTYPE_RECEIPT;
-      transactionNegative = true;
-      break;
-    case InventoryDecrease:
-      transactionType = TRXTYPE_INVENTORY;
-      transactionNegative = true;
-      break;
-    case InventoryIncrease:
-      transactionType = TRXTYPE_INVENTORY;
-      transactionNegative = false;
-      break;
-    case InventoryOpening:
-      transactionType = TRXTYPE_INVENTORY;
-      transactionNegative = false;
-      break;
-    case InventoryClosing:
-      transactionType = TRXTYPE_INVENTORY;
-      transactionNegative = false;
-      break;
-    case IntMovementFrom:
-      transactionType = TRXTYPE_INTERNALMOVEMENTFROM;
-      transactionNegative = true;
-      break;
-    case IntMovementTo:
-      transactionType = TRXTYPE_INTERNALMOVEMENTTO;
-      transactionNegative = false;
-      break;
-    case InternalCons:
-      transactionType = TRXTYPE_INTERNALCONSUMPTION;
-      transactionNegative = false;
-      break;
-    case InternalConsNegative:
-      transactionType = TRXTYPE_INTERNALCONSUMPTION;
-      transactionNegative = true;
-      break;
-    case InternalConsVoid:
-      transactionType = TRXTYPE_INTERNALCONSUMPTION;
-      transactionNegative = true;
-      break;
-    case BOMPart:
-      transactionType = TRXTYPE_BOM;
-      transactionNegative = true;
-      break;
-    case BOMProduct:
-      transactionType = TRXTYPE_BOM;
-      transactionNegative = false;
-      break;
-    case ManufacturingConsumed:
-      transactionType = TRXTYPE_MANUFACTURING;
-      transactionNegative = true;
-      break;
-    case ManufacturingProduced:
-      transactionType = TRXTYPE_MANUFACTURING;
-      transactionNegative = false;
-      break;
-    case Unknown:
-      throw new OBException("@UnknownTrxType@: " + trxType);
-    default:
-      throw new OBException("@UnknownTrxType@: " + trxType);
+      case Shipment:
+        transactionType = TRXTYPE_SHIPMENT;
+        transactionNegative = false;
+        break;
+      case ShipmentReturn:
+        transactionType = TRXTYPE_SHIPMENT;
+        transactionNegative = true;
+        break;
+      case ShipmentVoid:
+        transactionType = TRXTYPE_SHIPMENT;
+        transactionNegative = true;
+        break;
+      case ShipmentNegative:
+        transactionType = TRXTYPE_SHIPMENT;
+        transactionNegative = true;
+        break;
+      case Receipt:
+        transactionType = TRXTYPE_RECEIPT;
+        transactionNegative = false;
+        break;
+      case ReceiptReturn:
+        transactionType = TRXTYPE_RECEIPT;
+        transactionNegative = true;
+        break;
+      case ReceiptVoid:
+        transactionType = TRXTYPE_RECEIPT;
+        transactionNegative = true;
+        break;
+      case ReceiptNegative:
+        transactionType = TRXTYPE_RECEIPT;
+        transactionNegative = true;
+        break;
+      case InventoryDecrease:
+        transactionType = TRXTYPE_INVENTORY;
+        transactionNegative = true;
+        break;
+      case InventoryIncrease:
+        transactionType = TRXTYPE_INVENTORY;
+        transactionNegative = false;
+        break;
+      case InventoryOpening:
+        transactionType = TRXTYPE_INVENTORY;
+        transactionNegative = false;
+        break;
+      case InventoryClosing:
+        transactionType = TRXTYPE_INVENTORY;
+        transactionNegative = false;
+        break;
+      case IntMovementFrom:
+        transactionType = TRXTYPE_INTERNALMOVEMENTFROM;
+        transactionNegative = true;
+        break;
+      case IntMovementTo:
+        transactionType = TRXTYPE_INTERNALMOVEMENTTO;
+        transactionNegative = false;
+        break;
+      case InternalCons:
+        transactionType = TRXTYPE_INTERNALCONSUMPTION;
+        transactionNegative = false;
+        break;
+      case InternalConsNegative:
+        transactionType = TRXTYPE_INTERNALCONSUMPTION;
+        transactionNegative = true;
+        break;
+      case InternalConsVoid:
+        transactionType = TRXTYPE_INTERNALCONSUMPTION;
+        transactionNegative = true;
+        break;
+      case BOMPart:
+        transactionType = TRXTYPE_BOM;
+        transactionNegative = true;
+        break;
+      case BOMProduct:
+        transactionType = TRXTYPE_BOM;
+        transactionNegative = false;
+        break;
+      case ManufacturingConsumed:
+        transactionType = TRXTYPE_MANUFACTURING;
+        transactionNegative = true;
+        break;
+      case ManufacturingProduced:
+        transactionType = TRXTYPE_MANUFACTURING;
+        transactionNegative = false;
+        break;
+      case Unknown:
+        throw new OBException("@UnknownTrxType@: " + trxType);
+      default:
+        throw new OBException("@UnknownTrxType@: " + trxType);
     }
   }
 
@@ -181,10 +181,12 @@ public class DocLine_CostAdjustment extends DocLine {
     return transactionType;
   }
 
+  @Override
   public void setAmount(String amt) {
     trxAmt = amt;
   } // setAmounts
 
+  @Override
   public String getAmount() {
     return trxAmt;
   } // setAmounts
@@ -214,11 +216,13 @@ public class DocLine_CostAdjustment extends DocLine {
     // Charge Account
     if (m_M_Product_ID.equals("") && !m_C_Charge_ID.equals("")) {
       BigDecimal amt = new BigDecimal(-1); // Revenue (-)
-      if (p_DocumentType.indexOf("AP") != -1)
+      if (p_DocumentType.indexOf("AP") != -1) {
         amt = new BigDecimal(+1); // Expense (+)
+      }
       Account acct = getChargeAccount(as, amt, conn);
-      if (acct != null)
+      if (acct != null) {
         return acct;
+      }
     }
     // GL Item directly from Invoice Line
     else if (m_M_Product_ID.equals("") && !m_C_Glitem_ID.equals("")) {
@@ -226,24 +230,25 @@ public class DocLine_CostAdjustment extends DocLine {
         DocLineInvoiceData[] data = null;
         data = DocLineInvoiceData.selectGlitem(conn, m_C_Glitem_ID, as.getC_AcctSchema_ID());
         String Account_ID = "";
-        if (data == null || data.length == 0)
+        if (data == null || data.length == 0) {
           return null;
+        }
         if (data.length > 0) {
           switch (Integer.parseInt(AcctType)) {
-          case 1:
-            // It is similar to ProductInfo.ACCTTYPE_P_Revenue
-            Account_ID = data[0].glitemCreditAcct;
-            break;
-          case 2:
-            // It is similar to ProductInfo.ACCTTYPE_P_Expense
-            Account_ID = data[0].glitemDebitAcct;
-            break;
+            case 1:
+              // It is similar to ProductInfo.ACCTTYPE_P_Revenue
+              Account_ID = data[0].glitemCreditAcct;
+              break;
+            case 2:
+              // It is similar to ProductInfo.ACCTTYPE_P_Expense
+              Account_ID = data[0].glitemDebitAcct;
+              break;
           }
         }
         // No account
         if (Account_ID.equals("")) {
-          log4jDocLine_CostAdjustment.warn("getAccount - NO account for m_C_Glitem_ID="
-              + m_C_Glitem_ID);
+          log4jDocLine_CostAdjustment
+              .warn("getAccount - NO account for m_C_Glitem_ID=" + m_C_Glitem_ID);
           return null;
         }
         // Return Account
@@ -257,6 +262,7 @@ public class DocLine_CostAdjustment extends DocLine {
     return p_productInfo.getAccount(AcctType, as, conn);
   } // getAccount
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

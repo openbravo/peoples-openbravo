@@ -43,8 +43,8 @@ public interface JsonDataService {
    * properties.
    * 
    * The result is a json string which contains paging information (startrow, endrow, rowcount) and
-   * the data itself. See the Smartclient <a
-   * href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
+   * the data itself. See the Smartclient
+   * <a href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
    * RestDataSource</a> for more information.
    * 
    * @param parameters
@@ -75,8 +75,8 @@ public interface JsonDataService {
    *          extenders of this service.
    * @param content
    *          the json string containing the data, the expected format is the same as defined by the
-   *          Smartclient <a
-   *          href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
+   *          Smartclient
+   *          <a href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
    *          RestDataSource</a>
    * @return the inserted objects as json or the an error json string
    */
@@ -92,8 +92,8 @@ public interface JsonDataService {
    *          extenders of this service.
    * @param content
    *          the json string containing the data, the expected format is the same as defined by the
-   *          Smartclient <a
-   *          href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
+   *          Smartclient
+   *          <a href="http://www.smartclient.com/docs/7.0rc2/a/b/c/go.html#class..RestDataSource">
    *          RestDataSource</a>
    * @return the inserted objects as json or the an error json string
    */

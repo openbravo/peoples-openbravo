@@ -93,8 +93,8 @@ public class SelectorFieldPropertyCallout extends SimpleCallout {
         }
 
         if (StringUtils.equals(currentProperty.getName(), Entity.COMPUTED_COLUMNS_PROXY_PROPERTY)) {
-          currentEntity = ModelProvider.getInstance().getEntity(
-              currentEntity.getName() + Entity.COMPUTED_COLUMNS_CLASS_APPENDIX);
+          currentEntity = ModelProvider.getInstance()
+              .getEntity(currentEntity.getName() + Entity.COMPUTED_COLUMNS_CLASS_APPENDIX);
         } else {
           currentEntity = foundProperty.getTargetEntity();
         }
@@ -117,7 +117,9 @@ public class SelectorFieldPropertyCallout extends SimpleCallout {
       }
 
       final Table propertyTable = OBDal.getInstance()
-          .createQuery(Table.class, Table.PROPERTY_ID + "='" + tableId + "'").list().get(0);
+          .createQuery(Table.class, Table.PROPERTY_ID + "='" + tableId + "'")
+          .list()
+          .get(0);
 
       final OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
       columnCriteria.add(Restrictions.and(Restrictions.eq(Column.PROPERTY_TABLE, propertyTable),

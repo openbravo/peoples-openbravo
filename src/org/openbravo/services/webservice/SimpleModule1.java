@@ -306,11 +306,18 @@ public class SimpleModule1  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+    @Override
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof SimpleModule1)) return false;
+        if (!(obj instanceof SimpleModule1)) {
+          return false;
+        }
         SimpleModule1 other = (SimpleModule1) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null) {
+          return false;
+        }
+        if (this == obj) {
+          return true;
+        }
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
@@ -358,6 +365,7 @@ public class SimpleModule1  implements java.io.Serializable {
     }
 
     private boolean __hashCodeCalc = false;
+    @Override
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;

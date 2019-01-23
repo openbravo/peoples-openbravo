@@ -57,7 +57,8 @@ public class SL_InvAmtUpd_ProductRefDate extends SimpleCallout {
       Organization organization = OBDal.getInstance().get(Organization.class, orgId);
       Currency currency = organization.getCurrency() != null ? organization.getCurrency()
           : organization.getClient().getCurrency();
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateTimeFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
 

@@ -26,6 +26,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
@@ -39,8 +41,6 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.ad.ui.MessageTrl;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test the {@link I18NComponent}, test that a translated label actually is used inside of the label
@@ -86,8 +86,8 @@ public class LabelTest extends WeldBaseTest {
     messageTrl.setMessage(messageWithTrl);
     messageTrl.setMessageText(msgTextTranslated);
     messageTrl.setTranslation(true);
-    messageTrl.setLanguage(OBDal.getInstance().get(Language.class,
-        OBContext.getOBContext().getLanguage().getId()));
+    messageTrl.setLanguage(
+        OBDal.getInstance().get(Language.class, OBContext.getOBContext().getLanguage().getId()));
     messageWithTrl.getADMessageTrlList().add(messageTrl);
     OBDal.getInstance().save(messageWithTrl);
 

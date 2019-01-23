@@ -24,6 +24,7 @@ class FunctionValue implements XmlComponentValue {
     xmlDocument.hasXmlComponentValue.put(functionTemplate, this); // CHX
   }
 
+  @Override
   public String print() {
     return null;
   }
@@ -34,14 +35,17 @@ class FunctionValue implements XmlComponentValue {
   public void init() {
   }
 
+  @Override
   public String printPrevious() {
     return print();
   }
 
+  @Override
   public String printSimple() {
     return print();
   }
 
+  @Override
   public String printPreviousSimple() {
     return printPrevious();
   }

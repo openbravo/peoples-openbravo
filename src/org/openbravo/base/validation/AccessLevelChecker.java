@@ -110,8 +110,8 @@ public class AccessLevelChecker {
     // orgId can be null for a new Organization which by default is not
     // the zero organization
     if (orgId != null && orgId.equals("0")) {
-      throw new OBSecurityException("Entity " + entity
-          + " may not have instances with organization *");
+      throw new OBSecurityException(
+          "Entity " + entity + " may not have instances with organization *");
     }
   }
 
@@ -119,8 +119,8 @@ public class AccessLevelChecker {
     // orgId can be null for a new Organization which by default is not
     // the zero organization
     if (orgId == null || !orgId.equals("0")) {
-      throw new OBSecurityException("Entity " + entity
-          + " may only have instances with organization *");
+      throw new OBSecurityException(
+          "Entity " + entity + " may only have instances with organization *");
     }
   }
 }

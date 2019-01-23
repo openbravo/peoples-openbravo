@@ -42,6 +42,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
 
   static Logger log = LogManager.getLogger();
 
+  @Override
   public void contextInitialized(ServletContextEvent sce) {
 
     log.info("Quartz Initializer Servlet loaded, initializing " + "Scheduler...");
@@ -74,8 +75,9 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
       int startDelay = 0;
       final String startDelayS = servletContext.getInitParameter("start-delay-seconds");
       try {
-        if (startDelayS != null && startDelayS.trim().length() > 0)
+        if (startDelayS != null && startDelayS.trim().length() > 0) {
           startDelay = Integer.parseInt(startDelayS);
+        }
       } catch (final Exception e) {
         log.error("Cannot parse value of 'start-delay-seconds' to an integer: " + startDelayS
             + ", defaulting to 5 seconds.", e);
@@ -149,6 +151,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
     }
   }
 
+  @Override
   public void contextDestroyed(ServletContextEvent sce) {
 
     if (!performShutdown) {

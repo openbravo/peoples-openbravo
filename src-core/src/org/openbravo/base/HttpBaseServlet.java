@@ -78,6 +78,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * which is configured to be loaded upon start of the application server. See also web.xml
    * (load-on-startup).
    */
+  @Override
   public void init(ServletConfig config) {
     try {
       super.init(config);
@@ -107,8 +108,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
             // prefix = mSchemaPath.substring(0, lastSlash+1);
           }
         }
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("************************prefix: " + prefix);
+        }
         if (strContext == null || strContext.equals("")) {
           String path = "/";
           int secondPath = -1;
@@ -172,14 +174,16 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
       throws IOException, ServletException {
     strDireccion = HttpBaseUtils.getLocalAddress(request);
     String strActualUrl = HttpBaseUtils.getLocalHostAddress(request);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Server name: " + strActualUrl);
+    }
     HttpSession session = request.getSession(true);
     String strLanguage = "";
     try {
       strLanguage = (String) session.getAttribute("#AD_LANGUAGE");
-      if (strLanguage == null || strLanguage.trim().equals(""))
+      if (strLanguage == null || strLanguage.trim().equals("")) {
         strLanguage = "";
+      }
     } catch (Exception e) {
       strLanguage = "";
     }
@@ -189,8 +193,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
         .replace("@actual_url_context@", strDireccion);
     strReplaceWithFull = strReplaceWith;
     strReplaceWith = HttpBaseUtils.getRelativeUrl(request, strReplaceWith);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("xmlEngine.strReplaceWith: " + strReplaceWith);
+    }
     xmlEngine.strReplaceWith = strReplaceWith;
 
   }
@@ -225,11 +230,13 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @throws IOException
    * @throws ServletException
    */
-  public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void service(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     initialize(request, response);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Call to HttpServlet.service");
+    }
     super.service(request, response);
   }
 
@@ -274,8 +281,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @throws IOException
    * @throws ServletException
    */
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     doPost(request, response);
   }
 
@@ -283,7 +291,8 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
     doPostCall(request, response);
   }
 
-  public void doPostCall(HttpServletRequest request, HttpServletResponse response) throws Exception {
+  public void doPostCall(HttpServletRequest request, HttpServletResponse response)
+      throws Exception {
     return;
   }
 
@@ -293,6 +302,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return A Connection object containing the open connection.
    * @throws NoConnectionAvailableException
    */
+  @Override
   public Connection getConnection() throws NoConnectionAvailableException {
     return (myPool.getConnection());
   }
@@ -303,6 +313,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * 
    * @return String containing the database type (ORACLE or POSTGRES).
    */
+  @Override
   public String getRDBMS() {
     return (myPool.getRDBMS());
   }
@@ -315,6 +326,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @throws NoConnectionAvailableException
    * @throws SQLException
    */
+  @Override
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
     return myPool.getTransactionConnection();
   }
@@ -327,6 +339,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    *          The Connection object required to be committed and stored back into the pool.
    * @throws SQLException
    */
+  @Override
   public void releaseCommitConnection(Connection conn) throws SQLException {
     myPool.releaseCommitConnection(conn);
   }
@@ -339,6 +352,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    *          The Connection object required to be rolled back and stored back into the pool.
    * @throws SQLException
    */
+  @Override
   public void releaseRollbackConnection(Connection conn) throws SQLException {
     myPool.releaseRollbackConnection(conn);
   }
@@ -354,6 +368,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return PreparedStatement object with the strSql prepared.
    * @throws Exception
    */
+  @Override
   public PreparedStatement getPreparedStatement(String poolName, String strSql) throws Exception {
     return (myPool.getPreparedStatement(poolName, strSql));
   }
@@ -367,6 +382,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return PreparedStatement object with the strSql prepared.
    * @throws Exception
    */
+  @Override
   public PreparedStatement getPreparedStatement(String strSql) throws Exception {
     return (myPool.getPreparedStatement(strSql));
   }
@@ -382,7 +398,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return PreparedStatement object with the strSql prepared.
    * @throws SQLException
    */
-  public PreparedStatement getPreparedStatement(Connection conn, String strSql) throws SQLException {
+  @Override
+  public PreparedStatement getPreparedStatement(Connection conn, String strSql)
+      throws SQLException {
     return (myPool.getPreparedStatement(conn, strSql));
   }
 
@@ -394,6 +412,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    *          Object containing prepared statement to release.
    * @throws SQLException
    */
+  @Override
   public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
     try {
       myPool.releasePreparedStatement(preparedStatement);
@@ -410,6 +429,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return Prepared Statement object requested.
    * @throws Exception
    */
+  @Override
   public Statement getStatement(String poolName) throws Exception {
     return (myPool.getStatement(poolName));
   }
@@ -421,6 +441,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return Prepared Statement object requested.
    * @throws Exception
    */
+  @Override
   public Statement getStatement() throws Exception {
     return (myPool.getStatement());
   }
@@ -432,6 +453,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return Prepared Statement object requested.
    * @throws SQLException
    */
+  @Override
   public Statement getStatement(Connection conn) throws SQLException {
     return (myPool.getStatement(conn));
   }
@@ -443,6 +465,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    *          Object containing the statement to release.
    * @throws SQLException
    */
+  @Override
   public void releaseStatement(Statement statement) throws SQLException {
     myPool.releaseStatement(statement);
   }
@@ -455,6 +478,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    *          Object containing the statement to release.
    * @throws SQLException
    */
+  @Override
   public void releaseTransactionalStatement(Statement statement) throws SQLException {
     myPool.releaseTransactionalStatement(statement);
   }
@@ -468,6 +492,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    *          Object containing the prepared statement to release.
    * @throws SQLException
    */
+  @Override
   public void releaseTransactionalPreparedStatement(PreparedStatement preparedStatement)
       throws SQLException {
     myPool.releaseTransactionalPreparedStatement(preparedStatement);
@@ -484,6 +509,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return CallableStatement object with the strSql prepared.
    * @throws SQLException
    */
+  @Override
   public CallableStatement getCallableStatement(String poolName, String strSql) throws Exception {
     return (myPool.getCallableStatement(poolName, strSql));
   }
@@ -497,6 +523,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return CallableStatement object with the strSql prepared.
    * @throws Exception
    */
+  @Override
   public CallableStatement getCallableStatement(String strSql) throws Exception {
     return (myPool.getCallableStatement(strSql));
   }
@@ -512,7 +539,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    * @return CallableStatement object with the strSql prepared.
    * @throws SQLException
    */
-  public CallableStatement getCallableStatement(Connection conn, String strSql) throws SQLException {
+  @Override
+  public CallableStatement getCallableStatement(Connection conn, String strSql)
+      throws SQLException {
     return (myPool.getCallableStatement(conn, strSql));
   }
 
@@ -524,6 +553,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
    *          Object containing prepared callable statement to release.
    * @throws SQLException
    */
+  @Override
   public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException {
     myPool.releaseCallableStatement(callableStatement);
   }
@@ -655,16 +685,19 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
     myPool = ConnectionProviderContextListener.getPool(config.getServletContext());
   }
 
+  @Override
   public String getStatus() {
     return myPool.getStatus();
   }
 
+  @Override
   public String getServletInfo() {
     return "This servlet adds some functions (connection to the database, xmlEngine, logging) over HttpServlet";
   }
 
   private class FopEventListener implements EventListener {
 
+    @Override
     public void processEvent(Event event) {
       String msg = EventFormatter.format(event);
       EventSeverity severity = event.getSeverity();

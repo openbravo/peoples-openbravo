@@ -131,7 +131,8 @@ public class DalLayerInitializer implements OBSingleton {
   }
 
   private boolean isUsingExternalConnectionPool() {
-    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String poolClassName = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
     if (poolClassName == null || "".equals(poolClassName)) {
       return false;

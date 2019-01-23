@@ -270,147 +270,161 @@ public class COAData extends MultipartRequest implements FieldProvider {
     cElementValueId = elementValueId;
   }
 
+  @Override
   public String getField(String fieldName) {
     if (fieldName == null) {
       log4j.debug("COAData - getField - Field is null");
       return null;
     }
-    if (fieldName.equalsIgnoreCase("ACCOUNT_VALUE") || fieldName.equals("accountValue"))
+    if (fieldName.equalsIgnoreCase("ACCOUNT_VALUE") || fieldName.equals("accountValue")) {
       return accountValue;
-    else if (fieldName.equalsIgnoreCase("ACCOUNT_NAME") || fieldName.equals("accountName"))
+    } else if (fieldName.equalsIgnoreCase("ACCOUNT_NAME") || fieldName.equals("accountName")) {
       return accountName;
-    else if (fieldName.equalsIgnoreCase("ACCOUNT_DESCRIPTION")
-        || fieldName.equals("accountDescription"))
+    } else if (fieldName.equalsIgnoreCase("ACCOUNT_DESCRIPTION")
+        || fieldName.equals("accountDescription")) {
       return accountDescription;
-    else if (fieldName.equalsIgnoreCase("ACCOUNT_TYPE") || fieldName.equals("accountType"))
+    } else if (fieldName.equalsIgnoreCase("ACCOUNT_TYPE") || fieldName.equals("accountType")) {
       return accountType;
-    else if (fieldName.equalsIgnoreCase("ACCOUNT_SIGN") || fieldName.equals("accountSign"))
+    } else if (fieldName.equalsIgnoreCase("ACCOUNT_SIGN") || fieldName.equals("accountSign")) {
       return accountSign;
-    else if (fieldName.equalsIgnoreCase("ACCOUNT_DOCUMENT") || fieldName.equals("accountDocument"))
+    } else if (fieldName.equalsIgnoreCase("ACCOUNT_DOCUMENT")
+        || fieldName.equals("accountDocument")) {
       return accountDocument;
-    else if (fieldName.equalsIgnoreCase("ACCOUNT_SUMMARY") || fieldName.equals("accountSummary"))
+    } else if (fieldName.equalsIgnoreCase("ACCOUNT_SUMMARY")
+        || fieldName.equals("accountSummary")) {
       return accountSummary;
-    else if (fieldName.equalsIgnoreCase("DEFAULT_ACCOUNT") || fieldName.equals("defaultAccount"))
+    } else if (fieldName.equalsIgnoreCase("DEFAULT_ACCOUNT")
+        || fieldName.equals("defaultAccount")) {
       return defaultAccount;
-    else if (fieldName.equalsIgnoreCase("ACCOUNT_PARENT") || fieldName.equals("accountParent"))
+    } else if (fieldName.equalsIgnoreCase("ACCOUNT_PARENT") || fieldName.equals("accountParent")) {
       return accountParent;
-    else if (fieldName.equalsIgnoreCase("ELEMENT_LEVEL") || fieldName.equals("elementLevel"))
+    } else if (fieldName.equalsIgnoreCase("ELEMENT_LEVEL") || fieldName.equals("elementLevel")) {
       return elementLevel;
-    else if (fieldName.equalsIgnoreCase("OPERANDS") || fieldName.equals("operands"))
+    } else if (fieldName.equalsIgnoreCase("OPERANDS") || fieldName.equals("operands")) {
       return operands.trim();
-    else if (fieldName.equalsIgnoreCase("BALANCE_SHEET") || fieldName.equals("balanceSheet"))
+    } else if (fieldName.equalsIgnoreCase("BALANCE_SHEET") || fieldName.equals("balanceSheet")) {
       return balanceSheet;
-    else if (fieldName.equalsIgnoreCase("BALANCE_SHEET_NAME")
-        || fieldName.equals("balanceSheetName"))
+    } else if (fieldName.equalsIgnoreCase("BALANCE_SHEET_NAME")
+        || fieldName.equals("balanceSheetName")) {
       return balanceSheetName;
-    else if (fieldName.equalsIgnoreCase("US_1120_BALANCE_SHEET")
-        || fieldName.equals("uS1120BalanceSheet"))
+    } else if (fieldName.equalsIgnoreCase("US_1120_BALANCE_SHEET")
+        || fieldName.equals("uS1120BalanceSheet")) {
       return uS1120BalanceSheet;
-    else if (fieldName.equalsIgnoreCase("US_1120_BALANCE_SHEET_NAME")
-        || fieldName.equals("uS1120BalanceSheetName"))
+    } else if (fieldName.equalsIgnoreCase("US_1120_BALANCE_SHEET_NAME")
+        || fieldName.equals("uS1120BalanceSheetName")) {
       return uS1120BalanceSheetName;
-    else if (fieldName.equalsIgnoreCase("PROFIT_AND_LOSS") || fieldName.equals("profitAndLoss"))
+    } else if (fieldName.equalsIgnoreCase("PROFIT_AND_LOSS") || fieldName.equals("profitAndLoss")) {
       return profitAndLoss;
-    else if (fieldName.equalsIgnoreCase("PROFIT_AND_LOSS_NAME")
-        || fieldName.equals("profitAndLossName"))
+    } else if (fieldName.equalsIgnoreCase("PROFIT_AND_LOSS_NAME")
+        || fieldName.equals("profitAndLossName")) {
       return profitAndLossName;
-    else if (fieldName.equalsIgnoreCase("US_1120_INCOME_STATEMENT")
-        || fieldName.equals("uS1120IncomeStatement"))
+    } else if (fieldName.equalsIgnoreCase("US_1120_INCOME_STATEMENT")
+        || fieldName.equals("uS1120IncomeStatement")) {
       return uS1120IncomeStatement;
-    else if (fieldName.equalsIgnoreCase("US_1120_INCOME_STATEMENT_NAME")
-        || fieldName.equals("uS1120IncomeStatementName"))
+    } else if (fieldName.equalsIgnoreCase("US_1120_INCOME_STATEMENT_NAME")
+        || fieldName.equals("uS1120IncomeStatementName")) {
       return uS1120IncomeStatementName;
-    else if (fieldName.equalsIgnoreCase("CASH_FLOW") || fieldName.equals("cashFlow"))
+    } else if (fieldName.equalsIgnoreCase("CASH_FLOW") || fieldName.equals("cashFlow")) {
       return cashFlow;
-    else if (fieldName.equalsIgnoreCase("CASH_FLOW_NAME") || fieldName.equals("cashFlowName"))
+    } else if (fieldName.equalsIgnoreCase("CASH_FLOW_NAME") || fieldName.equals("cashFlowName")) {
       return cashFlowName;
-    else if (fieldName.equalsIgnoreCase("C_ELEMENT_VALUE_ID")
-        || fieldName.equalsIgnoreCase("CELEMENTVALUEID"))
+    } else if (fieldName.equalsIgnoreCase("C_ELEMENT_VALUE_ID")
+        || fieldName.equalsIgnoreCase("CELEMENTVALUEID")) {
       return cElementValueId;
-    else if (fieldName.equalsIgnoreCase("SHOW_VALUE_COND")
-        || fieldName.equalsIgnoreCase("showValueCond"))
+    } else if (fieldName.equalsIgnoreCase("SHOW_VALUE_COND")
+        || fieldName.equalsIgnoreCase("showValueCond")) {
       return showValueCond;
-    else if (fieldName.equalsIgnoreCase("TITLE_NODE") || fieldName.equalsIgnoreCase("titleNode"))
+    } else if (fieldName.equalsIgnoreCase("TITLE_NODE")
+        || fieldName.equalsIgnoreCase("titleNode")) {
       return titleNode;
-    else {
+    } else {
       log4j.debug("COAData - getField - Field does not exist: " + fieldName);
       return null;
     }
   }
 
+  @Override
   public FieldProvider lineFixedSize(String linea) {
     return null;
   }
 
+  @Override
   public FieldProvider lineSeparatorFormated(String line) {
-    if (line == null)
+    if (line == null) {
       return null;
-    if (line.length() < 1)
+    }
+    if (line.length() < 1) {
       return null;
+    }
     COAData coaData = new COAData();
     int next = 0;
     int previous = 0;
     String text = "";
     for (int i = 0; i < 21; i++) {
-      if (next >= line.length())
+      if (next >= line.length()) {
         break;
+      }
       if ((previous + 1) < line.length() && line.substring(previous, previous + 1).equals("\"")) {
         int aux = line.indexOf("\"", previous + 1);
-        if (aux != -1)
+        if (aux != -1) {
           next = aux;
+        }
       }
       next = line.indexOf(",", next + 1);
-      if (next == -1)
+      if (next == -1) {
         next = line.length();
+      }
       text = line.substring(previous, next);
       if (text.length() > 0) {
-        if (text.charAt(0) == '"')
+        if (text.charAt(0) == '"') {
           text = text.substring(1);
-        if (text.charAt(text.length() - 1) == '"')
+        }
+        if (text.charAt(text.length() - 1) == '"') {
           text = text.substring(0, text.length() - 1);
+        }
       }
       log4j.debug("COAData - lineSeparatorFormated - i: " + i);
       log4j.debug("COAData - lineSeparatorFormated - text: " + text);
       switch (i) {
-      case 0:
-        coaData.setAccountValue(text);
-        break;
-      case 1:
-        coaData.setAccountName(text);
-        break;
-      case 2:
-        coaData.setAccountDescription(text);
-        break;
-      case 3:
-        coaData.setAccountType(text);
-        break;
-      case 4:
-        coaData.setAccountSign(text);
-        break;
-      case 5:
-        coaData.setAccountDocument(text);
-        break;
-      case 6:
-        coaData.setAccountSummary(text);
-        break;
-      case 7:
-        coaData.setDefaultAccount(text);
-        break;
-      case 8:
-        coaData.setAccountParent(text);
-        break;
-      case 9:
-        coaData.setElementLevel(text);
-        break;
-      case 10:
-        coaData.setOperands(text);
-        break;
-      case 11:
-        coaData.setShowValueCond(text);
-        break;
-      case 12:
-        coaData.setTitleNode(text);
-        break;
+        case 0:
+          coaData.setAccountValue(text);
+          break;
+        case 1:
+          coaData.setAccountName(text);
+          break;
+        case 2:
+          coaData.setAccountDescription(text);
+          break;
+        case 3:
+          coaData.setAccountType(text);
+          break;
+        case 4:
+          coaData.setAccountSign(text);
+          break;
+        case 5:
+          coaData.setAccountDocument(text);
+          break;
+        case 6:
+          coaData.setAccountSummary(text);
+          break;
+        case 7:
+          coaData.setDefaultAccount(text);
+          break;
+        case 8:
+          coaData.setAccountParent(text);
+          break;
+        case 9:
+          coaData.setElementLevel(text);
+          break;
+        case 10:
+          coaData.setOperands(text);
+          break;
+        case 11:
+          coaData.setShowValueCond(text);
+          break;
+        case 12:
+          coaData.setTitleNode(text);
+          break;
       }
       previous = next + 1;
     }

@@ -32,6 +32,7 @@ public class WADTime extends WADControl {
     initialize();
   }
 
+  @Override
   public void initialize() {
     generateJSCode();
   }
@@ -41,37 +42,52 @@ public class WADTime extends WADControl {
     // addImport("time", "../../../../../web/js/time.js");
     StringBuffer validation = new StringBuffer();
     if (getData("IsMandatory").equals("Y")) {
-      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp"))
-          .append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp"))
+      validation.append("  if (inputValue(frm.inp")
+          .append(getData("ColumnNameInp"))
+          .append(")==null || inputValue(frm.inp")
+          .append(getData("ColumnNameInp"))
           .append(")==\"\") {\n");
-      if (getData("IsDisplayed").equals("Y"))
-        validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp"))
+      if (getData("IsDisplayed").equals("Y")) {
+        validation.append("    setWindowElementFocus(frm.inp")
+            .append(getData("ColumnNameInp"))
             .append(");\n");
+      }
       validation.append("    showJSMessage(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");
     }
     if (!getData("ValueMin").equals("") || !getData("ValueMax").equals("")) {
-      validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp"))
+      validation.append("  if (inputValue(frm.inp")
+          .append(getData("ColumnNameInp"))
           .append(")!=null && ");
-      validation.append("inputValue(frm.inp").append(getData("ColumnNameInp"))
+      validation.append("inputValue(frm.inp")
+          .append(getData("ColumnNameInp"))
           .append(")!=\"\" && (");
       boolean valmin = false;
       if (!getData("ValueMin").equals("")) {
-        validation.append("timecmp(frm.inp").append(getData("ColumnNameInp")).append(".value, '")
-            .append(getData("ValueMin")).append("')<0");
+        validation.append("timecmp(frm.inp")
+            .append(getData("ColumnNameInp"))
+            .append(".value, '")
+            .append(getData("ValueMin"))
+            .append("')<0");
         valmin = true;
       }
       if (!getData("ValueMax").equals("")) {
-        if (valmin)
+        if (valmin) {
           validation.append(" || ");
-        validation.append("timecmp(frm.inp").append(getData("ColumnNameInp")).append(".value, '")
-            .append(getData("ValueMax")).append("')>0");
+        }
+        validation.append("timecmp(frm.inp")
+            .append(getData("ColumnNameInp"))
+            .append(".value, '")
+            .append(getData("ValueMax"))
+            .append("')>0");
       }
       validation.append(")) {\n");
-      if (getData("IsDisplayed").equals("Y"))
-        validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp"))
+      if (getData("IsDisplayed").equals("Y")) {
+        validation.append("    setWindowElementFocus(frm.inp")
+            .append(getData("ColumnNameInp"))
             .append(");\n");
+      }
       validation.append("    showJSMessage(9);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");
@@ -80,10 +96,12 @@ public class WADTime extends WADControl {
     setCalloutJS();
   }
 
+  @Override
   public String getType() {
     return "TextBox";
   }
 
+  @Override
   public String editMode() {
     String textButton = "";
     String buttonClass = "";
@@ -97,8 +115,9 @@ public class WADTime extends WADControl {
       // if field is not mandatory, discard it
       discard[0] = "xxmissingSpan";
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADTime", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADTime", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -108,8 +127,8 @@ public class WADTime extends WADControl {
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("button", textButton);
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
-        "IsUpdateable").equals("N"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
+        || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -125,6 +144,7 @@ public class WADTime extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
     String textButton = "";
     String buttonClass = "";
@@ -138,8 +158,9 @@ public class WADTime extends WADControl {
       // if field is not mandatory, discard it
       discard[0] = "xxmissingSpan";
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADTime", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADTime", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -149,7 +170,8 @@ public class WADTime extends WADControl {
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("button", textButton);
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y")
+        || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -165,11 +187,15 @@ public class WADTime extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String toXml() {
     StringBuffer text = new StringBuffer();
     if (getData("IsParameter").equals("Y")) {
-      text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("\" name=\"")
-          .append(getData("ColumnName")).append("\" attribute=\"value\"/>");
+      text.append("<PARAMETER id=\"")
+          .append(getData("ColumnName"))
+          .append("\" name=\"")
+          .append(getData("ColumnName"))
+          .append("\" attribute=\"value\"/>");
     } else {
       text.append("<FIELD id=\"").append(getData("ColumnName")).append("\" attribute=\"value\">");
       text.append(getData("ColumnName")).append("</FIELD>");
@@ -177,6 +203,7 @@ public class WADTime extends WADControl {
     return text.toString();
   }
 
+  @Override
   public boolean isTime() {
     return true;
   }

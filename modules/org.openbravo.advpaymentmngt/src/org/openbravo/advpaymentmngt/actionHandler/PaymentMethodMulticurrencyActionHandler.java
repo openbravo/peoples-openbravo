@@ -56,8 +56,8 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
 
       if ("null".equals(currencyId) && !"null".equals(financialAccountId)
           && !"".equals(financialAccountId)) {
-        FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            financialAccountId);
+        FIN_FinancialAccount financialAccount = OBDal.getInstance()
+            .get(FIN_FinancialAccount.class, financialAccountId);
         currencyId = financialAccount.getCurrency().getId();
         result.put("currencyIdIdentifier", financialAccount.getCurrency().getIdentifier());
         result.put("currencyId", currencyId);
@@ -80,10 +80,11 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
         if (finAccPaymentMethod.getAccount().getCurrency().getId().equals(currencyId)) {
           result.put("conversionrate", 1);
         } else {
-          ConversionRate convRate = FinancialUtils.getConversionRate(paymentDate, OBDal
-              .getInstance().get(Currency.class, currencyId), finAccPaymentMethod.getAccount()
-              .getCurrency(), OBDal.getInstance().get(Organization.class, strOrgId), OBDal
-              .getInstance().get(Organization.class, strOrgId).getClient());
+          ConversionRate convRate = FinancialUtils.getConversionRate(paymentDate,
+              OBDal.getInstance().get(Currency.class, currencyId),
+              finAccPaymentMethod.getAccount().getCurrency(),
+              OBDal.getInstance().get(Organization.class, strOrgId),
+              OBDal.getInstance().get(Organization.class, strOrgId).getClient());
           if (convRate != null) {
             result.put("conversionrate", convRate.getMultipleRateBy());
           } else {
@@ -92,8 +93,8 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
           }
         }
         result.put("currencyToId", finAccPaymentMethod.getAccount().getCurrency().getId());
-        result.put("currencyToIdentifier", finAccPaymentMethod.getAccount().getCurrency()
-            .getIdentifier());
+        result.put("currencyToIdentifier",
+            finAccPaymentMethod.getAccount().getCurrency().getIdentifier());
       } else {
         result.put("conversionrate", 1);
         result.put("currencyToId", currencyId);
@@ -110,8 +111,8 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       if (finAccPaymentMethod.getAccount().getCurrency().getId().equals(currencyId)) {
         return isSOTrx ? finAccPaymentMethod.isPayinAllow() : finAccPaymentMethod.isPayoutAllow();
       } else {
-        return isSOTrx ? finAccPaymentMethod.isPayinIsMulticurrency() : finAccPaymentMethod
-            .isPayoutIsMulticurrency();
+        return isSOTrx ? finAccPaymentMethod.isPayinIsMulticurrency()
+            : finAccPaymentMethod.isPayoutIsMulticurrency();
       }
     } else {
       return false;
@@ -122,8 +123,8 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
       String financialAccountId) {
     OBContext.setAdminMode(true);
     try {
-      OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
-          FinAccPaymentMethod.class);
+      OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance()
+          .createCriteria(FinAccPaymentMethod.class);
       obc.setFilterOnReadableOrganization(false);
       obc.setMaxResults(1);
       obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,

@@ -26,6 +26,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -38,8 +40,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -64,8 +64,8 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
       List<String> selectedProductsId = getProductsIdListFromProductsParameter(productIds);
       for (Organization legalOrganization : legalOrganizations) {
         doChecks(legalOrganization.getId(), movementdate);
-        PriceDifferenceUtil.setTransactionsReadyForPriceAdjustment(selectedProductsId,
-            movementdate, legalOrganization);
+        PriceDifferenceUtil.setTransactionsReadyForPriceAdjustment(selectedProductsId, movementdate,
+            legalOrganization);
         JSONObject msg = new JSONObject();
         msg = PriceDifferenceProcess.processPriceDifference(legalOrganization);
         transactionsProcessed += msg.getInt("transactionsProcessed");
@@ -125,8 +125,8 @@ public class PriceDifferenceByDateProcess extends BaseProcessActionHandler {
       Date maxDate = CostingUtils.getMaxTransactionDate(org);
       Period periodClosed = CostingUtils.periodClosed(org, movementdate, maxDate, "CAD");
       if (periodClosed != null) {
-        String errorMsg = OBMessageUtils.getI18NMessage("DocumentTypePeriodClosed", new String[] {
-            "CAD", periodClosed.getIdentifier() });
+        String errorMsg = OBMessageUtils.getI18NMessage("DocumentTypePeriodClosed",
+            new String[] { "CAD", periodClosed.getIdentifier() });
         throw new OBException(errorMsg);
       }
     } catch (ServletException e) {

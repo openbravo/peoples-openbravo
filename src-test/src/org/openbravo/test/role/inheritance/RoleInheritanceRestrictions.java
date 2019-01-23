@@ -347,9 +347,8 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
     Role role = null;
     try {
       OBContext.setAdminMode(true);
-      template = RoleInheritanceTestUtils.createRole("template",
-          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
-          true);
+      template = RoleInheritanceTestUtils.createRole("template", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
       String templateId = template.getId();
       role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
@@ -396,9 +395,8 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
     try {
       OBContext.setAdminMode(true);
       // Try to create an automatic template
-      template = RoleInheritanceTestUtils.createRole("template",
-          RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C",
-          false, true);
+      template = RoleInheritanceTestUtils.createRole("template", RoleInheritanceTestUtils.CLIENT_ID,
+          RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", false, true);
       String templateId = template.getId();
       try {
         OBDal.getInstance().flush();

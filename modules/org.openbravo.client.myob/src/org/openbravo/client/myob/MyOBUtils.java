@@ -119,14 +119,12 @@ public class MyOBUtils {
   }
 
   private static List<WidgetClassMenu> getWidgetClassMenuItemsList(WidgetClass widgetClass) {
-    OBCriteria<WidgetClassMenu> obcMenuItems = OBDal.getInstance().createCriteria(
-        WidgetClassMenu.class);
+    OBCriteria<WidgetClassMenu> obcMenuItems = OBDal.getInstance()
+        .createCriteria(WidgetClassMenu.class);
     if (widgetClass.getWidgetSuperclass() != null) {
-      obcMenuItems
-          .add(Restrictions.or(
-              Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass),
-              Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS,
-                  widgetClass.getWidgetSuperclass())));
+      obcMenuItems.add(Restrictions
+          .or(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass), Restrictions
+              .eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass.getWidgetSuperclass())));
     } else {
       obcMenuItems.add(Restrictions.eq(WidgetClassMenu.PROPERTY_WIDGETCLASS, widgetClass));
     }
@@ -213,8 +211,8 @@ public class MyOBUtils {
       Client client, String[] orgIds, Role role) {
     OBCriteria<WidgetInstance> criteria = getWidgetInstanceCriteria(priority, client, null, role);
     criteria.setFilterOnReadableOrganization(false);
-    criteria.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
-        + Organization.PROPERTY_ID, (Object[]) orgIds));
+    criteria.add(Restrictions.in(
+        WidgetInstance.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID, (Object[]) orgIds));
     return criteria;
   }
 
@@ -222,8 +220,8 @@ public class MyOBUtils {
       Client client, Set<String> orgIds, Role role) {
     OBCriteria<WidgetInstance> criteria = getWidgetInstanceCriteria(priority, client, null, role);
     criteria.setFilterOnReadableOrganization(false);
-    criteria.add(Restrictions.in(WidgetInstance.PROPERTY_ORGANIZATION + "."
-        + Organization.PROPERTY_ID, orgIds));
+    criteria.add(Restrictions
+        .in(WidgetInstance.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID, orgIds));
     return criteria;
   }
 
@@ -235,8 +233,8 @@ public class MyOBUtils {
     OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnActive(isActive);
-    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT,
-        OBDal.getInstance().get(Client.class, OBContext.getOBContext().getCurrentClient().getId())));
+    obc.add(Restrictions.eq(WidgetInstance.PROPERTY_CLIENT, OBDal.getInstance()
+        .get(Client.class, OBContext.getOBContext().getCurrentClient().getId())));
     obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATROLE,
         OBDal.getInstance().get(Role.class, OBContext.getOBContext().getRole().getId())));
     obc.add(Restrictions.eq(WidgetInstance.PROPERTY_VISIBLEATUSER,
@@ -265,8 +263,9 @@ public class MyOBUtils {
    */
   WidgetProvider getWidgetProvider(WidgetClass widgetClass) {
     try {
-      String strJavaClass = (widgetClass.getWidgetSuperclass() != null) ? widgetClass
-          .getWidgetSuperclass().getJavaClass() : widgetClass.getJavaClass();
+      String strJavaClass = (widgetClass.getWidgetSuperclass() != null)
+          ? widgetClass.getWidgetSuperclass().getJavaClass()
+          : widgetClass.getJavaClass();
       final Class<?> clz = OBClassLoader.getInstance().loadClass(strJavaClass);
       final WidgetProvider widgetProvider = (WidgetProvider) weldUtils.getInstance(clz);
       widgetProvider.setWidgetClass(widgetClass);
@@ -305,7 +304,8 @@ public class MyOBUtils {
     hql.append("WHERE widgetClass.allowAnonymousAccess IS true ");
     hql.append("AND widgetClass.superclass IS false ");
     hql.append("AND widgetClass.availableInWorkspace IS true");
-    Query<String> query = OBDal.getInstance().getSession()
+    Query<String> query = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), String.class);
     return query.list();
   }

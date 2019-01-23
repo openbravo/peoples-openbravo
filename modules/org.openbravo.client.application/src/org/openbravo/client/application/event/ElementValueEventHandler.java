@@ -46,8 +46,8 @@ import org.openbravo.model.financialmgmt.accounting.coa.ElementValue;
 
 public class ElementValueEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ElementValue.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ElementValue.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -55,8 +55,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -74,9 +73,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     // Skip is required as accounts come with a tree definition
     OBContext.setAdminMode();
     try {
-      if (!account.getOrganization().isReady()
-          || !ArrayUtils.contains(OBContext.getOBContext().getReadableClients(), account
-              .getClient().getId())) {
+      if (!account.getOrganization().isReady() || !ArrayUtils
+          .contains(OBContext.getOBContext().getReadableClients(), account.getClient().getId())) {
         return;
       }
     } finally {
@@ -85,8 +83,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     doIt(account);
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -134,8 +131,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     HashMap<String, String> result = new HashMap<String, String>();
     // Default values for result
     result.put("ParentID", "0");
-    result
-        .put("SeqNo", String.valueOf(getNextSeqNo(account.getAccountingElement().getTree(), "0")));
+    result.put("SeqNo",
+        String.valueOf(getNextSeqNo(account.getAccountingElement().getTree(), "0")));
     List<ElementValue> accounts = getAccountList(account);
     ElementValue previousElement = null;
     for (ElementValue elementValue : accounts) {
@@ -162,7 +159,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
 
   List<ElementValue> getAccountList(ElementValue account) {
     OBCriteria<ElementValue> obc = OBDal.getInstance().createCriteria(ElementValue.class);
-    obc.add(Restrictions.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, account.getAccountingElement()));
+    obc.add(
+        Restrictions.eq(ElementValue.PROPERTY_ACCOUNTINGELEMENT, account.getAccountingElement()));
     obc.add(Restrictions.eq(ElementValue.PROPERTY_ACTIVE, true));
     obc.add(Restrictions.le(ElementValue.PROPERTY_SEARCHKEY, account.getSearchKey()));
     obc.add(Restrictions.ne(ElementValue.PROPERTY_ID, account.getId()));

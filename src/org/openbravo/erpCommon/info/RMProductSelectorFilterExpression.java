@@ -35,10 +35,11 @@ public class RMProductSelectorFilterExpression implements FilterExpression {
       return "";
     }
     StringBuilder whereClause = new StringBuilder();
-    String orgId = (String) RequestContext.get().getSession()
+    String orgId = (String) RequestContext.get()
+        .getSession()
         .getAttribute(RETURN_FROM_CUSTOMER_WINDOW + "|AD_ORG_ID");
-    String orgList = Utility.getInStrSet(OBContext.getOBContext()
-        .getOrganizationStructureProvider().getNaturalTree(orgId));
+    String orgList = Utility.getInStrSet(
+        OBContext.getOBContext().getOrganizationStructureProvider().getNaturalTree(orgId));
     if (!orgList.isEmpty()) {
       whereClause.append("e.organization.id in (" + orgList + ")");
     }

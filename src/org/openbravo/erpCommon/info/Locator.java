@@ -42,8 +42,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class Locator extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  private static final String[] colNames = { "name", "value", "aisle", "bin", "nivel",
-      "priorityno", "isdefault", "rowkey" };
+  private static final String[] colNames = { "name", "value", "aisle", "bin", "nivel", "priorityno",
+      "isdefault", "rowkey" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
   private static final String WINDOWID_GOODSRECEIPT = "184";
@@ -53,13 +53,15 @@ public class Locator extends HttpSecureAppServlet {
   private static final String WINDOWID_PHYSICALINVENTORY = "168";
   private static final String WINDOWID_GOODSMOVEMENT = "170";
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -96,13 +98,14 @@ public class Locator extends HttpSecureAppServlet {
     } else if (vars.commandIn("KEY")) {
       removePageSessionVariables(vars);
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Locator.name");
-      String strWarehouse = vars
-          .getRequestGlobalVariable("inpmWarehouseId", "Locator.mWarehouseId");
+      String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId",
+          "Locator.mWarehouseId");
       if ((strKeyValue.equals("") || strKeyValue == null)
           && (strWarehouse.equals("") || strWarehouse == null)) {
         String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
-        if (!windowId.equals("") && windowId != null)
+        if (!windowId.equals("") && windowId != null) {
           strWarehouse = Utility.getContext(this, vars, "M_Warehouse_ID", windowId);
+        }
       }
       strKeyValue = strKeyValue + "%";
       vars.setSessionValue("Locator.name", strKeyValue);
@@ -132,8 +135,9 @@ public class Locator extends HttpSecureAppServlet {
           strKeyValue);
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
-      } else
+      } else {
         printPage(response, vars, strKeyValue, LocatorData.selectname(this, strWarehouse), strOrg);
+      }
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
@@ -156,8 +160,9 @@ public class Locator extends HttpSecureAppServlet {
       }
       printGridData(response, vars, strName, strWarehousename, strAisle, strBin, strLevel,
           strSortCols, strSortDirs, strOffset, strPageSize, strNewFilter, strOrg);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void removePageSessionVariables(VariablesSecureApp vars) {
@@ -170,11 +175,11 @@ public class Locator extends HttpSecureAppServlet {
     vars.removeSessionValue("Locator.currentPage");
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strNameValue, String strWarehousename, String strOrg) throws IOException,
-      ServletException {
-    if (log4j.isDebugEnabled())
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strNameValue,
+      String strWarehousename, String strOrg) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of Locators seeker");
+    }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Locator")
         .createXmlDocument();
     xmlDocument.setParameter("key", strNameValue);
@@ -198,10 +203,12 @@ public class Locator extends HttpSecureAppServlet {
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       LocatorData[] data) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Locators seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     xmlDocument.setParameter("script", generateResult(data));
     response.setContentType("text/html; charset=UTF-8");
@@ -224,10 +231,12 @@ public class Locator extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -242,8 +251,9 @@ public class Locator extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -274,12 +284,13 @@ public class Locator extends HttpSecureAppServlet {
   }
 
   private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strName,
-      String strWarehousename, String strAisle, String strBin, String strLevel,
-      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
-      String strNewFilter, String strOrg) throws IOException, ServletException {
+      String strWarehousename, String strAisle, String strBin, String strLevel, String strOrderCols,
+      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter, String strOrg)
+      throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
     int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -344,28 +355,33 @@ public class Locator extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
         log4j.error("Error obtaining rows data", e);
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
       }
     }
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -373,7 +389,8 @@ public class Locator extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -390,18 +407,28 @@ public class Locator extends HttpSecureAppServlet {
            */
 
           if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -414,12 +441,14 @@ public class Locator extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the Locators seeker";
   } // end of getServletInfo() method

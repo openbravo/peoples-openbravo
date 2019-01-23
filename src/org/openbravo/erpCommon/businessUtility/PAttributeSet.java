@@ -39,18 +39,23 @@ public class PAttributeSet {
   }
 
   public static boolean isInstanceAttributeSet(PAttributeSetData[] data) {
-    if (data == null || data.length < 1)
+    if (data == null || data.length < 1) {
       return false;
-    if (data[0].islot.equals("Y"))
+    }
+    if (data[0].islot.equals("Y")) {
       return true;
-    if (data[0].isserno.equals("Y"))
+    }
+    if (data[0].isserno.equals("Y")) {
       return true;
-    if (data[0].isguaranteedate.equals("Y"))
+    }
+    if (data[0].isguaranteedate.equals("Y")) {
       return true;
+    }
     if (!data[0].elementname.equals("")) {
       for (int i = 0; i < data.length; i++) {
-        if (data[i].isinstanceattribute.equals("Y"))
+        if (data[i].isinstanceattribute.equals("Y")) {
           return true;
+        }
       }
     }
     return false;

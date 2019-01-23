@@ -70,8 +70,8 @@ public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
 
   private void createWarningMessage(CalloutInfo info, int gcCount) {
     if (gcCount > 0) {
-      String parsedMessage = Utility.messageBD(this, warningMessage, OBContext.getOBContext()
-          .getLanguage().getId());
+      String parsedMessage = Utility.messageBD(this, warningMessage,
+          OBContext.getOBContext().getLanguage().getId());
       info.addResult("WARNING", parsedMessage);
     }
   }

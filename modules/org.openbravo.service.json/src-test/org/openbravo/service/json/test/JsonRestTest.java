@@ -50,7 +50,8 @@ public class JsonRestTest extends OBBaseTest {
   private static final String LOGIN = "Openbravo";
   private static final String PWD = "openbravo";
 
-  protected JSONObject doRequest(String wsPart, String testContent, String method, int responseCode) {
+  protected JSONObject doRequest(String wsPart, String testContent, String method,
+      int responseCode) {
     try {
       final HttpURLConnection hc = createConnection(wsPart, method);
       hc.connect();

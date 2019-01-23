@@ -67,7 +67,8 @@ public class DbUtility implements OBSingleton {
     }
     if (throwable.getCause() instanceof org.hibernate.exception.ConstraintViolationException
         && ((org.hibernate.exception.ConstraintViolationException) throwable.getCause())
-            .getSQLException().getNextException() != null) {
+            .getSQLException()
+            .getNextException() != null) {
       final org.hibernate.exception.ConstraintViolationException cve = (org.hibernate.exception.ConstraintViolationException) throwable
           .getCause();
       return cve.getSQLException().getNextException();

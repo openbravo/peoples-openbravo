@@ -63,6 +63,7 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
@@ -96,8 +97,8 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "BatchPaymentExecution|DateFrom",
           "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "BatchPaymentExecution|DateTo", "");
-      boolean isReceipt = "Y".equals(vars.getGlobalVariable("inpIsReceipt",
-          "BatchPaymentExecution|IsReceipt", ""));
+      boolean isReceipt = "Y"
+          .equals(vars.getGlobalVariable("inpIsReceipt", "BatchPaymentExecution|IsReceipt", ""));
       String strNewFilter = vars.getStringParameter("newFilter");
       String strOffset = vars.getStringParameter("offset");
       String strPageSize = vars.getStringParameter("page_size");
@@ -110,8 +111,8 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     } else if (vars.commandIn("CALLOUTPAYMENTMETHOD")) {
       String strPaymentMethodId = vars.getRequestGlobalVariable("inpPaymentMethod", "");
       String strOrgId = vars.getRequestGlobalVariable("inpOrgId", "");
-      boolean isReceipt = "Y".equals(vars.getGlobalVariable("inpIsReceipt",
-          "BatchPaymentExecution|IsReceipt", ""));
+      boolean isReceipt = "Y"
+          .equals(vars.getGlobalVariable("inpIsReceipt", "BatchPaymentExecution|IsReceipt", ""));
       reloadPaymentMethodCombo(response, strPaymentMethodId, "", strOrgId, isReceipt);
 
     } else if (vars.commandIn("CALLOUTFINANCIALACCOUNT")) {
@@ -119,13 +120,14 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
       String strPaymentMethodId = vars.getRequestGlobalVariable("inpPaymentMethod", "");
       String strOrgId = vars.getRequestGlobalVariable("inpOrgId", "");
       String strCurrencyId = vars.getRequestGlobalVariable("inpCurrencyId", "");
-      boolean isReceipt = "Y".equals(vars.getGlobalVariable("inpIsReceipt",
-          "BatchPaymentExecution|IsReceipt", ""));
+      boolean isReceipt = "Y"
+          .equals(vars.getGlobalVariable("inpIsReceipt", "BatchPaymentExecution|IsReceipt", ""));
       reloadFinancialAccountCombo(response, strPaymentMethodId, strFinancialAccountId, strOrgId,
           strCurrencyId, isReceipt);
 
-    } else
+    } else {
       pageError(response);
+    }
 
   }
 
@@ -134,8 +136,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
       String strPaymentMethodId, String strIsReceipt) throws IOException, ServletException {
     log4j.debug("Output: BatchPaymentExecution");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_forms/BatchPaymentExecution").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_forms/BatchPaymentExecution")
+        .createXmlDocument();
 
     final String formClassName = this.getClass().getName();
     final String adFormId = getADFormInfo(formClassName).getId();
@@ -154,9 +157,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "49DC1D6F086945AB82F84C66F5F13F16", Utility.getContext(this, vars, "#User_Org",
-              "BatchPaymentExecution"), Utility.getContext(this, vars, "#User_Client",
-              "BatchPaymentExecution"), 0);
+          "49DC1D6F086945AB82F84C66F5F13F16",
+          Utility.getContext(this, vars, "#User_Org", "BatchPaymentExecution"),
+          Utility.getContext(this, vars, "#User_Client", "BatchPaymentExecution"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "PrintInvoices", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -199,8 +202,8 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
 
     // Payment Method combobox
     final boolean isReceipt = "Y".equals(strIsReceipt);
-    String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(strPaymentMethodId, "",
-        newOrg, true, true, isReceipt);
+    String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(strPaymentMethodId, "", newOrg,
+        true, true, isReceipt);
     xmlDocument.setParameter("sectionDetailPaymentMethod", paymentMethodComboHtml);
 
     // Financial Account combobox
@@ -226,8 +229,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -242,8 +246,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -278,9 +283,8 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
 
   private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
       String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
-      String strNewFilter, String strOrgId, String strFinancialAccountId,
-      String strPaymentMethodId, String strDateFrom, String strDateTo, boolean isReceipt)
-      throws IOException {
+      String strNewFilter, String strOrgId, String strFinancialAccountId, String strPaymentMethodId,
+      String strDateFrom, String strDateTo, boolean isReceipt) throws IOException {
     log4j.debug("Output: print page rows");
 
     AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
@@ -309,8 +313,9 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
         orderByColsMap.put("duedate", FIN_Payment.PROPERTY_PAYMENTDATE);
         orderByColsMap.put("amount", FIN_Payment.PROPERTY_AMOUNT);
         orderByColsMap.put("rowkey", FIN_Payment.PROPERTY_ID);
-        for (int i = 0; i < colNames.length; i++)
+        for (int i = 0; i < colNames.length; i++) {
           strOrderBy = strOrderBy.replace(colNames[i], orderByColsMap.get(colNames[i]));
+        }
 
         String[] orderByClause = strOrderBy.split(" ");
         String strOrderByProperty = orderByClause[0];
@@ -325,8 +330,8 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
         if (strNewFilterAux.equals("1") || strNewFilterAux.equals("")) { // New filter or first load
-          gridPayments = dao.getPayExecRowCount(strOrgId, strPaymentMethodId,
-              strFinancialAccountId, FIN_Utility.getDate(strDateFrom),
+          gridPayments = dao.getPayExecRowCount(strOrgId, strPaymentMethodId, strFinancialAccountId,
+              FIN_Utility.getDate(strDateFrom),
               FIN_Utility.getDate(DateTimeData.nDaysAfter(this, strDateTo, "1")), offset,
               TableSQLData.maxRowsPerGridPage, null, null, isReceipt);
           strNumRows = Integer.toString(gridPayments.size());
@@ -350,28 +355,33 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
         log4j.error("Error obtaining rows data", e);
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
 
       }
     }
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -379,7 +389,8 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (gridPayments != null && gridPayments.size() > 0) {
       DecimalFormat df = Utility.getFormat(vars, "euroRelation");
@@ -391,45 +402,55 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
           // "amount", "rowkey"
           String columnData = "";
           switch (k) {
-          case 0: // documentno
-            columnData = pay.getDocumentNo();
-            break;
-          case 1: // businesspartner
-            if (pay.getBusinessPartner() != null) {
-              columnData = pay.getBusinessPartner().getIdentifier();
-            }
-            break;
-          case 2: // description
-            if (pay.getDescription() != null)
-              columnData = pay.getDescription();
-            break;
-          case 3: // duedate
-            columnData = Utility.formatDate(pay.getPaymentDate(), vars.getJavaDateFormat());
-            break;
-          case 4: // amount
-            columnData = df.format(pay.getAmount());
-            break;
-          case 5: // rowkey
-            columnData = pay.getId().toString();
-            break;
-          default: // invalid
-            log4j.error("Invalid column");
-            break;
+            case 0: // documentno
+              columnData = pay.getDocumentNo();
+              break;
+            case 1: // businesspartner
+              if (pay.getBusinessPartner() != null) {
+                columnData = pay.getBusinessPartner().getIdentifier();
+              }
+              break;
+            case 2: // description
+              if (pay.getDescription() != null) {
+                columnData = pay.getDescription();
+              }
+              break;
+            case 3: // duedate
+              columnData = Utility.formatDate(pay.getPaymentDate(), vars.getJavaDateFormat());
+              break;
+            case 4: // amount
+              columnData = df.format(pay.getAmount());
+              break;
+            case 5: // rowkey
+              columnData = pay.getId().toString();
+              break;
+            default: // invalid
+              log4j.error("Invalid column");
+              break;
           }
 
           if (columnData != "") {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(columnData.replaceAll("<b>", "").replaceAll("<B>", "")
-                .replaceAll("</b>", "").replaceAll("</B>", "").replaceAll("<i>", "")
-                .replaceAll("<I>", "").replaceAll("</i>", "").replaceAll("</I>", "")
-                .replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(columnData.replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -442,15 +463,16 @@ public class BatchPaymentExecution extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
 
   private void reloadPaymentMethodCombo(HttpServletResponse response, String srtPaymentMethod,
-      String strFinancialAccountId, String strOrgId, boolean isReceipt) throws IOException,
-      ServletException {
+      String strFinancialAccountId, String strOrgId, boolean isReceipt)
+      throws IOException, ServletException {
     log4j.debug("Callout: Financial Account has changed to");
 
     String paymentMethodComboHtml = FIN_Utility.getPaymentMethodList(srtPaymentMethod,

@@ -33,12 +33,14 @@ public class RDBMSIndependent {
     sql = sql.toUpperCase().replace("ALL TRIGGERS", "TRIGGER ALL");
     if (totalOutParameters > 0) {
       int init = sql.indexOf("(");
-      if (init == -1)
+      if (init == -1) {
         throw new ServletException("Badly formed sql: " + sql);
+      }
       strSql.append(sql.substring(0, init + 1));
       int end = sql.lastIndexOf(")");
-      if (end == -1)
+      if (end == -1) {
         throw new ServletException("Badly formed sql: " + sql);
+      }
       boolean first = true;
       int count = 0;
       StringTokenizer stoken = new StringTokenizer(sql.substring(init + 1, end), ",", false);
@@ -56,8 +58,9 @@ public class RDBMSIndependent {
         }
       }
       strSql.append(sql.substring(end));
-    } else
+    } else {
       strSql.append(sql);
+    }
 
     PreparedStatement st = null;
     if (conn == null) {
@@ -99,10 +102,11 @@ public class RDBMSIndependent {
     } catch (SQLException e) {
       throw e;
     } finally {
-      if (conn == null)
+      if (conn == null) {
         connectionProvider.releasePreparedStatement(st);
-      else
+      } else {
         connectionProvider.releaseTransactionalStatement(st);
+      }
     }
     return (total);
   }

@@ -208,7 +208,8 @@ public class ImportEntryBuilder {
       return false;
     }
 
-    final Query<Number> qry = SessionHandler.getInstance().getSession()
+    final Query<Number> qry = SessionHandler.getInstance()
+        .getSession()
         .createQuery("select count(*) from C_IMPORT_ENTRY where id=:id", Number.class);
     qry.setParameter("id", entryId);
 
@@ -220,7 +221,8 @@ public class ImportEntryBuilder {
       return false;
     }
 
-    final Query<Number> qry = SessionHandler.getInstance().getSession()
+    final Query<Number> qry = SessionHandler.getInstance()
+        .getSession()
         .createQuery("select count(*) from C_Import_Entry_Archive where id=:id", Number.class);
     qry.setParameter("id", entryId);
 

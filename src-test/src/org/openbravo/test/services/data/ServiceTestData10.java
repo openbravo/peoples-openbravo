@@ -27,13 +27,14 @@ public class ServiceTestData10 extends ServiceTestData {
   public void initialize() {
     setTestNumber("BACK-501");
     setTestDescription("Services missing configuration data. Missing Price Rule Range");
-    setErrorMessage("@ServicePriceRuleRangeNotFound@. @ServicePriceRule@: Ranges, @AmountUpTo@: 10000.00");
+    setErrorMessage(
+        "@ServicePriceRuleRangeNotFound@. @ServicePriceRule@: Ranges, @AmountUpTo@: 10000.00");
     setBpartnerId(BP_CUSTOMER_A);
     setOrderDate("01-06-2015");
     setServiceId(SERVICE_WARRANTY);
-    setProducts(new String[][] {//
-    // ProductId, quantity, price, amount
-    { PRODUCT_DISTRIBUTION_GOOD_A, "1000", "10.00", "10.00" } //
+    setProducts(new String[][] { //
+        // ProductId, quantity, price, amount
+        { PRODUCT_DISTRIBUTION_GOOD_A, "1000", "10.00", "10.00" } //
     });
     setQuantity(BigDecimal.ONE);
     setPrice(new BigDecimal("250.00"));

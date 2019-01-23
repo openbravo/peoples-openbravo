@@ -148,8 +148,8 @@ public class OBConfigFileProvider implements OBSingleton {
         classPathLocation = classPathLocation.substring(0, classPathLocation.length());
       }
 
-      final InputStream is = getResourceAsStream(classPathLocation + "/"
-          + OBProvider.CONFIG_FILE_NAME);
+      final InputStream is = getResourceAsStream(
+          classPathLocation + "/" + OBProvider.CONFIG_FILE_NAME);
       if (is != null) {
         OBProvider.getInstance().register("", is);
       }

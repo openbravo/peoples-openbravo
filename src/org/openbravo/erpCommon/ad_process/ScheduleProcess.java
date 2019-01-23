@@ -71,15 +71,15 @@ public class ScheduleProcess extends HttpSecureAppServlet {
       // Duplicated code in: RescheduleProcess
       if (group.equals("Y")) {
         ProcessRequest requestObject = OBDal.getInstance().get(ProcessRequest.class, requestId);
-        OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance().createCriteria(
-            ProcessGroupList.class);
+        OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance()
+            .createCriteria(ProcessGroupList.class);
         processListCri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP,
             requestObject.getProcessGroup()));
         processListCri.setMaxResults(1);
         if (processListCri.list().size() == 0) {
           advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
-              OBMessageUtils.getI18NMessage("PROGROUP_NoProcess", new String[] { requestObject
-                  .getProcessGroup().getName() }));
+              OBMessageUtils.getI18NMessage("PROGROUP_NoProcess",
+                  new String[] { requestObject.getProcessGroup().getName() }));
           return;
         }
       }

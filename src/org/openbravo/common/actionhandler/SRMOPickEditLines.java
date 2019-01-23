@@ -91,8 +91,9 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       try {
         jsonRequest = new JSONObject();
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        String message = OBMessageUtils.translateError(new DalConnectionProvider(), vars,
-            vars.getLanguage(), ex.getMessage()).getMessage();
+        String message = OBMessageUtils
+            .translateError(new DalConnectionProvider(), vars, vars.getLanguage(), ex.getMessage())
+            .getMessage();
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("text", message);
@@ -108,12 +109,12 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
     return jsonRequest;
   }
 
-  private void createOrderLines(JSONObject jsonRequest, List<String> idList) throws JSONException,
-      OBException {
+  private void createOrderLines(JSONObject jsonRequest, List<String> idList)
+      throws JSONException, OBException {
     JSONObject grid = jsonRequest.getJSONObject("_params").getJSONObject("grid");
     JSONArray selectedLines = grid.getJSONArray("_selection");
-    JSONObject orphanlinesgrid = jsonRequest.getJSONObject("_params").getJSONObject(
-        "orphanlinesgrid");
+    JSONObject orphanlinesgrid = jsonRequest.getJSONObject("_params")
+        .getJSONObject("orphanlinesgrid");
     JSONArray selectedLinesOrphan = orphanlinesgrid.getJSONArray("_selection");
 
     final String strOrderId = jsonRequest.getString("C_Order_ID");
@@ -139,8 +140,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       Product product = OBDal.getInstance().get(Product.class, selectedLine.getString("product"));
       if (!product.isReturnable()) {
-        throw new OBException("@Product@ '" + product.getIdentifier()
-            + "' @ServiceIsNotReturnable@");
+        throw new OBException(
+            "@Product@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
       }
 
       if (selectedLine.get("returned").equals(null)) {
@@ -165,13 +166,13 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       }
       ShipmentInOutLine shipmentLine = null;
       if (StringUtils.isNotEmpty(selectedLine.getString("goodsShipmentLine"))) {
-        shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-            selectedLine.getString("goodsShipmentLine"));
+        shipmentLine = OBDal.getInstance()
+            .get(ShipmentInOutLine.class, selectedLine.getString("goodsShipmentLine"));
       }
       AttributeSetInstance asi = null;
       if (!selectedLine.get("attributeSetValue").equals(null)) {
-        asi = OBDal.getInstance().get(AttributeSetInstance.class,
-            selectedLine.getString("attributeSetValue"));
+        asi = OBDal.getInstance()
+            .get(AttributeSetInstance.class, selectedLine.getString("attributeSetValue"));
       }
       UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.get("uOM"));
 
@@ -180,9 +181,10 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setAttributeSetValue(asi);
       newOrderLine.setUOM(uom);
       newOrderLine.setOperativeUOM(shipmentLine != null ? shipmentLine.getOperativeUOM() : null);
-      newOrderLine.setOperativeQuantity(shipmentLine != null
-          && shipmentLine.getOperativeQuantity() != null ? shipmentLine.getOperativeQuantity()
-          .negate() : BigDecimal.ZERO);
+      newOrderLine
+          .setOperativeQuantity(shipmentLine != null && shipmentLine.getOperativeQuantity() != null
+              ? shipmentLine.getOperativeQuantity().negate()
+              : BigDecimal.ZERO);
 
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned")).negate();
 
@@ -201,11 +203,13 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         UOM aum = OBDal.getInstance().get(UOM.class, aumId);
         newOrderLine.setOperativeUOM(aum);
         if (!aum.getId().equals(shipmentLine.getUOM().getId())) {
-          qtyReturned = UOMUtil.getConvertedQty(shipmentLine.getProduct().getId(),
-              new BigDecimal(selectedLine.getString("returned")), aum.getId()).negate();
+          qtyReturned = UOMUtil
+              .getConvertedQty(shipmentLine.getProduct().getId(),
+                  new BigDecimal(selectedLine.getString("returned")), aum.getId())
+              .negate();
         }
-        newOrderLine.setOperativeQuantity(new BigDecimal(selectedLine.getString("returned"))
-            .negate());
+        newOrderLine
+            .setOperativeQuantity(new BigDecimal(selectedLine.getString("returned")).negate());
       }
 
       // Ordered Quantity = returned quantity.
@@ -248,7 +252,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setTax(tax);
 
       // Price
-      BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice, grossListPrice, baseGrossUnitPrice;
+      BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice,
+          grossListPrice, baseGrossUnitPrice;
       stdPrice = baseGrossUnitPrice = BigDecimal.ZERO;
       final int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
@@ -281,8 +286,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       if (order.getPriceList().isPriceIncludesTax()) {
         grossPrice = unitPrice;
-        grossAmt = grossPrice.multiply(qtyReturned)
-            .setScale(stdPrecision, RoundingMode.HALF_UP);
+        grossAmt = grossPrice.multiply(qtyReturned).setScale(stdPrecision, RoundingMode.HALF_UP);
         netPrice = limitPrice = stdPrice = netListPrice = BigDecimal.ZERO;
       } else {
         netPrice = unitPrice;
@@ -295,14 +299,14 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setGrossListPrice(grossListPrice);
       newOrderLine.setPriceLimit(limitPrice);
       newOrderLine.setStandardPrice(stdPrice);
-      newOrderLine.setLineNetAmount(netPrice.multiply(qtyReturned).setScale(stdPrecision,
-          RoundingMode.HALF_UP));
+      newOrderLine.setLineNetAmount(
+          netPrice.multiply(qtyReturned).setScale(stdPrecision, RoundingMode.HALF_UP));
       newOrderLine.setLineGrossAmount(grossAmt);
       newOrderLine.setBaseGrossUnitPrice(baseGrossUnitPrice);
 
       if (!selectedLine.get("returnReason").equals(null)) {
-        newOrderLine.setReturnReason(OBDal.getInstance().get(ReturnReason.class,
-            selectedLine.getString("returnReason")));
+        newOrderLine.setReturnReason(
+            OBDal.getInstance().get(ReturnReason.class, selectedLine.getString("returnReason")));
       } else {
         newOrderLine.setReturnReason(order.getReturnReason());
       }

@@ -271,8 +271,7 @@ public class DataImportService implements OBSingleton {
           // do a special thing to update the clientlist and orglist columns
           // in the ad_role table with the newly created id's
           // this is done through a stored procedure
-          SessionHandler
-              .getInstance()
+          SessionHandler.getInstance()
               .getSession()
               .createNativeQuery("UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'")
               .executeUpdate();
@@ -310,8 +309,8 @@ public class DataImportService implements OBSingleton {
     for (BaseOBObject objectToRepair : repairReferences) {
       if (objectToRepair instanceof TreeNode) {
         final TreeNode tn = (TreeNode) objectToRepair;
-        Entity entity = ModelProvider.getInstance().getEntityFromTreeType(
-            tn.getTree().getTypeArea());
+        Entity entity = ModelProvider.getInstance()
+            .getEntityFromTreeType(tn.getTree().getTypeArea());
         if (entity == null && tn.getTree().getTable() != null) {
           entity = ModelProvider.getInstance().getEntityByTableId(tn.getTree().getTable().getId());
         }
@@ -326,8 +325,8 @@ public class DataImportService implements OBSingleton {
           continue;
         }
       }
-      for (Property p : PrimitiveReferenceHandler.getInstance().getPrimitiveReferences(
-          objectToRepair.getEntity())) {
+      for (Property p : PrimitiveReferenceHandler.getInstance()
+          .getPrimitiveReferences(objectToRepair.getEntity())) {
         final String value = (String) objectToRepair.get(p.getName());
         // also ignore 0 as there is a business partner tree node with 0
         if (value != null && !value.equals("0")) {
@@ -338,8 +337,8 @@ public class DataImportService implements OBSingleton {
 
           if (referencedBob == null || referencedBob.getId() == null) {
             if (ir.getErrorMessages() == null) {
-              ir.setErrorMessages("The object " + objectToRepair
-                  + " references an object (entity: " + entity + ") with id " + value
+              ir.setErrorMessages("The object " + objectToRepair + " references an object (entity: "
+                  + entity + ") with id " + value
                   + " which does not exist in the database or in the import set.");
             } else {
               ir.setErrorMessages(ir.getErrorMessages() + "\nThe object " + objectToRepair
@@ -359,7 +358,8 @@ public class DataImportService implements OBSingleton {
     int i = 0;
     final StringBuilder msgs = new StringBuilder();
     for (Property p : bob.getEntity().getProperties()) {
-      if (p.isOneToMany() || p.isAuditInfo() || p.isClientOrOrganization() || p.isComputedColumn()) {
+      if (p.isOneToMany() || p.isAuditInfo() || p.isClientOrOrganization()
+          || p.isComputedColumn()) {
         continue;
       }
       final Object value = bob.get(p.getName());
@@ -485,12 +485,12 @@ public class DataImportService implements OBSingleton {
             break;
           }
         }
-        if (containsAdRoleOrOrgAccess)
-          SessionHandler
-              .getInstance()
+        if (containsAdRoleOrOrgAccess) {
+          SessionHandler.getInstance()
               .getSession()
               .createNativeQuery("UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'")
               .executeUpdate();
+        }
       }
     }
 
@@ -532,8 +532,8 @@ public class DataImportService implements OBSingleton {
       ir.getInsertedObjects().add(ins);
       done++;
     }
-    Check.isTrue(done == toInsert.size(), "Not all objects have been inserted, check for loop: "
-        + done + "/" + toInsert.size());
+    Check.isTrue(done == toInsert.size(),
+        "Not all objects have been inserted, check for loop: " + done + "/" + toInsert.size());
 
     // flush to set the ids in the objects
     OBDal.getInstance().flush();
@@ -547,8 +547,8 @@ public class DataImportService implements OBSingleton {
       ir.getUpdatedObjects().add(upd);
       done++;
     }
-    Check.isTrue(done == toUpdate.size(), "Not all objects have been inserted, check for loop: "
-        + done + "/" + toUpdate.size());
+    Check.isTrue(done == toUpdate.size(),
+        "Not all objects have been inserted, check for loop: " + done + "/" + toUpdate.size());
 
     // flush to set the ids in the objects
     OBDal.getInstance().flush();

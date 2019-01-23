@@ -126,7 +126,8 @@ public class EntityResolver implements OBNotSingleton {
   // searches for a previous entity with the same id or an id retrieved from
   // the ad_ref_data_loaded table. The resolving takes into account different
   // access levels and
-  public BaseOBObject resolve(String entityName, String id, boolean referenced, boolean filterOrgs) {
+  public BaseOBObject resolve(String entityName, String id, boolean referenced,
+      boolean filterOrgs) {
 
     Check.isNotNull(client, "Client should not be null");
     Check.isNotNull(organization, "Org should not be null");
@@ -281,9 +282,8 @@ public class EntityResolver implements OBNotSingleton {
       if (result == null) {
         result = searchClientRefLoaded(id, entity, refLoadeds);
       }
-      if (result == null
-          && (entity.getName().compareTo(AttributeSetInstance.ENTITY_NAME) == 0 || entity.getName()
-              .compareTo(AttributeSet.ENTITY_NAME) == 0)) {
+      if (result == null && (entity.getName().compareTo(AttributeSetInstance.ENTITY_NAME) == 0
+          || entity.getName().compareTo(AttributeSet.ENTITY_NAME) == 0)) {
         result = OBDal.getInstance().get(entity.getName(), id);
       }
       if (result == null) {
@@ -429,8 +429,8 @@ public class EntityResolver implements OBNotSingleton {
     // same for here
     obc.add(Restrictions.eq(Organization.PROPERTY_ID, id));
     final List<?> res = obc.list();
-    Check.isTrue(res.size() <= 1, "More than one result when searching in " + entity.getName()
-        + " with id " + id);
+    Check.isTrue(res.size() <= 1,
+        "More than one result when searching in " + entity.getName() + " with id " + id);
     if (res.size() == 1) {
       return (BaseOBObject) res.get(0);
     }
@@ -442,10 +442,7 @@ public class EntityResolver implements OBNotSingleton {
     PreparedStatement ps = null;
     try {
       String st = "Select specific_id, ad_client_id, ad_org_id from ad_ref_data_loaded where ad_client_id in ('"
-          + client.getId()
-          + "', '0') and generic_id='"
-          + id
-          + "' and ad_table_id='"
+          + client.getId() + "', '0') and generic_id='" + id + "' and ad_table_id='"
           + entity.getTableId() + "'";
       ps = new DalConnectionProvider(false).getPreparedStatement(st);
       ps.execute();
@@ -517,23 +514,24 @@ public class EntityResolver implements OBNotSingleton {
       boolean filterByClient) {
     OBContext.setAdminMode();
     try {
-      final OBCriteria<ReferenceDataStore> rdlCriteria = OBDal.getInstance().createCriteria(
-          ReferenceDataStore.class);
+      final OBCriteria<ReferenceDataStore> rdlCriteria = OBDal.getInstance()
+          .createCriteria(ReferenceDataStore.class);
       rdlCriteria.setFilterOnActive(false);
       rdlCriteria.setFilterOnReadableOrganization(false);
       rdlCriteria.setFilterOnReadableClients(false);
       rdlCriteria.add(Restrictions.eq(ReferenceDataStore.PROPERTY_GENERIC, id));
       if (filterByClient) {
-        rdlCriteria.add(Restrictions.eq(ReferenceDataStore.PROPERTY_CLIENT + "."
-            + Client.PROPERTY_ID, client.getId()));
+        rdlCriteria.add(Restrictions
+            .eq(ReferenceDataStore.PROPERTY_CLIENT + "." + Client.PROPERTY_ID, client.getId()));
       } else {
         Object[] clients = { client.getId(), "0" };
-        rdlCriteria.add(Restrictions.in(ReferenceDataStore.PROPERTY_CLIENT + "."
-            + Client.PROPERTY_ID, clients));
+        rdlCriteria.add(Restrictions
+            .in(ReferenceDataStore.PROPERTY_CLIENT + "." + Client.PROPERTY_ID, clients));
       }
       if (orgId != null) {
-        rdlCriteria.add(Restrictions.in(ReferenceDataStore.PROPERTY_ORGANIZATION + "."
-            + Organization.PROPERTY_ID, (Object[]) getOrgIds(orgId)));
+        rdlCriteria.add(Restrictions.in(
+            ReferenceDataStore.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID,
+            (Object[]) getOrgIds(orgId)));
       }
       rdlCriteria.add(Restrictions.eq(ReferenceDataStore.PROPERTY_TABLE + "." + Table.PROPERTY_ID,
           entity.getTableId()));
@@ -576,8 +574,8 @@ public class EntityResolver implements OBNotSingleton {
 
   protected void setClient(Client client) {
     setClientOrganizationZero();
-    organizationStructureProvider = OBProvider.getInstance().get(
-        OrganizationStructureProvider.class);
+    organizationStructureProvider = OBProvider.getInstance()
+        .get(OrganizationStructureProvider.class);
     organizationStructureProvider.setClientId(client.getId());
     this.client = client;
   }
@@ -676,8 +674,8 @@ public class EntityResolver implements OBNotSingleton {
         // TODO: this can be made faster by
         // adding client/organization filtering above in
         // the criteria
-        final BaseOBObject searchResult = searchInstance(entity, (String) queryResult.get(0)
-            .getId());
+        final BaseOBObject searchResult = searchInstance(entity,
+            (String) queryResult.get(0).getId());
         if (searchResult == null) {
           // not valid return null
           return null;

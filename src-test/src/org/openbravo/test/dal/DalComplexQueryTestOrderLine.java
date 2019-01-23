@@ -109,8 +109,8 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
 
     // final Session session = OBDal.getInstance().getSession();
     // session.createQuery(hql.toString());
-    final OBQuery<OrderLine> qry = OBDal.getInstance().createQuery(OrderLine.class,
-        whereClause.toString());
+    final OBQuery<OrderLine> qry = OBDal.getInstance()
+        .createQuery(OrderLine.class, whereClause.toString());
 
     // set the business partner parameter
     final Map<String, Object> parameters = new HashMap<>(1);
@@ -166,10 +166,10 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
     // SELECT ID, C_ORDER_ID, DOCUMENTNO, DATEORDERED, C_BPARTNER_ID, PARTNER_NAME, PRODUCT_NAME,
     // DESCRIPTION, TOTAL_QTY,
     // QTYORDERED, ISACTIVE, ? AS DATE_FORMAT
-    selectClause
-        .append("select ol.id, ol.salesOrder.id, ol.salesOrder.documentNo, ol.salesOrder.orderDate, ");
-    selectClause
-        .append(" ol.salesOrder.businessPartner.id, ol.salesOrder.businessPartner.name, ol.product.name, ");
+    selectClause.append(
+        "select ol.id, ol.salesOrder.id, ol.salesOrder.documentNo, ol.salesOrder.orderDate, ");
+    selectClause.append(
+        " ol.salesOrder.businessPartner.id, ol.salesOrder.businessPartner.name, ol.product.name, ");
     selectClause.append(" ol.orderedQuantity, sum(matchPO.quantity) as totalQty ");
 
     final StringBuilder fromClause = new StringBuilder();
@@ -197,8 +197,8 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
     whereClause.append(" and ol.salesOrder.documentStatus='CO' ");
 
     // Add the readable organization and client clauses
-    whereClause.append(" and ol.organization "
-        + OBDal.getInstance().getReadableOrganizationsInClause());
+    whereClause
+        .append(" and ol.organization " + OBDal.getInstance().getReadableOrganizationsInClause());
     whereClause.append(" and ol.client " + OBDal.getInstance().getReadableClientsInClause());
 
     // append active
@@ -209,10 +209,10 @@ public class DalComplexQueryTestOrderLine extends OBBaseTest {
     orderByClause.append(" order by ol.salesOrder.businessPartner.id, ol.id");
 
     final StringBuilder groupClause = new StringBuilder();
-    groupClause
-        .append(" group by ol.id, ol.salesOrder.id, ol.salesOrder.documentNo, ol.salesOrder.orderDate, ");
-    groupClause
-        .append(" ol.salesOrder.businessPartner.id, ol.salesOrder.businessPartner.name, ol.product.name, ");
+    groupClause.append(
+        " group by ol.id, ol.salesOrder.id, ol.salesOrder.documentNo, ol.salesOrder.orderDate, ");
+    groupClause.append(
+        " ol.salesOrder.businessPartner.id, ol.salesOrder.businessPartner.name, ol.product.name, ");
     groupClause.append(" ol.orderedQuantity");
 
     final String hql = selectClause.toString() + fromClause.toString() + whereClause.toString()

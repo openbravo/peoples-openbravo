@@ -30,8 +30,8 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 
 public class FaccAcctModifyEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      AccountingFact.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(AccountingFact.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -39,8 +39,7 @@ public class FaccAcctModifyEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

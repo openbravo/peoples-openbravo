@@ -80,15 +80,15 @@ public class FundsTransferTest extends WeldBaseTest {
     OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
 
     // Caja Account
-    FIN_FinancialAccount caja = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        "C2AA9C0AFB434FD4B827BE58DC52C1E2");
+    FIN_FinancialAccount caja = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, "C2AA9C0AFB434FD4B827BE58DC52C1E2");
     caja_clone = (FIN_FinancialAccount) DalUtil.copy(caja, false);
     caja_clone.setName(caja_clone.getName() + " - clone");
     OBDal.getInstance().save(caja_clone);
 
     // Banco Account
-    FIN_FinancialAccount banco = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        "DEDDE613C5314ACD8DCC60C474D1A107");
+    FIN_FinancialAccount banco = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, "DEDDE613C5314ACD8DCC60C474D1A107");
     banco_clone = (FIN_FinancialAccount) DalUtil.copy(banco, false);
     banco_clone.setName(banco_clone.getName() + " - clone");
     OBDal.getInstance().save(banco_clone);
@@ -143,18 +143,18 @@ public class FundsTransferTest extends WeldBaseTest {
   @Test(expected = OBException.class)
   @InSequence(4)
   public void testFundsTransferConversionRateError() {
-    FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem,
-        TRANSACTION_AMT, null, null, null);
+    FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem, TRANSACTION_AMT,
+        null, null, null);
   }
 
   @Test
   @InSequence(5)
   public void testFundsTransferManualConversionRate() {
-    FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem,
-        TRANSACTION_AMT, CONVERSION_RATE, null, null);
+    FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem, TRANSACTION_AMT,
+        CONVERSION_RATE, null, null);
 
-    BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE).setScale(2,
-        RoundingMode.HALF_UP);
+    BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
+        .setScale(2, RoundingMode.HALF_UP);
 
     testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, null);
   }
@@ -164,11 +164,11 @@ public class FundsTransferTest extends WeldBaseTest {
   public void testFundsTransferSystemConversionRate() {
     createConversionRate(caja_clone.getCurrency(), banco_gbp.getCurrency());
 
-    FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem,
-        TRANSACTION_AMT, null, null, null);
+    FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem, TRANSACTION_AMT,
+        null, null, null);
 
-    BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE).setScale(2,
-        RoundingMode.HALF_UP);
+    BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
+        .setScale(2, RoundingMode.HALF_UP);
 
     testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, null);
   }
@@ -176,11 +176,11 @@ public class FundsTransferTest extends WeldBaseTest {
   @Test
   @InSequence(8)
   public void testFundsTransferTargetFee() {
-    FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem,
-        TRANSACTION_AMT, CONVERSION_RATE, null, FEE_AMT_TO);
+    FundsTransferActionHandler.createTransfer(TODAY, caja_clone, banco_gbp, glitem, TRANSACTION_AMT,
+        CONVERSION_RATE, null, FEE_AMT_TO);
 
-    BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE).setScale(2,
-        RoundingMode.HALF_UP);
+    BigDecimal convertedAmount = TRANSACTION_AMT.multiply(CONVERSION_RATE)
+        .setScale(2, RoundingMode.HALF_UP);
 
     testTransactions(caja_clone, banco_gbp, TRANSACTION_AMT, null, convertedAmount, FEE_AMT_TO);
   }
@@ -209,7 +209,8 @@ public class FundsTransferTest extends WeldBaseTest {
     OBDal.getInstance().refresh(target_acct);
     for (FIN_FinaccTransaction trans : target_acct.getFINFinaccTransactionList()) {
       if (BP_DEPOSIT.equalsIgnoreCase(trans.getTransactionType())) {
-        assertThat("Wrong deposit", trans.getDepositAmount(), closeTo(deposit_amt, BigDecimal.ZERO));
+        assertThat("Wrong deposit", trans.getDepositAmount(),
+            closeTo(deposit_amt, BigDecimal.ZERO));
         deposit_amt_checked = true;
       } else if (BANK_FEE.equalsIgnoreCase(trans.getTransactionType())) {
         assertThat("Wrong target fee", trans.getPaymentAmount(),
@@ -221,8 +222,8 @@ public class FundsTransferTest extends WeldBaseTest {
     }
 
     // check that everything was checked
-    assertTrue("Not all the transactions were found", debit_amt_checked && origin_fee_checked
-        && deposit_amt_checked && target_fee_checked);
+    assertTrue("Not all the transactions were found",
+        debit_amt_checked && origin_fee_checked && deposit_amt_checked && target_fee_checked);
   }
 
   @After

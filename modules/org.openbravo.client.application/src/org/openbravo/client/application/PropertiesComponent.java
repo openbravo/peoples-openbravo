@@ -51,8 +51,9 @@ public class PropertiesComponent extends SessionDynamicTemplateComponent {
 
   public Collection<LocalProperty> getProperties() {
     final List<LocalProperty> properties = new ArrayList<LocalProperty>();
-    final List<Preference> preferences = Preferences.getAllPreferences(OBContext.getOBContext()
-        .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
+    final List<Preference> preferences = Preferences.getAllPreferences(
+        OBContext.getOBContext().getCurrentClient().getId(),
+        OBContext.getOBContext().getCurrentOrganization().getId(),
         OBContext.getOBContext().getUser().getId(), OBContext.getOBContext().getRole().getId());
     final List<String> handledIds = new ArrayList<String>();
     for (Preference preference : preferences) {

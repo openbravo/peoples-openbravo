@@ -99,10 +99,11 @@ public class Translate extends DefaultHandler {
   public Translate(String _fileTermination) throws ServletException {
     extension = _fileTermination;
     boolean isHtml = extension.toLowerCase().endsWith("html");
-    if (isHtml)
+    if (isHtml) {
       parser = new org.cyberneko.html.parsers.SAXParser();
-    else
+    } else {
       parser = new SAXParser();
+    }
     parser.setEntityResolver(new LocalEntityResolver());
     parser.setContentHandler(this);
   }
@@ -365,8 +366,9 @@ public class Translate extends DefaultHandler {
   public void characters(char[] ch, int start, int length) {
     final String chars = new String(ch, start, length);
     log.debug("characters: " + chars);
-    if (translationText == null)
+    if (translationText == null) {
       translationText = new StringBuilder();
+    }
     translationText.append(chars);
   }
 
@@ -400,8 +402,9 @@ public class Translate extends DefaultHandler {
         if (pos != -1) {
           translate(txt.substring(0, pos), true);
           txt = txt.substring(pos + 1);
-        } else
+        } else {
           break;
+        }
         pos = txt.indexOf("\"");
       }
       return;

@@ -28,6 +28,8 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
@@ -51,8 +53,6 @@ import org.openbravo.test.services.data.ServiceTestData;
 import org.openbravo.test.services.data.ServiceTestData10;
 import org.openbravo.test.services.data.ServiceTestData11;
 import org.openbravo.test.services.data.ServiceTestData9;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Tests cases to check ServicePriceUtils.getServiceAmount method. All possible errors are properly
@@ -105,8 +105,8 @@ public class ServicesTest3 extends WeldBaseTest {
     String testOrderId = null;
     try {
       if (parameter.getTestNumber().equals("BACK-501")) {
-        ServicePriceRuleRange range = OBDal.getInstance().get(ServicePriceRuleRange.class,
-            SERVICEPRICERULE_RANGE_UP_TO_BLANK);
+        ServicePriceRuleRange range = OBDal.getInstance()
+            .get(ServicePriceRuleRange.class, SERVICEPRICERULE_RANGE_UP_TO_BLANK);
         range.setActive(false);
       }
       Order order;
@@ -114,8 +114,8 @@ public class ServicesTest3 extends WeldBaseTest {
       Order testOrder = (Order) DalUtil.copy(order, false);
       testOrderId = testOrder.getId();
       testOrder.setDocumentNo("Service Test " + parameter.getTestNumber());
-      testOrder.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          parameter.getBpartnerId()));
+      testOrder.setBusinessPartner(
+          OBDal.getInstance().get(BusinessPartner.class, parameter.getBpartnerId()));
       testOrder.setOrderDate(OBDateUtils.getDate(parameter.getOrderDate()));
       PriceList priceList = OBDal.getInstance().get(PriceList.class, parameter.getPricelistId());
       testOrder.setPriceList(priceList);
@@ -142,13 +142,15 @@ public class ServicesTest3 extends WeldBaseTest {
             new BigDecimal(product[2]));
 
         try {
-          ServicePriceUtils.getServiceAmount(
-              serviceOrderLine,
-              isPriceIncludingTaxes ? orderLine.getLineGrossAmount().setScale(
-                  orderLine.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_UP)
-                  : orderLine.getLineNetAmount().setScale(
-                      orderLine.getCurrency().getStandardPrecision().intValue(),
-                      RoundingMode.HALF_UP), null, null, null, null);
+          ServicePriceUtils.getServiceAmount(serviceOrderLine,
+              isPriceIncludingTaxes
+                  ? orderLine.getLineGrossAmount()
+                      .setScale(orderLine.getCurrency().getStandardPrecision().intValue(),
+                          RoundingMode.HALF_UP)
+                  : orderLine.getLineNetAmount()
+                      .setScale(orderLine.getCurrency().getStandardPrecision().intValue(),
+                          RoundingMode.HALF_UP),
+              null, null, null, null);
         } catch (OBException e) {
           assertEquals("ServicePriceUtils.getServiceAmount not properly handled error",
               e.getMessage(), parameter.getErrorMessage());
@@ -164,8 +166,8 @@ public class ServicesTest3 extends WeldBaseTest {
       if (testOrderId != null) {
         System.out.println(testOrderId);
         if (parameter.getTestNumber().equals("BACK-501")) {
-          ServicePriceRuleRange range = OBDal.getInstance().get(ServicePriceRuleRange.class,
-              SERVICEPRICERULE_RANGE_UP_TO_BLANK);
+          ServicePriceRuleRange range = OBDal.getInstance()
+              .get(ServicePriceRuleRange.class, SERVICEPRICERULE_RANGE_UP_TO_BLANK);
           range.setActive(true);
         }
         OBDal.getInstance().flush();
@@ -206,8 +208,8 @@ public class ServicesTest3 extends WeldBaseTest {
     }
     testOrderLine.setTax(OBDal.getInstance().get(TaxRate.class, TAX_EXEMPT));
     if (parameter.getBpartnerId() != null) {
-      testOrderLine.setBusinessPartner(OBDal.getInstance().get(BusinessPartner.class,
-          parameter.getBpartnerId()));
+      testOrderLine.setBusinessPartner(
+          OBDal.getInstance().get(BusinessPartner.class, parameter.getBpartnerId()));
     }
     testOrderLine.setSalesOrder(testOrder);
     testOrderLine.setOrderDate(testOrder.getOrderDate());

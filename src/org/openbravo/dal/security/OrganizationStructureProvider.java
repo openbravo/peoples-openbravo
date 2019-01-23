@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.NativeQuery;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
@@ -38,8 +40,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Builds a tree of organizations to compute the accessible organizations for the current
@@ -83,10 +83,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     // allowed because this code is used while generating entities.
     String sql = "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, o.isperiodcontrolallowed"
         + "  from ad_tree t, ad_treenode n, ad_org o, ad_orgtype ot"
-        + " where n.node_id = o.ad_org_id"
-        + "   and o.ad_orgtype_id = ot.ad_orgtype_id"
-        + "   and n.ad_tree_id = t.ad_tree_id"
-        + "   and t.ad_table_id = '155'"
+        + " where n.node_id = o.ad_org_id" + "   and o.ad_orgtype_id = ot.ad_orgtype_id"
+        + "   and n.ad_tree_id = t.ad_tree_id" + "   and t.ad_table_id = '155'"
         + "   and t.ad_client_id = :clientId";
 
     @SuppressWarnings("rawtypes")
@@ -320,8 +318,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
     where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
     where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
-    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
-        where.toString());
+    OBQuery<Organization> orgQry = OBDal.getInstance()
+        .createQuery(Organization.class, where.toString());
     orgQry.setFilterOnReadableClients(false);
     orgQry.setFilterOnReadableOrganization(false);
     orgQry.setNamedParameter("client", paramClientId);

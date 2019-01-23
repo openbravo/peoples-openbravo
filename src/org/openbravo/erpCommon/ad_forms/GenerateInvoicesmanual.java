@@ -62,20 +62,21 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
   @Any
   private Instance<GenerateInvoicesHook> hooks;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "GenerateInvoicesmanual|DateFrom",
           "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "GenerateInvoicesmanual|DateTo", "");
-      String strInvDate = vars
-          .getGlobalVariable("inpInvDate", "GenerateInvoicesmanual|invDate", "");
+      String strInvDate = vars.getGlobalVariable("inpInvDate", "GenerateInvoicesmanual|invDate",
+          "");
       String strC_BPartner_ID = vars.getGlobalVariable("inpcBpartnerId",
           "GenerateInvoicesmanual|C_BPartner_ID", "");
-      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId",
-          "GenerateInvoicesmanual|Ad_Org_ID", vars.getOrg());
+      String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "GenerateInvoicesmanual|Ad_Org_ID",
+          vars.getOrg());
       String strIncludeTaxes = vars.getGlobalVariable("inpinctaxes",
           "GenerateInvoicesmanual|withtax", "");
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo,
@@ -83,8 +84,8 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "GenerateInvoicesmanual|DateFrom");
-      String strDateTo = vars
-          .getRequestGlobalVariable("inpDateTo", "GenerateInvoicesmanual|DateTo");
+      String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+          "GenerateInvoicesmanual|DateTo");
       String strInvDate = vars.getRequestGlobalVariable("inpInvDate",
           "GenerateInvoicesmanual|invDate");
       String strC_BPartner_ID = vars.getRequestGlobalVariable("inpcBpartnerId",
@@ -119,8 +120,9 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       String strCOrderId = vars.getInStringParameter("inpOrder", IsIDFilter.instance);
       String strInvDate = vars.getRequestGlobalVariable("inpInvDate",
           "GenerateInvoicesmanual|invDate");
-      if (strCOrderId.equals(""))
+      if (strCOrderId.equals("")) {
         strCOrderId = "('0')";
+      }
       GenerateInvoicesmanualData.initUpdate(conn, this);
       GenerateInvoicesmanualData.updateSelection(conn, this, strCOrderId);
       String pinstance = SequenceIdData.getUUID();
@@ -142,8 +144,9 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
       vars.setMessage("GenerateInvoicesmanual", myMessage);
       GenerateInvoicesmanualData.resetSelection(conn, this, strCOrderId);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug(message);
+      }
 
       response.sendRedirect(strDireccion + request.getServletPath());
 
@@ -176,15 +179,17 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
         log4j.error(e.getMessage(), e);
       }
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strC_BPartner_ID, String strAD_Org_ID, String strDateFrom, String strDateTo,
       String strIncludeTaxes, String strInvDate) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     String discard[] = { "sectionDetail" };
@@ -192,12 +197,14 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
     GenerateInvoicesmanualData[] data = null;
     String strTreeOrg = GenerateShipmentsmanualData.treeOrg(this, vars.getClient());
     if (strC_BPartner_ID.equals("") && strAD_Org_ID.equals("")) {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/GenerateInvoicesmanual", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/GenerateInvoicesmanual", discard)
+          .createXmlDocument();
       data = GenerateInvoicesmanualData.set();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/GenerateInvoicesmanual").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/GenerateInvoicesmanual")
+          .createXmlDocument();
       // data = GenerateInvoicesmanualData.select(this,
       // Utility.getContext(this, vars, "#User_Client",
       // "GenerateInvoicesmanual"), Utility.getContext(this, vars,
@@ -207,20 +214,21 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       if (strIncludeTaxes.equals("Y")) {
         data = GenerateInvoicesmanualData.selectGross(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "GenerateInvoicesmanual"),
-            Utility.getContext(this, vars, "#User_Org", "GenerateInvoicesmanual"),
-            strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            Utility.getContext(this, vars, "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID,
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
             Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
-      } else
+      } else {
         data = GenerateInvoicesmanualData.select(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "GenerateInvoicesmanual"),
-            Utility.getContext(this, vars, "#User_Org", "GenerateInvoicesmanual"),
-            strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+            Utility.getContext(this, vars, "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID,
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
             Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+      }
       data = calcAmountsWithInvoiceTerm(data);
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "GenerateInvoicesmanual", false, "",
-        "", "", false, "ad_forms", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "GenerateInvoicesmanual", false, "", "",
+        "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
@@ -230,9 +238,8 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "GenerateInvoicesmanual.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "GenerateInvoicesmanual.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "GenerateInvoicesmanual.html",
           strReplaceWith);
@@ -269,9 +276,9 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "AD_Org Security validation", Utility.getContext(this, vars, "#User_Org",
-              "GenerateInvoicesmanual"), Utility.getContext(this, vars, "#User_Client",
-              "GenerateInvoicesmanual"), 0);
+          "AD_Org Security validation",
+          Utility.getContext(this, vars, "#User_Org", "GenerateInvoicesmanual"),
+          Utility.getContext(this, vars, "#User_Client", "GenerateInvoicesmanual"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "GenerateInvoicesmanual",
           strAD_Org_ID);
       xmlDocument.setData("reportAD_Org_ID", "liststructure", comboTableData.select(false));
@@ -284,7 +291,8 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
     out.close();
   }
 
-  private GenerateInvoicesmanualData[] calcAmountsWithInvoiceTerm(GenerateInvoicesmanualData[] gData) {
+  private GenerateInvoicesmanualData[] calcAmountsWithInvoiceTerm(
+      GenerateInvoicesmanualData[] gData) {
     for (GenerateInvoicesmanualData gIData : gData) {
       String strTermValue = gIData.getField("termvalue");
       if (strTermValue.equals("N")) {
@@ -293,7 +301,8 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       } else if (strTermValue.equals("I")) {
         gIData.pendinglines = gIData.notinvoicedlines;
       } else if (strTermValue.equals("O")) {
-        if ((new BigDecimal(gIData.qtydelivered).compareTo(new BigDecimal(gIData.qtyordered)) < 0)) {
+        if ((new BigDecimal(gIData.qtydelivered)
+            .compareTo(new BigDecimal(gIData.qtyordered)) < 0)) {
           gIData.notinvoicedlines = gIData.amountlines;
           gIData.pendinglines = "0";
         }
@@ -330,6 +339,7 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
     return handleException(e.getMessage(), vars);
   }
 
+  @Override
   public String getServletInfo() {
     return "GenerateInvoicesmanual Servlet. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

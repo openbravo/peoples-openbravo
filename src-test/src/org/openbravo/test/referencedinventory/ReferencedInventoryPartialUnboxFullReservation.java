@@ -31,8 +31,8 @@ import org.openbravo.dal.service.OBDal;
  * Partial unbox a storage detail that was 100% reserved and boxed
  *
  */
-public class ReferencedInventoryPartialUnboxFullReservation extends
-    ReferencedInventoryUnboxReservationTest {
+public class ReferencedInventoryPartialUnboxFullReservation
+    extends ReferencedInventoryUnboxReservationTest {
 
   @Rule
   public ParameterCdiTestRule<ParamsUnboxReservationTest> parameterValuesRule = new ParameterCdiTestRule<ParamsUnboxReservationTest>(

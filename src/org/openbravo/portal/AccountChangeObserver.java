@@ -63,8 +63,8 @@ public class AccountChangeObserver extends EntityPersistenceEventObserver {
     }
 
     // account cancellation
-    Boolean wasActive = (Boolean) event.getPreviousState(userEntity
-        .getProperty(User.PROPERTY_ACTIVE));
+    Boolean wasActive = (Boolean) event
+        .getPreviousState(userEntity.getProperty(User.PROPERTY_ACTIVE));
     Boolean isActive = (Boolean) event
         .getCurrentState(userEntity.getProperty(User.PROPERTY_ACTIVE));
     if (wasActive && !isActive) {

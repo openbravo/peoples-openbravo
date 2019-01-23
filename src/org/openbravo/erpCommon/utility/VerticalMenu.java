@@ -45,32 +45,36 @@ public class VerticalMenu extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("LOADING")) {
       printPageLoadingMenu(response, vars);
     } else if (vars.commandIn("HIDE")) {
       printPageHideMenu(response, vars);
-    } else
+    } else {
       throw new IllegalArgumentException("Unsupported command: " + vars.getCommand());
+    }
   }
 
   private void printPageHideMenu(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     log4j.debug("Output: Vertical Menu's screen");
 
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/VerticalMenu").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenu")
+        .createXmlDocument();
     xmlDocument.ignoreTranslation = true;
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";");
-    xmlDocument.setParameter("autosave", "var autosave = "
-        + (vars.getSessionValue("#Autosave").equals("")
-            || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true") + ";");
+    xmlDocument.setParameter("autosave",
+        "var autosave = "
+            + (vars.getSessionValue("#Autosave").equals("")
+                || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true")
+            + ";");
 
     xmlDocument.setParameter("menu", "");
     xmlDocument.setParameter("popup", "");
@@ -83,8 +87,9 @@ public class VerticalMenu extends HttpSecureAppServlet {
 
   private void printPageLoadingMenu(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/VerticalMenuLoading").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenuLoading")
+        .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());

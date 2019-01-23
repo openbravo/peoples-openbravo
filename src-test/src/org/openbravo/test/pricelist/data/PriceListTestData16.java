@@ -67,28 +67,28 @@ public class PriceListTestData16 extends PriceListTestData {
     ruleLine4.setStandardPriceDiscount(new BigDecimal("17.13"));
 
     // Add lines
-    setTestPriceListRulesData(new PriceListSchemaLineTestData[] { ruleLine1, ruleLine2, ruleLine3,
-        ruleLine4 });
+    setTestPriceListRulesData(
+        new PriceListSchemaLineTestData[] { ruleLine1, ruleLine2, ruleLine3, ruleLine4 });
 
     /**
      * This Map will be used to verify Product Prices values after test is executed. Map has the
      * following structure: <Product name, [Unit Price Expected, List Price Expected]>
      */
     HashMap<String, String[]> productPriceLines = new HashMap<String, String[]>();
-    productPriceLines.put(PriceListTestConstants.FINAL_GOOD_A_PRODUCT_NAME, new String[] { "1.28",
-        "1.25" });
-    productPriceLines.put(PriceListTestConstants.FINAL_GOOD_B_PRODUCT_NAME, new String[] { "1.60",
-        "1.39" });
-    productPriceLines.put(PriceListTestConstants.FINAL_GOOD_C_PRODUCT_NAME, new String[] { "1.60",
-        "1.39" });
-    productPriceLines.put(PriceListTestConstants.LAPTOP_PRODUCT_NAME, new String[] { "1035.88",
-        "1060.38" });
-    productPriceLines.put(PriceListTestConstants.SOCCER_BALL_PRODUCT_NAME, new String[] { "30.66",
-        "31.39" });
-    productPriceLines.put(PriceListTestConstants.T_SHIRTS_PRODUCT_NAME, new String[] { "38.95",
-        "39.87" });
-    productPriceLines.put(PriceListTestConstants.TENNIS_BALL_PRODUCT_NAME, new String[] { "4.14",
-        "4.24" });
+    productPriceLines.put(PriceListTestConstants.FINAL_GOOD_A_PRODUCT_NAME,
+        new String[] { "1.28", "1.25" });
+    productPriceLines.put(PriceListTestConstants.FINAL_GOOD_B_PRODUCT_NAME,
+        new String[] { "1.60", "1.39" });
+    productPriceLines.put(PriceListTestConstants.FINAL_GOOD_C_PRODUCT_NAME,
+        new String[] { "1.60", "1.39" });
+    productPriceLines.put(PriceListTestConstants.LAPTOP_PRODUCT_NAME,
+        new String[] { "1035.88", "1060.38" });
+    productPriceLines.put(PriceListTestConstants.SOCCER_BALL_PRODUCT_NAME,
+        new String[] { "30.66", "31.39" });
+    productPriceLines.put(PriceListTestConstants.T_SHIRTS_PRODUCT_NAME,
+        new String[] { "38.95", "39.87" });
+    productPriceLines.put(PriceListTestConstants.TENNIS_BALL_PRODUCT_NAME,
+        new String[] { "4.14", "4.24" });
     setExpectedProductPrices(productPriceLines);
 
     // Price List Header

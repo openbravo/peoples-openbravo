@@ -195,7 +195,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     final String entityAlias = sel.getEntityAlias();
     // Client filter
     additionalFilter.append(entityAlias + ".client.id in ('0', '")
-        .append(OBContext.getOBContext().getCurrentClient().getId()).append("')");
+        .append(OBContext.getOBContext().getCurrentClient().getId())
+        .append("')");
 
     if (includeOrgFilter(parameters)) {
       // Organization filter
@@ -294,7 +295,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * <li>Date Domain Type: Returns a multiple clause comparing separately value's day, month and
    * year.</li>
    * <li>Boolean Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
-   * <li>Foreign Key Domain Type: Returns an equals clause <i>field.clauseLeftPart.id = value</i></li>
+   * <li>Foreign Key Domain Type: Returns an equals clause <i>field.clauseLeftPart.id =
+   * value</i></li>
    * <li>Unique Id Domain Type: Returns an equals clause <i>field.clauseLeftPart = value</i></li>
    * <li>String Domain Type: Compares the clause left part with the value using the upper database
    * function which to make comparison case insensitive.
@@ -328,7 +330,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       return val;
     }
 
-    DomainType domainType = ModelProvider.getInstance().getReference(field.getReference().getId())
+    DomainType domainType = ModelProvider.getInstance()
+        .getReference(field.getReference().getId())
         .getDomainType();
     if (domainType.getClass().getSuperclass().equals(BigDecimalDomainType.class)
         || domainType.getClass().equals(LongDomainType.class)) {
@@ -528,8 +531,10 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    */
   private int getFieldSortIndex(String fieldName, Selector sel) {
     @SuppressWarnings("deprecation")
-    final String[] queryAliases = OBDal.getInstance().getSession()
-        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1")).getReturnAliases();
+    final String[] queryAliases = OBDal.getInstance()
+        .getSession()
+        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1"))
+        .getReturnAliases();
 
     for (int i = 0; i < queryAliases.length; i++) {
       if (queryAliases[i] != null && queryAliases[i].equals(fieldName)) {
@@ -545,7 +550,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
       for (int i = 0; i < criterias.length(); i++) {
         JSONObject criteria = criterias.getJSONObject(i);
-        if (!criteria.has("fieldName") && criteria.has("criteria") && criteria.has("_constructor")) {
+        if (!criteria.has("fieldName") && criteria.has("criteria")
+            && criteria.has("_constructor")) {
           // nested criteria, eval it recursively
           JSONArray cs = criteria.getJSONArray("criteria");
           HashMap<String, String[]> c = getCriteria(cs);
@@ -565,8 +571,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
             value += value.length() > 0 ? ", " : "";
             value += "'" + values.getString(v) + "'";
           }
-          String qry = criteria.getString(AdvancedQueryBuilder.EXISTS_QUERY_KEY).replace(
-              AdvancedQueryBuilder.EXISTS_VALUE_HOLDER, value);
+          String qry = criteria.getString(AdvancedQueryBuilder.EXISTS_QUERY_KEY)
+              .replace(AdvancedQueryBuilder.EXISTS_VALUE_HOLDER, value);
 
           if (criteriaValues.containsKey(fieldName)) {
             // assuming it is possible to have more than one query for exists in same field, storing

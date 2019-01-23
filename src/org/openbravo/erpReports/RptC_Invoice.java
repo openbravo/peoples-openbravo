@@ -26,30 +26,33 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperReport;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.erpCommon.utility.DateTimeData;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperReport;
+
 public class RptC_Invoice extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strcInvoiceId = vars.getSessionValue("RptC_Invoice.inpcInvoiceId_R");
-      if (strcInvoiceId.equals(""))
+      if (strcInvoiceId.equals("")) {
         strcInvoiceId = vars.getSessionValue("RptC_Invoice.inpcInvoiceId");
+      }
       printPagePDF(response, vars, strcInvoiceId);
     } else if (vars.commandIn("FIND")) {
       String strbPartnerId = vars.getStringParameter("inpcBpartnerId");
@@ -62,23 +65,27 @@ public class RptC_Invoice extends HttpSecureAppServlet {
           strbPartnerId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"));
       int j;
       for (j = 0; j < data2.length; j++) {
-        if (j != 0)
+        if (j != 0) {
           strcInvoiceId += ",";
+        }
         strcInvoiceId += data2[j].cInvoiceId;
       }
       strcInvoiceId = "(" + strcInvoiceId + ")";
       printPagePDF(response, vars, strcInvoiceId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
       String strcInvoiceId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
+    }
 
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("printPagePDF strInvoiceId = " + strcInvoiceId);
+    }
 
     RptCInvoiceHeaderData[] pdfInvoicesData = RptCInvoiceHeaderData.select(this, strcInvoiceId);
 
@@ -95,8 +102,8 @@ public class RptC_Invoice extends HttpSecureAppServlet {
 
     JasperReport jasperReportLines;
     try {
-      jasperReportLines = ReportingUtils.compileReport(strBaseDesign
-          + "/org/openbravo/erpReports/RptC_Invoice_Lines.jrxml");
+      jasperReportLines = ReportingUtils
+          .compileReport(strBaseDesign + "/org/openbravo/erpReports/RptC_Invoice_Lines.jrxml");
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
@@ -104,8 +111,8 @@ public class RptC_Invoice extends HttpSecureAppServlet {
     parameters.put("SR_LINES_1", jasperReportLines);
 
     try {
-      jasperReportLines = ReportingUtils.compileReport(strBaseDesign
-          + "/org/openbravo/erpReports/RptC_Invoice_TaxLines.jrxml");
+      jasperReportLines = ReportingUtils
+          .compileReport(strBaseDesign + "/org/openbravo/erpReports/RptC_Invoice_TaxLines.jrxml");
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
@@ -117,6 +124,7 @@ public class RptC_Invoice extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, "pdf", parameters, pdfInvoicesData, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the RptCOrders seeker";
   } // End of getServletInfo() method

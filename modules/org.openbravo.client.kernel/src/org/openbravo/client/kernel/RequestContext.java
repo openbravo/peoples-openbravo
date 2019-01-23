@@ -44,7 +44,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
  * have to passed as parameters to methods.</li>
  * <li>If there is no request/response object available then Mock versions are used. This makes it
  * possible to run logic in a test environment outside of the servlet container.</li>
- * <li>Makes it possible to set request parameters to simulate a request from a client to a server.</li>
+ * <li>Makes it possible to set request parameters to simulate a request from a client to a
+ * server.</li>
  * </ul>
  * 
  * @author mtaal
@@ -192,8 +193,8 @@ public class RequestContext {
     this.response = response;
   }
 
-  public static class HttpServletRequestWrapper extends
-      javax.servlet.http.HttpServletRequestWrapper {
+  public static class HttpServletRequestWrapper
+      extends javax.servlet.http.HttpServletRequestWrapper {
 
     private HttpServletRequest delegate;
     private Map<String, Object> attributes = new HashMap<String, Object>();
@@ -211,6 +212,7 @@ public class RequestContext {
       parameters.put(arg0, new String[] { arg1 });
     }
 
+    @Override
     public Object getAttribute(String arg0) {
       if (delegate == null) {
         return attributes.get(arg0);
@@ -226,6 +228,7 @@ public class RequestContext {
       return delegate.getAttribute(arg0);
     }
 
+    @Override
     public Enumeration<String> getAttributeNames() {
       if (delegate == null) {
         final List<String> names = new ArrayList<String>();
@@ -235,6 +238,7 @@ public class RequestContext {
       return delegate.getAttributeNames();
     }
 
+    @Override
     public String getContentType() {
       if (delegate == null) {
         return "text/html";
@@ -242,6 +246,7 @@ public class RequestContext {
       return delegate.getContentType();
     }
 
+    @Override
     public ServletInputStream getInputStream() throws IOException {
       if (delegate == null) {
         if (inputStream == null) {
@@ -263,6 +268,7 @@ public class RequestContext {
       return delegate.getInputStream();
     }
 
+    @Override
     public String getParameter(String arg0) {
       if (delegate == null || parameters.containsKey(arg0)) {
         final String[] param = parameters.get(arg0);
@@ -274,6 +280,7 @@ public class RequestContext {
       return delegate.getParameter(arg0);
     }
 
+    @Override
     public Enumeration<String> getParameterNames() {
       final List<String> names = new ArrayList<String>();
       names.addAll(parameters.keySet());
@@ -283,6 +290,7 @@ public class RequestContext {
       return Collections.enumeration(names);
     }
 
+    @Override
     public String[] getParameterValues(String arg0) {
       if (delegate == null || parameters.containsKey(arg0)) {
         return parameters.get(arg0);
@@ -290,6 +298,7 @@ public class RequestContext {
       return delegate.getParameterValues(arg0);
     }
 
+    @Override
     public String getRequestURI() {
       if (delegate == null) {
         return "";
@@ -297,6 +306,7 @@ public class RequestContext {
       return delegate.getRequestURI();
     }
 
+    @Override
     public HttpSession getSession() {
       if (delegate == null) {
         if (localSession == null) {
@@ -307,6 +317,7 @@ public class RequestContext {
       return delegate.getSession();
     }
 
+    @Override
     public HttpSession getSession(boolean arg0) {
       if (delegate == null) {
         if (localSession == null && !arg0) {
@@ -317,6 +328,7 @@ public class RequestContext {
       return delegate.getSession(arg0);
     }
 
+    @Override
     public void removeAttribute(String arg0) {
       if (delegate == null) {
         attributes.remove(arg0);
@@ -325,6 +337,7 @@ public class RequestContext {
       delegate.removeAttribute(arg0);
     }
 
+    @Override
     public void setAttribute(String arg0, Object arg1) {
       if (delegate == null) {
         attributes.put(arg0, arg1);
@@ -364,50 +377,62 @@ public class RequestContext {
       }
     }
 
+    @Override
     public int available() {
       return localInputStream.available();
     }
 
+    @Override
     public void close() throws IOException {
       localInputStream.close();
     }
 
+    @Override
     public boolean equals(Object obj) {
       return localInputStream.equals(obj);
     }
 
+    @Override
     public int hashCode() {
       return localInputStream.hashCode();
     }
 
+    @Override
     public void mark(int readAheadLimit) {
       localInputStream.mark(readAheadLimit);
     }
 
+    @Override
     public boolean markSupported() {
       return localInputStream.markSupported();
     }
 
+    @Override
     public int read() {
       return localInputStream.read();
     }
 
+    @Override
     public int read(byte[] b, int off, int len) {
       return localInputStream.read(b, off, len);
     }
 
+    @Override
     public int read(byte[] b) throws IOException {
       return localInputStream.read(b);
     }
 
+    @Override
     public void reset() {
       localInputStream.reset();
     }
 
+    @Override
     public long skip(long n) {
       return localInputStream.skip(n);
     }
 
+    @Override
     public String toString() {
       return localInputStream.toString();
     }

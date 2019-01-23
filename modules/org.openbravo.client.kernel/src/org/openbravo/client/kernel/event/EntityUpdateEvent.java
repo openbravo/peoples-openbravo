@@ -50,8 +50,8 @@ public class EntityUpdateEvent extends EntityPersistenceEvent {
       }
       index++;
     }
-    throw new IllegalArgumentException("Property " + property + " not found for entity "
-        + getTargetInstance());
+    throw new IllegalArgumentException(
+        "Property " + property + " not found for entity " + getTargetInstance());
   }
 
   /**

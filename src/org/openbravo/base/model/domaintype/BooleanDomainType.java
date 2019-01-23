@@ -30,6 +30,7 @@ public class BooleanDomainType extends BasePrimitiveDomainType {
   /**
    * @return class of the {@link Boolean}
    */
+  @Override
   public Class<?> getPrimitiveType() {
     return Boolean.class;
   }

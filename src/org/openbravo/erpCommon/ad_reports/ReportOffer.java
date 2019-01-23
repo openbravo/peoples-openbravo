@@ -43,8 +43,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportOffer extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -68,8 +69,8 @@ public class ReportOffer extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
-      String strDateFrom, String strDateTo, String strcBpartnerId) throws IOException,
-      ServletException {
+      String strDateFrom, String strDateTo, String strcBpartnerId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -126,9 +127,7 @@ public class ReportOffer extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("today", DateTimeData.today(readOnlyCP));
 
-    xmlDocument.setData(
-        "reportCBPartnerId_IN",
-        "liststructure",
+    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
         SelectorUtilityData.selectBpartner(readOnlyCP,
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOffer"),
             Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOffer"), strcBpartnerId));
@@ -152,8 +151,9 @@ public class ReportOffer extends HttpSecureAppServlet {
         Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOffer"),
         Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOffer"), strOfferId);
 
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/SubreportOfferProduct").createXmlDocument();
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/SubreportOfferProduct")
+        .createXmlDocument();
 
     response.setContentType("text/plain; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
@@ -164,6 +164,7 @@ public class ReportOffer extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportOffer. This Servlet was made by Pablo Sarobe";
   }

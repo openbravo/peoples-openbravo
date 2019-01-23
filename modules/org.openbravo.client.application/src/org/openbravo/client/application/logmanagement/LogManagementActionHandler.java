@@ -47,14 +47,13 @@ public class LogManagementActionHandler extends BaseProcessActionHandler {
     try {
       JSONObject request = new JSONObject(content);
       JSONObject params = request.getJSONObject("_params");
-      List<String> loggersToUpdate = getLoggerToUpdateList(params.getJSONObject("loggers")
-          .getJSONArray("_selection"));
+      List<String> loggersToUpdate = getLoggerToUpdateList(
+          params.getJSONObject("loggers").getJSONArray("_selection"));
       Level newLogLevel = Level.getLevel(params.getString("loglevel"));
 
       updateLoggerConfiguration(loggersToUpdate, newLogLevel);
 
-      return getResponseBuilder()
-          .refreshGridParameter("loggers")
+      return getResponseBuilder().refreshGridParameter("loggers")
           .showMsgInProcessView(ResponseActionsBuilder.MessageType.SUCCESS,
               OBMessageUtils.messageBD("OBUIAPP_LogLevelChanged")) //
           .retryExecution() //
@@ -62,8 +61,10 @@ public class LogManagementActionHandler extends BaseProcessActionHandler {
 
     } catch (JSONException e) {
       log.error("Error in set log level process", e);
-      return getResponseBuilder().showMsgInView(ResponseActionsBuilder.MessageType.ERROR,
-          OBMessageUtils.messageBD("Error"), OBMessageUtils.messageBD("Error")).build();
+      return getResponseBuilder()
+          .showMsgInView(ResponseActionsBuilder.MessageType.ERROR,
+              OBMessageUtils.messageBD("Error"), OBMessageUtils.messageBD("Error"))
+          .build();
     }
   }
 

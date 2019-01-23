@@ -43,18 +43,20 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class BusinessPartnerMultiple extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  private static final String[] colNames = { "Value", "Name", "SO_CreditAvailable",
-      "SO_CreditUsed", "SalesRep", "Url", "Email", "ActualLifetimeValue", "C_BPartner_ID", "RowKey" };
+  private static final String[] colNames = { "Value", "Name", "SO_CreditAvailable", "SO_CreditUsed",
+      "SalesRep", "Url", "Email", "ActualLifetimeValue", "C_BPartner_ID", "RowKey" };
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -73,18 +75,21 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String strKeyValue = vars.getGlobalVariable("inpKey", "BusinessPartnerMultiple.key", "");
       String strBpartners = vars.getStringParameter("inpBpartner", "all");
 
-      if (strIsSOTrxTab.equals(""))
+      if (strIsSOTrxTab.equals("")) {
         strBpartner = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+      }
       String strSelected = "all";
-      if (strBpartner.equals("Y"))
+      if (strBpartner.equals("Y")) {
         strSelected = "costumer";
-      else if (strBpartner.equals("N"))
+      } else if (strBpartner.equals("N")) {
         strSelected = "vendor";
-      else
+      } else {
         strSelected = "all";
+      }
       vars.setSessionValue("BusinessPartnerMultiple.bpartner", strSelected);
-      if (!strNameValue.equals(""))
+      if (!strNameValue.equals("")) {
         vars.setSessionValue("BusinessPartnerMultiple.name", strNameValue + "%");
+      }
       printPage(response, vars, strKeyValue, strNameValue, strBpartners);
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
@@ -125,22 +130,25 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
 
       } else if (action.equalsIgnoreCase("getIdsInRange")) {
         // asking for selected rows
-        printGridDataSelectedRows(response, vars, strKey, strName, strContact, strZIP,
-            strProvincia, strBpartners, strCity, strSortCols, strSortDirs);
+        printGridDataSelectedRows(response, vars, strKey, strName, strContact, strZIP, strProvincia,
+            strBpartners, strCity, strSortCols, strSortDirs);
       } else {
         throw new ServletException("Unimplemented action in DATA request: " + action);
       }
 
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKeyValue,
       String strNameValue, String strBpartners) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of the multiple business partners seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/BusinessPartnerMultiple").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/BusinessPartnerMultiple")
+        .createXmlDocument();
     if (strKeyValue.equals("") && strNameValue.equals("")) {
       xmlDocument.setParameter("key", "%");
     } else {
@@ -148,9 +156,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     }
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("alertMsg",
-        "ALERT_MSG=\"" + Utility.messageBD(this, "NoBusinessPartnerSelected", vars.getLanguage())
-            + "\";");
+    xmlDocument.setParameter("alertMsg", "ALERT_MSG=\""
+        + Utility.messageBD(this, "NoBusinessPartnerSelected", vars.getLanguage()) + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("name", strNameValue);
     xmlDocument.setParameter("clients", strBpartners);
@@ -164,10 +171,12 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -182,8 +191,9 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -200,12 +210,11 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");
       dataAux.setData("isidentifier", (colNames[i].equals("RowKey") ? "true" : "false"));
       dataAux.setData("iskey", (colNames[i].equals("RowKey") ? "true" : "false"));
-      dataAux
-          .setData("isvisible",
-              (colNames[i].endsWith("_ID") || colNames[i].equalsIgnoreCase("RowKey") ? "false"
-                  : "true"));
-      String name = Utility
-          .messageBD(this, "MBPS_" + colNames[i].toUpperCase(), vars.getLanguage());
+      dataAux.setData("isvisible",
+          (colNames[i].endsWith("_ID") || colNames[i].equalsIgnoreCase("RowKey") ? "false"
+              : "true"));
+      String name = Utility.messageBD(this, "MBPS_" + colNames[i].toUpperCase(),
+          vars.getLanguage());
       dataAux.setData("name", (name.startsWith("MBPS_") ? colNames[i] : name));
       dataAux.setData("type", "string");
       dataAux.setData("width", colWidths[i]);
@@ -221,8 +230,9 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       String strCity, String strOrderCols, String strOrderDirs, String strOffset,
       String strPageSize, String strNewFilter, String strOrg) throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
     int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -255,11 +265,13 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
           } else {
             pgLimit = TableSQLData.maxRowsPerGridPage + " OFFSET " + offset;
           }
-          strNumRows = BusinessPartnerMultipleData.countRows(this, rownum, Utility.getContext(this,
-              vars, "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
-              strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                  .equals("vendor") ? "vendors" : ""), strCity, pgLimit, oraLimit1, oraLimit2);
+          strNumRows = BusinessPartnerMultipleData.countRows(this, rownum,
+              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
+              strName, strContact, strZIP, strProvincia,
+              (strBpartners.equals("costumer") ? "clients" : ""),
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, pgLimit, oraLimit1,
+              oraLimit2);
           vars.setSessionValue("BusinessPartnerMultipleInfo.numrows", strNumRows);
         } else {
           strNumRows = vars.getSessionValue("BusinessPartnerMultipleInfo.numrows");
@@ -269,19 +281,22 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit1 = String.valueOf(offset + pageSize);
           String oraLimit2 = (offset + 1) + " AND " + oraLimit1;
-          data = BusinessPartnerMultipleData.select(this, "ROWNUM", Utility.getContext(this, vars,
-              "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
-              strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                  .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
+          data = BusinessPartnerMultipleData.select(this, "ROWNUM",
+              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
+              strName, strContact, strZIP, strProvincia,
+              (strBpartners.equals("costumer") ? "clients" : ""),
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
               oraLimit2);
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
-          data = BusinessPartnerMultipleData.select(this, "1", Utility.getContext(this, vars,
-              "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
-              strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                  .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "", "");
+          data = BusinessPartnerMultipleData.select(this, "1",
+              Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
+              strName, strContact, strZIP, strProvincia,
+              (strBpartners.equals("costumer") ? "clients" : ""),
+              (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "",
+              "");
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -293,32 +308,38 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
 
     DecimalFormat df = Utility.getFormat(vars, "priceEdition");
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -326,7 +347,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -338,22 +360,32 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
           if (columnname.equalsIgnoreCase("SO_CreditAvailable")
               || columnname.equalsIgnoreCase("SO_CreditUsed")
               || columnname.equalsIgnoreCase("ActualLifetimeValue")) {
-            final String value = data[j].getField(columnname).equals("") ? "0" : data[j]
-                .getField(columnname);
+            final String value = data[j].getField(columnname).equals("") ? "0"
+                : data[j].getField(columnname);
             strRowsData.append(df.format(new BigDecimal(value)));
           } else if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -366,8 +398,9 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
@@ -405,20 +438,23 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit1 = String.valueOf(maxOffset);
         String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
-        data = BusinessPartnerMultipleData.select(this, "ROWNUM", Utility.getContext(this, vars,
-            "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
-            strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1, oraLimit2);
+        data = BusinessPartnerMultipleData.select(this, "ROWNUM",
+            Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
+            strName, strContact, strZIP, strProvincia,
+            (strBpartners.equals("costumer") ? "clients" : ""),
+            (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, "", oraLimit1,
+            oraLimit2);
       } else {
         // minOffset and maxOffset are zero based so pageSize is difference +1
         int pageSize = maxOffset - minOffset + 1;
         String pgLimit = pageSize + " OFFSET " + minOffset;
-        data = BusinessPartnerMultipleData.select(this, "1", Utility.getContext(this, vars,
-            "#User_Client", "BusinessPartner"), Utility.getContext(this, vars,
-            "#AccessibleOrgTree", "BusinessPartner"), strKey, strName, strContact, strZIP,
-            strProvincia, (strBpartners.equals("costumer") ? "clients" : ""), (strBpartners
-                .equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "", "");
+        data = BusinessPartnerMultipleData.select(this, "1",
+            Utility.getContext(this, vars, "#User_Client", "BusinessPartner"),
+            Utility.getContext(this, vars, "#AccessibleOrgTree", "BusinessPartner"), strKey,
+            strName, strContact, strZIP, strProvincia,
+            (strBpartners.equals("costumer") ? "clients" : ""),
+            (strBpartners.equals("vendor") ? "vendors" : ""), strCity, strOrderBy, pgLimit, "", "");
       }
 
       // result field has to be named id -> rename by copy the list
@@ -433,12 +469,14 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
       log4j.error("Error obtaining id-list for getIdsInRange", e);
       type = "Error";
       title = "Error";
-      if (!e.getMessage().startsWith("<![CDATA["))
+      if (!e.getMessage().startsWith("<![CDATA[")) {
         description = "<![CDATA[" + e.getMessage() + "]]>";
+      }
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridID").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridID")
+        .createXmlDocument();
     xmlDocument.setParameter("type", type);
     xmlDocument.setParameter("title", title);
     xmlDocument.setParameter("description", description);
@@ -451,6 +489,7 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents que multiple business partners seeker";
   } // end of getServletInfo() method

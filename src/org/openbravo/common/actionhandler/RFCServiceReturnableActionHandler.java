@@ -22,6 +22,8 @@ package org.openbravo.common.actionhandler;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
@@ -33,8 +35,6 @@ import org.openbravo.materialmgmt.ProductPriceUtils;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class RFCServiceReturnableActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -51,10 +51,10 @@ public class RFCServiceReturnableActionHandler extends BaseActionHandler {
 
       final String strRFCOrderDate = jsonRequest.getString("rfcOrderDate");
       final Date rfcOrderDate = OBDateUtils.getDate(strRFCOrderDate);
-      final ShipmentInOutLine shipmentLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-          jsonRequest.getString("goodsShipmentId"));
-      final Product serviceProduct = OBDal.getInstance().get(Product.class,
-          jsonRequest.getString("productId"));
+      final ShipmentInOutLine shipmentLine = OBDal.getInstance()
+          .get(ShipmentInOutLine.class, jsonRequest.getString("goodsShipmentId"));
+      final Product serviceProduct = OBDal.getInstance()
+          .get(Product.class, jsonRequest.getString("productId"));
       JSONObject returnAllowedRFC = ProductPriceUtils.productReturnAllowedRFC(shipmentLine,
           serviceProduct, rfcOrderDate);
       result.put("message", returnAllowedRFC);
@@ -63,8 +63,8 @@ public class RFCServiceReturnableActionHandler extends BaseActionHandler {
       try {
         result = new JSONObject();
         String message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
-            RequestContext.get().getVariablesSecureApp(), OBContext.getOBContext().getLanguage()
-                .getLanguage(), e.getMessage());
+            RequestContext.get().getVariablesSecureApp(),
+            OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", "Error");

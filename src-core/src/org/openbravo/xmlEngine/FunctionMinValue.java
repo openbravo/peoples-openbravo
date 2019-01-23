@@ -24,23 +24,25 @@ class FunctionMinValue extends FunctionEvaluationValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatOutput(new BigDecimal(arg1Value.printSimple())
-          .min(new BigDecimal(arg2Value.printSimple())));
+      return functionTemplate.printFormatOutput(
+          new BigDecimal(arg1Value.printSimple()).min(new BigDecimal(arg2Value.printSimple())));
     }
   }
 
+  @Override
   public String printSimple() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
     } else {
-      return functionTemplate.printFormatSimple(new BigDecimal(arg1Value.printSimple())
-          .min(new BigDecimal(arg2Value.printSimple())));
+      return functionTemplate.printFormatSimple(
+          new BigDecimal(arg1Value.printSimple()).min(new BigDecimal(arg2Value.printSimple())));
     }
   }
 

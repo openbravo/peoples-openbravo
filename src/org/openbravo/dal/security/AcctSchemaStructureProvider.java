@@ -60,10 +60,8 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
   private List<String> getAcctSchemasFromDB(String orgId, String clientID) {
     try {
       OBContext.setAdminMode(true);
-      String where = " select a.id"
-          + " from OrganizationAcctSchema as oas"
-          + " join oas.accountingSchema as a"
-          + " where oas.client.id = :clientId"
+      String where = " select a.id" + " from OrganizationAcctSchema as oas"
+          + " join oas.accountingSchema as a" + " where oas.client.id = :clientId"
           + " and (ad_isorgincluded(:orgId, oas.organization.id, oas.client.id) <> -1 or :orgId = '0')"
           + " and a.active = true" + " and oas.active = true" + " group by a.id";
 

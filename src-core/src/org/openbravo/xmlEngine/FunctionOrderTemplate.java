@@ -25,11 +25,13 @@ class FunctionOrderTemplate extends FunctionTemplate {
     super(fieldName, field, format, format, dataTemplate);
   }
 
+  @Override
   public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
     FunctionValue functionValue = searchFunction(xmlDocument);
     if (functionValue == null) {
-      if (log4jFunctionOrderTemplate.isDebugEnabled())
+      if (log4jFunctionOrderTemplate.isDebugEnabled()) {
         log4jFunctionOrderTemplate.debug("New FunctionOrderValue: " + fieldName);
+      }
       functionValue = new FunctionOrderValue(this, xmlDocument);
     }
     return functionValue;

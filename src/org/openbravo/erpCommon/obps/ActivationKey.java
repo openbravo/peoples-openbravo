@@ -152,7 +152,15 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, POS_TERMINALS_EXCEEDED
+    NO_RESTRICTION,
+    OPS_INSTANCE_NOT_ACTIVE,
+    NUMBER_OF_SOFT_USERS_REACHED,
+    NUMBER_OF_CONCURRENT_USERS_REACHED,
+    MODULE_EXPIRED,
+    NOT_MATCHED_INSTANCE,
+    HB_NOT_ACTIVE,
+    EXPIRED_GOLDEN,
+    POS_TERMINALS_EXCEEDED
   }
 
   public enum CommercialModuleStatus {
@@ -160,9 +168,12 @@ public class ActivationKey {
   }
 
   public enum FeatureRestriction {
-    NO_RESTRICTION(""), DISABLED_MODULE_RESTRICTION("FeatureInDisabledModule"), TIER1_RESTRICTION(
-        "FEATURE_OBPS_ONLY"), TIER2_RESTRICTION("FEATURE_OBPS_ONLY"), UNKNOWN_RESTRICTION(""), GOLDEN_RESTRICTION(
-        "RESTRICTED_TO_GOLDEN");
+    NO_RESTRICTION(""),
+    DISABLED_MODULE_RESTRICTION("FeatureInDisabledModule"),
+    TIER1_RESTRICTION("FEATURE_OBPS_ONLY"),
+    TIER2_RESTRICTION("FEATURE_OBPS_ONLY"),
+    UNKNOWN_RESTRICTION(""),
+    GOLDEN_RESTRICTION("RESTRICTED_TO_GOLDEN");
 
     private String msg;
 
@@ -207,8 +218,13 @@ public class ActivationKey {
   }
 
   public enum SubscriptionStatus {
-    COMMUNITY("COM"), ACTIVE("ACT"), CANCEL("CAN"), EXPIRED("EXP"), NO_ACTIVE_YET("NAY"), INVALID(
-        "INV");
+    COMMUNITY(
+        "COM"),
+    ACTIVE("ACT"),
+    CANCEL("CAN"),
+    EXPIRED("EXP"),
+    NO_ACTIVE_YET("NAY"),
+    INVALID("INV");
     private String code;
 
     private SubscriptionStatus(String code) {
@@ -539,7 +555,8 @@ public class ActivationKey {
     if (startDate == null || now.before(startDate)) {
       isActive = false;
       notActiveYet = true;
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      String dateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       errorMessage = "@OPSNotActiveTill@ " + outputFormat.format(startDate);
@@ -555,7 +572,8 @@ public class ActivationKey {
         } else {
           isActive = false;
           hasExpired = true;
-          String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+          String dateFormat = OBPropertiesProvider.getInstance()
+              .getOpenbravoProperties()
               .getProperty("dateFormat.java");
           SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
           errorMessage = "@OPSActivationExpired@ " + outputFormat.format(endDate);
@@ -626,13 +644,13 @@ public class ActivationKey {
       String restrictionsFilePath = null;
       if (DalContextListener.getServletContext() != null) {
         // Taking restrictions from Tomcat context
-        restrictionsFilePath = DalContextListener.getServletContext().getRealPath(
-            "/src-loc/design/org/openbravo/erpCommon/obps/licenseRestrictions");
+        restrictionsFilePath = DalContextListener.getServletContext()
+            .getRealPath("/src-loc/design/org/openbravo/erpCommon/obps/licenseRestrictions");
       } else {
         // Not in Tomcat context, taking restrictions from sources
-        restrictionsFilePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("source.path")
-            + "/src/org/openbravo/erpCommon/obps/licenseRestrictions";
+        restrictionsFilePath = OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties()
+            .getProperty("source.path") + "/src/org/openbravo/erpCommon/obps/licenseRestrictions";
       }
 
       File restrictionsFile = new File(restrictionsFilePath);
@@ -679,8 +697,8 @@ public class ActivationKey {
   private PublicKey getPublicKey(String strPublickey) {
     try {
       KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-      byte[] rawPublicKey = org.apache.commons.codec.binary.Base64.decodeBase64(strPublickey
-          .getBytes());
+      byte[] rawPublicKey = org.apache.commons.codec.binary.Base64
+          .decodeBase64(strPublickey.getBytes());
 
       X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(rawPublicKey);
       return keyFactory.generatePublic(publicKeySpec);
@@ -745,8 +763,8 @@ public class ActivationKey {
     String customMsg = "";
     MsgSeverity severity = MsgSeverity.ERROR;
     for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
-      ActivationMsg moduleMsg = moduleRestriction.getActivationMessage(this, OBContext
-          .getOBContext().getLanguage().getLanguage());
+      ActivationMsg moduleMsg = moduleRestriction.getActivationMessage(this,
+          OBContext.getOBContext().getLanguage().getLanguage());
 
       if (moduleMsg != null) {
         customMsg += moduleMsg.getMsgText();
@@ -928,12 +946,11 @@ public class ActivationKey {
       OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
 
       // sesion_active='Y' and (lastPing is null or lastPing<lastValidPing)
-      obCriteria.add(Restrictions.and(
-          Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
+      obCriteria.add(Restrictions.and(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
           Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING),
               Restrictions.lt(Session.PROPERTY_LASTPING, lastValidPingTime))));
-      obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
-          NO_CU_SESSION_TYPES)));
+      obCriteria.add(
+          Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS, NO_CU_SESSION_TYPES)));
 
       if (currentSessionId != null) {
         obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
@@ -1025,7 +1042,8 @@ public class ActivationKey {
     } else {
       String packs = getProperty("wsPacks");
       String unitsPack = getProperty("wsUnitsPerUnit");
-      return Utility.messageBD(conn, "OPWSLimited", lang).replace("@packs@", packs)
+      return Utility.messageBD(conn, "OPWSLimited", lang)
+          .replace("@packs@", packs)
           .replace("@unitsPerPack@", unitsPack);
     }
   }
@@ -1121,8 +1139,8 @@ public class ActivationKey {
   public int getActiveSessions(String currentSession) {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
-    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
-        NO_CU_SESSION_TYPES)));
+    obCriteria
+        .add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS, NO_CU_SESSION_TYPES)));
 
     if (currentSession != null && !currentSession.equals("")) {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
@@ -1144,8 +1162,9 @@ public class ActivationKey {
     SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
 
     String allModules = getProperty("modules");
-    if (allModules == null || allModules.equals(""))
+    if (allModules == null || allModules.equals("")) {
       return moduleList;
+    }
     String modulesInfo[] = allModules.split(",");
     Date now = new Date();
     for (String moduleInfo : modulesInfo) {
@@ -1294,8 +1313,8 @@ public class ActivationKey {
         params.put("instanceNo", getProperty("instanceno"));
         params.put("updated", getProperty("updated"));
       } else {
-        params.put("purpose", OBDal.getInstance().get(SystemInformation.class, "0")
-            .getInstancePurpose());
+        params.put("purpose",
+            OBDal.getInstance().get(SystemInformation.class, "0").getInstancePurpose());
       }
       ProcessBundle pb = new ProcessBundle(null, new VariablesSecureApp("0", "0", "0"));
       pb.setParams(params);
@@ -1451,7 +1470,8 @@ public class ActivationKey {
       mods.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, false));
       mods.addOrder(Order.asc(Module.PROPERTY_NAME));
       for (Module mod : mods.list()) {
-        if (isModuleSubscribed(mod.getId(), refreshIfneeded) == CommercialModuleStatus.NO_SUBSCRIBED) {
+        if (isModuleSubscribed(mod.getId(),
+            refreshIfneeded) == CommercialModuleStatus.NO_SUBSCRIBED) {
           rt += (rt.isEmpty() ? "" : ", ") + mod.getName();
         }
       }
@@ -1521,8 +1541,8 @@ public class ActivationKey {
       }
       if (!hasExpired) {
         String msg;
-        Long daysToExpireMsg = getProperty("daysWarn") == null ? null : Long
-            .parseLong(getProperty("daysWarn"));
+        Long daysToExpireMsg = getProperty("daysWarn") == null ? null
+            : Long.parseLong(getProperty("daysWarn"));
         if (golden) {
           msg = "OBPS_TO_EXPIRE_GOLDEN";
           if (daysToExpireMsg == null) {
@@ -1611,9 +1631,8 @@ public class ActivationKey {
     if (currentDayCount > checkCalls) {
       synchronized (wsCountLock) {
         // clean up old days
-        while (!exceededInLastDays.isEmpty()
-            && exceededInLastDays.get(0).getTime() < today.getTime()
-                - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
+        while (!exceededInLastDays.isEmpty() && exceededInLastDays.get(0)
+            .getTime() < today.getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD) {
           Date removed = exceededInLastDays.remove(0);
           log.info("Removed date from exceeded days " + removed);
         }
@@ -1702,10 +1721,11 @@ public class ActivationKey {
     hql.append("having count(*) > :maxWsPerDay\n");
     hql.append(" order by 1\n");
 
-    Query<Date> qExceededDays = OBDal.getInstance().getSession()
+    Query<Date> qExceededDays = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), Date.class);
-    qExceededDays.setParameter("firstDay", new Date(getDayAt0(new Date()).getTime()
-        - WS_MS_EXCEEDING_ALLOWED_PERIOD));
+    qExceededDays.setParameter("firstDay",
+        new Date(getDayAt0(new Date()).getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD));
     qExceededDays.setParameter("maxWsPerDay", maxWsCalls);
 
     exceededInLastDays = new ArrayList<Date>();
@@ -1748,8 +1768,9 @@ public class ActivationKey {
     Date firstDayOfPeriod = exceededInLastDays.get(0);
 
     long lastDayOfPeriod;
-    if (today.getTime() + (getExtraWsExceededDaysAllowed() * MILLSECS_PER_DAY) < firstDayOfPeriod
-        .getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD) {
+    if (today.getTime()
+        + (getExtraWsExceededDaysAllowed() * MILLSECS_PER_DAY) < firstDayOfPeriod.getTime()
+            + WS_MS_EXCEEDING_ALLOWED_PERIOD) {
       lastDayOfPeriod = firstDayOfPeriod.getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD;
     } else {
       lastDayOfPeriod = today.getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD;

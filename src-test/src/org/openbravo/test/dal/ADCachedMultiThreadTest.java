@@ -278,8 +278,8 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
       }
     }
 
-    assertTrue("Threads with errors", totalSummary.size() == 1
-        && totalSummary.get("Success") != null);
+    assertTrue("Threads with errors",
+        totalSummary.size() == 1 && totalSummary.get("Success") != null);
 
     log.debug("Total time {}", System.currentTimeMillis() - t0);
   }
@@ -319,8 +319,8 @@ public class ADCachedMultiThreadTest extends OBBaseTest {
       SessionHandler.getInstance().commitAndClose();
       OBDal.getInstance().getSession().disconnect();
 
-      log.debug("thread {} done in {} ms", this.getClass().getName(), System.currentTimeMillis()
-          - t);
+      log.debug("thread {} done in {} ms", this.getClass().getName(),
+          System.currentTimeMillis() - t);
       return System.currentTimeMillis() - t;
     }
 

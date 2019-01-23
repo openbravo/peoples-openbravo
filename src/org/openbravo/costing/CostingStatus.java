@@ -46,8 +46,9 @@ public class CostingStatus implements OBSingleton {
       OBContext.setAdminMode(false);
       try {
         //
-        OBQuery<Preference> crQry = OBDal.getInstance().createQuery(Preference.class,
-            Preference.PROPERTY_ATTRIBUTE + " ='Cost_Eng_Ins_Migrated'");
+        OBQuery<Preference> crQry = OBDal.getInstance()
+            .createQuery(Preference.class,
+                Preference.PROPERTY_ATTRIBUTE + " ='Cost_Eng_Ins_Migrated'");
         crQry.setFilterOnReadableClients(false);
         crQry.setFilterOnReadableOrganization(false);
         crQry.setMaxResult(1);
@@ -59,8 +60,8 @@ public class CostingStatus implements OBSingleton {
           costingQry.setFilterOnReadableClients(false);
           costingQry.setFilterOnReadableOrganization(false);
 
-          OBQuery<CostingRule> cRuleQry = OBDal.getInstance().createQuery(CostingRule.class,
-              CostingRule.PROPERTY_VALIDATED + " = true");
+          OBQuery<CostingRule> cRuleQry = OBDal.getInstance()
+              .createQuery(CostingRule.class, CostingRule.PROPERTY_VALIDATED + " = true");
           cRuleQry.setFilterOnReadableClients(false);
           cRuleQry.setFilterOnReadableOrganization(false);
 

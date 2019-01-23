@@ -64,8 +64,8 @@ public class OBObjectFieldProvider implements FieldProvider, OBNotSingleton {
    * @return a new FieldProvider
    */
   public static OBObjectFieldProvider createOBObjectFieldProvider(BaseOBObject bob) {
-    final OBObjectFieldProvider fieldProvider = OBProvider.getInstance().get(
-        OBObjectFieldProvider.class);
+    final OBObjectFieldProvider fieldProvider = OBProvider.getInstance()
+        .get(OBObjectFieldProvider.class);
     fieldProvider.setObObject(bob);
     return fieldProvider;
   }
@@ -97,6 +97,7 @@ public class OBObjectFieldProvider implements FieldProvider, OBNotSingleton {
    * characters after the underscores have been uppercased.
    * 
    */
+  @Override
   public String getField(String fieldName) {
     // is converted to lower case for simplicity
     final String lowerFieldName = fieldName.toLowerCase();

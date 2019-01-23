@@ -81,8 +81,8 @@ public class DataEntityQueryService {
    */
   public int count() {
     Check.isNotNull(entityName, "entityName must be set");
-    final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
-        queryBuilder.getJoinClause() + queryBuilder.getWhereClause());
+    final OBQuery<BaseOBObject> obq = OBDal.getInstance()
+        .createQuery(entityName, queryBuilder.getJoinClause() + queryBuilder.getWhereClause());
     obq.setFilterOnReadableClients(isFilterOnReadableClients());
     obq.setFilterOnReadableOrganization(isFilterOnReadableOrganizations());
 
@@ -152,11 +152,12 @@ public class DataEntityQueryService {
     }
     obq.setFilterOnActive(isFilterOnActive());
 
-    log.debug("Setting params:\n{}", ()->
-      queryBuilder.getNamedParameters().entrySet().stream()
-        .map(e -> "  -" + e.getKey() + ": " + e.getValue())
-        .collect(Collectors.joining("\n"))
-    );
+    log.debug("Setting params:\n{}",
+        () -> queryBuilder.getNamedParameters()
+            .entrySet()
+            .stream()
+            .map(e -> "  -" + e.getKey() + ": " + e.getValue())
+            .collect(Collectors.joining("\n")));
 
     obq.setNamedParameters(queryBuilder.getNamedParameters());
 
@@ -171,15 +172,15 @@ public class DataEntityQueryService {
   List<Property> getDistinctDisplayProperties() {
     final String localDistinct = getDistinct();
     final List<Property> properties = new ArrayList<Property>();
-    final Property property = DalUtil.getPropertyFromPath(
-        ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
+    final Property property = DalUtil
+        .getPropertyFromPath(ModelProvider.getInstance().getEntity(getEntityName()), localDistinct);
 
     // now use the table reference definition or select on the identifier properties
     if (property.getDomainType() instanceof TableDomainType
         && ((TableDomainType) property.getDomainType()).getRefTable() != null) {
       final TableDomainType domainType = (TableDomainType) property.getDomainType();
-      final Property displayProp = KernelUtils.getInstance().getPropertyFromColumn(
-          OBDal.getInstance()
+      final Property displayProp = KernelUtils.getInstance()
+          .getPropertyFromColumn(OBDal.getInstance()
               .get(Column.class, domainType.getRefTable().getDisplayColumn().getId()));
       if (displayProp != null) {
         properties.add(displayProp);

@@ -190,7 +190,8 @@ public class BaseTest extends TestCase {
   protected ConnectionProvider getConnectionProvider() {
     try {
       final String propFile = OBConfigFileProvider.getInstance().getFileLocation();
-      final ConnectionProvider conn = new ConnectionProviderImpl(propFile + "/Openbravo.properties");
+      final ConnectionProvider conn = new ConnectionProviderImpl(
+          propFile + "/Openbravo.properties");
       return conn;
     } catch (PoolNotFoundException e) {
       throw new IllegalStateException(e);
@@ -354,8 +355,9 @@ public class BaseTest extends TestCase {
    *          the exception to report.
    */
   protected void reportException(Exception e) {
-    if (e == null)
+    if (e == null) {
       return;
+    }
     e.printStackTrace(System.err);
     if (e instanceof SQLException) {
       reportException(((SQLException) e).getNextException());

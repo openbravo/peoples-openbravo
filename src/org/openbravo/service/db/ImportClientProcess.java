@@ -44,6 +44,7 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
    * Executes the import process. The expected parameters in the bundle are clientId (denoting the
    * client) and fileLocation giving the full path location of the file with the data to import.
    */
+  @Override
   public void execute(ProcessBundle bundle) throws Exception {
 
     try {
@@ -55,10 +56,10 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
 
       final ClientImportProcessor importProcessor = new ClientImportProcessor();
       importProcessor.setNewName((newName != null ? newName.trim() : newName));
-      final InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(
-          getImportFile()), "UTF-8");
-      final ImportResult ir = DataImportService.getInstance().importClientData(importProcessor,
-          importAuditInfo, inputStreamReader);
+      final InputStreamReader inputStreamReader = new InputStreamReader(
+          new FileInputStream(getImportFile()), "UTF-8");
+      final ImportResult ir = DataImportService.getInstance()
+          .importClientData(importProcessor, importAuditInfo, inputStreamReader);
       inputStreamReader.close();
       if (ir.hasErrorOccured()) {
         final StringBuilder sb = new StringBuilder();

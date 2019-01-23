@@ -20,6 +20,8 @@ package org.openbravo.client.application.attachment;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -33,8 +35,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.AttachmentConfig;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Event Handler on AttachmentConfig entity that manages the changes on the Attachment Method used
@@ -45,8 +45,8 @@ import org.apache.logging.log4j.LogManager;
 public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
   private static final Logger logger = LogManager.getLogger();
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      AttachmentConfig.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(AttachmentConfig.ENTITY_NAME) };
   private static Property propActive = entities[0].getProperty(AttachmentConfig.PROPERTY_ACTIVE);
 
   @Override
@@ -114,8 +114,8 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     if (!newAttachmentConfig.isActive()) {
       return;
     }
-    final OBQuery<AttachmentConfig> attachmentConfigQuery = OBDal.getInstance().createQuery(
-        AttachmentConfig.class, "id!=:id and client.id=:clientId");
+    final OBQuery<AttachmentConfig> attachmentConfigQuery = OBDal.getInstance()
+        .createQuery(AttachmentConfig.class, "id!=:id and client.id=:clientId");
     attachmentConfigQuery.setNamedParameter("id", newAttachmentConfig.getId());
     attachmentConfigQuery.setNamedParameter("clientId", newAttachmentConfig.getClient().getId());
     // Ensure that filtering by client and active is done.

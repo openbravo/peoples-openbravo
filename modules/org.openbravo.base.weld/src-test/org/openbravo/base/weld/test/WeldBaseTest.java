@@ -28,6 +28,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.dialect.function.SQLFunction;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -45,8 +47,6 @@ import org.openbravo.client.kernel.KernelInitializer;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.core.SQLFunctionRegister;
 import org.openbravo.test.base.OBBaseTest;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Base test for weld, provides access to the weld container.
@@ -70,7 +70,8 @@ public class WeldBaseTest extends OBBaseTest {
       System.setProperty("com.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager", "true");
 
       log.info("Creating cdi archive...");
-      final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      final String sourcePath = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("source.path");
       archive = ShrinkWrap.create(JavaArchive.class);
 
@@ -153,7 +154,8 @@ public class WeldBaseTest extends OBBaseTest {
   @AfterClass
   public static void resetOBInterceptors() {
     final OBInterceptor interceptor = (OBInterceptor) SessionFactoryController.getInstance()
-        .getConfiguration().getInterceptor();
+        .getConfiguration()
+        .getInterceptor();
     interceptor.setInterceptorListener(null);
     initialized = false;
   }

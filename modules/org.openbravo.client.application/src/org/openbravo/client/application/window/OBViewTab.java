@@ -154,8 +154,8 @@ public class OBViewTab extends BaseTemplateComponent {
   public String getNotesDataSourceJavaScript() {
     final Map<String, Object> dsParameters = new HashMap<>(getParameters());
     dsParameters.put(DataSourceConstants.DS_ONLY_GENERATE_CREATESTATEMENT, true);
-    final Component component = dsComponentProvider.getComponent(
-        "090A37D22E61FE94012E621729090048", dsParameters);
+    final Component component = dsComponentProvider.getComponent("090A37D22E61FE94012E621729090048",
+        dsParameters);
     return component.generate();
   }
 
@@ -269,8 +269,8 @@ public class OBViewTab extends BaseTemplateComponent {
     if (!ActivationKey.getInstance().isActive() || tab.getTable().isFullyAudited()) {
       IconButton auditBtn = new IconButton();
       auditBtn.type = "audit";
-      auditBtn.label = Utility.messageBD(new DalConnectionProvider(false), "AuditTrail", OBContext
-          .getOBContext().getLanguage().getLanguage());
+      auditBtn.label = Utility.messageBD(new DalConnectionProvider(false), "AuditTrail",
+          OBContext.getOBContext().getLanguage().getLanguage());
       auditBtn.action = "OB.ToolbarUtils.showAuditTrail(this.view);";
       iconButtons.add(auditBtn);
     }
@@ -278,9 +278,9 @@ public class OBViewTab extends BaseTemplateComponent {
     String useClassicPopupTreeStr = null;
     try {
       useClassicPopupTreeStr = Preferences.getPreferenceValue("OBUIAPP_UseClassicTreeView", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), tab.getWindow());
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), tab.getWindow());
     } catch (PropertyException e) {
       // The property is not defined, so the classic popup tree should not be used
     }
@@ -291,8 +291,8 @@ public class OBViewTab extends BaseTemplateComponent {
         // Classic Tree button
         IconButton treeBtn = new IconButton();
         treeBtn.type = "tree";
-        treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree", OBContext
-            .getOBContext().getLanguage().getLanguage());
+        treeBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Tree",
+            OBContext.getOBContext().getLanguage().getLanguage());
         treeBtn.action = "OB.ToolbarUtils.showTree(this.view);";
         iconButtons.add(treeBtn);
       } else {
@@ -317,8 +317,8 @@ public class OBViewTab extends BaseTemplateComponent {
     if (printBtn.hasEmail) {
       IconButton emailBtn = new IconButton();
       emailBtn.type = "email";
-      emailBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Email", OBContext
-          .getOBContext().getLanguage().getLanguage());
+      emailBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Email",
+          OBContext.getOBContext().getLanguage().getLanguage());
       emailBtn.action = printBtn.action.replace("print.html", "send.html");
       emailBtn.action = emailBtn.action.replace("printButton", "emailButton");
       btns.add(emailBtn);
@@ -540,7 +540,8 @@ public class OBViewTab extends BaseTemplateComponent {
   }
 
   public String getKeyPropertyType() {
-    return UIDefinitionController.getInstance().getUIDefinition(getKeyProperty().getColumnId())
+    return UIDefinitionController.getInstance()
+        .getUIDefinition(getKeyProperty().getColumnId())
         .getName();
   }
 
@@ -602,9 +603,10 @@ public class OBViewTab extends BaseTemplateComponent {
       }
     }
     for (String processId : processIds) {
-      org.openbravo.client.application.Process process = OBDal.getInstance().get(
-          org.openbravo.client.application.Process.class, processId);
-      final ParameterWindowComponent processWindow = createComponent(ParameterWindowComponent.class);
+      org.openbravo.client.application.Process process = OBDal.getInstance()
+          .get(org.openbravo.client.application.Process.class, processId);
+      final ParameterWindowComponent processWindow = createComponent(
+          ParameterWindowComponent.class);
       processWindow.setParameters(getParameters());
       processWindow.setUniqueString(uniqueString);
       processWindow.setProcess(process);
@@ -663,8 +665,8 @@ public class OBViewTab extends BaseTemplateComponent {
     String jsExpression = null;
     if (tab.getDisplayLogic() != null && !tab.getDisplayLogic().isEmpty()) {
       boolean inpColumnNames = true;
-      final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(),
-          tab, inpColumnNames);
+      final DynamicExpressionParser parser = new DynamicExpressionParser(tab.getDisplayLogic(), tab,
+          inpColumnNames);
       jsExpression = parser.getJSExpression();
       // Retrieves the preference attributes used in the display logic of the tab
       setPreferenceAttributesFromParserResult(parser, this.getWindowId());
@@ -749,8 +751,8 @@ public class OBViewTab extends BaseTemplateComponent {
     for (Tab subTab : subTabs) {
       if (subTab.getDisplayLogic() != null && !subTab.getDisplayLogic().isEmpty()) {
         boolean inpColumnNames = true;
-        final DynamicExpressionParser parser = new DynamicExpressionParser(
-            subTab.getDisplayLogic(), tab, inpColumnNames);
+        final DynamicExpressionParser parser = new DynamicExpressionParser(subTab.getDisplayLogic(),
+            tab, inpColumnNames);
         List<String> tokens = parser.getOtherTokensInExpression();
         for (String token : tokens) {
           if (!displayLogicFields.contains(token) && fieldHandler.isField(token)) {
@@ -868,8 +870,8 @@ public class OBViewTab extends BaseTemplateComponent {
 
       // Read only logic
       if (fld.getColumn().getReadOnlyLogic() != null) {
-        final DynamicExpressionParser parser = new DynamicExpressionParser(fld.getColumn()
-            .getReadOnlyLogic(), tab);
+        final DynamicExpressionParser parser = new DynamicExpressionParser(
+            fld.getColumn().getReadOnlyLogic(), tab);
         readOnlyIf = parser.getJSExpression();
         if (!parser.getSessionAttributes().isEmpty()) {
           sessionLogic = true;
@@ -896,9 +898,9 @@ public class OBViewTab extends BaseTemplateComponent {
     public String getUrl() {
       if (url == null) {
         url = "/";
-        log.error("The button " + column.getName() + " of the table "
-            + column.getTable().getDBTableName()
-            + " has not process or a process definition assigned to it");
+        log.error(
+            "The button " + column.getName() + " of the table " + column.getTable().getDBTableName()
+                + " has not process or a process definition assigned to it");
       }
       return url;
     }
@@ -910,9 +912,9 @@ public class OBViewTab extends BaseTemplateComponent {
     public String getCommand() {
       if (command == null) {
         command = "/";
-        log.error("The button " + column.getName() + " of the table "
-            + column.getTable().getDBTableName()
-            + " has not process or a process definition assigned to it");
+        log.error(
+            "The button " + column.getName() + " of the table " + column.getTable().getDBTableName()
+                + " has not process or a process definition assigned to it");
       }
       return command;
     }
@@ -1062,8 +1064,8 @@ public class OBViewTab extends BaseTemplateComponent {
       type = "print";
       action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()
           + ", 'printButton');";
-      label = Utility.messageBD(new DalConnectionProvider(false), "Print", OBContext.getOBContext()
-          .getLanguage().getLanguage());
+      label = Utility.messageBD(new DalConnectionProvider(false), "Print",
+          OBContext.getOBContext().getLanguage().getLanguage());
     }
   }
 

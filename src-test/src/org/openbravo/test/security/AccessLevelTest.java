@@ -75,7 +75,7 @@ public class AccessLevelTest extends OBBaseTest {
     // User level:
     // "S";"System"
     // " C";"Client"
-    // "  O";"Organization"
+    // " O";"Organization"
     // " CO";"Client+Organization"
 
     setSystemAdministratorContext();
@@ -174,8 +174,8 @@ public class AccessLevelTest extends OBBaseTest {
         where.append("where organization != :orgId");
         params.put("orgId", orgZero);
       }
-      final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(e.getName(),
-          where.toString());
+      final OBQuery<BaseOBObject> obq = OBDal.getInstance()
+          .createQuery(e.getName(), where.toString());
       obq.setNamedParameters(params);
       for (BaseOBObject bob : obq.list()) {
         String clientId = null;
@@ -204,8 +204,8 @@ public class AccessLevelTest extends OBBaseTest {
     setTestAdminContext();
     final Client c = OBDal.getInstance().get(Client.class, "0");
 
-    final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class,
-        "2C4C71BC828B47A0AF2A79855FD3BA7A");
+    final BusinessPartner bp = OBDal.getInstance()
+        .get(BusinessPartner.class, "2C4C71BC828B47A0AF2A79855FD3BA7A");
     bp.setClient(c);
     try {
       commitTransaction();

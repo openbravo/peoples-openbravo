@@ -45,6 +45,7 @@ public class KernelComponentProvider extends BaseComponentProvider {
    * @see org.openbravo.client.kernel.ComponentProvider#getComponent(java.lang.String,
    * java.lang.String, java.util.Map)
    */
+  @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
     final BaseComponent component = createComponent(componentId, parameters);
     component.setParameters(parameters);
@@ -60,7 +61,8 @@ public class KernelComponentProvider extends BaseComponentProvider {
       return getComponent(ApplicationComponent.class);
     } else if (componentId.equals(KernelConstants.SESSION_DYNAMIC_COMPONENT_ID)) {
       // generate the session dynamic resources
-      final SessionDynamicResourceComponent sessionDynamicComponent = getComponent(SessionDynamicResourceComponent.class);
+      final SessionDynamicResourceComponent sessionDynamicComponent = getComponent(
+          SessionDynamicResourceComponent.class);
       sessionDynamicComponent.setParameters(parameters);
       return sessionDynamicComponent;
     } else if (componentId.equals(KernelConstants.TEST_COMPONENT_ID)) {
@@ -91,19 +93,19 @@ public class KernelComponentProvider extends BaseComponentProvider {
     }
     globalResources = new ArrayList<>();
 
-    globalResources.add(createStaticResource("org.openbravo.client.kernel/"
-        + KernelConstants.KERNEL_COMPONENT_TYPE + "/" + KernelConstants.APPLICATION_COMPONENT_ID,
-        true));
+    globalResources.add(
+        createStaticResource("org.openbravo.client.kernel/" + KernelConstants.KERNEL_COMPONENT_TYPE
+            + "/" + KernelConstants.APPLICATION_COMPONENT_ID, true));
 
-    globalResources.add(createDynamicResource("org.openbravo.client.kernel/"
-        + KernelConstants.KERNEL_COMPONENT_TYPE + "/"
-        + KernelConstants.SESSION_DYNAMIC_COMPONENT_ID));
+    globalResources.add(
+        createDynamicResource("org.openbravo.client.kernel/" + KernelConstants.KERNEL_COMPONENT_TYPE
+            + "/" + KernelConstants.SESSION_DYNAMIC_COMPONENT_ID));
 
     globalResources
         .add(createStaticResource("web/org.openbravo.client.kernel/js/ob-i18n.js", true));
 
-    globalResources.add(createStaticResource(
-        "web/org.openbravo.client.kernel/js/ob-kernel-utilities.js", true));
+    globalResources.add(
+        createStaticResource("web/org.openbravo.client.kernel/js/ob-kernel-utilities.js", true));
 
     return globalResources;
   }

@@ -71,10 +71,8 @@ public class Evaluator implements OBSingleton {
     OBScriptEngine engine = OBScriptEngine.getInstance();
 
     try {
-      Check
-          .isNotNull(
-              engine,
-              "Scripting engine not found using name js, check for other scripting language names such as Mozilla Rhino");
+      Check.isNotNull(engine,
+          "Scripting engine not found using name js, check for other scripting language names such as Mozilla Rhino");
 
       final Entity e = contextBob.getEntity();
 
@@ -87,8 +85,8 @@ public class Evaluator implements OBSingleton {
       Check.isInstanceOf(result, Boolean.class);
       return (Boolean) result;
     } catch (final ScriptException e) {
-      throw new OBException("Exception while executing " + script + " for business object "
-          + contextBob, e);
+      throw new OBException(
+          "Exception while executing " + script + " for business object " + contextBob, e);
     }
   }
 }

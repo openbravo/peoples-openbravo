@@ -44,8 +44,7 @@ public class ImportReprocessErrorEntries extends DalBaseProcess {
     OBContext.setAdminMode(false);
     try {
       @SuppressWarnings("rawtypes")
-      final Query qry = OBDal
-          .getInstance()
+      final Query qry = OBDal.getInstance()
           .getSession()
           .createQuery(
               "update " + ImportEntry.ENTITY_NAME + " e set e." + ImportEntry.PROPERTY_IMPORTSTATUS

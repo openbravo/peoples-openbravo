@@ -92,7 +92,8 @@ public class FICTest extends BaseDataSourceTestDal {
     String response = doRequest("/org.openbravo.client.kernel", params, 200, "POST");
 
     String ficDateFromValue = new JSONObject(response).getJSONObject("columnValues")
-        .getJSONObject("Datefrom").getString("value");
+        .getJSONObject("Datefrom")
+        .getString("value");
 
     // FIC returns date-time in UTC, let's convert actual date-time to UTC...
     SimpleDateFormat utcFormatter = new DateUIDefinition().getFormat();

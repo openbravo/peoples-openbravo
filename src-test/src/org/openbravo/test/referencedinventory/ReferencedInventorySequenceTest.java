@@ -39,8 +39,8 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
 
   @Test
   public void testReferencedInventorySequenceIsUsed() {
-    final Sequence sequence = (Sequence) DalUtil.copy(OBDal.getInstance().getProxy(Sequence.class,
-        ANY_EXISTING_SEQUENCE_ID));
+    final Sequence sequence = (Sequence) DalUtil
+        .copy(OBDal.getInstance().getProxy(Sequence.class, ANY_EXISTING_SEQUENCE_ID));
     sequence.setName(UUID.randomUUID().toString());
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush(); // Required to lock sequence at db level later on
@@ -51,13 +51,13 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
     OBDal.getInstance().save(refInvType);
     Long currentSequenceNumber = sequence.getNextAssignedNumber();
 
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
     assertThat("Referenced Inventory Search Key is taken from sequence", refInv.getSearchKey(),
         equalTo(Long.toString(currentSequenceNumber)));
 
-    final ReferencedInventory refInv2 = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    final ReferencedInventory refInv2 = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
     assertThat("Referenced Inventory Search Key is updated from sequence", refInv2.getSearchKey(),
         equalTo(Long.toString(currentSequenceNumber + 1)));
   }

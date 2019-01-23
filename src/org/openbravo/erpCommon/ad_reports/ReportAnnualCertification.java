@@ -42,8 +42,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportAnnualCertification extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -51,8 +52,8 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification|cAcctSchemaId", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "ReportAnnualCertification|DateFrom", "");
-      String strDateTo = vars
-          .getGlobalVariable("inpDateTo", "ReportAnnualCertification|DateTo", "");
+      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportAnnualCertification|DateTo",
+          "");
       String strAmtFrom = vars.getGlobalVariable("inpAmtFrom", "ReportAnnualCertification|AmtFrom",
           "");
       String strAmtTo = vars.getGlobalVariable("inpAmtTo", "ReportAnnualCertification|AmtTo", "");
@@ -80,8 +81,8 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification|DateTo");
       String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
           "ReportAnnualCertification|AmtFrom");
-      String strAmtTo = vars
-          .getRequestGlobalVariable("inpAmtTo", "ReportAnnualCertification|AmtTo");
+      String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo",
+          "ReportAnnualCertification|AmtTo");
       String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
           "ReportAnnualCertification|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
@@ -93,24 +94,30 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       String strReportType = vars.getRequestGlobalVariable("inpcReportType",
           "ReportAnnualCertification|ReportType");
       String strHide = vars.getStringParameter("inpHideMatched");
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("inpAll: " + strAll);
-      if (strAll.equals(""))
+      }
+      if (strAll.equals("")) {
         vars.removeSessionValue("ReportAnnualCertification|All");
-      else
+      } else {
         strAll = vars.getGlobalVariable("inpAll", "ReportAnnualCertification|All");
-      if (strHide.equals(""))
+      }
+      if (strHide.equals("")) {
         vars.removeSessionValue("ReportAnnualCertification|HideMatched");
-      else
+      } else {
         strHide = vars.getGlobalVariable("inpHideMatched", "ReportAnnualCertification|HideMatched");
-      if (log4j.isDebugEnabled())
+      }
+      if (log4j.isDebugEnabled()) {
         log4j.debug("##################### DoPost - Find - strcBpartnerId= " + strcBpartnerId);
-      if (log4j.isDebugEnabled())
-        log4j.debug("##################### DoPost - XLS - strcelementvaluefrom= "
-            + strcelementvaluefrom);
-      if (log4j.isDebugEnabled())
-        log4j.debug("##################### DoPost - XLS - strcelementvalueto= "
-            + strcelementvalueto);
+      }
+      if (log4j.isDebugEnabled()) {
+        log4j.debug(
+            "##################### DoPost - XLS - strcelementvaluefrom= " + strcelementvaluefrom);
+      }
+      if (log4j.isDebugEnabled()) {
+        log4j.debug(
+            "##################### DoPost - XLS - strcelementvalueto= " + strcelementvalueto);
+      }
       vars.setSessionValue("ReportAnnualCertification.initRecordNumber", "0");
 
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
@@ -122,9 +129,9 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       String strRecordRange = Utility.getContext(this, vars, "#RecordRange",
           "ReportAnnualCertification");
       int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0"))
+      if (strInitRecord.equals("") || strInitRecord.equals("0")) {
         vars.setSessionValue("ReportAnnualCertification.initRecordNumber", "0");
-      else {
+      } else {
         int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
         initRecord -= intRecordRange;
         strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
@@ -137,8 +144,9 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification");
       int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
       int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
-      if (initRecord == 0)
+      if (initRecord == 0) {
         initRecord = 1;
+      }
       initRecord += intRecordRange;
       strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
       vars.setSessionValue("ReportAnnualCertification.initRecordNumber", strInitRecord);
@@ -152,8 +160,8 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           "ReportAnnualCertification|DateTo");
       String strAmtFrom = vars.getRequestGlobalVariable("inpAmtFrom",
           "ReportAnnualCertification|AmteFrom");
-      String strAmtTo = vars
-          .getRequestGlobalVariable("inpAmtTo", "ReportAnnualCertification|AmtTo");
+      String strAmtTo = vars.getRequestGlobalVariable("inpAmtTo",
+          "ReportAnnualCertification|AmtTo");
       String strcelementvaluefrom = vars.getRequestGlobalVariable("inpcElementValueIdFrom",
           "ReportAnnualCertification|C_ElementValue_IDFROM");
       String strcelementvalueto = vars.getRequestGlobalVariable("inpcElementValueIdTo",
@@ -168,8 +176,9 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
           strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strAll, strReportType,
           strHide, strcAcctSchemaId);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
@@ -181,19 +190,21 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportAnnualCertification.initRecordNumber");
     int initRecordNumber = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
-    if (log4j.isDebugEnabled())
-      log4j.debug("Date From:" + strDateFrom + "- To:" + strDateTo + " - Schema:"
-          + strcAcctSchemaId);
+    }
+    if (log4j.isDebugEnabled()) {
+      log4j.debug(
+          "Date From:" + strDateFrom + "- To:" + strDateTo + " - Schema:" + strcAcctSchemaId);
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
     ReportAnnualCertificationData[] data = null;
 
     String[] discard = { "discard" };
-    xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportAnnualCertification", discard)
+    xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportAnnualCertification", discard)
         .createXmlDocument();
     // Setting Key Mappings ( key shortcut)
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -204,7 +215,8 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     // toolbar.prepareRelationBarTemplate(false,
     // false,
-    // "submitCommandForm('XLS', false, frmMain, 'ReportAnnualCertification.xls', 'EXCEL');return false;"
+    // "submitCommandForm('XLS', false, frmMain, 'ReportAnnualCertification.xls', 'EXCEL');return
+    // false;"
     // );
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
@@ -222,8 +234,8 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
           tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       // Left Bar
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
-          "ReportAnnualCertification.html", strReplaceWith);
+      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportAnnualCertification.html",
+          strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -243,9 +255,9 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     try {
       // AD_OrgType_BU_LE
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_ORG_ID", "",
-          "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#User_Org",
-              "ReportAnnualCertification"), Utility.getContext(this, vars, "#User_Client",
-              "ReportAnnualCertification"), '*');
+          "AD_OrgType_BU_LE",
+          Utility.getContext(this, vars, "#User_Org", "ReportAnnualCertification"),
+          Utility.getContext(this, vars, "#User_Client", "ReportAnnualCertification"), '*');
       comboTableData.fillParameters(null, "ReportAnnualCertification", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
     } catch (Exception ex) {
@@ -290,8 +302,9 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
       String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
       String strcBpartnerId, String strAll, String strReportType, String strHide,
       String strcAcctSchemaId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: PDF");
+    }
     ReportAnnualCertificationData[] data = null;
 
     if (!strDateFrom.equals("") && !strDateTo.equals("")) {
@@ -343,6 +356,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportAnnualCertification. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

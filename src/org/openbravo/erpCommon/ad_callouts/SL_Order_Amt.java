@@ -51,8 +51,8 @@ public class SL_Order_Amt extends SimpleCallout {
     String strCOrderId = info.getStringParameter("inpcOrderId", IsIDFilter.instance);
     String strProduct = info.getStringParameter("inpmProductId", IsIDFilter.instance);
     String strUOM = info.getStringParameter("inpcUomId", IsIDFilter.instance);
-    String strAttribute = info
-        .getStringParameter("inpmAttributesetinstanceId", IsIDFilter.instance);
+    String strAttribute = info.getStringParameter("inpmAttributesetinstanceId",
+        IsIDFilter.instance);
     String strTaxId = info.getStringParameter("inpcTaxId", IsIDFilter.instance);
     BigDecimal qtyOrdered = info.getBigDecimalParameter("inpqtyordered");
     BigDecimal priceActual = info.getBigDecimalParameter("inppriceactual");
@@ -142,8 +142,8 @@ public class SL_Order_Amt extends SimpleCallout {
       if (isTaxIncludedPriceList) {
         grossUnitPrice = PriceAdjustment.calculatePriceActual(order, product, qtyOrdered,
             grossBaseUnitPrice);
-        BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
-            RoundingMode.HALF_UP);
+        BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered)
+            .setScale(stdPrecision, RoundingMode.HALF_UP);
         BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
             stdPrecision, taxBaseAmt);
         priceActual = BigDecimal.ZERO;
@@ -184,8 +184,8 @@ public class SL_Order_Amt extends SimpleCallout {
     // If taxinclusive field is changed then modify net unit price and gross price
     if (isGrossUnitPriceChanged
         || (StringUtils.equals(strChanged, "inpcTaxId") && isTaxIncludedPriceList)) {
-      BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
-          RoundingMode.HALF_UP);
+      BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered)
+          .setScale(stdPrecision, RoundingMode.HALF_UP);
       BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
           stdPrecision, taxBaseAmt);
       BigDecimal netUnitPrice = BigDecimal.ZERO;
@@ -200,8 +200,8 @@ public class SL_Order_Amt extends SimpleCallout {
       } else {
         grossBaseUnitPrice = PriceAdjustment.calculatePriceStd(order, product, qtyOrdered,
             grossUnitPrice);
-        BigDecimal baseGrossAmount = grossBaseUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
-            RoundingMode.HALF_UP);
+        BigDecimal baseGrossAmount = grossBaseUnitPrice.multiply(qtyOrdered)
+            .setScale(stdPrecision, RoundingMode.HALF_UP);
         BigDecimal baseAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, baseGrossAmount,
             stdPrecision, taxBaseAmt);
         priceStd = BigDecimal.ZERO;
@@ -209,8 +209,8 @@ public class SL_Order_Amt extends SimpleCallout {
           priceStd = baseAmount.divide(qtyOrdered, pricePrecision, RoundingMode.HALF_UP);
         }
         // Check whether price adjustment sets grossBaseUnitPrice as Zero
-        calcDiscount = (grossBaseUnitPrice.compareTo(grossUnitPrice) == 0 || grossBaseUnitPrice
-            .compareTo(BigDecimal.ZERO) != 0);
+        calcDiscount = (grossBaseUnitPrice.compareTo(grossUnitPrice) == 0
+            || grossBaseUnitPrice.compareTo(BigDecimal.ZERO) != 0);
       }
 
       info.addResult("inpgrosspricestd", grossBaseUnitPrice);
@@ -229,8 +229,10 @@ public class SL_Order_Amt extends SimpleCallout {
         || StringUtils.equals(strChanged, "inpqtyordered")) {
       BigDecimal priceList = isTaxIncludedPriceList ? grossPriceList : netPriceList;
       BigDecimal unitPrice = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
-      BigDecimal discount = priceList.compareTo(BigDecimal.ZERO) == 0 || !calcDiscount ? BigDecimal.ZERO
-          : priceList.subtract(unitPrice).multiply(new BigDecimal("100"))
+      BigDecimal discount = priceList.compareTo(BigDecimal.ZERO) == 0 || !calcDiscount
+          ? BigDecimal.ZERO
+          : priceList.subtract(unitPrice)
+              .multiply(new BigDecimal("100"))
               .divide(priceList, stdPrecision, RoundingMode.HALF_EVEN);
       log4j.debug("Discount rounded: " + discount.toString());
       info.addResult("inpdiscount", discount);
@@ -242,21 +244,22 @@ public class SL_Order_Amt extends SimpleCallout {
       BigDecimal priceList = isTaxIncludedPriceList ? grossPriceList : netPriceList;
       if (priceList.compareTo(BigDecimal.ZERO) != 0) {
         BigDecimal baseUnitPrice = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
-        origDiscount = priceList.subtract(baseUnitPrice).multiply(new BigDecimal("100"))
+        origDiscount = priceList.subtract(baseUnitPrice)
+            .multiply(new BigDecimal("100"))
             .divide(priceList, stdPrecision, RoundingMode.HALF_UP);
       }
 
       if (origDiscount.compareTo(newDiscount) != 0) {
-        BigDecimal baseUnitPrice = priceList.subtract(
-            priceList.multiply(newDiscount).divide(new BigDecimal("100"))).setScale(pricePrecision,
-            RoundingMode.HALF_UP);
+        BigDecimal baseUnitPrice = priceList
+            .subtract(priceList.multiply(newDiscount).divide(new BigDecimal("100")))
+            .setScale(pricePrecision, RoundingMode.HALF_UP);
         if (isTaxIncludedPriceList) {
           grossUnitPrice = PriceAdjustment.calculatePriceActual(order, product, qtyOrdered,
               baseUnitPrice);
           info.addResult("inpgrosspricestd", baseUnitPrice);
           info.addResult("inpgrossUnitPrice", grossUnitPrice);
-          BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
-              RoundingMode.HALF_UP);
+          BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered)
+              .setScale(stdPrecision, RoundingMode.HALF_UP);
           BigDecimal netAmount = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount,
               stdPrecision, taxBaseAmt);
           BigDecimal netUnitPrice = BigDecimal.ZERO;
@@ -290,20 +293,20 @@ public class SL_Order_Amt extends SimpleCallout {
         && qtyOrdered.compareTo(BigDecimal.ZERO) != 0) {
       BigDecimal stockNoAttribute, stockAttribute, resultStock;
       if (StringUtils.equals(strEnforceAttribute, "N")) {
-        stockNoAttribute = new BigDecimal(SLOrderStockData.totalStockNoAttribute(this, strProduct,
-            strUOM));
+        stockNoAttribute = new BigDecimal(
+            SLOrderStockData.totalStockNoAttribute(this, strProduct, strUOM));
         resultStock = stockNoAttribute.subtract(qtyOrdered);
         if (stockSecurity.compareTo(resultStock) > 0) {
-          info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit",
-              info.vars.getLanguage())));
+          info.showMessage(FormatUtilities
+              .replaceJS(Utility.messageBD(this, "StockLimit", info.vars.getLanguage())));
         }
       } else if (StringUtils.isNotEmpty(strAttribute)) {
-        stockAttribute = new BigDecimal(SLOrderStockData.totalStockAttribute(this, strProduct,
-            strUOM, strAttribute));
+        stockAttribute = new BigDecimal(
+            SLOrderStockData.totalStockAttribute(this, strProduct, strUOM, strAttribute));
         resultStock = stockAttribute.subtract(qtyOrdered);
         if (stockSecurity.compareTo(resultStock) > 0) {
-          info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "StockLimit",
-              info.vars.getLanguage())));
+          info.showMessage(FormatUtilities
+              .replaceJS(Utility.messageBD(this, "StockLimit", info.vars.getLanguage())));
         }
       }
     }
@@ -314,8 +317,8 @@ public class SL_Order_Amt extends SimpleCallout {
       boolean enforced = SLOrderAmtData.listPriceType(this, currentPriceList.getId());
       if (enforced && priceLimit.compareTo(BigDecimal.ZERO) != 0
           && priceActual.compareTo(priceLimit) < 0) {
-        info.showMessage(FormatUtilities.replaceJS(Utility.messageBD(this, "UnderLimitPrice",
-            info.vars.getLanguage())));
+        info.showMessage(FormatUtilities
+            .replaceJS(Utility.messageBD(this, "UnderLimitPrice", info.vars.getLanguage())));
       }
     }
 
@@ -325,8 +328,8 @@ public class SL_Order_Amt extends SimpleCallout {
     } else {
       if (!StringUtils.equals(strChanged, "inplinenetamt")) {
         if (isTaxIncludedPriceList) {
-          BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
-              RoundingMode.HALF_UP);
+          BigDecimal grossAmount = grossUnitPrice.multiply(qtyOrdered)
+              .setScale(stdPrecision, RoundingMode.HALF_UP);
           lineNetAmt = FinancialUtils.calculateNetAmtFromGross(strTaxId, grossAmount, stdPrecision,
               taxBaseAmt);
         } else {
@@ -351,8 +354,8 @@ public class SL_Order_Amt extends SimpleCallout {
 
     // Line Gross Amount
     if (!StringUtils.equals(strChanged, "inplineGrossAmount")) {
-      BigDecimal grossLineAmt = grossUnitPrice.multiply(qtyOrdered).setScale(stdPrecision,
-          RoundingMode.HALF_UP);
+      BigDecimal grossLineAmt = grossUnitPrice.multiply(qtyOrdered)
+          .setScale(stdPrecision, RoundingMode.HALF_UP);
       info.addResult("inplineGrossAmount", grossLineAmt);
     }
 

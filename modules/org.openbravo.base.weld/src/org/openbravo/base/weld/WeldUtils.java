@@ -31,10 +31,10 @@ import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalContextListener;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Provides weld utilities.
@@ -50,8 +50,8 @@ public class WeldUtils {
 
   public static BeanManager getStaticInstanceBeanManager() {
     if (staticBeanManager == null) {
-      staticBeanManager = (BeanManager) DalContextListener.getServletContext().getAttribute(
-          BEAN_MANAGER_ATTRIBUTE_NAME);
+      staticBeanManager = (BeanManager) DalContextListener.getServletContext()
+          .getAttribute(BEAN_MANAGER_ATTRIBUTE_NAME);
 
       if (staticBeanManager == null) {
         // In wildfly, bean manager is not saved in servlet context.

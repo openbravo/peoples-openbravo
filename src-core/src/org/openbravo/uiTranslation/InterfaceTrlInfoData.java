@@ -32,14 +32,15 @@ class InterfaceTrlInfoData implements FieldProvider {
   public String description;
   public String help;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("NAME"))
+    if (fieldName.equalsIgnoreCase("NAME")) {
       return name;
-    else if (fieldName.equalsIgnoreCase("DESCRIPTION"))
+    } else if (fieldName.equalsIgnoreCase("DESCRIPTION")) {
       return description;
-    else if (fieldName.equalsIgnoreCase("HELP"))
+    } else if (fieldName.equalsIgnoreCase("HELP")) {
       return help;
-    else {
+    } else {
       log4j.debug("Field does not exist: " + fieldName);
       return null;
     }
@@ -76,8 +77,8 @@ class InterfaceTrlInfoData implements FieldProvider {
       result.close();
     } catch (SQLException e) {
       log4j.error("SQL error in query: " + strSql + "Exception:", e);
-      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@"
-          + e.getMessage());
+      throw new ServletException(
+          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch (Exception ex) {
       log4j.error("Exception in query: " + strSql + "Exception:", ex);
       throw new ServletException("@CODE=@" + ex.getMessage());

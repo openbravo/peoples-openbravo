@@ -22,11 +22,11 @@ package org.openbravo.base.weld.test;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Rule to make possible to run parameterized test cases with Arquillian runner. The Rule field
@@ -74,10 +74,12 @@ public class ParameterCdiTestRule<T> implements MethodRule {
     for (Object param : params) {
       targetField.set(target, param);
 
-      log.info("============================================================================================================");
+      log.info(
+          "============================================================================================================");
       log.info("   Paremeterized test {}.{} ", target.getClass().getName(), method.getName());
       log.info("       {}: {}", targetField.getName(), param);
-      log.info("============================================================================================================");
+      log.info(
+          "============================================================================================================");
 
       base.evaluate();
     }

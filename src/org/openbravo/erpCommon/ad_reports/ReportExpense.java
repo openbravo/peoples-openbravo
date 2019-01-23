@@ -44,8 +44,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportExpense extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Use ReadOnly Connection Provider
@@ -76,8 +77,8 @@ public class ReportExpense extends HttpSecureAppServlet {
       setHistoryCommand(request, "DIRECT");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportExpense|currency",
           strUserCurrencyId);
-      printPageDataHtml(request, response, vars, strDateFrom, strDateTo, strcBpartnerId,
-          strPartner, strProject, strExpense, strCurrencyId);
+      printPageDataHtml(request, response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner,
+          strProject, strExpense, strCurrencyId);
     } else if (vars.commandIn("FIND") || vars.commandIn("PDF")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportExpense|dateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportExpense|dateTo");
@@ -164,8 +165,9 @@ public class ReportExpense extends HttpSecureAppServlet {
           Utility.messageBD(readOnlyCP, "NoConversionRateHeader", vars.getLanguage()),
           strConvRateErrorMsg);
     } else { // Otherwise, the report is launched
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_reports/ReportExpenseEdit").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportExpenseEdit")
+          .createXmlDocument();
 
       xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -261,15 +263,16 @@ public class ReportExpense extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId, String strPartner,
-      String strProject, String strExpense, String strCurrencyId) throws IOException,
-      ServletException {
+      String strProject, String strExpense, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportExpense").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportExpense")
+        .createXmlDocument();
 
     // Use ReadOnly Connection Provider
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
@@ -322,16 +325,16 @@ public class ReportExpense extends HttpSecureAppServlet {
     xmlDocument.setParameter("all", strExpense);
 
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE",
-          "C_BPartner_ID", "C_BPartner Employee w Address", "", Utility.getContext(readOnlyCP,
-              vars, "#AccessibleOrgTree", "ReportExpense"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportExpense"), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE", "C_BPartner_ID",
+          "C_BPartner Employee w Address", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportExpense"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportExpense", "");
 
-      ComboTableData comboTableDataProject = new ComboTableData(readOnlyCP, "TABLE",
-          "C_Project_ID", "C_Project", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportExpense"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportExpense"), 0);
+      ComboTableData comboTableDataProject = new ComboTableData(readOnlyCP, "TABLE", "C_Project_ID",
+          "C_Project", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportExpense"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableDataProject, "ReportExpense", "");
 
       xmlDocument.setData("reportC_BPartner_ID", "liststructure", comboTableData.select(false));
@@ -343,9 +346,9 @@ public class ReportExpense extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportExpense"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportExpense"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportExpense"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportExpense"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportExpense",
           strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -358,6 +361,7 @@ public class ReportExpense extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportExpense. This Servlet was made by Jon Alegria";
   } // end of getServletInfo() method

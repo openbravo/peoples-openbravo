@@ -187,7 +187,8 @@ public class DatasourceEventObserver extends ObserverBaseTest {
 
     String resp = dataSource.update(new HashMap<String, String>(), content.toString());
     return new JSONObject(resp).getJSONObject(JsonConstants.RESPONSE_RESPONSE)
-        .getJSONArray(JsonConstants.DATA).getJSONObject(0);
+        .getJSONArray(JsonConstants.DATA)
+        .getJSONObject(0);
   }
 
   private void assertDescription(BaseOBObject obj, JSONObject updatedOrder,
@@ -195,7 +196,8 @@ public class DatasourceEventObserver extends ObserverBaseTest {
     OBDal.getInstance().commitAndClose();
 
     BaseOBObject refreshedBob = (BaseOBObject) OBDal.getInstance()
-        .createCriteria(obj.getEntityName()).add(Restrictions.eq(BaseOBObject.ID, obj.getId()))
+        .createCriteria(obj.getEntityName())
+        .add(Restrictions.eq(BaseOBObject.ID, obj.getId()))
         .uniqueResult();
     assertThat(obj.getEntityName() + " - " + obj.getId() + " response description",
         updatedOrder.getString("description"), is(expectedDescription));

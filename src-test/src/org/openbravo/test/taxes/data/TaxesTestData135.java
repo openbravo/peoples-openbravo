@@ -139,8 +139,8 @@ public class TaxesTestData135 extends TaxesTestData {
     // {totalGrossDraftAfterInsert, totalNetDraftAfterInsert, totalGrossCompletedAfterInsert,
     // totalNetCompletedAfterInsert, totalGrossDraftAfterUpdate, totalNetDraftAfterUpdate,
     // totalGrossCompletedAfterUpdate, totalNetCompletedAfterUpdate}
-    String[] lineAmounts4 = new String[] { "10914.63", "6149.78", "10914.63", "6149.78",
-        "21829.26", "12299.56", "21829.26", "12299.56" };
+    String[] lineAmounts4 = new String[] { "10914.63", "6149.78", "10914.63", "6149.78", "21829.26",
+        "12299.56", "21829.26", "12299.56" };
     line4.setLineAmounts(lineAmounts4);
 
     // Line info
@@ -195,8 +195,8 @@ public class TaxesTestData135 extends TaxesTestData {
     // {totalGrossDraftAfterInsert, totalNetDraftAfterInsert, totalGrossCompletedAfterInsert,
     // totalNetCompletedAfterInsert, totalGrossDraftAfterUpdate, totalNetDraftAfterUpdate,
     // totalGrossCompletedAfterUpdate, totalNetCompletedAfterUpdate}
-    String[] lineAmounts6 = new String[] { "10776.96", "6072.21", "10776.96", "6072.21",
-        "21553.92", "12144.42", "21553.92", "12144.42" };
+    String[] lineAmounts6 = new String[] { "10776.96", "6072.21", "10776.96", "6072.21", "21553.92",
+        "12144.42", "21553.92", "12144.42" };
     line6.setLineAmounts(lineAmounts6);
 
     // Add lines

@@ -43,8 +43,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportProductionRunJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -125,27 +126,29 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
           + strLaunchDateFrom;
     }
     if (StringUtils.isNotEmpty(strLaunchDateTo)) {
-      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
-          + Utility.messageBD(readOnlyCP, "LaunchDateTo", vars.getLanguage()) + ":"
-          + strLaunchDateTo;
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? ""
+          : " - " + Utility.messageBD(readOnlyCP, "LaunchDateTo", vars.getLanguage()) + ":"
+              + strLaunchDateTo;
     }
     if (StringUtils.isNotEmpty(strStartDateFrom)) {
-      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
-          + Utility.messageBD(readOnlyCP, "StartDateFrom", vars.getLanguage()) + ":"
-          + strStartDateFrom;
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? ""
+          : " - " + Utility.messageBD(readOnlyCP, "StartDateFrom", vars.getLanguage()) + ":"
+              + strStartDateFrom;
     }
     if (StringUtils.isNotEmpty(strStartDateTo)) {
-      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
-          + Utility.messageBD(readOnlyCP, "StartDateTo", vars.getLanguage()) + ":" + strStartDateTo;
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? ""
+          : " - " + Utility.messageBD(readOnlyCP, "StartDateTo", vars.getLanguage()) + ":"
+              + strStartDateTo;
     }
     if (StringUtils.isNotEmpty(strEndDateFrom)) {
-      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
-          + Utility.messageBD(readOnlyCP, "EndDateFrom", vars.getLanguage()) + ":" + strEndDateFrom;
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? ""
+          : " - " + Utility.messageBD(readOnlyCP, "EndDateFrom", vars.getLanguage()) + ":"
+              + strEndDateFrom;
     }
     if (StringUtils.isNotEmpty(strmaWorkRequirement)) {
-      strSubtitle += StringUtils.isEmpty(strSubtitle) ? "" : " - "
-          + Utility.messageBD(readOnlyCP, "WorkRequirement", vars.getLanguage()) + ":"
-          + strmaWorkRequirement;
+      strSubtitle += StringUtils.isEmpty(strSubtitle) ? ""
+          : " - " + Utility.messageBD(readOnlyCP, "WorkRequirement", vars.getLanguage()) + ":"
+              + strmaWorkRequirement;
     }
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProductionRun.jrxml";
@@ -157,16 +160,17 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strLaunchDateFrom, String strLaunchDateTo, String strStartDateFrom,
-      String strStartDateTo, String strEndDateFrom, String strEndDateTo, String strmaWorkRequirement)
-      throws IOException, ServletException {
+      String strStartDateTo, String strEndDateFrom, String strEndDateTo,
+      String strmaWorkRequirement) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportProductionRunJR").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProductionRunJR")
+        .createXmlDocument();
 
     // Use ReadOnly Connection Provider
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
@@ -210,8 +214,8 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
         vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("launchDateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("launchDateTo", strLaunchDateTo);
-    xmlDocument
-        .setParameter("launchDateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("launchDateTodisplayFormat",
+        vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("launchDateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("startDateFrom", strStartDateFrom);
     xmlDocument.setParameter("startDateFromdisplayFormat",
@@ -229,13 +233,13 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "MA_Workrequirement_ID", "", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportProductionRunJR"), Utility.getContext(readOnlyCP, vars,
-              "#User_Client", "ReportProductionRunJR"), 0);
+          "MA_Workrequirement_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProductionRunJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProductionRunJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportProductionRunJR",
           strmaWorkRequirement);
-      xmlDocument
-          .setData("reportMA_WORKREQUIREMENT", "liststructure", comboTableData.select(false));
+      xmlDocument.setData("reportMA_WORKREQUIREMENT", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -245,6 +249,7 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportProductionRunJR.";
   } // end of getServletInfo() method

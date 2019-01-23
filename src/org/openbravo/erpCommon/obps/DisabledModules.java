@@ -115,16 +115,16 @@ public class DisabledModules {
    */
   static boolean isEnabled(Artifacts artifactType, String id) {
     switch (artifactType) {
-    case MODULE:
-      return !disabledModules.contains(id);
-    case FORM:
-      return !disabledForms.contains(id);
-    case PROCESS:
-      return !disabledProcesses.contains(id);
-    case TAB:
-      return !disabledTabs.contains(id);
-    case WINDOW:
-      return !disabledWindows.contains(id);
+      case MODULE:
+        return !disabledModules.contains(id);
+      case FORM:
+        return !disabledForms.contains(id);
+      case PROCESS:
+        return !disabledProcesses.contains(id);
+      case TAB:
+        return !disabledTabs.contains(id);
+      case WINDOW:
+        return !disabledWindows.contains(id);
     }
     return true;
   }

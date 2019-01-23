@@ -36,6 +36,7 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
 
   private static final long SEQUENCE = 100l;
 
+  @Override
   protected long getSeq() {
     return SEQUENCE;
   }
@@ -55,17 +56,18 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
   @Override
   public boolean getCreditToUseDisplayLogic(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if ((context.has("received_from") && !context.isNull("received_from") && !"".equals(context
-        .getString("received_from")))
-        || (context.has("inpreceivedFrom") && !context.isNull("inpreceivedFrom") && !""
-            .equals(context.getString("inpreceivedFrom")))) {
-      String document = !context.isNull("received_from") ? context.getString("trxtype") : context
-          .getString("inptrxtype");
-      String strBusinessPartner = !context.isNull("received_from") ? context
-          .getString("received_from") : context.getString("inpreceivedFrom");
+    if ((context.has("received_from") && !context.isNull("received_from")
+        && !"".equals(context.getString("received_from")))
+        || (context.has("inpreceivedFrom") && !context.isNull("inpreceivedFrom")
+            && !"".equals(context.getString("inpreceivedFrom")))) {
+      String document = !context.isNull("received_from") ? context.getString("trxtype")
+          : context.getString("inptrxtype");
+      String strBusinessPartner = !context.isNull("received_from")
+          ? context.getString("received_from")
+          : context.getString("inpreceivedFrom");
       if (getDefaultGeneratedCredit(requestMap).signum() == 0 || "RCIN".equals(document)) {
-        BusinessPartner bpartner = OBDal.getInstance().get(BusinessPartner.class,
-            strBusinessPartner);
+        BusinessPartner bpartner = OBDal.getInstance()
+            .get(BusinessPartner.class, strBusinessPartner);
         Organization org = OBDal.getInstance().get(Organization.class, context.get("ad_org_id"));
         Currency currency = OBDal.getInstance().get(Currency.class, context.get("c_currency_id"));
         BigDecimal customerCredit = new AdvPaymentMngtDao().getCustomerCredit(bpartner,

@@ -44,18 +44,22 @@ public class ChangeInventoryStatusActionHandler extends BaseProcessActionHandler
       String inventoryStatusID = params.getString("M_InventoryStatus_ID");
 
       InventoryStatusUtils.changeStatusOfStorageBin(mLocatorID, inventoryStatusID);
-      return getResponseBuilder().showMsgInView(MessageType.SUCCESS,
-          OBMessageUtils.messageBD("Success"), OBMessageUtils.messageBD("Success")).build();
+      return getResponseBuilder()
+          .showMsgInView(MessageType.SUCCESS, OBMessageUtils.messageBD("Success"),
+              OBMessageUtils.messageBD("Success"))
+          .build();
 
     } catch (Exception e) {
       log4j.error(e.getMessage(), e);
       if (StringUtils.startsWith(e.getMessage(), "WARNING")) {
-        return getResponseBuilder().showMsgInView(MessageType.WARNING,
-            OBMessageUtils.messageBD("Warning"),
-            StringUtils.replaceOnce(e.getMessage(), "WARNING", "")).build();
+        return getResponseBuilder()
+            .showMsgInView(MessageType.WARNING, OBMessageUtils.messageBD("Warning"),
+                StringUtils.replaceOnce(e.getMessage(), "WARNING", ""))
+            .build();
       }
-      return getResponseBuilder().showMsgInView(MessageType.ERROR,
-          OBMessageUtils.messageBD("Error"), e.getMessage()).build();
+      return getResponseBuilder()
+          .showMsgInView(MessageType.ERROR, OBMessageUtils.messageBD("Error"), e.getMessage())
+          .build();
     }
   }
 }

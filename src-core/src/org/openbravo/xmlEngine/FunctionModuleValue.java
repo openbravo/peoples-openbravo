@@ -25,6 +25,7 @@ class FunctionModuleValue extends FunctionEvaluationValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     log4jFunctionModuleValue.debug("Arg2: " + arg2Value.printSimple());
     log4jFunctionModuleValue.debug("Arg1: " + arg1Value.printSimple());
@@ -57,6 +58,7 @@ class FunctionModuleValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
     log4jFunctionModuleValue.debug("Arg2: " + arg2Value.printSimple());
     log4jFunctionModuleValue.debug("Arg1: " + arg1Value.printSimple());

@@ -54,8 +54,8 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
       final boolean isIncremental = params.getBoolean("IsIncremental");
       final boolean isUnitCost = params.getBoolean("IsUnitCost");
 
-      MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
-          strTransactionId);
+      MaterialTransaction transaction = OBDal.getInstance()
+          .get(MaterialTransaction.class, strTransactionId);
 
       if (transaction.getTransactionCost() == null) {
         JSONObject message = new JSONObject();
@@ -69,8 +69,8 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
           .getOrganizationStructureProvider(transaction.getClient().getId());
 
       // MCC= Manual Cost Correction
-      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-          osp.getLegalEntity(transaction.getOrganization()), "MCC");
+      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils
+          .insertCostAdjustmentHeader(osp.getLegalEntity(transaction.getOrganization()), "MCC");
 
       BigDecimal costAdjusted;
       if (isIncremental) {

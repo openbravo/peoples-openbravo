@@ -37,28 +37,33 @@ import net.sf.jasperreports.engine.JasperReport;
 public class RptC_Remittance extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       String strcRemittanceId = vars.getSessionValue("RptC_Remittance.inpcRemittanceId_R");
-      if (strcRemittanceId.equals(""))
+      if (strcRemittanceId.equals("")) {
         strcRemittanceId = vars.getSessionValue("RptC_Remittance.inpcRemittanceId");
+      }
       printPagePDF(response, vars, strcRemittanceId, vars.getLanguage());
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
       String strcRemittanceId, String language) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pdf");
+    }
 
     String strBaseDesign = getBaseDesignPath(language);
 
@@ -66,18 +71,20 @@ public class RptC_Remittance extends HttpSecureAppServlet {
 
     String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Remittance.jrxml";
 
-    if (strOutput.equals("pdf"))
+    if (strOutput.equals("pdf")) {
       response.setHeader("Content-disposition", "inline; filename=RptC_Remittance.pdf");
+    }
 
-    RptCRemittanceData[] data = RptCRemittanceData
-        .select(this, Utility.getContext(this, vars, "#User_Client", "RptC_RemittanceJR"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "RptC_RemittanceJR"),
-            strcRemittanceId);
+    RptCRemittanceData[] data = RptCRemittanceData.select(this,
+        Utility.getContext(this, vars, "#User_Client", "RptC_RemittanceJR"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "RptC_RemittanceJR"),
+        strcRemittanceId);
 
     JasperReport jasperReportLines;
     try {
-      jasperReportLines = ReportingUtils.getTranslatedJasperReport(this, strBaseDesign
-          + "/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml", vars.getLanguage());
+      jasperReportLines = ReportingUtils.getTranslatedJasperReport(this,
+          strBaseDesign + "/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml",
+          vars.getLanguage());
     } catch (JRException e) {
       e.printStackTrace();
       throw new ServletException(e.getMessage());
@@ -90,6 +97,7 @@ public class RptC_Remittance extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the RptCOrders seeker";
   } // End of getServletInfo() method

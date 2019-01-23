@@ -64,8 +64,8 @@ public class PriceAdjustment {
       BigDecimal qty, BigDecimal priceStd) {
     BigDecimal priceActual = priceStd;
     try {
-      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
-          .getPricePrecision().intValue();
+      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY)).getPricePrecision()
+          .intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, false)) {
         log.debug("promo: " + promo + "- " + promo.getDiscount());
@@ -78,8 +78,7 @@ public class PriceAdjustment {
           priceActual = promo.getFixedPrice();
         } else {
           if (applyDiscount) {
-            priceActual = priceActual
-                .subtract(promo.getDiscountAmount())
+            priceActual = priceActual.subtract(promo.getDiscountAmount())
                 .multiply(
                     BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))))
                 .setScale(precision, RoundingMode.HALF_UP);
@@ -107,8 +106,8 @@ public class PriceAdjustment {
       BigDecimal qty, BigDecimal priceActual) {
     BigDecimal priceStd = priceActual;
     try {
-      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
-          .getPricePrecision().intValue();
+      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY)).getPricePrecision()
+          .intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, true)) {
         boolean applyDiscount = true;
@@ -121,9 +120,10 @@ public class PriceAdjustment {
           // Avoids divide by zero error
           if (BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100)))
               .compareTo(BigDecimal.ZERO) != 0) {
-            priceStd = priceStd.add(promo.getDiscountAmount()).divide(
-                BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
-                precision, RoundingMode.HALF_UP);
+            priceStd = priceStd.add(promo.getDiscountAmount())
+                .divide(
+                    BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
+                    precision, RoundingMode.HALF_UP);
           } else {
             // 100 % Discount in price adjustment results in priceStd = Zero
             priceStd = BigDecimal.ZERO;
@@ -136,9 +136,9 @@ public class PriceAdjustment {
       log.debug("Std:" + priceActual + "->" + priceStd);
       return priceStd;
     } catch (Throwable t) {
-      log.error("Error calculating price std with adjustments, returning price actual ("
-          + priceActual + ") order/invoice:" + orderOrInvoice + " - product: " + product
-          + " - qty:" + qty);
+      log.error(
+          "Error calculating price std with adjustments, returning price actual (" + priceActual
+              + ") order/invoice:" + orderOrInvoice + " - product: " + product + " - qty:" + qty);
       return priceActual;
     }
   }

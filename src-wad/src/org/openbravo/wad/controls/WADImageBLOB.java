@@ -32,6 +32,7 @@ public class WADImageBLOB extends WADControl {
     initialize();
   }
 
+  @Override
   public void initialize() {
     addImport("searchs", "../../../../../web/js/searchs.js");
     generateJSCode();
@@ -39,8 +40,9 @@ public class WADImageBLOB extends WADControl {
 
   private void generateJSCode() {
     if (getData("IsMandatory").equals("Y")) {
-      XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-          "org/openbravo/wad/controls/WADImageJSValidation").createXmlDocument();
+      XmlDocument xmlDocument = getReportEngine()
+          .readXmlTemplate("org/openbravo/wad/controls/WADImageJSValidation")
+          .createXmlDocument();
 
       xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
       setValidation(replaceHTML(xmlDocument.print()));
@@ -48,17 +50,21 @@ public class WADImageBLOB extends WADControl {
     setCalloutJS();
   }
 
+  @Override
   public String getType() {
     return "Image";
   }
 
+  @Override
   public String editMode() {
     String[] discard = { "buttonxx" };
     if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y")
-        && !getData("IsUpdateable").equals("N"))
+        && !getData("IsUpdateable").equals("N")) {
       discard[0] = "paramInactive";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADImageBLOB", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADImageBLOB", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -69,12 +75,15 @@ public class WADImageBLOB extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String newMode() {
     String[] discard = { "buttonxx" };
-    if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y"))
+    if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y")) {
       discard[0] = "paramInactive";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADImageBLOB", discard).createXmlDocument();
+    }
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADImageBLOB", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -85,14 +94,16 @@ public class WADImageBLOB extends WADControl {
     return replaceHTML(xmlDocument.print());
   }
 
+  @Override
   public String toXml() {
     String[] discard = { "xx_PARAM", "xx_PARAM_R" };
     if (getData("IsParameter").equals("Y")) {
       discard[0] = "xx";
       discard[1] = "xx_R";
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADImageBLOBXML", discard).createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADImageBLOBXML", discard)
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());

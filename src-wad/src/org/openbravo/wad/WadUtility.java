@@ -46,8 +46,9 @@ class WadUtility {
   private static Map<String, String> referenceClassnameCache = new HashMap<String, String>();
 
   public static String getSQLWadContext(String code, Vector<Object> vecParameters) {
-    if (code == null || code.trim().equals(""))
+    if (code == null || code.trim().equals("")) {
       return "";
+    }
     String token;
     String strValue = code;
     StringBuffer strOut = new StringBuffer();
@@ -55,7 +56,8 @@ class WadUtility {
     int i = strValue.indexOf("@");
     String strAux, strAux1;
     while (i != -1) {
-      if (strValue.length() > (i + 5) && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
+      if (strValue.length() > (i + 5)
+          && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
         strValue = strValue.substring(i + 5, strValue.length());
       } else {
         // Delete the chain symbol
@@ -63,11 +65,13 @@ class WadUtility {
         if (strAux.substring(strAux.length() - 1).equals("'")) {
           strAux = strAux.substring(0, strAux.length() - 1);
           strOut.append(strAux);
-        } else
+        } else {
           strOut.append(strValue.substring(0, i));
+        }
         strAux1 = strAux;
-        if (strAux.substring(strAux.length() - 1).equals("("))
+        if (strAux.substring(strAux.length() - 1).equals("(")) {
           strAux = strAux.substring(0, strAux.length() - 1).toUpperCase().trim();
+        }
         if (strAux.length() > 3
             && strAux.substring(strAux.length() - 3, strAux.length()).equals(" IN")) {
           strAux = " type=\"replace\" optional=\"true\" after=\"" + strAux1 + "\" text=\"'" + i
@@ -78,8 +82,9 @@ class WadUtility {
         strValue = strValue.substring(i + 1, strValue.length());
 
         int j = strValue.indexOf("@");
-        if (j < 0)
+        if (j < 0) {
           return "";
+        }
 
         token = strValue.substring(0, j);
 
@@ -88,17 +93,19 @@ class WadUtility {
           modifier = token.substring(0, 1);
           token = token.substring(1, token.length());
         }
-        if (strAux.equals(""))
+        if (strAux.equals("")) {
           strOut.append("?");
-        else
+        } else {
           strOut.append("'" + i + "'");
+        }
         String parameter = "<Parameter name=\"" + token + "\"" + strAux + "/>";
         String paramElement[] = { parameter, modifier };
         vecParameters.addElement(paramElement);
         strValue = strValue.substring(j + 1, strValue.length());
         strAux = strValue.trim();
-        if (strAux.length() > 0 && strAux.substring(0, 1).indexOf("'") > -1)
+        if (strAux.length() > 0 && strAux.substring(0, 1).indexOf("'") > -1) {
           strValue = strAux.substring(1, strValue.length());
+        }
       }
       i = strValue.indexOf("@");
     }
@@ -109,8 +116,9 @@ class WadUtility {
   public static String getWadContext(String code, Vector<Object> vecFields,
       Vector<Object> vecAuxiliarFields, FieldsData[] parentsFieldsData, boolean isDefaultValue,
       String isSOTrx, String windowId) {
-    if (code == null || code.trim().equals(""))
+    if (code == null || code.trim().equals("")) {
       return "";
+    }
     String token;
     String strValue = code;
     StringBuffer strOut = new StringBuffer();
@@ -118,20 +126,23 @@ class WadUtility {
     int i = strValue.indexOf("@");
     String strAux;
     while (i != -1) {
-      if (strValue.length() > (i + 5) && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
+      if (strValue.length() > (i + 5)
+          && strValue.substring(i + 1, i + 5).equalsIgnoreCase("SQL=")) {
         strValue = strValue.substring(i + 5, strValue.length());
       } else {
         strValue = strValue.substring(i + 1, strValue.length());
 
         int j = strValue.indexOf("@");
-        if (j < 0)
+        if (j < 0) {
           return "";
+        }
 
         token = strValue.substring(0, j);
         strAux = getWadContextTranslate(token, vecFields, vecAuxiliarFields, parentsFieldsData,
             isDefaultValue, isSOTrx, windowId, true);
-        if (!strAux.trim().equals("") && strOut.toString().indexOf(strAux) == -1)
+        if (!strAux.trim().equals("") && strOut.toString().indexOf(strAux) == -1) {
           strOut.append(", " + strAux);
+        }
 
         strValue = strValue.substring(j + 1, strValue.length());
       }
@@ -143,8 +154,9 @@ class WadUtility {
   public static String getTextWadContext(String code, Vector<Object> vecFields,
       Vector<Object> vecAuxiliarFields, FieldsData[] parentsFieldsData, boolean isDefaultValue,
       String isSOTrx, String windowId) {
-    if (code == null || code.trim().equals(""))
+    if (code == null || code.trim().equals("")) {
       return "";
+    }
     String token;
     String strValue = code;
     StringBuffer strOut = new StringBuffer();
@@ -155,24 +167,30 @@ class WadUtility {
       String strFirstElement = getTextWadContext(strValue.substring(0, h), vecFields,
           vecAuxiliarFields, parentsFieldsData, isDefaultValue, isSOTrx, windowId);
       total.append("(");
-      if (strValue.substring(0, h).indexOf("@") == -1)
+      if (strValue.substring(0, h).indexOf("@") == -1) {
         total.append("(\"");
+      }
       total.append(strFirstElement);
-      if (strValue.substring(0, h).indexOf("@") == -1)
+      if (strValue.substring(0, h).indexOf("@") == -1) {
         total.append("\")");
+      }
       total.append(".equals(\"\")?(");
-      if (strValue.substring(h + 1).indexOf("@") == -1)
+      if (strValue.substring(h + 1).indexOf("@") == -1) {
         total.append("\"");
+      }
       total.append(getTextWadContext(strValue.substring(h + 1), vecFields, vecAuxiliarFields,
           parentsFieldsData, isDefaultValue, isSOTrx, windowId));
-      if (strValue.substring(h + 1).indexOf("@") == -1)
+      if (strValue.substring(h + 1).indexOf("@") == -1) {
         total.append("\"");
+      }
       total.append("):(");
-      if (strValue.substring(0, h).indexOf("@") == -1)
+      if (strValue.substring(0, h).indexOf("@") == -1) {
         total.append("\"");
+      }
       total.append(strFirstElement);
-      if (strValue.substring(0, h).indexOf("@") == -1)
+      if (strValue.substring(0, h).indexOf("@") == -1) {
         total.append("\"");
+      }
       total.append("))");
       return total.toString();
     }
@@ -183,8 +201,9 @@ class WadUtility {
       strValue = strValue.substring(i + 1, strValue.length());
 
       int j = strValue.indexOf("@");
-      if (j < 0)
+      if (j < 0) {
         return "";
+      }
 
       token = strValue.substring(0, j);
       strOut.append(getWadContextTranslate(token, vecFields, vecAuxiliarFields, parentsFieldsData,
@@ -199,14 +218,17 @@ class WadUtility {
   }
 
   private static String transformFieldName(String field) {
-    if (field == null || field.trim().equals(""))
+    if (field == null || field.trim().equals("")) {
       return "";
+    }
     int aux = field.toUpperCase().indexOf(" AS ");
-    if (aux != -1)
+    if (aux != -1) {
       return field.substring(aux + 3).trim();
+    }
     aux = field.lastIndexOf(".");
-    if (aux != -1)
+    if (aux != -1) {
       return field.substring(aux + 1).trim();
+    }
 
     return field.trim();
   }
@@ -215,8 +237,9 @@ class WadUtility {
     String strAux;
     for (int i = 0; i < vecFields.size(); i++) {
       strAux = transformFieldName((String) vecFields.elementAt(i));
-      if (strAux.equalsIgnoreCase(field))
+      if (strAux.equalsIgnoreCase(field)) {
         return true;
+      }
     }
     return false;
   }
@@ -225,26 +248,30 @@ class WadUtility {
       Vector<Object> vecAuxiliarFields, FieldsData[] parentsFieldsData, boolean isDefaultValue,
       String isSOTrx, String windowId, boolean dataMultiple) {
     if (token.substring(0, 1).indexOf("#") > -1 || token.substring(0, 1).indexOf("$") > -1) {
-      if (token.equalsIgnoreCase("#DATE"))
+      if (token.equalsIgnoreCase("#DATE")) {
         return "DateTimeData.today(this)";
-      // else return "vars.getSessionValue(\"" + token + "\")";
-      else
+        // else return "vars.getSessionValue(\"" + token + "\")";
+      } else {
         return "Utility.getContext(this, vars, \"" + token + "\", windowId)";
+      }
     } else {
       String aux = Sqlc.TransformaNombreColumna(token);
-      if (token.equalsIgnoreCase("ISSOTRX"))
+      if (token.equalsIgnoreCase("ISSOTRX")) {
         return ("\"" + isSOTrx + "\"");
+      }
       if (parentsFieldsData != null) {
         for (int i = 0; i < parentsFieldsData.length; i++) {
-          if (parentsFieldsData[i].name.equalsIgnoreCase(token))
+          if (parentsFieldsData[i].name.equalsIgnoreCase(token)) {
             return "strP" + parentsFieldsData[i].name;
+          }
         }
       }
       if (!isDefaultValue) {
         if (vecFields != null && findField(vecFields, token)) {
-          return (dataMultiple ? "((dataField!=null)?dataField.getField(\"" + aux
-              + "\"):((data==null || data.length==0)?\"\":data[0]." : "((data==null)?\"\":data.")
-              + "getField(\"" + aux + "\")))";
+          return (dataMultiple
+              ? "((dataField!=null)?dataField.getField(\"" + aux
+                  + "\"):((data==null || data.length==0)?\"\":data[0]."
+              : "((data==null)?\"\":data.") + "getField(\"" + aux + "\")))";
         } else if (vecAuxiliarFields != null && findField(vecAuxiliarFields, token)) {
           return "str" + token;
         }
@@ -254,21 +281,25 @@ class WadUtility {
   }
 
   public static boolean isInVector(Vector<Object> vec, String field) {
-    if (field == null || field.trim().equals(""))
+    if (field == null || field.trim().equals("")) {
       return false;
+    }
     for (int i = 0; i < vec.size(); i++) {
       String aux = (String) vec.elementAt(i);
-      if (aux.equalsIgnoreCase(field))
+      if (aux.equalsIgnoreCase(field)) {
         return true;
+      }
     }
     return false;
   }
 
   private static void saveVectorField(Vector<Object> vec, String field) {
-    if (field == null || field.trim().equals(""))
+    if (field == null || field.trim().equals("")) {
       return;
-    if (!isInVector(vec, field))
+    }
+    if (!isInVector(vec, field)) {
       vec.addElement(field);
+    }
   }
 
   public static String getComboReloadText(String token, Vector<Object> vecFields,
@@ -290,8 +321,9 @@ class WadUtility {
         if (i != -1) {
           String strAux = token.substring(0, i);
           token = token.substring(i + 1);
-          if (!strOut.toString().trim().equals(""))
+          if (!strOut.toString().trim().equals("")) {
             strOut.append(", ");
+          }
           strOut.append(getComboReloadTextTranslate(strAux, vecFields, parentsFieldsData,
               vecComboReload, prefix, columnname));
         }
@@ -305,23 +337,26 @@ class WadUtility {
   private static String getComboReloadTextTranslate(String token, Vector<Object> vecFields,
       FieldsData[] parentsFieldsData, Vector<Object> vecComboReload, String prefix,
       String columnname) {
-    if (token == null || token.trim().equals(""))
+    if (token == null || token.trim().equals("")) {
       return "";
-    if (!token.equalsIgnoreCase(columnname))
+    }
+    if (!token.equalsIgnoreCase(columnname)) {
       saveVectorField(vecComboReload, token);
+    }
     if (parentsFieldsData != null) {
       for (int i = 0; i < parentsFieldsData.length; i++) {
-        if (parentsFieldsData[i].name.equalsIgnoreCase(token))
-          return ((prefix.equals("")) ? ("\"" + parentsFieldsData[i].name + "\"") : ("\"" + prefix
-              + Sqlc.TransformaNombreColumna(parentsFieldsData[i].name) + "\""));
+        if (parentsFieldsData[i].name.equalsIgnoreCase(token)) {
+          return ((prefix.equals("")) ? ("\"" + parentsFieldsData[i].name + "\"")
+              : ("\"" + prefix + Sqlc.TransformaNombreColumna(parentsFieldsData[i].name) + "\""));
+        }
       }
     }
     if (vecFields != null && findField(vecFields, token)) {
-      return ((prefix.equals("")) ? ("\"" + token + "\"") : ("\"" + prefix
-          + Sqlc.TransformaNombreColumna(token) + "\""));
+      return ((prefix.equals("")) ? ("\"" + token + "\"")
+          : ("\"" + prefix + Sqlc.TransformaNombreColumna(token) + "\""));
     }
-    return ((prefix.equals("")) ? ("\"" + FormatUtilities.replace(token) + "\"") : ("\"" + prefix
-        + Sqlc.TransformaNombreColumna(token) + "\""));
+    return ((prefix.equals("")) ? ("\"" + FormatUtilities.replace(token) + "\"")
+        : ("\"" + prefix + Sqlc.TransformaNombreColumna(token) + "\""));
   }
 
   private static void setPropertyValue(Properties _prop, FieldProvider _field, String _name,
@@ -329,16 +364,19 @@ class WadUtility {
     String aux = "";
     try {
       aux = _field.getField(_fieldName);
-      if (aux == null || aux.equals(""))
+      if (aux == null || aux.equals("")) {
         aux = _defaultValue;
+      }
     } catch (Exception ex) {
-      if (_defaultValue == null)
+      if (_defaultValue == null) {
         throw new Exception("Inexistent field: " + _fieldName);
-      else
+      } else {
         aux = _defaultValue;
+      }
     }
-    if (aux != null)
+    if (aux != null) {
       _prop.setProperty(_name, aux);
+    }
   }
 
   public static WADControl getControl(ConnectionProvider conn, FieldProvider field,
@@ -353,8 +391,9 @@ class WadUtility {
       boolean isreadonly, String tabName, String adLanguage, XmlEngine xmlEngine,
       boolean isDisplayLogic, boolean isReloadObject, boolean isReadOnlyLogic,
       boolean hasParentsFields, boolean isReadOnlyDefinedTab) throws Exception {
-    if (field == null)
+    if (field == null) {
       return null;
+    }
     Properties prop = new Properties();
     setPropertyValue(prop, field, "ColumnName", "columnname", null);
     prop.setProperty("ColumnNameInp", Sqlc.TransformaNombreColumna(field.getField("columnname")));

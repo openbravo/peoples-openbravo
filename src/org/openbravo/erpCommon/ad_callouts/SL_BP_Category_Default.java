@@ -39,9 +39,9 @@ public class SL_BP_Category_Default extends SimpleCallout {
       try {
         OBContext.setAdminMode();
         info.addSelect("inpcBpGroupId");
-        OBCriteria<Category> bpCatCrit = OBDao.getFilteredCriteria(Category.class, Restrictions.in(
-            Category.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID,
-            new OrganizationStructureProvider().getNaturalTree(strOrgId)));
+        OBCriteria<Category> bpCatCrit = OBDao.getFilteredCriteria(Category.class,
+            Restrictions.in(Category.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID,
+                new OrganizationStructureProvider().getNaturalTree(strOrgId)));
         bpCatCrit.addOrderBy(Category.PROPERTY_NAME, true);
         String defaultCategoryId = getDefaultCategory(strOrgId);
         for (final Category bpCategory : bpCatCrit.list()) {
@@ -58,14 +58,16 @@ public class SL_BP_Category_Default extends SimpleCallout {
   private String getDefaultCategory(String strOrgId) {
     OBContext.setAdminMode();
     try {
-      OBCriteria<Category> bpCatCrit = OBDao.getFilteredCriteria(Category.class, Restrictions.eq(
-          Category.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID, strOrgId), Restrictions
-          .eq(Category.PROPERTY_DEFAULT, true));
+      OBCriteria<Category> bpCatCrit = OBDao.getFilteredCriteria(
+          Category.class, Restrictions
+              .eq(Category.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID, strOrgId),
+          Restrictions.eq(Category.PROPERTY_DEFAULT, true));
       List<Category> categories = bpCatCrit.list();
       if (categories.size() > 0) {
         return categories.get(0).getId();
       } else {
-        String parentOrg = OBContext.getOBContext().getOrganizationStructureProvider()
+        String parentOrg = OBContext.getOBContext()
+            .getOrganizationStructureProvider()
             .getParentOrg(strOrgId);
         if (parentOrg != null && !"".equals(parentOrg)) {
           return getDefaultCategory(parentOrg);

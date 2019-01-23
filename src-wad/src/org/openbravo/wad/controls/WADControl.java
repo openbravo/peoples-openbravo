@@ -46,26 +46,31 @@ public class WADControl {
   }
 
   public void setData(String name, String value) {
-    if (name == null)
+    if (name == null) {
       return;
-    if (this.data == null)
+    }
+    if (this.data == null) {
       this.data = new Hashtable<String, String>();
-    if (value == null || value.equals(""))
+    }
+    if (value == null || value.equals("")) {
       this.data.remove(name.toUpperCase());
-    else
+    } else {
       this.data.put(name.toUpperCase(), value);
+    }
   }
 
   public String getData(String name) {
     String aux = data.get(name.toUpperCase());
-    if (aux == null)
+    if (aux == null) {
       aux = "";
+    }
     return aux;
   }
 
   public void setInfo(Properties prop) {
-    if (prop == null)
+    if (prop == null) {
       return;
+    }
     for (Enumeration<?> e = prop.propertyNames(); e.hasMoreElements();) {
       String _name = (String) e.nextElement();
       setData(_name, prop.getProperty(_name));
@@ -93,8 +98,9 @@ public class WADControl {
   }
 
   public void addCSSImport(String name, String _data) {
-    if (css == null)
+    if (css == null) {
       css = new Vector<String[]>();
+    }
     String[] aux = new String[2];
     aux[0] = name;
     aux[1] = _data;
@@ -102,8 +108,9 @@ public class WADControl {
   }
 
   public void addImport(String name, String _data) {
-    if (imports == null)
+    if (imports == null) {
       imports = new Vector<String[]>();
+    }
     String[] aux = new String[2];
     aux[0] = name;
     aux[1] = _data;
@@ -111,8 +118,9 @@ public class WADControl {
   }
 
   public void addJSCode(String name, String _code) {
-    if (jsCode == null)
+    if (jsCode == null) {
       jsCode = new Vector<String[]>();
+    }
     String[] aux = new String[2];
     aux[0] = name;
     aux[1] = _code;
@@ -167,8 +175,9 @@ public class WADControl {
   private void generateJSCode() {
     addImport("ValidationTextBox", "../../../../../web/js/default/ValidationTextBox.js");
     if (getData("IsMandatory").equals("Y")) {
-      XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-          "org/openbravo/wad/controls/WADControlJSValidation").createXmlDocument();
+      XmlDocument xmlDocument = getReportEngine()
+          .readXmlTemplate("org/openbravo/wad/controls/WADControlJSValidation")
+          .createXmlDocument();
       xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
       setValidation(replaceHTML(xmlDocument.print()));
     }
@@ -178,8 +187,9 @@ public class WADControl {
   public void setCalloutJS() {
     String callout = getData("CallOutName");
     if (callout != null && !callout.equals("")) {
-      XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-          "org/openbravo/wad/controls/WADControlJS").createXmlDocument();
+      XmlDocument xmlDocument = getReportEngine()
+          .readXmlTemplate("org/openbravo/wad/controls/WADControlJS")
+          .createXmlDocument();
       xmlDocument.setParameter("calloutName", callout);
       xmlDocument.setParameter("calloutMapping", getData("CallOutMapping"));
       addJSCode("callout" + callout, replaceHTML(xmlDocument.print()));
@@ -188,31 +198,37 @@ public class WADControl {
 
   public String getOnChangeCode() {
     StringBuffer text = new StringBuffer();
-    if (getData("IsDisplayLogic").equals("Y"))
+    if (getData("IsDisplayLogic").equals("Y")) {
       text.append("displayLogic();");
-    if (getData("IsReadOnlyLogic").equals("Y"))
+    }
+    if (getData("IsReadOnlyLogic").equals("Y")) {
       text.append("readOnlyLogic();");
+    }
     String callout = getData("CallOutName");
     String isComboReload = getData("IsComboReload");
-    if (isComboReload == null || isComboReload.equals(""))
+    if (isComboReload == null || isComboReload.equals("")) {
       isComboReload = "N";
-    if (callout != null && !callout.equals(""))
+    }
+    if (callout != null && !callout.equals("")) {
       text.append("callout").append(callout).append("(this.name);");
-    if (isComboReload.equals("Y"))
+    }
+    if (isComboReload.equals("Y")) {
       text.append("reloadComboReloads").append(getData("AD_Tab_ID")).append("(this.name);");
+    }
     return text.toString();
   }
 
   public String editMode() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADControl").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADControl")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData(
-        "IsUpdateable").equals("N"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y")
+        || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
 
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
@@ -229,15 +245,17 @@ public class WADControl {
   }
 
   public String newMode() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADControl").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADControl")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
 
-    boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
+    boolean isDisabled = (getData("IsReadOnly").equals("Y")
+        || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled ? "Y" : "N"));
     if (!isDisabled && getData("IsMandatory").equals("Y")) {
       xmlDocument.setParameter("required", "true");
@@ -253,12 +271,14 @@ public class WADControl {
   }
 
   public String getType() {
-    if (getData("IsDisplayed").equals("N"))
+    if (getData("IsDisplayed").equals("N")) {
       return "Hidden";
-    else
+    } else {
       return "TextBox";
+    }
   }
 
+  @Override
   public String toString() {
     StringBuffer text = new StringBuffer();
     if (getData("IsDisplayed").equals("N")) {
@@ -275,12 +295,14 @@ public class WADControl {
   }
 
   public String toLabel() {
-    if (getData("AD_Reference_ID").equals("28"))
+    if (getData("AD_Reference_ID").equals("28")) {
       return "";
+    }
     String[] discard = { "isNotLinkable" };
     String isLinkable = getData("IsLinkable");
-    if (isLinkable == null || !isLinkable.equals("Y"))
+    if (isLinkable == null || !isLinkable.equals("Y")) {
       discard[0] = "isLinkable";
+    }
 
     createWADLabelControl();
     WadControlLabelBuilder builder = new WadControlLabelBuilder(label);
@@ -322,12 +344,14 @@ public class WADControl {
   private void createWADLabelControl() {
     String column = getData("ColumnName");
     String labelText = getData("ColumnLabelText");
-    if (labelText.trim().equals(""))
+    if (labelText.trim().equals("")) {
       labelText = column;
+    }
     String columnId = getData("AdColumnId");
     String columnLink = getData("ColumnNameLabel");
-    if (columnLink == null || columnLink.equals(""))
+    if (columnLink == null || columnLink.equals("")) {
       columnLink = getData("ColumnName");
+    }
     label = new WADLabelControl(WADLabelControl.FIELD_LABEL, null, null, columnId, column, null,
         null, getData("IsLinkable"), getData("KeyColumnName"), getData("ColumnNameInp"),
         getData("AD_Table_ID"), columnLink);
@@ -374,8 +398,9 @@ public class WADControl {
    * Returns HTML needed for hidden fields
    */
   public String getHiddenHTML() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADHidden").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADHidden")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -387,8 +412,9 @@ public class WADControl {
    * Returns XML needed for hidden fields
    */
   public String getHiddenXML() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
-        "org/openbravo/wad/controls/WADHiddenXML").createXmlDocument();
+    XmlDocument xmlDocument = getReportEngine()
+        .readXmlTemplate("org/openbravo/wad/controls/WADHiddenXML")
+        .createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     return replaceHTML(xmlDocument.print());

@@ -54,6 +54,7 @@ import org.openbravo.model.ad.ui.WindowTrl;
 public class ReferencedLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
@@ -68,8 +69,9 @@ public class ReferencedLink extends HttpSecureAppServlet {
    *          HTTP response object to handle possible redirects
    */
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     try {
       OBContext.setAdminMode(true);
       VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -80,8 +82,9 @@ public class ReferencedLink extends HttpSecureAppServlet {
         PrintWriter out = response.getWriter();
         out.print(getJSON(vars).toString());
         out.close();
-      } else
+      } else {
         throw new ServletException();
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -111,8 +114,8 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
       // Special case, find the real recordId for the language case
       if (entity.getName().equals(Language.ENTITY_NAME)) {
-        final OBQuery<Language> languages = OBDal.getInstance().createQuery(Language.class,
-            Language.PROPERTY_LANGUAGE + "=:recordId");
+        final OBQuery<Language> languages = OBDal.getInstance()
+            .createQuery(Language.class, Language.PROPERTY_LANGUAGE + "=:recordId");
         Map<String, Object> parameters = new HashMap<>(1);
         parameters.put("recordId", recordId);
         languages.setNamedParameters(parameters);
@@ -299,8 +302,8 @@ public class ReferencedLink extends HttpSecureAppServlet {
 
   public static String applyRules(String fieldId, String strTableReferenceId, Entity obEntity,
       String strKeyReferenceId, boolean fieldRules, boolean hasKeyReferenceId) {
-    OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance().createCriteria(
-        TableNavigation.class);
+    OBCriteria<TableNavigation> tableNavigationCriteria = OBDal.getInstance()
+        .createCriteria(TableNavigation.class);
     tableNavigationCriteria.add(Restrictions.eq("table.id", strTableReferenceId));
     if (fieldRules) {
       Field field = OBDal.getInstance().get(Field.class, fieldId);
@@ -319,8 +322,8 @@ public class ReferencedLink extends HttpSecureAppServlet {
         String hqlWhere = "AS e WHERE e.id = :strKeyReferenceId AND ( "
             + tableNavigation.getHQLLogic() + " )";
 
-        final OBQuery<BaseOBObject> query = OBDal.getInstance().createQuery(obEntity.getName(),
-            hqlWhere);
+        final OBQuery<BaseOBObject> query = OBDal.getInstance()
+            .createQuery(obEntity.getName(), hqlWhere);
         query.setNamedParameter("strKeyReferenceId", strKeyReferenceId);
 
         query.setMaxResult(1);

@@ -31,13 +31,15 @@ import org.openbravo.erpCommon.utility.reporting.DocumentType;
 @SuppressWarnings("serial")
 public class PrintPayments extends PrintController {
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     DocumentType documentType = DocumentType.PAYMENT;
@@ -47,12 +49,14 @@ public class PrintPayments extends PrintController {
     String strDocumentId = null;
 
     strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpfinPaymentId_R");
-    if (strDocumentId.equals(""))
+    if (strDocumentId.equals("")) {
       strDocumentId = vars.getSessionValue(sessionValuePrefix + ".inpfinPaymentId");
+    }
 
     post(request, response, vars, documentType, sessionValuePrefix, strDocumentId);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that processes the print action";
   } // End of getServletInfo() method

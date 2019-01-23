@@ -48,13 +48,15 @@ public class AccountElementValue extends HttpSecureAppServlet {
   private static final RequestFilter columnFilter = new ValueListFilter(colNames);
   private static final RequestFilter directionFilter = new ValueListFilter("asc", "desc");
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strWindowId = vars.getStringParameter("WindowID");
@@ -68,12 +70,14 @@ public class AccountElementValue extends HttpSecureAppServlet {
       if (strAcctSchema.equals("")) {
         strAcctSchema = Utility.getContext(this, vars, "$C_AcctSchema_ID", "AccountElementValue");
         vars.setSessionValue("AccountElementValue.cAcctschemaId", strAcctSchema);
-      } else
+      } else {
         vars.setSessionValue("$C_AcctSchema_ID", strAcctSchema);
+      }
 
       vars.removeSessionValue("AccountElementValue.value");
-      if (!strNameValue.equals(""))
+      if (!strNameValue.equals("")) {
         vars.setSessionValue("AccountElementValue.name", strNameValue + "%");
+      }
 
       String strValue = vars.getGlobalVariable("inpValue", "AccountElementValue.value", "");
       String strName = vars.getGlobalVariable("inpName", "AccountElementValue.name", "");
@@ -81,8 +85,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
     } else if (vars.commandIn("STRUCTURE")) {
       printGridStructure(response, vars);
     } else if (vars.commandIn("DATA")) {
-      if (vars.getStringParameter("newFilter").equals("1"))
+      if (vars.getStringParameter("newFilter").equals("1")) {
         clearSessionValues(vars);
+      }
       String strWindowId = vars.getStringParameter("WindowID");
       String strAcctSchema = vars.getSessionValue(strWindowId + "|C_AcctSchema_ID");
       if (strAcctSchema.equals("")) {
@@ -92,8 +97,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
       if (strAcctSchema.equals("")) {
         strAcctSchema = Utility.getContext(this, vars, "$C_AcctSchema_ID", "AccountElementValue");
         vars.setSessionValue("AccountElementValue.cAcctschemaId", strAcctSchema);
-      } else
+      } else {
         vars.setSessionValue("$C_AcctSchema_ID", strAcctSchema);
+      }
       String strValue = vars.getGlobalVariable("inpValue", "AccountElementValue.value", "");
       String strName = vars.getGlobalVariable("inpName", "AccountElementValue.name", "");
       String strOrganization = vars.getStringParameter("inpOrganization");
@@ -124,18 +130,22 @@ public class AccountElementValue extends HttpSecureAppServlet {
           Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue + "%");
       if (data != null && data.length == 1) {
         printPageKey(response, vars, data);
-      } else
+      } else {
         printPage(response, vars, strKeyValue + "%", "", "", strAcctSchema, true);
-    } else
+      }
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageKey(HttpServletResponse response, VariablesSecureApp vars,
       AccountElementValueData[] data) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: AccountElementValue seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/SearchUniqueKeyResponse").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/SearchUniqueKeyResponse")
+        .createXmlDocument();
 
     xmlDocument.setParameter("script", generateResult(data));
     response.setContentType("text/html; charset=UTF-8");
@@ -144,8 +154,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     out.close();
   }
 
-  private String generateResult(AccountElementValueData[] data) throws IOException,
-      ServletException {
+  private String generateResult(AccountElementValueData[] data)
+      throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
     html.append("\nfunction validateSelector() {\n");
@@ -160,14 +170,16 @@ public class AccountElementValue extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strValue,
       String strName, String strElementValue, String strAcctSchema, boolean isDefault)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Frame 1 of the AccountElementValues seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/info/AccountElementValue").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/info/AccountElementValue")
+        .createXmlDocument();
     AccountElementValueData[] data = null;
     if (isDefault) {
-      data = AccountElementValueData.set(
-          strValue.equals("") && strName.equals("") ? "%" : strValue, strName);
+      data = AccountElementValueData.set(strValue.equals("") && strName.equals("") ? "%" : strValue,
+          strName);
     } else {
       data = AccountElementValueData.select(this, "1", "", "", "", "", strElementValue,
           Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
@@ -194,11 +206,12 @@ public class AccountElementValue extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("orgs", vars.getStringParameter("inpAD_Org_ID"));
     xmlDocument.setParameter("inpcAcctSchemaId", strAcctSchema);
-    if ("".equals(strAcctSchema))
+    if ("".equals(strAcctSchema)) {
       xmlDocument.setParameter("inpcAcctSchema", "");
-    else
+    } else {
       xmlDocument.setParameter("inpcAcctSchema",
           AccountElementValueData.selectschemaname(this, strAcctSchema));
+    }
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");
     xmlDocument.setParameter("grid_SortCols", "1");
@@ -213,10 +226,12 @@ public class AccountElementValue extends HttpSecureAppServlet {
 
   private void printGridStructure(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page structure");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure")
+        .createXmlDocument();
 
     SQLReturnObject[] data = getHeaders(vars);
     String type = "Hidden";
@@ -231,8 +246,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(xmlDocument.print());
+    }
     out.println(xmlDocument.print());
     out.close();
   }
@@ -250,8 +266,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
       dataAux.setData("isidentifier", (colNames[i].equals("ROWKEY") ? "true" : "false"));
       dataAux.setData("iskey", (colNames[i].equals("ROWKEY") ? "true" : "false"));
       dataAux.setData("isvisible", (colNames[i].endsWith("_ID") ? "false" : "true"));
-      String name = Utility
-          .messageBD(this, "ACCS_" + colNames[i].toUpperCase(), vars.getLanguage());
+      String name = Utility.messageBD(this, "ACCS_" + colNames[i].toUpperCase(),
+          vars.getLanguage());
       dataAux.setData("name", (name.startsWith("ACCS_") ? colNames[i] : name));
       dataAux.setData("type", "string");
       dataAux.setData("width", colWidths[i]);
@@ -262,13 +278,14 @@ public class AccountElementValue extends HttpSecureAppServlet {
     return data;
   }
 
-  private void printGridData(HttpServletResponse response, VariablesSecureApp vars,
-      String strValue, String strName, String strOrganization, String strAccountElementValue,
-      String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
-      String strNewFilter, String strAcctSchema) throws IOException, ServletException {
+  private void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strValue,
+      String strName, String strOrganization, String strAccountElementValue, String strOrderCols,
+      String strOrderDirs, String strOffset, String strPageSize, String strNewFilter,
+      String strAcctSchema) throws IOException, ServletException {
     String localStrNewFilter = strNewFilter;
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: print page rows");
+    }
     int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -340,30 +357,36 @@ public class AccountElementValue extends HttpSecureAppServlet {
         } else {
           type = myError.getType();
           title = myError.getTitle();
-          if (!myError.getMessage().startsWith("<![CDATA["))
+          if (!myError.getMessage().startsWith("<![CDATA[")) {
             description = "<![CDATA[" + myError.getMessage() + "]]>";
-          else
+          } else {
             description = myError.getMessage();
+          }
         }
       } catch (Exception e) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Error obtaining rows data");
+        }
         type = "Error";
         title = "Error";
-        if (e.getMessage().startsWith("<![CDATA["))
+        if (e.getMessage().startsWith("<![CDATA[")) {
           description = "<![CDATA[" + e.getMessage() + "]]>";
-        else
+        } else {
           description = e.getMessage();
+        }
         e.printStackTrace();
       }
     }
 
-    if (!type.startsWith("<![CDATA["))
+    if (!type.startsWith("<![CDATA[")) {
       type = "<![CDATA[" + type + "]]>";
-    if (!title.startsWith("<![CDATA["))
+    }
+    if (!title.startsWith("<![CDATA[")) {
       title = "<![CDATA[" + title + "]]>";
-    if (!description.startsWith("<![CDATA["))
+    }
+    if (!description.startsWith("<![CDATA[")) {
       description = "<![CDATA[" + description + "]]>";
+    }
     StringBuffer strRowsData = new StringBuffer();
     strRowsData.append("<xml-data>\n");
     strRowsData.append("  <status>\n");
@@ -371,7 +394,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     strRowsData.append("    <title>").append(title).append("</title>\n");
     strRowsData.append("    <description>").append(description).append("</description>\n");
     strRowsData.append("  </status>\n");
-    strRowsData.append("  <rows numRows=\"").append(strNumRows)
+    strRowsData.append("  <rows numRows=\"")
+        .append(strNumRows)
         .append("\" backendPage=\"" + page + "\">\n");
     if (data != null && data.length > 0) {
       for (int j = 0; j < data.length; j++) {
@@ -381,18 +405,28 @@ public class AccountElementValue extends HttpSecureAppServlet {
           String columnname = headers[k].getField("columnname");
 
           if ((data[j].getField(columnname)) != null) {
-            if (headers[k].getField("adReferenceId").equals("32"))
+            if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/");
-            strRowsData.append(data[j].getField(columnname).replaceAll("<b>", "")
-                .replaceAll("<B>", "").replaceAll("</b>", "").replaceAll("</B>", "")
-                .replaceAll("<i>", "").replaceAll("<I>", "").replaceAll("</i>", "")
-                .replaceAll("</I>", "").replaceAll("<p>", "&nbsp;").replaceAll("<P>", "&nbsp;")
-                .replaceAll("<br>", "&nbsp;").replaceAll("<BR>", "&nbsp;"));
+            }
+            strRowsData.append(data[j].getField(columnname)
+                .replaceAll("<b>", "")
+                .replaceAll("<B>", "")
+                .replaceAll("</b>", "")
+                .replaceAll("</B>", "")
+                .replaceAll("<i>", "")
+                .replaceAll("<I>", "")
+                .replaceAll("</i>", "")
+                .replaceAll("</I>", "")
+                .replaceAll("<p>", "&nbsp;")
+                .replaceAll("<P>", "&nbsp;")
+                .replaceAll("<br>", "&nbsp;")
+                .replaceAll("<BR>", "&nbsp;"));
           } else {
             if (headers[k].getField("adReferenceId").equals("32")) {
               strRowsData.append(strReplaceWith).append("/images/blank.gif");
-            } else
+            } else {
               strRowsData.append("&nbsp;");
+            }
           }
           strRowsData.append("]]></td>\n");
         }
@@ -405,8 +439,9 @@ public class AccountElementValue extends HttpSecureAppServlet {
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug(strRowsData.toString());
+    }
     out.print(strRowsData.toString());
     out.close();
   }
@@ -415,6 +450,7 @@ public class AccountElementValue extends HttpSecureAppServlet {
     vars.removeSessionValue("");
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents que AccountElementValues seeker";
   } // end of getServletInfo() method

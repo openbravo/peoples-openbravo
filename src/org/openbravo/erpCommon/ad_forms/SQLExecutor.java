@@ -39,8 +39,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SQLExecutor extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -116,8 +117,9 @@ public class SQLExecutor extends HttpSecureAppServlet {
       String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "SQLExecutor");
       int intRecordRange = strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange);
       int initRecord = (strInitRecord.equals("") ? 0 : Integer.parseInt(strInitRecord));
-      if (initRecord == 0)
+      if (initRecord == 0) {
         initRecord = 1;
+      }
       initRecord += intRecordRange;
       strInitRecord = ((initRecord < 0) ? "0" : Integer.toString(initRecord));
       vars.setSessionValue("SQLExecutor|initRecordNumber", strInitRecord);
@@ -128,8 +130,9 @@ public class SQLExecutor extends HttpSecureAppServlet {
       String strInitRecord = lastRange(vars, strSQL, strRecordRange);
       vars.setSessionValue("SQLExecutor|initRecordNumber", strInitRecord);
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void showErrorMessage(VariablesSecureApp vars, Exception ex) {
@@ -152,16 +155,18 @@ public class SQLExecutor extends HttpSecureAppServlet {
       initRecord += Integer.parseInt(strRecordRange);
     }
     initRecord -= Integer.parseInt(strRecordRange);
-    if (initRecord < 0)
+    if (initRecord < 0) {
       initRecord = 0;
+    }
     return Integer.toString(initRecord);
 
   }
 
   private void printExcel(HttpServletResponse response, VariablesSecureApp vars, String strSQL,
       SQLExecutor_Query[] data) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/SQLExecutor_Excel").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/SQLExecutor_Excel")
+        .createXmlDocument();
     SQLExecutorData[] dataHeader = null;
     StringBuffer dataBuffer = new StringBuffer();
     if (data != null && data.length != 0) {
@@ -193,8 +198,9 @@ public class SQLExecutor extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSQL,
       SQLExecutor_Query[] data, String strInitRecord, int initRecordNumber, int intRecordRange)
       throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_forms/SQLExecutor").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_forms/SQLExecutor")
+        .createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("sql", strSQL);
@@ -258,6 +264,7 @@ public class SQLExecutor extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for the standard SQL execution";
   }

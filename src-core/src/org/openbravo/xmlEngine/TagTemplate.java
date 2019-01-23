@@ -101,6 +101,7 @@ class TagTemplate implements XmlComponentTemplate {
     }
   }
 
+  @Override
   public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
     return new TagValue(this, xmlDocument);
   }

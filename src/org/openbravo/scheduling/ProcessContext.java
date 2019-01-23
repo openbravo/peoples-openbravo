@@ -229,6 +229,7 @@ public class ProcessContext {
   /**
    * @return a JSON string representation of this obContext
    */
+  @Override
   public String toString() {
     XStream xstream = new XStream(new JettisonMappedXmlDriver());
     return xstream.toXML(this);

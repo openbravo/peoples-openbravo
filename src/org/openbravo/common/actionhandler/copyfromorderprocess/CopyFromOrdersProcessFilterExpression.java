@@ -54,11 +54,12 @@ public class CopyFromOrdersProcessFilterExpression implements FilterExpression {
   }
 
   private String getLegalEntityId(String organizationId) {
-    final Organization organization = OBDal.getInstance().getProxy(Organization.class,
-        organizationId);
+    final Organization organization = OBDal.getInstance()
+        .getProxy(Organization.class, organizationId);
     return OBContext.getOBContext()
         .getOrganizationStructureProvider(organization.getClient().getId())
-        .getLegalEntity(organization).getId();
+        .getLegalEntity(organization)
+        .getId();
   }
 
   private boolean calculateSoTrxField(Map<String, String> requestMap) {

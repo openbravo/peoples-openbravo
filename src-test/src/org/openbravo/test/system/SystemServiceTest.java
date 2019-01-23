@@ -55,8 +55,8 @@ public class SystemServiceTest extends OBBaseTest {
     // check one day in the future to prevent date/time rounding issues
     final Date tomorrow = new Date(System.currentTimeMillis() + ONEDAY);
     for (DataSet ds : dss) {
-      assertFalse("Fails on dataset " + ds.getName() + " checking date " + tomorrow, DataSetService
-          .getInstance().hasChanged(ds, tomorrow));
+      assertFalse("Fails on dataset " + ds.getName() + " checking date " + tomorrow,
+          DataSetService.getInstance().hasChanged(ds, tomorrow));
     }
 
     // pick smallest possible date in past to ensure that there is always a change in some dataset
@@ -66,8 +66,8 @@ public class SystemServiceTest extends OBBaseTest {
       if (!DataSetService.getInstance().hasData(ds)) {
         continue;
       }
-      assertTrue("Fails on dataset " + ds.getName() + " checking date " + past, DataSetService
-          .getInstance().hasChanged(ds, past));
+      assertTrue("Fails on dataset " + ds.getName() + " checking date " + past,
+          DataSetService.getInstance().hasChanged(ds, past));
     }
   }
 

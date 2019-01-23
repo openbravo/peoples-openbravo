@@ -37,8 +37,8 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ShipmentInOutLine.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ShipmentInOutLine.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -78,14 +78,14 @@ public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
   }
 
   private void checkShipmentOrderRelation(ShipmentInOutLine shipmentInOutLine) {
-    OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance().createCriteria(
-        ShipmentInOutLine.class);
+    OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance()
+        .createCriteria(ShipmentInOutLine.class);
     criteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT,
         shipmentInOutLine.getShipmentReceipt()));
 
     if (criteria.count() == 1) {
-      ShipmentInOut shipmentInOut = OBDal.getInstance().get(ShipmentInOut.class,
-          shipmentInOutLine.getShipmentReceipt().getId());
+      ShipmentInOut shipmentInOut = OBDal.getInstance()
+          .get(ShipmentInOut.class, shipmentInOutLine.getShipmentReceipt().getId());
       if (shipmentInOut != null) {
         shipmentInOut.setSalesOrder(null);
         OBDal.getInstance().save(shipmentInOut);

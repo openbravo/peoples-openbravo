@@ -36,10 +36,8 @@ public class JavaPackageChecker extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
     String strPackage = info.getStringParameter("inpjavapackage", null);
     if (!isValidName(strPackage)) {
-      info.addResult(
-          "WARNING",
-          Utility.messageBD(this, "javaPackageError", OBContext.getOBContext().getLanguage()
-              .getLanguage()));
+      info.addResult("WARNING", Utility.messageBD(this, "javaPackageError",
+          OBContext.getOBContext().getLanguage().getLanguage()));
     }
   }
 

@@ -150,16 +150,16 @@ public abstract class WidgetProvider {
       aboutFieldDefinitions.put(MODULEDBPREFIX, moduleDBPrefixList);
       aboutFieldDefinitions.put(MODULELICENSETYPE, widgetClass.getModule().getLicenseType());
       aboutFieldDefinitions.put(MODULEUPDATEINFO,
-          widgetClass.getModule().getUpdateInformation() == null ? "" : widgetClass.getModule()
-              .getUpdateInformation());
+          widgetClass.getModule().getUpdateInformation() == null ? ""
+              : widgetClass.getModule().getUpdateInformation());
       aboutFieldDefinitions.put(MODULELICENSETEXT,
-          widgetClass.getModule().getLicenseText() == null ? "" : widgetClass.getModule()
-              .getLicenseText());
-      aboutFieldDefinitions.put(MODULEAUTHOR, widgetClass.getModule().getAuthor() == null ? ""
-          : widgetClass.getModule().getAuthor());
+          widgetClass.getModule().getLicenseText() == null ? ""
+              : widgetClass.getModule().getLicenseText());
+      aboutFieldDefinitions.put(MODULEAUTHOR,
+          widgetClass.getModule().getAuthor() == null ? "" : widgetClass.getModule().getAuthor());
       aboutFieldDefinitions.put(TITLE, MyOBUtils.getWidgetTitle(widgetClass));
-      aboutFieldDefinitions.put(DESCRIPTION, widgetClass.getDescription() == null ? ""
-          : widgetClass.getDescription());
+      aboutFieldDefinitions.put(DESCRIPTION,
+          widgetClass.getDescription() == null ? "" : widgetClass.getDescription());
       aboutFieldDefinitions.put(SUPERCLASSTITLE, widgetClass.getWidgetSuperclass() == null ? ""
           : MyOBUtils.getWidgetTitle(widgetClass.getWidgetSuperclass()));
       aboutFieldDefinitions.put(DATAACCESSLEVEL, widgetClass.getDataAccessLevel());
@@ -200,11 +200,12 @@ public abstract class WidgetProvider {
         } else {
           reference = parameter.getReference();
         }
-        if (reference.getName().equals("Text") || reference.getName().equals("Memo"))
+        if (reference.getName().equals("Text") || reference.getName().equals("Memo")) {
           fieldDefinition.put(PARAMETERCOLSPAN, 2);
+        }
 
-        final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-            reference);
+        final UIDefinition uiDefinition = UIDefinitionController.getInstance()
+            .getUIDefinition(reference);
         fieldDefinition.put(PARAMETERTYPE, uiDefinition.getName());
 
         try {
@@ -329,8 +330,8 @@ public abstract class WidgetProvider {
   private static Object getComboBoxData(Reference reference) {
     OBContext.setAdminMode();
     try {
-      final UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(
-          reference);
+      final UIDefinition uiDefinition = UIDefinitionController.getInstance()
+          .getUIDefinition(reference);
 
       if (uiDefinition instanceof EnumUIDefinition) {
         return getComboBoxData((EnumUIDefinition) uiDefinition);
@@ -348,7 +349,8 @@ public abstract class WidgetProvider {
 
   private static Object getComboBoxData(FKComboUIDefinition fkComboUIDefinition) throws Exception {
     // FIXME: Revisit this method later. Not all foreign keys have a ADReferenceTable.
-    final ReferencedTable refTable = fkComboUIDefinition.getReference().getADReferencedTableList()
+    final ReferencedTable refTable = fkComboUIDefinition.getReference()
+        .getADReferencedTableList()
         .get(0);
     final Entity entity = ModelProvider.getInstance().getEntity(refTable.getTable().getName());
 
@@ -377,19 +379,18 @@ public abstract class WidgetProvider {
       }
       orderBy = sb.toString();
     }
-    final String whereOrderByClause = (refTable.getHqlwhereclause() != null ? refTable
-        .getHqlwhereclause() : "") + " order by " + orderBy;
-    final OBQuery<BaseOBObject> obQuery = OBDal.getInstance().createQuery(entity.getName(),
-        whereOrderByClause);
+    final String whereOrderByClause = (refTable.getHqlwhereclause() != null
+        ? refTable.getHqlwhereclause()
+        : "") + " order by " + orderBy;
+    final OBQuery<BaseOBObject> obQuery = OBDal.getInstance()
+        .createQuery(entity.getName(), whereOrderByClause);
     final List<JSONObject> values = new ArrayList<JSONObject>();
     for (BaseOBObject bob : obQuery.list()) {
       final JSONObject dataJSONObject = new JSONObject();
       dataJSONObject.put(JsonConstants.ID, bob.getId());
-      dataJSONObject
-          .put(
-              JsonConstants.IDENTIFIER,
-              (displayProperty != null ? bob.getValue(displayProperty.getName()) : bob
-                  .getIdentifier()));
+      dataJSONObject.put(JsonConstants.IDENTIFIER,
+          (displayProperty != null ? bob.getValue(displayProperty.getName())
+              : bob.getIdentifier()));
       values.add(dataJSONObject);
     }
     return values;
@@ -418,7 +419,8 @@ public abstract class WidgetProvider {
     }
 
     final String readReferenceHql = "select searchKey, name from ADList where reference.id=:referenceId";
-    final Query<Object[]> readReferenceQry = OBDal.getInstance().getSession()
+    final Query<Object[]> readReferenceQry = OBDal.getInstance()
+        .getSession()
         .createQuery(readReferenceHql, Object[].class);
     readReferenceQry.setParameter("referenceId", referenceId);
     for (Object[] row : readReferenceQry.list()) {

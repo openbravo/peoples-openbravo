@@ -95,6 +95,7 @@ public class DalWebService implements WebService {
    * @param response
    *          the HttpServletResponse
    */
+  @Override
   public void doGet(String path, HttpServletRequest request, HttpServletResponse response)
       throws Exception {
     final String segment = WebServiceUtil.getInstance().getFirstSegment(path);
@@ -152,8 +153,8 @@ public class DalWebService implements WebService {
         }
 
         SessionInfo.setQueryProfile("xmlWebService");
-        final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
-            whereOrderByClause);
+        final OBQuery<BaseOBObject> obq = OBDal.getInstance()
+            .createQuery(entityName, whereOrderByClause);
 
         if (request.getParameter(PARAMETER_NO_ACTIVE_FILTER) != null
             && request.getParameter(PARAMETER_NO_ACTIVE_FILTER).equals("true")) {
@@ -164,16 +165,16 @@ public class DalWebService implements WebService {
           try {
             obq.setFirstResult(Integer.parseInt(firstResult));
           } catch (NumberFormatException e) {
-            throw new InvalidRequestException("Value of firstResult parameter is not an integer: "
-                + firstResult);
+            throw new InvalidRequestException(
+                "Value of firstResult parameter is not an integer: " + firstResult);
           }
         }
         if (maxResult != null) {
           try {
             obq.setMaxResult(Integer.parseInt(maxResult));
           } catch (NumberFormatException e) {
-            throw new InvalidRequestException("Value of maxResult parameter is not an integer: "
-                + firstResult);
+            throw new InvalidRequestException(
+                "Value of maxResult parameter is not an integer: " + firstResult);
           }
         }
 
@@ -231,16 +232,16 @@ public class DalWebService implements WebService {
           }
         }
       } else {
-        final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
-            ID + " = :bobId");
+        final OBQuery<BaseOBObject> obq = OBDal.getInstance()
+            .createQuery(entityName, ID + " = :bobId");
         obq.setNamedParameter("bobId", id);
         obq.setFilterOnActive(false);
         obq.setMaxResult(1);
         final BaseOBObject result = obq.uniqueResult();
 
         if (result == null) {
-          throw new ResourceNotFoundException("No resource found for entity " + entityName
-              + " using id " + id);
+          throw new ResourceNotFoundException(
+              "No resource found for entity " + entityName + " using id " + id);
         }
         final StringWriter sw = new StringWriter();
         final EntityXMLConverter exc = EntityXMLConverter.newInstance();
@@ -265,8 +266,9 @@ public class DalWebService implements WebService {
         throw new OBException(
             "The templates expect an url to end with dal/, the current url ends with just dal (without the /)");
       }
-      final String templatedXml = WebServiceUtil.getInstance().applyTemplate(xml,
-          this.getClass().getResourceAsStream(request.getParameter("template")), url);
+      final String templatedXml = WebServiceUtil.getInstance()
+          .applyTemplate(xml, this.getClass().getResourceAsStream(request.getParameter("template")),
+              url);
       response.setContentType("text/html;charset=UTF-8");
       final Writer w = response.getWriter();
       w.write(templatedXml);
@@ -384,6 +386,7 @@ public class DalWebService implements WebService {
    * @param response
    *          the HttpServletResponse
    */
+  @Override
   public void doPost(String path, HttpServletRequest request, HttpServletResponse response) {
     doChangeAction(path, request, response, ChangeAction.CREATE);
   }
@@ -400,6 +403,7 @@ public class DalWebService implements WebService {
    * @param response
    *          the HttpServletResponse
    */
+  @Override
   public void doDelete(String path, HttpServletRequest request, HttpServletResponse response) {
 
     // check if the url points to a specific business object, if so remove
@@ -416,8 +420,9 @@ public class DalWebService implements WebService {
       OBDal.getInstance().remove(result);
       OBDal.getInstance().commitAndClose();
 
-      final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
-          "Action performed successfully", "Removed business object " + resIdentifier, null);
+      final String resultXml = WebServiceUtil.getInstance()
+          .createResultXMLWithLogWarning("Action performed successfully",
+              "Removed business object " + resIdentifier, null);
       try {
         response.setContentType("text/xml;charset=UTF-8");
         final Writer w = response.getWriter();
@@ -445,15 +450,16 @@ public class DalWebService implements WebService {
       }
 
       try {
-        final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
-            whereOrderByClause);
+        final OBQuery<BaseOBObject> obq = OBDal.getInstance()
+            .createQuery(entityName, whereOrderByClause);
 
         Object o = obq.deleteQuery().executeUpdate();
 
         OBDal.getInstance().commitAndClose();
 
-        final String resultXml = WebServiceUtil.getInstance().createResultXMLWithLogWarning(
-            "Action performed successfully", "Removed business objects " + o, null);
+        final String resultXml = WebServiceUtil.getInstance()
+            .createResultXMLWithLogWarning("Action performed successfully",
+                "Removed business objects " + o, null);
         response.setContentType("text/xml;charset=UTF-8");
         final Writer w = response.getWriter();
         w.write(resultXml);
@@ -479,6 +485,7 @@ public class DalWebService implements WebService {
    * @param response
    *          the HttpServletResponse
    */
+  @Override
   public void doPut(String path, HttpServletRequest request, HttpServletResponse response) {
     // update a resource
     doChangeAction(path, request, response, ChangeAction.UPDATE);
@@ -603,8 +610,9 @@ public class DalWebService implements WebService {
     }
     sb.append("Removed " + deleted + " business objects, " + notDeleted
         + " business objects could not be found, so not removed");
-    return WebServiceUtil.getInstance().createResultXMLWithObjectsAndWarning(
-        "Action performed successfully", sb.toString(), null, null, null, deletedList);
+    return WebServiceUtil.getInstance()
+        .createResultXMLWithObjectsAndWarning("Action performed successfully", sb.toString(), null,
+            null, null, deletedList);
   }
 
   protected String doCreateUpdate(XMLEntityConverter xec) {
@@ -618,8 +626,8 @@ public class DalWebService implements WebService {
         + (xec.getLogMessages() != null ? "\n" : "") + "Updated " + xec.getToUpdate().size()
         + " business objects, Inserted " + xec.getToInsert().size() + " business objects ";
 
-    return WebServiceUtil.getInstance().createResultXMLWithObjectsAndWarning(
-        "Action performed successfully", log, xec.getWarningMessages(), xec.getToInsert(),
-        xec.getToUpdate(), null);
+    return WebServiceUtil.getInstance()
+        .createResultXMLWithObjectsAndWarning("Action performed successfully", log,
+            xec.getWarningMessages(), xec.getToInsert(), xec.getToUpdate(), null);
   }
 }

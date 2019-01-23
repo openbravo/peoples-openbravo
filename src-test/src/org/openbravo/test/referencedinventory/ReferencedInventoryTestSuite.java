@@ -24,7 +24,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-// Box without reservation
+    // Box without reservation
     ReferencedInventoryFullBoxTest.class, //
     ReferencedInventoryPartialBoxTest.class, //
     ReferencedInventoryExceptionTest.class, //

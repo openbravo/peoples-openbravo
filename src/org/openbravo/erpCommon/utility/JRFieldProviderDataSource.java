@@ -21,11 +21,11 @@ package org.openbravo.erpCommon.utility;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
+import org.openbravo.data.FieldProvider;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
-
-import org.openbravo.data.FieldProvider;
 
 public class JRFieldProviderDataSource implements JRDataSource {
 
@@ -73,13 +73,15 @@ public class JRFieldProviderDataSource implements JRDataSource {
         if (clazz.equals(java.lang.Boolean.class)) {
           if (value != null && !value.equals("")) {
             objValue = value.equals("Y") ? Boolean.TRUE : Boolean.FALSE;
-          } else
+          } else {
             objValue = null;
+          }
         } else if (clazz.equals(java.lang.Byte.class)) {
           if (value != null && !value.equals("")) {
             objValue = Byte.valueOf(value);
-          } else
+          } else {
             objValue = null;
+          }
         } else if (clazz.equals(java.util.Date.class)) {
           if (value != null && !value.equals("")) {
             SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
@@ -88,8 +90,9 @@ public class JRFieldProviderDataSource implements JRDataSource {
             } catch (Exception e) {
               throw new JRException("Unable to parse the date", e);
             }
-          } else
+          } else {
             objValue = null;
+          }
         }
         /*
          * else if (clazz.equals(java.sql.Timestamp.class)) { objValue =
@@ -139,13 +142,15 @@ public class JRFieldProviderDataSource implements JRDataSource {
         else if (clazz.equals(java.math.BigDecimal.class)) {
           if (value != null && !value.equals("")) {
             objValue = new BigDecimal(value);
-          } else
+          } else {
             objValue = null;
+          }
         } else if (clazz.equals(java.lang.String.class)) {
           if (value != null && !value.equals("")) {
             objValue = new String(value);
-          } else
+          } else {
             objValue = null;
+          }
         }
         /*
          * else if (clazz.equals(Clob.class)) { objValue =
@@ -178,8 +183,9 @@ public class JRFieldProviderDataSource implements JRDataSource {
         else {
           if (value != null && !value.equals("")) {
             objValue = new String(value);
-          } else
+          } else {
             objValue = null;
+          }
         }
       } catch (Exception e) {
         e.printStackTrace();

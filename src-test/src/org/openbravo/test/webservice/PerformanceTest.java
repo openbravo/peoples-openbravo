@@ -47,8 +47,8 @@ public class PerformanceTest extends BaseWSTest {
   @Test
   public void testPerformance() {
     try {
-      final HttpURLConnection hc = createConnection(
-          "/ws/dal/BusinessPartner?includeChildren=false", "GET");
+      final HttpURLConnection hc = createConnection("/ws/dal/BusinessPartner?includeChildren=false",
+          "GET");
       hc.connect();
       final InputStream is = hc.getInputStream();
       final OutputStream os = new FileOutputStream("/tmp/test.xml");
@@ -82,6 +82,7 @@ public class PerformanceTest extends BaseWSTest {
    * @return the created connection
    * @throws Exception
    */
+  @Override
   protected HttpURLConnection createConnection(String wsPart, String method) throws Exception {
     Authenticator.setDefault(new Authenticator() {
       @Override

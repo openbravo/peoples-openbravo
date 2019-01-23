@@ -29,6 +29,7 @@ public class MatchStatementDefaultFilterExpresion extends MatchStatementFilterEx
 
   private static final long SEQUENCE = 100l;
 
+  @Override
   protected long getSeq() {
     return SEQUENCE;
   }

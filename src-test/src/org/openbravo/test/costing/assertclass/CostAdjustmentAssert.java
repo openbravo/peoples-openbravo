@@ -65,7 +65,8 @@ public class CostAdjustmentAssert {
   }
 
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,
-      String type, BigDecimal amount, int day, boolean source, boolean unit, boolean isNeedPosting) {
+      String type, BigDecimal amount, int day, boolean source, boolean unit,
+      boolean isNeedPosting) {
     this(materialTransaction, currencyId, type, amount, day, source, unit, "CO", isNeedPosting);
   }
 
@@ -76,8 +77,8 @@ public class CostAdjustmentAssert {
 
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String type,
       BigDecimal amount, int day, boolean source, boolean unit, String status) {
-    this(materialTransaction, TestCostingConstants.EURO_ID, type, amount, day, source, unit,
-        status, false);
+    this(materialTransaction, TestCostingConstants.EURO_ID, type, amount, day, source, unit, status,
+        false);
   }
 
   public CostAdjustmentAssert(MaterialTransaction materialTransaction, String currencyId,

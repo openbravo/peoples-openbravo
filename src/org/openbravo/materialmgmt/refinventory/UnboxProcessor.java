@@ -55,9 +55,9 @@ public class UnboxProcessor extends ReferencedInventoryProcessor {
     for (int i = 0; i < selectedStorageDetails.length(); i++) {
       final JSONObject storageDetailJS = selectedStorageDetails.getJSONObject(i);
       final StorageDetail storageDetail = getStorageDetail(storageDetailJS);
-      Check.isNotNull(storageDetail.getReferencedInventory(), String.format(
-          OBMessageUtils.messageBD("StorageDetailNotLinkedToReferencedInventory"),
-          storageDetail.getIdentifier()));
+      Check.isNotNull(storageDetail.getReferencedInventory(),
+          String.format(OBMessageUtils.messageBD("StorageDetailNotLinkedToReferencedInventory"),
+              storageDetail.getIdentifier()));
     }
   }
 

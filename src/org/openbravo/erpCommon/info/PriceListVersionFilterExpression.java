@@ -98,7 +98,8 @@ public class PriceListVersionFilterExpression implements FilterExpression {
       priceListCrit.setFilterOnReadableOrganization(false);
     }
     if (priceListCrit.count() > 0) {
-      log.debug("Return client's default PriceList: " + priceListCrit.list().get(0).getIdentifier());
+      log.debug(
+          "Return client's default PriceList: " + priceListCrit.list().get(0).getIdentifier());
       return priceListCrit.list().get(0);
     }
     return null;
@@ -124,8 +125,8 @@ public class PriceListVersionFilterExpression implements FilterExpression {
   }
 
   private PriceListVersion getPriceListVersion(PriceList priceList, Date date) {
-    OBCriteria<PriceListVersion> plVersionCrit = OBDal.getInstance().createCriteria(
-        PriceListVersion.class);
+    OBCriteria<PriceListVersion> plVersionCrit = OBDal.getInstance()
+        .createCriteria(PriceListVersion.class);
     plVersionCrit.add(Restrictions.eq(PriceListVersion.PROPERTY_PRICELIST, priceList));
     plVersionCrit.add(Restrictions.le(PriceListVersion.PROPERTY_VALIDFROMDATE, date));
     plVersionCrit.addOrderBy(PriceListVersion.PROPERTY_VALIDFROMDATE, false);
@@ -161,7 +162,8 @@ public class PriceListVersionFilterExpression implements FilterExpression {
       String orgId = requestMap.get("inpadOrgId");
 
       if (StringUtils.isNotEmpty(orgId)) {
-        final Set<String> orgSet = OBContext.getOBContext().getOrganizationStructureProvider()
+        final Set<String> orgSet = OBContext.getOBContext()
+            .getOrganizationStructureProvider()
             .getNaturalTree(orgId);
         if (orgSet.size() > 0) {
           boolean addComma = false;

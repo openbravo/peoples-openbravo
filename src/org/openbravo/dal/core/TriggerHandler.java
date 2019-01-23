@@ -43,8 +43,8 @@ public class TriggerHandler {
   private static final Logger log = LogManager.getLogger();
 
   private static TriggerHandler instance;
-  private boolean isPostgreSQL = "POSTGRE".equals(OBPropertiesProvider.getInstance()
-      .getOpenbravoProperties().getProperty("bbdd.rdbms"));
+  private boolean isPostgreSQL = "POSTGRE".equals(
+      OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
 
   public static TriggerHandler getInstance() {
     if (instance == null) {

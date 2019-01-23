@@ -98,8 +98,8 @@ public class OBRebuildAppender extends AbstractAppender {
     }
   }
 
-  private Connection getConnection() throws PoolNotFoundException, NoConnectionAvailableException,
-      SQLException {
+  private Connection getConnection()
+      throws PoolNotFoundException, NoConnectionAvailableException, SQLException {
     if (cp == null) {
       File fProp = null;
       if (baseDir != null) {

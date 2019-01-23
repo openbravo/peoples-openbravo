@@ -63,6 +63,7 @@ public class DocumentationComponent extends BaseTemplateComponent {
     final List<String> result = new ArrayList<String>();
 
     final FilenameFilter jsFilter = new FilenameFilter() {
+      @Override
       public boolean accept(File dir, String fileName) {
         return fileName.endsWith(".js");
       }
@@ -73,8 +74,8 @@ public class DocumentationComponent extends BaseTemplateComponent {
         continue;
       }
 
-      final File jsModFolder = new File(modulesFolder, JS_DIRECTORY_PATH.replace("@javapackage@",
-          mod.getJavaPackage()));
+      final File jsModFolder = new File(modulesFolder,
+          JS_DIRECTORY_PATH.replace("@javapackage@", mod.getJavaPackage()));
 
       if (!jsModFolder.exists()) {
         continue;
@@ -82,8 +83,8 @@ public class DocumentationComponent extends BaseTemplateComponent {
 
       File[] files = jsModFolder.listFiles(jsFilter);
       for (int i = 0; i < files.length; i++) {
-        result.add("#" + getContextUrl() + "web/" + mod.getJavaPackage() + "/js/"
-            + files[i].getName());
+        result.add(
+            "#" + getContextUrl() + "web/" + mod.getJavaPackage() + "/js/" + files[i].getName());
       }
     }
     return result;

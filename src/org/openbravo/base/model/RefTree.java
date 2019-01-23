@@ -19,7 +19,6 @@
 
 package org.openbravo.base.model;
 
-
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Ref_Table table in the application
  * dictionary.

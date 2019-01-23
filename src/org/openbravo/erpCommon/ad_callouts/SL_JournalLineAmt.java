@@ -61,10 +61,10 @@ public class SL_JournalLineAmt extends SimpleCallout {
 
     GLJournal gLJournal = OBDal.getInstance().get(GLJournal.class, strGLJournal);
     BigDecimal currencyRate = gLJournal.getRate().setScale(stdPrecision, RoundingMode.HALF_UP);
-    BigDecimal amtAcctDr = amtSourceDr.multiply(currencyRate).setScale(stdPrecision,
-        RoundingMode.HALF_UP);
-    BigDecimal amtAcctCr = amtSourceCr.multiply(currencyRate).setScale(stdPrecision,
-        RoundingMode.HALF_UP);
+    BigDecimal amtAcctDr = amtSourceDr.multiply(currencyRate)
+        .setScale(stdPrecision, RoundingMode.HALF_UP);
+    BigDecimal amtAcctCr = amtSourceCr.multiply(currencyRate)
+        .setScale(stdPrecision, RoundingMode.HALF_UP);
 
     info.addResult("inpamtacctdr", amtAcctDr);
     info.addResult("inpamtacctcr", amtAcctCr);

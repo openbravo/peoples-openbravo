@@ -38,8 +38,8 @@ public class SL_ScheduledMaintenance_Maintenance extends SimpleCallout {
 
     // Schedule Maintenance Data
     if (StringUtils.isNotEmpty(strMaintenance)) {
-      SLScheduledMaintenanceMaintenanceData[] data = SLScheduledMaintenanceMaintenanceData.select(
-          this, strMaintenance);
+      SLScheduledMaintenanceMaintenanceData[] data = SLScheduledMaintenanceMaintenanceData
+          .select(this, strMaintenance);
 
       // Set Session value for IsSOTrx
       if (StringUtils.isEmpty(data[0].maMachineId)) {

@@ -35,28 +35,30 @@ class ShowSessionVariablesStructureData implements FieldProvider {
   String value;
   String rownum;
 
+  @Override
   public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("isPreference"))
+    if (fieldName.equalsIgnoreCase("isPreference")) {
       return (isPreference ? "Yes" : "NO");
-    else if (fieldName.equalsIgnoreCase("isAccounting"))
+    } else if (fieldName.equalsIgnoreCase("isAccounting")) {
       return (isAccounting ? "Yes" : "NO");
-    else if (fieldName.equalsIgnoreCase("isGlobal"))
+    } else if (fieldName.equalsIgnoreCase("isGlobal")) {
       return (isGlobal ? "Yes" : "NO");
-    else if (fieldName.equalsIgnoreCase("window"))
+    } else if (fieldName.equalsIgnoreCase("window")) {
       return ((window == null) ? "" : window);
-    else if (fieldName.equalsIgnoreCase("windowName"))
+    } else if (fieldName.equalsIgnoreCase("windowName")) {
       return ((windowName == null) ? "" : windowName);
-    else if (fieldName.equalsIgnoreCase("completeName"))
+    } else if (fieldName.equalsIgnoreCase("completeName")) {
       return ((completeName == null) ? "" : completeName);
-    else if (fieldName.equalsIgnoreCase("name"))
+    } else if (fieldName.equalsIgnoreCase("name")) {
       return ((name == null) ? "" : name);
-    else if (fieldName.equalsIgnoreCase("value"))
+    } else if (fieldName.equalsIgnoreCase("value")) {
       return ((value == null) ? "" : value);
-    else if (fieldName.equalsIgnoreCase("rownum"))
+    } else if (fieldName.equalsIgnoreCase("rownum")) {
       return ((rownum == null) ? "0" : rownum);
-    else {
-      if (log4j.isDebugEnabled())
+    } else {
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Field does not exist: " + fieldName);
+      }
       return null;
     }
   }

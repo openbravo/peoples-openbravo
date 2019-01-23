@@ -61,8 +61,8 @@ public class InstancePurpose extends HttpSecureAppServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -125,9 +125,8 @@ public class InstancePurpose extends HttpSecureAppServlet {
         xmlDocument.setParameter("selectedPurpose", purpose);
       }
     }
-    xmlDocument
-        .setParameter("welcome", Replace.replace(
-            Utility.messageBD(this, strWelcomeMsg, vars.getLanguage()), "\\n", "<br/>"));
+    xmlDocument.setParameter("welcome", Replace
+        .replace(Utility.messageBD(this, strWelcomeMsg, vars.getLanguage()), "\\n", "<br/>"));
     xmlDocument.setParameter("title", Utility.messageBD(myPool, strTitle, vars.getLanguage()));
 
     xmlDocument.setParameter("recordId",

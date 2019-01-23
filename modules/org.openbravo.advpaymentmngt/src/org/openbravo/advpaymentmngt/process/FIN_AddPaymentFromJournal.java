@@ -89,8 +89,8 @@ public class FIN_AddPaymentFromJournal extends DalBaseProcess {
         mm.call(procedureName, parameters, null, false, false);
       } catch (Exception e) {
         OBDal.getInstance().rollbackAndClose();
-        OBError error = OBMessageUtils.translateError(conn, vars, vars.getLanguage(), e.getCause()
-            .getMessage());
+        OBError error = OBMessageUtils.translateError(conn, vars, vars.getLanguage(),
+            e.getCause().getMessage());
         throw new OBException(error.getMessage());
       }
 

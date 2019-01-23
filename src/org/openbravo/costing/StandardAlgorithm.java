@@ -36,16 +36,17 @@ public class StandardAlgorithm extends CostingAlgorithm {
   @Override
   public BigDecimal getTransactionCost() {
     switch (trxType) {
-    case InventoryOpening:
-      BigDecimal unitCost = transaction.getPhysicalInventoryLine().getCost();
-      if (unitCost != null && unitCost.signum() != 0) {
-        return getOpeningInventoryCost();
-      }
-    default:
+      case InventoryOpening:
+        BigDecimal unitCost = transaction.getPhysicalInventoryLine().getCost();
+        if (unitCost != null && unitCost.signum() != 0) {
+          return getOpeningInventoryCost();
+        }
+      default:
     }
     return getOutgoingTransactionCost();
   }
 
+  @Override
   protected BigDecimal getOutgoingTransactionCost() {
     Date date;
     if (costingRule.isBackdatedTransactionsFixed() || trxType == TrxType.InventoryOpening
@@ -66,7 +67,8 @@ public class StandardAlgorithm extends CostingAlgorithm {
    * @return The cost of the transaction based on the unit cost defined in the inventory line.
    */
   private BigDecimal getOpeningInventoryCost() {
-    BigDecimal unitCost = transaction.getPhysicalInventoryLine().getCost()
+    BigDecimal unitCost = transaction.getPhysicalInventoryLine()
+        .getCost()
         .setScale(costCurrency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
     Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
         transaction.getMovementDate(), costDimensions);

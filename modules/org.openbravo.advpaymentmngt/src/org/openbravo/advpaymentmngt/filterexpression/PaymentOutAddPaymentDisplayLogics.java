@@ -37,6 +37,7 @@ public class PaymentOutAddPaymentDisplayLogics extends AddPaymentDisplayLogicsHa
 
   private static final long SEQUENCE = 100l;
 
+  @Override
   protected long getSeq() {
     return SEQUENCE;
   }

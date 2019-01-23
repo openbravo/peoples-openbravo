@@ -75,10 +75,12 @@ public class DatabaseValidator implements SystemValidator {
   // if this is set then only module specific things are checked.
   private Module validateModule;
 
+  @Override
   public String getCategory() {
     return "Database Model";
   }
 
+  @Override
   public SystemValidationResult validate() {
     final SystemValidationResult result = new SystemValidationResult();
 
@@ -100,10 +102,9 @@ public class DatabaseValidator implements SystemValidator {
     }
     for (int i = 0; i < db.getViewCount(); i++) {
       if (db.getView(i).getName().length() > 30) {
-        result
-            .addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
-                "Name of View " + db.getView(i).getName()
-                    + " is too long. Only 30 characters allowed.");
+        result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+            "Name of View " + db.getView(i).getName()
+                + " is too long. Only 30 characters allowed.");
       }
     }
 
@@ -137,8 +138,7 @@ public class DatabaseValidator implements SystemValidator {
       }
       for (int i = 0; i < dbTable.getForeignKeyCount(); i++) {
         if (dbTable.getForeignKey(i).getName().length() > 30) {
-          result.addError(
-              SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
+          result.addError(SystemValidationResult.SystemValidationType.INCORRECT_NAME_LENGTH,
               "Name of ForeignKey " + dbTable.getForeignKey(i).getName() + "for table "
                   + dbTable.getName() + " is too long. Only 30 characters allowed.");
         }
@@ -200,25 +200,23 @@ public class DatabaseValidator implements SystemValidator {
         continue;
       }
 
-      final org.apache.ddlutils.model.Table dbTable = dbTablesByName.get(adTable.getDBTableName()
-          .toUpperCase());
+      final org.apache.ddlutils.model.Table dbTable = dbTablesByName
+          .get(adTable.getDBTableName().toUpperCase());
       final View view = dbViews.get(adTable.getDBTableName().toUpperCase());
 
       if (view == null && dbTable == null) {
         // in Application Dictionary not in Physical Table
-        if (moduleId == null
-            || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage()
-                .getModule().getId().equals(moduleId))) {
-          result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB, "Table "
-              + adTable.getDBTableName() + " defined in the Application Dictionary"
-              + " but is not present in the database");
+        if (moduleId == null || (adTable.getDataPackage().getModule() != null
+            && adTable.getDataPackage().getModule().getId().equals(moduleId))) {
+          result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB,
+              "Table " + adTable.getDBTableName() + " defined in the Application Dictionary"
+                  + " but is not present in the database");
         }
       } else if (view != null) {
         dbViews.remove(view.getName().toUpperCase());
       } else {
-        if (moduleId == null
-            || (adTable.getDataPackage().getModule() != null && adTable.getDataPackage()
-                .getModule().getId().equals(moduleId))) {
+        if (moduleId == null || (adTable.getDataPackage().getModule() != null
+            && adTable.getDataPackage().getModule().getId().equals(moduleId))) {
           checkTableWithoutPrimaryKey(dbTable, result);
           checkMaxObjectNameLength(dbTable, result);
         }
@@ -239,9 +237,9 @@ public class DatabaseValidator implements SystemValidator {
       // ignore errors related to C_TEMP_SELECTION and AD_CONTEXT_INFO
       if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")
           && !dbTable.getName().toUpperCase().startsWith("AD_CONTEXT_INFO")) {
-        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Table "
-            + dbTable.getName() + " present in the database "
-            + " but not defined in the Application Dictionary");
+        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD,
+            "Table " + dbTable.getName() + " present in the database "
+                + " but not defined in the Application Dictionary");
       }
     }
 
@@ -249,9 +247,9 @@ public class DatabaseValidator implements SystemValidator {
       for (View view : dbViews.values()) {
         // ignore errors related to C_TEMP_SELECTION
         if (!view.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
-          result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "View "
-              + view.getName() + " present in the database "
-              + " but not defined in the Application Dictionary");
+          result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD,
+              "View " + view.getName() + " present in the database "
+                  + " but not defined in the Application Dictionary");
         }
       }
     }
@@ -274,10 +272,10 @@ public class DatabaseValidator implements SystemValidator {
    * 
    */
   private void checkPasswordColumns(SystemValidationResult result) {
-    org.openbravo.model.ad.domain.Reference hashed = OBDal.getInstance().get(
-        org.openbravo.model.ad.domain.Reference.class, "C5C21C28B39E4683A91779F16C112E40");
-    org.openbravo.model.ad.domain.Reference encrypted = OBDal.getInstance().get(
-        org.openbravo.model.ad.domain.Reference.class, "16EC6DF4A59747749FDF256B7FBBB058");
+    org.openbravo.model.ad.domain.Reference hashed = OBDal.getInstance()
+        .get(org.openbravo.model.ad.domain.Reference.class, "C5C21C28B39E4683A91779F16C112E40");
+    org.openbravo.model.ad.domain.Reference encrypted = OBDal.getInstance()
+        .get(org.openbravo.model.ad.domain.Reference.class, "16EC6DF4A59747749FDF256B7FBBB058");
 
     // if one of the old-booleans is set, but not using new reference-id's -> report as warning
     SimpleExpression enc = Restrictions.eq(Column.PROPERTY_DISPLAYENCRIPTION, Boolean.TRUE);
@@ -293,15 +291,10 @@ public class DatabaseValidator implements SystemValidator {
     if (colQuery.count() > 0) {
       List<Column> columns = colQuery.list();
       for (Column column : columns) {
-        result
-            .addWarning(
-                SystemValidationType.OLDSTYLE_PASSWORD_COLUMNS,
-                "The column '"
-                    + column.getTable().getName()
-                    + "'.'"
-                    + column.getName()
-                    + "' is using old-style config for password-type columns. It should be changed to use one of the new references '"
-                    + hashed.getName() + "' or '" + encrypted.getName() + "'");
+        result.addWarning(SystemValidationType.OLDSTYLE_PASSWORD_COLUMNS, "The column '"
+            + column.getTable().getName() + "'.'" + column.getName()
+            + "' is using old-style config for password-type columns. It should be changed to use one of the new references '"
+            + hashed.getName() + "' or '" + encrypted.getName() + "'");
       }
     }
   }
@@ -321,12 +314,9 @@ public class DatabaseValidator implements SystemValidator {
     for (DataSet ds : dsList) {
       String dsName = ds.getName();
       if (!dsName.matches("[a-zA-Z0-9 _\\-]+")) {
-        result
-            .addWarning(
-                SystemValidationResult.SystemValidationType.INCORRECT_DATASET_NAME,
-                "The name of the dataset \""
-                    + dsName
-                    + "\" contains illegal characters. It is only allowed to contain 'a'..'z', 'A'..'Z', '0'..'9', whitespace, '-' and '_'");
+        result.addWarning(SystemValidationResult.SystemValidationType.INCORRECT_DATASET_NAME,
+            "The name of the dataset \"" + dsName
+                + "\" contains illegal characters. It is only allowed to contain 'a'..'z', 'A'..'Z', '0'..'9', whitespace, '-' and '_'");
       }
     }
   }
@@ -351,17 +341,17 @@ public class DatabaseValidator implements SystemValidator {
 
   private void checkNameLength(String type, String name, SystemValidationResult result) {
     if (name.length() > MAX_OBJECT_NAME_LENGTH) {
-      result.addError(SystemValidationResult.SystemValidationType.NAME_TOO_LONG, "The name of "
-          + type + " " + name + " is too long, the maximum allowed length is: "
-          + MAX_OBJECT_NAME_LENGTH);
+      result.addError(SystemValidationResult.SystemValidationType.NAME_TOO_LONG,
+          "The name of " + type + " " + name + " is too long, the maximum allowed length is: "
+              + MAX_OBJECT_NAME_LENGTH);
     }
   }
 
   private void checkTableWithoutPrimaryKey(org.apache.ddlutils.model.Table dbTable,
       SystemValidationResult result) {
     if (dbTable.getPrimaryKeyColumns().length == 0) {
-      result.addError(SystemValidationResult.SystemValidationType.NO_PRIMARY_KEY_COLUMNS, "Table "
-          + dbTable.getName() + " has no primary key columns.");
+      result.addError(SystemValidationResult.SystemValidationType.NO_PRIMARY_KEY_COLUMNS,
+          "Table " + dbTable.getName() + " has no primary key columns.");
     }
   }
 
@@ -372,7 +362,8 @@ public class DatabaseValidator implements SystemValidator {
       return null;
     }
     for (Property property : entity.getProperties()) {
-      if (property.getColumnName() != null && property.getColumnName().equalsIgnoreCase(columnName)) {
+      if (property.getColumnName() != null
+          && property.getColumnName().equalsIgnoreCase(columnName)) {
         return property;
       }
     }
@@ -411,7 +402,8 @@ public class DatabaseValidator implements SystemValidator {
         final String colName = property.getColumnName().toUpperCase();
 
         // ignore this specific case
-        if (fkWhiteList.contains(entity.getTableName().toLowerCase() + "." + colName.toLowerCase())) {
+        if (fkWhiteList
+            .contains(entity.getTableName().toLowerCase() + "." + colName.toLowerCase())) {
           continue;
         }
 
@@ -422,9 +414,8 @@ public class DatabaseValidator implements SystemValidator {
 
         // if the property doesn't belong to the module, then it shouldn't be checked, as the
         // physical model will not contain it
-        if (module != null
-            && (property.getModule() == null || !module.getId()
-                .equals(property.getModule().getId()))) {
+        if (module != null && (property.getModule() == null
+            || !module.getId().equals(property.getModule().getId()))) {
           continue;
         }
 
@@ -478,22 +469,23 @@ public class DatabaseValidator implements SystemValidator {
         hasSqlLogic = false;
       }
       // If the column has SQL logic, it does not need to be present in the database
-      final boolean checkColumn = (moduleId == null || (column.getModule().getId().equals(moduleId)))
-          && !hasSqlLogic;
+      final boolean checkColumn = (moduleId == null
+          || (column.getModule().getId().equals(moduleId))) && !hasSqlLogic;
       if (!checkColumn) {
         dbColumnsByName.remove(column.getDBColumnName().toUpperCase());
         continue;
       }
-      final org.apache.ddlutils.model.Column dbColumn = dbColumnsByName.get(column
-          .getDBColumnName().toUpperCase());
+      final org.apache.ddlutils.model.Column dbColumn = dbColumnsByName
+          .get(column.getDBColumnName().toUpperCase());
       if (dbColumn == null) {
         String message = "";
         if (column.getDBColumnName().substring(0, 3).equalsIgnoreCase("EM_")) {
           message = " The problem could also be that the column name has a dbprefix of a non existant module or that it starts with the dbprefix of the module which owns the table. In this second case, the column doesn't need the 'EM_DBPREFIX' prefix, you can use the name you want.";
         }
-        result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB, "Column "
-            + adTable.getDBTableName() + "." + column.getDBColumnName()
-            + " defined in the Application Dictionary but not present in the database." + message);
+        result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB,
+            "Column " + adTable.getDBTableName() + "." + column.getDBColumnName()
+                + " defined in the Application Dictionary but not present in the database."
+                + message);
 
       } else {
         checkDataType(column, dbColumn, result, dbTable);
@@ -510,9 +502,9 @@ public class DatabaseValidator implements SystemValidator {
     // to its modified tables, so they have to be checked always at this point
 
     for (org.apache.ddlutils.model.Column dbColumn : dbColumnsByName.values()) {
-      result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD, "Column "
-          + dbTable.getName() + "." + dbColumn.getName() + " present in the database "
-          + " but not defined in the Application Dictionary.");
+      result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD,
+          "Column " + dbTable.getName() + "." + dbColumn.getName() + " present in the database "
+              + " but not defined in the Application Dictionary.");
     }
   }
 
@@ -531,7 +523,8 @@ public class DatabaseValidator implements SystemValidator {
     //
     // final Property p = getProperty(dbTable.getName(), dbColumn.getName());
     // updateSql
-    // .append("update ad_column set ismandatory='Y' where ad_column_id in (select c.ad_column_id from ad_column c, ad_table t "
+    // .append("update ad_column set ismandatory='Y' where ad_column_id in (select c.ad_column_id
+    // from ad_column c, ad_table t "
     // + "where c.ad_table_id=t.ad_table_id and t.tablename='"
     // + p.getEntity().getTableName() + "' and c.columnname='" + p.getColumnName() + "');\n");
     //
@@ -583,8 +576,8 @@ public class DatabaseValidator implements SystemValidator {
     } else if (property != null && property.getPrimitiveObjectType() != null) {
       final Class<?> prim = property.getPrimitiveObjectType();
       if (prim == String.class || property.getDomainType() instanceof ButtonDomainType) {
-        checkType(dbColumn, dbTable, result, new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR",
-            "CLOB" });
+        checkType(dbColumn, dbTable, result,
+            new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR", "CLOB" });
         // there are too many differences which make this check not relevant/practical at the moment
         // checkLength(dbColumn, dbTable, result, property.getFieldLength());
       } else if (prim == Long.class) {
@@ -609,7 +602,8 @@ public class DatabaseValidator implements SystemValidator {
   }
 
   private void checkType(org.apache.ddlutils.model.Column dbColumn,
-      org.apache.ddlutils.model.Table dbTable, SystemValidationResult result, String[] expectedTypes) {
+      org.apache.ddlutils.model.Table dbTable, SystemValidationResult result,
+      String[] expectedTypes) {
     boolean found = false;
     final StringBuilder sb = new StringBuilder();
     for (String expectedType : expectedTypes) {
@@ -620,9 +614,10 @@ public class DatabaseValidator implements SystemValidator {
       }
     }
     if (!found) {
-      result.addError(SystemValidationType.WRONG_TYPE, "Column " + dbTable.getName() + "."
-          + dbColumn.getName() + " has incorrect type, expecting " + sb.toString() + "but was "
-          + dbColumn.getType());
+      result.addError(SystemValidationType.WRONG_TYPE,
+          "Column " + dbTable.getName() + "." + dbColumn.getName()
+              + " has incorrect type, expecting " + sb.toString() + "but was "
+              + dbColumn.getType());
     }
   }
 
@@ -632,18 +627,17 @@ public class DatabaseValidator implements SystemValidator {
       if (dbColumn.getName().toUpperCase().equals("USER1_ID")
           || dbColumn.getName().toUpperCase().equals("USER2_ID")) {
         final Property p = getProperty(dbTable.getName(), dbColumn.getName());
-        updateSql
-            .append("update ad_column set ad_reference_id='10', ad_reference_value_id=NULL where ad_column_id in (select c.ad_column_id from ad_column c, ad_table t "
+        updateSql.append(
+            "update ad_column set ad_reference_id='10', ad_reference_value_id=NULL where ad_column_id in (select c.ad_column_id from ad_column c, ad_table t "
                 + "where c.ad_table_id=t.ad_table_id and t.tablename='"
-                + p.getEntity().getTableName()
-                + "' and c.columnname='"
-                + p.getColumnName()
+                + p.getEntity().getTableName() + "' and c.columnname='" + p.getColumnName()
                 + "');\n");
       }
 
-      result.addError(SystemValidationType.WRONG_TYPE, "Column " + dbTable.getName() + "."
-          + dbColumn.getName() + " has incorrect type, expecting " + expectedType + " but was "
-          + dbColumn.getType());
+      result.addError(SystemValidationType.WRONG_TYPE,
+          "Column " + dbTable.getName() + "." + dbColumn.getName()
+              + " has incorrect type, expecting " + expectedType + " but was "
+              + dbColumn.getType());
     }
   }
 
@@ -655,21 +649,23 @@ public class DatabaseValidator implements SystemValidator {
     }
 
     if (dbColumn.getSizeAsInt() != expectedLength) {
-      result.addError(SystemValidationType.WRONG_LENGTH, "Column " + dbTable.getName() + "."
-          + dbColumn.getName() + " has incorrect length, expecting " + expectedLength + " but was "
-          + dbColumn.getSizeAsInt() + ". If this a foreign key column then the expected "
-          + "length is either 32 (a uuid) or based on"
-          + " the fieldLength (so not the db columnlength) of the referenced column"
-          + ", as defined in AD_COLUMN.");
+      result.addError(SystemValidationType.WRONG_LENGTH,
+          "Column " + dbTable.getName() + "." + dbColumn.getName()
+              + " has incorrect length, expecting " + expectedLength + " but was "
+              + dbColumn.getSizeAsInt() + ". If this a foreign key column then the expected "
+              + "length is either 32 (a uuid) or based on"
+              + " the fieldLength (so not the db columnlength) of the referenced column"
+              + ", as defined in AD_COLUMN.");
     }
   }
 
   private void checkMaxLength(org.apache.ddlutils.model.Column dbColumn,
       org.apache.ddlutils.model.Table dbTable, SystemValidationResult result, int maxLength) {
     if (dbColumn.getSizeAsInt() > maxLength) {
-      result.addError(SystemValidationType.WRONG_LENGTH, "Column " + dbTable.getName() + "."
-          + dbColumn.getName() + " has incorrect length, it is  " + dbColumn.getSizeAsInt()
-          + " but the maximum size allowed for that type of column is " + maxLength + ".");
+      result.addError(SystemValidationType.WRONG_LENGTH,
+          "Column " + dbTable.getName() + "." + dbColumn.getName()
+              + " has incorrect length, it is  " + dbColumn.getSizeAsInt()
+              + " but the maximum size allowed for that type of column is " + maxLength + ".");
     }
   }
 
@@ -703,47 +699,35 @@ public class DatabaseValidator implements SystemValidator {
         if (p.isPrimitive() && p.getPrimitiveObjectType() != null
             && Date.class.isAssignableFrom(p.getPrimitiveObjectType())
             && p.getName().toLowerCase().equals("created") && !entity.isTraceable()) {
-          result
-              .addWarning(
-                  SystemValidationType.WRONG_NAME,
-                  "The table "
-                      + entity.getTableName()
-                      + " has a column 'created', Note that the audit column which stores the creation time MUST be called: creation Date");
+          result.addWarning(SystemValidationType.WRONG_NAME, "The table " + entity.getTableName()
+              + " has a column 'created', Note that the audit column which stores the creation time MUST be called: creation Date");
         }
       }
       // can this ever be false?
       if (hasClientReference && !hasValidClient) {
-        result
-            .addError(
-                SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME,
-                "Table  "
-                    + entity.getTableName()
-                    + " has a column referencing AD_Client. "
-                    + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
-                    + "should have the value " + Organization.PROPERTY_CLIENT
-                    + ", it currently has " + invalidClientName);
+        result.addError(SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME,
+            "Table  " + entity.getTableName() + " has a column referencing AD_Client. "
+                + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
+                + "should have the value " + Organization.PROPERTY_CLIENT + ", it currently has "
+                + invalidClientName);
       }
       if (hasOrgReference && !hasValidOrg && !entity.getName().equals("Organization")) {
-        result
-            .addError(
-                SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME,
-                "Table  "
-                    + entity.getTableName()
-                    + " has a column referencing AD_Org. "
-                    + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
-                    + "should have the value " + Client.PROPERTY_ORGANIZATION
-                    + ", it currently has " + invalidOrgName);
+        result.addError(SystemValidationType.INCORRECT_CLIENT_ORG_PROPERTY_NAME,
+            "Table  " + entity.getTableName() + " has a column referencing AD_Org. "
+                + " The AD_Column.name (note: different from AD_Column.columnname!) of this column "
+                + "should have the value " + Client.PROPERTY_ORGANIZATION + ", it currently has "
+                + invalidOrgName);
       }
     }
   }
 
   /**
-   * Checks DB objects naming rules for: <li>
-   * Primary Keys <li>
-   * Foreign Keys <li>
-   * Check Constraints <li>
-   * Unique Constraints <li>
-   * Indexes
+   * Checks DB objects naming rules for:
+   * <li>Primary Keys
+   * <li>Foreign Keys
+   * <li>Check Constraints
+   * <li>Unique Constraints
+   * <li>Indexes
    * 
    */
   private void checkDBObjectsName(SystemValidationResult result) {
@@ -870,8 +854,7 @@ public class DatabaseValidator implements SystemValidator {
       fieldCriteria.add(Restrictions.eq(Field.PROPERTY_TAB, tab));
       fieldCriteria.add(Restrictions.eq(Field.PROPERTY_SHOWINGRIDVIEW, true));
       if (fieldCriteria.count() == 0) {
-        result.addError(
-            SystemValidationType.NOFIELDSINGRIDVIEW,
+        result.addError(SystemValidationType.NOFIELDSINGRIDVIEW,
             "No Fields are visible in grid view for Tab " + tab.getWindow().getName() + " - "
                 + tab.getName());
       }
@@ -887,8 +870,8 @@ public class DatabaseValidator implements SystemValidator {
    */
   private void checkKillableImplementation(SystemValidationResult result) {
 
-    OBCriteria<org.openbravo.model.ad.ui.Process> obc = OBDal.getInstance().createCriteria(
-        org.openbravo.model.ad.ui.Process.class);
+    OBCriteria<org.openbravo.model.ad.ui.Process> obc = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.ad.ui.Process.class);
     obc.add(Restrictions.eq(org.openbravo.model.ad.ui.Process.PROPERTY_KILLABLE, true));
     if (validateModule != null) {
       obc.add(Restrictions.eq(DataSet.PROPERTY_MODULE, validateModule));
@@ -896,15 +879,12 @@ public class DatabaseValidator implements SystemValidator {
     List<org.openbravo.model.ad.ui.Process> processList = obc.list();
     for (org.openbravo.model.ad.ui.Process process : processList) {
       try {
-        Class<?> processClass = Class.forName(process.getJavaClassName(), false, this.getClass()
-            .getClassLoader());
+        Class<?> processClass = Class.forName(process.getJavaClassName(), false,
+            this.getClass().getClassLoader());
         if (!KillableProcess.class.isAssignableFrom(processClass)) {
-          result
-              .addWarning(
-                  SystemValidationResult.SystemValidationType.KILLABLENOTIMPLEMENTED,
-                  "The process "
-                      + process.getIdentifier()
-                      + " is marked as killable so the javaclass associated must implement the KillableProcess interface");
+          result.addWarning(SystemValidationResult.SystemValidationType.KILLABLENOTIMPLEMENTED,
+              "The process " + process.getIdentifier()
+                  + " is marked as killable so the javaclass associated must implement the KillableProcess interface");
         }
       } catch (ClassNotFoundException e) {
         result.addWarning(SystemValidationResult.SystemValidationType.KILLABLENOTIMPLEMENTED,

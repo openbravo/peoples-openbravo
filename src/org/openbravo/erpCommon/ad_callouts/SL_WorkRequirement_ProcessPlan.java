@@ -43,8 +43,9 @@ public class SL_WorkRequirement_ProcessPlan extends SimpleCallout {
         strProcessPlan);
     if (data != null && data.length > 0) {
       info.addResult("inpexplodephases", FormatUtilities.replaceJS(data[0].explodephases));
-      final BigDecimal conversionRate = StringUtils.isNotEmpty(data[0].conversionrate) ? new BigDecimal(
-          data[0].conversionrate) : null;
+      final BigDecimal conversionRate = StringUtils.isNotEmpty(data[0].conversionrate)
+          ? new BigDecimal(data[0].conversionrate)
+          : null;
       info.addResult("inpconversionrate", conversionRate);
       info.addResult("inpsecondaryunit", FormatUtilities.replaceJS(data[0].secondaryunit));
     } else {

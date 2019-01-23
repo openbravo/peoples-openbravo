@@ -153,9 +153,8 @@ public class AllowedCrossDomainsHandler {
       response.setHeader("Access-Control-Max-Age", "10000");
     } catch (Exception logIt) {
       // on purpose not stopping on this to retain some robustness
-      log.error(
-          "Error when setting cors headers " + logIt.getMessage() + " " + request.getRequestURL()
-              + " " + request.getQueryString(), logIt);
+      log.error("Error when setting cors headers " + logIt.getMessage() + " "
+          + request.getRequestURL() + " " + request.getQueryString(), logIt);
     }
   }
 

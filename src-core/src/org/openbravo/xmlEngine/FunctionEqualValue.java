@@ -24,6 +24,7 @@ class FunctionEqualValue extends FunctionEvaluationValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
@@ -32,6 +33,7 @@ class FunctionEqualValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;

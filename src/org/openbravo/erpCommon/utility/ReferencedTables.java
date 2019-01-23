@@ -51,15 +51,18 @@ class ReferencedTables {
     String tableName = ReferencedTablesData.selectTableName(conn, adTableId);
     if (keyId != null && !keyId.equals("")) {
       if (adTableId.equals("800018")) { // C_Debt_Payment
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("DP");
+        }
         String invoiceId = ReferencedTablesData.selectKeyId(conn, "C_INVOICE_ID", tableName,
             keyName, keyId);
         if (!invoiceId.equals("")) {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug("InvoiceId: " + invoiceId);
+          }
           String newAdTableId = ReferencedTablesData.selectTableId(conn, "C_Invoice");
-          ReferencedTables ref = new ReferencedTables(conn, newAdTableId, "C_Invoice_ID", invoiceId);
+          ReferencedTables ref = new ReferencedTables(conn, newAdTableId, "C_Invoice_ID",
+              invoiceId);
           hassotrx = ref.hasSOTrx();
           sotrx = ref.isSOTrx();
           ref = null;
@@ -67,16 +70,18 @@ class ReferencedTables {
           String orderId = ReferencedTablesData.selectKeyId(conn, "C_ORDER_ID", tableName, keyName,
               keyId);
           if (!orderId.equals("")) {
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("OrderId: " + orderId);
+            }
             String newAdTableId = ReferencedTablesData.selectTableId(conn, "C_Order");
             ReferencedTables ref = new ReferencedTables(conn, newAdTableId, "C_Order_ID", orderId);
             hassotrx = ref.hasSOTrx();
             sotrx = ref.isSOTrx();
             ref = null;
           } else {
-            if (log4j.isDebugEnabled())
+            if (log4j.isDebugEnabled()) {
               log4j.debug("Settlement");
+            }
             checkParent(tableName, "C_Settlement_Generate_ID");
           }
         }
@@ -85,29 +90,32 @@ class ReferencedTables {
         sotrx = ReferencedTablesData.selectNotManual(conn, keyId);
       } else if (ReferencedTablesData.hasIsSOTrx(conn, adTableId)) {
         hassotrx = true;
-        if (keyName.equalsIgnoreCase("C_DocTypeTarget_ID"))
+        if (keyName.equalsIgnoreCase("C_DocTypeTarget_ID")) {
           keyName = "C_DocType_ID";
-        else if (keyName.equalsIgnoreCase("PO_Window_ID"))
+        } else if (keyName.equalsIgnoreCase("PO_Window_ID")) {
           keyName = "AD_Window_ID";
-        else if (keyName.equalsIgnoreCase("BillTo_ID"))
+        } else if (keyName.equalsIgnoreCase("BillTo_ID")) {
           keyName = "C_BPartner_Location_ID";
+        }
         sotrx = ReferencedTablesData.selectSOTrx(conn, tableName, keyName, keyId);
-      } else
+      } else {
         checkParent(tableName, "");
+      }
     }
   }
 
   private void checkParent(String tableName, String filterField) throws ServletException {
     ReferencedTablesData[] data = ReferencedTablesData.select(conn, filterField, adTableId);
-    if (keyName.equalsIgnoreCase("C_DocTypeTarget_ID"))
+    if (keyName.equalsIgnoreCase("C_DocTypeTarget_ID")) {
       keyName = "C_DocType_ID";
-    else if (keyName.equalsIgnoreCase("PO_Window_ID"))
+    } else if (keyName.equalsIgnoreCase("PO_Window_ID")) {
       keyName = "AD_Window_ID";
-    else if (keyName.equalsIgnoreCase("BillTo_ID"))
+    } else if (keyName.equalsIgnoreCase("BillTo_ID")) {
       keyName = "C_BPartner_Location_ID";
-    else if ((keyName.equalsIgnoreCase("SO_Bankaccount_ID"))
-        || (keyName.equalsIgnoreCase("PO_Bankaccount_ID")))
+    } else if ((keyName.equalsIgnoreCase("SO_Bankaccount_ID"))
+        || (keyName.equalsIgnoreCase("PO_Bankaccount_ID"))) {
       keyName = "C_BankAccount_ID";
+    }
     if (data != null && data.length > 0) {
       for (int i = 0; i < data.length; i++) {
         Vector<Object> vecReference = getTableNameReferenced(data[i].columnname,

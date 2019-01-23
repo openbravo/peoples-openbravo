@@ -37,13 +37,15 @@ public class SL_Costing_Currency extends SimpleCallout {
     try {
       OBContext.setAdminMode(true);
       Organization org = OBDal.getInstance().get(Organization.class, strAdOrgId);
-      if (org.getCurrency() != null)
+      if (org.getCurrency() != null) {
         strCurrencyId = org.getCurrency().getId();
-      else {
-        Organization legalOrg = OBContext.getOBContext().getOrganizationStructureProvider()
+      } else {
+        Organization legalOrg = OBContext.getOBContext()
+            .getOrganizationStructureProvider()
             .getLegalEntity(org);
-        if (legalOrg != null)
+        if (legalOrg != null) {
           strCurrencyId = legalOrg.getCurrency() != null ? legalOrg.getCurrency().getId() : null;
+        }
         if (strCurrencyId == null) {
           Client client = OBDal.getInstance().get(Client.class, strClientId);
           strCurrencyId = client.getCurrency() != null ? client.getCurrency().getId() : null;

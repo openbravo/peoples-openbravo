@@ -40,8 +40,9 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 public class GenericTreeServlet extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("OPENNODE")) {
       String strNode = vars.getRequiredStringParameter("inpNodeId");
@@ -59,10 +60,9 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
       String strNode = vars.getRequiredStringParameter("inpNodeId");
       String treeClass = vars.getRequiredStringParameter("inpTreeClass");
       printDescription(response, vars, strNode, treeClass, 2);
-    }
-
-    else
+    } else {
       pageError(response);
+    }
   }
 
   /**
@@ -77,8 +77,9 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
    */
   private void printOpenNode(HttpServletResponse response, VariablesSecureApp vars,
       String strNodeId, String treeClass, String level) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: ajaxreponse");
+    }
 
     response.setContentType("text/plain; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
@@ -86,7 +87,8 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
     String htmlTree = "";
     try {
       String newLevel = Integer.valueOf(Integer.valueOf(level).intValue() + 1).toString();
-      GenericTree tree = (GenericTree) Class.forName(treeClass).getDeclaredConstructor()
+      GenericTree tree = (GenericTree) Class.forName(treeClass)
+          .getDeclaredConstructor()
           .newInstance();
       tree.setParameters(this);
       tree.setLanguage(vars.getLanguage());
@@ -112,8 +114,9 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
    */
   private void printDescription(HttpServletResponse response, VariablesSecureApp vars,
       String strNodeId, String treeClass, int type) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: ajaxreponse");
+    }
 
     String description = "";
     response.setContentType("text/plain; charset=UTF-8");
@@ -121,7 +124,8 @@ public class GenericTreeServlet extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
 
     try {
-      GenericTree tree = (GenericTree) Class.forName(treeClass).getDeclaredConstructor()
+      GenericTree tree = (GenericTree) Class.forName(treeClass)
+          .getDeclaredConstructor()
           .newInstance();
       tree.setParameters(this);
       tree.setLanguage(vars.getLanguage());

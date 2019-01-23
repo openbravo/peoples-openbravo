@@ -52,8 +52,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -119,9 +120,9 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       if (vars.commandIn("PDF")) {
         strOutput = "pdf";
       }
-      printPageDataHtml(request, response, vars, strOrg, strProject, strProjectType,
-          strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2,
-          strDateFrom3, strDateTo3, strOutput, strCurrencyId);
+      printPageDataHtml(request, response, vars, strOrg, strProject, strProjectType, strResponsible,
+          strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strDateFrom3,
+          strDateTo3, strOutput, strCurrencyId);
     } else {
       pageError(response);
     }
@@ -131,8 +132,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strOrg, String strProject, String strProjectType,
       String strResponsible, String strDateFrom, String strDateTo, String strExpand,
       String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3,
-      String strDateTo3, String strOutput, String strCurrencyId) throws IOException,
-      ServletException {
+      String strDateTo3, String strOutput, String strCurrencyId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -272,8 +273,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     hsqlScript.append("         and uomconv.toUOM.id =  '101' ");
     hsqlScript.append(" )");
 
-    final OBQuery<UOM> query = OBDal.getReadOnlyInstance().createQuery(UOM.class,
-        hsqlScript.toString());
+    final OBQuery<UOM> query = OBDal.getReadOnlyInstance()
+        .createQuery(UOM.class, hsqlScript.toString());
     query.setNamedParameters(parameters);
     return query.list();
   }
@@ -289,8 +290,9 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR")
+        .createXmlDocument();
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "ReportProjectProfitabilityJR",
@@ -356,9 +358,10 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLE",
-          "Responsible_ID", "Responsible employee", "", Utility.getContext(readOnlyCP, vars,
-              "#AccessibleOrgTree", "ReportProjectProfitabilityJR"), Utility.getContext(readOnlyCP,
-              vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+          "Responsible_ID", "Responsible employee", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportProjectProfitabilityJR", strResponsible);
       xmlDocument.setData("reportResponsible", "liststructure", comboTableData.select(false));
@@ -373,8 +376,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "C_Project_ID", "", "",
-          Utility
-              .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"),
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportProjectProfitabilityJR", strProject);
@@ -382,8 +385,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
       comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "C_ProjectType_ID", "", "",
-          Utility
-              .getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"),
           Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportProjectProfitabilityJR", strProjectType);
@@ -397,9 +400,10 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("ccurrencyid", strCurrencyId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR",
-          "C_Currency_ID", "", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportProjectProfitabilityJR"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportProjectProfitabilityJR"), 0);
+          "C_Currency_ID", "", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
+              "ReportProjectProfitabilityJR"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData,
           "ReportProjectProfitabilityJR", strCurrencyId);
       xmlDocument.setData("reportC_Currency_ID", "liststructure", comboTableData.select(false));
@@ -412,6 +416,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportProjectProfitabilityJR. This Servlet was made by Pablo Sarobe";
   }

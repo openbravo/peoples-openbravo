@@ -47,8 +47,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportOrderNotShipped extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -92,8 +93,8 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strdateFrom, String strdateTo, String strcBpartnerId, String strDeliveryTerms,
-      String strOrderDocNo, String strOrderRef, String strCOrgId) throws IOException,
-      ServletException {
+      String strOrderDocNo, String strOrderRef, String strCOrgId)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
     }
@@ -150,9 +151,9 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     xmlDocument.setParameter("deliveryTerms", strDeliveryTerms);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
-          "C_Order DeliveryRule", "", Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree",
-              "ReportOrderNotShipped"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportOrderNotShipped"), 0);
+          "C_Order DeliveryRule", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOrderNotShipped"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOrderNotShipped"), 0);
       Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportOrderNotShipped",
           strDeliveryTerms);
       xmlDocument.setData("reportDeliveryTerms", "liststructure", comboTableData.select(false));
@@ -165,11 +166,11 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     xmlDocument.setParameter("adOrgId", strCOrgId);
     try {
       ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "TABLEDIR", "AD_Org_ID",
-          "", "49DC1D6F086945AB82F84C66F5F13F16", Utility.getContext(readOnlyCP, vars, "#User_Org",
-              "ReportOrderNotShipped"), Utility.getContext(readOnlyCP, vars, "#User_Client",
-              "ReportOrderNotShipped"), 0);
-      Utility
-          .fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportOrderNotShipped", "");
+          "", "49DC1D6F086945AB82F84C66F5F13F16",
+          Utility.getContext(readOnlyCP, vars, "#User_Org", "ReportOrderNotShipped"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOrderNotShipped"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "ReportOrderNotShipped",
+          "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;
 
@@ -217,8 +218,10 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
         data[i].pendingqty = df.format(UOMUtil.getConvertedAumQty(data[i].mProductId,
             new BigDecimal(data[i].pendingvalue), data[i].aum));
         try {
-          data[i].qtyinstock = UOMUtil.getConvertedAumQty(data[i].mProductId,
-              new BigDecimal(data[i].stockvalue), data[i].aum).toString();
+          data[i].qtyinstock = UOMUtil
+              .getConvertedAumQty(data[i].mProductId, new BigDecimal(data[i].stockvalue),
+                  data[i].aum)
+              .toString();
         } catch (NumberFormatException nfe) {
           data[i].qtyinstock = null;
           data[i].aumsymbol = " ";
@@ -241,6 +244,7 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportOrderNotShipped.";
   }

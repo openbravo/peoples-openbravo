@@ -101,13 +101,11 @@ public class ParametersActionHandler extends BaseActionHandler implements Portal
 
       try {
         @SuppressWarnings("unused")
-        final java.lang.reflect.Field f = ParameterValue.class.getDeclaredField("PROPERTY_"
-            + dbFilterProperty.toUpperCase());
+        final java.lang.reflect.Field f = ParameterValue.class
+            .getDeclaredField("PROPERTY_" + dbFilterProperty.toUpperCase());
       } catch (NoSuchFieldException fieldException) {
-        result.put(
-            "message",
-            getMessge("Error", "Property " + dbFilterProperty
-                + " is not defined in Parameters class"));
+        result.put("message", getMessge("Error",
+            "Property " + dbFilterProperty + " is not defined in Parameters class"));
         return result;
       }
 
@@ -117,8 +115,9 @@ public class ParametersActionHandler extends BaseActionHandler implements Portal
         final Parameter param = OBDal.getInstance()
             .get(Parameter.class, p.getString("parameterId"));
         ParameterValue value;
-        OBQuery<ParameterValue> obq = OBDal.getInstance().createQuery(ParameterValue.class,
-            dbFilterProperty + " = :filter and parameter = :param");
+        OBQuery<ParameterValue> obq = OBDal.getInstance()
+            .createQuery(ParameterValue.class,
+                dbFilterProperty + " = :filter and parameter = :param");
         obq.setNamedParameter("filter", filterObject);
         obq.setNamedParameter("param", param);
 

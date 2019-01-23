@@ -72,8 +72,8 @@ public class ProductEventHandler extends EntityPersistenceEventObserver {
             for (CharacteristicValue chValue : productCh.getCharacteristic()
                 .getCharacteristicValueList()) {
               if (!chValue.isSummaryLevel()) {
-                ProductCharacteristicConf charConf = OBProvider.getInstance().get(
-                    ProductCharacteristicConf.class);
+                ProductCharacteristicConf charConf = OBProvider.getInstance()
+                    .get(ProductCharacteristicConf.class);
                 charConf.setCharacteristicOfProduct(productCh);
                 charConf.setOrganization(productCh.getOrganization());
                 charConf.setCharacteristicValue(chValue);

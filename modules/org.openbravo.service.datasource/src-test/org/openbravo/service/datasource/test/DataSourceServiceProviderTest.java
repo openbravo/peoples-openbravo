@@ -66,8 +66,8 @@ public class DataSourceServiceProviderTest extends WeldBaseTest {
     dataSource.setJavaClassName(ExtendedDataSource.class.getName());
     dataSource.setName(Table.ENTITY_NAME);
     dataSource.setDescription("test");
-    dataSource.setTemplate(OBDal.getInstance().get(Template.class,
-        DataSourceConstants.DS_TEMPLATE_ID));
+    dataSource
+        .setTemplate(OBDal.getInstance().get(Template.class, DataSourceConstants.DS_TEMPLATE_ID));
     final String whereClause = Table.PROPERTY_HELPCOMMENT + " <> null";
     dataSource.setHQLWhereClause(whereClause);
     OBDal.getInstance().save(dataSource);

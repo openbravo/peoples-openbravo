@@ -166,9 +166,9 @@ public class GroupInfo {
   public String executeNextProcess() throws SchedulerException, ServletException {
     if (currentposition == 0) {
       groupLog = new StringBuilder();
-      groupLog.append(now()
-          + OBMessageUtils.getI18NMessage("PROGROUP_Start", new String[] { group.getName() })
-          + "\n\n");
+      groupLog.append(
+          now() + OBMessageUtils.getI18NMessage("PROGROUP_Start", new String[] { group.getName() })
+              + "\n\n");
       startGroupTime = new Date();
     }
     if (currentposition < groupList.size()
@@ -177,10 +177,8 @@ public class GroupInfo {
       ProcessGroupList processList = groupList.get(currentposition);
       String currentProcessId = processList.getProcess().getId();
       currentposition++;
-      groupLog.append(now()
-          + processList.getSequenceNumber()
-          + OBMessageUtils.getI18NMessage("PROGROUP_StartSuccess", new String[] { processList
-              .getProcess().getName() }) + "\n");
+      groupLog.append(now() + processList.getSequenceNumber() + OBMessageUtils.getI18NMessage(
+          "PROGROUP_StartSuccess", new String[] { processList.getProcess().getName() }) + "\n");
 
       // Execute next process immediately
       final ProcessBundle firstProcess = new ProcessBundle(currentProcessId, vars,
@@ -209,10 +207,9 @@ public class GroupInfo {
       resultMessage = OBMessageUtils.getI18NMessage("PROGROUP_Fail", null);
       this.status = Process.ERROR;
     }
-    groupLog.append(now()
-        + processList.getSequenceNumber()
-        + OBMessageUtils.getI18NMessage("PROGROUP_Process", new String[] { processList.getProcess()
-            .getName() }) + resultMessage + "\n");
+    groupLog.append(
+        now() + processList.getSequenceNumber() + OBMessageUtils.getI18NMessage("PROGROUP_Process",
+            new String[] { processList.getProcess().getName() }) + resultMessage + "\n");
     groupLog.append(OBMessageUtils.getI18NMessage("PROGROUP_Separator", null) + "\n");
   }
 

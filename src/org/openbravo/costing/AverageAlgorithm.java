@@ -41,14 +41,16 @@ import org.openbravo.model.materialmgmt.cost.Costing;
 
 public class AverageAlgorithm extends CostingAlgorithm {
 
+  @Override
   public BigDecimal getTransactionCost() {
     BigDecimal trxCost = super.getTransactionCost();
     // If it is a transaction whose cost has not been calculated based on current average cost
     // calculate new average cost.
     if (modifiesAverage(trxType)) {
       Costing currentCosting = getProductCost();
-      BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
-          .negate() : trxCost;
+      BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1)
+          ? trxCost.negate()
+          : trxCost;
       BigDecimal newCost = null;
       BigDecimal currentStock = CostingUtils.getCurrentStock(transaction, costOrg, costDimensions,
           costingRule.isBackdatedTransactionsFixed(), costCurrency);
@@ -58,8 +60,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
         if (transaction.getMovementQuantity().signum() == 0) {
           newCost = BigDecimal.ZERO;
         } else {
-          newCost = trxCostWithSign.divide(transaction.getMovementQuantity(), costCurrency
-              .getCostingPrecision().intValue(), RoundingMode.HALF_UP);
+          newCost = trxCostWithSign.divide(transaction.getMovementQuantity(),
+              costCurrency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
         }
       } else {
         BigDecimal newCostAmt = currentValuedStock.add(trxCostWithSign);
@@ -142,13 +144,13 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     cost.setQuantity(transaction.getMovementQuantity());
     cost.setTotalMovementQuantity(currentStock.add(transaction.getMovementQuantity()));
-    cost.setTotalStockValuation(currentValuedStock.add(trxCost.setScale(costCurrency
-        .getStandardPrecision().intValue(), RoundingMode.HALF_UP)));
+    cost.setTotalStockValuation(currentValuedStock.add(
+        trxCost.setScale(costCurrency.getStandardPrecision().intValue(), RoundingMode.HALF_UP)));
     if (transaction.getMovementQuantity().signum() == 0) {
       cost.setPrice(newCost);
     } else {
-      cost.setPrice(trxCost.divide(transaction.getMovementQuantity(), costCurrency
-          .getPricePrecision().intValue(), RoundingMode.HALF_UP));
+      cost.setPrice(trxCost.divide(transaction.getMovementQuantity(),
+          costCurrency.getPricePrecision().intValue(), RoundingMode.HALF_UP));
     }
     cost.setCostType("AVA");
     cost.setManual(false);
@@ -314,21 +316,21 @@ public class AverageAlgorithm extends CostingAlgorithm {
    */
   protected static boolean modifiesAverage(TrxType trxType) {
     switch (trxType) {
-    case Receipt:
-    case ReceiptVoid:
-    case ShipmentVoid:
-    case ShipmentReturn:
-    case ShipmentNegative:
-    case InventoryIncrease:
-    case InventoryOpening:
-    case IntMovementTo:
-    case InternalConsNegative:
-    case InternalConsVoid:
-    case BOMProduct:
-    case ManufacturingProduced:
-      return true;
-    default:
-      return false;
+      case Receipt:
+      case ReceiptVoid:
+      case ShipmentVoid:
+      case ShipmentReturn:
+      case ShipmentNegative:
+      case InventoryIncrease:
+      case InventoryOpening:
+      case IntMovementTo:
+      case InternalConsNegative:
+      case InternalConsVoid:
+      case BOMProduct:
+      case ManufacturingProduced:
+        return true;
+      default:
+        return false;
     }
   }
 

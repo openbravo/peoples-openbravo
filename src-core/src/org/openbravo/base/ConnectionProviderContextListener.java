@@ -36,6 +36,7 @@ public class ConnectionProviderContextListener implements ServletContextListener
   private static Logger log4j = LogManager.getLogger();
   private static ConnectionProvider pool;
 
+  @Override
   public void contextInitialized(ServletContextEvent event) {
     ServletContext context = event.getServletContext();
     ConfigParameters configParameters = ConfigParameters.retrieveFrom(context);
@@ -49,6 +50,7 @@ public class ConnectionProviderContextListener implements ServletContextListener
 
   }
 
+  @Override
   public void contextDestroyed(ServletContextEvent event) {
     ServletContext context = event.getServletContext();
     destroyPool(getPool(context));

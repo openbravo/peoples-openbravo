@@ -136,12 +136,14 @@ public class ApplyModule {
           }
 
           String msg = result.getWarningMessages();
-          if (msg != null && msg.length() > 0)
+          if (msg != null && msg.length() > 0) {
             log4j.warn(msg);
+          }
 
           msg = result.getLogMessages();
-          if (msg != null && msg.length() > 0)
+          if (msg != null && msg.length() > 0) {
             log4j.debug(msg);
+          }
         }
         OBDal.getInstance().commitAndClose();
       }
@@ -174,10 +176,11 @@ public class ApplyModule {
           ApplyModuleData.process179(pool, pinstance);
 
           final OBError myMessage = getProcessInstanceMessageSimple(pool, pinstance);
-          if (myMessage.getType().equals("Error"))
+          if (myMessage.getType().equals("Error")) {
             log4j.error(myMessage.getMessage());
-          else
+          } else {
             log4j.info(myMessage.getMessage());
+          }
         } catch (final ServletException ex) {
           log4j.error("Error running verify language process", ex);
         }
@@ -250,18 +253,20 @@ public class ApplyModule {
    */
   private String dataSet2ImportFilename(ApplyModuleData ds) throws FileNotFoundException {
     String strPath;
-    if (ds.adModuleId.equals("0"))
+    if (ds.adModuleId.equals("0")) {
       strPath = obDir + "/referencedata/standard";
-    else
+    } else {
       strPath = obDir + "/modules/" + ds.javapackage + "/referencedata/standard";
+    }
 
     strPath = strPath + "/" + BasicUtility.wikifiedName(ds.dsName) + ".xml";
     return strPath;
   }
 
   public static void main(String[] args) {
-    final ApplyModule am = new ApplyModule(new CPStandAlone(
-        "/ws/modularity/openbravo/config/Openbravo.properties"), "/ws/modularity/openbravo");
+    final ApplyModule am = new ApplyModule(
+        new CPStandAlone("/ws/modularity/openbravo/config/Openbravo.properties"),
+        "/ws/modularity/openbravo");
     am.execute();
   }
 }

@@ -93,13 +93,13 @@ public class SE_Locator_Activate extends SimpleCallout {
     parameters.put("storageBinId", strLocator);
     hsqlScript.append(" (coalesce (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + ",0) <> 0)");
     hsqlScript.append(" or coalesce (sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + ",0) <> 0");
-    hsqlScript.append(" or coalesce (sd." + StorageDetail.PROPERTY_QUANTITYINDRAFTTRANSACTIONS
-        + ",0) <> 0");
+    hsqlScript.append(
+        " or coalesce (sd." + StorageDetail.PROPERTY_QUANTITYINDRAFTTRANSACTIONS + ",0) <> 0");
     hsqlScript.append(" or coalesce (sd." + StorageDetail.PROPERTY_QUANTITYORDERINDRAFTTRANSACTIONS
         + ",0) <> 0) ");
 
-    final OBQuery<StorageDetail> query = OBDal.getInstance().createQuery(StorageDetail.class,
-        hsqlScript.toString());
+    final OBQuery<StorageDetail> query = OBDal.getInstance()
+        .createQuery(StorageDetail.class, hsqlScript.toString());
     query.setNamedParameters(parameters);
     query.setMaxResult(1);
     return query.uniqueResult() != null;
@@ -117,14 +117,14 @@ public class SE_Locator_Activate extends SimpleCallout {
     hsqlScript.append(" where w.id = :warehouseId and");
     parameters.put("warehouseId", warehouse);
     hsqlScript.append(" (coalesce (sp." + StoragePending.PROPERTY_ORDEREDQUANTITY + ",0) <> 0");
-    hsqlScript.append(" or coalesce (sp." + StoragePending.PROPERTY_ORDEREDQUANTITYORDER
-        + ",0) <> 0");
+    hsqlScript
+        .append(" or coalesce (sp." + StoragePending.PROPERTY_ORDEREDQUANTITYORDER + ",0) <> 0");
     hsqlScript.append(" or coalesce (sp." + StoragePending.PROPERTY_RESERVEDQUANTITY + ",0) <> 0");
-    hsqlScript.append(" or coalesce (sp." + StoragePending.PROPERTY_RESERVEDQUANTITYORDER
-        + ",0) <> 0) ");
+    hsqlScript
+        .append(" or coalesce (sp." + StoragePending.PROPERTY_RESERVEDQUANTITYORDER + ",0) <> 0) ");
 
-    final OBQuery<StoragePending> query = OBDal.getInstance().createQuery(StoragePending.class,
-        hsqlScript.toString());
+    final OBQuery<StoragePending> query = OBDal.getInstance()
+        .createQuery(StoragePending.class, hsqlScript.toString());
     query.setNamedParameters(parameters);
     query.setMaxResult(1);
     return query.uniqueResult() != null;

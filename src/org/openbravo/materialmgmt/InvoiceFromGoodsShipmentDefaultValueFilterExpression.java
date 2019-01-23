@@ -20,14 +20,15 @@ package org.openbravo.materialmgmt;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.FilterExpression;
+import org.openbravo.common.actionhandler.InvoiceFromShipmentActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Class to set the default value of priceList parameter in {@link InvoiceFromShipmentActionHandler}

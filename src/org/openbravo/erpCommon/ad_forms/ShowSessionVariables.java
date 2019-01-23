@@ -40,8 +40,9 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ShowSessionVariables extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("REMOVE")) {
@@ -75,8 +76,8 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       String preferences = vars.getGlobalVariable("inpPreference",
           "ShowSessionVariables|preferences", "Y");
       String global = vars.getGlobalVariable("inpGlobal", "ShowSessionVariables|global", "Y");
-      String accounting = vars.getGlobalVariable("inpAccounting",
-          "ShowSessionVariables|accounting", "Y");
+      String accounting = vars.getGlobalVariable("inpAccounting", "ShowSessionVariables|accounting",
+          "Y");
       String windowG = vars.getGlobalVariable("inpWindowGlobal",
           "ShowSessionVariables|windowGlobal", "Y");
       String window = vars.getGlobalVariable("inpWindow", "ShowSessionVariables|window", "0");
@@ -85,8 +86,8 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       String preferences = vars.getGlobalVariable("inpPreference",
           "ShowSessionVariables|preferences", "Y");
       String global = vars.getGlobalVariable("inpGlobal", "ShowSessionVariables|global", "Y");
-      String accounting = vars.getGlobalVariable("inpAccounting",
-          "ShowSessionVariables|accounting", "Y");
+      String accounting = vars.getGlobalVariable("inpAccounting", "ShowSessionVariables|accounting",
+          "Y");
       String windowG = vars.getGlobalVariable("inpWindowGlobal",
           "ShowSessionVariables|windowGlobal", "Y");
       String window = vars.getGlobalVariable("inpWindow", "ShowSessionVariables|window", "0");
@@ -95,29 +96,34 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
   }
 
   private boolean existsWindow(Vector<String> windows, String windowId) {
-    if (windows.size() == 0)
+    if (windows.size() == 0) {
       return false;
+    }
     for (int i = 0; i < windows.size(); i++) {
       String aux = windows.elementAt(i);
-      if (aux.equals(windowId))
+      if (aux.equals(windowId)) {
         return true;
+      }
     }
     return false;
   }
 
   private String windowName(ShowSessionVariablesData[] windows, String windowId) {
-    if (windows == null || windowId == null || windowId.equals(""))
+    if (windows == null || windowId == null || windowId.equals("")) {
       return "";
+    }
     for (int i = 0; i < windows.length; i++) {
-      if (windows[i].id.equals(windowId))
+      if (windows[i].id.equals(windowId)) {
         return windows[i].name;
+      }
     }
     return "";
   }
 
   private ShowSessionVariablesStructureData[] orderStructure(
       ShowSessionVariablesStructureData[] data, ShowSessionVariablesData[] windows,
-      boolean preferences, boolean global, boolean accounting, boolean windowGlobal, String window) {
+      boolean preferences, boolean global, boolean accounting, boolean windowGlobal,
+      String window) {
     ShowSessionVariablesStructureData[] resData = null;
     try {
       Vector<ShowSessionVariablesStructureData> vecPreferences = new Vector<>();
@@ -143,9 +149,8 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       Vector<ShowSessionVariablesStructureData> vecPreferencesW = new Vector<>();
       if (preferences && !window.equals("")) {
         for (int i = 0; i < data.length; i++) {
-          if (data[i].isPreference
-              && (data[i].window != null && !data[i].window.equals("") && (data[i].window
-                  .equals(window) || window.equals("0")))) {
+          if (data[i].isPreference && (data[i].window != null && !data[i].window.equals("")
+              && (data[i].window.equals(window) || window.equals("0")))) {
             boolean insertado = false;
             data[i].windowName = windowName(windows, data[i].window);
             for (int j = 0; j < vecPreferencesW.size() && !insertado; j++) {
@@ -234,11 +239,9 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       Vector<ShowSessionVariablesStructureData> vecWindow = new Vector<>();
       if (!window.equals("")) {
         for (int i = 0; i < data.length; i++) {
-          if (!data[i].isAccounting
-              && !data[i].isGlobal
-              && !data[i].isPreference
-              && (data[i].window != null && !data[i].window.equals("") && (data[i].window
-                  .equals(window) || window.equals("0")))) {
+          if (!data[i].isAccounting && !data[i].isGlobal && !data[i].isPreference
+              && (data[i].window != null && !data[i].window.equals("")
+                  && (data[i].window.equals(window) || window.equals("0")))) {
             boolean insertado = false;
             data[i].windowName = windowName(windows, data[i].window);
             for (int j = 0; j < vecWindow.size() && !insertado; j++) {
@@ -286,9 +289,10 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         resData[i].rownum = "" + i;
       }
 
-      if (log4j.isDebugEnabled())
-        log4j.debug("ShowSession - orderStructure - Total: " + resData.length + "-"
-            + resData[0].name);
+      if (log4j.isDebugEnabled()) {
+        log4j.debug(
+            "ShowSession - orderStructure - Total: " + resData.length + "-" + resData[0].name);
+      }
     } catch (Exception e) {
       log4j.error("ShowSession - orderStructure - Ordering Session variables error " + e);
     }
@@ -297,8 +301,9 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
 
   private ShowSessionVariablesStructureData[] compoundSession(HttpServletRequest request,
       VariablesSecureApp vars, Vector<String> windows) {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("ShowSession - compoundSession - view session");
+    }
     ShowSessionVariablesStructureData[] data = null;
     HttpSession session = request.getSession(true);
     Vector<ShowSessionVariablesStructureData> texto = new Vector<>();
@@ -307,8 +312,9 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       Enumeration<?> e = session.getAttributeNames();
       while (e.hasMoreElements()) {
         sessionName = (String) e.nextElement();
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("ShowSession - compoundSession - session name: " + sessionName);
+        }
         String realName = sessionName;
         ShowSessionVariablesStructureData data1 = new ShowSessionVariablesStructureData();
         if (realName.startsWith("P|")) {
@@ -326,8 +332,9 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         int pos = realName.indexOf("|");
         if (pos != -1) {
           data1.window = realName.substring(0, pos);
-          if (!existsWindow(windows, data1.window))
+          if (!existsWindow(windows, data1.window)) {
             windows.addElement(data1.window);
+          }
           realName = realName.substring(pos + 1);
         }
 
@@ -345,10 +352,11 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
   }
 
   private void printPageDataSheet(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, String preferences, String global, String accounting,
-      String windowG, String window) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+      VariablesSecureApp vars, String preferences, String global, String accounting, String windowG,
+      String window) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) {
       log4j.debug("ShowSession - printPageDataSheet - Output: data sheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     Vector<String> windows = new Vector<>();
@@ -356,11 +364,13 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
     XmlDocument xmlDocument;
     if (data == null || data.length == 0) {
       String[] discard = { "sectionDetail" };
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/ShowSessionVariables", discard).createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/ShowSessionVariables", discard)
+          .createXmlDocument();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/erpCommon/ad_forms/ShowSessionVariables").createXmlDocument();
+      xmlDocument = xmlEngine
+          .readXmlTemplate("org/openbravo/erpCommon/ad_forms/ShowSessionVariables")
+          .createXmlDocument();
     }
     StringBuffer strWindows = new StringBuffer();
     Vector<ShowSessionVariablesData> vecWindows = new Vector<>();
@@ -369,8 +379,9 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       for (int i = 0; i < windows.size(); i++) {
         String aux = windows.elementAt(i);
         try {
-          if (i > 0)
+          if (i > 0) {
             strWindows.append(", ");
+          }
           strWindows.append("'").append(aux).append("'");
         } catch (Exception e) {
           ShowSessionVariablesData d = new ShowSessionVariablesData();
@@ -414,9 +425,9 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    ShowSessionVariablesData[] windowsData = (vars.getLanguage().equals("en_US") ? ShowSessionVariablesData
-        .select(this, strWindows.toString()) : ShowSessionVariablesData.selectTrl(this,
-        strWindows.toString(), vars.getLanguage()));
+    ShowSessionVariablesData[] windowsData = (vars.getLanguage().equals("en_US")
+        ? ShowSessionVariablesData.select(this, strWindows.toString())
+        : ShowSessionVariablesData.selectTrl(this, strWindows.toString(), vars.getLanguage()));
     {
       Vector<ShowSessionVariablesData> v = new Vector<>();
       ShowSessionVariablesData d = new ShowSessionVariablesData();
@@ -441,6 +452,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ShowSession. This Servlet was made by Wad constructor";
   } // end of getServletInfo() method

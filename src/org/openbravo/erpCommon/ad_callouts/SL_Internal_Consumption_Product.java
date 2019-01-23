@@ -63,8 +63,8 @@ public class SL_Internal_Consumption_Product extends SimpleCallout {
     try {
       final Product product = OBDal.getInstance().get(Product.class, strProduct);
       if (product != null) {
-        info.addResult("inpattributeset", product.getAttributeSet() != null ? product
-            .getAttributeSet().getId() : "");
+        info.addResult("inpattributeset",
+            product.getAttributeSet() != null ? product.getAttributeSet().getId() : "");
         info.addResult("inpattrsetvaluetype",
             FormatUtilities.replaceJS(product.getUseAttributeSetValueAs()));
       }
@@ -80,9 +80,9 @@ public class SL_Internal_Consumption_Product extends SimpleCallout {
     FieldProvider[] tld = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              "SLInternalConsumptionProduct"), Utility.getContext(this, info.vars, "#User_Client",
-              "SLInternalConsumptionProduct"), 0);
+          "M_Product_UOM", "",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", "SLInternalConsumptionProduct"),
+          Utility.getContext(this, info.vars, "#User_Client", "SLInternalConsumptionProduct"), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData,
           "SLInternalConsumptionProduct", "");
       tld = comboTableData.select(false);

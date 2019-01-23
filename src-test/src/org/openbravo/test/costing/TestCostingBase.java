@@ -70,31 +70,37 @@ public class TestCostingBase extends WeldBaseTest {
         OBDal.getInstance().flush();
 
         // Set QA context
-        OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-            TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+        OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+            TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+            TestCostingConstants.SPAIN_ORGANIZATION_ID);
 
         // Set Spain organization currency
-        Organization organization = OBDal.getInstance().get(Organization.class,
-            TestCostingConstants.SPAIN_ORGANIZATION_ID);
+        Organization organization = OBDal.getInstance()
+            .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID);
         organization.setCurrency(OBDal.getInstance().get(Currency.class, EURO_ID));
         OBDal.getInstance().save(organization);
 
         // Set allow negatives in General Ledger
-        AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class,
-            TestCostingConstants.GENERALLEDGER_ID);
+        AcctSchema acctSchema = OBDal.getInstance()
+            .get(AcctSchema.class, TestCostingConstants.GENERALLEDGER_ID);
         acctSchema.setAllowNegative(false);
         OBDal.getInstance().save(acctSchema);
 
         // Active tables in General Ledger Configuration
         List<Table> tableList = new ArrayList<Table>();
-        tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INTERNAL_CONSUMPTION_ID));
-        tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INTERNAL_MOVEMENT_ID));
-        tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INVENTORY_COUNT_ID));
+        tableList.add(OBDal.getInstance()
+            .get(Table.class, TestCostingConstants.TABLE_INTERNAL_CONSUMPTION_ID));
+        tableList.add(
+            OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INTERNAL_MOVEMENT_ID));
+        tableList.add(
+            OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INVENTORY_COUNT_ID));
         tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INOUT_ID));
-        tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_PRODUCTION_ID));
-        tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_MATCH_INVOICE_ID));
-        final OBCriteria<AcctSchemaTable> criteria1 = OBDal.getInstance().createCriteria(
-            AcctSchemaTable.class);
+        tableList
+            .add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_PRODUCTION_ID));
+        tableList
+            .add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_MATCH_INVOICE_ID));
+        final OBCriteria<AcctSchemaTable> criteria1 = OBDal.getInstance()
+            .createCriteria(AcctSchemaTable.class);
         criteria1.add(Restrictions.eq(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA, acctSchema));
         criteria1.add(Restrictions.in(AcctSchemaTable.PROPERTY_TABLE, tableList));
         criteria1.setFilterOnActive(false);
@@ -110,8 +116,8 @@ public class TestCostingBase extends WeldBaseTest {
         // Create costing rule
         CostingRule costingRule = OBProvider.getInstance().get(CostingRule.class);
         TestCostingUtils.setGeneralData(costingRule);
-        costingRule.setCostingAlgorithm(OBDal.getInstance().get(CostingAlgorithm.class,
-            TestCostingConstants.AVERAGE_COSTINGALGORITHM_ID));
+        costingRule.setCostingAlgorithm(OBDal.getInstance()
+            .get(CostingAlgorithm.class, TestCostingConstants.AVERAGE_COSTINGALGORITHM_ID));
         costingRule.setWarehouseDimension(true);
         costingRule.setBackdatedTransactionsFixed(true);
         costingRule.setValidated(false);
@@ -156,31 +162,36 @@ public class TestCostingBase extends WeldBaseTest {
       OBDal.getInstance().flush();
 
       // Set QA context
-      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID, TestCostingConstants.QATESTING_ROLE_ID,
-          TestCostingConstants.QATESTING_CLIENT_ID, TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      OBContext.setOBContext(TestCostingConstants.OPENBRAVO_USER_ID,
+          TestCostingConstants.QATESTING_ROLE_ID, TestCostingConstants.QATESTING_CLIENT_ID,
+          TestCostingConstants.SPAIN_ORGANIZATION_ID);
 
       // Set Spain organization currency
-      Organization organization = OBDal.getInstance().get(Organization.class,
-          TestCostingConstants.SPAIN_ORGANIZATION_ID);
+      Organization organization = OBDal.getInstance()
+          .get(Organization.class, TestCostingConstants.SPAIN_ORGANIZATION_ID);
       organization.setCurrency(null);
       OBDal.getInstance().save(organization);
 
       // Set allow negatives in General Ledger
-      AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class,
-          TestCostingConstants.GENERALLEDGER_ID);
+      AcctSchema acctSchema = OBDal.getInstance()
+          .get(AcctSchema.class, TestCostingConstants.GENERALLEDGER_ID);
       acctSchema.setAllowNegative(true);
       OBDal.getInstance().save(acctSchema);
 
       // Active tables in General Ledger Configuration
       List<Table> tableList = new ArrayList<Table>();
-      tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INTERNAL_CONSUMPTION_ID));
-      tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INTERNAL_MOVEMENT_ID));
-      tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INVENTORY_COUNT_ID));
+      tableList.add(
+          OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INTERNAL_CONSUMPTION_ID));
+      tableList.add(
+          OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INTERNAL_MOVEMENT_ID));
+      tableList
+          .add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INVENTORY_COUNT_ID));
       tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_INOUT_ID));
       tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_PRODUCTION_ID));
-      tableList.add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_MATCH_INVOICE_ID));
-      final OBCriteria<AcctSchemaTable> criteria = OBDal.getInstance().createCriteria(
-          AcctSchemaTable.class);
+      tableList
+          .add(OBDal.getInstance().get(Table.class, TestCostingConstants.TABLE_MATCH_INVOICE_ID));
+      final OBCriteria<AcctSchemaTable> criteria = OBDal.getInstance()
+          .createCriteria(AcctSchemaTable.class);
       criteria.add(Restrictions.eq(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA, acctSchema));
       criteria.add(Restrictions.in(AcctSchemaTable.PROPERTY_TABLE, tableList));
       for (AcctSchemaTable acctSchemaTable : criteria.list()) {

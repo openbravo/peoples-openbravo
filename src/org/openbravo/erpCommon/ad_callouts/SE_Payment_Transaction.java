@@ -46,12 +46,13 @@ public class SE_Payment_Transaction extends SimpleCallout {
         final String strTransactionId = info.getStringParameter("Fin_Finacc_Transaction_ID", null);
         if (StringUtils.isNotBlank(strTransactionId)) {
           final FIN_Payment oldPayment = OBDal.getInstance()
-              .get(FIN_FinaccTransaction.class, strTransactionId).getFinPayment();
+              .get(FIN_FinaccTransaction.class, strTransactionId)
+              .getFinPayment();
           if (oldPayment != null) {
             descToRemove = oldPayment.getDescription();
             if (StringUtils.isNotBlank(descToRemove)) {
-              description = FIN_Utility.getFinAccTransactionDescription(description, "\n"
-                  + descToRemove, "");
+              description = FIN_Utility.getFinAccTransactionDescription(description,
+                  "\n" + descToRemove, "");
             }
           }
         }

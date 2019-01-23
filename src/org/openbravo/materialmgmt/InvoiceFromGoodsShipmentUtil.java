@@ -70,8 +70,11 @@ public class InvoiceFromGoodsShipmentUtil {
    * @return The Price List
    */
   public static List<PriceList> getPriceListFromOrder(final ShipmentInOut shipment) {
-    return Arrays.asList(shipment.getMaterialMgmtShipmentInOutLineList().get(0).getSalesOrderLine()
-        .getSalesOrder().getPriceList());
+    return Arrays.asList(shipment.getMaterialMgmtShipmentInOutLineList()
+        .get(0)
+        .getSalesOrderLine()
+        .getSalesOrder()
+        .getPriceList());
   }
 
   /**

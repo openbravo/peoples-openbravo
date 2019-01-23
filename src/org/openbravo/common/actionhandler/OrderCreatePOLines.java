@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -44,8 +46,6 @@ import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DbUtility;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 public class OrderCreatePOLines extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -90,7 +90,8 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
   }
 
   private void createOrderLines(JSONObject jsonRequest) throws JSONException, OBException {
-    JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+    JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+        .getJSONObject("grid")
         .getJSONArray("_selection");
     final String strOrderId = jsonRequest.getString("C_Order_ID");
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
@@ -118,7 +119,8 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       newOrderLine.setCurrency(order.getCurrency());
 
       Product product = OBDal.getInstance().get(Product.class, selectedLine.getString("product"));
-      if (product.getAttributeSetValue() != null && "D".equals(product.getUseAttributeSetValueAs())) {
+      if (product.getAttributeSetValue() != null
+          && "D".equals(product.getUseAttributeSetValueAs())) {
         newOrderLine.setAttributeSetValue(product.getAttributeSetValue());
       }
       UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.get("product$uOM"));
@@ -164,7 +166,8 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       newOrderLine.setTax(tax);
 
       // Price
-      BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice, grossListPrice, grossStdPrice;
+      BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice,
+          grossListPrice, grossStdPrice;
       stdPrice = BigDecimal.ZERO;
       final int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
@@ -190,8 +193,8 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       newOrderLine.setStandardPrice(stdPrice);
       // Set Base Gross Unit Price thats is Gross Standard Price
       newOrderLine.setBaseGrossUnitPrice(grossStdPrice);
-      newOrderLine.setLineNetAmount(netPrice.multiply(qtyOrdered).setScale(stdPrecision,
-          RoundingMode.HALF_UP));
+      newOrderLine.setLineNetAmount(
+          netPrice.multiply(qtyOrdered).setScale(stdPrecision, RoundingMode.HALF_UP));
       newOrderLine.setLineGrossAmount(grossAmt);
 
       List<OrderLine> orderLines = order.getOrderLineList();

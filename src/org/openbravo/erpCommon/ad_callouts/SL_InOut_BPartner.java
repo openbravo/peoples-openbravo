@@ -67,9 +67,9 @@ public class SL_InOut_BPartner extends SimpleCallout {
     FieldProvider[] tdv = null;
     try {
       ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLEDIR",
-          "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To", Utility.getContext(this,
-              info.vars, "#AccessibleOrgTree", info.getWindowId()), Utility.getContext(this,
-              info.vars, "#User_Client", info.getWindowId()), 0);
+          "C_BPartner_Location_ID", "", "C_BPartner Location - Ship To",
+          Utility.getContext(this, info.vars, "#AccessibleOrgTree", info.getWindowId()),
+          Utility.getContext(this, info.vars, "#User_Client", info.getWindowId()), 0);
       Utility.fillSQLParameters(this, info.vars, null, comboTableData, info.getWindowId(), "");
       tdv = comboTableData.select(false);
       comboTableData = null;
@@ -81,8 +81,8 @@ public class SL_InOut_BPartner extends SimpleCallout {
       for (int i = 0; i < tdv.length; i++) {
         // If a location is provided it is selected, else the first one is selected
         boolean selected = (StringUtils.isEmpty(strLocation) && i == 0)
-            || (StringUtils.isNotEmpty(strLocation) && StringUtils.equalsIgnoreCase(
-                tdv[i].getField("id"), strLocation));
+            || (StringUtils.isNotEmpty(strLocation)
+                && StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strLocation));
         info.addSelectResult(tdv[i].getField("id"),
             FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\"")),
             selected);
@@ -135,8 +135,8 @@ public class SL_InOut_BPartner extends SimpleCallout {
       for (int i = 0; i < tdv.length; i++) {
         // If no contact is provided it is selected, else the first one is selected
         boolean selected = (StringUtils.isEmpty(strContact) && i == 0)
-            || (StringUtils.isNotEmpty(strContact) && StringUtils.equalsIgnoreCase(
-                tdv[i].getField("id"), strContact));
+            || (StringUtils.isNotEmpty(strContact)
+                && StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strContact));
         info.addSelectResult(tdv[i].getField("id"),
             FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\"")),
             selected);

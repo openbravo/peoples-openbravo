@@ -58,16 +58,17 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
   private AdvPaymentMngtDao dao;
   private static final RequestFilter filterYesNo = new ValueListFilter("Y", "N", "");
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strWindowId = vars
-          .getGlobalVariable("inpwindowId", "SelectExpectedPayments|Window_ID");
+      String strWindowId = vars.getGlobalVariable("inpwindowId",
+          "SelectExpectedPayments|Window_ID");
       String strTabId = vars.getGlobalVariable("inpTabId", "SelectExpectedPayments|Tab_ID");
-      String strPaymentProposalId = vars.getGlobalVariable("inpfinPaymentProposalId", strWindowId
-          + "|" + "FIN_Payment_Proposal_ID");
+      String strPaymentProposalId = vars.getGlobalVariable("inpfinPaymentProposalId",
+          strWindowId + "|" + "FIN_Payment_Proposal_ID");
 
       printPage(response, vars, strPaymentProposalId, strWindowId, strTabId);
 
@@ -75,15 +76,15 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
       String strPaymentProposalId = vars.getRequiredStringParameter("inpfinPaymentProposalId");
       String strSelectedPaymentDetails = vars.getInStringParameter("inpScheduledPaymentDetailId",
           IsIDFilter.instance);
-      Boolean showAlternativePM = "Y".equals(vars.getStringParameter("inpAlternativePaymentMethod",
-          filterYesNo));
+      Boolean showAlternativePM = "Y"
+          .equals(vars.getStringParameter("inpAlternativePaymentMethod", filterYesNo));
 
       printGrid(response, vars, strPaymentProposalId, strSelectedPaymentDetails, showAlternativePM);
 
     } else if (vars.commandIn("SAVE")) {
       String strPaymentProposalId = vars.getRequiredStringParameter("inpfinPaymentProposalId");
-      String strSelectedScheduledPaymentDetailIds = vars.getInParameter(
-          "inpScheduledPaymentDetailId", IsIDFilter.instance);
+      String strSelectedScheduledPaymentDetailIds = vars
+          .getInParameter("inpScheduledPaymentDetailId", IsIDFilter.instance);
       String strTabId = vars.getRequiredStringParameter("inpTabId");
       String strPaymentAmount = vars.getRequiredNumericParameter("inpActualPayment");
       String strDifferenceAction = vars.getStringParameter("inpDifferenceAction", "");
@@ -96,8 +97,8 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
-      String strPaymentProposalId, String strWindowId, String strTabId) throws IOException,
-      ServletException {
+      String strPaymentProposalId, String strWindowId, String strTabId)
+      throws IOException, ServletException {
     log4j.debug("Output: Add Payment button pressed on Make Proposal window");
 
     dao = new AdvPaymentMngtDao();
@@ -107,8 +108,9 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
     if (paymentProposal.getDuedate() == null) {
       discard[0] = "dueDateInfoRow";
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/SelectExpectedPayments", discard)
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/SelectExpectedPayments",
+            discard)
         .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -119,8 +121,8 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
     OBContext.setAdminMode();
     try {
       xmlDocument.setParameter("title", dao.getObject(Process.class, classInfo.id).getIdentifier());
-      xmlDocument.setParameter("precision", paymentProposal.getCurrency().getStandardPrecision()
-          .toString());
+      xmlDocument.setParameter("precision",
+          paymentProposal.getCurrency().getStandardPrecision().toString());
       xmlDocument.setParameter("currency", paymentProposal.getCurrency().getId());
     } finally {
       OBContext.restorePreviousMode();
@@ -134,10 +136,10 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("proposalNo", paymentProposal.getDocumentNo());
     xmlDocument.setParameter("paymentMethod", paymentProposal.getPaymentMethod().getName());
-    xmlDocument.setParameter(
-        "businessPartner",
-        paymentProposal.getBusinessPartner() == null ? Utility.messageBD(this, "All",
-            vars.getLanguage()) : paymentProposal.getBusinessPartner().getName());
+    xmlDocument.setParameter("businessPartner",
+        paymentProposal.getBusinessPartner() == null
+            ? Utility.messageBD(this, "All", vars.getLanguage())
+            : paymentProposal.getBusinessPartner().getName());
     if (paymentProposal.getDuedate() != null) {
       xmlDocument.setParameter("dueDate",
           Utility.formatDate(paymentProposal.getDuedate(), vars.getJavaDateFormat()));
@@ -156,21 +158,24 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
 
     dao = new AdvPaymentMngtDao();
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentProposalGrid").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/AddPaymentProposalGrid")
+        .createXmlDocument();
 
     FIN_PaymentProposal paymentProposal = dao.getObject(FIN_PaymentProposal.class,
         strPaymentProposalId);
     List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
     boolean firstLoad = false;
-    if (strSelectedPaymentDetails == null || "".equals(strSelectedPaymentDetails))
+    if (strSelectedPaymentDetails == null || "".equals(strSelectedPaymentDetails)) {
       firstLoad = true;
-    if (firstLoad)
+    }
+    if (firstLoad) {
       selectedScheduledPaymentDetails = FIN_AddPayment
           .getSelectedPendingPaymentsFromProposal(paymentProposal);
-    else
+    } else {
       selectedScheduledPaymentDetails = FIN_AddPayment.getSelectedPaymentDetails(null,
           strSelectedPaymentDetails);
+    }
 
     Date dueDate = paymentProposal.getDuedate();
     if (dueDate != null) {
@@ -209,13 +214,14 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
     // removed when new security implementation is done
     OBContext.setAdminMode();
     try {
-      FIN_PaymentProposal paymentProposal = new AdvPaymentMngtDao().getObject(
-          FIN_PaymentProposal.class, strPaymentProposalId);
+      FIN_PaymentProposal paymentProposal = new AdvPaymentMngtDao()
+          .getObject(FIN_PaymentProposal.class, strPaymentProposalId);
       // Initialize payment proposal deleting existing ones.
       List<String> propDetailsToDelete = new ArrayList<String>();
       List<FIN_PaymentPropDetail> proposalDetails = paymentProposal.getFINPaymentPropDetailList();
-      for (FIN_PaymentPropDetail propDetail : proposalDetails)
+      for (FIN_PaymentPropDetail propDetail : proposalDetails) {
         propDetailsToDelete.add(propDetail.getId());
+      }
       for (String strPropDetailId : propDetailsToDelete) {
         proposalDetails.remove(dao.getObject(FIN_PaymentPropDetail.class, strPropDetailId));
         OBDal.getInstance().remove(dao.getObject(FIN_PaymentPropDetail.class, strPropDetailId));
@@ -238,13 +244,14 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
 
         boolean warningDifferentPaymentMethod = false;
         for (FIN_PaymentScheduleDetail payScheDe : selectedPaymentScheduleDetails) {
-          if ((payScheDe.getInvoicePaymentSchedule() != null)
-              && !paymentProposal.getPaymentMethod().getId()
-                  .equals(payScheDe.getInvoicePaymentSchedule().getFinPaymentmethod().getId())) {
+          if ((payScheDe.getInvoicePaymentSchedule() != null) && !paymentProposal.getPaymentMethod()
+              .getId()
+              .equals(payScheDe.getInvoicePaymentSchedule().getFinPaymentmethod().getId())) {
             warningDifferentPaymentMethod = true;
             break;
           } else if ((payScheDe.getOrderPaymentSchedule() != null)
-              && !paymentProposal.getPaymentMethod().getId()
+              && !paymentProposal.getPaymentMethod()
+                  .getId()
                   .equals(payScheDe.getOrderPaymentSchedule().getFinPaymentmethod().getId())) {
             warningDifferentPaymentMethod = true;
             break;
@@ -285,6 +292,7 @@ public class SelectExpectedPayments extends HttpSecureAppServlet {
     return FieldProviderFactory.getFieldProviderArray(result);
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents the payment proposal";
     // end of getServletInfo() method

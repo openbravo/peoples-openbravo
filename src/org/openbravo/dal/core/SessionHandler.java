@@ -64,7 +64,8 @@ public class SessionHandler implements OBNotSingleton {
   private static ExternalConnectionPool externalConnectionPool;
 
   {
-    String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String poolClassName = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("db.externalPoolClassName");
     if (poolClassName != null && !"".equals(poolClassName)) {
       try {

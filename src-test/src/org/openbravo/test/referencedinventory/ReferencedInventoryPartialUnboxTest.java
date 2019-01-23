@@ -35,10 +35,9 @@ public class ReferencedInventoryPartialUnboxTest extends ReferencedInventoryUnbo
 
   @Rule
   public ParameterCdiTestRule<ParamsUnboxTest> parameterValuesRule = new ParameterCdiTestRule<ParamsUnboxTest>(
-      Arrays
-          .asList(new ParamsUnboxTest[] { new ParamsUnboxTest(
-              "Partial unbox (1 unit of 10 units) of a storage detail without reservations", "10",
-              "1") }));
+      Arrays.asList(new ParamsUnboxTest[] { new ParamsUnboxTest(
+          "Partial unbox (1 unit of 10 units) of a storage detail without reservations", "10",
+          "1") }));
 
   private @ParameterCdiTest ParamsUnboxTest params;
 

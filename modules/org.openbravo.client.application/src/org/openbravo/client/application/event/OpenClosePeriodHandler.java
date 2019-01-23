@@ -65,8 +65,8 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
         String strAction = "";
         if (size == 1) {
           if (OBDal.getInstance().get(Period.class, periodIdList.get(0)) == null) {
-            PeriodControl periodControl = OBDal.getInstance().get(PeriodControl.class,
-                periodIdList.get(0));
+            PeriodControl periodControl = OBDal.getInstance()
+                .get(PeriodControl.class, periodIdList.get(0));
             strAction = periodControl.getPeriodStatus();
           } else {
             Period period = OBDal.getInstance().get(Period.class, periodIdList.get(0));
@@ -182,9 +182,9 @@ public class OpenClosePeriodHandler extends BaseActionHandler {
     JSONObject response = new JSONObject();
     DalConnectionProvider conn = new DalConnectionProvider(false);
     ComboTableData comboTableData = new ComboTableData(vars, conn, "LIST", "", ACTIONS_REF,
-        VALID_PERIOD_CONTROL_ACTION_VALIDATION, Utility.getContext(conn, vars,
-            "#AccessibleOrgTree", PERIOD_CONTROL_WINDOW_ID), Utility.getContext(conn, vars,
-            "#User_Client", PERIOD_CONTROL_WINDOW_ID), 0);
+        VALID_PERIOD_CONTROL_ACTION_VALIDATION,
+        Utility.getContext(conn, vars, "#AccessibleOrgTree", PERIOD_CONTROL_WINDOW_ID),
+        Utility.getContext(conn, vars, "#User_Client", PERIOD_CONTROL_WINDOW_ID), 0);
     Utility.fillSQLParameters(conn, vars, null, comboTableData, PERIOD_CONTROL_WINDOW_ID, "");
     FieldProvider[] fpArray = comboTableData.select(false);
     JSONObject valueMap = new JSONObject();

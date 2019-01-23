@@ -39,19 +39,19 @@ import org.openbravo.model.ad.module.Module;
  */
 public class ModuleHandler extends EntityPersistenceEventObserver {
   private static final String MODULE_TABLE_ID = "9D36D488605044F5A0264D7C8B916657";
-  private static Entity[] entities = { ModelProvider.getInstance().getEntityByTableId(
-      MODULE_TABLE_ID) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntityByTableId(MODULE_TABLE_ID) };
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    if (!event.getPreviousState(getVersionProperty()).equals(
-        event.getCurrentState(getVersionProperty()))
-        || !event.getPreviousState(getEnabledProperty()).equals(
-            event.getCurrentState(getEnabledProperty()))
-        || !event.getPreviousState(getInDevelopmentProperty()).equals(
-            event.getCurrentState(getInDevelopmentProperty()))) {
+    if (!event.getPreviousState(getVersionProperty())
+        .equals(event.getCurrentState(getVersionProperty()))
+        || !event.getPreviousState(getEnabledProperty())
+            .equals(event.getCurrentState(getEnabledProperty()))
+        || !event.getPreviousState(getInDevelopmentProperty())
+            .equals(event.getCurrentState(getInDevelopmentProperty()))) {
       BaseComponent.nullifyModuleCache();
     }
   }

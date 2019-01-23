@@ -37,8 +37,8 @@ import org.openbravo.model.pricing.pricelist.ProductPrice;
 
 public class ProductPriceObserver extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ProductPrice.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ProductPrice.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -67,8 +67,8 @@ public class ProductPriceObserver extends EntityPersistenceEventObserver {
    */
   private void overrideProductPriceOrganization(EntityPersistenceEvent event) {
     if (event instanceof EntityNewEvent || event instanceof EntityUpdateEvent) {
-      final Entity productPriceEntity = ModelProvider.getInstance().getEntity(
-          ProductPrice.ENTITY_NAME);
+      final Entity productPriceEntity = ModelProvider.getInstance()
+          .getEntity(ProductPrice.ENTITY_NAME);
       final Property orgProperty = productPriceEntity
           .getProperty(ProductPrice.PROPERTY_ORGANIZATION);
       final Property plvProperty = productPriceEntity

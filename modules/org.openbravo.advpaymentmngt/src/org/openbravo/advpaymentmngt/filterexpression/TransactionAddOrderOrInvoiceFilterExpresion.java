@@ -25,11 +25,12 @@ import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 
 @ComponentProvider.Qualifier(APRMConstants.TRANSACTION_WINDOW_ID)
-public class TransactionAddOrderOrInvoiceFilterExpresion extends
-    AddOrderOrInvoiceFilterExpressionHandler {
+public class TransactionAddOrderOrInvoiceFilterExpresion
+    extends AddOrderOrInvoiceFilterExpressionHandler {
 
   private static final long SEQUENCE = 100l;
 
+  @Override
   protected long getSeq() {
     return SEQUENCE;
   }

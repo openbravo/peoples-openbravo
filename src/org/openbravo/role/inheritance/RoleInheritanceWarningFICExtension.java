@@ -27,6 +27,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.ModelProvider;
@@ -39,8 +41,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleInheritance;
 import org.openbravo.model.ad.ui.Tab;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * This FICExtension is used to show a warning message to the user when editing an access which
@@ -95,7 +95,8 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
       if (!ApplicationConstants.TABLEBASEDTABLE.equals(tab.getTable().getDataOriginType())) {
         valid = Boolean.FALSE;
       } else {
-        String entityClassName = ModelProvider.getInstance().getEntityByTableId(tabId)
+        String entityClassName = ModelProvider.getInstance()
+            .getEntityByTableId(tabId)
             .getClassName();
         valid = manager.existsInjector(entityClassName);
       }
@@ -117,7 +118,8 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
       }
     } else {
       String entityClassName = ModelProvider.getInstance()
-          .getEntityByTableId(tab.getTable().getId()).getClassName();
+          .getEntityByTableId(tab.getTable().getId())
+          .getClassName();
       InheritedAccessEnabled access = (InheritedAccessEnabled) row;
       return manager.getRole(access, entityClassName);
     }

@@ -64,8 +64,8 @@ class ADOrgPersistInfoUtility {
       String currencyId) {
     long number = System.currentTimeMillis();
     InitialOrgSetup initialOrg = new InitialOrgSetup(OBContext.getOBContext().getCurrentClient());
-    initialOrg.createOrganization("Test_" + number, "", newOrgType, strParentOrg, "", "", "",
-        false, null, "", false, false, false, false, false);
+    initialOrg.createOrganization("Test_" + number, "", newOrgType, strParentOrg, "", "", "", false,
+        null, "", false, false, false, false, false);
     Organization org = OBDal.getInstance().get(Organization.class, initialOrg.getOrgId());
     org.setSummaryLevel(summary);
     if (StringUtils.equals(newOrgType, ADOrgPersistInfoConstants.ORGTYPE_LEGALWITHACCOUNTING)) {
@@ -101,8 +101,8 @@ class ADOrgPersistInfoUtility {
   }
 
   private static void setAcctSchema(final Organization org) {
-    OrganizationAcctSchema orgAcctSchema = OBProvider.getInstance().get(
-        OrganizationAcctSchema.class);
+    OrganizationAcctSchema orgAcctSchema = OBProvider.getInstance()
+        .get(OrganizationAcctSchema.class);
     orgAcctSchema.setOrganization(org);
     orgAcctSchema.setClient(org.getClient());
     orgAcctSchema.setAccountingSchema(org.getGeneralLedger());
@@ -113,8 +113,8 @@ class ADOrgPersistInfoUtility {
   static void setAsReady(final String orgId, final String isCascade) {
     final Map<String, String> parameters = new HashMap<String, String>(1);
     parameters.put("Cascade", isCascade);
-    final ProcessInstance pinstance = CallProcess.getInstance().call("AD_Org_Ready", orgId,
-        parameters);
+    final ProcessInstance pinstance = CallProcess.getInstance()
+        .call("AD_Org_Ready", orgId, parameters);
     if (pinstance.getResult() == 0L) {
       throw new RuntimeException(pinstance.getErrorMsg());
     }
@@ -126,10 +126,10 @@ class ADOrgPersistInfoUtility {
     try {
       OBContext.setAdminMode(false);
       Client client = OBDal.getInstance().get(Client.class, ADOrgPersistInfoConstants.CLIENT_0);
-      Organization org0 = OBDal.getInstance().get(Organization.class,
-          ADOrgPersistInfoConstants.ORG_0);
-      final OBCriteria<OrganizationType> criteria = OBDal.getInstance().createCriteria(
-          OrganizationType.class);
+      Organization org0 = OBDal.getInstance()
+          .get(Organization.class, ADOrgPersistInfoConstants.ORG_0);
+      final OBCriteria<OrganizationType> criteria = OBDal.getInstance()
+          .createCriteria(OrganizationType.class);
       criteria.add(Restrictions.eq(OrganizationType.PROPERTY_BUSINESSUNIT, true));
       criteria.add(Restrictions.eq(OrganizationType.PROPERTY_ACTIVE, true));
       criteria.add(Restrictions.eq(OrganizationType.PROPERTY_CLIENT, client));
@@ -175,54 +175,54 @@ class ADOrgPersistInfoUtility {
       /* Assert Legal Entity */
       assertEquals("Match Legal Entity of Organization through OrganizationStructureProvider",
           osp.getLegalEntity(org) == null ? null : osp.getLegalEntity(org).getId(),
-          org.getLegalEntityOrganization() == null ? null : org.getLegalEntityOrganization()
-              .getId());
-      assertEquals(
-          "Match Legal Entity of Organization through AD_GET_ORG_LE_BU",
+          org.getLegalEntityOrganization() == null ? null
+              : org.getLegalEntityOrganization().getId());
+      assertEquals("Match Legal Entity of Organization through AD_GET_ORG_LE_BU",
           getLegalEntityOrBusinessUnitOrg(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_LE_BU, orgId,
-              "LE"), org.getLegalEntityOrganization() == null ? null : org
-              .getLegalEntityOrganization().getId());
-      assertEquals(
-          "Match Legal Entity of Organization through AD_GET_ORG_LE_BU_TREENODE",
-          getLegalEntityOrBusinessUnitOrg(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_LE_BU_TN,
-              orgId, "LE"), org.getLegalEntityOrganization() == null ? null : org
-              .getLegalEntityOrganization().getId());
+              "LE"),
+          org.getLegalEntityOrganization() == null ? null
+              : org.getLegalEntityOrganization().getId());
+      assertEquals("Match Legal Entity of Organization through AD_GET_ORG_LE_BU_TREENODE",
+          getLegalEntityOrBusinessUnitOrg(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_LE_BU_TN, orgId,
+              "LE"),
+          org.getLegalEntityOrganization() == null ? null
+              : org.getLegalEntityOrganization().getId());
 
       /* Assert Business Unit */
       assertEquals(
           "Match Business Unit Organization of Organization through OrganizationStructureProvider",
           ADOrgPersistInfoUtility.getBusinessUnitOrganization(orgId) == null ? null
               : ADOrgPersistInfoUtility.getBusinessUnitOrganization(orgId).getId(),
-          org.getBusinessUnitOrganization() == null ? null : org.getBusinessUnitOrganization()
-              .getId());
-      assertEquals(
-          "Match Business Unit Organization of Organization through AD_GET_ORG_LE_BU",
+          org.getBusinessUnitOrganization() == null ? null
+              : org.getBusinessUnitOrganization().getId());
+      assertEquals("Match Business Unit Organization of Organization through AD_GET_ORG_LE_BU",
           getLegalEntityOrBusinessUnitOrg(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_LE_BU, orgId,
-              "BU"), org.getBusinessUnitOrganization() == null ? null : org
-              .getBusinessUnitOrganization().getId());
+              "BU"),
+          org.getBusinessUnitOrganization() == null ? null
+              : org.getBusinessUnitOrganization().getId());
       assertEquals(
           "Match Business Unit Organization of Organization through AD_GET_ORG_LE_BU_TREENODE",
-          getLegalEntityOrBusinessUnitOrg(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_LE_BU_TN,
-              orgId, "BU"), org.getBusinessUnitOrganization() == null ? null : org
-              .getBusinessUnitOrganization().getId());
+          getLegalEntityOrBusinessUnitOrg(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_LE_BU_TN, orgId,
+              "BU"),
+          org.getBusinessUnitOrganization() == null ? null
+              : org.getBusinessUnitOrganization().getId());
 
       /* Assert Period Control Allowed */
       assertEquals(
           "Match Period Control Allowed Organization through OrganizationStructureProvider",
-          osp.getPeriodControlAllowedOrganization(org) == null ? null : osp
-              .getPeriodControlAllowedOrganization(org).getId(),
-          org.getPeriodControlAllowedOrganization() == null ? null : org
-              .getPeriodControlAllowedOrganization().getId());
-      assertEquals(
-          "Match Period Control Allowed Organization through ad_org_getperiodcontrolallow",
+          osp.getPeriodControlAllowedOrganization(org) == null ? null
+              : osp.getPeriodControlAllowedOrganization(org).getId(),
+          org.getPeriodControlAllowedOrganization() == null ? null
+              : org.getPeriodControlAllowedOrganization().getId());
+      assertEquals("Match Period Control Allowed Organization through ad_org_getperiodcontrolallow",
           runFunction(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETPERIODCONTROLALLOW, orgId),
-          org.getPeriodControlAllowedOrganization() == null ? null : org
-              .getPeriodControlAllowedOrganization().getId());
+          org.getPeriodControlAllowedOrganization() == null ? null
+              : org.getPeriodControlAllowedOrganization().getId());
       assertEquals(
           "Match Period Control Allowed Organization through ad_org_getperiodcontrolallowtn",
           runFunction(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETPERIODCONTROLALLOWTN, orgId),
-          org.getPeriodControlAllowedOrganization() == null ? null : org
-              .getPeriodControlAllowedOrganization().getId());
+          org.getPeriodControlAllowedOrganization() == null ? null
+              : org.getPeriodControlAllowedOrganization().getId());
 
       /* Assert Calendar Owner */
       final Organization calOrg = ADOrgPersistInfoUtility.getCalendarOrganization(orgId);
@@ -231,17 +231,17 @@ class ADOrgPersistInfoUtility {
               : org.getCalendarOwnerOrganization().getId());
       assertEquals("Match Calendar Owner Organization through ad_org_getcalendarowner",
           runFunction(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETCALENDAROWNER, orgId),
-          org.getCalendarOwnerOrganization() == null ? null : org.getCalendarOwnerOrganization()
-              .getId());
+          org.getCalendarOwnerOrganization() == null ? null
+              : org.getCalendarOwnerOrganization().getId());
       assertEquals("Match Calendar Owner Organization through ad_org_getcalendarownertn",
           runFunction(ADOrgPersistInfoConstants.FUNCTION_AD_ORG_GETCALENDAROWNERTN, orgId),
-          org.getCalendarOwnerOrganization() == null ? null : org.getCalendarOwnerOrganization()
-              .getId());
+          org.getCalendarOwnerOrganization() == null ? null
+              : org.getCalendarOwnerOrganization().getId());
 
       /* Assert Inherited Calendar */
       if (calOrg != null) {
-        assertEquals("Match Inherited Calendar", calOrg.getCalendar().getId(), org
-            .getInheritedCalendar().getId());
+        assertEquals("Match Inherited Calendar", calOrg.getCalendar().getId(),
+            org.getInheritedCalendar().getId());
       }
     }
   }

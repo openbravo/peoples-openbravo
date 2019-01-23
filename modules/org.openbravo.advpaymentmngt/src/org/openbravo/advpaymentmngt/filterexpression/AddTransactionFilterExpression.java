@@ -48,31 +48,32 @@ public class AddTransactionFilterExpression implements FilterExpression {
     Parameters param = Parameters.getParameter(strCurrentParam);
     try {
       switch (param) {
-      case TransactionType:
-        return getDefaultDocument(requestMap);
-      case TransactionDate:
-        return getDefaultTransactionDate();
-      case AccountingDate:
-        return getDefaultAccountingDate();
-      case Currency:
-        return getDefaultCurrency(requestMap);
-      case Organization:
-        return getOrganization(requestMap);
-      case DepositAmount:
-        return getDefaultDepositAmout();
-      case WithdrawalAmount:
-        return getDefaulWithdrawalAmount();
-      case BusinessPartner:
-        return getDefaulBusinessPartner();
-      case GLItem:
-        return getDefaulGLItem();
-      case Description:
-        return getDefaulDescription();
-      case DocumentCategory:
-        return getDefaulDocumentCategory();
+        case TransactionType:
+          return getDefaultDocument(requestMap);
+        case TransactionDate:
+          return getDefaultTransactionDate();
+        case AccountingDate:
+          return getDefaultAccountingDate();
+        case Currency:
+          return getDefaultCurrency(requestMap);
+        case Organization:
+          return getOrganization(requestMap);
+        case DepositAmount:
+          return getDefaultDepositAmout();
+        case WithdrawalAmount:
+          return getDefaulWithdrawalAmount();
+        case BusinessPartner:
+          return getDefaulBusinessPartner();
+        case GLItem:
+          return getDefaulGLItem();
+        case Description:
+          return getDefaulDescription();
+        case DocumentCategory:
+          return getDefaulDocumentCategory();
       }
     } catch (Exception e) {
-      log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(), e);
+      log.error("Error trying to get default value of " + strCurrentParam + " " + e.getMessage(),
+          e);
       return null;
     }
     return null;
@@ -80,10 +81,17 @@ public class AddTransactionFilterExpression implements FilterExpression {
   }
 
   private enum Parameters {
-    TransactionType("trxtype"), Currency("c_currency_id"), Organization("ad_org_id"), TransactionDate(
-        "trxdate"), AccountingDate("dateacct"), DepositAmount("depositamt"), WithdrawalAmount(
-        "withdrawalamt"), BusinessPartner("c_bpartner_id"), GLItem("c_glitem_id"), Description(
-        "description"), DocumentCategory("DOCBASETYPE");
+    TransactionType("trxtype"),
+    Currency("c_currency_id"),
+    Organization("ad_org_id"),
+    TransactionDate("trxdate"),
+    AccountingDate("dateacct"),
+    DepositAmount("depositamt"),
+    WithdrawalAmount("withdrawalamt"),
+    BusinessPartner("c_bpartner_id"),
+    GLItem("c_glitem_id"),
+    Description("description"),
+    DocumentCategory("DOCBASETYPE");
 
     private String columnname;
 
@@ -110,8 +118,8 @@ public class AddTransactionFilterExpression implements FilterExpression {
 
     JSONObject context = new JSONObject(_requestMap.get("context"));
     String bankStatementLineId = context.getString("bankStatementLineId");
-    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        bankStatementLineId);
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance()
+        .get(FIN_BankStatementLine.class, bankStatementLineId);
     if (bankstatementline.getDramount().compareTo(BigDecimal.ZERO) != 0) {
       return "BPW";
     } else {
@@ -127,8 +135,8 @@ public class AddTransactionFilterExpression implements FilterExpression {
   public String getDefaultAccountingDate() throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String bankStatementLineId = context.getString("bankStatementLineId");
-    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        bankStatementLineId);
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance()
+        .get(FIN_BankStatementLine.class, bankStatementLineId);
     return OBDateUtils.formatDate(bankstatementline.getTransactionDate());
   }
 
@@ -141,13 +149,13 @@ public class AddTransactionFilterExpression implements FilterExpression {
     JSONObject context = new JSONObject(reqstMap.get("context"));
     if (context.has("inpfinFinancialAccountId") && !context.isNull("inpfinFinancialAccountId")
         && !"".equals(context.getString("inpfinFinancialAccountId"))) {
-      return OBDal.getInstance().get(FIN_FinancialAccount.class,
-          context.get("inpfinFinancialAccountId"));
+      return OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, context.get("inpfinFinancialAccountId"));
     } else if (context.has("Fin_Financial_Account_ID")
         && !context.isNull("Fin_Financial_Account_ID")
         && !"".equals(context.getString("Fin_Financial_Account_ID"))) {
-      return OBDal.getInstance().get(FIN_FinancialAccount.class,
-          context.get("Fin_Financial_Account_ID"));
+      return OBDal.getInstance()
+          .get(FIN_FinancialAccount.class, context.get("Fin_Financial_Account_ID"));
 
     }
     return null;
@@ -156,8 +164,8 @@ public class AddTransactionFilterExpression implements FilterExpression {
   public String getDefaultDepositAmout() throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String bankStatementLineId = context.getString("bankStatementLineId");
-    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        bankStatementLineId);
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance()
+        .get(FIN_BankStatementLine.class, bankStatementLineId);
     if (bankstatementline.getDramount().compareTo(BigDecimal.ZERO) != 0) {
       return "0.00";
     } else {
@@ -168,8 +176,8 @@ public class AddTransactionFilterExpression implements FilterExpression {
   public String getDefaulWithdrawalAmount() throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String bankStatementLineId = context.getString("bankStatementLineId");
-    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        bankStatementLineId);
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance()
+        .get(FIN_BankStatementLine.class, bankStatementLineId);
     if (bankstatementline.getDramount().compareTo(BigDecimal.ZERO) != 0) {
       return bankstatementline.getDramount().toString();
     } else {
@@ -184,25 +192,26 @@ public class AddTransactionFilterExpression implements FilterExpression {
   public String getDefaulGLItem() throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String bankStatementLineId = context.getString("bankStatementLineId");
-    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        bankStatementLineId);
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance()
+        .get(FIN_BankStatementLine.class, bankStatementLineId);
     return bankstatementline.getGLItem() != null ? bankstatementline.getGLItem().getId() : null;
   }
 
   public String getDefaulBusinessPartner() throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String bankStatementLineId = context.getString("bankStatementLineId");
-    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        bankStatementLineId);
-    return bankstatementline.getBusinessPartner() != null ? bankstatementline.getBusinessPartner()
-        .getId() : null;
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance()
+        .get(FIN_BankStatementLine.class, bankStatementLineId);
+    return bankstatementline.getBusinessPartner() != null
+        ? bankstatementline.getBusinessPartner().getId()
+        : null;
   }
 
   public String getDefaulDescription() throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
     String bankStatementLineId = context.getString("bankStatementLineId");
-    FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-        bankStatementLineId);
+    FIN_BankStatementLine bankstatementline = OBDal.getInstance()
+        .get(FIN_BankStatementLine.class, bankStatementLineId);
     String bpname = bankstatementline.getBpartnername();
     String description = bankstatementline.getDescription();
     if (StringUtils.isNotBlank(bpname)) {

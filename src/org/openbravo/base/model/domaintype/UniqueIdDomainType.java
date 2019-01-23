@@ -26,5 +26,3 @@ package org.openbravo.base.model.domaintype;
  */
 public class UniqueIdDomainType extends StringDomainType {
 }
-
-

@@ -85,8 +85,8 @@ public class DalInitializingTask extends Task {
   public void execute() {
 
     // initAntConsoleLogging();
-    OBProvider.getInstance().register(OBClassLoader.class, OBClassLoader.ClassOBClassLoader.class,
-        false);
+    OBProvider.getInstance()
+        .register(OBClassLoader.class, OBClassLoader.ClassOBClassLoader.class, false);
 
     final boolean rereadConfigs = !DalLayerInitializer.getInstance().isInitialized();
 

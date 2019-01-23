@@ -47,6 +47,7 @@ import org.openbravo.model.ad.ui.WindowTrl;
 @ApplicationScoped
 public class ComputeWindowActionHandler extends BaseActionHandler {
 
+  @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     final String tabId = removeFragment((String) parameters.get("tabId"));
     final String recordId = removeFragment((String) parameters.get("recordId"));
@@ -64,8 +65,8 @@ public class ComputeWindowActionHandler extends BaseActionHandler {
 
       // special case, find the real recordId for the language case
       if (entity.getName().equals(Language.ENTITY_NAME)) {
-        final OBQuery<Language> languages = OBDal.getInstance().createQuery(Language.class,
-            Language.PROPERTY_LANGUAGE + "=:recordId");
+        final OBQuery<Language> languages = OBDal.getInstance()
+            .createQuery(Language.class, Language.PROPERTY_LANGUAGE + "=:recordId");
         Map<String, Object> qryParameters = new HashMap<>(1);
         qryParameters.put("recordId", recordId);
         languages.setNamedParameters(qryParameters);

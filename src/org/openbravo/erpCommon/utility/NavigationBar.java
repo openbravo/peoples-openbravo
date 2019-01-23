@@ -58,7 +58,8 @@ public class NavigationBar {
   public NavigationBar(ConnectionProvider _conn, String _language, String _action,
       String _windowName, String _windowType, String _baseDirection, String _breadcrumb,
       boolean hideBack, boolean _validateChangesOnRefresh) {
-    this(_conn, _language, _action, _windowName, _windowType, _baseDirection, _breadcrumb, hideBack);
+    this(_conn, _language, _action, _windowName, _windowType, _baseDirection, _breadcrumb,
+        hideBack);
     this.validateChangesOnRefresh = _validateChangesOnRefresh;
   }
 
@@ -73,13 +74,12 @@ public class NavigationBar {
       toolbar.append("  <TR class=\"Main_NavBar_bg\"><TD></TD>\n");
       if (!hideBack) {
         toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
-        toolbar
-            .append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"goToPreviousPage(); return false;\" border=\"0\" onmouseover=\"window.status='");
+        toolbar.append(
+            "    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"goToPreviousPage(); return false;\" border=\"0\" onmouseover=\"window.status='");
         auxText = Utility.messageBD(conn, "GoBack", language);
         toolbar.append(auxText);
-        toolbar
-            .append(
-                "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonBack\"><IMG src=\"")
+        toolbar.append(
+            "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonBack\"><IMG src=\"")
             .append(base_direction)
             .append(
                 "/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_back\" border=\"0\" alt=\"");
@@ -94,33 +94,32 @@ public class NavigationBar {
         toolbar.append("document.frmMain.autosave.value='N'; ");
       }
       toolbar.append("submitCommandForm('DEFAULT', ")
-          .append(validateChangesOnRefresh ? "true" : "false").append(", null, '")
+          .append(validateChangesOnRefresh ? "true" : "false")
+          .append(", null, '")
           .append(servlet_action);
-      toolbar.append("', '_self', null, ").append(validateChangesOnRefresh ? "true" : "false")
+      toolbar.append("', '_self', null, ")
+          .append(validateChangesOnRefresh ? "true" : "false")
           .append(");return false;\" border=\"0\" onmouseover=\"window.status='");
       auxText = Utility.messageBD(conn, "Refresh", language);
-      toolbar
-          .append(auxText)
+      toolbar.append(auxText)
           .append(
               "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonRefresh\"><IMG src=\"");
-      toolbar
-          .append(base_direction)
+      toolbar.append(base_direction)
           .append(
               "/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_refresh\" border=\"0\" alt=\"");
       toolbar.append(auxText).append("\" title=\"").append(auxText).append("\"");
       toolbar.append("></a>\n");
       toolbar.append("  </TD>\n");
-      toolbar
-          .append(
-              "  <TD class=\"Main_NavBar_Breadcrumb_cell\"><span class=\"Main_NavBar_Breadcrumb\" id=\"paramBreadcrumb\">")
-          .append(breadcrumb).append("</span></TD>\n");
+      toolbar.append(
+          "  <TD class=\"Main_NavBar_Breadcrumb_cell\"><span class=\"Main_NavBar_Breadcrumb\" id=\"paramBreadcrumb\">")
+          .append(breadcrumb)
+          .append("</span></TD>\n");
       toolbar.append("  <TD></TD>\n");
       toolbar.append("  <TD class=\"Main_NavBar_RightButton_cell\">\n");
-      toolbar
-          .append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"about();return false;\" border=\"0\" onmouseover=\"window.status='");
+      toolbar.append(
+          "    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"about();return false;\" border=\"0\" onmouseover=\"window.status='");
       auxText = Utility.messageBD(conn, "About", language);
-      toolbar
-          .append(auxText)
+      toolbar.append(auxText)
           .append(
               "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonAbout\"><IMG src=\"")
           .append(base_direction)
@@ -132,16 +131,16 @@ public class NavigationBar {
       toolbar.append("  <TD class=\"Main_NavBar_separator_cell_small\"></TD>\n");
       toolbar.append("  <TD class=\"Main_NavBar_RightButton_cell\">\n");
       toolbar.append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"openHelp(");
-      if (window_type.equalsIgnoreCase("W"))
+      if (window_type.equalsIgnoreCase("W")) {
         toolbar.append("document.frmMain.inpwindowId.value");
-      else
+      } else {
         toolbar.append("null");
+      }
       toolbar.append(", '../ad_help/DisplayHelp.html', 'HELP', false, null, null, '");
       toolbar.append(window_type).append("', '").append(window_name);
       toolbar.append("');return false;\" border=\"0\" onmouseover=\"window.status='");
       auxText = Utility.messageBD(conn, "Help", language);
-      toolbar
-          .append(auxText)
+      toolbar.append(auxText)
           .append(
               "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonHelp\"><IMG src=\"")
           .append(base_direction)
@@ -152,9 +151,8 @@ public class NavigationBar {
       toolbar.append("  </TD>\n");
       toolbar.append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
       toolbar.append("  <TD class=\"Main_NavBar_bg_logo_left\"></TD>\n");
-      toolbar
-          .append(
-              "  <TD class=\"Main_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"")
+      toolbar.append(
+          "  <TD class=\"Main_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"")
           .append(base_direction)
           .append(
               "/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Main_NavBar_logo\"></TD>\n");

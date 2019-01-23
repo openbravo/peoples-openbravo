@@ -49,9 +49,9 @@ public class ExpressionsTest extends OBBaseTest {
 
   private HashMap<String, String> expr = new HashMap<String, String>();
 
-  /** 
-   * This before method is named setUpEt() to avoid overwriting the super 
-   * setUp method that is invoke automatically before this one.
+  /**
+   * This before method is named setUpEt() to avoid overwriting the super setUp method that is
+   * invoke automatically before this one.
    */
   @Before
   public void setUpEt() throws Exception {
@@ -76,9 +76,10 @@ public class ExpressionsTest extends OBBaseTest {
     expr.put("Format a parsed date",
         "OB.formatDate(OB.parseDate('1979-04-24', 'yyyy-MM-dd'), 'MM-dd-yyyy')");
 
-    expr.put("Filter by vendor/customer", "if(OB.isSalesTransaction()===null){'';}"
-        + "else if(OB.isSalesTransaction()==true){'e.customer = true';}"
-        + "else{'e.vendor = true';}");
+    expr.put("Filter by vendor/customer",
+        "if(OB.isSalesTransaction()===null){'';}"
+            + "else if(OB.isSalesTransaction()==true){'e.customer = true';}"
+            + "else{'e.vendor = true';}");
 
     expr.put("Complex expression from Java",
         "OB.getFilterExpression('org.openbravo.userinterface.selectors.test.SampleFilterExpression');");

@@ -68,8 +68,9 @@ public class OBLedgerUtils {
         return acctSchemaId;
       }
 
-      String clientId = StringUtils.equals(orgId, "0") ? OBContext.getOBContext()
-          .getCurrentClient().getId() : org.getClient().getId();
+      String clientId = StringUtils.equals(orgId, "0")
+          ? OBContext.getOBContext().getCurrentClient().getId()
+          : org.getClient().getId();
       // Get client base general ledger
       return getClientLedger(clientId);
 
@@ -104,8 +105,8 @@ public class OBLedgerUtils {
     }
 
     // Loop through parent organization list
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        org.getClient().getId());
+    OrganizationStructureProvider osp = OBContext.getOBContext()
+        .getOrganizationStructureProvider(org.getClient().getId());
     List<String> parentOrgIds = osp.getParentList(org.getId(), false);
     for (String orgId : parentOrgIds) {
       Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
@@ -123,7 +124,8 @@ public class OBLedgerUtils {
     where.append(" from " + AcctSchema.ENTITY_NAME);
     where.append(" where " + AcctSchema.PROPERTY_CLIENT + ".id = :clientId");
     where.append(" order by " + AcctSchema.PROPERTY_NAME);
-    Query<String> qry = OBDal.getInstance().getSession()
+    Query<String> qry = OBDal.getInstance()
+        .getSession()
         .createQuery(where.toString(), String.class);
     qry.setParameter("clientId", clientId);
     qry.setMaxResults(1);

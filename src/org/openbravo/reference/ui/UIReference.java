@@ -57,9 +57,9 @@ public class UIReference {
       FieldProvider field) throws Exception {
     if (!UIReferenceUtility.checkTableTranslation(comboTableData, tableName, field, reference)) {
       comboTableData.addSelectField(UIReferenceUtility.formatField(comboTableData.getVars(),
-          reference,
-          (((tableName != null && tableName.length() != 0) ? (tableName + ".") : "") + field
-              .getField("name"))), "NAME");
+          reference, (((tableName != null && tableName.length() != 0) ? (tableName + ".") : "")
+              + field.getField("name"))),
+          "NAME");
     }
   }
 

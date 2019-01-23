@@ -45,11 +45,11 @@ public class TaxesTestData181 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> lineTaxes = new HashMap<String, String[]>();
-    lineTaxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "5454545454545454545454545.45",
-        "545454545454545454545454.55", "5454545454545454545454545.45",
-        "545454545454545454545454.55", "10909090909090909090909090.91",
-        "1090909090909090909090909.09", "10909090909090909090909090.91",
-        "1090909090909090909090909.09" });
+    lineTaxes.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "5454545454545454545454545.45", "545454545454545454545454.55",
+            "5454545454545454545454545.45", "545454545454545454545454.55",
+            "10909090909090909090909090.91", "1090909090909090909090909.09",
+            "10909090909090909090909090.91", "1090909090909090909090909.09" });
     line.setLinetaxes(lineTaxes);
 
     // Amounts for line level are provided
@@ -71,11 +71,11 @@ public class TaxesTestData181 extends TaxesTestData {
     // taxAmtCompletedAfterInsert, taxableAmtDraftAfterUpdate, taxAmtDraftAfterUpdate,
     // taxableAmtCompletedAfterUpdate, taxAmtCompletedAfterUpdate}
     HashMap<String, String[]> taxes = new HashMap<String, String[]>();
-    taxes.put(TaxDataConstants.TAX_VAT_10, new String[] { "5454545454545454545454545.45",
-        "545454545454545454545454.55", "5454545454545454545454545.45",
-        "545454545454545454545454.55", "10909090909090909090909090.91",
-        "1090909090909090909090909.09", "10909090909090909090909090.91",
-        "1090909090909090909090909.09" });
+    taxes.put(TaxDataConstants.TAX_VAT_10,
+        new String[] { "5454545454545454545454545.45", "545454545454545454545454.55",
+            "5454545454545454545454545.45", "545454545454545454545454.55",
+            "10909090909090909090909090.91", "1090909090909090909090909.09",
+            "10909090909090909090909090.91", "1090909090909090909090909.09" });
     setDoctaxes(taxes);
 
     // Amounts for document level are provided

@@ -98,7 +98,8 @@ public class VariablesSecureApp extends VariablesBase {
    *          ID of the role as specified by the AD_ROLE_ID column within the AD_ROLE database
    *          table.
    */
-  public VariablesSecureApp(String strUser, String strClient, String strOrganization, String strRole) {
+  public VariablesSecureApp(String strUser, String strClient, String strOrganization,
+      String strRole) {
     this(strUser, strClient, strOrganization, strRole, null);
   }
 
@@ -234,8 +235,8 @@ public class VariablesSecureApp extends VariablesBase {
           // Get theme (skin)
           OBContext.setAdminMode();
           try {
-            org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-                org.openbravo.model.ad.system.System.class, "0");
+            org.openbravo.model.ad.system.System sys = OBDal.getInstance()
+                .get(org.openbravo.model.ad.system.System.class, "0");
             if (sys != null && !sys.getTADTheme().isEmpty()) {
               strTheme = (systemClient.getLanguage().isRTLLanguage() ? "rtl/" : "ltr/")
                   + sys.getTADTheme();

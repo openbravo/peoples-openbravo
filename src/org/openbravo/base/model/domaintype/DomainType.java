@@ -26,8 +26,8 @@ import org.openbravo.base.model.Reference;
 import org.openbravo.base.validation.ValidationException;
 
 /**
- * The ModelReference implements the reference extensions used for the Data Access Layer. See <a
- * href
+ * The ModelReference implements the reference extensions used for the Data Access Layer. See
+ * <a href
  * ="http://wiki.openbravo.com/wiki/Projects/Reference_Extension/Technical_Documentation#DAL">here
  * </a> for more information.
  * 

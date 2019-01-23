@@ -47,8 +47,8 @@ public class OBOracle10gDialect extends Oracle10gDialect {
     registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
     registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
     registerColumnType(Types.VARCHAR, 5, "char($l)");
-    registerFunction("to_number", new StandardSQLFunction("to_number",
-        StandardBasicTypes.BIG_DECIMAL));
+    registerFunction("to_number",
+        new StandardSQLFunction("to_number", StandardBasicTypes.BIG_DECIMAL));
 
     log.debug("Created Openbravo specific Oracle DIalect");
   }

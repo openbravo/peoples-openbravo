@@ -23,6 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -34,8 +36,6 @@ import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * The SimpleDataSourceService provides a simple way of returning data in the correct format for a
@@ -53,6 +53,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    * 
    * @see org.openbravo.service.datasource.DataSource#fetch(java.util.Map)
    */
+  @Override
   public String fetch(Map<String, String> parameters) {
 
     addFetchParameters(parameters);
@@ -114,6 +115,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     }
   }
 
+  @Override
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
     for (JSONObject jsonObject : fetchJSONObject(parameters)) {
       writer.write(jsonObject);
@@ -145,8 +147,8 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     } else {
       data = getData(parameters, startRow, endRow);
     }
-    final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
-        DataToJsonConverter.class);
+    final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
+        .get(DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
     toJsonConverter.setEntity(entity);
     return toJsonConverter.convertToJsonObjects(data);
@@ -217,8 +219,8 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    * @return the number of objects read, note that this maybe more than endRow - startRow + 1. The
    *         startRow parameter should be strictly followed though.
    */
-  protected abstract List<Map<String, Object>> getData(Map<String, String> parameters,
-      int startRow, int endRow);
+  protected abstract List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
+      int endRow);
 
   /*
    * (non-Javadoc)

@@ -97,24 +97,18 @@ public class PaymentTest_08 extends OBBaseTest {
       // CHECK OUTPUT DATA
       OBContext.setAdminMode();
       try {
-        assertTrue(
-            "Invoice Payment Schedule Outstanding Amount == 0",
-            BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0)
-                .getOutstandingAmount()) != 0);
+        assertTrue("Invoice Payment Schedule Outstanding Amount == 0", BigDecimal.ZERO
+            .compareTo(invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) != 0);
         assertTrue("Invoice Payment Schedule  not Total Pending", invoice.getGrandTotalAmount()
             .compareTo(invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-        assertTrue(
-            "Invoice Payment Schedule Paid Amount != 0",
-            BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
-        assertTrue(
-            "Order Payment Schedule Outstanding Amount == 0",
-            BigDecimal.ZERO.compareTo(order.getFINPaymentScheduleList().get(0)
-                .getOutstandingAmount()) != 0);
+        assertTrue("Invoice Payment Schedule Paid Amount != 0", BigDecimal.ZERO
+            .compareTo(invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+        assertTrue("Order Payment Schedule Outstanding Amount == 0", BigDecimal.ZERO
+            .compareTo(order.getFINPaymentScheduleList().get(0).getOutstandingAmount()) != 0);
         assertTrue("Order Payment Schedule not Total Pending", invoice.getGrandTotalAmount()
             .compareTo(invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-        assertTrue(
-            "Order Payment Schedule Paid Amount != 0",
-            BigDecimal.ZERO.compareTo(order.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+        assertTrue("Order Payment Schedule Paid Amount != 0", BigDecimal.ZERO
+            .compareTo(order.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
       } finally {
         OBContext.restorePreviousMode();
@@ -156,22 +150,21 @@ public class PaymentTest_08 extends OBBaseTest {
     PriceList testPriceList = OBDal.getInstance().get(PriceList.class, priceListId);
     BusinessPartner testBusinessPartner = OBDal.getInstance()
         .get(BusinessPartner.class, bpartnerId);
-    Location location = TestUtility.getOneInstance(Location.class, new Value(
-        Location.PROPERTY_BUSINESSPARTNER, testBusinessPartner));
+    Location location = TestUtility.getOneInstance(Location.class,
+        new Value(Location.PROPERTY_BUSINESSPARTNER, testBusinessPartner));
     PaymentTerm testPaymentTerm = OBDal.getInstance().get(PaymentTerm.class, paymentTermId);
     Currency testCurrency = OBDal.getInstance().get(Currency.class, currencyId);
     Product testProduct = OBDal.getInstance().get(Product.class, productId);
-    UOM uom = TestUtility.getOneInstance(UOM.class, new Value(UOM.PROPERTY_NAME, testProduct
-        .getUOM().getName()));
+    UOM uom = TestUtility.getOneInstance(UOM.class,
+        new Value(UOM.PROPERTY_NAME, testProduct.getUOM().getName()));
     TaxRate testTaxRate = OBDal.getInstance().get(TaxRate.class, taxId);
     DocumentType testDocumentType = OBDal.getInstance().get(DocumentType.class, docTypeId);
     DocumentType testOrderDocumentType = OBDal.getInstance()
         .get(DocumentType.class, orderDocTypeId);
     FIN_FinancialAccount testAccount = TestUtility.insertFinancialAccount("APRM_FINACC_PAYMENT_08",
         STANDARD_DESCRIPTION, testCurrency, CASH, false,
-        getOneInstance(org.openbravo.model.common.geography.Location.class), null, null, null,
-        null, null, null, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, null, true,
-        true);
+        getOneInstance(org.openbravo.model.common.geography.Location.class), null, null, null, null,
+        null, null, null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO, null, true, true);
 
     FIN_PaymentMethod testPaymentMethod = TestUtility.insertPaymentMethod("APRM_PM_PAYMENT_08",
         STANDARD_DESCRIPTION, true, true, false, MANUAL_EXECUTION, null, false, IN_TRANSIT_ACCOUNT,
@@ -179,11 +172,12 @@ public class PaymentTest_08 extends OBBaseTest {
         IN_TRANSIT_ACCOUNT, WITHDRAWN_ACCOUNT, CLEARED_ACCOUNT, true, true);
 
     FinAccPaymentMethod existAssociation = TestUtility.getOneInstance(FinAccPaymentMethod.class,
-        new Value(FinAccPaymentMethod.PROPERTY_ACCOUNT, testAccount), new Value(
-            FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, testPaymentMethod));
+        new Value(FinAccPaymentMethod.PROPERTY_ACCOUNT, testAccount),
+        new Value(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, testPaymentMethod));
 
-    if (existAssociation == null)
+    if (existAssociation == null) {
       TestUtility.associatePaymentMethod(testAccount, testPaymentMethod);
+    }
     this.financialAccountId = testAccount.getId();
 
     // UPDATE BPARTNER AND ASSOCIATED NEW FINANCIAL ACCOUNT
@@ -191,8 +185,8 @@ public class PaymentTest_08 extends OBBaseTest {
     OBDal.getInstance().save(testBusinessPartner);
 
     Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, warehouseId);
-    Order order = TestUtility.createNewOrder(OBContext.getOBContext().getCurrentClient(), OBContext
-        .getOBContext().getCurrentOrganization(), new Date(), new Date(), new Date(),
+    Order order = TestUtility.createNewOrder(OBContext.getOBContext().getCurrentClient(),
+        OBContext.getOBContext().getCurrentOrganization(), new Date(), new Date(), new Date(),
         testOrderDocumentType, testBusinessPartner, location, warehouse, "I", testPriceList,
         testCurrency, testPaymentMethod, testPaymentTerm, testProduct, uom, quantity, netUnitPrice,
         netListPrice, priceLimit, testTaxRate, lineNetAmount, true);
@@ -204,16 +198,16 @@ public class PaymentTest_08 extends OBBaseTest {
     OBContext.setAdminMode();
     try {
       FIN_PaymentScheduleDetail psd = TestUtility.getOneInstance(FIN_PaymentScheduleDetail.class,
-          new Value(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, order
-              .getFINPaymentScheduleList().get(0)));
+          new Value(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE,
+              order.getFINPaymentScheduleList().get(0)));
 
       assertTrue("Payment Schedule Outstanding Amount == Order amount", order.getGrandTotalAmount()
           .compareTo(order.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
       assertTrue("Payment Schedule Received Amount == 0",
           BigDecimal.ZERO.compareTo(order.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
-      assertTrue("Payment Schedule Deatail Amount == Total Amount", order.getGrandTotalAmount()
-          .compareTo(psd.getAmount()) == 0);
+      assertTrue("Payment Schedule Deatail Amount == Total Amount",
+          order.getGrandTotalAmount().compareTo(psd.getAmount()) == 0);
       assertTrue("Payment Schedule Detail Write-off Amount == 0",
           BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
     } finally {
@@ -229,12 +223,13 @@ public class PaymentTest_08 extends OBBaseTest {
         IN_TRANSIT_ACCOUNT, DEPOSIT_ACCOUNT, CLEARED_ACCOUNT, true, false, false, MANUAL_EXECUTION,
         null, false, IN_TRANSIT_ACCOUNT, WITHDRAWN_ACCOUNT, CLEARED_ACCOUNT, true, true);
 
-    existAssociation = TestUtility.getOneInstance(FinAccPaymentMethod.class, new Value(
-        FinAccPaymentMethod.PROPERTY_ACCOUNT, testAccount), new Value(
-        FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, awaitingExecutionPM));
+    existAssociation = TestUtility.getOneInstance(FinAccPaymentMethod.class,
+        new Value(FinAccPaymentMethod.PROPERTY_ACCOUNT, testAccount),
+        new Value(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, awaitingExecutionPM));
 
-    if (existAssociation == null)
+    if (existAssociation == null) {
       TestUtility.associatePaymentMethod(testAccount, awaitingExecutionPM);
+    }
 
     // SET NEW PAYMENT METHOD FOR CREATED PAYMENT: AWAITING EXECUTION
     // NO PAYMENT INFO SHOULD BE UPDATED AS PAYMENT HAS NOT BEEN EXECUTED YET
@@ -251,15 +246,15 @@ public class PaymentTest_08 extends OBBaseTest {
       assertTrue("Status != Awaiting Execution", "RPAE".equals(payment.getStatus()));
       // CHECK OUTPUT DATA FOR ORDER AGAIN NO CHANGE SHOULD HAPPEN AS PAYMENT REMAINS AWE
       FIN_PaymentScheduleDetail psd = TestUtility.getOneInstance(FIN_PaymentScheduleDetail.class,
-          new Value(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, order
-              .getFINPaymentScheduleList().get(0)));
+          new Value(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE,
+              order.getFINPaymentScheduleList().get(0)));
       assertTrue("Payment Schedule Outstanding Amount == Order amount", order.getGrandTotalAmount()
           .compareTo(order.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
       assertTrue("Payment Schedule Received Amount == 0",
           BigDecimal.ZERO.compareTo(order.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
-      assertTrue("Payment Schedule Deatail Amount == Total Amount", order.getGrandTotalAmount()
-          .compareTo(psd.getAmount()) == 0);
+      assertTrue("Payment Schedule Deatail Amount == Total Amount",
+          order.getGrandTotalAmount().compareTo(psd.getAmount()) == 0);
       assertTrue("Payment Schedule Detail Write-off Amount == 0",
           BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
     } finally {
@@ -297,18 +292,16 @@ public class PaymentTest_08 extends OBBaseTest {
     try {
       // CHECK OUTPUT DATA FOR INVOICE
       FIN_PaymentScheduleDetail psd = TestUtility.getOneInstance(FIN_PaymentScheduleDetail.class,
-          new Value(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE, invoice
-              .getFINPaymentScheduleList().get(0)));
-      assertTrue(
-          "Payment Schedule Outstanding Amount == Order amount",
-          invoice.getGrandTotalAmount().compareTo(
-              invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
-      assertTrue(
-          "Payment Schedule Received Amount == 0",
-          BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
+          new Value(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
+              invoice.getFINPaymentScheduleList().get(0)));
+      assertTrue("Payment Schedule Outstanding Amount == Order amount",
+          invoice.getGrandTotalAmount()
+              .compareTo(invoice.getFINPaymentScheduleList().get(0).getOutstandingAmount()) == 0);
+      assertTrue("Payment Schedule Received Amount == 0", BigDecimal.ZERO
+          .compareTo(invoice.getFINPaymentScheduleList().get(0).getPaidAmount()) == 0);
 
-      assertTrue("Payment Schedule Deatail Amount == Total Amount", invoice.getGrandTotalAmount()
-          .compareTo(psd.getAmount()) == 0);
+      assertTrue("Payment Schedule Deatail Amount == Total Amount",
+          invoice.getGrandTotalAmount().compareTo(psd.getAmount()) == 0);
       assertTrue("Payment Schedule Detail Write-off Amount == 0",
           BigDecimal.ZERO.compareTo(psd.getWriteoffAmount()) == 0);
     } finally {

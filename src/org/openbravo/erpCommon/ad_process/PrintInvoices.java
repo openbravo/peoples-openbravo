@@ -41,20 +41,23 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class PrintInvoices extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: dataSheet");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
@@ -68,10 +71,11 @@ public class PrintInvoices extends HttpSecureAppServlet {
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, classInfo.id);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), classInfo.id);
+    }
 
     if (data != null && data.length != 0) {
       strHelp = data[0].help;
@@ -83,8 +87,9 @@ public class PrintInvoices extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "",
-          "49DC1D6F086945AB82F84C66F5F13F16", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "PrintInvoices"), Utility.getContext(this, vars, "#User_Client", "PrintInvoices"), 0);
+          "49DC1D6F086945AB82F84C66F5F13F16",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "PrintInvoices"),
+          Utility.getContext(this, vars, "#User_Client", "PrintInvoices"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "PrintInvoices", "");
       xmlDocument.setData("reportAD_ORGID", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -131,6 +136,7 @@ public class PrintInvoices extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet ReportInvoices. This Servlet was made by Pablo Sarobe";
   } // end of getServletInfo() method

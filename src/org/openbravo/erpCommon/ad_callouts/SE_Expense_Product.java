@@ -59,26 +59,26 @@ public class SE_Expense_Product extends SimpleCallout {
 
     BigDecimal invPrice = StringUtils.isNotEmpty(strInvPrice) ? new BigDecimal(strInvPrice)
         : BigDecimal.ZERO;
-    BigDecimal lastNetUnitPrice = StringUtils.isNotEmpty(strlastNetUnitPrice) ? new BigDecimal(
-        strlastNetUnitPrice) : BigDecimal.ZERO;
+    BigDecimal lastNetUnitPrice = StringUtils.isNotEmpty(strlastNetUnitPrice)
+        ? new BigDecimal(strlastNetUnitPrice)
+        : BigDecimal.ZERO;
     String strmPricelistId = SEExpenseProductData.priceList(this, strsTimeexpenseId);
     SEExpenseProductData[] data = SEExpenseProductData.select(this, strmProductId, strmPricelistId);
     if (StringUtils.isEmpty(strDateexpense)) {
-      strDateexpense = StringUtils.isEmpty(SEExpenseProductData.selectReportDate(this,
-          strsTimeexpenseId)) ? DateTimeData.today(this) : SEExpenseProductData.selectReportDate(
-          this, strsTimeexpenseId);
+      strDateexpense = StringUtils.isEmpty(
+          SEExpenseProductData.selectReportDate(this, strsTimeexpenseId)) ? DateTimeData.today(this)
+              : SEExpenseProductData.selectReportDate(this, strsTimeexpenseId);
     }
 
     // Search for price
     boolean noPrice = true;
     String priceActual = "";
     String cCurrencyID = "";
-    if (StringUtils.isEmpty(strInvPrice)
-        || (StringUtils.equals(strChanged, "inpmProductId") && invPrice.compareTo(lastNetUnitPrice) == 0)) {
+    if (StringUtils.isEmpty(strInvPrice) || (StringUtils.equals(strChanged, "inpmProductId")
+        && invPrice.compareTo(lastNetUnitPrice) == 0)) {
       for (int i = 0; data != null && i < data.length && noPrice; i++) {
-        if (StringUtils.isEmpty(data[i].validfrom)
-            || !StringUtils.equals(DateTimeData.compare(this, strDateexpense, data[i].validfrom),
-                "-1")) {
+        if (StringUtils.isEmpty(data[i].validfrom) || !StringUtils
+            .equals(DateTimeData.compare(this, strDateexpense, data[i].validfrom), "-1")) {
           noPrice = false;
           // Price
           priceActual = data[i].pricestd;
@@ -93,9 +93,8 @@ public class SE_Expense_Product extends SimpleCallout {
       if (noPrice) {
         data = SEExpenseProductData.selectBasePriceList(this, strmProductId, strmPricelistId);
         for (int i = 0; data != null && i < data.length && noPrice; i++) {
-          if (StringUtils.isEmpty(data[i].validfrom)
-              || !StringUtils.equals(DateTimeData.compare(this, strDateexpense, data[i].validfrom),
-                  "-1")) {
+          if (StringUtils.isEmpty(data[i].validfrom) || !StringUtils
+              .equals(DateTimeData.compare(this, strDateexpense, data[i].validfrom), "-1")) {
             noPrice = false;
             // Price
             priceActual = data[i].pricestd;
@@ -140,12 +139,16 @@ public class SE_Expense_Product extends SimpleCallout {
     info.addResult("inpinvoiceprice", price);
 
     // Get currency to from org's currency or client's currency if it doesn't exists
-    final Organization org = OBDal.getInstance().get(Sheet.class, strsTimeexpenseId)
+    final Organization org = OBDal.getInstance()
+        .get(Sheet.class, strsTimeexpenseId)
         .getOrganization();
     String c_Currency_To_ID = getCurrency(org.getId());
     if (c_Currency_To_ID == null) {
-      c_Currency_To_ID = OBDal.getInstance().get(Sheet.class, strsTimeexpenseId).getClient()
-          .getCurrency().getId();
+      c_Currency_To_ID = OBDal.getInstance()
+          .get(Sheet.class, strsTimeexpenseId)
+          .getClient()
+          .getCurrency()
+          .getId();
     }
 
     // Checks if there is a conversion rate for each of the transactions of
@@ -160,24 +163,25 @@ public class SE_Expense_Product extends SimpleCallout {
         } catch (Exception e) {
           convertedAmount = "";
           OBDal.getInstance().rollbackAndClose();
-          info.showMessage(Utility.translateError(this, info.vars, info.vars.getLanguage(),
-              e.getMessage()).getMessage());
+          info.showMessage(
+              Utility.translateError(this, info.vars, info.vars.getLanguage(), e.getMessage())
+                  .getMessage());
           log4j.warn("Currency does not exist. Exception:" + e);
         }
         convAmount = StringUtils.isNotEmpty(convertedAmount) ? new BigDecimal(convertedAmount)
             : BigDecimal.ZERO;
         int stdPrecisionConv = 0;
         if (StringUtils.isNotEmpty(c_Currency_To_ID)) {
-          stdPrecisionConv = Integer.valueOf(SEExpenseProductData.selectPrecision(this,
-              c_Currency_To_ID));
+          stdPrecisionConv = Integer
+              .valueOf(SEExpenseProductData.selectPrecision(this, c_Currency_To_ID));
         }
         if (convAmount.scale() > stdPrecisionConv) {
           convAmount = convAmount.setScale(stdPrecisionConv, RoundingMode.HALF_UP);
         }
       }
       // Update Converted Amount
-      info.addResult("inpconvertedamt", convAmount.compareTo(BigDecimal.ZERO) != 0 ? convAmount
-          : null);
+      info.addResult("inpconvertedamt",
+          convAmount.compareTo(BigDecimal.ZERO) != 0 ? convAmount : null);
     }
 
     // If the product was changed, then update the currency

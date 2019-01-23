@@ -75,6 +75,7 @@ public class JsonRestServlet extends BaseWebServiceServlet {
     super.init(config);
   }
 
+  @Override
   protected void doService(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
@@ -89,8 +90,8 @@ public class JsonRestServlet extends BaseWebServiceServlet {
           log.error("User " + OBContext.getOBContext().getUser() + " with role "
               + OBContext.getOBContext().getRole()
               + " is trying to access to non granted web service " + request.getRequestURL());
-          throw new OBSecurityException("Web Services are not granted to "
-              + OBContext.getOBContext().getRole() + " role");
+          throw new OBSecurityException(
+              "Web Services are not granted to " + OBContext.getOBContext().getRole() + " role");
         }
       }
       callServiceInSuper(request, response);
@@ -124,8 +125,8 @@ public class JsonRestServlet extends BaseWebServiceServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
 
     try {
       final Map<String, String> parameters = getParameterMap(request);
@@ -170,13 +171,13 @@ public class JsonRestServlet extends BaseWebServiceServlet {
   }
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
     // note if clause updates parameter map
     if (checkSetIDEntityName(request, response, parameters)) {
-      final String result = DefaultJsonDataService.getInstance().add(parameters,
-          getRequestContent(request));
+      final String result = DefaultJsonDataService.getInstance()
+          .add(parameters, getRequestContent(request));
       writeResult(response, result);
     }
   }
@@ -208,13 +209,13 @@ public class JsonRestServlet extends BaseWebServiceServlet {
   }
 
   @Override
-  public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPut(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     final Map<String, String> parameters = getParameterMap(request);
     // note if clause updates parameter map
     if (checkSetIDEntityName(request, response, parameters)) {
-      final String result = DefaultJsonDataService.getInstance().update(parameters,
-          getRequestContent(request));
+      final String result = DefaultJsonDataService.getInstance()
+          .update(parameters, getRequestContent(request));
       writeResult(response, result);
     }
   }
@@ -230,15 +231,13 @@ public class JsonRestServlet extends BaseWebServiceServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(servletPathPart)) {
-      writeResult(
-          response,
-          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
-              + request.getRequestURI())));
+      writeResult(response, JsonUtils.convertExceptionToJson(
+          new InvalidRequestException("Invalid url: " + request.getRequestURI())));
       return false;
     }
     if (pathParts.length == 1) {
-      writeResult(response, JsonUtils.convertExceptionToJson(new InvalidRequestException(
-          "Invalid url, no entityName: " + request.getRequestURI())));
+      writeResult(response, JsonUtils.convertExceptionToJson(
+          new InvalidRequestException("Invalid url, no entityName: " + request.getRequestURI())));
       return false;
     }
     final String entityName = pathParts[1];
@@ -284,10 +283,8 @@ public class JsonRestServlet extends BaseWebServiceServlet {
     final String servicePart = request.getRequestURI().substring(nameIndex);
     final String[] pathParts = WebServiceUtil.getInstance().getSegments(servicePart);
     if (pathParts.length == 0 || !pathParts[0].equals(servletPathPart)) {
-      writeResult(
-          response,
-          JsonUtils.convertExceptionToJson(new InvalidRequestException("Invalid url: "
-              + request.getRequestURI())));
+      writeResult(response, JsonUtils.convertExceptionToJson(
+          new InvalidRequestException("Invalid url: " + request.getRequestURI())));
       return false;
     }
     if (pathParts.length == 1) {
@@ -395,10 +392,10 @@ public class JsonRestServlet extends BaseWebServiceServlet {
 
     public void close() throws IOException {
       writer.write("]");
-      writer.write(",\"" + JsonConstants.RESPONSE_STATUS + "\":"
-          + JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      writer.write(",\"" + JsonConstants.RESPONSE_TOTALROWS + "\":"
-          + (lines + (limitReached ? 1 : 0)));
+      writer.write(
+          ",\"" + JsonConstants.RESPONSE_STATUS + "\":" + JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      writer.write(
+          ",\"" + JsonConstants.RESPONSE_TOTALROWS + "\":" + (lines + (limitReached ? 1 : 0)));
       if (startRow != -1) {
         writer.write(",\"" + JsonConstants.RESPONSE_STARTROW + "\":" + startRow);
       }

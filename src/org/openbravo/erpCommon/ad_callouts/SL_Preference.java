@@ -98,10 +98,8 @@ public class SL_Preference extends SimpleCallout {
 
       if (qPref.count() > 0) {
         info.addResult("inpselected", "N");
-        info.addResult(
-            "MESSAGE",
-            Utility.messageBD(this, "MultipleSelectedPreferences", OBContext.getOBContext()
-                .getLanguage().getLanguage()));
+        info.addResult("MESSAGE", Utility.messageBD(this, "MultipleSelectedPreferences",
+            OBContext.getOBContext().getLanguage().getLanguage()));
       }
     }
   }

@@ -68,8 +68,8 @@ public class SL_RequisitionLine_Amt extends SimpleCallout {
 
     // Set true if selected Price List or Requisition's Price List Includes Tax in Price
     boolean isPriceIncludesTax = (priceListObj != null && priceListObj.isPriceIncludesTax())
-        || (priceListObj == null && requisitionObj.getPriceList() != null && requisitionObj
-            .getPriceList().isPriceIncludesTax());
+        || (priceListObj == null && requisitionObj.getPriceList() != null
+            && requisitionObj.getPriceList().isPriceIncludesTax());
 
     // Apply precision to Price Actual
     priceActual = internalRound(priceActual, pricePrecision);
@@ -84,8 +84,8 @@ public class SL_RequisitionLine_Amt extends SimpleCallout {
           log4j.debug("pricelist: " + priceList.toString());
           log4j.debug("priceActual: " + priceActual.toString());
         }
-        discount = ((priceList.subtract(priceActual)).divide(priceList, 12,
-            RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100"));
+        discount = ((priceList.subtract(priceActual)).divide(priceList, 12, RoundingMode.HALF_EVEN))
+            .multiply(new BigDecimal("100"));
       }
       if (log4j.isDebugEnabled()) {
         log4j.debug("Discount: " + discount.toString());
@@ -104,15 +104,17 @@ public class SL_RequisitionLine_Amt extends SimpleCallout {
       // Calculate Price Std and Price Actual
       BigDecimal discount1 = BigDecimal.ZERO;
       if (priceList.compareTo(BigDecimal.ZERO) != 0) {
-        discount1 = internalRound(((priceList.subtract(priceActual)).divide(priceList, 12,
-            RoundingMode.HALF_EVEN)).multiply(new BigDecimal("100")), stdPrecision);
+        discount1 = internalRound(
+            ((priceList.subtract(priceActual)).divide(priceList, 12, RoundingMode.HALF_EVEN))
+                .multiply(new BigDecimal("100")),
+            stdPrecision);
       }
       BigDecimal discount2 = internalRound(discount, stdPrecision);
 
       // checks if rounded discount has changed
       if (discount1.compareTo(discount2) != 0) {
-        priceActual = priceList.subtract(priceList.multiply(discount).divide(new BigDecimal("100"),
-            12, RoundingMode.HALF_EVEN));
+        priceActual = priceList.subtract(
+            priceList.multiply(discount).divide(new BigDecimal("100"), 12, RoundingMode.HALF_EVEN));
         priceActual = internalRound(priceActual, pricePrecision);
         info.addResult("inppriceactual", priceActual);
       }
@@ -136,7 +138,7 @@ public class SL_RequisitionLine_Amt extends SimpleCallout {
   }
 
   private BigDecimal internalRound(BigDecimal value, Integer precision) {
-    return (precision == null || value.scale() <= precision) ? value : value.setScale(precision,
-        RoundingMode.HALF_UP);
+    return (precision == null || value.scale() <= precision) ? value
+        : value.setScale(precision, RoundingMode.HALF_UP);
   }
 }

@@ -38,8 +38,8 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
  */
 public class ReferenceInventoryEventHandler extends EntityPersistenceEventObserver {
 
-  private static final Entity[] ENTITIES = { ModelProvider.getInstance().getEntity(
-      ReferencedInventory.ENTITY_NAME) };
+  private static final Entity[] ENTITIES = {
+      ModelProvider.getInstance().getEntity(ReferencedInventory.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -54,9 +54,9 @@ public class ReferenceInventoryEventHandler extends EntityPersistenceEventObserv
     recomputeValueFromSequenceIfAutomaticallySet(event);
   }
 
-/**
-   * If value is automatic (when value starts with "<"), it recompute its value using the associated sequence (if found) 
-   * and updates the next sequence number in database 
+  /**
+   * If value is automatic (when value starts with "<"), it recompute its value using the associated
+   * sequence (if found) and updates the next sequence number in database
    */
   private void recomputeValueFromSequenceIfAutomaticallySet(EntityPersistenceEvent event) {
     if (!isValidEvent(event)) {
@@ -72,8 +72,8 @@ public class ReferenceInventoryEventHandler extends EntityPersistenceEventObserv
       final ReferencedInventoryType refInvType = (ReferencedInventoryType) event
           .getCurrentState(refInvTypeProperty);
 
-      final String documentNo = ReferencedInventoryUtil.getProposedValueFromSequenceOrNull(
-          refInvType.getId(), true);
+      final String documentNo = ReferencedInventoryUtil
+          .getProposedValueFromSequenceOrNull(refInvType.getId(), true);
       event.setCurrentState(valueProperty, documentNo);
     }
   }

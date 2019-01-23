@@ -32,21 +32,25 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 public class DisplayHelp extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("BY DEFAULT\n");
+      }
       String strKeyId = "";
       String strType = vars.getRequiredStringParameter("inpwindowType");
-      if (strType.equals("W"))
+      if (strType.equals("W")) {
         strKeyId = vars.getRequiredStringParameter("inpwindowId");
+      }
       printPageDataSheet(response, vars, strKeyId);
     } else {
       pageError(response);
@@ -55,8 +59,9 @@ public class DisplayHelp extends HttpSecureAppServlet {
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strWindow) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: Help Displayer");
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -65,6 +70,7 @@ public class DisplayHelp extends HttpSecureAppServlet {
     out.close();
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet that presents window's help";
   } // end of getServletInfo() method

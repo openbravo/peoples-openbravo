@@ -151,7 +151,8 @@ public class NamingUtil {
       final Field fld = clz.getField(ENTITY_NAME_CONSTANT);
       return (String) fld.get(null);
     } catch (final Exception e) {
-      throw new OBException("Exception when getting ENTITY_NAME constant from  " + clz.getName(), e);
+      throw new OBException("Exception when getting ENTITY_NAME constant from  " + clz.getName(),
+          e);
     }
   }
 
@@ -256,10 +257,8 @@ public class NamingUtil {
     // check for doublures and be robust....
     for (Property p : property.getEntity().getProperties()) {
       if (p.getName() != null && p.getName().equalsIgnoreCase(mappingName)) {
-        log.error("ERROR: Property name computation fails for property "
-            + property
-            + " using new name "
-            + mappingName
+        log.error("ERROR: Property name computation fails for property " + property
+            + " using new name " + mappingName
             + " there is more then one property with the same name, being robust and "
             + "renaming property automatically. If this error appears during update.database then "
             + "this is possibly solved automatically. Otherwise this should be repaired manually by "
@@ -315,7 +314,8 @@ public class NamingUtil {
     if (p.getReferencedProperty() == null || p.getReferencedProperty().getColumnName() == null) {
       return false;
     }
-    return p.getColumnName().toLowerCase()
+    return p.getColumnName()
+        .toLowerCase()
         .equals(p.getReferencedProperty().getColumnName().toLowerCase());
   }
 

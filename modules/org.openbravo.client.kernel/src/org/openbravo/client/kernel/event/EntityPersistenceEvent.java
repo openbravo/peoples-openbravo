@@ -52,8 +52,8 @@ public class EntityPersistenceEvent {
       }
       index++;
     }
-    throw new IllegalArgumentException("Property " + property + " not found for entity "
-        + getTargetInstance());
+    throw new IllegalArgumentException(
+        "Property " + property + " not found for entity " + getTargetInstance());
   }
 
   /**
@@ -118,8 +118,8 @@ public class EntityPersistenceEvent {
       }
       index++;
     }
-    throw new IllegalArgumentException("Property " + property + " not found for entity "
-        + getTargetInstance());
+    throw new IllegalArgumentException(
+        "Property " + property + " not found for entity " + getTargetInstance());
   }
 
   /**

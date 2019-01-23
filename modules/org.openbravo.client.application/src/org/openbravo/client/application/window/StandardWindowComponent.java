@@ -59,6 +59,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   private String uniqueString = "" + System.currentTimeMillis();
   private List<String> processViews = new ArrayList<String>();
 
+  @Override
   protected Template getComponentTemplate() {
 
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
@@ -81,6 +82,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     return adcs.isInDevelopment();
   }
 
+  @Override
   public String generate() {
     final String jsCode = super.generate();
     return jsCode;
@@ -126,9 +128,8 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     final List<OBViewTab> tempTabs = new ArrayList<OBViewTab>();
     for (Tab tab : getWindow().getADTabList()) {
       // NOTE: grid sequence and field sequence tabs do not have any fields defined!
-      if (!tab.isActive()
-          || tab.getADFieldList().isEmpty()
-          || ActivationKey.getInstance().hasLicencesTabAccess(tab.getId()) != FeatureRestriction.NO_RESTRICTION) {
+      if (!tab.isActive() || tab.getADFieldList().isEmpty() || ActivationKey.getInstance()
+          .hasLicencesTabAccess(tab.getId()) != FeatureRestriction.NO_RESTRICTION) {
         continue;
       }
       final OBViewTab tabComponent = createComponent(OBViewTab.class);
@@ -211,21 +212,23 @@ public class StandardWindowComponent extends BaseTemplateComponent {
    */
   public static Map<String, Optional<GCTab>> getTabsGridConfig(Window window) {
     // window comes from ADCS, we need to retrieve GC from DB as it might have changed
-    OBQuery<GCTab> qGCTab = OBDal.getInstance().createQuery(GCTab.class,
-        "as g where g.tab.window = :window");
+    OBQuery<GCTab> qGCTab = OBDal.getInstance()
+        .createQuery(GCTab.class, "as g where g.tab.window = :window");
     qGCTab.setNamedParameter("window", window);
     Map<String, List<GCTab>> gcsByTab = qGCTab.stream() //
         .collect(groupingBy(gcTab -> gcTab.getTab().getId()));
 
-    return window.getADTabList().stream() //
+    return window.getADTabList()
+        .stream() //
         .map(tab -> getTabConfig(tab, gcsByTab)) //
         .collect(toMap(SimpleEntry::getKey, SimpleEntry::getValue));
   }
 
   private static SimpleEntry<String, Optional<GCTab>> getTabConfig(Tab tab,
       Map<String, List<GCTab>> gcsByTab) {
-    Stream<GCTab> candidates = gcsByTab.containsKey(tab.getId()) ? gcsByTab.get(tab.getId())
-        .stream() : Stream.empty();
+    Stream<GCTab> candidates = gcsByTab.containsKey(tab.getId())
+        ? gcsByTab.get(tab.getId()).stream()
+        : Stream.empty();
 
     Optional<GCTab> selectedGC = candidates //
         .sorted( //

@@ -122,32 +122,35 @@ public class Sqlc extends DefaultHandler {
     errorNum = 0;
 
     if (argv.length < 1) {
-      log4j
-          .error("Usage: java org.openbravo.data.Sqlc connection.xml [fileTermination [sourceDir destinyDir [write_txt_files]]]");
+      log4j.error(
+          "Usage: java org.openbravo.data.Sqlc connection.xml [fileTermination [sourceDir destinyDir [write_txt_files]]]");
       return;
     }
 
     final Sqlc sqlc = new Sqlc();
     XMLReader parser;
     parser = new SAXParser();
-    if (argv.length <= 4)
+    if (argv.length <= 4) {
       sqlc.writeTxtFiles = false;
-    else
+    } else {
       sqlc.writeTxtFiles = argv[4].equalsIgnoreCase("true");
+    }
     parser.setContentHandler(sqlc);
     final String strFileConnection = argv[0];
     sqlc.readProperties(strFileConnection);
 
     // the first parameter is the directory where the search is done
-    if (argv.length <= 2)
+    if (argv.length <= 2) {
       dirIni = ".";
-    else
+    } else {
       dirIni = argv[2];
+    }
 
-    if (argv.length <= 3)
+    if (argv.length <= 3) {
       dirFin = dirIni;
-    else
+    } else {
       dirFin = argv[3];
+    }
 
     // include only directories (and sub-directories under this one) with
     // this pattern, the packaging will be from this point, not from call
@@ -167,10 +170,11 @@ public class Sqlc extends DefaultHandler {
     // the second parameter is the string-chain to make the filter
     // the file must end with this string-chain in order to be recognized
     boolFilter = true; // there always must be a termination
-    if (argv.length <= 1)
+    if (argv.length <= 1) {
       strFilter = ".xml";
-    else
+    } else {
       strFilter = argv[1];
+    }
     String listOfFiles = System.getProperty("sqlc.listOfFiles", null);
     if (listOfFiles == null) {
       dirFilter = new DirFilter(strFilter);
@@ -223,8 +227,9 @@ public class Sqlc extends DefaultHandler {
   private static ArrayList<String> getDirectories(String s) {
     final ArrayList<String> l = new ArrayList<String>();
     final StringTokenizer tok = new StringTokenizer(s, "/");
-    while (tok.hasMoreTokens())
+    while (tok.hasMoreTokens()) {
       l.add(tok.nextToken());
+    }
     return l;
   }
 
@@ -234,50 +239,46 @@ public class Sqlc extends DefaultHandler {
 
     File[] list;
 
-    if (boolFilter)
+    if (boolFilter) {
       list = file.listFiles(dirFilter);
-    else
+    } else {
       list = file.listFiles();
+    }
     for (int i = 0; i < list.length; i++) {
       final File fileItem = list[i];
       if (fileItem.isDirectory()) {
-        if (log4j.isDebugEnabled())
-          log4j
-              .debug("dir: "
-                  + fileItem.getName()
-                  + " - parse:"
-                  + parse
-                  + " - parent:"
-                  + parent
-                  + " - level:"
-                  + level
-                  + " - include:"
-                  + (includeDirectories != null && includeDirectories.size() > level ? includeDirectories
-                      .get(level) : "--"));
+        if (log4j.isDebugEnabled()) {
+          log4j.debug("dir: " + fileItem.getName() + " - parse:" + parse + " - parent:" + parent
+              + " - level:" + level + " - include:"
+              + (includeDirectories != null && includeDirectories.size() > level
+                  ? includeDirectories.get(level)
+                  : "--"));
+        }
         // if it is a subdirectory then list recursively
-        if (parse)
+        if (parse) {
           listDir(fileItem, boolFilter, dirFilter, sqlc, parser, strFilter, fileFin, true, parent,
               level + 1);
-        else {
-          if ((includeDirectories.size() == level + 1)
-              && (includeDirectories.get(level).equals("*") || includeDirectories.get(level)
-                  .equals(fileItem.getName())))
+        } else {
+          if ((includeDirectories.size() == level + 1) && (includeDirectories.get(level).equals("*")
+              || includeDirectories.get(level).equals(fileItem.getName()))) {
             listDir(fileItem, boolFilter, dirFilter, sqlc, parser, strFilter, fileFin, true,
                 fileItem.getParent() + "/" + fileItem.getName(), level + 1);
-          else if (includeDirectories.size() > level
-              && (includeDirectories.get(level).equals("*") || includeDirectories.get(level)
-                  .equals(fileItem.getName())))
+          } else if (includeDirectories.size() > level && (includeDirectories.get(level).equals("*")
+              || includeDirectories.get(level).equals(fileItem.getName()))) {
             listDir(fileItem, boolFilter, dirFilter, sqlc, parser, strFilter, fileFin, false,
                 parent, level + 1);
-          // other case don't follow deeping into the tree
+            // other case don't follow deeping into the tree
+          }
         }
       } else {
         try {
-          if (log4j.isDebugEnabled())
+          if (log4j.isDebugEnabled()) {
             log4j.debug(list[i] + " Parent: " + fileItem.getParent() + " getName() "
                 + fileItem.getName() + " canonical: " + fileItem.getCanonicalPath());
-          if (parse)
+          }
+          if (parse) {
             parseSqlFile(list[i], sqlc, parser, strFilter, fileFin, parent);
+          }
         } catch (final IOException e) {
           log4j.error("IOException: ", e);
         }
@@ -294,19 +295,22 @@ public class Sqlc extends DefaultHandler {
     String parent = _parent;
     parent = parent.replace("\\", "/");
     final String strFileName = fileParsing.getName();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Parsing of " + strFileName);
+    }
     sqlc.init();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("new Sql");
+    }
     final int pos = strFileName.indexOf(strFilter);
     if (pos == -1) {
       log4j.error("File " + strFileName + " don't have termination " + strFilter);
       return;
     }
     final String strFileWithoutTermination = strFileName.substring(0, pos);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("File without termination: " + strFileWithoutTermination);
+    }
     if (strFileWithoutTermination.equalsIgnoreCase("SQLC")) {
       log4j.error("Name Sqlc not allowed for a file");
       return;
@@ -316,22 +320,26 @@ public class Sqlc extends DefaultHandler {
       String parentDir = fileParsing.getParent().replace("\\", "/");
       // In case includeDirectories has value remove parent from path to
       // keep clean the package
-      if (includeDirectories != null && parentDir.startsWith(parent))
+      if (includeDirectories != null && parentDir.startsWith(parent)) {
         parentDir = parentDir.substring(parent.length());
+      }
 
       final File dirJava = new File(fileFin, parentDir);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("parentDir:" + parentDir + " - javadir:" + dirJava + " - parent:" + parent);
+      }
       dirJava.mkdirs();
       javaFileName = TransformaNombreFichero(strFileWithoutTermination);
       final File fileJava = new File(dirJava, javaFileName + ".java");
       File fileTxt = null;
-      if (sqlc.writeTxtFiles)
+      if (sqlc.writeTxtFiles) {
         fileTxt = new File(fileParsing.getParent(), strFileWithoutTermination + ".txt");
+      }
       if ((!fileJava.exists()) || (fileParsing.lastModified() > fileJava.lastModified())) {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug(" time file parsed: " + fileParsing.lastModified() + " time file java: "
               + fileParsing.lastModified());
+        }
         final FileOutputStream resultsFile = new FileOutputStream(fileJava);
         sqlc.out = new OutputStreamWriter(resultsFile, "UTF-8");
         sqlc.out1 = new StringBuffer();
@@ -349,8 +357,9 @@ public class Sqlc extends DefaultHandler {
         log4j.info("File: " + fileParsing + " \tprocessed");
         final java.util.Date date = new java.util.Date(); // there is date in
         // java.sql.*
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("Time: " + date.getTime());
+        }
 
         sqlc.error = false;
         try {
@@ -383,8 +392,9 @@ public class Sqlc extends DefaultHandler {
         sqlc.importJavaUtil = false;
         sqlc.importRDBMSIndependent = false;
         resultsFile.close();
-        if (resultsFileTxt != null)
+        if (resultsFileTxt != null) {
           resultsFileTxt.close();
+        }
         if (sqlc.error) {
           fileJava.delete();
           if (fileTxt != null) {
@@ -392,8 +402,9 @@ public class Sqlc extends DefaultHandler {
           }
         }
       } else {
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("File: " + fileParsing + " \tskipped");
+        }
       }
     } catch (final IOException e) {
       log4j.error("Problem closing the file", e);
@@ -407,8 +418,9 @@ public class Sqlc extends DefaultHandler {
 
   private void popElement() {
     strElement = stcElement.pop();
-    if (!stcElement.isEmpty())
+    if (!stcElement.isEmpty()) {
       strElement = stcElement.peek();
+    }
   }
 
   @Override
@@ -416,10 +428,12 @@ public class Sqlc extends DefaultHandler {
       Attributes amap) { // throws SAXException {
     readBuffer();
     pushElement(qName);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Configuration: startElement is called: element  name=" + name);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Configuration: startElement is called: element qName=" + qName);
+    }
     if (name.equals("SqlMethod")) {
       sql.sqlStatic = "true";
       sql.sqlConnection = "false";
@@ -471,10 +485,11 @@ public class Sqlc extends DefaultHandler {
           sql.saveContextInfo = "true".equalsIgnoreCase(amap.getValue(i));
         }
       }
-      if (sqlPackage != null)
+      if (sqlPackage != null) {
         sql.sqlClass = sqlPackage + "." + sql.sqlObject;
-      else
+      } else {
         sql.sqlClass = sql.sqlObject;
+      }
     } else if (name.equals("SqlClass")) {
       final int size = amap.getLength();
       for (int i = 0; i < size; i++) {
@@ -512,8 +527,9 @@ public class Sqlc extends DefaultHandler {
           strIgnoreValue = amap.getValue(i);
         }
       }
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Configuration: call to addParameter ");
+      }
       parameterSql = sql.addParameter(false, strName, strDefault, strInOut, strOptional, strAfter,
           strText, strIgnoreValue);
     } else if (name.equals("Field")) {
@@ -534,8 +550,8 @@ public class Sqlc extends DefaultHandler {
           sql.strSequenceName = amap.getValue(i);
         }
       }
-      parameterSql = sql
-          .addParameter(true, sql.strSequenceName, null, null, null, null, null, null);
+      parameterSql = sql.addParameter(true, sql.strSequenceName, null, null, null, null, null,
+          null);
     }
   }
 
@@ -544,13 +560,16 @@ public class Sqlc extends DefaultHandler {
     // SAXException
     // {
     readBuffer();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Configuration: call to endElement: " + name);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("(before pop) Element: " + strElement);
+    }
     popElement();
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("(after pop) Element: " + strElement);
+    }
     if (name.equals("SqlMethod")) {
       if (sql.sqlType.equals("constant")) {
         try {
@@ -580,16 +599,18 @@ public class Sqlc extends DefaultHandler {
 
   @Override
   public void characters(char[] ch, int start, int lengthc) throws SAXException {
-    if (buffer == null)
+    if (buffer == null) {
       buffer = new StringBuffer();
+    }
     buffer.append(ch, start, lengthc);
   }
 
   private void readBuffer() {
     if (buffer != null) {
       final String strBuffer = buffer.toString();
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Configuration(" + strElement + "): characters are  called: " + strBuffer);
+      }
       if (strElement.equals("Sql")) {
         sql.strSQL = strBuffer;
       } else if (strElement.equals("SqlClassComment")) {
@@ -611,8 +632,9 @@ public class Sqlc extends DefaultHandler {
       strURL = properties.getProperty("bbdd.url");
       strDBUser = properties.getProperty("bbdd.user");
       strDBPassword = properties.getProperty("bbdd.password");
-      if (properties.getProperty("bbdd.rdbms").equalsIgnoreCase("POSTGRE"))
+      if (properties.getProperty("bbdd.rdbms").equalsIgnoreCase("POSTGRE")) {
         strURL += "/" + properties.getProperty("bbdd.sid");
+      }
       // read from properties file
       queryExecutionStrategy = properties.getProperty("sqlc.queryExecutionStrategy");
       // override with value passed from command line/build.xml invocation
@@ -630,10 +652,11 @@ public class Sqlc extends DefaultHandler {
     log4j.info("Loading driver: " + strDriver);
     Class.forName(strDriver);
     log4j.info("Driver loaded");
-    if (strDBUser == null || strDBUser.equals(""))
+    if (strDBUser == null || strDBUser.equals("")) {
       connection = DriverManager.getConnection(strURL);
-    else
+    } else {
       connection = DriverManager.getConnection(strURL, strDBUser, strDBPassword);
+    }
     log4j.info("connect made");
   }
 
@@ -692,11 +715,13 @@ public class Sqlc extends DefaultHandler {
     querySql.append(imprimirSubstring2(sql.strSQL, posSQL, sql.strSQL.length()));
 
     try {
-      if (preparedStatement != null)
+      if (preparedStatement != null) {
         preparedStatement.close();
+      }
       preparedStatement = connection.prepareStatement(querySql.toString());
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Prepared statement: " + sql.strSQL);
+      }
 
       /*
        * Commented because it is not a supported operation ResultSetMetaData rsmdPS =
@@ -709,27 +734,31 @@ public class Sqlc extends DefaultHandler {
         boolean isParameterWithoutType = !parameter.strInOut.equals("out")
             && !parameter.strInOut.equals("none") && !parameter.strInOut.equals("argument")
             && !parameter.strInOut.equals("replace");
-        if (!parameter.boolOptional
-            || (parameter.boolOptional && (isParameterWithoutType && queryWithOptionalParameterWithoutType))) {
+        if (!parameter.boolOptional || (parameter.boolOptional
+            && (isParameterWithoutType && queryWithOptionalParameterWithoutType))) {
           if (parameter.type == java.sql.Types.INTEGER) {
             if (parameter.strDefault == null) {
-              if (log4j.isDebugEnabled())
+              if (log4j.isDebugEnabled()) {
                 log4j.debug("setInt: " + i + " value: 0");
+              }
               preparedStatement.setInt(i, 0);
             } else {
-              if (log4j.isDebugEnabled())
+              if (log4j.isDebugEnabled()) {
                 log4j.debug("setInt: " + i + " value: " + parameter.strDefault);
+              }
               preparedStatement.setInt(i, Integer.parseInt(parameter.strDefault));
             }
             preparedStatement.setInt(i, Integer.parseInt(parameter.strDefault));
           } else if (parameter.type == java.sql.Types.VARCHAR) {
             if (parameter.strDefault == null) {
-              if (log4j.isDebugEnabled())
+              if (log4j.isDebugEnabled()) {
                 log4j.debug("setString: " + i + " value: null");
+              }
               preparedStatement.setNull(i, java.sql.Types.VARCHAR);
             } else {
-              if (log4j.isDebugEnabled())
+              if (log4j.isDebugEnabled()) {
                 log4j.debug("setString: " + i + " value: " + parameter.strDefault);
+              }
               preparedStatement.setString(i, parameter.strDefault);
             }
           }
@@ -744,8 +773,9 @@ public class Sqlc extends DefaultHandler {
         rsmd = preparedStatement.getMetaData();
         // Get the number of columns in the result set
         numCols = rsmd.getColumnCount();
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("number of columns: " + numCols);
+        }
       } // else
       // rsmd = preparedStatement.getMetaData ();
     } catch (final SQLException e) {
@@ -760,8 +790,9 @@ public class Sqlc extends DefaultHandler {
   }
 
   private void printInitClass() throws IOException {
-    if (this.writeTxtFiles)
+    if (this.writeTxtFiles) {
       printTxtFile();
+    }
     out1.append("//Sqlc generated " + VERSION + "\n"); // v0.011");
     if (sqlcPackage != null) {
       out1.append("package " + sqlcPackage + ";\n");
@@ -801,9 +832,10 @@ public class Sqlc extends DefaultHandler {
         out3.append(" */\n");
       }
     }
-    if (!javaFileName.equals(sqlcName))
+    if (!javaFileName.equals(sqlcName)) {
       throw new IOException("File name for xsql class " + javaFileName
           + " is different than the class name defined inside the file: " + sqlcName);
+    }
 
     out3.append("@SuppressWarnings(\"serial\")\n");
     if (sqlcAccessModifier.length() > 0) {
@@ -814,8 +846,9 @@ public class Sqlc extends DefaultHandler {
     out3.append("static Logger log4j = LogManager.getLogger();\n");
     try {
       // Display column headings
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Number of columns: " + numCols);
+      }
       out3.append("  private String InitRecordNumber=\"0\";\n");
       for (int i = 1; i <= numCols; i++) {
         out3.append("  public String ");
@@ -840,8 +873,9 @@ public class Sqlc extends DefaultHandler {
     out3.append("  public String getField(String fieldName) {\n");
     try {
       // Display column headings
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Number of columns in getField: " + numCols);
+      }
       for (int i = 1; i <= numCols; i++) {
         final String columnLabel = rsmd.getColumnLabel(i);
         final String transformedColumnLabel = TransformaNombreColumna(columnLabel);
@@ -852,8 +886,9 @@ public class Sqlc extends DefaultHandler {
         }
         out3.append("(fieldName.equalsIgnoreCase(\"");
         out3.append(columnLabel);
-        if (!columnLabel.equalsIgnoreCase(transformedColumnLabel))
+        if (!columnLabel.equalsIgnoreCase(transformedColumnLabel)) {
           out3.append("\") || fieldName.equals(\"" + transformedColumnLabel);
+        }
         out3.append("\"))\n");
         out3.append("      return " + transformedColumnLabel + ";\n");
       }
@@ -979,8 +1014,9 @@ public class Sqlc extends DefaultHandler {
   private void printTxtFile() {
     try {
       // Display column headings
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Printing txt File: " + numCols);
+      }
       for (int i = 1; i <= numCols; i++) {
         printWriterTxt.print(rsmd.getColumnLabel(i));
         if (i == numCols) {
@@ -991,14 +1027,14 @@ public class Sqlc extends DefaultHandler {
       }
       printWriterTxt.println("");
       for (int i = 1; i <= numCols; i++) {
-        printWriterTxt.println("<FIELD id=\""
-            + TransformaNombreColumna("field_" + rsmd.getColumnLabel(i)) + "\">"
-            + TransformaNombreColumna(rsmd.getColumnLabel(i)) + "</FIELD>");
+        printWriterTxt
+            .println("<FIELD id=\"" + TransformaNombreColumna("field_" + rsmd.getColumnLabel(i))
+                + "\">" + TransformaNombreColumna(rsmd.getColumnLabel(i)) + "</FIELD>");
       }
       printWriterTxt.println("");
       for (int i = 1; i <= numCols; i++) {
-        printWriterTxt.println("      <Parameter name=\""
-            + TransformaNombreColumna(rsmd.getColumnLabel(i)) + "\"/>");
+        printWriterTxt.println(
+            "      <Parameter name=\"" + TransformaNombreColumna(rsmd.getColumnLabel(i)) + "\"/>");
       }
       printWriterTxt.println("");
       printWriterTxt.println("  " + sqlcName + " getEditVariables(VariablesSapp vars) {");
@@ -1024,11 +1060,12 @@ public class Sqlc extends DefaultHandler {
     try {
       for (int i = 1; i <= numCols; i++) {
         final String strNameLabel = rsmd.getColumnLabel(i);
-        out2.append("    object" + sqlcName + "[0]." + TransformaNombreColumna(strNameLabel)
-            + " = ");
+        out2.append(
+            "    object" + sqlcName + "[0]." + TransformaNombreColumna(strNameLabel) + " = ");
         boolean printedParameter = false;
         for (final Parameter parameter : sql.vecParameter) {
-          if (parameter.strName.equals(TransformaNombreColumna(strNameLabel)) && !printedParameter) {
+          if (parameter.strName.equals(TransformaNombreColumna(strNameLabel))
+              && !printedParameter) {
             out2.append(TransformaNombreColumna(strNameLabel) + ";\n");
             printedParameter = true;
           }
@@ -1055,9 +1092,9 @@ public class Sqlc extends DefaultHandler {
           parameter.strText = parameter.strName + " = ? AND";
         }
         if (parameter.strName != null && // se deben imprimir los
-            // repetidos, quitar:
-            // !parameter.boolRepeated
-            // &&
+        // repetidos, quitar:
+        // !parameter.boolRepeated
+        // &&
             !parameter.strInOut.equals("out")) {
           int posFinalAfter = posFinal(sql.strSQL, parameter.strAfter);
           if (posFinalAfter != -1) {
@@ -1071,16 +1108,16 @@ public class Sqlc extends DefaultHandler {
               out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
                   + parameter.strName + ".equals(\"\")");
               if (parameter.strIgnoreValue != null) {
-                out2.append(" || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue
-                    + "\") ");
+                out2.append(
+                    " || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue + "\") ");
               }
               out2.append(")?\"\":\" " + parameter.strText + "\" + " + parameter.strName + ");\n");
             } else if (parameter.strInOut.equals("replace")) {
               out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
                   + parameter.strName + ".equals(\"\")");
               if (parameter.strIgnoreValue != null) {
-                out2.append(" || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue
-                    + "\") ");
+                out2.append(
+                    " || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue + "\") ");
               }
               out2.append(")?\"\":" + parameter.strName + ");\n");
 
@@ -1088,8 +1125,8 @@ public class Sqlc extends DefaultHandler {
               out2.append("    strSql = strSql + ((" + parameter.strName + "==null || "
                   + parameter.strName + ".equals(\"\")");
               if (parameter.strIgnoreValue != null) {
-                out2.append(" || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue
-                    + "\") ");
+                out2.append(
+                    " || " + parameter.strName + ".equals(\"" + parameter.strIgnoreValue + "\") ");
               }
               out2.append(")?\"\":\" " + parameter.strText + " \");\n");
             }
@@ -1142,10 +1179,10 @@ public class Sqlc extends DefaultHandler {
       }
     } else if (sql.sqlReturn.equalsIgnoreCase("OBJECT")) {
       // out2.append(
-      // "    SqlRespuestaCS objectSqlRespuestaCS = new SqlRespuestaCS();"
+      // " SqlRespuestaCS objectSqlRespuestaCS = new SqlRespuestaCS();"
       // );
-      out2.append("    " + sql.sqlClass + " object" + sql.sqlObject + " = new " + sql.sqlClass
-          + "();\n");
+      out2.append(
+          "    " + sql.sqlClass + " object" + sql.sqlObject + " = new " + sql.sqlClass + "();\n");
     }
     if (sql.executeType.equals("executeUpdate")) {
       out2.append("    int updateCount = 0;\n");
@@ -1195,20 +1232,23 @@ public class Sqlc extends DefaultHandler {
     } else {
       if (sql.sqlType.equals("preparedStatement")) {
         aux.append("    st = connectionProvider.getPreparedStatement(");
-        if (sql.sqlConnection.equals("true"))
+        if (sql.sqlConnection.equals("true")) {
           aux.append("conn, ");
+        }
         aux.append("strSql);\n");
         aux.append(queryTimeoutStr);
       } else if (sql.sqlType.equals("statement")) {
         aux.append("    st = connectionProvider.getStatement(");
-        if (sql.sqlConnection.equals("true"))
+        if (sql.sqlConnection.equals("true")) {
           aux.append("conn");
+        }
         aux.append(");\n");
         aux.append(queryTimeoutStr);
       } else if (sql.sqlType.equals("callableStatement")) {
         aux.append("      st = connectionProvider.getCallableStatement(");
-        if (sql.sqlConnection.equals("true"))
+        if (sql.sqlConnection.equals("true")) {
           aux.append("conn, ");
+        }
         aux.append("strSql);\n");
         aux.append(queryTimeoutStr);
       }
@@ -1227,16 +1267,16 @@ public class Sqlc extends DefaultHandler {
           aux.append("      if (" + parameter.strName + " != null && !(" + parameter.strName
               + ".equals(\"\"))");
           if (parameter.strIgnoreValue != null) {
-            aux.append(" && !(" + parameter.strName + ".equals(\"" + parameter.strIgnoreValue
-                + "\"))");
+            aux.append(
+                " && !(" + parameter.strName + ".equals(\"" + parameter.strIgnoreValue + "\"))");
           }
           aux.append(") {\n");
           aux.append("  ");
         }
         if (parameter.strInOut.equals("in") || parameter.strInOut.equals("inOut")) {
           declareiParameter = true;
-          aux.append("      iParameter++; UtilSql.setValue(st, iParameter, " + parameter.type
-              + ", ");
+          aux.append(
+              "      iParameter++; UtilSql.setValue(st, iParameter, " + parameter.type + ", ");
           if (parameter.strDefault == null) {
             aux.append("null, ");
           } else {
@@ -1246,8 +1286,8 @@ public class Sqlc extends DefaultHandler {
         }
         if (parameter.strInOut.equals("out")) {
           declareiParameter = true;
-          aux.append("      iParameter++; st.registerOutParameter(iParameter, " + parameter.type
-              + ");\n");
+          aux.append(
+              "      iParameter++; st.registerOutParameter(iParameter, " + parameter.type + ");\n");
         } else if (parameter.strInOut.equals("inOut")) { // in this case
           // iParamter
           // is
@@ -1263,8 +1303,9 @@ public class Sqlc extends DefaultHandler {
     }
 
     aux.append("\n");
-    if (declareiParameter)
+    if (declareiParameter) {
       out2.append("    int iParameter = 0;\n");
+    }
     out2.append(aux.toString());
   }
 
@@ -1279,7 +1320,8 @@ public class Sqlc extends DefaultHandler {
     printSQLBody();
     printSQLParameters();
 
-    out2.append("      // on postgres use non zero fetchsize to read data via cursor and not all at once\n");
+    out2.append(
+        "      // on postgres use non zero fetchsize to read data via cursor and not all at once\n");
     out2.append("      if (connectionProvider.getRDBMS().equalsIgnoreCase(\"POSTGRE\")) {\n");
     out2.append("        st.setFetchSize(1000);\n");
     out2.append("      }\n");
@@ -1293,7 +1335,8 @@ public class Sqlc extends DefaultHandler {
     out2.append("        log4j.error(\"SQL error in query: \" + strSql + \" :\" + e);\n");
     out2.append("      }\n");
     out2.append("      instance.errorOcurred = true;\n");
-    out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\"\n");
+    out2.append(
+        "      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\"\n");
     out2.append("          + e.getMessage());\n");
     out2.append("    } catch (Exception ex) {\n");
     out2.append("      if (log4j.isDebugEnabled()) {\n");
@@ -1373,8 +1416,9 @@ public class Sqlc extends DefaultHandler {
       out2.append("    PreparedStatement psl = null;\n");
       out2.append("    try {\n");
       out2.append("      psl = connectionProvider.getPreparedStatement(");
-      if (sql.sqlConnection.equals("true"))
+      if (sql.sqlConnection.equals("true")) {
         out2.append("conn, ");
+      }
       out2.append("strSql1);\n");
       out2.append("      ResultSet resultKey;\n");
       out2.append("      resultKey = psl.executeQuery();\n");
@@ -1389,7 +1433,8 @@ public class Sqlc extends DefaultHandler {
       out2.append("      } else {\n");
       out2.append("        log4j.error(\"SQL error in query: \" + strSql + \" :\" + e);\n");
       out2.append("      }\n");
-      out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
+      out2.append(
+          "      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
       out2.append("    } catch(Exception ex){\n");
       out2.append("      if (log4j.isDebugEnabled()) {\n");
       out2.append("        log4j.error(\"Exception in query: \" + strSql, ex);\n");
@@ -1400,15 +1445,17 @@ public class Sqlc extends DefaultHandler {
       out2.append("    } finally {\n");
       out2.append("      try {\n");
       if (!sql.sqlConnection.equals("true")) {
-        if (sql.sqlType.equals("statement"))
+        if (sql.sqlType.equals("statement")) {
           out2.append("        connectionProvider.releaseStatement(psl);\n");
-        else
+        } else {
           out2.append("        connectionProvider.releasePreparedStatement(psl);\n");
+        }
       } else {
-        if (sql.sqlType.equals("statement"))
+        if (sql.sqlType.equals("statement")) {
           out2.append("       connectionProvider.releaseTransactionalStatement(psl);\n");
-        else if (sql.sqlType.equalsIgnoreCase("preparedstatement"))
+        } else if (sql.sqlType.equalsIgnoreCase("preparedstatement")) {
           out2.append("        connectionProvider.releaseTransactionalPreparedStatement(psl);\n");
+        }
       }
       out2.append("      } catch(Exception ignore){\n");
       out2.append("        ignore.printStackTrace();\n");
@@ -1436,8 +1483,9 @@ public class Sqlc extends DefaultHandler {
 
     if (sql.executeType.equals("executeQuery")) {
       out2.append("      result = st." + sql.executeType + "(");
-      if (sql.sqlType.equals("statement"))
+      if (sql.sqlType.equals("statement")) {
         out2.append("strSql");
+      }
       out2.append(");\n");
       if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
         out2.append("      long countRecord = 0;\n");
@@ -1464,7 +1512,7 @@ public class Sqlc extends DefaultHandler {
           // true for Oracle and false for PostgreSQL),
           // so we make the comparation here as strings with true if
           // the result is different of 0.
-          // out2.append("        boolReturn = result.getBoolean(\"" +
+          // out2.append(" boolReturn = result.getBoolean(\"" +
           // rsmd.getColumnLabel(1) +"\");\n");
           out2.append("        boolReturn = !UtilSql.getValue(result, \"" + rsmd.getColumnLabel(1)
               + "\").equals(\"0\");\n");
@@ -1489,8 +1537,9 @@ public class Sqlc extends DefaultHandler {
       out2.append("      result.close();\n");
     } else if (sql.executeType.equals("executeUpdate")) {
       out2.append("      updateCount = st." + sql.executeType + "(");
-      if (sql.sqlType.equals("statement"))
+      if (sql.sqlType.equals("statement")) {
         out2.append("strSql");
+      }
       out2.append(");\n");
     } else if (sql.executeType.equals("execute")) {
       out2.append("      st." + sql.executeType + "();\n");
@@ -1517,7 +1566,8 @@ public class Sqlc extends DefaultHandler {
     out2.append("      } else {\n");
     out2.append("        log4j.error(\"SQL error in query: \" + strSql + \" :\" + e);\n");
     out2.append("      }\n");
-    out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
+    out2.append(
+        "      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
     out2.append("    } catch(Exception ex){\n");
     out2.append("      if (log4j.isDebugEnabled()) {\n");
     out2.append("        log4j.error(\"Exception in query: \" + strSql, ex);\n");
@@ -1528,18 +1578,21 @@ public class Sqlc extends DefaultHandler {
     out2.append("    } finally {\n");
     out2.append("      try {\n");
     if (!sql.sqlConnection.equals("true")) {
-      if (sql.sqlType.equals("statement"))
+      if (sql.sqlType.equals("statement")) {
         out2.append("        connectionProvider.releaseStatement(st);\n");
-      else
+      } else {
         out2.append("        connectionProvider.releasePreparedStatement(st);\n");
+      }
     } else {
-      if (sql.sqlType.equals("statement"))
+      if (sql.sqlType.equals("statement")) {
         out2.append("        connectionProvider.releaseTransactionalStatement(st);\n");
-      else
+      } else {
         out2.append("        connectionProvider.releaseTransactionalPreparedStatement(st);\n");
+      }
     }
     out2.append("      } catch(Exception e){\n");
-    out2.append("        log4j.error(\"Error during release*Statement of query: \" + strSql, e);\n");
+    out2.append(
+        "        log4j.error(\"Error during release*Statement of query: \" + strSql, e);\n");
     out2.append("      }\n");
     out2.append("    }\n");
     if (sql.sqlType.equals("callableStatement")) {
@@ -1556,40 +1609,51 @@ public class Sqlc extends DefaultHandler {
             && !parameter.strInOut.equals("replace")) {
           out2.append("      parametersData.addElement("
               + (parameter.strInOut.equalsIgnoreCase("out") ? "\"" + parameter.strName + "\""
-                  : parameter.strName) + ");\n");
+                  : parameter.strName)
+              + ");\n");
           out2.append("      parametersTypes.addElement(\"" + parameter.strInOut + "\");\n");
           if (parameter.strInOut.equals("out")) {
             outParamName = parameter.strName;
-            paramsReceipt.append("      object").append(sql.sqlObject).append(".")
-                .append(outParamName).append(" = vecTotal.elementAt(").append(outParams)
+            paramsReceipt.append("      object")
+                .append(sql.sqlObject)
+                .append(".")
+                .append(outParamName)
+                .append(" = vecTotal.elementAt(")
+                .append(outParams)
                 .append(");\n");
             outParams++;
           }
         }
       }
-      if (outParams > 0)
+      if (outParams > 0) {
         out2.append("      Vector<String> vecTotal = new Vector<String>();\n");
+      }
       out2.append("      try {\n");
-      if (outParams > 0)
+      if (outParams > 0) {
         out2.append("        vecTotal = ");
+      }
       importRDBMSIndependent = true;
       out2.append("      RDBMSIndependent.getCallableResult("
           + (sql.sqlConnection.equals("true") ? "conn" : "null")
           + ", connectionProvider, strSql, parametersData, parametersTypes, " + outParams + ");\n");
-      if (outParams > 0)
+      if (outParams > 0) {
         out2.append(paramsReceipt.toString());
+      }
       out2.append("      } catch(SQLException e){\n");
       out2.append("      if (log4j.isDebugEnabled()) {\n");
       out2.append("        log4j.error(\"SQL error in query: \" + strSql, e);\n");
       out2.append("      } else {\n");
       out2.append("        log4j.error(\"SQL error in query: \" + strSql + \" :\" + e);\n");
       out2.append("      }\n");
-      out2.append("        throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
+      out2.append(
+          "        throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
       out2.append("      } catch(NoConnectionAvailableException ec){\n");
-      out2.append("        log4j.error(\"Connection error in query: \" + strSql + \"Exception:\"+ ec);\n");
+      out2.append(
+          "        log4j.error(\"Connection error in query: \" + strSql + \"Exception:\"+ ec);\n");
       out2.append("        throw new ServletException(\"@CODE=NoConnectionAvailable\");\n");
       out2.append("      } catch(PoolNotFoundException ep){\n");
-      out2.append("        log4j.error(\"Pool error in query: \" + strSql + \"Exception:\"+ ep);\n");
+      out2.append(
+          "        log4j.error(\"Pool error in query: \" + strSql + \"Exception:\"+ ep);\n");
       out2.append("        throw new ServletException(\"@CODE=NoConnectionAvailable\");\n");
       out2.append("      } catch(Exception ex){\n");
       out2.append("      if (log4j.isDebugEnabled()) {\n");
@@ -1603,8 +1667,8 @@ public class Sqlc extends DefaultHandler {
     }
 
     if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
-      out2.append("    " + sqlcName + " object" + sqlcName + "[] = new " + sqlcName
-          + "[vector.size()];\n");
+      out2.append(
+          "    " + sqlcName + " object" + sqlcName + "[] = new " + sqlcName + "[vector.size()];\n");
       out2.append("    vector.copyInto(object" + sqlcName + ");\n");
     }
 
@@ -1631,21 +1695,21 @@ public class Sqlc extends DefaultHandler {
   // emits code to process a single row of a result
   private void printSQLReadResultRow() throws SQLException {
     for (int i = 1; i <= numCols; i++) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("Columna: " + rsmd.getColumnName(i) + " tipo: " + rsmd.getColumnType(i));
+      }
       if (rsmd.getColumnType(i) == java.sql.Types.TIMESTAMP || rsmd.getColumnType(i) == 91) {
         out2.append("        object" + sqlcName + "."
-            + TransformaNombreColumna(rsmd.getColumnLabel(i))
-            + " = UtilSql.getDateValue(result, \"" + rsmd.getColumnLabel(i) + "\", \""
-            + javaDateFormat + "\");\n");
+            + TransformaNombreColumna(rsmd.getColumnLabel(i)) + " = UtilSql.getDateValue(result, \""
+            + rsmd.getColumnLabel(i) + "\", \"" + javaDateFormat + "\");\n");
       } else if (rsmd.getColumnType(i) == java.sql.Types.BLOB) {
-        out2.append("        object" + sqlcName + "."
-            + TransformaNombreColumna(rsmd.getColumnLabel(i))
-            + " = UtilSql.getBlobValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
+        out2.append(
+            "        object" + sqlcName + "." + TransformaNombreColumna(rsmd.getColumnLabel(i))
+                + " = UtilSql.getBlobValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
       } else {
-        out2.append("        object" + sqlcName + "."
-            + TransformaNombreColumna(rsmd.getColumnLabel(i)) + " = UtilSql.getValue(result, \""
-            + rsmd.getColumnLabel(i) + "\");\n");
+        out2.append(
+            "        object" + sqlcName + "." + TransformaNombreColumna(rsmd.getColumnLabel(i))
+                + " = UtilSql.getValue(result, \"" + rsmd.getColumnLabel(i) + "\");\n");
       }
     }
     for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
@@ -1654,12 +1718,14 @@ public class Sqlc extends DefaultHandler {
         out2.append("        object" + sqlcName + "." + fieldAdded.strName
             + " = Long.toString(countRecord);\n");
         hasCountField = true;
-      } else if (fieldAdded.strValue.equals("void"))
+      } else if (fieldAdded.strValue.equals("void")) {
         out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = \"\";\n");
+      }
     }
-    if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE"))
-      out2.append("        object" + sqlcName
-          + ".InitRecordNumber = Integer.toString(firstRegister);\n");
+    if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE")) {
+      out2.append(
+          "        object" + sqlcName + ".InitRecordNumber = Integer.toString(firstRegister);\n");
+    }
   }
 
   private void printHeadFunctionSql(boolean printProviderConnection, boolean boolPagin,
@@ -1716,8 +1782,9 @@ public class Sqlc extends DefaultHandler {
       }
       out2.append("ConnectionProvider connectionProvider");
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Parameters numbering");
+    }
     for (final Parameter parameter : sql.vecParameter) {
       if (sql.sqlStatic.equals("true")) {
         if (parameter.strName != null && !parameter.boolRepeated && !parameter.boolSequence
@@ -1768,8 +1835,9 @@ public class Sqlc extends DefaultHandler {
       }
       out2.append("connectionProvider");
     }
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Parameters numbering");
+    }
     for (final Parameter parameter : sql.vecParameter) {
       if (sql.sqlStatic.equals("true")) {
         if (parameter.strName != null && !parameter.boolRepeated && !parameter.boolSequence
@@ -1800,8 +1868,9 @@ public class Sqlc extends DefaultHandler {
 
   private static int posFinal(String strSQL, String strPattern) {
     int index = strSQL.indexOf(strPattern);
-    if (index != -1)
+    if (index != -1) {
       index = index + strPattern.length();
+    }
     return index;
   }
 
@@ -1873,9 +1942,9 @@ public class Sqlc extends DefaultHandler {
           result.append(Character.toLowerCase(curr));
         }
       } else {
-        if (curr == '_')
+        if (curr == '_') {
           underscore = true;
-        else {
+        } else {
           if (underscore) {
             result.append(Character.toUpperCase(curr));
             underscore = false;

@@ -28,25 +28,31 @@ class ToolBar_Image implements HTMLElement {
     this(_base_direction, _name, _description, _name);
   }
 
-  public ToolBar_Image(String _base_direction, String _name, String _description, String _imageClass) {
+  public ToolBar_Image(String _base_direction, String _name, String _description,
+      String _imageClass) {
     this.name = _name;
     this.base_direction = _base_direction;
     this.description = _description;
     this.imageClass = _imageClass;
   }
 
+  @Override
   public String getWidth() {
     return "16";
   }
 
+  @Override
   public String elementType() {
     return "IMAGE";
   }
 
+  @Override
   public String toString() {
     StringBuffer toolbar = new StringBuffer();
     toolbar.append("<img class=\"Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_")
-        .append(imageClass).append("\" src=\"").append(base_direction)
+        .append(imageClass)
+        .append("\" src=\"")
+        .append(base_direction)
         .append("/images/blank.gif\" ");
     toolbar.append("title=\"").append(description);
     // Needed to build the HTML tag id as refresh has in classic layout

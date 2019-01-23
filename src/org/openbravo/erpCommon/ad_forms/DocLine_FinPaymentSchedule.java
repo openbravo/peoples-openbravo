@@ -49,10 +49,12 @@ public class DocLine_FinPaymentSchedule extends DocLine {
     Line_ID = line_ID;
   }
 
+  @Override
   public String getAmount() {
     return Amount;
   }
 
+  @Override
   public void setAmount(String amount) {
     Amount = amount;
   }
@@ -121,6 +123,7 @@ public class DocLine_FinPaymentSchedule extends DocLine {
     PrepaidAmount = prepaidAmount;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method

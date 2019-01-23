@@ -30,7 +30,8 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler {
 
   @Override
-  protected JSONObject doExecute(Map<String, Object> parameters, String content) throws OBException {
+  protected JSONObject doExecute(Map<String, Object> parameters, String content)
+      throws OBException {
     JSONObject result = new JSONObject();
     try {
 

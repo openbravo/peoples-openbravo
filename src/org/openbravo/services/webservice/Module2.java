@@ -75,11 +75,18 @@ public class Module2  extends org.openbravo.services.webservice.Module1  impleme
     }
 
     private java.lang.Object __equalsCalc = null;
+    @Override
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof Module2)) return false;
+        if (!(obj instanceof Module2)) {
+          return false;
+        }
         Module2 other = (Module2) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null) {
+          return false;
+        }
+        if (this == obj) {
+          return true;
+        }
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
@@ -92,6 +99,7 @@ public class Module2  extends org.openbravo.services.webservice.Module1  impleme
     }
 
     private boolean __hashCodeCalc = false;
+    @Override
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;

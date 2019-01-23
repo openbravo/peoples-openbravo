@@ -53,10 +53,11 @@ public class StockUtils {
       Long lineNo, String processId, String mReservationId, String calledFromApp, String available,
       String nettable, String overIssue) throws ServletException, NoConnectionAvailableException {
     return StockUtilsData.getStock(OBDal.getInstance().getConnection(true),
-        new DalConnectionProvider(true), uuid, recordId, quantity != null ? quantity.toString()
-            : null, mProductId, mLocatorId, mWarehouseId, priorityWarehouseId, adOrgId,
-        mAttributeSetInstanceId, adUserId, adClientId, warehouseRuleId, cUomId, productUomId,
-        adTableId, auxId, lineNo != null ? lineNo.toString() : null, processId, mReservationId,
-        calledFromApp, available, nettable, overIssue);
+        new DalConnectionProvider(true), uuid, recordId,
+        quantity != null ? quantity.toString() : null, mProductId, mLocatorId, mWarehouseId,
+        priorityWarehouseId, adOrgId, mAttributeSetInstanceId, adUserId, adClientId,
+        warehouseRuleId, cUomId, productUomId, adTableId, auxId,
+        lineNo != null ? lineNo.toString() : null, processId, mReservationId, calledFromApp,
+        available, nettable, overIssue);
   }
 }

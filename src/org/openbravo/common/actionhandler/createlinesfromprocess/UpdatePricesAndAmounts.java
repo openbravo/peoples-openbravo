@@ -83,16 +83,16 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     BigDecimal priceList = orderLine.getListPrice();
     BigDecimal priceLimit = orderLine.getPriceLimit();
 
-    BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual).setScale(stdPrecision,
-        RoundingMode.HALF_UP);
+    BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual)
+        .setScale(stdPrecision, RoundingMode.HALF_UP);
 
     // Processing for Prices Including Taxes
     if (getInvoice().getPriceList().isPriceIncludesTax()) {
       BigDecimal grossUnitPrice = orderLine.getGrossUnitPrice();
       BigDecimal grossBaseUnitPrice = orderLine.getBaseGrossUnitPrice();
       BigDecimal grossListPrice = orderLine.getGrossListPrice();
-      BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
-          RoundingMode.HALF_UP);
+      BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice)
+          .setScale(stdPrecision, RoundingMode.HALF_UP);
 
       // Set gross price information
       priceInformation.setGrossUnitPrice(grossUnitPrice);
@@ -144,23 +144,23 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
       int pricePrecision = invoiceCurrency.getPricePrecision().intValue();
 
       // Price List, Price Standard and Price Limit
-      BigDecimal priceActual = priceInformation.getOffersPriceInvoice().setScale(pricePrecision,
-          RoundingMode.HALF_UP);
-      BigDecimal priceStd = priceInformation.getStandardPrice().setScale(pricePrecision,
-          RoundingMode.HALF_UP);
-      BigDecimal priceList = priceInformation.getListPrice().setScale(pricePrecision,
-          RoundingMode.HALF_UP);
-      BigDecimal priceLimit = priceInformation.getPriceLimit().setScale(pricePrecision,
-          RoundingMode.HALF_UP);
+      BigDecimal priceActual = priceInformation.getOffersPriceInvoice()
+          .setScale(pricePrecision, RoundingMode.HALF_UP);
+      BigDecimal priceStd = priceInformation.getStandardPrice()
+          .setScale(pricePrecision, RoundingMode.HALF_UP);
+      BigDecimal priceList = priceInformation.getListPrice()
+          .setScale(pricePrecision, RoundingMode.HALF_UP);
+      BigDecimal priceLimit = priceInformation.getPriceLimit()
+          .setScale(pricePrecision, RoundingMode.HALF_UP);
 
-      BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual).setScale(stdPrecision,
-          RoundingMode.HALF_UP);
+      BigDecimal lineNetAmount = qtyOrdered.multiply(priceActual)
+          .setScale(stdPrecision, RoundingMode.HALF_UP);
 
       // Processing for Prices Including Taxes
       if (getInvoice().getPriceList().isPriceIncludesTax()) {
         BigDecimal grossUnitPrice = priceStd;
-        BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice).setScale(stdPrecision,
-            RoundingMode.HALF_UP);
+        BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice)
+            .setScale(stdPrecision, RoundingMode.HALF_UP);
 
         // Set gross price information
         priceInformation.setGrossUnitPrice(grossUnitPrice);
@@ -215,7 +215,8 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     obq.append("   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), ");
     obq.append("   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), ");
     obq.append("   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), ");
-    obq.append("   TO_NUMBER(ROUND(M_GET_OFFERS_PRICE(:dateInvoiced, :bpId, :productID, TO_NUMBER(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id))), TO_NUMBER(:qtyOrdered), :priceListID), :pricePrecision)) ");
+    obq.append(
+        "   TO_NUMBER(ROUND(M_GET_OFFERS_PRICE(:dateInvoiced, :bpId, :productID, TO_NUMBER(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id))), TO_NUMBER(:qtyOrdered), :priceListID), :pricePrecision)) ");
     obq.append(" from PricingProductPrice pp ");
     obq.append("   join pp.priceListVersion plv ");
     obq.append(" where pp.product.id = :productID");

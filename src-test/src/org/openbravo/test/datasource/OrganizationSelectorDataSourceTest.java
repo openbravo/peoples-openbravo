@@ -80,10 +80,12 @@ public class OrganizationSelectorDataSourceTest extends BaseDataSourceTestDal {
     String roleId = initialContext.getRole() != null ? initialContext.getRole().getId() : null;
     String languageId = initialContext.getLanguage() != null ? initialContext.getLanguage().getId()
         : null;
-    String orgId = initialContext.getCurrentOrganization() != null ? initialContext
-        .getCurrentOrganization().getId() : null;
-    String warehouseId = initialContext.getWarehouse() != null ? initialContext.getWarehouse()
-        .getId() : null;
+    String orgId = initialContext.getCurrentOrganization() != null
+        ? initialContext.getCurrentOrganization().getId()
+        : null;
+    String warehouseId = initialContext.getWarehouse() != null
+        ? initialContext.getWarehouse().getId()
+        : null;
     changeProfile(roleId, languageId, orgId, warehouseId);
   }
 

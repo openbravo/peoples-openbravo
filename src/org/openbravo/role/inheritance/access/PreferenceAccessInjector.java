@@ -108,15 +108,17 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
   @Override
   public String getSecuredElementIdentifier(InheritedAccessEnabled access) {
     Preference preference = (Preference) access;
-    String identifier = preference.isPropertyList() ? preference.getProperty() : preference
-        .getAttribute();
+    String identifier = preference.isPropertyList() ? preference.getProperty()
+        : preference.getAttribute();
     String isPropertyList = preference.isPropertyList() ? "Y" : "N";
-    String visibleAtClient = preference.getVisibleAtClient() != null ? preference
-        .getVisibleAtClient().getId() : " ";
-    String visibleAtOrg = preference.getVisibleAtOrganization() != null ? preference
-        .getVisibleAtOrganization().getId() : " ";
-    String visibleAtUser = preference.getUserContact() != null ? preference.getUserContact()
-        .getId() : " ";
+    String visibleAtClient = preference.getVisibleAtClient() != null
+        ? preference.getVisibleAtClient().getId()
+        : " ";
+    String visibleAtOrg = preference.getVisibleAtOrganization() != null
+        ? preference.getVisibleAtOrganization().getId()
+        : " ";
+    String visibleAtUser = preference.getUserContact() != null ? preference.getUserContact().getId()
+        : " ";
     String visibleAtWindow = preference.getWindow() != null ? preference.getWindow().getId() : " ";
     return identifier + "_" + isPropertyList + "_" + visibleAtClient + "_" + visibleAtOrg + "_"
         + visibleAtUser + "_" + visibleAtWindow;
@@ -125,15 +127,17 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
   @Override
   public InheritedAccessEnabled findAccess(InheritedAccessEnabled access, String roleId) {
     Preference preference = (Preference) access;
-    String property = preference.isPropertyList() ? preference.getProperty() : preference
-        .getAttribute();
+    String property = preference.isPropertyList() ? preference.getProperty()
+        : preference.getAttribute();
     if (propertyBlackList.contains(property)) {
       return null;
     }
-    String clientId = preference.getVisibleAtClient() != null ? preference.getVisibleAtClient()
-        .getId() : null;
-    String orgId = preference.getVisibleAtOrganization() != null ? preference
-        .getVisibleAtOrganization().getId() : null;
+    String clientId = preference.getVisibleAtClient() != null
+        ? preference.getVisibleAtClient().getId()
+        : null;
+    String orgId = preference.getVisibleAtOrganization() != null
+        ? preference.getVisibleAtOrganization().getId()
+        : null;
     String userId = preference.getUserContact() != null ? preference.getUserContact().getId()
         : null;
     String windowId = preference.getWindow() != null ? preference.getWindow().getId() : null;

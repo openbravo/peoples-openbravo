@@ -198,7 +198,7 @@ public class EntityAccessTest extends CrossOrganizationReference {
     // assertTrue(cs.size() > 0);
     // fail("Non readable check not enforced");
     // } catch (final OBSecurityException e) {
-    // assertTrue("Wrong exception thrown:  " + e.getMessage(), e.getMessage().indexOf(
+    // assertTrue("Wrong exception thrown: " + e.getMessage(), e.getMessage().indexOf(
     // "is not readable") != -1);
     // }
   }
@@ -217,7 +217,9 @@ public class EntityAccessTest extends CrossOrganizationReference {
     OBDal.getInstance().remove(cs.get(0));
   }
 
-  /** Covers issue #36628: it was not possible to update organization if entity had computed columns */
+  /**
+   * Covers issue #36628: it was not possible to update organization if entity had computed columns
+   */
   @Test
   public void changeOrgIsAllowedHavingComputedColumns() {
     setTestAdminContext();

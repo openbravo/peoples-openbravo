@@ -99,8 +99,8 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
     // AND COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID,M_REQUISITION.C_BPARTNER_ID) =
     // C_BPARTNER.C_BPARTNER_ID
     // AND C_BPARTNER.PO_PAYMENTTERM_ID IS NOT NULL
-    whereClause
-        .append(" where (rl.businessPartner.pOPaymentTerms != null or rl.requisition.businessPartner.pOPaymentTerms != null)");
+    whereClause.append(
+        " where (rl.businessPartner.pOPaymentTerms != null or rl.requisition.businessPartner.pOPaymentTerms != null)");
 
     // AND M_REQUISITION.ISACTIVE = 'Y'
     whereClause.append(" and rl.requisition.active=true");
@@ -145,8 +145,8 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
     // (M_REQUISITIONLINE.C_BPARTNER_ID IS NULL AND M_REQUISITION.C_BPARTNER_ID IS NULL))
     // ORDER BY M_REQUISITIONLINE.NEEDBYDATE, M_REQUISITIONLINE.M_PRODUCT_ID,
     // M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
-    whereClause
-        .append(" and ((rl.businessPartner.id = :bpId or rl.requisition.businessPartner.id = :bpId) or "
+    whereClause.append(
+        " and ((rl.businessPartner.id = :bpId or rl.requisition.businessPartner.id = :bpId) or "
             + "(rl.businessPartner = null and rl.requisition.businessPartner = null))");
     parameters.put("bpId", "1000011");
 
@@ -154,8 +154,8 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
     // M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
     whereClause.append(" order by rl.needByDate, rl.product.id, rl.attributeSetValue.id");
 
-    final OBQuery<RequisitionLine> obQuery = OBDal.getInstance().createQuery(RequisitionLine.class,
-        whereClause.toString());
+    final OBQuery<RequisitionLine> obQuery = OBDal.getInstance()
+        .createQuery(RequisitionLine.class, whereClause.toString());
 
     obQuery.setNamedParameters(parameters);
 
@@ -219,8 +219,8 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
     // AND COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID,M_REQUISITION.C_BPARTNER_ID) =
     // C_BPARTNER.C_BPARTNER_ID
     // AND C_BPARTNER.PO_PAYMENTTERM_ID IS NOT NULL
-    whereClause
-        .append(" (bp.pOPaymentTerms != null or requisition.businessPartner.pOPaymentTerms != null)");
+    whereClause.append(
+        " (bp.pOPaymentTerms != null or requisition.businessPartner.pOPaymentTerms != null)");
 
     // AND M_REQUISITION.ISACTIVE = 'Y'
     whereClause.append(" and requisition.active=true");
@@ -264,8 +264,8 @@ public class DalComplexQueryRequisitionTest extends OBBaseTest {
     // M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID
     whereClause.append(" order by needByDate, product.id, attributeSetValue.id");
 
-    final OBQuery<RequisitionLine> obQuery = OBDal.getInstance().createQuery(RequisitionLine.class,
-        whereClause.toString());
+    final OBQuery<RequisitionLine> obQuery = OBDal.getInstance()
+        .createQuery(RequisitionLine.class, whereClause.toString());
 
     // now set the parameters
     final Map<String, Object> parameters = new HashMap<>(6);

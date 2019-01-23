@@ -49,8 +49,8 @@ public class ReturnToFromCustomerVendorOrphanHQLTransformer extends HqlQueryTran
       transformedHqlQuery = transformedHqlQuery.replaceAll("@unitPriceProperty@",
           grossUnitPriceProperty);
     } else {
-      transformedHqlQuery = transformedHqlQuery
-          .replaceAll("@unitPriceProperty@", unitPriceProperty);
+      transformedHqlQuery = transformedHqlQuery.replaceAll("@unitPriceProperty@",
+          unitPriceProperty);
     }
     String distinctProperty = requestParameters.get("_distinct");
     if ("returnReason".equals(distinctProperty)) {

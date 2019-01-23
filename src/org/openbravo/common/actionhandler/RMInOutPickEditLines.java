@@ -66,8 +66,8 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       final String strInOutId = jsonRequest.getString("M_InOut_ID");
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
       if (inOut != null) {
-        List<String> idList = OBDao.getIDListFromOBObject(inOut
-            .getMaterialMgmtShipmentInOutLineList());
+        List<String> idList = OBDao
+            .getIDListFromOBObject(inOut.getMaterialMgmtShipmentInOutLineList());
         createInOutLines(jsonRequest, idList);
       }
 
@@ -94,7 +94,8 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
   }
 
   private void createInOutLines(JSONObject jsonRequest, List<String> idList) throws JSONException {
-    JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+    JSONArray selectedLines = jsonRequest.getJSONObject("_params")
+        .getJSONObject("grid")
         .getJSONArray("_selection");
     final String strInOutId = jsonRequest.getString("M_InOut_ID");
     ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strInOutId);
@@ -113,19 +114,19 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       if (notExistsShipmentLine) {
         newInOutLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
       } else {
-        newInOutLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-            selectedLine.get("goodsShipmentLine"));
+        newInOutLine = OBDal.getInstance()
+            .get(ShipmentInOutLine.class, selectedLine.get("goodsShipmentLine"));
         idList.remove(selectedLine.get("goodsShipmentLine"));
       }
       newInOutLine.setShipmentReceipt(inOut);
       newInOutLine.setOrganization(inOut.getOrganization());
       newInOutLine.setLineNo((i + 1L) * 10L);
 
-      OrderLine orderLine = OBDal.getInstance().get(OrderLine.class,
-          selectedLine.getString("orderLine"));
+      OrderLine orderLine = OBDal.getInstance()
+          .get(OrderLine.class, selectedLine.getString("orderLine"));
       newInOutLine.setSalesOrderLine(orderLine);
-      newInOutLine.setStorageBin(OBDal.getInstance().get(Locator.class,
-          selectedLine.getString("storageBin")));
+      newInOutLine.setStorageBin(
+          OBDal.getInstance().get(Locator.class, selectedLine.getString("storageBin")));
       newInOutLine.setProduct(orderLine.getProduct());
       newInOutLine.setAttributeSetValue(orderLine.getAttributeSetValue());
       newInOutLine.setUOM(orderLine.getUOM());
@@ -134,14 +135,15 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       if (isUomManagementEnabled) {
         try {
           OBContext.setAdminMode(true);
-          UOM operativeUOM = OBDal.getInstance().get(UOM.class,
-              selectedLine.getString("alternativeUOM"));
+          UOM operativeUOM = OBDal.getInstance()
+              .get(UOM.class, selectedLine.getString("alternativeUOM"));
           newInOutLine.setOperativeUOM(operativeUOM);
           newInOutLine.setOperativeQuantity(qtyReceived.negate());
           if (alternativeUOMEqualsToReturnedUOM(selectedLine)) {
             qtyReceived = convertedQtyReceivedBasedOnTheAUM(qtyReceived, selectedLine);
           } else {
-            BigDecimal operativeQuantity = convertQtyReceivedBasedOnTheUOM(qtyReceived, selectedLine);
+            BigDecimal operativeQuantity = convertQtyReceivedBasedOnTheUOM(qtyReceived,
+                selectedLine);
             newInOutLine.setOperativeQuantity(operativeQuantity.negate());
           }
         } finally {
@@ -152,8 +154,8 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
 
       if (selectedLine.getString("conditionGoods") != null
           && !selectedLine.getString("conditionGoods").equals("null")) {
-        newInOutLine.setConditionGoods(OBDal.getInstance().get(ConditionGoods.class,
-            selectedLine.getString("conditionGoods")));
+        newInOutLine.setConditionGoods(OBDal.getInstance()
+            .get(ConditionGoods.class, selectedLine.getString("conditionGoods")));
       } else {
         newInOutLine.setConditionGoods(inOut.getConditionGoods());
       }
@@ -178,10 +180,10 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
     }
     for (ShipmentInOutLine inOutLine : inOut.getMaterialMgmtShipmentInOutLineList()) {
       if (inOutLine.getSalesOrderLine().getBOMParent() != null) {
-        OBCriteria<ShipmentInOutLine> obc = OBDal.getInstance().createCriteria(
-            ShipmentInOutLine.class);
-        obc.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, inOutLine
-            .getSalesOrderLine().getBOMParent()));
+        OBCriteria<ShipmentInOutLine> obc = OBDal.getInstance()
+            .createCriteria(ShipmentInOutLine.class);
+        obc.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
+            inOutLine.getSalesOrderLine().getBOMParent()));
         ShipmentInOutLine parentInOutLine = (ShipmentInOutLine) obc.uniqueResult();
         inOutLine.setBOMParent(parentInOutLine);
         OBDal.getInstance().save(inOutLine);
@@ -191,22 +193,20 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
     removeNonSelectedLines(idList, inOut);
   }
 
-  private BigDecimal convertQtyReceivedBasedOnTheUOM(BigDecimal qtyReceived, JSONObject selectedLine)
-      throws JSONException {
-    return UOMUtil.getConvertedAumQty(
-        selectedLine.getString("product"), qtyReceived,
+  private BigDecimal convertQtyReceivedBasedOnTheUOM(BigDecimal qtyReceived,
+      JSONObject selectedLine) throws JSONException {
+    return UOMUtil.getConvertedAumQty(selectedLine.getString("product"), qtyReceived,
         selectedLine.getString("alternativeUOM"));
   }
 
-  private BigDecimal convertedQtyReceivedBasedOnTheAUM(BigDecimal qtyReceived, JSONObject selectedLine)
-      throws JSONException {
+  private BigDecimal convertedQtyReceivedBasedOnTheAUM(BigDecimal qtyReceived,
+      JSONObject selectedLine) throws JSONException {
     return UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
         selectedLine.getString("alternativeUOM"));
   }
 
   private boolean alternativeUOMEqualsToReturnedUOM(JSONObject selectedLine) throws JSONException {
-    return selectedLine.getString("alternativeUOM")
-        .equals(selectedLine.getString("returnedUOM"));
+    return selectedLine.getString("alternativeUOM").equals(selectedLine.getString("returnedUOM"));
   }
 
   private void removeNonSelectedLines(List<String> idList, ShipmentInOut inOut) {

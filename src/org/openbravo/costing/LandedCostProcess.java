@@ -104,7 +104,8 @@ public class LandedCostProcess {
           .getOrganizationStructureProvider(landedCost.getClient().getId())
           .getLegalEntity(landedCost.getOrganization());
       if (!StringUtils.equals(CostingUtils.getCostDimensionRule(org, new Date())
-          .getCostingAlgorithm().getJavaClassName(), "org.openbravo.costing.StandardAlgorithm")) {
+          .getCostingAlgorithm()
+          .getJavaClassName(), "org.openbravo.costing.StandardAlgorithm")) {
         CostAdjustment ca = generateCostAdjustment(landedCost.getId(), message);
         landedCost.setCostAdjustment(ca);
         message.put("documentNo", ca.getDocumentNo());
@@ -186,8 +187,8 @@ public class LandedCostProcess {
       lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
       log.debug("Start Distributing lcCost {}", lcCost.getIdentifier());
       // Load distribution algorithm
-      LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(lcCost
-          .getLandedCostDistributionAlgorithm());
+      LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(
+          lcCost.getLandedCostDistributionAlgorithm());
 
       lcDistAlg.distributeAmount(lcCost, false);
       lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
@@ -202,8 +203,8 @@ public class LandedCostProcess {
   private CostAdjustment generateCostAdjustment(String strLandedCostId, JSONObject message) {
     LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
     Date referenceDate = landedCost.getReferenceDate();
-    CostAdjustment ca = CostAdjustmentUtils.insertCostAdjustmentHeader(
-        landedCost.getOrganization(), "LC");
+    CostAdjustment ca = CostAdjustmentUtils.insertCostAdjustmentHeader(landedCost.getOrganization(),
+        "LC");
 
     String strResult = OBMessageUtils.messageBD("LandedCostProcessed");
     Map<String, String> map = new HashMap<String, String>();
@@ -216,8 +217,8 @@ public class LandedCostProcess {
 
     StringBuffer hql = new StringBuffer();
     hql.append(" select sum(rla." + LCReceiptLineAmt.PROPERTY_AMOUNT + ") as amt");
-    hql.append("   , rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST
-        + ".currency.id as lcCostCurrency");
+    hql.append(
+        "   , rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + ".currency.id as lcCostCurrency");
     hql.append("   , gsl." + ShipmentInOutLine.PROPERTY_ID + " as receipt");
     hql.append("   , (select " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " from "
         + MaterialTransaction.ENTITY_NAME + " as transaction where "
@@ -238,7 +239,8 @@ public class LandedCostProcess {
     hql.append(" , gsl." + ShipmentInOutLine.PROPERTY_LINENO);
     hql.append(" , amt");
 
-    Query<Object[]> qryLCRLA = OBDal.getInstance().getSession()
+    Query<Object[]> qryLCRLA = OBDal.getInstance()
+        .getSession()
         .createQuery(hql.toString(), Object[].class);
     qryLCRLA.setParameter("lc", landedCost);
 
@@ -250,8 +252,8 @@ public class LandedCostProcess {
         Object[] receiptAmt = receiptamts.get();
         BigDecimal amt = (BigDecimal) receiptAmt[0];
         Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, receiptAmt[1]);
-        ShipmentInOutLine receiptLine = OBDal.getInstance().get(ShipmentInOutLine.class,
-            receiptAmt[2]);
+        ShipmentInOutLine receiptLine = OBDal.getInstance()
+            .get(ShipmentInOutLine.class, receiptAmt[2]);
         // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
         MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
         final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
@@ -278,7 +280,8 @@ public class LandedCostProcess {
     return ca;
   }
 
-  private LandedCostDistributionAlgorithm getDistributionAlgorithm(LCDistributionAlgorithm lcDistAlg) {
+  private LandedCostDistributionAlgorithm getDistributionAlgorithm(
+      LCDistributionAlgorithm lcDistAlg) {
     LandedCostDistributionAlgorithm lcDistAlgInstance;
     try {
       Class<?> clz = null;
@@ -309,20 +312,21 @@ public class LandedCostProcess {
     lcm.setInvoiceLine(lcc.getInvoiceLine());
     OBDal.getInstance().save(lcm);
 
-    final OBCriteria<ConversionRateDoc> conversionRateDoc = OBDal.getInstance().createCriteria(
-        ConversionRateDoc.class);
-    conversionRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, lcm.getInvoiceLine()
-        .getInvoice()));
+    final OBCriteria<ConversionRateDoc> conversionRateDoc = OBDal.getInstance()
+        .createCriteria(ConversionRateDoc.class);
+    conversionRateDoc.add(
+        Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, lcm.getInvoiceLine().getInvoice()));
     ConversionRateDoc invoiceconversionrate = (ConversionRateDoc) conversionRateDoc.uniqueResult();
-    Currency currency = lcc.getOrganization().getCurrency() != null ? lcc.getOrganization()
-        .getCurrency() : lcc.getOrganization().getClient().getCurrency();
-    ConversionRate landedCostrate = FinancialUtils.getConversionRate(lcc.getLandedCost()
-        .getReferenceDate(), lcc.getCurrency(), currency, lcc.getOrganization(), lcc.getClient());
+    Currency currency = lcc.getOrganization().getCurrency() != null
+        ? lcc.getOrganization().getCurrency()
+        : lcc.getOrganization().getClient().getCurrency();
+    ConversionRate landedCostrate = FinancialUtils.getConversionRate(
+        lcc.getLandedCost().getReferenceDate(), lcc.getCurrency(), currency, lcc.getOrganization(),
+        lcc.getClient());
 
     if (invoiceconversionrate != null
         && invoiceconversionrate.getRate() != landedCostrate.getMultipleRateBy()) {
-      BigDecimal amount = lcc
-          .getAmount()
+      BigDecimal amount = lcc.getAmount()
           .multiply(invoiceconversionrate.getRate())
           .subtract(lcc.getAmount().multiply(landedCostrate.getMultipleRateBy()))
           .divide(landedCostrate.getMultipleRateBy(), currency.getStandardPrecision().intValue(),

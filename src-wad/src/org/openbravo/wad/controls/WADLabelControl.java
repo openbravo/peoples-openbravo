@@ -61,10 +61,12 @@ public class WADLabelControl {
   public void setLabelType(int type) {
     labelType = type;
     if (labelType == FIELD_GROUP_LABEL) {
-      if (fieldGroupId != null && !fieldGroupId.trim().equals(""))
+      if (fieldGroupId != null && !fieldGroupId.trim().equals("")) {
         setLabelId(fieldGroupId);
-      if (columnName != null && !columnName.trim().equals(""))
+      }
+      if (columnName != null && !columnName.trim().equals("")) {
         setLabelPlaceHolderText(columnName);
+      }
     }
   }
 
@@ -121,12 +123,14 @@ public class WADLabelControl {
     if (columnName != null && !columnName.trim().equals("")) {
       this.columnName = columnName;
       if (labelType == FIELD_LABEL || labelType == BUTTON_LABEL) {
-        if (getLabelId() == null || getLabelId().equals(""))
+        if (getLabelId() == null || getLabelId().equals("")) {
           setLabelId(this.columnName);
+        }
         setLabelPlaceHolderText(this.columnName);
       } else if (labelType == FIELD_GROUP_LABEL) {
-        if (fieldGroupId != null && !fieldGroupId.trim().equals(""))
+        if (fieldGroupId != null && !fieldGroupId.trim().equals("")) {
           setLabelId(fieldGroupId);
+        }
         setLabelPlaceHolderText(this.columnName);
       }
     }
@@ -178,8 +182,9 @@ public class WADLabelControl {
 
   public void setLinkable(String linkable) {
     isLinkable = false;
-    if (linkable != null && linkable.equalsIgnoreCase("y"))
+    if (linkable != null && linkable.equalsIgnoreCase("y")) {
       isLinkable = true;
+    }
   }
 
   public void setLinkable(boolean linkable) {

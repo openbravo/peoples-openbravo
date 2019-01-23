@@ -50,12 +50,12 @@ public class PriceListTestData4 extends PriceListTestData {
      * following structure: <Product name, [Unit Price Expected, List Price Expected]>
      */
     HashMap<String, String[]> productPriceLines = new HashMap<String, String[]>();
-    productPriceLines.put(PriceListTestConstants.SPAIN_GOOD_A_PRODUCT_NAME, new String[] { "1.76",
-        "1.95" });
-    productPriceLines.put(PriceListTestConstants.SPAIN_GOOD_B_PRODUCT_NAME, new String[] { "1.76",
-        "1.95" });
-    productPriceLines.put(PriceListTestConstants.SPAIN_GOOD_C_PRODUCT_NAME, new String[] { "1.76",
-        "1.95" });
+    productPriceLines.put(PriceListTestConstants.SPAIN_GOOD_A_PRODUCT_NAME,
+        new String[] { "1.76", "1.95" });
+    productPriceLines.put(PriceListTestConstants.SPAIN_GOOD_B_PRODUCT_NAME,
+        new String[] { "1.76", "1.95" });
+    productPriceLines.put(PriceListTestConstants.SPAIN_GOOD_C_PRODUCT_NAME,
+        new String[] { "1.76", "1.95" });
     setExpectedProductPrices(productPriceLines);
 
     // Price List Header

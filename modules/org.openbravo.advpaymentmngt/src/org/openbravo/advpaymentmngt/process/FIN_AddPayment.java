@@ -262,8 +262,8 @@ public class FIN_AddPayment {
       BigDecimal finTxnAmount) {
     return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
-        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, paymentCurrency, finTxnConvertRate, finTxnAmount, true, null);
+        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff, isRefund,
+        paymentCurrency, finTxnConvertRate, finTxnAmount, true, null);
   }
 
   /*
@@ -278,8 +278,8 @@ public class FIN_AddPayment {
       boolean isRefund) {
     return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
-        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, null, null, null, true, null);
+        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff, isRefund,
+        null, null, null, true, null);
   }
 
   /**
@@ -336,8 +336,8 @@ public class FIN_AddPayment {
       boolean isRefund, boolean doFlush) {
     return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
-        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, null, null, null, doFlush, null);
+        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff, isRefund,
+        null, null, null, doFlush, null);
   }
 
   /**
@@ -391,7 +391,9 @@ public class FIN_AddPayment {
       throws OBException {
     BigDecimal assignedAmount = paymentDetailAmount;
     if (paymentScheduleDetail.getPaymentDetails() != null) {
-      if (!paymentScheduleDetail.getPaymentDetails().getFinPayment().getId()
+      if (!paymentScheduleDetail.getPaymentDetails()
+          .getFinPayment()
+          .getId()
           .equals(payment.getId())) {
         // If payment schedule detail belongs to a different payment
         throw new OBException(String.format(FIN_Utility.messageBD("APRM_PsdInSeveralPayments"),
@@ -400,15 +402,17 @@ public class FIN_AddPayment {
       // Detail for this payment already exists. Payment being edited
       // If amount has changed payment schedule details needs to be updated. Aggregate amount
       // coming from unpaid schedule detail which remains unpaid
-      if (paymentScheduleDetail.getAmount().add(paymentScheduleDetail.getWriteoffAmount())
+      if (paymentScheduleDetail.getAmount()
+          .add(paymentScheduleDetail.getWriteoffAmount())
           .compareTo(paymentDetailAmount) != 0) {
         // update Amounts as they have changed
-        assignedAmount = assignedAmount.subtract(paymentScheduleDetail.getPaymentDetails()
-            .getAmount());
+        assignedAmount = assignedAmount
+            .subtract(paymentScheduleDetail.getPaymentDetails().getAmount());
         // update detail with the new value
         List<FIN_PaymentScheduleDetail> outStandingPSDs = getOutstandingPSDs(paymentScheduleDetail);
         BigDecimal difference = paymentScheduleDetail.getAmount()
-            .add(paymentScheduleDetail.getWriteoffAmount()).subtract(paymentDetailAmount);
+            .add(paymentScheduleDetail.getWriteoffAmount())
+            .subtract(paymentDetailAmount);
         // Assume doubtful debt is always positive
         BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
         if (outStandingPSDs.size() == 0) {
@@ -417,15 +421,15 @@ public class FIN_AddPayment {
               paymentDetailAmount, paymentScheduleDetail.getDoubtfulDebtAmount());
           if (!isWriteoff) {
             // No outstanding PSD exists so one needs to be created for the difference
-            FIN_PaymentScheduleDetail outstandingPSD = (FIN_PaymentScheduleDetail) DalUtil.copy(
-                paymentScheduleDetail, false);
+            FIN_PaymentScheduleDetail outstandingPSD = (FIN_PaymentScheduleDetail) DalUtil
+                .copy(paymentScheduleDetail, false);
             outstandingPSD.setAmount(difference);
             outstandingPSD.setWriteoffAmount(BigDecimal.ZERO);
-            outstandingPSD.setDoubtfulDebtAmount(paymentScheduleDetail.getDoubtfulDebtAmount()
-                .subtract(doubtFulDebtAmount));
+            outstandingPSD.setDoubtfulDebtAmount(
+                paymentScheduleDetail.getDoubtfulDebtAmount().subtract(doubtFulDebtAmount));
             outstandingPSD.setPaymentDetails(null);
-            paymentScheduleDetail.setAmount(paymentScheduleDetail.getAmount().add(
-                paymentScheduleDetail.getWriteoffAmount()));
+            paymentScheduleDetail.setAmount(
+                paymentScheduleDetail.getAmount().add(paymentScheduleDetail.getWriteoffAmount()));
             paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
             paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
             OBDal.getInstance().save(outstandingPSD);
@@ -444,30 +448,29 @@ public class FIN_AddPayment {
           if (!isWriteoff) {
             if (outstandingPSD.getAmount().add(difference).signum() == 0) {
               // If the outstanding psd amount is zero after adding the difference delete it.
-              doubtFulDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount().add(
-                  outstandingPSD.getDoubtfulDebtAmount());
+              doubtFulDebtAmount = paymentScheduleDetail.getDoubtfulDebtAmount()
+                  .add(outstandingPSD.getDoubtfulDebtAmount());
               OBDal.getInstance().remove(outstandingPSD);
             } else {
               // update existing PD with difference
               doubtFulDebtAmount = getDoubtFulDebtAmount(
                   paymentScheduleDetail.getAmount().add(outstandingPSD.getAmount()),
-                  paymentDetailAmount,
-                  paymentScheduleDetail.getDoubtfulDebtAmount().add(
-                      outstandingPSD.getDoubtfulDebtAmount()));
+                  paymentDetailAmount, paymentScheduleDetail.getDoubtfulDebtAmount()
+                      .add(outstandingPSD.getDoubtfulDebtAmount()));
               outstandingPSD.setAmount(outstandingPSD.getAmount().add(difference));
-              outstandingPSD.setDoubtfulDebtAmount(outstandingPSD.getDoubtfulDebtAmount().add(
-                  paymentScheduleDetail.getDoubtfulDebtAmount().subtract(doubtFulDebtAmount)));
+              outstandingPSD.setDoubtfulDebtAmount(outstandingPSD.getDoubtfulDebtAmount()
+                  .add(paymentScheduleDetail.getDoubtfulDebtAmount().subtract(doubtFulDebtAmount)));
               OBDal.getInstance().save(outstandingPSD);
             }
             paymentScheduleDetail.setWriteoffAmount(BigDecimal.ZERO);
             paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(BigDecimal.ZERO);
           } else {
             paymentScheduleDetail.setWriteoffAmount(difference.add(outstandingPSD.getAmount()));
-            doubtFulDebtAmount = outstandingPSD.getDoubtfulDebtAmount().add(
-                paymentScheduleDetail.getDoubtfulDebtAmount());
+            doubtFulDebtAmount = outstandingPSD.getDoubtfulDebtAmount()
+                .add(paymentScheduleDetail.getDoubtfulDebtAmount());
             OBDal.getInstance().save(paymentScheduleDetail);
-            paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(
-                difference.add(outstandingPSD.getAmount()));
+            paymentScheduleDetail.getPaymentDetails()
+                .setWriteoffAmount(difference.add(outstandingPSD.getAmount()));
             OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
             OBDal.getInstance().remove(outstandingPSD);
           }
@@ -491,8 +494,8 @@ public class FIN_AddPayment {
           OBDal.getInstance().remove(outstandingPSD);
         }
         paymentScheduleDetail.setWriteoffAmount(writeOffAmt);
-        paymentScheduleDetail.setDoubtfulDebtAmount(paymentScheduleDetail.getDoubtfulDebtAmount()
-            .add(doubtfulAmt));
+        paymentScheduleDetail
+            .setDoubtfulDebtAmount(paymentScheduleDetail.getDoubtfulDebtAmount().add(doubtfulAmt));
         OBDal.getInstance().save(paymentScheduleDetail);
         paymentScheduleDetail.getPaymentDetails().setWriteoffAmount(writeOffAmt);
         OBDal.getInstance().save(paymentScheduleDetail.getPaymentDetails());
@@ -522,8 +525,8 @@ public class FIN_AddPayment {
         paymentScheduleDetail.setDoubtfulDebtAmount(doubtfulDebtAmount);
         OBDal.getInstance().save(paymentScheduleDetail);
       }
-      dao.getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount,
-          amountDifference, false, null, doFlush, null);
+      dao.getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount, amountDifference,
+          false, null, doFlush, null);
     }
     return assignedAmount;
   }
@@ -550,8 +553,8 @@ public class FIN_AddPayment {
       finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
       if (vars != null) {
         DecimalFormat generalQtyRelationFmt = Utility.getFormat(vars, "generalQtyEdition");
-        finTxnConvertRate = finTxnConvertRate.setScale(
-            generalQtyRelationFmt.getMaximumFractionDigits(), RoundingMode.HALF_UP);
+        finTxnConvertRate = finTxnConvertRate
+            .setScale(generalQtyRelationFmt.getMaximumFractionDigits(), RoundingMode.HALF_UP);
       }
     }
 
@@ -576,17 +579,17 @@ public class FIN_AddPayment {
       BigDecimal conversionRate) {
     dao = new AdvPaymentMngtDao();
     FIN_Payment refundPayment;
-    if (payment.getFINPaymentDetailList().isEmpty())
+    if (payment.getFINPaymentDetailList().isEmpty()) {
       refundPayment = payment;
-    else {
+    } else {
       refundPayment = (FIN_Payment) DalUtil.copy(payment, false);
       String strDescription = Utility.messageBD(conProvider, "APRM_RefundPayment",
           vars.getLanguage());
       strDescription += ": " + payment.getDocumentNo();
       refundPayment.setDescription(strDescription);
       refundPayment.setGeneratedCredit(BigDecimal.ZERO);
-      final String strDocumentNo = FIN_Utility.getDocumentNo(payment.getOrganization(), payment
-          .getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment");
+      final String strDocumentNo = FIN_Utility.getDocumentNo(payment.getOrganization(),
+          payment.getDocumentType().getDocumentCategory(), "DocumentNo_FIN_Payment");
       refundPayment.setDocumentNo(strDocumentNo);
     }
     refundPayment.setProcessed(false);
@@ -598,8 +601,8 @@ public class FIN_AddPayment {
 
     setFinancialTransactionAmountAndRate(refundPayment, conversionRate, null);
 
-    FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(
-        payment.getOrganization(), refundAmount);
+    FIN_PaymentScheduleDetail refundScheduleDetail = dao
+        .getNewPaymentScheduleDetail(payment.getOrganization(), refundAmount);
     dao.getNewPaymentDetail(refundPayment, refundScheduleDetail, refundAmount, BigDecimal.ZERO,
         true, null);
 
@@ -640,9 +643,10 @@ public class FIN_AddPayment {
 
     for (FIN_PaymentScheduleDetail paymentScheduleDetail : selectedPaymentScheduleDetails) {
       BigDecimal detailWriteOffAmt = null;
-      if (writeOffAmt != null)
-        detailWriteOffAmt = paymentScheduleDetail.getAmount().subtract(
-            selectedPaymentScheduleDetailAmounts.get(paymentScheduleDetail.getId()));
+      if (writeOffAmt != null) {
+        detailWriteOffAmt = paymentScheduleDetail.getAmount()
+            .subtract(selectedPaymentScheduleDetailAmounts.get(paymentScheduleDetail.getId()));
+      }
 
       dao.getNewPaymentProposalDetail(paymentProposal.getOrganization(), paymentProposal,
           paymentScheduleDetail,
@@ -763,8 +767,8 @@ public class FIN_AddPayment {
   public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
       BusinessPartner businessPartner, Product product, Project project, Campaign campaign,
       ABCActivity activity, SalesRegion salesRegion) {
-    saveGLItem(payment, glitemAmount, glitem, businessPartner, product, project, campaign,
-        activity, salesRegion, null, null, null);
+    saveGLItem(payment, glitemAmount, glitem, businessPartner, product, project, campaign, activity,
+        salesRegion, null, null, null);
   }
 
   /**
@@ -787,8 +791,9 @@ public class FIN_AddPayment {
         OBDal.getInstance().remove(paymentDetail);
       } else {
         List<String> pdlIDs = new ArrayList<String>();
-        for (FIN_PaymentDetail deletePaymentDetail : pdl)
+        for (FIN_PaymentDetail deletePaymentDetail : pdl) {
           pdlIDs.add(deletePaymentDetail.getId());
+        }
 
         for (String pdlID : pdlIDs) {
           pdl.remove(dao.getObject(FIN_PaymentDetail.class, pdlID));
@@ -815,12 +820,14 @@ public class FIN_AddPayment {
    * @return returns a List of FIN_PaymentScheduleDetail including all the Payment Schedule Details.
    */
   public static List<FIN_PaymentScheduleDetail> getSelectedPaymentDetails(
-      List<FIN_PaymentScheduleDetail> scheduledPaymentDetails, String strSelectedPaymentDetailsIds) {
+      List<FIN_PaymentScheduleDetail> scheduledPaymentDetails,
+      String strSelectedPaymentDetailsIds) {
     final List<FIN_PaymentScheduleDetail> selectedScheduledPaymentDetails;
-    if (scheduledPaymentDetails == null)
+    if (scheduledPaymentDetails == null) {
       selectedScheduledPaymentDetails = new ArrayList<FIN_PaymentScheduleDetail>();
-    else
+    } else {
       selectedScheduledPaymentDetails = scheduledPaymentDetails;
+    }
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done
     OBContext.setAdminMode();
@@ -829,8 +836,9 @@ public class FIN_AddPayment {
       final List<FIN_PaymentScheduleDetail> tempSelectedScheduledPaymentDetails = FIN_Utility
           .getOBObjectList(FIN_PaymentScheduleDetail.class, strSelectedPaymentDetailsIds);
       for (FIN_PaymentScheduleDetail tempPaymentScheduleDetail : tempSelectedScheduledPaymentDetails) {
-        if (!selectedScheduledPaymentDetails.contains(tempPaymentScheduleDetail))
+        if (!selectedScheduledPaymentDetails.contains(tempPaymentScheduleDetail)) {
           selectedScheduledPaymentDetails.add(tempPaymentScheduleDetail);
+        }
 
       }
     } finally {
@@ -880,9 +888,10 @@ public class FIN_AddPayment {
     return selectedBaseOBObjectAmounts;
   }
 
-  private static List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(Set<String> psdSet) {
-    OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createCriteria(
-        FIN_PaymentScheduleDetail.class);
+  private static List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(
+      Set<String> psdSet) {
+    OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance()
+        .createCriteria(FIN_PaymentScheduleDetail.class);
     orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
     orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
     return orderedPSDs.list();
@@ -897,10 +906,11 @@ public class FIN_AddPayment {
     for (FIN_PaymentScheduleDetail paymentScheduleDetail : psds) {
       BigDecimal outstandingAmount = paymentScheduleDetail.getAmount();
       // Manage negative amounts
-      if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0 && remainingAmount
-          .compareTo(outstandingAmount) >= 0)
-          || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1 && outstandingAmount
-              .compareTo(BigDecimal.ZERO) == -1) && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
+      if ((remainingAmount.compareTo(BigDecimal.ZERO) > 0
+          && remainingAmount.compareTo(outstandingAmount) >= 0)
+          || ((remainingAmount.compareTo(BigDecimal.ZERO) == -1
+              && outstandingAmount.compareTo(BigDecimal.ZERO) == -1)
+              && (remainingAmount.compareTo(outstandingAmount) <= 0))) {
         recordsAmounts.put(paymentScheduleDetail.getId(), outstandingAmount);
         remainingAmount = remainingAmount.subtract(outstandingAmount);
       } else {
@@ -970,7 +980,8 @@ public class FIN_AddPayment {
     FIN_PaymentScheduleDetail[] FIN_PaymentScheduleDetails = new FIN_PaymentScheduleDetail[0];
     FIN_PaymentScheduleDetails = shownScheduledPaymentDetails.toArray(FIN_PaymentScheduleDetails);
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(shownScheduledPaymentDetails);
-    String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String dateFormat = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
         .getProperty("dateFormat.java");
     SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
@@ -1009,22 +1020,22 @@ public class FIN_AddPayment {
             HashMap<String, BigDecimal> idsAmounts = calculateAmounts(new BigDecimal(psdAmount),
                 psdIdSet);
             FieldProviderFactory.setField(data[i], "finSelectedPaymentDetailId", selectedId);
-            FieldProviderFactory.setField(data[i], "paymentAmount", idsAmounts.get(selectedId)
-                .toString());
+            FieldProviderFactory.setField(data[i], "paymentAmount",
+                idsAmounts.get(selectedId).toString());
           }
         }
 
-        FieldProviderFactory
-            .setField(data[i], "finSelectedPaymentDetailId", (selectedScheduledPaymentDetails
-                .contains(FIN_PaymentScheduleDetails[i])) ? FIN_PaymentScheduleDetails[i].getId()
+        FieldProviderFactory.setField(data[i], "finSelectedPaymentDetailId",
+            (selectedScheduledPaymentDetails.contains(FIN_PaymentScheduleDetails[i]))
+                ? FIN_PaymentScheduleDetails[i].getId()
                 : "");
         FieldProviderFactory.setField(data[i], "finScheduledPaymentDetailId",
             FIN_PaymentScheduleDetails[i].getId());
         if (FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule() != null) {
-          FieldProviderFactory.setField(data[i], "orderNr", FIN_PaymentScheduleDetails[i]
-              .getOrderPaymentSchedule().getOrder().getDocumentNo());
-          FieldProviderFactory.setField(data[i], "orderNrTrunc", FIN_PaymentScheduleDetails[i]
-              .getOrderPaymentSchedule().getOrder().getDocumentNo());
+          FieldProviderFactory.setField(data[i], "orderNr",
+              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder().getDocumentNo());
+          FieldProviderFactory.setField(data[i], "orderNrTrunc",
+              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder().getDocumentNo());
           FieldProviderFactory.setField(data[i], "orderPaymentScheduleId",
               FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getId());
         } else {
@@ -1035,25 +1046,36 @@ public class FIN_AddPayment {
         if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule() != null) {
           FIN_PaymentSchedule psd = FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule();
           OrganizationInformation orgInfo = OBDao.getActiveOBObjectList(psd.getOrganization(),
-              Organization.PROPERTY_ORGANIZATIONINFORMATIONLIST) != null ? (OrganizationInformation) OBDao
-              .getActiveOBObjectList(psd.getOrganization(),
-                  Organization.PROPERTY_ORGANIZATIONINFORMATIONLIST).get(0) : null;
+              Organization.PROPERTY_ORGANIZATIONINFORMATIONLIST) != null
+                  ? (OrganizationInformation) OBDao
+                      .getActiveOBObjectList(psd.getOrganization(),
+                          Organization.PROPERTY_ORGANIZATIONINFORMATIONLIST)
+                      .get(0)
+                  : null;
           if (!psd.getInvoice().isSalesTransaction() && orgInfo != null
               && orgInfo.getAPRMPaymentDescription().equals("Supplier Reference")) {
             // When the Organization of the Invoice sets that the Invoice Document No. is the
             // supplier's
-            FieldProviderFactory.setField(data[i], "invoiceNr", FIN_PaymentScheduleDetails[i]
-                .getInvoicePaymentSchedule().getInvoice().getOrderReference());
-            FieldProviderFactory.setField(data[i], "invoiceNrTrunc", FIN_PaymentScheduleDetails[i]
-                .getInvoicePaymentSchedule().getInvoice().getOrderReference());
+            FieldProviderFactory.setField(data[i], "invoiceNr",
+                FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+                    .getInvoice()
+                    .getOrderReference());
+            FieldProviderFactory.setField(data[i], "invoiceNrTrunc",
+                FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+                    .getInvoice()
+                    .getOrderReference());
           } else {
             // When the Organization of the Invoice sets that the Invoice Document No. is the
             // default
             // Invoice Number
-            FieldProviderFactory.setField(data[i], "invoiceNr", FIN_PaymentScheduleDetails[i]
-                .getInvoicePaymentSchedule().getInvoice().getDocumentNo());
-            FieldProviderFactory.setField(data[i], "invoiceNrTrunc", FIN_PaymentScheduleDetails[i]
-                .getInvoicePaymentSchedule().getInvoice().getDocumentNo());
+            FieldProviderFactory.setField(data[i], "invoiceNr",
+                FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+                    .getInvoice()
+                    .getDocumentNo());
+            FieldProviderFactory.setField(data[i], "invoiceNrTrunc",
+                FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+                    .getInvoice()
+                    .getDocumentNo());
           }
           FieldProviderFactory.setField(data[i], "invoicePaymentScheduleId",
               FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getId());
@@ -1063,36 +1085,40 @@ public class FIN_AddPayment {
           FieldProviderFactory.setField(data[i], "invoicePaymentScheduleId", "");
         }
         if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule() != null) {
-          FieldProviderFactory.setField(
-              data[i],
-              "expectedDate",
-              dateFormater.format(
-                  FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getExpectedDate())
+          FieldProviderFactory.setField(data[i], "expectedDate",
+              dateFormater
+                  .format(
+                      FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getExpectedDate())
                   .toString());
-          FieldProviderFactory.setField(
-              data[i],
-              "dueDate",
-              dateFormater.format(
-                  FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getDueDate())
+          FieldProviderFactory.setField(data[i], "dueDate",
+              dateFormater
+                  .format(FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getDueDate())
                   .toString());
-          FieldProviderFactory.setField(
-              data[i],
-              "transactionDate",
-              dateFormater.format(
-                  FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getInvoice()
-                      .getInvoiceDate()).toString());
-          FieldProviderFactory.setField(data[i], "invoicedAmount", FIN_PaymentScheduleDetails[i]
-              .getInvoicePaymentSchedule().getInvoice().getGrandTotalAmount().toString());
-          FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
-              .getInvoicePaymentSchedule().getAmount().toString());
+          FieldProviderFactory.setField(data[i], "transactionDate",
+              dateFormater.format(FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+                  .getInvoice()
+                  .getInvoiceDate()).toString());
+          FieldProviderFactory.setField(data[i], "invoicedAmount",
+              FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+                  .getInvoice()
+                  .getGrandTotalAmount()
+                  .toString());
+          FieldProviderFactory.setField(data[i], "expectedAmount",
+              FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getAmount().toString());
 
           // Truncate Business Partner
           String businessPartner = FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
-              .getInvoice().getBusinessPartner().getIdentifier();
-          FieldProviderFactory.setField(data[i], "businessPartnerId", FIN_PaymentScheduleDetails[i]
-              .getInvoicePaymentSchedule().getInvoice().getBusinessPartner().getId());
-          String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
-              .substring(0, 15).concat("...").toString() : businessPartner;
+              .getInvoice()
+              .getBusinessPartner()
+              .getIdentifier();
+          FieldProviderFactory.setField(data[i], "businessPartnerId",
+              FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+                  .getInvoice()
+                  .getBusinessPartner()
+                  .getId());
+          String truncateBusinessPartner = (businessPartner.length() > 18)
+              ? businessPartner.substring(0, 15).concat("...").toString()
+              : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",
               (businessPartner.length() > 18) ? businessPartner : "");
           FieldProviderFactory.setField(data[i], "businessPartnerNameTrunc",
@@ -1100,48 +1126,53 @@ public class FIN_AddPayment {
 
           // Truncate Payment Method
           String paymentMethodName = FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
-              .getFinPaymentmethod().getName();
-          String truncatePaymentMethodName = (paymentMethodName.length() > 18) ? paymentMethodName
-              .substring(0, 15).concat("...").toString() : paymentMethodName;
+              .getFinPaymentmethod()
+              .getName();
+          String truncatePaymentMethodName = (paymentMethodName.length() > 18)
+              ? paymentMethodName.substring(0, 15).concat("...").toString()
+              : paymentMethodName;
           FieldProviderFactory.setField(data[i], "paymentMethodName",
               (paymentMethodName.length() > 18) ? paymentMethodName : "");
           FieldProviderFactory.setField(data[i], "paymentMethodNameTrunc",
               truncatePaymentMethodName);
 
-          if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule().getFINPaymentPriority() != null) {
-            FieldProviderFactory.setField(data[i], "gridLineColor", FIN_PaymentScheduleDetails[i]
-                .getInvoicePaymentSchedule().getFINPaymentPriority().getColor());
+          if (FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+              .getFINPaymentPriority() != null) {
+            FieldProviderFactory.setField(data[i], "gridLineColor",
+                FIN_PaymentScheduleDetails[i].getInvoicePaymentSchedule()
+                    .getFINPaymentPriority()
+                    .getColor());
           }
         } else {
-          FieldProviderFactory.setField(
-              data[i],
-              "expectedDate",
-              dateFormater.format(
-                  FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getExpectedDate())
-                  .toString());
-          FieldProviderFactory.setField(
-              data[i],
-              "dueDate",
-              dateFormater.format(
-                  FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getDueDate()).toString());
-          FieldProviderFactory.setField(
-              data[i],
-              "transactionDate",
+          FieldProviderFactory.setField(data[i], "expectedDate",
               dateFormater
-                  .format(
-                      FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder()
-                          .getOrderDate()).toString());
+                  .format(FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getExpectedDate())
+                  .toString());
+          FieldProviderFactory.setField(data[i], "dueDate",
+              dateFormater
+                  .format(FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getDueDate())
+                  .toString());
+          FieldProviderFactory.setField(data[i], "transactionDate",
+              dateFormater.format(
+                  FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getOrder().getOrderDate())
+                  .toString());
           FieldProviderFactory.setField(data[i], "invoicedAmount", "");
-          FieldProviderFactory.setField(data[i], "expectedAmount", FIN_PaymentScheduleDetails[i]
-              .getOrderPaymentSchedule().getAmount().toString());
+          FieldProviderFactory.setField(data[i], "expectedAmount",
+              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getAmount().toString());
 
           // Truncate Business Partner
           String businessPartner = FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
-              .getOrder().getBusinessPartner().getIdentifier();
-          FieldProviderFactory.setField(data[i], "businessPartnerId", FIN_PaymentScheduleDetails[i]
-              .getOrderPaymentSchedule().getOrder().getBusinessPartner().getId());
-          String truncateBusinessPartner = (businessPartner.length() > 18) ? businessPartner
-              .substring(0, 15).concat("...").toString() : businessPartner;
+              .getOrder()
+              .getBusinessPartner()
+              .getIdentifier();
+          FieldProviderFactory.setField(data[i], "businessPartnerId",
+              FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
+                  .getOrder()
+                  .getBusinessPartner()
+                  .getId());
+          String truncateBusinessPartner = (businessPartner.length() > 18)
+              ? businessPartner.substring(0, 15).concat("...").toString()
+              : businessPartner;
           FieldProviderFactory.setField(data[i], "businessPartnerName",
               (businessPartner.length() > 18) ? businessPartner : "");
           FieldProviderFactory.setField(data[i], "businessPartnerNameTrunc",
@@ -1149,25 +1180,30 @@ public class FIN_AddPayment {
 
           // Truncate Payment Method
           String paymentMethodName = FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
-              .getFinPaymentmethod().getName();
-          String truncatePaymentMethodName = (paymentMethodName.length() > 18) ? paymentMethodName
-              .substring(0, 15).concat("...").toString() : paymentMethodName;
+              .getFinPaymentmethod()
+              .getName();
+          String truncatePaymentMethodName = (paymentMethodName.length() > 18)
+              ? paymentMethodName.substring(0, 15).concat("...").toString()
+              : paymentMethodName;
           FieldProviderFactory.setField(data[i], "paymentMethodName",
               (paymentMethodName.length() > 18) ? paymentMethodName : "");
           FieldProviderFactory.setField(data[i], "paymentMethodNameTrunc",
               truncatePaymentMethodName);
 
-          if (FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule().getFINPaymentPriority() != null) {
-            FieldProviderFactory.setField(data[i], "gridLineColor", FIN_PaymentScheduleDetails[i]
-                .getOrderPaymentSchedule().getFINPaymentPriority().getColor());
+          if (FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
+              .getFINPaymentPriority() != null) {
+            FieldProviderFactory.setField(data[i], "gridLineColor",
+                FIN_PaymentScheduleDetails[i].getOrderPaymentSchedule()
+                    .getFINPaymentPriority()
+                    .getColor());
           }
         }
-        FieldProviderFactory.setField(data[i], "outstandingAmount", FIN_PaymentScheduleDetails[i]
-            .getAmount().toString());
-        FieldProviderFactory.setField(data[i], "doubtfulDebtAmount", FIN_PaymentScheduleDetails[i]
-            .getDoubtfulDebtAmount().toString());
-        FieldProviderFactory.setField(data[i], "displayDoubtfulDebt", showDoubtfulDebtAmount ? ""
-            : "display: none;");
+        FieldProviderFactory.setField(data[i], "outstandingAmount",
+            FIN_PaymentScheduleDetails[i].getAmount().toString());
+        FieldProviderFactory.setField(data[i], "doubtfulDebtAmount",
+            FIN_PaymentScheduleDetails[i].getDoubtfulDebtAmount().toString());
+        FieldProviderFactory.setField(data[i], "displayDoubtfulDebt",
+            showDoubtfulDebtAmount ? "" : "display: none;");
 
         String strPaymentAmt = "";
         String strDifference = "";
@@ -1176,12 +1212,13 @@ public class FIN_AddPayment {
           strPaymentAmt = dao.getPaymentProposalDetailAmount(FIN_PaymentScheduleDetails[i],
               paymentProposal);
         } else {
-          strPaymentAmt = vars.getNumericParameter("inpPaymentAmount"
-              + FIN_PaymentScheduleDetails[i].getId(), "");
+          strPaymentAmt = vars
+              .getNumericParameter("inpPaymentAmount" + FIN_PaymentScheduleDetails[i].getId(), "");
         }
         if (!"".equals(strPaymentAmt)) {
           strDifference = FIN_PaymentScheduleDetails[i].getAmount()
-              .subtract(new BigDecimal(strPaymentAmt)).toString();
+              .subtract(new BigDecimal(strPaymentAmt))
+              .toString();
         }
         if (data[i].getField("paymentAmount") == null
             || "".equals(data[i].getField("paymentAmount"))) {
@@ -1206,8 +1243,9 @@ public class FIN_AddPayment {
   public static List<FIN_PaymentScheduleDetail> getSelectedPendingPaymentsFromProposal(
       FIN_PaymentProposal paymentProposal) {
     List<FIN_PaymentScheduleDetail> existingPaymentScheduleDetail = new ArrayList<FIN_PaymentScheduleDetail>();
-    for (FIN_PaymentPropDetail proposalDetail : paymentProposal.getFINPaymentPropDetailList())
+    for (FIN_PaymentPropDetail proposalDetail : paymentProposal.getFINPaymentPropDetailList()) {
       existingPaymentScheduleDetail.add(proposalDetail.getFINPaymentScheduledetail());
+    }
 
     return existingPaymentScheduleDetail;
   }
@@ -1225,11 +1263,11 @@ public class FIN_AddPayment {
 
     OBContext.setAdminMode();
     try {
-      OBCriteria<FIN_PaymentScheduleDetail> psdFilter = OBDal.getInstance().createCriteria(
-          FIN_PaymentScheduleDetail.class);
+      OBCriteria<FIN_PaymentScheduleDetail> psdFilter = OBDal.getInstance()
+          .createCriteria(FIN_PaymentScheduleDetail.class);
       psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_CLIENT, psd.getClient()));
-      psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION,
-          psd.getOrganization()));
+      psdFilter.add(
+          Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION, psd.getOrganization()));
       psdFilter.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
       if (psd.getOrderPaymentSchedule() == null) {
         psdFilter.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE));
@@ -1238,8 +1276,8 @@ public class FIN_AddPayment {
             psd.getOrderPaymentSchedule()));
       }
       if (psd.getInvoicePaymentSchedule() == null) {
-        psdFilter.add(Restrictions
-            .isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
+        psdFilter
+            .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
       } else {
         psdFilter.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
             psd.getInvoicePaymentSchedule()));
@@ -1249,13 +1287,13 @@ public class FIN_AddPayment {
       final List<String> removedPDSIds = new ArrayList<String>();
       for (FIN_PaymentScheduleDetail psdToRemove : psdFilter.list()) {
         psd.setAmount(psd.getAmount().add(psdToRemove.getAmount()));
-        psd.setDoubtfulDebtAmount(psd.getDoubtfulDebtAmount().add(
-            psdToRemove.getDoubtfulDebtAmount()));
+        psd.setDoubtfulDebtAmount(
+            psd.getDoubtfulDebtAmount().add(psdToRemove.getDoubtfulDebtAmount()));
         // TODO: Set 0 as default value for writeoffamt column in FIN_Payment_ScheduleDetail table
-        BigDecimal sum1 = (psd.getWriteoffAmount() == null) ? BigDecimal.ZERO : psd
-            .getWriteoffAmount();
-        BigDecimal sum2 = (psdToRemove.getWriteoffAmount() == null) ? BigDecimal.ZERO : psdToRemove
-            .getWriteoffAmount();
+        BigDecimal sum1 = (psd.getWriteoffAmount() == null) ? BigDecimal.ZERO
+            : psd.getWriteoffAmount();
+        BigDecimal sum2 = (psdToRemove.getWriteoffAmount() == null) ? BigDecimal.ZERO
+            : psdToRemove.getWriteoffAmount();
         psd.setWriteoffAmount(sum1.add(sum2));
 
         OBDal.getInstance().save(psdToRemove);
@@ -1263,23 +1301,25 @@ public class FIN_AddPayment {
       }
 
       for (String pdToRm : removedPDSIds) {
-        FIN_PaymentScheduleDetail psdToRemove = OBDal.getInstance().get(
-            FIN_PaymentScheduleDetail.class, pdToRm);
+        FIN_PaymentScheduleDetail psdToRemove = OBDal.getInstance()
+            .get(FIN_PaymentScheduleDetail.class, pdToRm);
         if (psdToRemove.getInvoicePaymentSchedule() != null) {
           psdToRemove.getInvoicePaymentSchedule()
-              .getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(psdToRemove);
+              .getFINPaymentScheduleDetailInvoicePaymentScheduleList()
+              .remove(psdToRemove);
           OBDal.getInstance().save(psdToRemove.getInvoicePaymentSchedule());
         }
         if (psdToRemove.getOrderPaymentSchedule() != null) {
           psdToRemove.getOrderPaymentSchedule()
-              .getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(psdToRemove);
+              .getFINPaymentScheduleDetailOrderPaymentScheduleList()
+              .remove(psdToRemove);
           OBDal.getInstance().save(psdToRemove.getOrderPaymentSchedule());
         }
         OBDal.getInstance().remove(psdToRemove);
       }
 
-      psd.setAmount(psd.getAmount().add(
-          (psd.getWriteoffAmount() == null) ? BigDecimal.ZERO : psd.getWriteoffAmount()));
+      psd.setAmount(psd.getAmount()
+          .add((psd.getWriteoffAmount() == null) ? BigDecimal.ZERO : psd.getWriteoffAmount()));
       psd.setWriteoffAmount(BigDecimal.ZERO);
       psd.setPaymentDetails(null);
       OBDal.getInstance().save(psd);
@@ -1333,8 +1373,8 @@ public class FIN_AddPayment {
     paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(amount));
     if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
       paymentSchedule.setPaidAmount(paymentSchedule.getPaidAmount().add(writeOffAmount));
-      paymentSchedule.setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(
-          writeOffAmount));
+      paymentSchedule
+          .setOutstandingAmount(paymentSchedule.getOutstandingAmount().subtract(writeOffAmount));
     }
     OBDal.getInstance().save(paymentSchedule);
     CashVATUtil.createInvoiceTaxCashVAT(paymentDetail, paymentSchedule, amount.add(writeOffAmount));
@@ -1360,13 +1400,15 @@ public class FIN_AddPayment {
     invoice.setTotalPaid(invoice.getTotalPaid().add(amount));
     invoice.setLastCalculatedOnDate(new Date());
     invoice.setOutstandingAmount(invoice.getOutstandingAmount().subtract(amount));
-    if (isDueDateFlag)
+    if (isDueDateFlag) {
       invoice.setDueAmount(invoice.getDueAmount().subtract(amount));
+    }
     if (writeOffAmount != null && writeOffAmount.compareTo(BigDecimal.ZERO) != 0) {
       invoice.setTotalPaid(invoice.getTotalPaid().add(writeOffAmount));
       invoice.setOutstandingAmount(invoice.getOutstandingAmount().subtract(writeOffAmount));
-      if (isDueDateFlag)
+      if (isDueDateFlag) {
         invoice.setDueAmount(invoice.getDueAmount().subtract(writeOffAmount));
+      }
     }
 
     if (0 == invoice.getOutstandingAmount().compareTo(BigDecimal.ZERO)) {
@@ -1374,8 +1416,8 @@ public class FIN_AddPayment {
       // If date is null invoice amount = 0 then nothing to set
       if (finalSettlementDate != null) {
         invoice.setFinalSettlementDate(finalSettlementDate);
-        invoice.setDaysSalesOutstanding(FIN_Utility.getDaysBetween(invoice.getInvoiceDate(),
-            finalSettlementDate));
+        invoice.setDaysSalesOutstanding(
+            FIN_Utility.getDaysBetween(invoice.getInvoiceDate(), finalSettlementDate));
       }
       invoice.setPaymentComplete(true);
     } else {
@@ -1386,14 +1428,16 @@ public class FIN_AddPayment {
     Date firstDueDate = null;
     for (FIN_PaymentSchedule paymentSchedule : paymentSchedList) {
       if (paymentSchedule.getOutstandingAmount().compareTo(BigDecimal.ZERO) > 0
-          && (firstDueDate == null || firstDueDate.after(paymentSchedule.getDueDate())))
+          && (firstDueDate == null || firstDueDate.after(paymentSchedule.getDueDate()))) {
         firstDueDate = paymentSchedule.getDueDate();
+      }
     }
 
     if (invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
       BigDecimal overdueAmount = calculateOverdueAmount(invoicePaymentSchedule);
       invoice.setPercentageOverdue(overdueAmount.multiply(new BigDecimal("100"))
-          .divide(invoice.getGrandTotalAmount(), 2, RoundingMode.HALF_UP).longValue());
+          .divide(invoice.getGrandTotalAmount(), 2, RoundingMode.HALF_UP)
+          .longValue());
     }
     if (firstDueDate != null) {
       invoice.setDaysTillDue(FIN_Utility.getDaysToDue(firstDueDate));
@@ -1406,7 +1450,8 @@ public class FIN_AddPayment {
   private static BigDecimal calculateOverdueAmount(FIN_PaymentSchedule invoicePaymentSchedule) {
     Invoice invoice = invoicePaymentSchedule.getInvoice();
     BigDecimal overdueOriginal = BigDecimal.ZERO;
-    FIN_PaymentScheduleDetail currentPSD = getLastCreatedPaymentScheduleDetail(invoicePaymentSchedule);
+    FIN_PaymentScheduleDetail currentPSD = getLastCreatedPaymentScheduleDetail(
+        invoicePaymentSchedule);
     for (FIN_PaymentSchedule paymentSchedule : invoice.getFINPaymentScheduleList()) {
       Date paymentDueDate = paymentSchedule.getDueDate();
       for (FIN_PaymentScheduleDetail psd : paymentSchedule
@@ -1426,8 +1471,8 @@ public class FIN_AddPayment {
 
   private static FIN_PaymentScheduleDetail getLastCreatedPaymentScheduleDetail(
       FIN_PaymentSchedule invoicePaymentSchedule) {
-    final OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance().createCriteria(
-        FIN_PaymentScheduleDetail.class);
+    final OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance()
+        .createCriteria(FIN_PaymentScheduleDetail.class);
     OBContext.setAdminMode();
     try {
       obc.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
@@ -1445,8 +1490,8 @@ public class FIN_AddPayment {
    * Returns the date in which last payment for this invoice took place
    */
   private static Date getFinalSettlementDate(Invoice invoice) {
-    final OBCriteria<FIN_PaymentSchedInvV> obc = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedInvV.class);
+    final OBCriteria<FIN_PaymentSchedInvV> obc = OBDal.getInstance()
+        .createCriteria(FIN_PaymentSchedInvV.class);
     OBContext.setAdminMode();
     try {
       obc.add(Restrictions.eq(FIN_PaymentSchedInvV.PROPERTY_INVOICE, invoice));
@@ -1466,14 +1511,14 @@ public class FIN_AddPayment {
    *         after payment is processed.
    */
   public static Boolean isForcedFinancialAccountTransaction(FIN_Payment payment) {
-    OBCriteria<FinAccPaymentMethod> psdFilter = OBDal.getInstance().createCriteria(
-        FinAccPaymentMethod.class);
+    OBCriteria<FinAccPaymentMethod> psdFilter = OBDal.getInstance()
+        .createCriteria(FinAccPaymentMethod.class);
     psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));
-    psdFilter.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
-        payment.getPaymentMethod()));
+    psdFilter.add(
+        Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, payment.getPaymentMethod()));
     for (FinAccPaymentMethod paymentMethod : psdFilter.list()) {
-      return payment.isReceipt() ? paymentMethod.isAutomaticDeposit() : paymentMethod
-          .isAutomaticWithdrawn();
+      return payment.isReceipt() ? paymentMethod.isAutomaticDeposit()
+          : paymentMethod.isAutomaticWithdrawn();
     }
     return false;
   }
@@ -1493,8 +1538,8 @@ public class FIN_AddPayment {
       final Session session = OBDal.getInstance().getSession();
       hql.append("SELECT distinct(p." + FIN_Payment.PROPERTY_ID + ") ");
       hql.append("FROM " + FIN_PaymentPropDetail.TABLE_NAME + " as ppd ");
-      hql.append("inner join ppd." + FIN_PaymentPropDetail.PROPERTY_FINPAYMENTSCHEDULEDETAIL
-          + " as psd ");
+      hql.append(
+          "inner join ppd." + FIN_PaymentPropDetail.PROPERTY_FINPAYMENTSCHEDULEDETAIL + " as psd ");
       hql.append("inner join psd." + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " as pd ");
       hql.append("inner join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + " as p ");
       hql.append("WHERE ppd." + FIN_PaymentPropDetail.PROPERTY_FINPAYMENTPROPOSAL + "."
@@ -1677,8 +1722,8 @@ public class FIN_AddPayment {
       FIN_PaymentScheduleDetail paymentScheduleDetail) {
     OBContext.setAdminMode();
     try {
-      OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance().createCriteria(
-          FIN_PaymentScheduleDetail.class);
+      OBCriteria<FIN_PaymentScheduleDetail> obc = OBDal.getInstance()
+          .createCriteria(FIN_PaymentScheduleDetail.class);
       obc.add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
       if (paymentScheduleDetail.getInvoicePaymentSchedule() != null) {
         obc.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE,
@@ -1698,8 +1743,8 @@ public class FIN_AddPayment {
     if (payment.getFINPaymentDetailList().size() > 0) {
       OBContext.setAdminMode();
       try {
-        OBCriteria<FIN_PaymentScheduleDetail> selectedGLItems = OBDal.getInstance().createCriteria(
-            FIN_PaymentScheduleDetail.class);
+        OBCriteria<FIN_PaymentScheduleDetail> selectedGLItems = OBDal.getInstance()
+            .createCriteria(FIN_PaymentScheduleDetail.class);
         selectedGLItems.createAlias(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, "pd");
         selectedGLItems.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS,
             payment.getFINPaymentDetailList()));
@@ -1731,8 +1776,8 @@ public class FIN_AddPayment {
     if (doubtfulDebtTotalAmount.compareTo(BigDecimal.ZERO) == 0) {
       return calculatedDoubtFulDebtAmount;
     }
-    calculatedDoubtFulDebtAmount = paymentAmount.subtract(scheduleDetailsTotalAmount
-        .subtract(doubtfulDebtTotalAmount));
+    calculatedDoubtFulDebtAmount = paymentAmount
+        .subtract(scheduleDetailsTotalAmount.subtract(doubtfulDebtTotalAmount));
     // There can not be negative Doubtful Debt Amounts. If it is negative, set it to Zero as the
     // other Payment Schedule Detail will compensate it.
     if (calculatedDoubtFulDebtAmount.signum() > 0) {
@@ -1778,9 +1823,10 @@ public class FIN_AddPayment {
    */
   public static FIN_PaymentScheduleDetail createPSD(BigDecimal amount,
       FIN_PaymentSchedule paymentSchedule, FIN_PaymentSchedule paymentScheduleInvoice,
-      FIN_PaymentDetail paymentDetails, Organization organization, BusinessPartner businessPartner) {
-    final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance().get(
-        FIN_PaymentScheduleDetail.class);
+      FIN_PaymentDetail paymentDetails, Organization organization,
+      BusinessPartner businessPartner) {
+    final FIN_PaymentScheduleDetail newPSD = OBProvider.getInstance()
+        .get(FIN_PaymentScheduleDetail.class);
     newPSD.setAmount(amount);
     if (paymentSchedule != null) {
       newPSD.setOrderPaymentSchedule(paymentSchedule);

@@ -44,8 +44,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      ProductionLine.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(ProductionLine.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
   private static String BOM_PRODUCTION = "321";
 
@@ -54,8 +54,7 @@ public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -67,8 +66,8 @@ public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
     }
     String currentTabId = vars.getStringParameter("tabId");
     if (BOM_PRODUCTION.equals(currentTabId)) {
-      final Entity productionLineEntity = ModelProvider.getInstance().getEntity(
-          ProductionLine.ENTITY_NAME);
+      final Entity productionLineEntity = ModelProvider.getInstance()
+          .getEntity(ProductionLine.ENTITY_NAME);
       final BigDecimal ZERO = new BigDecimal("0");
       final Property productionPlanProperty = productionLineEntity
           .getProperty(ProductionLine.PROPERTY_PRODUCTIONPLAN);
@@ -79,10 +78,10 @@ public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
       final BigDecimal currentMovementQty = (BigDecimal) event.getCurrentState(movementQtyProperty);
       final BigDecimal previousMovementQty = (BigDecimal) event
           .getPreviousState(movementQtyProperty);
-      OBCriteria<ProductionLine> productionLineCriteria = OBDal.getInstance().createCriteria(
-          ProductionLine.class);
-      productionLineCriteria.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN,
-          productionPlan));
+      OBCriteria<ProductionLine> productionLineCriteria = OBDal.getInstance()
+          .createCriteria(ProductionLine.class);
+      productionLineCriteria
+          .add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN, productionPlan));
       productionLineCriteria.add(Restrictions.gt(ProductionLine.PROPERTY_MOVEMENTQUANTITY, ZERO));
       if (productionLineCriteria.count() > 0 && previousMovementQty != currentMovementQty) {
         if (currentMovementQty.compareTo(ZERO) == 1 && previousMovementQty.compareTo(ZERO) != 1) {
@@ -94,8 +93,8 @@ public class ProductionLineEventHandler extends EntityPersistenceEventObserver {
             && previousMovementQty.compareTo(ZERO) != -1 && productionLineCriteria.count() == 1) {
           String language = OBContext.getOBContext().getLanguage().getLanguage();
           ConnectionProvider conn = new DalConnectionProvider(false);
-          throw new OBException(Utility.messageBD(conn, "@ProducedProductWithNegativeQty@",
-              language));
+          throw new OBException(
+              Utility.messageBD(conn, "@ProducedProductWithNegativeQty@", language));
         }
       }
     }

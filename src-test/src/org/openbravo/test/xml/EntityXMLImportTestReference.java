@@ -108,9 +108,9 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
         OBDal.getInstance().get(Organization.class, TEST_US_ORG_ID));
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -157,9 +157,9 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
     final String xml = getXML(Warehouse.class,
         OBDal.getInstance().get(Organization.class, TEST_US_ORG_ID));
     setUserContext(QA_TEST_ADMIN_USER_ID);
-    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
-        OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
-        OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
+    final ImportResult ir = DataImportService.getInstance()
+        .importDataFromXML(OBDal.getInstance().get(Client.class, QA_TEST_CLIENT_ID),
+            OBDal.getInstance().get(Organization.class, QA_TEST_ORG_ID), xml);
     if (ir.getException() != null) {
       ir.getException().printStackTrace(System.err);
       fail(ir.getException().getMessage());
@@ -207,7 +207,8 @@ public class EntityXMLImportTestReference extends XMLBaseTest {
       hql.append(" AND " + additionalWhereClause);
     }
 
-    Query<BaseOBObject> query = SessionHandler.getInstance().getSession()
+    Query<BaseOBObject> query = SessionHandler.getInstance()
+        .getSession()
         .createQuery(hql.toString(), BaseOBObject.class);
     query.setParameter("clientId", QA_TEST_CLIENT_ID);
 

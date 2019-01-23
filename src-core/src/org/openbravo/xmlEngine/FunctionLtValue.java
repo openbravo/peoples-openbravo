@@ -24,9 +24,10 @@ class FunctionLtValue extends FunctionEvaluationValue {
     super(functionTemplate, xmlDocument);
   }
 
+  @Override
   public String print() {
-    log4jFunctionLtValue.debug("Arg1: " + arg1Value.printSimple() + " Arg2: "
-        + arg2Value.printSimple());
+    log4jFunctionLtValue
+        .debug("Arg1: " + arg1Value.printSimple() + " Arg2: " + arg2Value.printSimple());
     if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
         || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
       return XmlEngine.strTextDividedByZero;
@@ -40,6 +41,7 @@ class FunctionLtValue extends FunctionEvaluationValue {
     }
   }
 
+  @Override
   public String printSimple() {
     return print();
   }

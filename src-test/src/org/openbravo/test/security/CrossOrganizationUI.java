@@ -63,8 +63,8 @@ public class CrossOrganizationUI extends OBBaseTest {
   private static final String ORDER_SALESREP_COLUMN = "2186";
   private static final String ORDER_BP_COLUMN = "2762";
 
-  private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(
-      ORDER_PRICELIST_COLUMN, ORDER_SALESREP_COLUMN, ORDER_BP_COLUMN);
+  private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays
+      .asList(ORDER_PRICELIST_COLUMN, ORDER_SALESREP_COLUMN, ORDER_BP_COLUMN);
 
   private boolean useCrossOrgColumns;
 
@@ -129,8 +129,8 @@ public class CrossOrganizationUI extends OBBaseTest {
   @SuppressWarnings("serial")
   private List<String> getComboValues(Field field) throws Exception {
     DalConnectionProvider con = new DalConnectionProvider(false);
-    HttpServletRequestMock.setRequestMockInRequestContext(new VariablesSecureAppMock(
-        new HashMap<String, String>() {
+    HttpServletRequestMock
+        .setRequestMockInRequestContext(new VariablesSecureAppMock(new HashMap<String, String>() {
           {
             // represents the organization of current record
             put("inpadOrgId", TEST_ORG_ID);

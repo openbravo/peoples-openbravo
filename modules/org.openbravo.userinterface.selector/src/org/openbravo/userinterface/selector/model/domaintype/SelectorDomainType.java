@@ -52,6 +52,7 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
 
   // Note: implementation should clean-up and close database connections or hibernate sessions. If
   // this is not done then the update.database task may hang when disabling foreign keys.
+  @Override
   public void initialize() {
 
     Session session = ModelProvider.getInstance().getSession();
@@ -116,8 +117,8 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
   @Override
   public Column getForeignKeyColumn(String columnName) {
     while (!column.isKey() && column.getDomainType() instanceof ForeignKeyDomainType) {
-      column = ((ForeignKeyDomainType) column.getDomainType()).getForeignKeyColumn(column
-          .getColumnName());
+      column = ((ForeignKeyDomainType) column.getDomainType())
+          .getForeignKeyColumn(column.getColumnName());
       tableName = column.getTable().getName();
     }
     return column;

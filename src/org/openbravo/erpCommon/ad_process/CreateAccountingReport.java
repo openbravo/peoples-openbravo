@@ -53,13 +53,15 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class CreateAccountingReport extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
+  @Override
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     String process = CreateAccountingReportData.processId(this, "UserDefinedAccountingReport");
@@ -85,8 +87,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       String strOrg = vars.getGlobalVariable("inpadOrgId", "CreateAccountingReport|orgId", "0");
       String strPeriod = vars.getGlobalVariable("inpPeriodId", "CreateAccountingReport|period", "");
       String strYear = vars.getGlobalVariable("inpYearId", "CreateAccountingReport|year", "");
-      printPage(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod,
-          strYear, process);
+      printPage(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod, strYear,
+          process);
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "CreateAccountingReport|cAcctSchemaId");
@@ -99,29 +101,33 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       printPagePopUp(response, vars, strcAcctSchemaId, strAccountingReportId, strOrg, strPeriod,
           strYear);
       // printPageClosePopUp(response, vars, strWindowPath);
-    } else
+    } else {
       pageErrorPopUp(response);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
       String strYear, String strProcessId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: process CreateAccountingReport");
+    }
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "";
-    if (vars.getLanguage().equals("en_US"))
+    if (vars.getLanguage().equals("en_US")) {
       data = ActionButtonDefaultData.select(this, strProcessId);
-    else
+    } else {
       data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+    }
     if (data != null && data.length != 0) {
       strDescription = data[0].description;
       strHelp = data[0].help;
     }
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/CreateAccountingReport").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/CreateAccountingReport")
+        .createXmlDocument();
 
     String strArray = arrayEntry(vars, strcAcctSchemaId);
 
@@ -152,16 +158,14 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
             Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
             strcAcctSchemaId, ""));
-    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure", AccountingSchemaMiscData
-        .selectC_ACCTSCHEMA_ID(this,
+    xmlDocument.setData("reportC_ACCTSCHEMA_ID", "liststructure",
+        AccountingSchemaMiscData.selectC_ACCTSCHEMA_ID(this,
             Utility.getContext(this, vars, "#AccessibleOrgTree", "CreateAccountingReport"),
             Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
             strcAcctSchemaId));
 
-    xmlDocument.setParameter(
-        "accountArray",
-        Utility.arrayDobleEntrada(
-            "arrAccount",
+    xmlDocument.setParameter("accountArray",
+        Utility.arrayDobleEntrada("arrAccount",
             CreateAccountingReportData.selectAD_Accountingrpt_Element_Double_ID(this,
                 Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
                 Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"), "")));
@@ -171,16 +175,14 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     // Utility.getContext(this, vars, "#User_Org",
     // "CreateAccountingReport"), Utility.getContext(this, vars,
     // "#User_Client", "CreateAccountingReport"), "800074"));
-    xmlDocument.setData(
-        "reportPeriod",
-        "liststructure",
+    xmlDocument.setData("reportPeriod", "liststructure",
         CreateAccountingReportData.selectCombo(this,
             Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"),
             Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
             vars.getLanguage()));
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "CreateAccountingReport", false, "",
-        "", "", false, "ad_process", strReplaceWith, false, true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "CreateAccountingReport", false, "", "",
+        "", false, "ad_process", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -192,9 +194,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
-          "CreateAccountingReport.html", classInfo.id, classInfo.type, strReplaceWith,
-          tabs.breadcrumb());
+      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "CreateAccountingReport.html",
+          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "CreateAccountingReport.html",
           strReplaceWith);
@@ -223,10 +224,12 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
   private void printPagePopUp(HttpServletResponse response, VariablesSecureApp vars,
       String strcAcctSchemaId, String strAccountingReportId, String strOrg, String strPeriod,
       String strYear) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Output: pop up CreateAccountingReport");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_process/CreateAccountingReportPopUp").createXmlDocument();
+    }
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/erpCommon/ad_process/CreateAccountingReportPopUp")
+        .createXmlDocument();
     String strPeriodFrom = "";
     int level = 0;
     String strPeriodTo = "";
@@ -246,8 +249,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     } else if (strAccountingType.equals("M")) {
       strPeriodFrom = "01/" + strPeriod + "/" + strYear;
       // log4j.debug("*************************strPeriodFrom1: "+strPeriodFrom);
-      strPeriodTo = CreateAccountingReportData
-          .lastDay(this, strPeriodFrom, vars.getSqlDateFormat());
+      strPeriodTo = CreateAccountingReportData.lastDay(this, strPeriodFrom,
+          vars.getSqlDateFormat());
       strPeriodTo = DateTimeData.nDaysAfter(this, strPeriodTo, "1");
       // log4j.debug("*************************strPeriodTo1: "+strPeriodTo);
     } else {
@@ -297,8 +300,9 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       for (int i = 0; i < data.length; i++) {
         result += "new Array(\"" + data[i].id + "\",\"" + data[i].filteredbyorganization + "\",\""
             + data[i].temporaryfiltertype + "\")";
-        if (i < data.length - 1)
+        if (i < data.length - 1) {
           result += ",\n";
+        }
       }
       result += ");";
       CreateAccountingReportData[] dataPeriod = CreateAccountingReportData.selectCombo(this,
@@ -312,8 +316,9 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
         for (int j = 0; j < dataPeriod.length; j++) {
           result += "new Array(\"" + dataPeriod[j].value + "\", \"" + dataPeriod[j].id + "\", \""
               + dataPeriod[j].name + "\")";
-          if (j < dataPeriod.length - 1)
+          if (j < dataPeriod.length - 1) {
             result += ",\n";
+          }
         }
         result += ");";
       }
@@ -329,8 +334,9 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     for (int i = 0; i < dataOrg.length; i++) {
       treeOrg.append(",");
       treeOrg.append(dataOrg[i].id);
-      if (dataOrg[i].issummary.equals("Y"))
+      if (dataOrg[i].issummary.equals("Y")) {
         treeOrg(vars, dataOrg[i].id, treeOrg);
+      }
     }
     return;
   }
@@ -339,34 +345,44 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       String strcAcctSchemaId, String strAccountingReportId, String strPeriodFrom,
       String strPeriodTo, String strOrg, int level, String strParent, String strPeriod)
       throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strAccountingReportId: " + strAccountingReportId);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strPeriodFrom: " + strPeriodFrom);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strPeriodTo: " + strPeriodTo);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strOrg: " + strOrg);
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************level: " + String.valueOf(level));
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************User_Client: "
           + Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"));
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************#User_Org: "
           + Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"));
-    if (log4j.isDebugEnabled())
+    }
+    if (log4j.isDebugEnabled()) {
       log4j.debug("Ouput: child tree data");
+    }
     String strAccountId = CreateAccountingReportData.selectAccounting(this, strAccountingReportId);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************strAccountId: " + strAccountId);
+    }
 
-    String initialBalance = CreateAccountingReportData
-        .isInitialBalance(this, strAccountingReportId);
-    if (initialBalance.equals(""))
+    String initialBalance = CreateAccountingReportData.isInitialBalance(this,
+        strAccountingReportId);
+    if (initialBalance.equals("")) {
       initialBalance = "N";
-    String dateInitialYear = CreateAccountingReportData.dateInitialYear(this,
-        strAccountingReportId, strPeriod);
+    }
+    String dateInitialYear = CreateAccountingReportData.dateInitialYear(this, strAccountingReportId,
+        strPeriod);
     dateInitialYear = CreateAccountingReportData.selectFormat(this, dateInitialYear,
         vars.getSqlDateFormat());
     CreateAccountingReportData[] data;
@@ -387,12 +403,14 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
           Utility.stringList(strOrg), inAccountIds, strPeriodFrom, strPeriodTo, strcAcctSchemaId,
           strAccountingReportId);
     }
-    if (data == null || data.length == 0)
+    if (data == null || data.length == 0) {
       data = CreateAccountingReportData.set();
+    }
     vectorArray.addElement(data[0]);
-    if (log4j.isDebugEnabled())
+    if (log4j.isDebugEnabled()) {
       log4j.debug("**********************data[0]*********************: " + data[0].name + "  "
           + data[0].total);
+    }
     CreateAccountingReportData[] dataAux = CreateAccountingReportData.selectChild(this,
         Utility.getContext(this, vars, "#User_Client", "CreateAccountingReport"),
         Utility.getContext(this, vars, "#User_Org", "CreateAccountingReport"), data[0].id,
@@ -413,8 +431,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     for (int i = data.length - 1; i >= 0; i--) {
       if (data[i].issummary.equals("Y")) {
         for (int j = i + 1; j < data.length; j++) {
-          if (Integer.valueOf(data[j].levelAccount).intValue() > Integer.valueOf(
-              data[i].levelAccount).intValue()
+          if (Integer.valueOf(data[j].levelAccount)
+              .intValue() > Integer.valueOf(data[i].levelAccount).intValue()
               && data[j].parent.equals(data[i].id)) {
             String total = data[j].total;
             count = count.add(new BigDecimal(total));
@@ -431,8 +449,9 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
       throws ServletException {
     ArrayList<Object> new_a = new ArrayList<Object>();
     for (int i = 0; i < data.length; i++) {
-      if (data[i].isshown.equals("Y"))
+      if (data[i].isshown.equals("Y")) {
         new_a.add(data[i]);
+      }
     }
     CreateAccountingReportData[] newData = new CreateAccountingReportData[new_a.size()];
     new_a.toArray(newData);
@@ -461,6 +480,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     return accounts;
   }
 
+  @Override
   public String getServletInfo() {
     return "Servlet CreateAccountingReport";
   } // end of getServletInfo() method

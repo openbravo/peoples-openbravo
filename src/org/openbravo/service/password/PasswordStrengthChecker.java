@@ -72,7 +72,7 @@ public class PasswordStrengthChecker {
   }
 
   private boolean hasMinimumLength(String password) {
-     return password.length() >= MINIMUM_LENGTH;
+    return password.length() >= MINIMUM_LENGTH;
   }
 
   private PasswordStrengthCriterion getUppercaseCriterion() {

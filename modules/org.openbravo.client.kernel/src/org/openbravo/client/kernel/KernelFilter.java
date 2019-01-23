@@ -40,13 +40,16 @@ import org.openbravo.dal.core.ThreadHandler;
 
 public class KernelFilter implements Filter {
 
+  @Override
   public void init(FilterConfig fConfig) throws ServletException {
     RequestContext.setServletContext(fConfig.getServletContext());
   }
 
+  @Override
   public void destroy() {
   }
 
+  @Override
   public void doFilter(final ServletRequest request, final ServletResponse response,
       final FilterChain chain) throws IOException, ServletException {
     final ThreadHandler dth = new ThreadHandler() {

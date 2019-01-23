@@ -32,8 +32,8 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 
 public class BusinessPartnerEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(
-      BusinessPartner.ENTITY_NAME) };
+  private static Entity[] entities = {
+      ModelProvider.getInstance().getEntity(BusinessPartner.ENTITY_NAME) };
   protected Logger logger = LogManager.getLogger();
 
   @Override
@@ -64,8 +64,9 @@ public class BusinessPartnerEventHandler extends EntityPersistenceEventObserver 
       final Entity bpEntity = ModelProvider.getInstance().getEntity(BusinessPartner.ENTITY_NAME);
       final Property bpCurrencyProperty = bpEntity.getProperty(BusinessPartner.PROPERTY_CURRENCY);
 
-      event.setCurrentState(bpCurrencyProperty, bp.getPriceList() != null ? bp.getPriceList()
-          .getCurrency() : bp.getPurchasePricelist().getCurrency());
+      event.setCurrentState(bpCurrencyProperty,
+          bp.getPriceList() != null ? bp.getPriceList().getCurrency()
+              : bp.getPurchasePricelist().getCurrency());
     }
   }
 }

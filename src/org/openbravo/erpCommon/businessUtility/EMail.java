@@ -95,18 +95,20 @@ public class EMail {
   }
 
   public void setEMailUser(String username, String password) {
-    if (username == null || password == null)
+    if (username == null || password == null) {
       log4j.warn("setEMailUser ignored - " + username + "/" + password);
-    else {
+    } else {
       g_auth = new EMailAuthenticator(username, password);
-      if (g_auth == null)
+      if (g_auth == null) {
         g_valid = false;
+      }
     }
   }
 
   private void setEMailUser() {
-    if (g_auth != null)
+    if (g_auth != null) {
       return;
+    }
     String from = g_from;
     String email = g_vars.getSessionValue("#User_EMail");
     String usr = g_vars.getSessionValue("#User_EMailUser");
@@ -118,8 +120,9 @@ public class EMail {
     email = g_vars.getSessionValue("#Request_EMail");
     usr = g_vars.getSessionValue("#Request_EMailUser");
     pwd = g_vars.getSessionValue("#Request_EMailUserPw");
-    if (from.equals(email) && usr.length() > 0 && pwd.length() > 0)
+    if (from.equals(email) && usr.length() > 0 && pwd.length() > 0) {
       setEMailUser(usr, pwd);
+    }
   }
 
   public String send() {
@@ -131,10 +134,12 @@ public class EMail {
     props.put("mail.host", g_smtpHost);
 
     setEMailUser();
-    if (g_auth != null)
+    if (g_auth != null) {
       log4j.debug("g_auth is not null, setting prop auth to true");
-    if (g_auth != null)
+    }
+    if (g_auth != null) {
       props.put("mail.smtp.auth", "true");
+    }
 
     Session session = Session.getInstance(props, g_auth);
 
@@ -147,18 +152,22 @@ public class EMail {
       g_smtpMsg.setFrom(new InternetAddress(g_from));
 
       InternetAddress[] address = getTos();
-      if (address.length == 1)
+      if (address.length == 1) {
         g_smtpMsg.setRecipient(Message.RecipientType.TO, address[0]);
-      else
+      } else {
         g_smtpMsg.setRecipients(Message.RecipientType.TO, address);
+      }
       address = getCcs();
-      if (address != null && address.length > 0)
+      if (address != null && address.length > 0) {
         g_smtpMsg.setRecipients(Message.RecipientType.CC, address);
+      }
       address = getBccs();
-      if (address != null && address.length > 0)
+      if (address != null && address.length > 0) {
         g_smtpMsg.setRecipients(Message.RecipientType.BCC, address);
-      if (g_replyTo != null)
+      }
+      if (g_replyTo != null) {
         g_smtpMsg.setReplyTo(new Address[] { g_replyTo });
+      }
       g_smtpMsg.setSentDate(new java.util.Date());
       g_smtpMsg.setHeader("Comments", "CompiereMail");
       g_smtpMsg.setAllow8bitMIME(true);
@@ -167,17 +176,20 @@ public class EMail {
       setContent();
       Transport t = session.getTransport("smtp");
       g_smtpMsg.saveChanges();
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("send() - transport obtained: " + t.toString());
+      }
       String username = g_auth.getPasswordAuthentication().getUserName();
       String password = g_auth.getPasswordAuthentication().getPassword();
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("send() - username and password set, username: " + username + ", password: "
             + password);
+      }
       t.connect(g_smtpHost, username, password);
-      if (log4j.isDebugEnabled())
-        log4j.debug("send() - transport connected: " + t.isConnected()
-            + ", now to try and send....");
+      if (log4j.isDebugEnabled()) {
+        log4j.debug(
+            "send() - transport connected: " + t.isConnected() + ", now to try and send....");
+      }
       t.sendMessage(g_smtpMsg, g_smtpMsg.getAllRecipients());
       t.close();
     } catch (MessagingException mex) {
@@ -223,10 +235,11 @@ public class EMail {
             }
           }
         }
-        if (ex instanceof MessagingException)
+        if (ex instanceof MessagingException) {
           ex = ((MessagingException) ex).getNextException();
-        else
+        } else {
           ex = null;
+        }
       } while (ex != null);
     } catch (Exception e) {
       log4j.error("send" + e);
@@ -266,29 +279,33 @@ public class EMail {
 
     // Simple Message
     if (g_attachments == null || g_attachments.size() == 0) {
-      if (g_messageHTML == null || g_messageHTML.length() == 0)
+      if (g_messageHTML == null || g_messageHTML.length() == 0) {
         g_smtpMsg.setContent(getMessageCRLF(), "text/plain; charset=UTF-8");
-      else
-        g_smtpMsg.setDataHandler(new DataHandler(new ByteArrayDataSource(g_messageHTML,
-            "text/html; charset=UTF-8")));
+      } else {
+        g_smtpMsg.setDataHandler(
+            new DataHandler(new ByteArrayDataSource(g_messageHTML, "text/html; charset=UTF-8")));
+      }
 
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("setContent(simple) " + getSubject());
+      }
     } else { // Multi part message
       // First Part - Message
       MimeBodyPart mbp_1 = new MimeBodyPart();
       mbp_1.setText("");
-      if (g_messageHTML == null || g_messageHTML.length() == 0)
+      if (g_messageHTML == null || g_messageHTML.length() == 0) {
         mbp_1.setContent(getMessageCRLF(), "text/plain; charset=UTF-8");
-      else
-        mbp_1.setDataHandler(new DataHandler(new ByteArrayDataSource(g_messageHTML,
-            "text/html; charset=UTF-8")));
+      } else {
+        mbp_1.setDataHandler(
+            new DataHandler(new ByteArrayDataSource(g_messageHTML, "text/html; charset=UTF-8")));
+      }
 
       // Create Multipart and its parts to it
       Multipart mp = new MimeMultipart();
       mp.addBodyPart(mbp_1);
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("setContent (multi) " + getSubject() + " - " + mbp_1);
+      }
 
       // for all attachments
       for (int i = 0; i < g_attachments.size(); i++) {
@@ -296,18 +313,18 @@ public class EMail {
         DataSource ds = null;
         if (attachment instanceof File) {
           File file = (File) attachment;
-          if (file.exists())
+          if (file.exists()) {
             ds = new FileDataSource(file);
-          else {
+          } else {
             log4j.error("setContent - File does not exist: " + file);
             continue;
           }
         } else if (attachment instanceof URL) {
           URL url = (URL) attachment;
           ds = new URLDataSource(url);
-        } else if (attachment instanceof DataSource)
+        } else if (attachment instanceof DataSource) {
           ds = (DataSource) attachment;
-        else {
+        } else {
           log4j.error("setContent - Attachement type unknown: " + attachment);
           continue;
         }
@@ -315,8 +332,9 @@ public class EMail {
         MimeBodyPart mbp_2 = new MimeBodyPart();
         mbp_2.setDataHandler(new DataHandler(ds));
         mbp_2.setFileName(ds.getName());
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
           log4j.debug("setContent - Added Attachment " + ds.getName() + " - " + mbp_2);
+        }
         mp.addBodyPart(mbp_2);
       }
 
@@ -326,19 +344,22 @@ public class EMail {
   } // setContent*/
 
   public void setMessageHTML(String html) {
-    if (html == null || html.length() == 0)
+    if (html == null || html.length() == 0) {
       g_valid = false;
-    else {
+    } else {
       g_messageHTML = html;
-      if (!g_messageHTML.endsWith("\n"))
+      if (!g_messageHTML.endsWith("\n")) {
         g_messageHTML += "\n";
+      }
     }
   }
 
   public void setMessageHTML(String subject, String message) {
     g_subject = subject;
-    StringBuffer sb = new StringBuffer("<html>\n").append("<head>\n").append("<title>\n")
-        .append(subject + "\n").append("</title>\n");
+    StringBuffer sb = new StringBuffer("<html>\n").append("<head>\n")
+        .append("<title>\n")
+        .append(subject + "\n")
+        .append("</title>\n");
     sb.append("</head>\n");
     sb.append("<body>\n");
     sb.append("<H2>").append(subject).append("</H2>\n");
@@ -372,8 +393,9 @@ public class EMail {
     }
     try {
       InternetAddress ia = new InternetAddress(newTo);
-      if (g_to == null)
+      if (g_to == null) {
         g_to = new ArrayList<InternetAddress>();
+      }
       g_to.add(ia);
     } catch (Exception e) {
       log4j.error("addTo - " + e.toString());
@@ -384,23 +406,26 @@ public class EMail {
   }
 
   public InternetAddress getTo() {
-    if (g_to == null || g_to.size() == 0)
+    if (g_to == null || g_to.size() == 0) {
       return null;
+    }
     InternetAddress ia = g_to.get(0);
     return ia;
   }
 
   public InternetAddress[] getTos() {
-    if (g_to == null || g_to.size() == 0)
+    if (g_to == null || g_to.size() == 0) {
       return null;
+    }
     InternetAddress[] ias = new InternetAddress[g_to.size()];
     g_to.toArray(ias);
     return ias;
   }
 
   public boolean addCc(String newCc) {
-    if (newCc == null || newCc.length() == 0)
+    if (newCc == null || newCc.length() == 0) {
       return false;
+    }
     InternetAddress ia = null;
     try {
       ia = new InternetAddress(newCc);
@@ -408,23 +433,26 @@ public class EMail {
       log4j.error("addCc" + e);
       return false;
     }
-    if (g_cc == null)
+    if (g_cc == null) {
       g_cc = new ArrayList<InternetAddress>();
+    }
     g_cc.add(ia);
     return true;
   }
 
   public InternetAddress[] getCcs() {
-    if (g_cc == null || g_cc.size() == 0)
+    if (g_cc == null || g_cc.size() == 0) {
       return null;
+    }
     InternetAddress[] ias = new InternetAddress[g_cc.size()];
     g_cc.toArray(ias);
     return ias;
   }
 
   public boolean addBcc(String newBcc) {
-    if (newBcc == null || newBcc.length() == 0)
+    if (newBcc == null || newBcc.length() == 0) {
       return false;
+    }
     InternetAddress ia = null;
     try {
       ia = new InternetAddress(newBcc);
@@ -432,23 +460,26 @@ public class EMail {
       log4j.error("addBcc" + e);
       return false;
     }
-    if (g_bcc == null)
+    if (g_bcc == null) {
       g_bcc = new ArrayList<InternetAddress>();
+    }
     g_bcc.add(ia);
     return true;
   }
 
   public InternetAddress[] getBccs() {
-    if (g_bcc == null || g_bcc.size() == 0)
+    if (g_bcc == null || g_bcc.size() == 0) {
       return null;
+    }
     InternetAddress[] ias = new InternetAddress[g_bcc.size()];
     g_bcc.toArray(ias);
     return ias;
   }
 
   public boolean setReplyTo(String newTo) {
-    if (newTo == null || newTo.length() == 0)
+    if (newTo == null || newTo.length() == 0) {
       return false;
+    }
     InternetAddress ia = null;
     try {
       ia = new InternetAddress(newTo);
@@ -465,10 +496,11 @@ public class EMail {
   }
 
   public void setSubject(String newSubject) {
-    if (newSubject == null || newSubject.length() == 0)
+    if (newSubject == null || newSubject.length() == 0) {
       g_valid = false;
-    else
+    } else {
       g_subject = newSubject;
+    }
   }
 
   public String getSubject() {
@@ -476,12 +508,13 @@ public class EMail {
   }
 
   public void setMessage(String newMessage) {
-    if (newMessage == null || newMessage.length() == 0)
+    if (newMessage == null || newMessage.length() == 0) {
       g_valid = false;
-    else {
+    } else {
       g_message = newMessage;
-      if (!g_message.endsWith("\n"))
+      if (!g_message.endsWith("\n")) {
         g_message += "\n";
+      }
     }
   }
 
@@ -490,29 +523,33 @@ public class EMail {
   }
 
   public String getMessageCRLF() {
-    if (g_message == null)
+    if (g_message == null) {
       return "";
+    }
     char[] chars = g_message.toCharArray();
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < chars.length; i++) {
       char c = chars[i];
       if (c == '\n') {
         int previous = i - 1;
-        if (previous >= 0 && chars[previous] == '\r')
+        if (previous >= 0 && chars[previous] == '\r') {
           sb.append(c);
-        else
+        } else {
           sb.append("\r\n");
-      } else
+        }
+      } else {
         sb.append(c);
+      }
     }
     return sb.toString();
   }
 
   public void setSmtpHost(String newSmtpHost) {
-    if (newSmtpHost == null || newSmtpHost.length() == 0)
+    if (newSmtpHost == null || newSmtpHost.length() == 0) {
       g_valid = false;
-    else
+    } else {
       g_smtpHost = newSmtpHost;
+    }
   }
 
   public String getSmtpHost() {
@@ -528,18 +565,22 @@ public class EMail {
   }
 
   public void addAttachment(File file) {
-    if (file == null)
+    if (file == null) {
       return;
-    if (g_attachments == null)
+    }
+    if (g_attachments == null) {
       g_attachments = new ArrayList<Object>();
+    }
     g_attachments.add(file);
   }
 
   public void addAttachment(URL url) {
-    if (url == null)
+    if (url == null) {
       return;
-    if (g_attachments == null)
+    }
+    if (g_attachments == null) {
       g_attachments = new ArrayList<Object>();
+    }
     g_attachments.add(url);
   }
 
@@ -549,10 +590,12 @@ public class EMail {
   }
 
   public void addAttachment(DataSource dataSource) {
-    if (dataSource == null)
+    if (dataSource == null) {
       return;
-    if (g_attachments == null)
+    }
+    if (g_attachments == null) {
       g_attachments = new ArrayList<Object>();
+    }
     g_attachments.add(dataSource);
   }
 }

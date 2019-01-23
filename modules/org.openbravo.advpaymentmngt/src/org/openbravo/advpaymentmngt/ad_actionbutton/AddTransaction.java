@@ -81,6 +81,7 @@ public class AddTransaction extends HttpSecureAppServlet {
   private AdvPaymentMngtDao dao;
   private static final Logger log = LogManager.getLogger();
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -98,8 +99,10 @@ public class AddTransaction extends HttpSecureAppServlet {
           strTabId))
           || !(Utility.isElementInList(
               Utility.getContext(this, vars, "#User_Client", strWindowId, accesslevel),
-              vars.getClient()) && Utility.isElementInList(
-              Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel), strOrgId))) {
+              vars.getClient())
+              && Utility.isElementInList(
+                  Utility.getContext(this, vars, "#User_Org", strWindowId, accesslevel),
+                  strOrgId))) {
         OBError myError = Utility.translateError(this, vars, vars.getLanguage(),
             Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
         vars.setMessage(strTabId, myError);
@@ -215,17 +218,17 @@ public class AddTransaction extends HttpSecureAppServlet {
             description = p.getDescription().replace("\n", ". ");
           }
 
-          FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(
-              p.getOrganization(),
+          FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(p.getOrganization(),
               OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId),
-              TransactionsDao.getTransactionMaxLineNo(OBDal.getInstance().get(
-                  FIN_FinancialAccount.class, strFinancialAccountId)) + 10, p, description,
-              FIN_Utility.getDate(strTransactionDate), null, p.isReceipt() ? "RDNC" : "PWNC",
-              depositAmt, paymentAmt, null, null, null, p.isReceipt() ? "BPD" : "BPW",
-              FIN_Utility.getDate(strTransactionDate), p.getCurrency(),
-              p.getFinancialTransactionConvertRate(), p.getAmount());
+              TransactionsDao.getTransactionMaxLineNo(
+                  OBDal.getInstance().get(FIN_FinancialAccount.class, strFinancialAccountId)) + 10,
+              p, description, FIN_Utility.getDate(strTransactionDate), null,
+              p.isReceipt() ? "RDNC" : "PWNC", depositAmt, paymentAmt, null, null, null,
+              p.isReceipt() ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate),
+              p.getCurrency(), p.getFinancialTransactionConvertRate(), p.getAmount());
           OBError processTransactionError = processTransaction(vars, this, "P", finTrans);
-          if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
+          if (processTransactionError != null
+              && "Error".equals(processTransactionError.getType())) {
             throw new OBException(processTransactionError.getMessage());
           }
           if (!"".equals(strFinBankStatementLineId)) {
@@ -244,8 +247,8 @@ public class AddTransaction extends HttpSecureAppServlet {
             .get(Organization.class, strElement_OT);
 
         final String strElement_BP = vars.getStringParameter("inpCBPartnerId", IsIDFilter.instance);
-        final BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
-            strElement_BP);
+        final BusinessPartner businessPartner = OBDal.getInstance()
+            .get(BusinessPartner.class, strElement_BP);
 
         final String strElement_PR = vars.getStringParameter("inpMProductId", IsIDFilter.instance);
         final Product product = OBDal.getInstance().get(Product.class, strElement_PR);
@@ -276,19 +279,20 @@ public class AddTransaction extends HttpSecureAppServlet {
         BigDecimal glItemDepositAmt = new BigDecimal(strGLItemDepositAmount);
         BigDecimal glItemPaymentAmt = new BigDecimal(strGLItemPaymentAmount);
 
-        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            strFinancialAccountId);
+        FIN_FinancialAccount account = OBDal.getInstance()
+            .get(FIN_FinancialAccount.class, strFinancialAccountId);
         GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
-        String description = strGLItemDescription.isEmpty() ? Utility.messageBD(this,
-            "APRM_GLItem", vars.getLanguage()) + ": " + glItem.getName() : strGLItemDescription;
+        String description = strGLItemDescription.isEmpty()
+            ? Utility.messageBD(this, "APRM_GLItem", vars.getLanguage()) + ": " + glItem.getName()
+            : strGLItemDescription;
         boolean isReceipt = (glItemDepositAmt.compareTo(glItemPaymentAmt) >= 0);
 
         // Currency, Organization, paymentDate,
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(organization, account,
-            TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description, FIN_Utility
-                .getDate(strTransactionDate), glItem, isReceipt ? "RDNC" : "PWNC",
-            glItemDepositAmt, glItemPaymentAmt, project, campaign, activity, isReceipt ? "BPD"
-                : "BPW", FIN_Utility.getDate(strTransactionDate), null, null, null,
+            TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
+            FIN_Utility.getDate(strTransactionDate), glItem, isReceipt ? "RDNC" : "PWNC",
+            glItemDepositAmt, glItemPaymentAmt, project, campaign, activity,
+            isReceipt ? "BPD" : "BPW", FIN_Utility.getDate(strTransactionDate), null, null, null,
             businessPartner, product, salesRegion, user1, user2, costcenter);
         OBError processTransactionError = processTransaction(vars, this, "P", finTrans);
         if (processTransactionError != null && "Error".equals(processTransactionError.getType())) {
@@ -302,11 +306,12 @@ public class AddTransaction extends HttpSecureAppServlet {
       } else if (strTransactionType.equals("F")) { // Fee
         BigDecimal feeDepositAmt = new BigDecimal(strFeeDepositAmount);
         BigDecimal feePaymentAmt = new BigDecimal(strFeePaymentAmount);
-        FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-            strFinancialAccountId);
+        FIN_FinancialAccount account = OBDal.getInstance()
+            .get(FIN_FinancialAccount.class, strFinancialAccountId);
         boolean isReceipt = (feeDepositAmt.compareTo(feePaymentAmt) >= 0);
-        String description = strFeeDescription.isEmpty() ? Utility.messageBD(this, "APRM_BankFee",
-            vars.getLanguage()) : strFeeDescription;
+        String description = strFeeDescription.isEmpty()
+            ? Utility.messageBD(this, "APRM_BankFee", vars.getLanguage())
+            : strFeeDescription;
 
         FIN_FinaccTransaction finTrans = dao.getNewFinancialTransaction(account.getOrganization(),
             account, TransactionsDao.getTransactionMaxLineNo(account) + 10, null, description,
@@ -330,12 +335,13 @@ public class AddTransaction extends HttpSecureAppServlet {
       msg.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), strMessage));
       vars.setMessage(strTabId, msg);
       msg = null;
-      if ("".equals(strFinBankStatementLineId))
+      if ("".equals(strFinBankStatementLineId)) {
         printPageClosePopUpAndRefreshParent(response, vars);
-      else {
+      } else {
         log4j.debug("Output: PopUp Response");
-        final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-            "org/openbravo/base/secureApp/PopUp_Close_Refresh").createXmlDocument();
+        final XmlDocument xmlDocument = xmlEngine
+            .readXmlTemplate("org/openbravo/base/secureApp/PopUp_Close_Refresh")
+            .createXmlDocument();
         xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
         response.setContentType("text/html; charset=UTF-8");
         final PrintWriter out = response.getWriter();
@@ -359,8 +365,9 @@ public class AddTransaction extends HttpSecureAppServlet {
 
     log4j.debug("Output: Add Transaction pressed on Financial Account || Transaction tab");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddTransaction").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/AddTransaction")
+        .createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -380,9 +387,9 @@ public class AddTransaction extends HttpSecureAppServlet {
     try {
       String Document_Type_AddTransaction_Reference_ID = "40B84CF78FC9435790887846CCDAE875";
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          Document_Type_AddTransaction_Reference_ID, "", Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "AddTransaction"), Utility.getContext(this, vars,
-              "#User_Client", "AddTransaction"), 0);
+          Document_Type_AddTransaction_Reference_ID, "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AddTransaction"),
+          Utility.getContext(this, vars, "#User_Client", "AddTransaction"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "AddTransaction", "");
       xmlDocument.setData("reportDocumentType", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -391,9 +398,10 @@ public class AddTransaction extends HttpSecureAppServlet {
     }
     boolean isReceipt = true;
     if (!"".equals(strBankStatementLineId)) {
-      FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
-          strBankStatementLineId);
-      String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+      FIN_BankStatementLine bsl = OBDal.getInstance()
+          .get(FIN_BankStatementLine.class, strBankStatementLineId);
+      String dateFormat = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       SimpleDateFormat dateFormater = new SimpleDateFormat(dateFormat);
       // Default signum based on amount
@@ -411,10 +419,11 @@ public class AddTransaction extends HttpSecureAppServlet {
       xmlDocument.setParameter("depositAmountGLItem", bsl.getCramount().toString());
       xmlDocument.setParameter("paymentAmountGLItem", bsl.getDramount().toString());
       xmlDocument.setParameter("mainDate", dateFormater.format(bsl.getTransactionDate()));
-      String bslDescription = (!"".equals(bsl.getDescription()) && bsl.getDescription() != null) ? bsl
-          .getDescription() : "";
-      String strDescription = (!"".equals(bsl.getBpartnername()) && bsl.getBpartnername() != null) ? bsl
-          .getBpartnername() + "\n" + bslDescription
+      String bslDescription = (!"".equals(bsl.getDescription()) && bsl.getDescription() != null)
+          ? bsl.getDescription()
+          : "";
+      String strDescription = (!"".equals(bsl.getBpartnername()) && bsl.getBpartnername() != null)
+          ? bsl.getBpartnername() + "\n" + bslDescription
           : bslDescription;
       xmlDocument.setParameter("GLItemDescription", strDescription);
       xmlDocument.setParameter("FeeDescription", strDescription);
@@ -442,9 +451,9 @@ public class AddTransaction extends HttpSecureAppServlet {
     try {
       String Transaction_Type_AddTransaction_Reference_ID = "C1B4345A1F8841C2B1ADD403CA733D75";
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          Transaction_Type_AddTransaction_Reference_ID, "", Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "AddTransaction"), Utility.getContext(this, vars,
-              "#User_Client", "AddTransaction"), 0);
+          Transaction_Type_AddTransaction_Reference_ID, "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "AddTransaction"),
+          Utility.getContext(this, vars, "#User_Client", "AddTransaction"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "AddTransaction", "");
       xmlDocument.setData("reportTransactionType", "liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -457,30 +466,44 @@ public class AddTransaction extends HttpSecureAppServlet {
     final String strCentrally = Utility.getContext(this, vars,
         DimensionDisplayUtility.IsAcctDimCentrally, strWindowId);
 
-    final String strElement_OT = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Organization,
-            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_BP = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_BPartner,
-            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_PR = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Product,
-            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_PJ = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_Project,
-            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_OT = Utility.getContext(this, vars,
+        DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+            DimensionDisplayUtility.DIM_Organization, AcctServer.DOCTYPE_FinAccTransaction,
+            DimensionDisplayUtility.DIM_Header),
+        strWindowId);
+    final String strElement_BP = Utility.getContext(this, vars,
+        DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+            DimensionDisplayUtility.DIM_BPartner, AcctServer.DOCTYPE_FinAccTransaction,
+            DimensionDisplayUtility.DIM_Header),
+        strWindowId);
+    final String strElement_PR = Utility.getContext(this, vars,
+        DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+            DimensionDisplayUtility.DIM_Product, AcctServer.DOCTYPE_FinAccTransaction,
+            DimensionDisplayUtility.DIM_Header),
+        strWindowId);
+    final String strElement_PJ = Utility.getContext(this, vars,
+        DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+            DimensionDisplayUtility.DIM_Project, AcctServer.DOCTYPE_FinAccTransaction,
+            DimensionDisplayUtility.DIM_Header),
+        strWindowId);
     final String strElement_AY = Utility.getContext(this, vars, "$Element_AY", strWindowId);
     final String strElement_SR = Utility.getContext(this, vars, "$Element_SR", strWindowId);
     final String strElement_MC = Utility.getContext(this, vars, "$Element_MC", strWindowId);
-    final String strElement_U1 = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User1,
-            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_U2 = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_User2,
-            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
-    final String strElement_CC = Utility.getContext(this, vars, DimensionDisplayUtility
-        .displayAcctDimensions(strCentrally, DimensionDisplayUtility.DIM_CostCenter,
-            AcctServer.DOCTYPE_FinAccTransaction, DimensionDisplayUtility.DIM_Header), strWindowId);
+    final String strElement_U1 = Utility.getContext(this, vars,
+        DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+            DimensionDisplayUtility.DIM_User1, AcctServer.DOCTYPE_FinAccTransaction,
+            DimensionDisplayUtility.DIM_Header),
+        strWindowId);
+    final String strElement_U2 = Utility.getContext(this, vars,
+        DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+            DimensionDisplayUtility.DIM_User2, AcctServer.DOCTYPE_FinAccTransaction,
+            DimensionDisplayUtility.DIM_Header),
+        strWindowId);
+    final String strElement_CC = Utility.getContext(this, vars,
+        DimensionDisplayUtility.displayAcctDimensions(strCentrally,
+            DimensionDisplayUtility.DIM_CostCenter, AcctServer.DOCTYPE_FinAccTransaction,
+            DimensionDisplayUtility.DIM_Header),
+        strWindowId);
 
     xmlDocument.setParameter("strElement_OT", strElement_OT);
     xmlDocument.setParameter("strElement_BP", strElement_BP);
@@ -507,8 +530,9 @@ public class AddTransaction extends HttpSecureAppServlet {
 
     log4j.debug("Output: Grid with transactions not reconciled");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/advpaymentmngt/ad_actionbutton/AddTransactionGrid").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine
+        .readXmlTemplate("org/openbravo/advpaymentmngt/ad_actionbutton/AddTransactionGrid")
+        .createXmlDocument();
 
     OBContext.setAdminMode();
     try {
@@ -517,8 +541,8 @@ public class AddTransaction extends HttpSecureAppServlet {
           && "Y".equals(closeAutomatically)) {
 
         FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentWithTransaction);
-        OBCriteria<FIN_FinaccTransaction> obcTrans = OBDal.getInstance().createCriteria(
-            FIN_FinaccTransaction.class);
+        OBCriteria<FIN_FinaccTransaction> obcTrans = OBDal.getInstance()
+            .createCriteria(FIN_FinaccTransaction.class);
         obcTrans.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
         FIN_FinaccTransaction finTrans = obcTrans.list().get(0);
 
@@ -528,8 +552,8 @@ public class AddTransaction extends HttpSecureAppServlet {
       OBContext.restorePreviousMode();
     }
 
-    FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
-        strFinancialAccountId);
+    FIN_FinancialAccount account = OBDal.getInstance()
+        .get(FIN_FinancialAccount.class, strFinancialAccountId);
 
     // Payments not deposited/withdrawal
     // Not stored in Fin_Finacc_Transaction table
@@ -584,8 +608,8 @@ public class AddTransaction extends HttpSecureAppServlet {
       vars.setSessionValue("AddTransaction|ShowJSMessage", "Y");
       vars.setSessionValue("AddTransaction|SelectedTransaction", finTrans.getId());
     } else {
-      FIN_Reconciliation reconciliation = TransactionsDao.getLastReconciliation(
-          finTrans.getAccount(), "N");
+      FIN_Reconciliation reconciliation = TransactionsDao
+          .getLastReconciliation(finTrans.getAccount(), "N");
       bsline.setMatchingtype("AD");
       bsline.setFinancialAccountTransaction(finTrans);
       if (finTrans.getFinPayment() != null) {
@@ -627,6 +651,7 @@ public class AddTransaction extends HttpSecureAppServlet {
     return myMessage;
   }
 
+  @Override
   public String getServletInfo() {
     return "This servlet adds transaction for a financial account";
   }

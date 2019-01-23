@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
@@ -42,8 +44,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Test cases to ensure correct concurrent initialization of ADCS.
@@ -137,12 +137,10 @@ public class ADCSInitialization extends WeldBaseTest {
     private void eagerADCSInitialization() throws Exception {
       log.info("Starting eager initialization");
 
-      Query<String> queryTabs = OBDal
-          .getInstance()
+      Query<String> queryTabs = OBDal.getInstance()
           .getSession()
-          .createQuery(
-              "select t.id from ADTab t where t.active=true order by t.window.id, t.id "
-                  + (threadNum % 2 == 0 ? "asc" : "desc"), String.class);
+          .createQuery("select t.id from ADTab t where t.active=true order by t.window.id, t.id "
+              + (threadNum % 2 == 0 ? "asc" : "desc"), String.class);
 
       List<String> tabs = queryTabs.list();
       long t = System.currentTimeMillis();
@@ -156,8 +154,7 @@ public class ADCSInitialization extends WeldBaseTest {
       }
       log.info("Intialized all tabs in {} ms", System.currentTimeMillis() - t);
 
-      Query<String> queryCombo = OBDal
-          .getInstance()
+      Query<String> queryCombo = OBDal.getInstance()
           .getSession()
           .createQuery(
               "select f.id from ADField f where f.active=true and f.column.reference.id in ('18','17','19')",

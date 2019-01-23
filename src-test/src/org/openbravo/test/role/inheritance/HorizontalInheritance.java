@@ -63,9 +63,9 @@ public class HorizontalInheritance extends WeldBaseTest {
       "Motion Chart", "Planet", "Twitter");
   private final List<String> VIEWS = Arrays.asList("OBUIAPP_AlertManagement",
       RoleInheritanceTestUtils.DUMMY_VIEW_IMPL_NAME);
-  private final List<String> PROCESSES = Arrays
-      .asList("Create Purchase Order Lines", "Grant Portal Access", "Manage Variants",
-          "Modify Payment In Plan", "Process Cost Adjustment");
+  private final List<String> PROCESSES = Arrays.asList("Create Purchase Order Lines",
+      "Grant Portal Access", "Manage Variants", "Modify Payment In Plan",
+      "Process Cost Adjustment");
   private final List<String> TABLES = Arrays.asList("AD_User", "C_Order", "FIN_Payment",
       "M_Warehouse", "OBUIAPP_Note");
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo",
