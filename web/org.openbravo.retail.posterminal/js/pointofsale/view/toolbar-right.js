@@ -673,6 +673,5 @@ enyo.kind({
   receiptChanged: function () {
     this.$.paymentTabContent.setReceipt(this.receipt);
   },
-  executeOnShow: function (options) {
-  }
+  executeOnShow: function (options) {}
 });

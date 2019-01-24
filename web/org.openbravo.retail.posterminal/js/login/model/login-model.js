@@ -629,8 +629,7 @@
         return;
       }
 
-      var i, paymentcashcurrency, paymentcash, paymentlegacy, max,
-          defaultpaymentcash, defaultpaymentcashcurrency;
+      var i, paymentcashcurrency, paymentcash, paymentlegacy, max, defaultpaymentcash, defaultpaymentcashcurrency;
 
       if (!OB.UTIL.isSupportedBrowser()) {
         OB.MobileApp.model.renderLogin();

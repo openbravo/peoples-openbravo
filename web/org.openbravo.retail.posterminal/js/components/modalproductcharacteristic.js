@@ -110,8 +110,7 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        i, j,
-        params = [],
+        i, j, params = [],
         productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent,
         forceRemote = false;
     var productFilterText, productCategory, productCharacteristicModel, resetValueList, characteristic = [];

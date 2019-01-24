@@ -6278,8 +6278,7 @@
     generateInvoice: function (callback) {
       var receiptShouldBeInvoiced = false,
           me = this,
-          invoice,
-          isDeleted = this.get('obposIsDeleted'),
+          invoice, isDeleted = this.get('obposIsDeleted'),
           receiptShouldBeShipped = false,
           deliveredNotInvoicedLine;
 
