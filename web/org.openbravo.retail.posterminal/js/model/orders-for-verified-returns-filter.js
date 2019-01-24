@@ -121,12 +121,17 @@
     column: 'store',
     type: 'TEXT',
     filter: true,
+    isMandatoryFilter: true,
     caption: 'OBPOS_Store',
     isList: true,
     termProperty: 'store',
     propertyId: 'id',
     propertyName: 'name',
-    hqlFilter: 'Store'
+    hqlFilter: 'Store',
+    preset: {
+      id: '',
+      name: ''
+    }
   }]);
 
 }());
