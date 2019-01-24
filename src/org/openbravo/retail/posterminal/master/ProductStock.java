@@ -49,7 +49,6 @@ public class ProductStock extends ProcessHQLQuery {
     return prepareQuery(jsonsent);
   }
 
-  @Override
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
 
     try {

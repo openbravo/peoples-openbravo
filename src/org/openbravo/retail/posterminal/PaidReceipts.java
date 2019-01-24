@@ -162,7 +162,6 @@ public class PaidReceipts extends JSONProcessSimple {
         hqlPaidReceiptsLines += " order by ordLine.lineNo";
         Query<?> paidReceiptsLinesQuery = OBDal.getInstance()
             .getSession()
-            .getSession()
             .createQuery(hqlPaidReceiptsLines);
         paidReceiptsLinesQuery.setParameter("salesOrderId", orderid);
 
@@ -183,7 +182,6 @@ public class PaidReceipts extends JSONProcessSimple {
               + " and m.shipmentReceipt.isnettingshipment = false";
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           Query<?> paidReceiptsShipLinesQuery = OBDal.getInstance()
-              .getSession()
               .getSession()
               .createQuery(hqlPaidReceiptsShipLines);
           paidReceiptsShipLinesQuery.setParameter("salesOrderLineId",
@@ -289,7 +287,6 @@ public class PaidReceipts extends JSONProcessSimple {
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           Query<?> paidReceiptsRelatedLinesQuery = OBDal.getInstance()
               .getSession()
-              .getSession()
               .createQuery(hqlPaidReceiptsRelatedLines);
           paidReceiptsRelatedLinesQuery.setParameter("salesOrderLineId",
               paidReceiptLine.getString("lineId"));
@@ -344,7 +341,6 @@ public class PaidReceipts extends JSONProcessSimple {
             + "group by " + hqlPropertiesPayments.getHqlGroupBy()
             + " order by finPayment.documentNo";
         Query<?> paidReceiptsPaymentsQuery = OBDal.getInstance()
-            .getSession()
             .getSession()
             .createQuery(hqlPaymentsIn);
         paidReceiptsPaymentsQuery.setParameter("orderId", orderid);
